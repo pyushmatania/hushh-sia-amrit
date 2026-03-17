@@ -110,8 +110,6 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
-  const displayedReviews = showAllReviews ? property.reviews : property.reviews.slice(0, 2);
-
   return (
     <motion.div
       initial={{ opacity: 0, x: 40 }}
