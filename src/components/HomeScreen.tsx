@@ -108,7 +108,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap }: HomeScreenPro
       </div>
 
 
-      {trendingNow.length > 0 && (
+      {activeCategory === "stays" && trendingNow.length > 0 && (
         <div className="mt-6">
           <div className="flex items-center justify-between px-5 mb-3">
             <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
@@ -126,20 +126,21 @@ export default function HomeScreen({ onPropertyTap, onSearchTap }: HomeScreenPro
         </div>
       )}
 
-      {/* Guest favourites */}
-      <div className="mt-6">
-        <div className="flex items-center justify-between px-5 mb-3">
-          <h2 className="text-lg font-bold text-foreground">⭐ Top Rated</h2>
-          <button className="text-xs text-primary font-medium flex items-center gap-1">
-            View all <ArrowRight size={12} />
-          </button>
+      {activeCategory === "stays" && (
+        <div className="mt-6">
+          <div className="flex items-center justify-between px-5 mb-3">
+            <h2 className="text-lg font-bold text-foreground">⭐ Top Rated</h2>
+            <button className="text-xs text-primary font-medium flex items-center gap-1">
+              View all <ArrowRight size={12} />
+            </button>
+          </div>
+          <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
+            {topRated.map((p, i) => (
+              <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} />
+            ))}
+          </div>
         </div>
-        <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
-          {topRated.map((p, i) => (
-            <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} />
-          ))}
-        </div>
-      </div>
+      )}
 
       {/* Filtered cards */}
       <div className="mt-7">
