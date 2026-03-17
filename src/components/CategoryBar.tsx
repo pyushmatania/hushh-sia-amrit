@@ -61,23 +61,23 @@ const activeAnimations = {
 const idleAnimations = {
   bounce: {
     y: [0, -2, 0],
-    transition: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+    transition: { duration: 2, repeat: Infinity, ease: "easeInOut" as const },
   },
   wiggle: {
     rotate: [0, -2, 2, 0],
-    transition: { duration: 2.5, repeat: Infinity, ease: "easeInOut" },
+    transition: { duration: 2.5, repeat: Infinity, ease: "easeInOut" as const },
   },
   pulse: {
     scale: [1, 1.04, 1],
-    transition: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+    transition: { duration: 2, repeat: Infinity, ease: "easeInOut" as const },
   },
   spin: {
     rotate: [0, 3, -3, 0],
-    transition: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+    transition: { duration: 3, repeat: Infinity, ease: "easeInOut" as const },
   },
   float: {
     y: [0, -3, 0],
-    transition: { duration: 2.5, repeat: Infinity, ease: "easeInOut" },
+    transition: { duration: 2.5, repeat: Infinity, ease: "easeInOut" as const },
   },
 };
 
