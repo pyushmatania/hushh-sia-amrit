@@ -33,7 +33,7 @@ export default function ProfileScreen() {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="pb-24">
+    <div className="pb-24 bg-mesh min-h-screen">
       {/* Header */}
       <div className="px-5 pt-6 pb-1 flex items-center justify-between">
         <motion.h1
