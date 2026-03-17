@@ -78,7 +78,7 @@ export const properties: Property[] = [
     name: "The Firefly Villa",
     description: "Private pool villa · Bonfire · Sound system",
     fullDescription: "Nestled in the heart of Jeypore, The Firefly Villa is your private paradise. Featuring a heated pool, a crackling bonfire pit, and a premium Bose sound system — this is where memories are made. Perfect for couples seeking intimacy or friend groups ready to celebrate under the stars.",
-    images: [property1, property2, property3],
+    images: [listingFireflyVilla, property2, property3],
     rating: 4.8,
     reviewCount: 124,
     location: "Jeypore, Odisha",
