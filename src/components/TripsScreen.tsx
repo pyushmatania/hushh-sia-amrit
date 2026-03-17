@@ -55,6 +55,8 @@ function TiltCard({
   const property = properties.find((p) => p.id === booking.propertyId);
   if (!property) return null;
 
+  const status = statusConfig[booking.status];
+
   const handlePointerMove = (e: React.PointerEvent) => {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
