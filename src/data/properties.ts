@@ -824,7 +824,7 @@ export const properties: Property[] = [
     name: "Tribal Dance Experience",
     description: "Live tribal dance · Costume try-on · Drum circle",
     fullDescription: "Immerse yourself in the rich tribal culture of Koraput with this unique 2-hour experience. Watch mesmerizing Dhemsa and Ghumura dance performances by Paroja and Gadaba tribal artists, try on traditional tribal costumes, join a high-energy drum circle, and learn basic tribal dance steps. Includes tribal snacks, rice beer tasting (optional), and a handmade tribal souvenir.",
-    images: [property2, property3, property1],
+    images: [listingTribalDance, property3, property1],
     rating: 4.8,
     reviewCount: 68,
     location: "Jeypore, Odisha",
