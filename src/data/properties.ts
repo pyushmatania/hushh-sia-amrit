@@ -72,7 +72,7 @@ export const properties: Property[] = [
     hostName: "Rahul M.",
     hostSince: "2023",
     responseRate: "98%",
-    category: ["couples", "party", "bonfire"],
+    category: ["stays", "couples", "party", "bonfire", "pool"],
     highlights: ["Heated pool open till midnight", "Bose premium sound system", "Instagram-worthy fairy light setup", "Private bonfire with marshmallow kit"],
     rules: [
       { icon: "🕐", text: "Check-in at slot start time" },
