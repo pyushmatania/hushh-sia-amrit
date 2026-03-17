@@ -367,13 +367,159 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
 
         <div className="border-b border-border my-5" />
 
-        {/* Location */}
-        <h3 className="text-lg font-semibold text-foreground mb-2">📍 Location</h3>
-        <p className="text-sm text-muted-foreground mb-2">{property.location}</p>
-        <div className="glass rounded-2xl p-4 mb-6">
-          <p className="text-sm text-foreground leading-relaxed">
-            <span className="font-semibold">How to get there:</span> {property.entryInstructions}
-          </p>
+        {/* Location & Map */}
+        <h3 className="text-lg font-semibold text-foreground mb-3">📍 Location</h3>
+        <p className="text-sm text-muted-foreground mb-3">{property.location}</p>
+        
+        {/* Embedded Map */}
+        <div className="rounded-2xl overflow-hidden border border-border mb-3 aspect-[16/9]">
+          <iframe
+            title="Property Location"
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(property.location)}&zoom=14`}
+          />
+        </div>
+
+        <div className="glass rounded-2xl p-4 mb-3">
+          <div className="flex items-center gap-3 mb-2">
+            <Navigation size={16} className="text-primary" />
+            <span className="text-sm font-semibold text-foreground">How to get there</span>
+          </div>
+          <p className="text-sm text-foreground/80 leading-relaxed">{property.entryInstructions}</p>
+        </div>
+
+        <div className="flex gap-2 mb-4">
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(property.location)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 glass rounded-xl px-4 py-3 flex items-center justify-center gap-2 text-sm font-medium text-foreground"
+          >
+            <MapPin size={14} className="text-primary" /> Open in Maps
+          </a>
+          <button className="flex-1 glass rounded-xl px-4 py-3 flex items-center justify-center gap-2 text-sm font-medium text-foreground">
+            <Phone size={14} className="text-primary" /> Call Host
+          </button>
+        </div>
+
+        <div className="border-b border-border my-5" />
+
+        {/* Nearby Attractions */}
+        <h3 className="text-lg font-semibold text-foreground mb-3">🗺️ What's Nearby</h3>
+        <div className="space-y-2 mb-5">
+          {[
+            { icon: <Coffee size={16} />, name: "Cafes & Restaurants", distance: "0.5 km" },
+            { icon: <ParkingCircle size={16} />, name: "Public Parking", distance: "0.2 km" },
+            { icon: <Utensils size={16} />, name: "Local Street Food", distance: "0.8 km" },
+            { icon: <Trees size={16} />, name: "Jagannath Sagar Lake", distance: "1.2 km" },
+            { icon: <Camera size={16} />, name: "Koraput Museum", distance: "3.5 km" },
+          ].map((place, i) => (
+            <div key={i} className="flex items-center gap-3 glass rounded-xl px-4 py-3">
+              <span className="text-primary">{place.icon}</span>
+              <span className="text-sm text-foreground flex-1">{place.name}</span>
+              <span className="text-xs text-muted-foreground">{place.distance}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="border-b border-border my-5" />
+
+        {/* Pricing Breakdown */}
+        <h3 className="text-lg font-semibold text-foreground mb-3">💰 Pricing Details</h3>
+        <div className="glass rounded-2xl p-4 mb-5 space-y-3">
+          <div className="flex justify-between text-sm">
+            <span className="text-foreground/80">Base price (per slot)</span>
+            <span className="text-foreground font-medium">₹{property.basePrice.toLocaleString()}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-foreground/80">Service fee</span>
+            <span className="text-foreground font-medium">₹{Math.round(property.basePrice * 0.1).toLocaleString()}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-foreground/80">Cleaning fee</span>
+            <span className="text-foreground font-medium">₹199</span>
+          </div>
+          <div className="border-t border-border pt-2 flex justify-between text-sm">
+            <span className="text-foreground font-semibold">Estimated total</span>
+            <span className="text-gradient-warm font-bold">₹{(property.basePrice + Math.round(property.basePrice * 0.1) + 199).toLocaleString()}</span>
+          </div>
+          <p className="text-[11px] text-muted-foreground">* Final price depends on selected slot & guest count</p>
+        </div>
+
+        <div className="border-b border-border my-5" />
+
+        {/* Cancellation Policy */}
+        <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
+          <CalendarX2 size={18} className="text-primary" /> Cancellation Policy
+        </h3>
+        <div className="glass rounded-2xl p-4 mb-5 space-y-3">
+          <div className="flex items-start gap-3">
+            <div className="w-2 h-2 rounded-full bg-green-500 mt-1.5 shrink-0" />
+            <div>
+              <p className="text-sm font-medium text-foreground">Free cancellation</p>
+              <p className="text-xs text-muted-foreground">Up to 48 hours before check-in</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <div className="w-2 h-2 rounded-full bg-yellow-500 mt-1.5 shrink-0" />
+            <div>
+              <p className="text-sm font-medium text-foreground">50% refund</p>
+              <p className="text-xs text-muted-foreground">24-48 hours before check-in</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <div className="w-2 h-2 rounded-full bg-destructive mt-1.5 shrink-0" />
+            <div>
+              <p className="text-sm font-medium text-foreground">No refund</p>
+              <p className="text-xs text-muted-foreground">Less than 24 hours before check-in</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-b border-border my-5" />
+
+        {/* Safety & Hygiene */}
+        <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
+          <Shield size={18} className="text-primary" /> Safety & Hygiene
+        </h3>
+        <div className="grid grid-cols-2 gap-2 mb-5">
+          {[
+            { icon: <ShieldCheck size={16} />, text: "Verified property" },
+            { icon: <Activity size={16} />, text: "First aid available" },
+            { icon: <Zap size={16} />, text: "Fire extinguisher" },
+            { icon: <Sparkles size={16} />, text: "Deep cleaned" },
+            { icon: <Camera size={16} />, text: "CCTV in common areas" },
+            { icon: <Phone size={16} />, text: "24/7 host support" },
+          ].map((item, i) => (
+            <div key={i} className="flex items-center gap-2 glass rounded-xl px-3 py-2.5">
+              <span className="text-primary shrink-0">{item.icon}</span>
+              <span className="text-xs text-foreground">{item.text}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="border-b border-border my-5" />
+
+        {/* Good to Know */}
+        <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
+          <Info size={18} className="text-primary" /> Good to Know
+        </h3>
+        <div className="glass rounded-2xl p-4 mb-8 space-y-3">
+          {[
+            { q: "Is there parking?", a: "Yes, free parking is available for up to 5 vehicles." },
+            { q: "Can I bring my own food?", a: "Outside food is allowed at most venues. Check house rules." },
+            { q: "Is the property wheelchair accessible?", a: "Please contact the host for accessibility details." },
+            { q: "Are pets allowed?", a: "Varies by property. Check the house rules section above." },
+          ].map((faq, i) => (
+            <div key={i}>
+              <p className="text-sm font-medium text-foreground">{faq.q}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{faq.a}</p>
+            </div>
+          ))}
         </div>
       </div>
 
