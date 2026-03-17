@@ -665,7 +665,7 @@ export const properties: Property[] = [
     hostName: "Ritu B.",
     hostSince: "2022",
     responseRate: "98%",
-    category: ["party", "experiences"],
+    category: ["experiences", "party", "services"],
     highlights: ["Marigold flower shower setup", "Professional Dhol + Nagada players", "Mehndi artist corner for 10 guests", "Ethnic photo booth with props"],
     rules: [
       { icon: "🕐", text: "Setup begins 3 hours before event" },
