@@ -75,7 +75,7 @@ export default function MessagesScreen() {
   const unreadCount = messages.filter((m) => !m.read).length;
 
   return (
-    <div className="pb-24">
+    <div className="pb-24 bg-mesh min-h-screen">
       <div className="px-5 pt-6 pb-2">
         <motion.h1
           initial={{ opacity: 0, y: -8 }}

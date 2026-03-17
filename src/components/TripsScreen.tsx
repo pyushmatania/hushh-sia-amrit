@@ -27,7 +27,7 @@ const statusStyles: Record<string, { bg: string; text: string; label: string }> 
 
 export default function TripsScreen() {
   return (
-    <div className="pb-24">
+    <div className="pb-24 bg-mesh min-h-screen">
       <div className="px-5 pt-6 pb-4">
         <motion.h1
           initial={{ opacity: 0, y: -8 }}
