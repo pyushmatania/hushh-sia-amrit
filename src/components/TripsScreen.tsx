@@ -5,6 +5,8 @@ import type { Booking } from "@/pages/Index";
 
 interface TripsScreenProps {
   bookings: Booking[];
+  onViewDetail: (booking: Booking) => void;
+  onRebook: (propertyId: string) => void;
 }
 
 const statusStyles: Record<string, { bg: string; text: string; label: string }> = {
@@ -13,7 +15,7 @@ const statusStyles: Record<string, { bg: string; text: string; label: string }> 
   cancelled: { bg: "bg-destructive/10", text: "text-destructive", label: "Cancelled" },
 };
 
-export default function TripsScreen({ bookings }: TripsScreenProps) {
+export default function TripsScreen({ bookings, onViewDetail, onRebook }: TripsScreenProps) {
   return (
     <div className="pb-24 bg-mesh min-h-screen">
       <div className="px-5 pt-6 pb-4">
@@ -61,7 +63,9 @@ export default function TripsScreen({ bookings }: TripsScreenProps) {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.08 }}
-                className="rounded-2xl border border-border overflow-hidden"
+                className="rounded-2xl border border-border overflow-hidden cursor-pointer"
+                onClick={() => onViewDetail(trip)}
+                whileTap={{ scale: 0.98 }}
               >
                 {/* Image */}
                 <div className="relative h-32">
@@ -91,14 +95,20 @@ export default function TripsScreen({ bookings }: TripsScreenProps) {
                   <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
                     <span className="text-[11px] text-muted-foreground">ID: {trip.bookingId}</span>
                     {trip.status === "upcoming" && (
-                      <button className="flex items-center gap-1 text-xs font-semibold text-primary">
+                      <span className="flex items-center gap-1 text-xs font-semibold text-primary">
                         View Details <ChevronRight size={14} />
-                      </button>
+                      </span>
                     )}
                     {trip.status === "completed" && (
-                      <button className="flex items-center gap-1 text-xs font-semibold text-foreground">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); onRebook(trip.propertyId); }}
+                        className="flex items-center gap-1 text-xs font-semibold text-foreground"
+                      >
                         Book Again <ChevronRight size={14} />
                       </button>
+                    )}
+                    {trip.status === "cancelled" && (
+                      <span className="text-xs text-muted-foreground">Cancelled</span>
                     )}
                   </div>
                 </div>

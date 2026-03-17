@@ -7,12 +7,13 @@ import PropertyDetail from "@/components/PropertyDetail";
 import ExperienceBuilder from "@/components/ExperienceBuilder";
 import CheckoutScreen from "@/components/CheckoutScreen";
 import BookingConfirmation from "@/components/BookingConfirmation";
+import BookingDetailScreen from "@/components/BookingDetailScreen";
 import WishlistScreen from "@/components/WishlistScreen";
 import TripsScreen from "@/components/TripsScreen";
 import ProfileScreen from "@/components/ProfileScreen";
 import MessagesScreen from "@/components/MessagesScreen";
 import SearchScreen from "@/components/SearchScreen";
-import type { Property } from "@/data/properties";
+import { properties, type Property } from "@/data/properties";
 
 export interface Booking {
   id: string;
@@ -30,7 +31,8 @@ type Screen =
   | { type: "detail"; property: Property }
   | { type: "builder"; property: Property; slotId: string; guests: number; date: Date }
   | { type: "checkout"; property: Property; slotId: string; guests: number; date: Date; selections: Record<string, number>; total: number }
-  | { type: "confirmation"; property: Property; slotId: string; guests: number; date: Date; total: number };
+  | { type: "confirmation"; property: Property; slotId: string; guests: number; date: Date; total: number }
+  | { type: "bookingDetail"; booking: Booking };
 
 export default function Index() {
   const [showSplash, setShowSplash] = useState(true);
@@ -65,7 +67,6 @@ export default function Index() {
   const handleCheckoutConfirm = useCallback(
     (property: Property, slotId: string, guests: number, date: Date) =>
       (finalTotal: number) => {
-        // Create a new booking
         const newBooking: Booking = {
           id: String(Date.now()),
           propertyId: property.id,
@@ -85,6 +86,21 @@ export default function Index() {
   const handleDone = useCallback(() => {
     setScreen({ type: "home" });
     setActiveTab("bookings");
+  }, []);
+
+  const handleViewBookingDetail = useCallback((booking: Booking) => {
+    setScreen({ type: "bookingDetail", booking });
+  }, []);
+
+  const handleCancelBooking = useCallback((bookingId: string) => {
+    setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: "cancelled" as const } : b));
+  }, []);
+
+  const handleRebook = useCallback((propertyId: string) => {
+    const property = properties.find(p => p.id === propertyId);
+    if (property) {
+      setScreen({ type: "detail", property });
+    }
   }, []);
 
   if (showSplash) {
@@ -108,7 +124,12 @@ export default function Index() {
           />
         )}
         {screen.type === "home" && activeTab === "bookings" && (
-          <TripsScreen key="trips" bookings={bookings} />
+          <TripsScreen
+            key="trips"
+            bookings={bookings}
+            onViewDetail={handleViewBookingDetail}
+            onRebook={handleRebook}
+          />
         )}
         {screen.type === "home" && activeTab === "messages" && (
           <MessagesScreen key="messages" />
@@ -157,6 +178,15 @@ export default function Index() {
             date={screen.date}
             total={screen.total}
             onDone={handleDone}
+          />
+        )}
+        {screen.type === "bookingDetail" && (
+          <BookingDetailScreen
+            key="bookingDetail"
+            booking={screen.booking}
+            onBack={() => { setScreen({ type: "home" }); setActiveTab("bookings"); }}
+            onCancel={handleCancelBooking}
+            onRebook={handleRebook}
           />
         )}
       </AnimatePresence>
