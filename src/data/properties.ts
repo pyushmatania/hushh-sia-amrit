@@ -513,7 +513,7 @@ export const properties: Property[] = [
     hostName: "Priya N.",
     hostSince: "2023",
     responseRate: "97%",
-    category: ["party", "experiences", "dining"],
+    category: ["experiences", "party", "dining"],
     highlights: ["Curated high tea with 12 items", "Tambola, trivia & card games included", "Goodie bag for every guest", "Instagram-worthy flower wall"],
     rules: [
       { icon: "🕐", text: "Minimum 2-hour booking" },
