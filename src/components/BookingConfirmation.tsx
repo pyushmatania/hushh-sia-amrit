@@ -1,11 +1,13 @@
 import { motion } from "framer-motion";
-import { Check, MapPin, Calendar, Users, QrCode } from "lucide-react";
+import { Check, MapPin, Calendar, Users, QrCode, Clock } from "lucide-react";
+import { format } from "date-fns";
 import type { Property } from "@/data/properties";
 
 interface BookingConfirmationProps {
   property: Property;
   slotId: string;
   guests: number;
+  date: Date;
   total: number;
   onDone: () => void;
 }
