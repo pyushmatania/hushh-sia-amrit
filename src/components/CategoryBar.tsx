@@ -101,8 +101,7 @@ function AnimatedIcon({ cat, isActive }: { cat: Category; isActive: boolean }) {
       alt={cat.label}
       className="w-12 h-12 object-contain"
       style={{
-        opacity: isActive ? 1 : 0.5,
-        filter: isActive ? "none" : "grayscale(40%)",
+        opacity: isActive ? 1 : 0.85,
       }}
       animate={controls}
       whileTap={{
