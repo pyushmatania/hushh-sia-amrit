@@ -710,7 +710,7 @@ export const properties: Property[] = [
     name: "Stargazing Observatory",
     description: "Telescope · Constellation tour · Night photography",
     fullDescription: "Jeypore's only dedicated stargazing experience on a hilltop with zero light pollution. Features a professional 8-inch Dobsonian telescope, guided constellation tour by an astronomy enthusiast, night sky photography assistance, and blankets + hot cocoa under the stars. See Saturn's rings, Jupiter's moons, and the Milky Way with your own eyes!",
-    images: [property3, property1, property2],
+    images: [listingStargazing, property1, property2],
     rating: 4.9,
     reviewCount: 95,
     location: "Near Jeypore, Odisha",
