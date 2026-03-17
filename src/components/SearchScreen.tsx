@@ -50,10 +50,10 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      className="fixed inset-0 z-50 bg-background overflow-y-auto pb-24"
+      className="fixed inset-0 z-50 bg-mesh overflow-y-auto pb-24"
     >
       {/* Search Header */}
-      <div className="sticky top-0 z-10 bg-background border-b border-border px-5 pt-4 pb-3">
+      <div className="sticky top-0 z-10 glass px-5 pt-4 pb-3">
         <div className="flex items-center gap-3">
           <div className="flex-1 flex items-center gap-3 rounded-xl bg-secondary px-4 py-3">
             <Search size={18} className="text-muted-foreground shrink-0" />

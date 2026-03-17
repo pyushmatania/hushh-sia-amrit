@@ -16,7 +16,7 @@ interface BottomNavProps {
 
 export default function BottomNav({ active, onChange }: BottomNavProps) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 bg-background border-t border-border">
+    <div className="fixed bottom-0 left-0 right-0 z-40 glass">
       <div className="flex items-center justify-around pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
         {tabs.map((tab) => {
           const isActive = active === tab.id;
@@ -24,8 +24,15 @@ export default function BottomNav({ active, onChange }: BottomNavProps) {
             <button
               key={tab.id}
               onClick={() => onChange(tab.id)}
-              className="flex flex-col items-center gap-0.5 min-w-[60px] py-0.5"
+              className="flex flex-col items-center gap-0.5 min-w-[60px] py-0.5 relative"
             >
+              {isActive && (
+                <motion.div
+                  layoutId="bottomNavGlow"
+                  className="absolute -top-1 left-1/2 -translate-x-1/2 w-8 h-[2px] bg-primary rounded-full glow-sm"
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                />
+              )}
               <tab.icon
                 size={22}
                 className={`transition-colors ${isActive ? "text-primary" : "text-muted-foreground"}`}

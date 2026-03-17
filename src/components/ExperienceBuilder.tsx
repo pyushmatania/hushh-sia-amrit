@@ -41,10 +41,10 @@ export default function ExperienceBuilder({ property, slotId, guests, onBack, on
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-30 bg-background overflow-y-auto pb-32"
+      className="fixed inset-0 z-30 bg-mesh overflow-y-auto pb-32"
     >
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-background border-b border-border px-5 py-3">
+      <div className="sticky top-0 z-10 glass px-5 py-3">
         <div className="flex items-center gap-3">
           <button onClick={onBack} className="w-9 h-9 rounded-full border border-border flex items-center justify-center">
             <ArrowLeft size={16} className="text-foreground" />
@@ -105,14 +105,14 @@ export default function ExperienceBuilder({ property, slotId, guests, onBack, on
       </div>
 
       {/* Footer */}
-      <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border px-5 py-3.5 z-40">
+      <div className="fixed bottom-0 left-0 right-0 glass px-5 py-3.5 z-40">
         <div className="flex items-center justify-between mb-1 text-xs text-muted-foreground">
           <span>Base: ₹{slot.price.toLocaleString()}</span>
           {addonTotal > 0 && <span>Add-ons: ₹{addonTotal.toLocaleString()}</span>}
         </div>
         <div className="flex items-center justify-between">
           <span className="font-semibold text-xl text-foreground">₹{total.toLocaleString()}</span>
-          <button onClick={() => onContinue(selections, total)} className="bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold text-sm">
+          <button onClick={() => onContinue(selections, total)} className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold text-sm glow-primary">
             Continue
           </button>
         </div>

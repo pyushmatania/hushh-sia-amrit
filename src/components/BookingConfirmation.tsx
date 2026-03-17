@@ -18,7 +18,7 @@ export default function BookingConfirmation({ property, slotId, guests, total, o
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="fixed inset-0 z-30 bg-background overflow-y-auto"
+      className="fixed inset-0 z-30 bg-mesh overflow-y-auto"
     >
       <div className="flex flex-col items-center justify-start pt-20 px-6">
         {/* Success icon */}
@@ -94,7 +94,7 @@ export default function BookingConfirmation({ property, slotId, guests, total, o
 
         {/* Actions */}
         <div className="w-full mt-6 space-y-3 pb-10">
-          <button onClick={onDone} className="w-full py-3.5 rounded-lg bg-primary text-primary-foreground font-semibold text-sm">
+          <button onClick={onDone} className="w-full py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm glow-primary">
             Go to My Trips
           </button>
           <button className="w-full py-3 rounded-lg border border-foreground text-foreground font-medium text-sm">

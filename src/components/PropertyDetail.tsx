@@ -56,20 +56,20 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-30 bg-background overflow-y-auto pb-28"
+      className="fixed inset-0 z-30 bg-mesh overflow-y-auto pb-28"
     >
       {/* Hero */}
       <div className="relative aspect-[4/3]">
         <img src={property.images[imgIndex]} alt={property.name} className="w-full h-full object-cover" />
         <div className="absolute top-0 left-0 right-0 flex justify-between items-center p-4">
-          <button onClick={onBack} className="w-9 h-9 rounded-full bg-background flex items-center justify-center shadow-md">
+          <button onClick={onBack} className="w-9 h-9 rounded-full glass flex items-center justify-center">
             <ArrowLeft size={18} className="text-foreground" />
           </button>
           <div className="flex gap-2">
-            <button className="w-9 h-9 rounded-full bg-background flex items-center justify-center shadow-md">
+            <button className="w-9 h-9 rounded-full glass flex items-center justify-center">
               <Share2 size={16} className="text-foreground" />
             </button>
-            <button onClick={() => setLiked(!liked)} className="w-9 h-9 rounded-full bg-background flex items-center justify-center shadow-md">
+            <button onClick={() => setLiked(!liked)} className="w-9 h-9 rounded-full glass flex items-center justify-center">
               <Heart size={16} className={liked ? "fill-primary text-primary" : "text-foreground"} />
             </button>
           </div>
@@ -222,7 +222,7 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
             initial={{ y: 80 }}
             animate={{ y: 0 }}
             exit={{ y: 80 }}
-            className="fixed bottom-0 left-0 right-0 bg-background border-t border-border px-5 py-3.5 flex items-center justify-between z-40"
+            className="fixed bottom-0 left-0 right-0 glass px-5 py-3.5 flex items-center justify-between z-40"
           >
             <div>
               <span className="font-semibold text-foreground">₹{selectedSlotData.price.toLocaleString()}</span>
@@ -230,7 +230,7 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
             </div>
             <button
               onClick={() => onBook(property, selectedSlot!, guests)}
-              className="bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold text-sm"
+              className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold text-sm glow-primary"
             >
               Reserve
             </button>

@@ -33,7 +33,7 @@ export default function ProfileScreen() {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="pb-24">
+    <div className="pb-24 bg-mesh min-h-screen">
       {/* Header */}
       <div className="px-5 pt-6 pb-1 flex items-center justify-between">
         <motion.h1
@@ -57,7 +57,7 @@ export default function ProfileScreen() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="mx-5 mt-5 rounded-3xl bg-card border border-border shadow-[0_4px_20px_rgba(0,0,0,0.06)] p-6"
+        className="mx-5 mt-5 rounded-3xl glass p-6"
       >
         <div className="flex items-start gap-5">
           {/* Avatar + Name */}

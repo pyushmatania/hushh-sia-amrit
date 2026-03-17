@@ -53,10 +53,10 @@ export default function CheckoutScreen({ property, slotId, guests, selections, t
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="fixed inset-0 z-30 bg-background overflow-y-auto pb-36"
+      className="fixed inset-0 z-30 bg-mesh overflow-y-auto pb-36"
     >
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-background border-b border-border px-5 py-3">
+      <div className="sticky top-0 z-10 glass px-5 py-3">
         <div className="flex items-center gap-3">
           <button onClick={onBack} className="w-9 h-9 rounded-full border border-border flex items-center justify-center">
             <ArrowLeft size={16} className="text-foreground" />
@@ -234,7 +234,7 @@ export default function CheckoutScreen({ property, slotId, guests, selections, t
       </div>
 
       {/* Sticky Pay Button */}
-      <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border px-5 py-3.5 z-40">
+      <div className="fixed bottom-0 left-0 right-0 glass px-5 py-3.5 z-40">
         <div className="flex items-center justify-between mb-1.5">
           <span className="text-xs text-muted-foreground">
             {paymentMethods.find(m => m.id === selectedPayment)?.label}
@@ -242,10 +242,10 @@ export default function CheckoutScreen({ property, slotId, guests, selections, t
           {couponApplied && <span className="text-xs text-success font-medium">10% off applied</span>}
         </div>
         <div className="flex items-center justify-between">
-          <span className="font-bold text-xl text-foreground">₹{finalTotal.toLocaleString()}</span>
+          <span className="font-bold text-xl text-gradient-warm">₹{finalTotal.toLocaleString()}</span>
           <button
             onClick={() => onConfirm(finalTotal)}
-            className="bg-primary text-primary-foreground px-8 py-3.5 rounded-lg font-semibold text-sm flex items-center gap-2"
+            className="bg-primary text-primary-foreground px-8 py-3.5 rounded-xl font-semibold text-sm flex items-center gap-2 glow-primary"
           >
             Pay Now <ChevronRight size={16} />
           </button>
