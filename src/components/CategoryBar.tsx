@@ -1,5 +1,5 @@
-import { motion, useAnimation } from "framer-motion";
-import { useEffect } from "react";
+import { motion, useAnimation, type Variants } from "framer-motion";
+import { useEffect, useState } from "react";
 import iconStays from "@/assets/icon-stays.png";
 import iconExperiences from "@/assets/icon-experiences.png";
 import iconServices from "@/assets/icon-services.png";
@@ -15,133 +15,161 @@ interface Category {
   label: string;
   icon: string;
   badge?: string;
-  animation: "bounce" | "wiggle" | "bell" | "fire" | "wave" | "burst" | "flicker" | "stir" | "twinkle";
+  animationType: string;
 }
 
 const categories: Category[] = [
-  { id: "stays", label: "Stays", icon: iconStays, animation: "bounce" },
-  { id: "experiences", label: "Experiences", icon: iconExperiences, badge: "NEW", animation: "wiggle" },
-  { id: "services", label: "Services", icon: iconServices, badge: "NEW", animation: "bell" },
-  { id: "bonfire", label: "Bonfire", icon: iconBonfire, animation: "fire" },
-  { id: "pool", label: "Pool", icon: iconPool, animation: "wave" },
-  { id: "party", label: "Celebrate", icon: iconParty, animation: "burst" },
-  { id: "movie", label: "Movie", icon: iconMovie, animation: "flicker" },
-  { id: "dining", label: "Dining", icon: iconDining, animation: "stir" },
-  { id: "stargazing", label: "Stargazing", icon: iconStargazing, animation: "twinkle" },
+  { id: "stays", label: "Stays", icon: iconStays, animationType: "doorSwing" },
+  { id: "experiences", label: "Experiences", icon: iconExperiences, badge: "NEW", animationType: "danceSpin" },
+  { id: "services", label: "Services", icon: iconServices, badge: "NEW", animationType: "bellRing" },
+  { id: "bonfire", label: "Bonfire", icon: iconBonfire, animationType: "fireFlicker" },
+  { id: "pool", label: "Pool", icon: iconPool, animationType: "waterSplash" },
+  { id: "party", label: "Celebrate", icon: iconParty, animationType: "confettiBurst" },
+  { id: "movie", label: "Movie", icon: iconMovie, animationType: "filmRoll" },
+  { id: "dining", label: "Dining", icon: iconDining, animationType: "plateServe" },
+  { id: "stargazing", label: "Stargazing", icon: iconStargazing, animationType: "starTwinkle" },
 ];
 
-// Personalised entrance animations per icon
-const activeAnimations = {
-  // Stays: door opening bounce
-  bounce: {
-    y: [0, -8, 0, -4, 0],
-    scale: [1, 1.15, 1, 1.08, 1],
-    transition: { duration: 0.6, ease: "easeOut" as const },
+// ─── ENTRANCE (tap) animations ───
+const entranceAnimations: Record<string, any> = {
+  // Stays: door swinging open then settling
+  doorSwing: {
+    rotateY: [0, -30, 15, -8, 0],
+    scale: [1, 1.15, 1.05, 1.1, 1],
+    transition: { duration: 0.7, ease: "easeOut" },
   },
-  // Experiences: excited wiggle like a dancer
-  wiggle: {
-    rotate: [0, -12, 12, -8, 8, -4, 0],
-    scale: [1, 1.12, 1.12, 1.08, 1.08, 1.04, 1],
-    transition: { duration: 0.7, ease: "easeOut" as const },
+  // Experiences: full excited dance spin
+  danceSpin: {
+    rotate: [0, -20, 20, -15, 15, -8, 8, 0],
+    y: [0, -10, 0, -6, 0, -3, 0, 0],
+    scale: [1, 1.2, 1.1, 1.15, 1.08, 1.1, 1.05, 1],
+    transition: { duration: 0.9, ease: "easeOut" },
   },
-  // Services: bell ring — tring tring!
-  bell: {
-    rotate: [0, 15, -15, 12, -12, 8, -8, 4, -4, 0],
-    scale: [1, 1.1, 1.1, 1.08, 1.08, 1.05, 1.05, 1.02, 1.02, 1],
-    transition: { duration: 0.8, ease: "easeOut" as const },
+  // Services: bell tring-tring — fast alternating swing from top pivot
+  bellRing: {
+    rotate: [0, 20, -20, 18, -18, 14, -14, 10, -10, 6, -6, 0],
+    transformOrigin: "top center",
+    scale: [1, 1.05, 1.05, 1.04, 1.04, 1.03, 1.03, 1.02, 1.02, 1.01, 1.01, 1],
+    transition: { duration: 1, ease: "easeOut" },
   },
-  // Bonfire: fire flicker — scale + glow shimmy
-  fire: {
-    scale: [1, 1.1, 0.95, 1.12, 0.98, 1.08, 1],
-    y: [0, -3, 1, -4, 0, -2, 0],
-    rotate: [0, -2, 3, -3, 2, -1, 0],
-    transition: { duration: 0.7, ease: "easeOut" as const },
+  // Bonfire: flames dancing — rapid vertical flicker + sway
+  fireFlicker: {
+    y: [0, -6, -2, -8, -1, -7, -3, -5, 0],
+    scaleY: [1, 1.15, 0.95, 1.2, 0.9, 1.18, 0.95, 1.1, 1],
+    scaleX: [1, 0.95, 1.05, 0.92, 1.08, 0.96, 1.04, 0.98, 1],
+    rotate: [0, -3, 3, -4, 4, -2, 2, -1, 0],
+    transition: { duration: 0.8, ease: "easeOut" },
   },
-  // Pool: water ripple — wave motion
-  wave: {
-    y: [0, -4, 2, -6, 3, -2, 0],
-    rotate: [0, 3, -3, 4, -4, 2, 0],
-    scale: [1, 1.05, 1.08, 1.03, 1.1, 1.04, 1],
-    transition: { duration: 0.9, ease: "easeInOut" as const },
+  // Pool: splash — drops up then ripple side to side
+  waterSplash: {
+    y: [0, -15, -5, -10, 0, 2, 0],
+    scaleX: [1, 0.85, 1.2, 0.9, 1.15, 1.05, 1],
+    scaleY: [1, 1.2, 0.85, 1.1, 0.95, 1.02, 1],
+    rotate: [0, 0, 5, -5, 3, -2, 0],
+    transition: { duration: 0.9, ease: "easeOut" },
   },
-  // Celebrate: party popper burst
-  burst: {
-    scale: [1, 1.3, 0.9, 1.15, 0.95, 1.05, 1],
-    rotate: [0, 20, -15, 10, -5, 0],
-    transition: { duration: 0.7, ease: "easeOut" as const },
+  // Celebrate: explosion burst outward
+  confettiBurst: {
+    scale: [1, 0.8, 1.4, 0.95, 1.15, 1],
+    rotate: [0, -10, 25, -15, 8, 0],
+    y: [0, 3, -12, 0, -4, 0],
+    transition: { duration: 0.8, ease: "easeOut" },
   },
-  // Movie: projector flicker
-  flicker: {
-    opacity: [1, 0.6, 1, 0.7, 1, 0.8, 1],
-    scale: [1, 1.08, 1.02, 1.1, 1, 1.06, 1],
-    transition: { duration: 0.6, ease: "easeOut" as const },
+  // Movie: film reel rolling — continuous rotation with scale
+  filmRoll: {
+    rotate: [0, 360],
+    scale: [1, 1.1, 1.05, 1.1, 1],
+    transition: { duration: 0.8, ease: "easeOut" },
   },
-  // Dining: eating/stirring motion
-  stir: {
-    rotate: [0, 8, -8, 12, -6, 4, 0],
-    y: [0, -2, 2, -3, 1, -1, 0],
-    scale: [1, 1.06, 1.04, 1.1, 1.02, 1.05, 1],
-    transition: { duration: 0.7, ease: "easeOut" as const },
+  // Dining: plate being served — slide in from side + settle
+  plateServe: {
+    x: [30, -5, 3, -2, 0],
+    rotate: [10, -5, 3, -1, 0],
+    scale: [0.8, 1.1, 1.05, 1.08, 1],
+    transition: { duration: 0.7, ease: "easeOut" },
   },
-  // Stargazing: twinkle sparkle
-  twinkle: {
-    scale: [1, 1.2, 0.9, 1.15, 0.95, 1.1, 1],
-    opacity: [1, 0.7, 1, 0.8, 1, 0.9, 1],
-    rotate: [0, 5, -5, 3, -3, 0],
-    transition: { duration: 0.8, ease: "easeOut" as const },
+  // Stargazing: star twinkle — scale pulses with opacity shimmer
+  starTwinkle: {
+    scale: [1, 1.3, 0.85, 1.25, 0.9, 1.15, 1],
+    opacity: [1, 0.5, 1, 0.6, 1, 0.8, 1],
+    rotate: [0, 15, -10, 12, -8, 5, 0],
+    transition: { duration: 1, ease: "easeOut" },
   },
 };
 
-// Idle looping animations matching the theme
-const idleAnimations = {
-  bounce: {
+// ─── IDLE (looping) animations — subtle but characteristic ───
+const idleAnimations: Record<string, any> = {
+  doorSwing: {
+    rotateY: [0, -3, 3, 0],
+    transition: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+  },
+  danceSpin: {
+    rotate: [0, -4, 4, -3, 3, 0],
     y: [0, -2, 0],
-    transition: { duration: 2, repeat: Infinity, ease: "easeInOut" as const },
+    transition: { duration: 2.5, repeat: Infinity, ease: "easeInOut" },
   },
-  wiggle: {
-    rotate: [0, -3, 3, 0],
-    transition: { duration: 2.5, repeat: Infinity, ease: "easeInOut" as const },
+  bellRing: {
+    rotate: [0, 6, -6, 5, -5, 3, -3, 0],
+    transformOrigin: "top center",
+    transition: { duration: 2, repeat: Infinity, ease: "easeInOut" },
   },
-  // Bell: gentle sway
-  bell: {
-    rotate: [0, 4, -4, 3, -3, 0],
-    transition: { duration: 2, repeat: Infinity, ease: "easeInOut" as const },
+  fireFlicker: {
+    y: [0, -2, 0, -3, -1, -2, 0],
+    scaleY: [1, 1.06, 0.97, 1.05, 0.98, 1.03, 1],
+    scaleX: [1, 0.97, 1.03, 0.98, 1.02, 0.99, 1],
+    transition: { duration: 1.2, repeat: Infinity, ease: "easeInOut" },
   },
-  // Fire: constant flicker
-  fire: {
-    scale: [1, 1.04, 0.98, 1.03, 1],
-    y: [0, -1, 1, -2, 0],
-    transition: { duration: 1.5, repeat: Infinity, ease: "easeInOut" as const },
-  },
-  // Water: gentle bob
-  wave: {
+  waterSplash: {
     y: [0, -2, 1, -1, 0],
+    scaleX: [1, 1.03, 0.97, 1.02, 1],
+    rotate: [0, 1, -1, 0.5, 0],
+    transition: { duration: 2.5, repeat: Infinity, ease: "easeInOut" },
+  },
+  confettiBurst: {
+    scale: [1, 1.06, 0.98, 1.04, 1],
+    rotate: [0, 3, -3, 2, 0],
+    transition: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+  },
+  filmRoll: {
+    rotate: [0, 5, -3, 2, 0],
+    transition: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+  },
+  plateServe: {
+    x: [0, 2, -2, 1, 0],
     rotate: [0, 1, -1, 0],
-    transition: { duration: 2.5, repeat: Infinity, ease: "easeInOut" as const },
+    transition: { duration: 2.5, repeat: Infinity, ease: "easeInOut" },
   },
-  // Party: subtle bounce
-  burst: {
-    scale: [1, 1.05, 1],
-    rotate: [0, 2, -2, 0],
-    transition: { duration: 2, repeat: Infinity, ease: "easeInOut" as const },
+  starTwinkle: {
+    scale: [1, 1.08, 0.95, 1.06, 1],
+    opacity: [1, 0.8, 1, 0.85, 1],
+    transition: { duration: 2, repeat: Infinity, ease: "easeInOut" },
   },
-  // Projector: subtle flicker
-  flicker: {
-    opacity: [1, 0.85, 1, 0.9, 1],
-    transition: { duration: 2, repeat: Infinity, ease: "easeInOut" as const },
-  },
-  // Stirring: gentle rock
-  stir: {
-    rotate: [0, 3, -3, 0],
-    y: [0, -1, 0],
-    transition: { duration: 2.5, repeat: Infinity, ease: "easeInOut" as const },
-  },
-  // Twinkle: gentle sparkle
-  twinkle: {
-    scale: [1, 1.06, 0.97, 1.04, 1],
-    opacity: [1, 0.85, 1, 0.9, 1],
-    transition: { duration: 2, repeat: Infinity, ease: "easeInOut" as const },
-  },
+};
+
+// Per-icon tap animations
+const tapAnimations: Record<string, any> = {
+  doorSwing: { rotateY: -20, scale: 1.15, transition: { type: "spring", stiffness: 500, damping: 10 } },
+  danceSpin: { rotate: 30, scale: 1.2, transition: { type: "spring", stiffness: 400, damping: 10 } },
+  bellRing: { rotate: [0, 15, -15, 10, -10, 0], scale: 1.15, transition: { duration: 0.4 } },
+  fireFlicker: { scaleY: 1.3, scaleX: 0.9, y: -5, transition: { type: "spring", stiffness: 500, damping: 10 } },
+  waterSplash: { y: -10, scaleX: 1.2, scaleY: 0.85, transition: { type: "spring", stiffness: 400, damping: 10 } },
+  confettiBurst: { scale: 1.35, rotate: 15, transition: { type: "spring", stiffness: 500, damping: 8 } },
+  filmRoll: { rotate: 180, scale: 1.1, transition: { type: "spring", stiffness: 300, damping: 12 } },
+  plateServe: { x: -10, rotate: -8, scale: 1.1, transition: { type: "spring", stiffness: 400, damping: 12 } },
+  starTwinkle: { scale: 1.3, opacity: 0.6, rotate: 20, transition: { type: "spring", stiffness: 400, damping: 10 } },
+};
+
+// Visual effect styles per icon (glow, shadow, etc.)
+const activeEffects: Record<string, React.CSSProperties> = {
+  fireFlicker: { filter: "drop-shadow(0 0 8px rgba(255,120,20,0.7)) drop-shadow(0 0 16px rgba(255,80,0,0.4))" },
+  waterSplash: { filter: "drop-shadow(0 0 8px rgba(60,160,255,0.6)) drop-shadow(0 0 14px rgba(30,120,255,0.3))" },
+  starTwinkle: { filter: "drop-shadow(0 0 10px rgba(255,230,80,0.7)) drop-shadow(0 0 20px rgba(255,200,0,0.4))" },
+  confettiBurst: { filter: "drop-shadow(0 0 8px rgba(255,100,200,0.5)) drop-shadow(0 0 14px rgba(200,50,255,0.3))" },
+  bellRing: { filter: "drop-shadow(0 0 6px rgba(255,200,50,0.5))" },
+  filmRoll: { filter: "drop-shadow(0 0 6px rgba(150,150,255,0.5))" },
+  danceSpin: { filter: "drop-shadow(0 0 6px rgba(100,255,150,0.5))" },
+  doorSwing: { filter: "drop-shadow(0 0 6px rgba(200,150,100,0.5))" },
+  plateServe: { filter: "drop-shadow(0 0 6px rgba(255,180,100,0.5))" },
 };
 
 function AnimatedIcon({ cat, isActive }: { cat: Category; isActive: boolean }) {
@@ -149,14 +177,18 @@ function AnimatedIcon({ cat, isActive }: { cat: Category; isActive: boolean }) {
 
   useEffect(() => {
     if (isActive) {
-      // Play entrance animation first, then idle loop
-      controls.start(activeAnimations[cat.animation]).then(() => {
-        controls.start(idleAnimations[cat.animation]);
+      controls.start(entranceAnimations[cat.animationType]).then(() => {
+        controls.start(idleAnimations[cat.animationType]);
       });
     } else {
-      controls.start({ scale: 1, y: 0, rotate: 0, transition: { duration: 0.2 } });
+      controls.start({
+        scale: 1, scaleX: 1, scaleY: 1,
+        y: 0, x: 0, rotate: 0, rotateY: 0,
+        opacity: 1,
+        transition: { duration: 0.3 },
+      });
     }
-  }, [isActive, cat.animation, controls]);
+  }, [isActive, cat.animationType, controls]);
 
   return (
     <motion.img
@@ -165,14 +197,12 @@ function AnimatedIcon({ cat, isActive }: { cat: Category; isActive: boolean }) {
       className="w-12 h-12 object-contain"
       style={{
         opacity: isActive ? 1 : 0.85,
+        ...(isActive ? activeEffects[cat.animationType] || {} : {}),
+        transition: "filter 0.3s ease",
       }}
       animate={controls}
-      whileTap={{
-        scale: 1.2,
-        rotate: [0, -8, 8, 0],
-        transition: { type: "spring", stiffness: 400, damping: 12 },
-      }}
-      whileHover={{ scale: 1.08, opacity: 0.8 }}
+      whileTap={tapAnimations[cat.animationType]}
+      whileHover={{ scale: 1.08 }}
     />
   );
 }
