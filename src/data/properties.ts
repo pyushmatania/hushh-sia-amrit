@@ -360,7 +360,7 @@ export const properties: Property[] = [
     name: "Sunset Pavilion",
     description: "Lake-facing · Sunset dining · Canopy seating",
     fullDescription: "A breathtaking lake-facing pavilion designed for unforgettable sunsets. With canopy dining setups, floating candles on the water, and a private chef option — this is the most romantic spot in Koraput district. Whether it's a proposal, anniversary, or just a magical evening, Sunset Pavilion delivers pure enchantment.",
-    images: [property2, property3, property1],
+    images: [listingSunsetPavilion, property3, property1],
     rating: 4.9,
     reviewCount: 178,
     location: "Jeypore, Odisha",
