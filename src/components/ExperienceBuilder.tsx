@@ -8,6 +8,7 @@ interface ExperienceBuilderProps {
   property: Property;
   slotId: string;
   guests: number;
+  date: Date;
   onBack: () => void;
   onContinue: (selections: Record<string, number>, total: number) => void;
 }
