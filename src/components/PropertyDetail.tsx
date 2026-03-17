@@ -66,7 +66,7 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
             <ArrowLeft size={18} className="text-foreground" />
           </button>
           <div className="flex gap-2">
-            <button className="w-9 h-9 rounded-full bg-background flex items-center justify-center shadow-md">
+            <button className="w-9 h-9 rounded-full glass flex items-center justify-center">
               <Share2 size={16} className="text-foreground" />
             </button>
             <button onClick={() => setLiked(!liked)} className="w-9 h-9 rounded-full bg-background flex items-center justify-center shadow-md">
