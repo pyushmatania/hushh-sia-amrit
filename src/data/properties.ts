@@ -480,7 +480,7 @@ export const properties: Property[] = [
     name: "Smash Pickleball Club",
     description: "2 courts · Floodlights · Coaching available",
     fullDescription: "Jeypore's premier pickleball facility with 2 professional-grade courts, floodlights for night play, and certified coaching. Whether you're a beginner looking for lessons or a pro wanting competitive matches, we've got you covered. Includes equipment rental, cold towels, and a refreshment lounge. Perfect for corporate team-building too!",
-    images: [property3, property1, property2],
+    images: [listingPickleball, property1, property2],
     rating: 4.6,
     reviewCount: 87,
     location: "Jeypore, Odisha",
