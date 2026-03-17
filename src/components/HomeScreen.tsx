@@ -1,11 +1,11 @@
-import { motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { motion } from "framer-motion";
 import { Search, ArrowRight, Sparkles, Bell, TrendingUp, Clock, MapPin } from "lucide-react";
 import CategoryBar from "./CategoryBar";
 import PropertyCard from "./PropertyCard";
 import PropertyCardSmall from "./PropertyCardSmall";
 import PackageCard from "./PackageCard";
 import { properties, packages, type Property } from "@/data/properties";
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo } from "react";
 import property1 from "@/assets/property-1.jpg";
 import property2 from "@/assets/property-2.jpg";
 import property3 from "@/assets/property-3.jpg";
@@ -18,9 +18,6 @@ interface HomeScreenProps {
 
 export default function HomeScreen({ onPropertyTap, onSearchTap }: HomeScreenProps) {
   const [activeCategory, setActiveCategory] = useState("all");
-  const [collapsed, setCollapsed] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const { scrollY } = useScroll({ container: scrollRef });
 
   const filteredProperties = useMemo(() => {
     if (activeCategory === "all") return properties;
@@ -30,12 +27,8 @@ export default function HomeScreen({ onPropertyTap, onSearchTap }: HomeScreenPro
   const topRated = useMemo(() => [...properties].sort((a, b) => b.rating - a.rating).slice(0, 4), []);
   const trendingNow = useMemo(() => properties.filter(p => p.slotsLeft > 0 && p.slotsLeft <= 3), []);
 
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    setCollapsed(latest > 150);
-  });
-
   return (
-    <div ref={scrollRef} className="pb-24 bg-mesh min-h-screen overflow-y-auto h-screen">
+    <div className="pb-24 bg-mesh min-h-screen">
 
       {/* Header */}
       <div className="px-5 pt-5 pb-2 flex items-center justify-between">
@@ -62,15 +55,9 @@ export default function HomeScreen({ onPropertyTap, onSearchTap }: HomeScreenPro
         </motion.button>
       </div>
 
-      {/* Category Bar - collapses on scroll */}
-      <div className="sticky top-0 z-20">
-        <motion.div
-          animate={{ height: collapsed ? 0 : "auto", opacity: collapsed ? 0 : 1 }}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="overflow-hidden"
-        >
-          <CategoryBar active={activeCategory} onChange={setActiveCategory} />
-        </motion.div>
+      {/* Category Bar */}
+      <div className="pt-1 pb-2">
+        <CategoryBar active={activeCategory} onChange={setActiveCategory} />
       </div>
 
       {/* Hero Typography */}
