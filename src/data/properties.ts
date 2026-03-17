@@ -1,6 +1,26 @@
 import property1 from "@/assets/property-1.jpg";
 import property2 from "@/assets/property-2.jpg";
 import property3 from "@/assets/property-3.jpg";
+import listingFireflyVilla from "@/assets/listing-firefly-villa.jpg";
+import listingKoraputGarden from "@/assets/listing-koraput-garden.jpg";
+import listingEmberGrounds from "@/assets/listing-ember-grounds.jpg";
+import listingMoonriseTerrace from "@/assets/listing-moonrise-terrace.jpg";
+import listingTribalCamp from "@/assets/listing-tribal-camp.jpg";
+import listingSportsArena from "@/assets/listing-sports-arena.jpg";
+import listingKaraokeCube from "@/assets/listing-karaoke-cube.jpg";
+import listingSunsetPavilion from "@/assets/listing-sunset-pavilion.jpg";
+import listingBirthdayHall from "@/assets/listing-birthday-hall.jpg";
+import listingAnniversaryGarden from "@/assets/listing-anniversary-garden.jpg";
+import listingPickleball from "@/assets/listing-pickleball.jpg";
+import listingKittyParty from "@/assets/listing-kitty-party.jpg";
+import listingHeritageWalk from "@/assets/listing-heritage-walk.jpg";
+import listingPottery from "@/assets/listing-pottery.jpg";
+import listingCoffeeTrail from "@/assets/listing-coffee-trail.jpg";
+import listingHaldiMehndi from "@/assets/listing-haldi-mehndi.jpg";
+import listingStargazing from "@/assets/listing-stargazing.jpg";
+import listingRafting from "@/assets/listing-rafting.jpg";
+import listingMovieAmphitheater from "@/assets/listing-movie-amphitheater.jpg";
+import listingTribalDance from "@/assets/listing-tribal-dance.jpg";
 
 export interface TimeSlot {
   id: string;
@@ -58,7 +78,7 @@ export const properties: Property[] = [
     name: "The Firefly Villa",
     description: "Private pool villa · Bonfire · Sound system",
     fullDescription: "Nestled in the heart of Jeypore, The Firefly Villa is your private paradise. Featuring a heated pool, a crackling bonfire pit, and a premium Bose sound system — this is where memories are made. Perfect for couples seeking intimacy or friend groups ready to celebrate under the stars.",
-    images: [property1, property2, property3],
+    images: [listingFireflyVilla, property2, property3],
     rating: 4.8,
     reviewCount: 124,
     location: "Jeypore, Odisha",
@@ -99,7 +119,7 @@ export const properties: Property[] = [
     name: "Koraput Garden House",
     description: "Farmhouse · Outdoor dining · Stargazing deck",
     fullDescription: "A sprawling farmhouse with an enchanting outdoor dining setup, surrounded by native flora. The stargazing deck offers unobstructed views of the Odisha night sky. Ideal for romantic dinners, family gatherings, or intimate birthday celebrations.",
-    images: [property2, property3, property1],
+    images: [listingKoraputGarden, property3, property1],
     rating: 4.6,
     reviewCount: 89,
     location: "Jeypore, Odisha",
@@ -139,7 +159,7 @@ export const properties: Property[] = [
     name: "Ember Grounds",
     description: "Open-air venue · Bonfire circle · Movie screen",
     fullDescription: "The Ember Grounds is an open-air experience venue built around a massive bonfire circle. With a 20-foot outdoor movie screen, premium lounge seating, and space for up to 30 guests — this is where parties come alive. The stars above, the fire below.",
-    images: [property3, property1, property2],
+    images: [listingEmberGrounds, property1, property2],
     rating: 4.9,
     reviewCount: 201,
     location: "Jeypore, Odisha",
@@ -180,7 +200,7 @@ export const properties: Property[] = [
     name: "Moonrise Terrace",
     description: "Rooftop lounge · Cocktail bar · City lights view",
     fullDescription: "Perched atop a heritage building in the heart of Jeypore, Moonrise Terrace offers sweeping panoramic views of the city skyline. With a curated cocktail bar, ambient lounge music, and designer furniture — it's the perfect venue for sophisticated celebrations, corporate mixers, or intimate anniversary dinners under the open sky.",
-    images: [property1, property3, property2],
+    images: [listingMoonriseTerrace, property3, property2],
     rating: 4.7,
     reviewCount: 156,
     location: "Jeypore, Odisha",
@@ -220,7 +240,7 @@ export const properties: Property[] = [
     name: "Tribal Camp",
     description: "Camping tents · Tribal art · Nature trail",
     fullDescription: "Experience the raw beauty of tribal Odisha at this curated camping site nestled in the foothills near Jeypore. Hand-painted tribal art adorns every tent. Wake up to birdsong, hike the nature trail, and end the evening with a tribal drum circle around the campfire. A soul-stirring experience for nature lovers and culture enthusiasts.",
-    images: [property2, property1, property3],
+    images: [listingTribalCamp, property1, property3],
     rating: 4.5,
     reviewCount: 67,
     location: "Jeypore, Odisha",
@@ -260,7 +280,7 @@ export const properties: Property[] = [
     name: "The Sports Arena",
     description: "Pickleball · Cricket net · Turf ground",
     fullDescription: "Jeypore's first premium sports and recreation venue. Featuring a full-size turf ground, professional cricket nets, a pickleball court, and a lounge area with refreshments. Perfect for corporate team-building, birthday tournaments, or just a fun evening with friends. Floodlights available for night games.",
-    images: [property3, property2, property1],
+    images: [listingSportsArena, property2, property1],
     rating: 4.4,
     reviewCount: 43,
     location: "Jeypore, Odisha",
@@ -300,7 +320,7 @@ export const properties: Property[] = [
     name: "Karaoke Cube",
     description: "Private karaoke room · Neon lights · Snack bar",
     fullDescription: "Step into Jeypore's most vibrant private karaoke experience. Soundproofed rooms with premium JBL speakers, a library of 2000+ songs (Hindi, English, Telugu, Odia), neon ambient lighting, and a snack bar with unlimited nachos and drinks. Great for birthdays, bachelorette parties, or just letting loose with friends.",
-    images: [property1, property2, property3],
+    images: [listingKaraokeCube, property2, property3],
     rating: 4.7,
     reviewCount: 98,
     location: "Jeypore, Odisha",
@@ -340,7 +360,7 @@ export const properties: Property[] = [
     name: "Sunset Pavilion",
     description: "Lake-facing · Sunset dining · Canopy seating",
     fullDescription: "A breathtaking lake-facing pavilion designed for unforgettable sunsets. With canopy dining setups, floating candles on the water, and a private chef option — this is the most romantic spot in Koraput district. Whether it's a proposal, anniversary, or just a magical evening, Sunset Pavilion delivers pure enchantment.",
-    images: [property2, property3, property1],
+    images: [listingSunsetPavilion, property3, property1],
     rating: 4.9,
     reviewCount: 178,
     location: "Jeypore, Odisha",
@@ -381,7 +401,7 @@ export const properties: Property[] = [
     name: "Birthday Bliss Hall",
     description: "Party hall · Balloon décor · DJ + Cake setup",
     fullDescription: "Jeypore's most loved birthday celebration venue! A fully decorated hall with themed balloon arches, neon signboards, fog machines, and a professional DJ. Includes a dedicated cake-cutting stage, photo booth with props, and catering options for up to 50 guests. From 1st birthdays to 50th — we make every year special.",
-    images: [property1, property3, property2],
+    images: [listingBirthdayHall, property3, property2],
     rating: 4.8,
     reviewCount: 210,
     location: "Jeypore, Odisha",
@@ -421,7 +441,7 @@ export const properties: Property[] = [
     name: "Anniversary Garden",
     description: "Romantic garden · Candlelight · Live music",
     fullDescription: "Celebrate your love story in this enchanting private garden designed exclusively for couples. With rose petal pathways, floating candles, a candlelight dinner table for two, and optional live acoustic music — every anniversary becomes a memory to treasure forever. Includes complimentary champagne and a personalized love letter setup.",
-    images: [property2, property1, property3],
+    images: [listingAnniversaryGarden, property1, property3],
     rating: 4.9,
     reviewCount: 145,
     location: "Jeypore, Odisha",
@@ -460,7 +480,7 @@ export const properties: Property[] = [
     name: "Smash Pickleball Club",
     description: "2 courts · Floodlights · Coaching available",
     fullDescription: "Jeypore's premier pickleball facility with 2 professional-grade courts, floodlights for night play, and certified coaching. Whether you're a beginner looking for lessons or a pro wanting competitive matches, we've got you covered. Includes equipment rental, cold towels, and a refreshment lounge. Perfect for corporate team-building too!",
-    images: [property3, property1, property2],
+    images: [listingPickleball, property1, property2],
     rating: 4.6,
     reviewCount: 87,
     location: "Jeypore, Odisha",
@@ -499,7 +519,7 @@ export const properties: Property[] = [
     name: "Kitty Party Lounge",
     description: "Private lounge · Games · High tea setup",
     fullDescription: "A chic, Instagram-worthy private lounge designed specifically for kitty parties, ladies' get-togethers, and brunch clubs. Features a curated high tea menu, fun party games (Tambola, cards, trivia), photo wall with props, and ambient music. Accommodates 8-20 ladies. Includes complimentary welcome drinks and a surprise goodie bag for each guest!",
-    images: [property1, property2, property3],
+    images: [listingKittyParty, property2, property3],
     rating: 4.7,
     reviewCount: 63,
     location: "Jeypore, Odisha",
@@ -538,7 +558,7 @@ export const properties: Property[] = [
     name: "Heritage Walk Jeypore",
     description: "Guided tour · Temples · Local food trail",
     fullDescription: "Discover Jeypore's hidden treasures with this 3-hour guided heritage walk. Visit the ancient Jagannath Temple, explore the vibrant weekly haat (tribal market), taste authentic Koraput coffee, and walk through 300-year-old colonial-era architecture. Led by a certified local historian, this immersive experience brings Jeypore's rich culture alive. Perfect for tourists, families, and anyone curious about local history.",
-    images: [property2, property3, property1],
+    images: [listingHeritageWalk, property3, property1],
     rating: 4.8,
     reviewCount: 112,
     location: "Jeypore Old Town, Odisha",
@@ -575,7 +595,7 @@ export const properties: Property[] = [
     name: "Tribal Pottery Workshop",
     description: "Hands-on pottery · Tribal artists · Take home your art",
     fullDescription: "Learn the ancient art of pottery from Dongria Kondh tribal artisans in this immersive 2-hour workshop. Shape clay on a traditional wheel, paint with natural dyes, and take home your handmade creation. Includes a tribal chai break and a mini exhibition of rare tribal pottery. A soul-enriching experience for all ages.",
-    images: [property3, property2, property1],
+    images: [listingPottery, property2, property1],
     rating: 4.7,
     reviewCount: 54,
     location: "Jeypore, Odisha",
@@ -613,7 +633,7 @@ export const properties: Property[] = [
     name: "Koraput Coffee Trail",
     description: "Coffee plantation tour · Tasting · Bean-to-cup",
     fullDescription: "Experience the magic of Koraput's famous Arabica coffee — from bean to cup. Tour a working plantation nestled in the Eastern Ghats, learn about organic farming, roast your own beans, and enjoy a curated tasting of 5 single-origin brews. Includes a take-home pack of fresh-roasted beans. The lush green hills and misty mornings make this a photographer's paradise.",
-    images: [property1, property3, property2],
+    images: [listingCoffeeTrail, property3, property2],
     rating: 4.9,
     reviewCount: 189,
     location: "Koraput, Odisha",
@@ -651,7 +671,7 @@ export const properties: Property[] = [
     name: "Haldi & Mehndi Lawn",
     description: "Pre-wedding venue · Floral décor · DJ & Dhol",
     fullDescription: "The perfect pre-wedding celebration venue! A lush green lawn with floral arches, marigold shower setup, professional Dhol players, and a dedicated Mehndi artist corner. Includes a Haldi ceremony platform, photo booth with ethnic props, and catering for traditional snacks. Make your pre-wedding celebrations Instagram-worthy!",
-    images: [property2, property1, property3],
+    images: [listingHaldiMehndi, property1, property3],
     rating: 4.6,
     reviewCount: 78,
     location: "Jeypore, Odisha",
@@ -690,7 +710,7 @@ export const properties: Property[] = [
     name: "Stargazing Observatory",
     description: "Telescope · Constellation tour · Night photography",
     fullDescription: "Jeypore's only dedicated stargazing experience on a hilltop with zero light pollution. Features a professional 8-inch Dobsonian telescope, guided constellation tour by an astronomy enthusiast, night sky photography assistance, and blankets + hot cocoa under the stars. See Saturn's rings, Jupiter's moons, and the Milky Way with your own eyes!",
-    images: [property3, property1, property2],
+    images: [listingStargazing, property1, property2],
     rating: 4.9,
     reviewCount: 95,
     location: "Near Jeypore, Odisha",
@@ -728,7 +748,7 @@ export const properties: Property[] = [
     name: "River Rafting & Kayaking",
     description: "Kolab River · Guided rapids · Beginner friendly",
     fullDescription: "Get your adrenaline pumping with river rafting and kayaking on the scenic Kolab River! Grade 1-2 rapids perfect for beginners, guided by certified adventure instructors. Includes safety gear, life jackets, and a riverside snack break. The 2-hour journey passes through lush green gorges and tribal villages. An unforgettable adventure experience!",
-    images: [property1, property2, property3],
+    images: [listingRafting, property2, property3],
     rating: 4.5,
     reviewCount: 72,
     location: "Kolab River, Jeypore",
@@ -766,7 +786,7 @@ export const properties: Property[] = [
     name: "Outdoor Movie Amphitheater",
     description: "Giant screen · Bean bags · Popcorn bar",
     fullDescription: "Watch movies under the stars in this gorgeous open-air amphitheater! Featuring a 25-foot LED screen, plush bean bag seating for 30, a gourmet popcorn bar (caramel, cheese, masala), and surround sound. Pick from our curated list of Hollywood and Bollywood classics, or bring your own content. Perfect for friend groups, date nights, or family outings.",
-    images: [property3, property2, property1],
+    images: [listingMovieAmphitheater, property2, property1],
     rating: 4.7,
     reviewCount: 134,
     location: "Jeypore, Odisha",
@@ -804,7 +824,7 @@ export const properties: Property[] = [
     name: "Tribal Dance Experience",
     description: "Live tribal dance · Costume try-on · Drum circle",
     fullDescription: "Immerse yourself in the rich tribal culture of Koraput with this unique 2-hour experience. Watch mesmerizing Dhemsa and Ghumura dance performances by Paroja and Gadaba tribal artists, try on traditional tribal costumes, join a high-energy drum circle, and learn basic tribal dance steps. Includes tribal snacks, rice beer tasting (optional), and a handmade tribal souvenir.",
-    images: [property2, property3, property1],
+    images: [listingTribalDance, property3, property1],
     rating: 4.8,
     reviewCount: 68,
     location: "Jeypore, Odisha",
