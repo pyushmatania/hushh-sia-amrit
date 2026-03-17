@@ -320,7 +320,7 @@ export const properties: Property[] = [
     name: "Karaoke Cube",
     description: "Private karaoke room · Neon lights · Snack bar",
     fullDescription: "Step into Jeypore's most vibrant private karaoke experience. Soundproofed rooms with premium JBL speakers, a library of 2000+ songs (Hindi, English, Telugu, Odia), neon ambient lighting, and a snack bar with unlimited nachos and drinks. Great for birthdays, bachelorette parties, or just letting loose with friends.",
-    images: [property1, property2, property3],
+    images: [listingKaraokeCube, property2, property3],
     rating: 4.7,
     reviewCount: 98,
     location: "Jeypore, Odisha",
