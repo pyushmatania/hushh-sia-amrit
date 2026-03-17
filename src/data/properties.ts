@@ -595,7 +595,7 @@ export const properties: Property[] = [
     name: "Tribal Pottery Workshop",
     description: "Hands-on pottery · Tribal artists · Take home your art",
     fullDescription: "Learn the ancient art of pottery from Dongria Kondh tribal artisans in this immersive 2-hour workshop. Shape clay on a traditional wheel, paint with natural dyes, and take home your handmade creation. Includes a tribal chai break and a mini exhibition of rare tribal pottery. A soul-enriching experience for all ages.",
-    images: [property3, property2, property1],
+    images: [listingPottery, property2, property1],
     rating: 4.7,
     reviewCount: 54,
     location: "Jeypore, Odisha",
