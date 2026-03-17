@@ -18,6 +18,9 @@ interface HomeScreenProps {
 
 export default function HomeScreen({ onPropertyTap, onSearchTap }: HomeScreenProps) {
   const [activeCategory, setActiveCategory] = useState("all");
+  const [collapsed, setCollapsed] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const { scrollY } = useScroll({ container: scrollRef });
 
   const filteredProperties = useMemo(() => {
     if (activeCategory === "all") return properties;
