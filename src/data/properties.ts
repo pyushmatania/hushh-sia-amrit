@@ -354,7 +354,7 @@ export const properties: Property[] = [
     hostName: "Deepa M.",
     hostSince: "2021",
     responseRate: "100%",
-    category: ["couples", "dining", "stargazing"],
+    category: ["stays", "couples", "dining", "stargazing"],
     highlights: ["Direct lake-facing sunset view", "Floating candles on water surface", "Optional live acoustic guitar", "Private chef 5-course dinner available"],
     rules: [
       { icon: "🕐", text: "Arrive 30 mins before sunset" },
