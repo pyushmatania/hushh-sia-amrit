@@ -5,6 +5,7 @@ import PropertyCard from "./PropertyCard";
 import PropertyCardSmall from "./PropertyCardSmall";
 import PackageCard from "./PackageCard";
 import { properties, packages, type Property } from "@/data/properties";
+import { Star, Flame, Music, Trophy, Clapperboard, UtensilsCrossed, Telescope, Wrench } from "lucide-react";
 import { useState, useMemo } from "react";
 import property1 from "@/assets/property-1.jpg";
 import property2 from "@/assets/property-2.jpg";
