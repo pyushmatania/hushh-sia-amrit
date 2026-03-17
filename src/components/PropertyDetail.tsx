@@ -382,43 +382,14 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
         <div className="border-b border-border my-5" />
 
         {/* Reviews */}
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-            <Star size={18} className="fill-primary text-primary" /> {property.rating} · {property.reviewCount} reviews
-          </h3>
-        </div>
-        <div className="space-y-4 mb-4">
-          {displayedReviews.map((review) => (
-            <motion.div
-              key={review.id}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="glass rounded-2xl p-4"
-            >
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-2xl">{review.avatar}</span>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">{review.name}</p>
-                  <p className="text-xs text-muted-foreground">{review.date}</p>
-                </div>
-                <div className="ml-auto flex items-center gap-0.5">
-                  {Array.from({ length: review.rating }).map((_, i) => (
-                    <Star key={i} size={10} className="fill-primary text-primary" />
-                  ))}
-                </div>
-              </div>
-              <p className="text-sm text-foreground/80 leading-relaxed">{review.comment}</p>
-            </motion.div>
-          ))}
-        </div>
-        {property.reviews.length > 2 && (
-          <button
-            onClick={() => setShowAllReviews(!showAllReviews)}
-            className="text-foreground underline underline-offset-2 text-sm font-semibold mb-6 flex items-center gap-1"
-          >
-            {showAllReviews ? "Show fewer reviews" : `Show all ${property.reviews.length} reviews`}
-          </button>
-        )}
+        <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+          <Star size={18} className="fill-primary text-primary" /> Reviews
+        </h3>
+        <ReviewSection
+          reviews={property.reviews}
+          rating={property.rating}
+          reviewCount={property.reviewCount}
+        />
 
         <div className="border-b border-border my-5" />
 
