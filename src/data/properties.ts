@@ -395,7 +395,7 @@ export const properties: Property[] = [
     hostName: "Suman P.",
     hostSince: "2022",
     responseRate: "99%",
-    category: ["party", "experiences"],
+    category: ["experiences", "party", "services"],
     highlights: ["Themed balloon arch included", "Fog machine grand entrance", "Professional cake-cutting stage", "Photo booth with 50+ props"],
     rules: [
       { icon: "🕐", text: "Setup begins 2 hours before event" },
