@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Heart, Star, BadgeCheck } from "lucide-react";
+import { Heart, Star, BadgeCheck, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import type { Property } from "@/data/properties";
 
@@ -13,81 +13,99 @@ export default function PropertyCard({ property, index, onTap }: PropertyCardPro
   const [imgIndex, setImgIndex] = useState(0);
   const [liked, setLiked] = useState(false);
 
+  const prevImg = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setImgIndex((i) => (i === 0 ? property.images.length - 1 : i - 1));
+  };
+  const nextImg = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setImgIndex((i) => (i === property.images.length - 1 ? 0 : i + 1));
+  };
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.08, type: "spring", stiffness: 260, damping: 20 }}
-      whileTap={{ scale: 0.98 }}
-      className="glass-card overflow-hidden cursor-pointer mx-4"
+      transition={{ delay: index * 0.06, type: "spring", stiffness: 300, damping: 25 }}
+      className="cursor-pointer mx-4 group"
       onClick={() => onTap(property)}
     >
-      {/* Image carousel */}
-      <div className="relative aspect-[4/5] overflow-hidden">
+      {/* Image */}
+      <div className="relative aspect-square rounded-xl overflow-hidden">
         <img
           src={property.images[imgIndex]}
           alt={property.name}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transition-transform duration-300"
         />
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+
+        {/* Nav arrows on hover */}
+        <button
+          onClick={prevImg}
+          className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-background/80 border border-border/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+        >
+          <ChevronLeft size={16} className="text-foreground" />
+        </button>
+        <button
+          onClick={nextImg}
+          className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-background/80 border border-border/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+        >
+          <ChevronRight size={16} className="text-foreground" />
+        </button>
 
         {/* Heart */}
         <motion.button
           whileTap={{ scale: 1.3 }}
           onClick={(e) => { e.stopPropagation(); setLiked(!liked); }}
-          className="absolute top-3 right-3 w-9 h-9 rounded-full glass-surface flex items-center justify-center"
+          className="absolute top-3 right-3"
         >
-          <Heart size={18} className={liked ? "fill-primary text-primary" : "text-foreground"} />
+          <Heart
+            size={24}
+            className={liked ? "fill-primary text-primary" : "text-foreground/90"}
+            strokeWidth={liked ? 0 : 2}
+            style={{ filter: liked ? "none" : "drop-shadow(0 1px 3px rgba(0,0,0,0.5))" }}
+          />
         </motion.button>
 
-        {/* Tags */}
-        <div className="absolute bottom-3 left-3 flex gap-1.5">
-          {property.tags.map((tag) => (
-            <span key={tag} className="glass-surface text-[11px] font-medium px-2.5 py-1 rounded-full text-foreground">
-              {tag}
-            </span>
-          ))}
-        </div>
+        {/* Tag */}
+        {property.tags[0] && (
+          <span className="absolute top-3 left-3 text-[11px] font-semibold bg-background/90 px-2.5 py-1 rounded-full text-foreground shadow-sm">
+            {property.tags[0]}
+          </span>
+        )}
 
         {/* Dots */}
-        <div className="absolute bottom-3 right-3 flex gap-1">
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1">
           {property.images.map((_, i) => (
-            <button
+            <span
               key={i}
-              onClick={(e) => { e.stopPropagation(); setImgIndex(i); }}
-              className={`w-1.5 h-1.5 rounded-full transition-colors ${i === imgIndex ? "bg-foreground" : "bg-foreground/30"}`}
+              className={`w-1.5 h-1.5 rounded-full transition-all ${
+                i === imgIndex ? "bg-foreground w-[6px]" : "bg-foreground/40"
+              }`}
             />
           ))}
         </div>
       </div>
 
-      {/* Info */}
-      <div className="p-4 space-y-2">
-        <div className="flex items-center gap-2">
-          <h3 className="font-display text-lg font-bold text-foreground">{property.name}</h3>
-          {property.verified && <BadgeCheck size={16} className="text-primary" />}
-        </div>
-        <p className="text-sm text-muted-foreground flex items-center gap-1">
-          {property.description} · <Star size={12} className="text-accent fill-accent" /> {property.rating} ({property.reviewCount})
-        </p>
+      {/* Info — Airbnb style */}
+      <div className="pt-3 pb-2 space-y-0.5">
         <div className="flex items-center justify-between">
-          <span className={`text-xs font-medium ${property.slotsLeft > 0 ? "text-success" : "text-destructive"}`}>
-            {property.slotsLeft > 0 ? `${property.slotsLeft} slots left today` : "Fully booked"}
-          </span>
-          <span className="text-sm">
-            From <span className="font-bold text-accent">₹{property.basePrice}</span> <span className="text-muted-foreground">/ 2 hours</span>
+          <h3 className="font-semibold text-[15px] text-foreground flex items-center gap-1.5">
+            {property.name}
+            {property.verified && <BadgeCheck size={14} className="text-primary" />}
+          </h3>
+          <span className="flex items-center gap-1 text-sm text-foreground">
+            <Star size={12} className="fill-foreground" />
+            {property.rating}
           </span>
         </div>
-
-        {/* Amenity pills */}
-        <div className="flex gap-1.5 pt-1">
-          {property.amenityIcons.slice(0, 4).map((icon, i) => (
-            <span key={i} className="text-xs bg-secondary px-2 py-1 rounded-md">
-              {icon} {property.amenities[i]}
-            </span>
-          ))}
-        </div>
+        <p className="text-sm text-muted-foreground">{property.description}</p>
+        <p className={`text-xs ${property.slotsLeft > 0 ? "text-muted-foreground" : "text-destructive"}`}>
+          {property.slotsLeft > 0 ? `${property.slotsLeft} slots left today` : "Fully booked"}
+        </p>
+        <p className="text-sm pt-0.5">
+          <span className="font-semibold text-foreground">₹{property.basePrice.toLocaleString()}</span>
+          <span className="text-muted-foreground"> / 2 hours</span>
+        </p>
       </div>
     </motion.div>
   );

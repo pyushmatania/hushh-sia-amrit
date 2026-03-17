@@ -1,7 +1,22 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Share2, Heart, Star, BadgeCheck, MapPin, ChevronDown, ChevronUp, Minus, Plus } from "lucide-react";
+import {
+  ArrowLeft, Share2, Heart, Star, BadgeCheck, MapPin,
+  ChevronDown, ChevronUp, Minus, Plus, Droplets, Flame,
+  Music, Car, Beef, Sparkles
+} from "lucide-react";
 import { useState } from "react";
 import type { Property } from "@/data/properties";
+
+const amenityIconMap: Record<string, React.ReactNode> = {
+  "Private Pool": <Droplets size={20} strokeWidth={1.5} />,
+  "Bonfire Pit": <Flame size={20} strokeWidth={1.5} />,
+  "Bonfire Circle": <Flame size={20} strokeWidth={1.5} />,
+  "Sound System": <Music size={20} strokeWidth={1.5} />,
+  "Free Parking": <Car size={20} strokeWidth={1.5} />,
+  "Parking": <Car size={20} strokeWidth={1.5} />,
+  "BBQ Area": <Beef size={20} strokeWidth={1.5} />,
+  "Fairy Lights": <Sparkles size={20} strokeWidth={1.5} />,
+};
 
 interface PropertyDetailProps {
   property: Property;
@@ -18,7 +33,6 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
 
   const selectedSlotData = property.slots.find((s) => s.id === selectedSlot);
 
-  // Generate dates for the next 7 days
   const dates = Array.from({ length: 7 }).map((_, i) => {
     const d = new Date();
     d.setDate(d.getDate() + i);
@@ -28,172 +42,186 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: 100 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 100 }}
-      transition={{ type: "spring", stiffness: 260, damping: 25 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       className="fixed inset-0 z-30 bg-background overflow-y-auto pb-28"
     >
       {/* Hero */}
-      <div className="relative aspect-[4/5] max-h-[50vh]">
+      <div className="relative aspect-[4/3]">
         <img src={property.images[imgIndex]} alt={property.name} className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
 
-        <div className="absolute top-4 left-4 right-4 flex justify-between">
-          <motion.button whileTap={{ scale: 0.9 }} onClick={onBack} className="w-10 h-10 rounded-full glass-surface flex items-center justify-center">
-            <ArrowLeft size={20} className="text-foreground" />
+        <div className="absolute top-0 left-0 right-0 flex justify-between items-center p-4">
+          <motion.button whileTap={{ scale: 0.9 }} onClick={onBack} className="w-9 h-9 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center">
+            <ArrowLeft size={18} className="text-foreground" />
           </motion.button>
           <div className="flex gap-2">
-            <button className="w-10 h-10 rounded-full glass-surface flex items-center justify-center">
-              <Share2 size={18} className="text-foreground" />
+            <button className="w-9 h-9 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center">
+              <Share2 size={16} className="text-foreground" />
             </button>
-            <button onClick={() => setLiked(!liked)} className="w-10 h-10 rounded-full glass-surface flex items-center justify-center">
-              <Heart size={18} className={liked ? "fill-primary text-primary" : "text-foreground"} />
+            <button onClick={() => setLiked(!liked)} className="w-9 h-9 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center">
+              <Heart size={16} className={liked ? "fill-primary text-primary" : "text-foreground"} />
             </button>
           </div>
         </div>
 
-        {/* Image dots */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
+        {/* Dots */}
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
           {property.images.map((_, i) => (
-            <button key={i} onClick={() => setImgIndex(i)} className={`w-2 h-2 rounded-full transition-all ${i === imgIndex ? "bg-foreground w-5" : "bg-foreground/30"}`} />
+            <button key={i} onClick={() => setImgIndex(i)} className={`w-[6px] h-[6px] rounded-full transition-all ${i === imgIndex ? "bg-foreground" : "bg-foreground/40"}`} />
           ))}
         </div>
+      </div>
 
-        <div className="absolute bottom-4 left-4">
-          <h1 className="font-display text-3xl font-extrabold text-foreground">{property.name}</h1>
+      {/* Content */}
+      <div className="px-4 pt-4">
+        {/* Title row */}
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-xl font-semibold text-foreground flex items-center gap-1.5">
+              {property.name}
+              {property.verified && <BadgeCheck size={16} className="text-primary" />}
+            </h1>
+            <p className="text-sm text-muted-foreground mt-0.5 flex items-center gap-1">
+              <MapPin size={13} /> {property.location}
+            </p>
+          </div>
+          <div className="flex items-center gap-1 text-sm shrink-0">
+            <Star size={14} className="fill-foreground text-foreground" />
+            <span className="font-semibold text-foreground">{property.rating}</span>
+            <span className="text-muted-foreground">({property.reviewCount})</span>
+          </div>
         </div>
-      </div>
 
-      {/* Quick info */}
-      <div className="px-4 py-3 flex items-center gap-4 text-sm">
-        <span className="flex items-center gap-1"><Star size={14} className="text-accent fill-accent" /> {property.rating} ({property.reviewCount})</span>
-        <span className="flex items-center gap-1"><MapPin size={14} className="text-muted-foreground" /> {property.location}</span>
-        {property.verified && <span className="flex items-center gap-1"><BadgeCheck size={14} className="text-primary" /> Verified</span>}
-      </div>
+        {/* Divider */}
+        <div className="border-b border-border my-4" />
 
-      {/* Description */}
-      <div className="px-4 pb-4">
+        {/* Description */}
         <p className="text-sm text-muted-foreground leading-relaxed">
-          {expanded ? property.fullDescription : property.fullDescription.slice(0, 120) + "..."}
+          {expanded ? property.fullDescription : property.fullDescription.slice(0, 140) + "..."}
         </p>
-        <button onClick={() => setExpanded(!expanded)} className="text-primary text-sm font-medium mt-1 flex items-center gap-1">
-          {expanded ? <>Less <ChevronUp size={14} /></> : <>Read more <ChevronDown size={14} /></>}
+        <button onClick={() => setExpanded(!expanded)} className="text-foreground underline text-sm font-medium mt-1.5 flex items-center gap-1">
+          {expanded ? <>Show less <ChevronUp size={14} /></> : <>Show more <ChevronDown size={14} /></>}
         </button>
-      </div>
 
-      {/* Amenities */}
-      <div className="px-4 pb-4">
-        <h3 className="font-display text-lg font-bold mb-3 text-foreground">What's here</h3>
-        <div className="grid grid-cols-2 gap-2">
-          {property.amenities.map((amenity, i) => (
-            <div key={amenity} className="glass-card p-3 flex items-center gap-2">
-              <span className="text-lg">{property.amenityIcons[i]}</span>
+        <div className="border-b border-border my-4" />
+
+        {/* Amenities */}
+        <h3 className="text-base font-semibold mb-3 text-foreground">What this place offers</h3>
+        <div className="space-y-3 mb-2">
+          {property.amenities.map((amenity) => (
+            <div key={amenity} className="flex items-center gap-3">
+              <span className="text-muted-foreground">
+                {amenityIconMap[amenity] || <Sparkles size={20} strokeWidth={1.5} />}
+              </span>
               <span className="text-sm text-foreground">{amenity}</span>
             </div>
           ))}
         </div>
-      </div>
 
-      {/* Date picker */}
-      <div className="px-4 pb-4">
-        <h3 className="font-display text-lg font-bold mb-3 text-foreground">Pick your date</h3>
-        <div className="flex gap-2 overflow-x-auto hide-scrollbar">
+        <div className="border-b border-border my-4" />
+
+        {/* Date picker */}
+        <h3 className="text-base font-semibold mb-3 text-foreground">Select a date</h3>
+        <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
           {dates.map((date, i) => (
             <button
               key={i}
               onClick={() => setSelectedDate(i)}
-              className={`shrink-0 flex flex-col items-center px-4 py-2.5 rounded-xl transition-all ${
-                selectedDate === i ? "bg-primary/15 border border-primary/30 glow-primary" : "bg-card border border-transparent"
+              className={`shrink-0 flex flex-col items-center w-14 py-2.5 rounded-full transition-all border ${
+                selectedDate === i
+                  ? "bg-foreground text-background border-foreground"
+                  : "border-border text-foreground hover:border-muted-foreground"
               }`}
             >
-              <span className="text-[10px] text-muted-foreground uppercase">{date.toLocaleDateString("en-IN", { weekday: "short" })}</span>
-              <span className={`text-lg font-bold ${selectedDate === i ? "text-primary" : "text-foreground"}`}>{date.getDate()}</span>
-              <span className="text-[10px] text-muted-foreground">{date.toLocaleDateString("en-IN", { month: "short" })}</span>
+              <span className="text-[10px] uppercase opacity-70">{date.toLocaleDateString("en-IN", { weekday: "short" })}</span>
+              <span className="text-base font-semibold">{date.getDate()}</span>
             </button>
           ))}
         </div>
-      </div>
 
-      {/* Time slots */}
-      <div className="px-4 pb-4">
-        <h3 className="font-display text-lg font-bold mb-3 text-foreground">Choose your slot</h3>
-        <div className="space-y-2">
+        <div className="border-b border-border my-4" />
+
+        {/* Time slots */}
+        <h3 className="text-base font-semibold mb-3 text-foreground">Choose a time slot</h3>
+        <div className="grid grid-cols-2 gap-2">
           {property.slots.map((slot) => (
-            <motion.button
+            <button
               key={slot.id}
-              whileTap={slot.available ? { scale: 0.97 } : {}}
               onClick={() => slot.available && setSelectedSlot(slot.id)}
               disabled={!slot.available}
-              className={`w-full p-4 rounded-xl flex items-center justify-between transition-all ${
+              className={`p-3 rounded-xl text-left transition-all border ${
                 selectedSlot === slot.id
-                  ? "bg-primary/15 border-2 border-primary glow-primary"
+                  ? "border-foreground bg-foreground/5"
                   : slot.available
-                    ? "bg-card border border-border hover:border-primary/30"
-                    : "bg-card/50 border border-border opacity-50"
+                    ? "border-border hover:border-muted-foreground"
+                    : "border-border opacity-40"
               }`}
             >
-              <div className="text-left">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-foreground">{slot.label}</span>
-                  {slot.popular && <span className="text-[10px] bg-primary/20 text-primary px-2 py-0.5 rounded-full font-medium">🔥 Popular</span>}
-                </div>
-                <span className="text-xs text-muted-foreground">{slot.time}</span>
+              <div className="flex items-center gap-1.5">
+                <span className="font-medium text-sm text-foreground">{slot.label}</span>
+                {slot.popular && <span className="text-[9px] bg-primary/15 text-primary px-1.5 py-0.5 rounded-full font-semibold">Popular</span>}
               </div>
-              <div className="text-right">
+              <span className="text-[11px] text-muted-foreground">{slot.time}</span>
+              <div className="mt-1">
                 {slot.available ? (
-                  <span className="font-bold text-accent">₹{slot.price.toLocaleString()}</span>
+                  <span className="font-semibold text-sm text-foreground">₹{slot.price.toLocaleString()}</span>
                 ) : (
-                  <span className="text-xs text-destructive font-medium">Booked</span>
+                  <span className="text-xs text-destructive">Booked</span>
                 )}
               </div>
-            </motion.button>
+            </button>
           ))}
         </div>
-      </div>
 
-      {/* Guest selector */}
-      <div className="px-4 pb-6">
-        <h3 className="font-display text-lg font-bold mb-3 text-foreground">How many guests?</h3>
-        <div className="flex items-center gap-4 glass-card p-4">
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setGuests(Math.max(1, guests - 1))}
-            className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"
-          >
-            <Minus size={18} className="text-foreground" />
-          </motion.button>
-          <span className="text-2xl font-bold text-foreground min-w-[3ch] text-center">{guests}</span>
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setGuests(Math.min(30, guests + 1))}
-            className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"
-          >
-            <Plus size={18} className="text-foreground" />
-          </motion.button>
-          <span className="text-sm text-muted-foreground ml-2">people</span>
+        <div className="border-b border-border my-4" />
+
+        {/* Guest selector */}
+        <div className="flex items-center justify-between py-2">
+          <div>
+            <h3 className="text-base font-semibold text-foreground">Guests</h3>
+            <p className="text-xs text-muted-foreground">How many people?</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setGuests(Math.max(1, guests - 1))}
+              className={`w-8 h-8 rounded-full border flex items-center justify-center transition-colors ${
+                guests <= 1 ? "border-border/50 text-muted-foreground/30" : "border-muted-foreground text-foreground"
+              }`}
+              disabled={guests <= 1}
+            >
+              <Minus size={14} />
+            </button>
+            <span className="text-base font-semibold text-foreground min-w-[2ch] text-center">{guests}</span>
+            <button
+              onClick={() => setGuests(Math.min(30, guests + 1))}
+              className="w-8 h-8 rounded-full border border-muted-foreground flex items-center justify-center text-foreground"
+            >
+              <Plus size={14} />
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Sticky bottom */}
+      {/* Sticky bottom bar */}
       <AnimatePresence>
         {selectedSlotData && (
           <motion.div
-            initial={{ y: 100 }}
+            initial={{ y: 80 }}
             animate={{ y: 0 }}
-            exit={{ y: 100 }}
-            className="fixed bottom-0 left-0 right-0 glass-surface border-t border-border/50 p-4 flex items-center justify-between z-40"
+            exit={{ y: 80 }}
+            className="fixed bottom-0 left-0 right-0 bg-background border-t border-border px-4 py-3 flex items-center justify-between z-40"
           >
             <div>
-              <span className="text-accent font-bold text-xl">₹{selectedSlotData.price.toLocaleString()}</span>
+              <span className="font-semibold text-foreground">₹{selectedSlotData.price.toLocaleString()}</span>
               <span className="text-muted-foreground text-sm"> / {selectedSlotData.label.toLowerCase()}</span>
             </div>
             <motion.button
-              whileTap={{ scale: 0.95 }}
+              whileTap={{ scale: 0.96 }}
               onClick={() => onBook(property, selectedSlot!, guests)}
-              className="bg-primary text-primary-foreground px-8 py-3 rounded-2xl font-bold text-sm shimmer-btn"
+              className="bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold text-sm"
             >
-              Secure the Vibe
+              Reserve
             </motion.button>
           </motion.div>
         )}
