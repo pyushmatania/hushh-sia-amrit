@@ -112,7 +112,7 @@ export default function ExperienceBuilder({ property, slotId, guests, onBack, on
         </div>
         <div className="flex items-center justify-between">
           <span className="font-semibold text-xl text-foreground">₹{total.toLocaleString()}</span>
-          <button onClick={() => onContinue(selections, total)} className="bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold text-sm">
+          <button onClick={() => onContinue(selections, total)} className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold text-sm glow-primary">
             Continue
           </button>
         </div>
