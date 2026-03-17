@@ -41,7 +41,7 @@ export default function ExperienceBuilder({ property, slotId, guests, onBack, on
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-30 bg-background overflow-y-auto pb-32"
+      className="fixed inset-0 z-30 bg-mesh overflow-y-auto pb-32"
     >
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background border-b border-border px-5 py-3">
