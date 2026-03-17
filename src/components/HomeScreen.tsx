@@ -20,7 +20,6 @@ export default function HomeScreen({ onPropertyTap, onSearchTap }: HomeScreenPro
   const [activeCategory, setActiveCategory] = useState("stays");
 
   const filteredProperties = useMemo(() => {
-    if (activeCategory === "all") return properties;
     return properties.filter(p => p.category.includes(activeCategory));
   }, [activeCategory]);
 
