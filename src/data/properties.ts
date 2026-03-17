@@ -159,7 +159,7 @@ export const properties: Property[] = [
     name: "Ember Grounds",
     description: "Open-air venue · Bonfire circle · Movie screen",
     fullDescription: "The Ember Grounds is an open-air experience venue built around a massive bonfire circle. With a 20-foot outdoor movie screen, premium lounge seating, and space for up to 30 guests — this is where parties come alive. The stars above, the fire below.",
-    images: [property3, property1, property2],
+    images: [listingEmberGrounds, property1, property2],
     rating: 4.9,
     reviewCount: 201,
     location: "Jeypore, Odisha",
