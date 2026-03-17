@@ -154,10 +154,6 @@ export default function HomeScreen({ onPropertyTap, onSearchTap }: HomeScreenPro
         </div>
       </div>
 
-      {/* Category Bar */}
-      <div className="sticky top-0 z-20">
-        <CategoryBar active={activeCategory} onChange={setActiveCategory} />
-      </div>
 
       {/* Trending Now */}
       {trendingNow.length > 0 && (
