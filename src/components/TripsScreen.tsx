@@ -42,12 +42,7 @@ function TiltCard({
   onViewDetail: (b: Booking) => void;
   onRebook: (id: string) => void;
 }) {
-  const property = properties.find((p) => p.id === booking.propertyId);
-  if (!property) return null;
-
-  const status = statusConfig[booking.status];
   const cardRef = useRef<HTMLDivElement>(null);
-
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
@@ -55,11 +50,10 @@ function TiltCard({
   const rotateY = useSpring(useTransform(x, [-150, 150], [-12, 12]), { stiffness: 300, damping: 30 });
   const glareX = useTransform(x, [-150, 150], [0, 100]);
   const glareY = useTransform(y, [-150, 150], [0, 100]);
-  const glareOpacity = useTransform(
-    x,
-    [-150, 0, 150],
-    [0.15, 0, 0.15]
-  );
+  const glareOpacity = useTransform(x, [-150, 0, 150], [0.15, 0, 0.15]);
+
+  const property = properties.find((p) => p.id === booking.propertyId);
+  if (!property) return null;
 
   const handlePointerMove = (e: React.PointerEvent) => {
     if (!cardRef.current) return;
