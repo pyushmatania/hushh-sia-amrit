@@ -15,19 +15,19 @@ interface Category {
   label: string;
   icon: string;
   badge?: string;
-  animation: "bounce" | "wiggle" | "pulse" | "spin" | "float";
+  animation: "bounce" | "wiggle" | "bell" | "fire" | "wave" | "burst" | "flicker" | "stir" | "twinkle";
 }
 
 const categories: Category[] = [
   { id: "stays", label: "Stays", icon: iconStays, animation: "bounce" },
   { id: "experiences", label: "Experiences", icon: iconExperiences, badge: "NEW", animation: "wiggle" },
-  { id: "services", label: "Services", icon: iconServices, badge: "NEW", animation: "pulse" },
-  { id: "bonfire", label: "Bonfire", icon: iconBonfire, animation: "pulse" },
-  { id: "pool", label: "Pool", icon: iconPool, animation: "float" },
-  { id: "party", label: "Celebrate", icon: iconParty, animation: "spin" },
-  { id: "movie", label: "Movie", icon: iconMovie, animation: "bounce" },
-  { id: "dining", label: "Dining", icon: iconDining, animation: "wiggle" },
-  { id: "stargazing", label: "Stargazing", icon: iconStargazing, animation: "pulse" },
+  { id: "services", label: "Services", icon: iconServices, badge: "NEW", animation: "bell" },
+  { id: "bonfire", label: "Bonfire", icon: iconBonfire, animation: "fire" },
+  { id: "pool", label: "Pool", icon: iconPool, animation: "wave" },
+  { id: "party", label: "Celebrate", icon: iconParty, animation: "burst" },
+  { id: "movie", label: "Movie", icon: iconMovie, animation: "flicker" },
+  { id: "dining", label: "Dining", icon: iconDining, animation: "stir" },
+  { id: "stargazing", label: "Stargazing", icon: iconStargazing, animation: "twinkle" },
 ];
 
 // Personalised entrance animations per icon
