@@ -591,12 +591,14 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
               <span className="text-muted-foreground text-sm"> / {selectedSlotData.label.toLowerCase()}</span>
               <p className="text-xs text-muted-foreground">{guests} guests</p>
             </div>
-            <button
+            <motion.button
               onClick={() => onBook(property, selectedSlot!, guests, selectedDate)}
               className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold text-sm glow-primary"
+              whileTap={{ scale: 0.93 }}
+              transition={{ type: "spring", stiffness: 400 }}
             >
               Reserve
-            </button>
+            </motion.button>
           </motion.div>
         )}
       </AnimatePresence>
