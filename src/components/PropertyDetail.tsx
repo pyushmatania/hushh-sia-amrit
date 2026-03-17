@@ -89,7 +89,6 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
   const [guests, setGuests] = useState(2);
   const [expanded, setExpanded] = useState(false);
   const [liked, setLiked] = useState(false);
-  const [showAllReviews, setShowAllReviews] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
 
   const heroX = useMotionValue(0);
