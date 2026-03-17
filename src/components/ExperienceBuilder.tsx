@@ -105,7 +105,7 @@ export default function ExperienceBuilder({ property, slotId, guests, onBack, on
       </div>
 
       {/* Footer */}
-      <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border px-5 py-3.5 z-40">
+      <div className="fixed bottom-0 left-0 right-0 glass px-5 py-3.5 z-40">
         <div className="flex items-center justify-between mb-1 text-xs text-muted-foreground">
           <span>Base: ₹{slot.price.toLocaleString()}</span>
           {addonTotal > 0 && <span>Add-ons: ₹{addonTotal.toLocaleString()}</span>}
