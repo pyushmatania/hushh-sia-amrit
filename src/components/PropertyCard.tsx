@@ -41,26 +41,26 @@ export default function PropertyCard({ property, index, onTap }: PropertyCardPro
         </button>
         {/* Badge */}
         {property.rating >= 4.8 && (
-          <span className="absolute top-3 left-3 text-[11px] font-semibold bg-background/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-foreground shadow-sm">
+          <span className="absolute top-3 left-3 text-[11px] font-semibold glass px-3 py-1.5 rounded-full text-foreground">
             Guest favourite
           </span>
         )}
         {/* Dots */}
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1">
           {property.images.map((_, i) => (
-            <span key={i} className={`w-[6px] h-[6px] rounded-full transition-all ${i === imgIndex ? "bg-background w-[6px]" : "bg-background/50"}`} />
+            <span key={i} className={`w-[6px] h-[6px] rounded-full transition-all ${i === imgIndex ? "bg-primary w-[6px]" : "bg-foreground/30"}`} />
           ))}
         </div>
         {/* Arrows */}
         <button
           onClick={(e) => { e.stopPropagation(); setImgIndex((i) => (i === 0 ? property.images.length - 1 : i - 1)); }}
-          className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-background/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+          className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full glass flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
         >
           <ChevronLeft size={16} className="text-foreground" />
         </button>
         <button
           onClick={(e) => { e.stopPropagation(); setImgIndex((i) => (i === property.images.length - 1 ? 0 : i + 1)); }}
-          className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-background/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+          className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full glass flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
         >
           <ChevronRight size={16} className="text-foreground" />
         </button>
@@ -80,12 +80,12 @@ export default function PropertyCard({ property, index, onTap }: PropertyCardPro
             </p>
           </div>
           <div className="flex items-center gap-1 shrink-0 pt-0.5">
-            <Star size={12} className="fill-foreground text-foreground" />
+            <Star size={12} className="fill-primary text-primary" />
             <span className="text-sm font-medium text-foreground">{property.rating}</span>
           </div>
         </div>
         <p className="text-sm mt-0.5">
-          <span className="font-semibold text-foreground">₹{property.basePrice.toLocaleString()}</span>
+          <span className="font-semibold text-gradient-warm">₹{property.basePrice.toLocaleString()}</span>
           <span className="text-muted-foreground"> / 2 hours</span>
         </p>
       </div>
