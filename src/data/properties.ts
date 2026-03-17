@@ -435,7 +435,7 @@ export const properties: Property[] = [
     hostName: "Rekha S.",
     hostSince: "2021",
     responseRate: "100%",
-    category: ["couples", "dining", "experiences"],
+    category: ["experiences", "couples", "dining"],
     highlights: ["Rose petal pathway to table", "Complimentary champagne toast", "Personalized love letter scroll", "Optional surprise proposal setup"],
     rules: [
       { icon: "🕐", text: "Arrive 15 mins before sunset for best experience" },
