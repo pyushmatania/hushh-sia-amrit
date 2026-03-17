@@ -57,7 +57,7 @@ export default function ProfileScreen() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="mx-5 mt-5 rounded-3xl bg-card border border-border shadow-[0_4px_20px_rgba(0,0,0,0.06)] p-6"
+        className="mx-5 mt-5 rounded-3xl glass p-6"
       >
         <div className="flex items-start gap-5">
           {/* Avatar + Name */}
