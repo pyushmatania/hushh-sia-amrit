@@ -519,7 +519,7 @@ export const properties: Property[] = [
     name: "Kitty Party Lounge",
     description: "Private lounge · Games · High tea setup",
     fullDescription: "A chic, Instagram-worthy private lounge designed specifically for kitty parties, ladies' get-togethers, and brunch clubs. Features a curated high tea menu, fun party games (Tambola, cards, trivia), photo wall with props, and ambient music. Accommodates 8-20 ladies. Includes complimentary welcome drinks and a surprise goodie bag for each guest!",
-    images: [property1, property2, property3],
+    images: [listingKittyParty, property2, property3],
     rating: 4.7,
     reviewCount: 63,
     location: "Jeypore, Odisha",
