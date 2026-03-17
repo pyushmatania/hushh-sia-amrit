@@ -55,10 +55,6 @@ export default function HomeScreen({ onPropertyTap, onSearchTap }: HomeScreenPro
         </motion.button>
       </div>
 
-      {/* Category Bar */}
-      <div className="pt-1 pb-2">
-        <CategoryBar active={activeCategory} onChange={setActiveCategory} />
-      </div>
 
       {/* Hero Typography */}
       <div className="px-5 pt-4 pb-6">
