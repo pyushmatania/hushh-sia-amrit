@@ -1,8 +1,10 @@
 import { motion } from "framer-motion";
 import {
   User, ChevronRight, MapPin, Calendar, Star,
-  Settings, HelpCircle, LogOut, Bell, Shield, Gift, Heart
+  Settings, HelpCircle, LogOut, Bell, Shield, Gift, Heart,
+  Sun, Moon, Monitor
 } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
 
 const menuSections = [
   {
@@ -49,7 +51,15 @@ const statusColors: Record<string, string> = {
   cancelled: "bg-destructive/10 text-destructive",
 };
 
+const themeOptions = [
+  { id: "light" as const, label: "Light", icon: Sun },
+  { id: "dark" as const, label: "Dark", icon: Moon },
+  { id: "system" as const, label: "Auto", icon: Monitor },
+];
+
 export default function ProfileScreen() {
+  const { theme, setTheme } = useTheme();
+
   return (
     <div className="pb-24">
       {/* Header */}
@@ -98,6 +108,44 @@ export default function ProfileScreen() {
             <span className="text-[11px] text-muted-foreground">{stat.label}</span>
           </div>
         ))}
+      </motion.div>
+
+      {/* Theme Switcher */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.18 }}
+        className="mx-5 mt-5"
+      >
+        <h3 className="font-semibold text-xs text-muted-foreground uppercase tracking-wider mb-2">Appearance</h3>
+        <div className="rounded-2xl border border-border p-1.5 flex gap-1">
+          {themeOptions.map((opt) => {
+            const isActive = theme === opt.id;
+            return (
+              <button
+                key={opt.id}
+                onClick={() => setTheme(opt.id)}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-all relative ${
+                  isActive
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground/70"
+                }`}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="themeToggle"
+                    className="absolute inset-0 bg-secondary rounded-xl"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span className="relative flex items-center gap-1.5">
+                  <opt.icon size={16} />
+                  {opt.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </motion.div>
 
       {/* Recent Bookings */}

@@ -10,6 +10,8 @@ import BookingConfirmation from "@/components/BookingConfirmation";
 import WishlistScreen from "@/components/WishlistScreen";
 import TripsScreen from "@/components/TripsScreen";
 import ProfileScreen from "@/components/ProfileScreen";
+import MessagesScreen from "@/components/MessagesScreen";
+import SearchScreen from "@/components/SearchScreen";
 import type { Property } from "@/data/properties";
 
 type Screen =
@@ -24,12 +26,14 @@ export default function Index() {
   const [activeTab, setActiveTab] = useState("home");
   const [screen, setScreen] = useState<Screen>({ type: "home" });
   const [wishlist, setWishlist] = useState<string[]>([]);
+  const [showSearch, setShowSearch] = useState(false);
 
   const toggleWishlist = useCallback((id: string) => {
     setWishlist((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
   }, []);
 
   const handlePropertyTap = useCallback((property: Property) => {
+    setShowSearch(false);
     setScreen({ type: "detail", property });
     setActiveTab("home");
   }, []);
@@ -69,7 +73,7 @@ export default function Index() {
     <div className="min-h-screen bg-background">
       <AnimatePresence mode="wait">
         {screen.type === "home" && activeTab === "home" && (
-          <HomeScreen key="home" onPropertyTap={handlePropertyTap} />
+          <HomeScreen key="home" onPropertyTap={handlePropertyTap} onSearchTap={() => setShowSearch(true)} />
         )}
         {screen.type === "home" && activeTab === "wishlists" && (
           <WishlistScreen
@@ -81,6 +85,9 @@ export default function Index() {
         )}
         {screen.type === "home" && activeTab === "bookings" && (
           <TripsScreen key="trips" />
+        )}
+        {screen.type === "home" && activeTab === "messages" && (
+          <MessagesScreen key="messages" />
         )}
         {screen.type === "home" && activeTab === "profile" && (
           <ProfileScreen key="profile" />
@@ -123,6 +130,17 @@ export default function Index() {
             guests={screen.guests}
             total={screen.total}
             onDone={handleDone}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Search overlay */}
+      <AnimatePresence>
+        {showSearch && (
+          <SearchScreen
+            key="search"
+            onPropertyTap={handlePropertyTap}
+            onClose={() => setShowSearch(false)}
           />
         )}
       </AnimatePresence>
