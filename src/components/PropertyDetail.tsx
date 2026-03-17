@@ -92,12 +92,7 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
 
   const selectedSlotData = property.slots.find((s) => s.id === selectedSlot);
 
-  const dates = Array.from({ length: 7 }).map((_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() + i);
-    return d;
-  });
-  const [selectedDate, setSelectedDate] = useState(0);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
   const displayedReviews = showAllReviews ? property.reviews : property.reviews.slice(0, 2);
 
