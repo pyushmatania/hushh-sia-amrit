@@ -187,6 +187,32 @@ export default function HomeScreen({ onPropertyTap, onSearchTap }: HomeScreenPro
         </div>
       )}
 
+      {/* Category-specific curated sections */}
+      {activeCategory !== "stays" && curatedSections.map((section, si) => (
+        section.items.length > 0 && (
+          <div key={si} className="mt-6">
+            <div className="flex items-center justify-between px-5 mb-3">
+              <div>
+                <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+                  <span>{section.emoji}</span> {section.title}
+                </h2>
+                {section.subtitle && (
+                  <p className="text-xs text-muted-foreground mt-0.5">{section.subtitle}</p>
+                )}
+              </div>
+              <button className="text-xs text-primary font-medium flex items-center gap-1">
+                View all <ArrowRight size={12} />
+              </button>
+            </div>
+            <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
+              {section.items.map((p, i) => (
+                <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} />
+              ))}
+            </div>
+          </div>
+        )
+      ))}
+
       {/* Filtered cards */}
       <div className="mt-7">
         <div className="flex items-center justify-between px-5 mb-3">
