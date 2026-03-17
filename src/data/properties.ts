@@ -558,7 +558,7 @@ export const properties: Property[] = [
     name: "Heritage Walk Jeypore",
     description: "Guided tour · Temples · Local food trail",
     fullDescription: "Discover Jeypore's hidden treasures with this 3-hour guided heritage walk. Visit the ancient Jagannath Temple, explore the vibrant weekly haat (tribal market), taste authentic Koraput coffee, and walk through 300-year-old colonial-era architecture. Led by a certified local historian, this immersive experience brings Jeypore's rich culture alive. Perfect for tourists, families, and anyone curious about local history.",
-    images: [property2, property3, property1],
+    images: [listingHeritageWalk, property3, property1],
     rating: 4.8,
     reviewCount: 112,
     location: "Jeypore Old Town, Odisha",
