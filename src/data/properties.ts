@@ -274,7 +274,7 @@ export const properties: Property[] = [
     hostName: "Amit K.",
     hostSince: "2024",
     responseRate: "96%",
-    category: ["sports", "party"],
+    category: ["experiences", "services", "pool"],
     highlights: ["Professional-grade pickleball court", "Floodlit turf for night matches", "Cricket bowling machine available", "Tournament hosting with trophies"],
     rules: [
       { icon: "🕐", text: "Check-in 15 mins before slot" },
