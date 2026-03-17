@@ -458,7 +458,7 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
         </h3>
         <div className="glass rounded-2xl p-4 mb-5 space-y-3">
           <div className="flex items-start gap-3">
-            <div className="w-2 h-2 rounded-full bg-green-500 mt-1.5 shrink-0" />
+            <div className="w-2 h-2 rounded-full bg-primary mt-1.5 shrink-0" />
             <div>
               <p className="text-sm font-medium text-foreground">Free cancellation</p>
               <p className="text-xs text-muted-foreground">Up to 48 hours before check-in</p>
