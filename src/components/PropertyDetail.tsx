@@ -89,6 +89,22 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
   const [expanded, setExpanded] = useState(false);
   const [liked, setLiked] = useState(false);
   const [showAllReviews, setShowAllReviews] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
+
+  const heroX = useMotionValue(0);
+  const heroOpacity = useTransform(heroX, [-120, 0, 120], [0.4, 1, 0.4]);
+
+  const handleHeroDragEnd = useCallback((_: any, info: PanInfo) => {
+    const threshold = 50;
+    if (info.offset.x < -threshold) {
+      setImgIndex((i) => (i === property.images.length - 1 ? 0 : i + 1));
+      setImgLoaded(false);
+    } else if (info.offset.x > threshold) {
+      setImgIndex((i) => (i === 0 ? property.images.length - 1 : i - 1));
+      setImgLoaded(false);
+    }
+    animate(heroX, 0, { type: "spring", stiffness: 300, damping: 30 });
+  }, [property.images.length, heroX]);
 
   const selectedSlotData = property.slots.find((s) => s.id === selectedSlot);
 
