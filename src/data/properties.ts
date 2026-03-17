@@ -153,7 +153,7 @@ export const properties: Property[] = [
     hostName: "Vikram S.",
     hostSince: "2021",
     responseRate: "99%",
-    category: ["party", "bonfire", "movie"],
+    category: ["stays", "party", "bonfire", "movie"],
     highlights: ["20-foot outdoor cinema screen", "Professional DJ booth with lighting", "Massive bonfire circle fits 30 people", "Full bar counter with mixologist option"],
     rules: [
       { icon: "🕐", text: "Check-in at slot start time" },
