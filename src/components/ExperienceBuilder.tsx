@@ -44,7 +44,7 @@ export default function ExperienceBuilder({ property, slotId, guests, onBack, on
       className="fixed inset-0 z-30 bg-mesh overflow-y-auto pb-32"
     >
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-background border-b border-border px-5 py-3">
+      <div className="sticky top-0 z-10 glass px-5 py-3">
         <div className="flex items-center gap-3">
           <button onClick={onBack} className="w-9 h-9 rounded-full border border-border flex items-center justify-center">
             <ArrowLeft size={16} className="text-foreground" />
