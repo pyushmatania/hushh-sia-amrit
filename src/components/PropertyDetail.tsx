@@ -7,7 +7,8 @@ import {
   ShieldCheck, Tent, Footprints, Palette, Bird, Drum,
   Activity, Trophy, Mic, Rainbow, Popcorn, Volume2,
   Snowflake, Camera, Theater, Waves, ChefHat, Guitar,
-  Flower2, Gamepad2
+  Flower2, Gamepad2, Navigation, Phone, CalendarX2,
+  Shield, Zap, Info, Coffee, Utensils, ParkingCircle
 } from "lucide-react";
 import { useState } from "react";
 import type { Property } from "@/data/properties";
