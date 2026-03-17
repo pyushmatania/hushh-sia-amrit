@@ -53,7 +53,7 @@ export default function CheckoutScreen({ property, slotId, guests, selections, t
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="fixed inset-0 z-30 bg-background overflow-y-auto pb-36"
+      className="fixed inset-0 z-30 bg-mesh overflow-y-auto pb-36"
     >
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background border-b border-border px-5 py-3">
