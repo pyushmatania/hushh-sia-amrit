@@ -87,7 +87,8 @@ export default function CheckoutScreen({ property, slotId, guests, date, selecti
               </p>
             </div>
           </div>
-          <div className="flex gap-4 text-xs text-muted-foreground">
+          <div className="flex gap-4 text-xs text-muted-foreground flex-wrap">
+            <span className="flex items-center gap-1"><CalendarIcon size={12} /> {format(date, "EEE, d MMM")}</span>
             <span className="flex items-center gap-1"><Clock size={12} /> {slot.label} · {slot.time}</span>
             <span className="flex items-center gap-1"><Users size={12} /> {guests} guests</span>
           </div>

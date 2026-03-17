@@ -13,7 +13,7 @@ interface ExperienceBuilderProps {
   onContinue: (selections: Record<string, number>, total: number) => void;
 }
 
-export default function ExperienceBuilder({ property, slotId, guests, onBack, onContinue }: ExperienceBuilderProps) {
+export default function ExperienceBuilder({ property, slotId, guests, date, onBack, onContinue }: ExperienceBuilderProps) {
   const [selections, setSelections] = useState<Record<string, number>>({});
   const slot = property.slots.find((s) => s.id === slotId)!;
 
