@@ -589,7 +589,7 @@ export const properties: Property[] = [
     hostName: "Artisan Ganga",
     hostSince: "2023",
     responseRate: "90%",
-    category: ["experiences", "family"],
+    category: ["experiences"],
     highlights: ["Learn from Dongria Kondh tribal artisans", "Take home your handmade pottery", "Natural dye painting session", "Tribal chai & snacks included"],
     rules: [
       { icon: "👕", text: "Wear clothes you don't mind getting dirty" },
