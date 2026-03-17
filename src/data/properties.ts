@@ -240,7 +240,7 @@ export const properties: Property[] = [
     name: "Tribal Camp",
     description: "Camping tents · Tribal art · Nature trail",
     fullDescription: "Experience the raw beauty of tribal Odisha at this curated camping site nestled in the foothills near Jeypore. Hand-painted tribal art adorns every tent. Wake up to birdsong, hike the nature trail, and end the evening with a tribal drum circle around the campfire. A soul-stirring experience for nature lovers and culture enthusiasts.",
-    images: [property2, property1, property3],
+    images: [listingTribalCamp, property1, property3],
     rating: 4.5,
     reviewCount: 67,
     location: "Jeypore, Odisha",
