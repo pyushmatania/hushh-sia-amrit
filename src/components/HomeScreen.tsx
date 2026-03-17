@@ -30,12 +30,12 @@ export default function HomeScreen({ onPropertyTap, onSearchTap }: HomeScreenPro
   const topRated = useMemo(() => [...properties].sort((a, b) => b.rating - a.rating).slice(0, 4), []);
   const trendingNow = useMemo(() => properties.filter(p => p.slotsLeft > 0 && p.slotsLeft <= 3), []);
 
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setCollapsed(latest > 150);
+  });
+
   return (
-    <div className="pb-24 bg-mesh min-h-screen">
-      {/* Category Bar */}
-      <div className="sticky top-0 z-20">
-        <CategoryBar active={activeCategory} onChange={setActiveCategory} />
-      </div>
+    <div ref={scrollRef} className="pb-24 bg-mesh min-h-screen overflow-y-auto h-screen">
 
       {/* Header */}
       <div className="px-5 pt-5 pb-2 flex items-center justify-between">
