@@ -22,7 +22,7 @@ const paymentMethods = [
   { id: "cod", label: "Pay at Venue", icon: Banknote, sublabel: "Cash or card on arrival" },
 ];
 
-export default function CheckoutScreen({ property, slotId, guests, selections, total, onBack, onConfirm }: CheckoutScreenProps) {
+export default function CheckoutScreen({ property, slotId, guests, date, selections, total, onBack, onConfirm }: CheckoutScreenProps) {
   const slot = property.slots.find((s) => s.id === slotId)!;
   const [coupon, setCoupon] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
