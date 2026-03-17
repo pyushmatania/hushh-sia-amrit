@@ -704,7 +704,7 @@ export const properties: Property[] = [
     hostName: "Astro Sameer",
     hostSince: "2023",
     responseRate: "94%",
-    category: ["stargazing", "experiences", "couples"],
+    category: ["experiences", "stargazing", "couples"],
     highlights: ["8-inch Dobsonian telescope", "See Saturn's rings with your eyes", "Milky Way photography guidance", "Hot cocoa & blankets provided"],
     rules: [
       { icon: "🕐", text: "Arrive before sunset for setup" },
