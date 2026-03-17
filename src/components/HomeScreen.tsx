@@ -102,60 +102,6 @@ export default function HomeScreen({ onPropertyTap, onSearchTap }: HomeScreenPro
       </div>
 
 
-      {/* Quick Stats */}
-      <div className="px-5 pb-4">
-        <div className="flex gap-3 overflow-x-auto hide-scrollbar">
-          {[
-            { emoji: "🏠", value: `${properties.length}`, label: "Venues" },
-            { emoji: "⭐", value: "4.7", label: "Avg Rating" },
-            { emoji: "🎉", value: `${packages.length}`, label: "Packages" },
-            { emoji: "📍", value: "Jeypore", label: "Location" },
-          ].map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.15 + i * 0.04 }}
-              className="shrink-0 glass rounded-2xl px-4 py-3 text-center min-w-[80px]"
-            >
-              <span className="text-xl">{stat.emoji}</span>
-              <p className="text-sm font-bold text-foreground mt-1">{stat.value}</p>
-              <p className="text-[10px] text-muted-foreground">{stat.label}</p>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-
-      {/* Feature Cards Grid */}
-      <div className="px-5 pb-4">
-        <div className="grid grid-cols-2 gap-3">
-          {[
-            { emoji: "🏊", title: "Pool Villas", subtitle: `${properties.filter(p => p.amenities.includes("Private Pool")).length} available`, gradient: "from-[hsl(270,60%,30%)] to-[hsl(320,50%,25%)]" },
-            { emoji: "🔥", title: "Bonfire Night", subtitle: "Book tonight", gradient: "from-[hsl(20,80%,25%)] to-[hsl(350,60%,25%)]" },
-            { emoji: "🎬", title: "Movie Under Stars", subtitle: "New experience", gradient: "from-[hsl(220,60%,25%)] to-[hsl(260,50%,20%)]" },
-            { emoji: "💑", title: "Date Night", subtitle: "Curated setups", gradient: "from-[hsl(340,60%,28%)] to-[hsl(280,50%,22%)]" },
-            { emoji: "🏕️", title: "Camping", subtitle: "Nature escapes", gradient: "from-[hsl(140,40%,22%)] to-[hsl(180,40%,18%)]" },
-            { emoji: "🏆", title: "Sports", subtitle: "Play & compete", gradient: "from-[hsl(30,60%,25%)] to-[hsl(50,50%,20%)]" },
-          ].map((card, i) => (
-            <motion.div
-              key={card.title}
-              initial={{ opacity: 0, y: 15, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: 0.2 + i * 0.06 }}
-              className={`relative rounded-2xl p-4 bg-gradient-to-br ${card.gradient} border border-border/30 cursor-pointer overflow-hidden group`}
-              onClick={onSearchTap}
-            >
-              <div className="absolute -top-4 -right-4 text-5xl opacity-30 group-hover:opacity-50 transition-opacity">{card.emoji}</div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-2xl">{card.emoji}</span>
-                <ArrowRight size={14} className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity ml-auto" />
-              </div>
-              <p className="text-sm font-bold text-foreground">{card.title}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">{card.subtitle}</p>
-            </motion.div>
-          ))}
-        </div>
-      </div>
 
       {/* Category Bar */}
       <div className="sticky top-0 z-20">
