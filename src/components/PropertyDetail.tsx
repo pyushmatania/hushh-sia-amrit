@@ -56,7 +56,7 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-30 bg-background overflow-y-auto pb-28"
+      className="fixed inset-0 z-30 bg-mesh overflow-y-auto pb-28"
     >
       {/* Hero */}
       <div className="relative aspect-[4/3]">
