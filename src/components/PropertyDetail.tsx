@@ -8,9 +8,14 @@ import {
   Activity, Trophy, Mic, Rainbow, Popcorn, Volume2,
   Snowflake, Camera, Theater, Waves, ChefHat, Guitar,
   Flower2, Gamepad2, Navigation, Phone, CalendarX2,
-  Shield, Zap, Info, Coffee, Utensils, ParkingCircle
+  Shield, Zap, Info, Coffee, Utensils, ParkingCircle,
+  CalendarIcon
 } from "lucide-react";
 import { useState } from "react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { Property } from "@/data/properties";
 
 const amenityIconMap: Record<string, React.ReactNode> = {
