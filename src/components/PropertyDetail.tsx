@@ -230,7 +230,7 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
             </div>
             <button
               onClick={() => onBook(property, selectedSlot!, guests)}
-              className="bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold text-sm"
+              className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold text-sm glow-primary"
             >
               Reserve
             </button>
