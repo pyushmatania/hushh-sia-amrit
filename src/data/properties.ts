@@ -552,7 +552,7 @@ export const properties: Property[] = [
     hostName: "Dr. Patnaik",
     hostSince: "2020",
     responseRate: "95%",
-    category: ["experiences", "family"],
+    category: ["experiences"],
     highlights: ["300-year-old colonial architecture", "Authentic Koraput coffee tasting", "Tribal market visit (on market days)", "Led by certified local historian"],
     rules: [
       { icon: "👟", text: "Comfortable walking shoes required" },
