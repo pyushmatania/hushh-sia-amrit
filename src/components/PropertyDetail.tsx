@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { Property } from "@/data/properties";
+import ReviewSection from "@/components/ReviewSection";
 
 const amenityIconMap: Record<string, React.ReactNode> = {
   "Private Pool": <Droplets size={22} strokeWidth={1.5} />,
