@@ -55,15 +55,9 @@ export default function HomeScreen({ onPropertyTap, onSearchTap }: HomeScreenPro
         </motion.button>
       </div>
 
-      {/* Category Bar - collapses on scroll */}
-      <div className="sticky top-0 z-20">
-        <motion.div
-          animate={{ height: collapsed ? 0 : "auto", opacity: collapsed ? 0 : 1 }}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="overflow-hidden"
-        >
-          <CategoryBar active={activeCategory} onChange={setActiveCategory} />
-        </motion.div>
+      {/* Category Bar */}
+      <div className="pt-1 pb-2">
+        <CategoryBar active={activeCategory} onChange={setActiveCategory} />
       </div>
 
       {/* Hero Typography */}
