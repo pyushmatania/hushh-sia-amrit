@@ -474,7 +474,7 @@ export const properties: Property[] = [
     hostName: "Coach Ravi",
     hostSince: "2024",
     responseRate: "98%",
-    category: ["sports", "experiences"],
+    category: ["experiences", "services", "pool"],
     highlights: ["2 professional-grade courts", "Equipment rental included", "Certified coaching available", "Cold towels & energy drinks"],
     rules: [
       { icon: "👟", text: "Non-marking shoes mandatory" },
