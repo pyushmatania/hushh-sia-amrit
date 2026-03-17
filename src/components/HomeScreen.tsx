@@ -17,10 +17,9 @@ interface HomeScreenProps {
 }
 
 export default function HomeScreen({ onPropertyTap, onSearchTap }: HomeScreenProps) {
-  const [activeCategory, setActiveCategory] = useState("all");
+  const [activeCategory, setActiveCategory] = useState("stays");
 
   const filteredProperties = useMemo(() => {
-    if (activeCategory === "all") return properties;
     return properties.filter(p => p.category.includes(activeCategory));
   }, [activeCategory]);
 
@@ -146,7 +145,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap }: HomeScreenPro
       <div className="mt-7">
         <div className="flex items-center justify-between px-5 mb-3">
           <h2 className="text-lg font-bold text-foreground">
-            {activeCategory === "all" ? "All venues" : `${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)} venues`}
+            {activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)}
           </h2>
           <span className="text-xs text-muted-foreground">{filteredProperties.length} found</span>
         </div>
