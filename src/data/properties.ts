@@ -280,7 +280,7 @@ export const properties: Property[] = [
     name: "The Sports Arena",
     description: "Pickleball · Cricket net · Turf ground",
     fullDescription: "Jeypore's first premium sports and recreation venue. Featuring a full-size turf ground, professional cricket nets, a pickleball court, and a lounge area with refreshments. Perfect for corporate team-building, birthday tournaments, or just a fun evening with friends. Floodlights available for night games.",
-    images: [property3, property2, property1],
+    images: [listingSportsArena, property2, property1],
     rating: 4.4,
     reviewCount: 43,
     location: "Jeypore, Odisha",
