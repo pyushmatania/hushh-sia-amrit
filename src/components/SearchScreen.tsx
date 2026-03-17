@@ -1,10 +1,14 @@
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Search, X, SlidersHorizontal, MapPin, Users, Calendar,
-  Star, BadgeCheck, ChevronDown
+  Search, X, SlidersHorizontal, MapPin, Users, Calendar as CalendarIcon,
+  Star, BadgeCheck, ChevronDown, ArrowUpDown, Minus, Plus, Sparkles
 } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
+import { format } from "date-fns";
 import { properties, type Property } from "@/data/properties";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 interface SearchScreenProps {
   onPropertyTap: (property: Property) => void;
@@ -13,37 +17,100 @@ interface SearchScreenProps {
 
 const amenityFilters = ["Private Pool", "Bonfire Pit", "Sound System", "BBQ Area", "Stargazing Deck", "Movie Screen", "DJ Booth"];
 
+const categoryFilters = [
+  { id: "stays", label: "Stays", emoji: "🏡" },
+  { id: "experiences", label: "Experiences", emoji: "✨" },
+  { id: "party", label: "Party", emoji: "🎉" },
+  { id: "bonfire", label: "Bonfire", emoji: "🔥" },
+  { id: "pool", label: "Pool", emoji: "🏊" },
+  { id: "dining", label: "Dining", emoji: "🍽️" },
+  { id: "movie", label: "Movie", emoji: "🎬" },
+  { id: "stargazing", label: "Stargazing", emoji: "🌌" },
+];
+
+type SortOption = "relevance" | "price-low" | "price-high" | "rating" | "reviews";
+
+const sortLabels: Record<SortOption, string> = {
+  relevance: "Relevance",
+  "price-low": "Price: Low → High",
+  "price-high": "Price: High → Low",
+  rating: "Top Rated",
+  reviews: "Most Reviewed",
+};
+
 export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenProps) {
   const [query, setQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
   const [guestCount, setGuestCount] = useState(0);
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [minRating, setMinRating] = useState(0);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+  const [sortBy, setSortBy] = useState<SortOption>("relevance");
+  const [showSort, setShowSort] = useState(false);
 
-  const toggleAmenity = (a: string) => {
+  const toggleAmenity = useCallback((a: string) => {
     setSelectedAmenities((prev) =>
       prev.includes(a) ? prev.filter((x) => x !== a) : [...prev, a]
     );
-  };
+  }, []);
+
+  const toggleCategory = useCallback((c: string) => {
+    setSelectedCategories((prev) =>
+      prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]
+    );
+  }, []);
 
   const filtered = useMemo(() => {
-    return properties.filter((p) => {
-      // Text search
+    let results = properties.filter((p) => {
       if (query && !p.name.toLowerCase().includes(query.toLowerCase()) && !p.description.toLowerCase().includes(query.toLowerCase()) && !p.location.toLowerCase().includes(query.toLowerCase())) {
         return false;
       }
-      // Price
       if (p.basePrice < priceRange[0] || p.basePrice > priceRange[1]) return false;
-      // Rating
       if (minRating > 0 && p.rating < minRating) return false;
-      // Amenities
+      if (guestCount > 0 && p.capacity < guestCount) return false;
       if (selectedAmenities.length > 0 && !selectedAmenities.some((a) => p.amenities.includes(a))) return false;
+      if (selectedCategories.length > 0 && !selectedCategories.some((c) => p.category.includes(c))) return false;
       return true;
     });
-  }, [query, priceRange, minRating, selectedAmenities]);
 
-  const activeFilterCount = (minRating > 0 ? 1 : 0) + (selectedAmenities.length > 0 ? 1 : 0) + (priceRange[0] > 0 || priceRange[1] < 10000 ? 1 : 0);
+    // Sort
+    switch (sortBy) {
+      case "price-low":
+        results = [...results].sort((a, b) => a.basePrice - b.basePrice);
+        break;
+      case "price-high":
+        results = [...results].sort((a, b) => b.basePrice - a.basePrice);
+        break;
+      case "rating":
+        results = [...results].sort((a, b) => b.rating - a.rating);
+        break;
+      case "reviews":
+        results = [...results].sort((a, b) => b.reviewCount - a.reviewCount);
+        break;
+    }
+
+    return results;
+  }, [query, priceRange, minRating, guestCount, selectedAmenities, selectedCategories, sortBy]);
+
+  const activeFilterCount =
+    (minRating > 0 ? 1 : 0) +
+    (selectedAmenities.length > 0 ? 1 : 0) +
+    (selectedCategories.length > 0 ? 1 : 0) +
+    (guestCount > 0 ? 1 : 0) +
+    (selectedDate ? 1 : 0) +
+    (priceRange[0] > 0 || priceRange[1] < 10000 ? 1 : 0);
+
+  const clearAll = useCallback(() => {
+    setPriceRange([0, 10000]);
+    setMinRating(0);
+    setSelectedAmenities([]);
+    setSelectedCategories([]);
+    setGuestCount(0);
+    setSelectedDate(undefined);
+    setSortBy("relevance");
+  }, []);
 
   return (
     <motion.div
@@ -76,11 +143,11 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
           </button>
         </div>
 
-        {/* Filter Toggle */}
-        <div className="flex items-center gap-2 mt-3">
+        {/* Filter & Sort Row */}
+        <div className="flex items-center gap-2 mt-3 overflow-x-auto no-scrollbar">
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all shrink-0 ${
               activeFilterCount > 0
                 ? "border-primary bg-primary/10 text-primary"
                 : "border-border text-foreground"
@@ -89,6 +156,19 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
             <SlidersHorizontal size={13} />
             Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
             <ChevronDown size={12} className={`transition-transform ${showFilters ? "rotate-180" : ""}`} />
+          </button>
+
+          {/* Sort button */}
+          <button
+            onClick={() => setShowSort(!showSort)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all shrink-0 ${
+              sortBy !== "relevance"
+                ? "border-primary bg-primary/10 text-primary"
+                : "border-border text-foreground"
+            }`}
+          >
+            <ArrowUpDown size={13} />
+            {sortLabels[sortBy]}
           </button>
 
           {/* Quick filter pills */}
@@ -100,13 +180,41 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
             <button
               key={pill.label}
               onClick={pill.action}
-              className="px-3 py-1.5 rounded-full text-xs font-medium border border-border text-muted-foreground hover:border-foreground/30 transition-all whitespace-nowrap"
+              className="px-3 py-1.5 rounded-full text-xs font-medium border border-border text-muted-foreground hover:border-foreground/30 transition-all whitespace-nowrap shrink-0"
             >
               {pill.label}
             </button>
           ))}
         </div>
       </div>
+
+      {/* Sort dropdown */}
+      <AnimatePresence>
+        {showSort && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden border-b border-border bg-background/80 backdrop-blur-md"
+          >
+            <div className="px-5 py-3 flex flex-wrap gap-2">
+              {(Object.keys(sortLabels) as SortOption[]).map((key) => (
+                <button
+                  key={key}
+                  onClick={() => { setSortBy(key); setShowSort(false); }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+                    sortBy === key
+                      ? "border-foreground bg-foreground text-background"
+                      : "border-border text-foreground"
+                  }`}
+                >
+                  {sortLabels[key]}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Expandable Filters */}
       <AnimatePresence>
@@ -118,15 +226,38 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
             className="overflow-hidden border-b border-border"
           >
             <div className="px-5 py-4 space-y-5">
+              {/* Category */}
+              <div>
+                <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5">
+                  <Sparkles size={14} className="text-primary" /> Category
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {categoryFilters.map((cat) => (
+                    <button
+                      key={cat.id}
+                      onClick={() => toggleCategory(cat.id)}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+                        selectedCategories.includes(cat.id)
+                          ? "border-foreground bg-foreground text-background"
+                          : "border-border text-foreground"
+                      }`}
+                    >
+                      <span>{cat.emoji}</span> {cat.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* Price Range */}
               <div>
                 <h4 className="text-sm font-semibold text-foreground mb-2">Price Range</h4>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   {[
                     { label: "Any", range: [0, 10000] as [number, number] },
                     { label: "₹0–999", range: [0, 999] as [number, number] },
-                    { label: "₹1000–1999", range: [1000, 1999] as [number, number] },
-                    { label: "₹2000+", range: [2000, 10000] as [number, number] },
+                    { label: "₹1K–2K", range: [1000, 1999] as [number, number] },
+                    { label: "₹2K–5K", range: [2000, 4999] as [number, number] },
+                    { label: "₹5K+", range: [5000, 10000] as [number, number] },
                   ].map((opt) => (
                     <button
                       key={opt.label}
@@ -140,6 +271,89 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
                       {opt.label}
                     </button>
                   ))}
+                </div>
+              </div>
+
+              {/* Guest Count */}
+              <div>
+                <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5">
+                  <Users size={14} className="text-primary" /> Guests
+                </h4>
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={() => setGuestCount(Math.max(0, guestCount - 1))}
+                    disabled={guestCount === 0}
+                    className="w-9 h-9 rounded-full border border-border flex items-center justify-center text-foreground disabled:opacity-30 transition-all active:scale-90"
+                  >
+                    <Minus size={16} />
+                  </button>
+                  <span className="text-sm font-semibold text-foreground w-16 text-center">
+                    {guestCount === 0 ? "Any" : `${guestCount}+`}
+                  </span>
+                  <button
+                    onClick={() => setGuestCount(guestCount + 1)}
+                    className="w-9 h-9 rounded-full border border-border flex items-center justify-center text-foreground transition-all active:scale-90"
+                  >
+                    <Plus size={16} />
+                  </button>
+                  {/* Quick guest presets */}
+                  <div className="flex gap-1.5 ml-2">
+                    {[5, 10, 20, 50].map((n) => (
+                      <button
+                        key={n}
+                        onClick={() => setGuestCount(n)}
+                        className={`px-2 py-1 rounded-md text-[11px] font-medium border transition-all ${
+                          guestCount === n
+                            ? "border-foreground bg-foreground text-background"
+                            : "border-border text-muted-foreground"
+                        }`}
+                      >
+                        {n}+
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Date */}
+              <div>
+                <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5">
+                  <CalendarIcon size={14} className="text-primary" /> Date
+                </h4>
+                <div className="flex items-center gap-2">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button
+                        className={cn(
+                          "flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all",
+                          selectedDate
+                            ? "border-foreground bg-foreground text-background"
+                            : "border-border text-foreground"
+                        )}
+                      >
+                        <CalendarIcon size={14} />
+                        {selectedDate ? format(selectedDate, "MMM d, yyyy") : "Pick a date"}
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 z-[60]" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={selectedDate}
+                        onSelect={setSelectedDate}
+                        disabled={(date) => date < new Date()}
+                        initialFocus
+                        className={cn("p-3 pointer-events-auto")}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  {selectedDate && (
+                    <button
+                      onClick={() => setSelectedDate(undefined)}
+                      className="text-xs text-muted-foreground underline underline-offset-2"
+                    >
+                      Clear
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -183,15 +397,23 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
                 </div>
               </div>
 
-              {/* Clear */}
-              {activeFilterCount > 0 && (
+              {/* Clear & Apply row */}
+              <div className="flex items-center justify-between pt-1">
+                {activeFilterCount > 0 && (
+                  <button
+                    onClick={clearAll}
+                    className="text-sm font-medium text-primary underline underline-offset-2"
+                  >
+                    Clear all filters
+                  </button>
+                )}
                 <button
-                  onClick={() => { setPriceRange([0, 10000]); setMinRating(0); setSelectedAmenities([]); setGuestCount(0); }}
-                  className="text-sm font-medium text-primary underline underline-offset-2"
+                  onClick={() => setShowFilters(false)}
+                  className="ml-auto px-5 py-2 rounded-xl bg-foreground text-background text-sm font-semibold transition-all active:scale-95"
                 >
-                  Clear all filters
+                  Show {filtered.length} result{filtered.length !== 1 ? "s" : ""}
                 </button>
-              )}
+              </div>
             </div>
           </motion.div>
         )}
@@ -240,6 +462,7 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
                       <Star size={11} className="fill-foreground" /> {property.rating}
                     </span>
                     <span className="text-xs text-muted-foreground">· {property.reviewCount} reviews</span>
+                    <span className="text-xs text-muted-foreground">· up to {property.capacity}</span>
                   </div>
                   <div className="flex items-center justify-between mt-1.5">
                     <span className="text-sm font-semibold text-foreground">
