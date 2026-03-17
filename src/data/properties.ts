@@ -234,7 +234,7 @@ export const properties: Property[] = [
     hostName: "Biju N.",
     hostSince: "2023",
     responseRate: "92%",
-    category: ["family", "bonfire", "sports"],
+    category: ["stays", "family", "bonfire", "experiences"],
     highlights: ["Authentic tribal drum circle experience", "Guided nature trail with bird spotting", "Hand-painted Dongria Kondh art tents", "Organic campfire dinner included"],
     rules: [
       { icon: "🕐", text: "Check-in at slot start time" },
