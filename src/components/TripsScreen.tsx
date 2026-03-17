@@ -99,13 +99,9 @@ function TiltCard({
 
           {/* Holographic glare effect */}
           <motion.div
-            className="absolute inset-0 pointer-events-none"
+            className="absolute inset-0 pointer-events-none rounded-3xl"
             style={{
-              background: useTransform(
-                [glareX, glareY] as any,
-                ([gx, gy]: number[]) =>
-                  `radial-gradient(circle at ${gx}% ${gy}%, hsla(270, 80%, 75%, var(--glare-opacity)) 0%, transparent 60%)`
-              ),
+              background: "radial-gradient(circle at 50% 50%, hsla(270, 80%, 75%, 0.25) 0%, transparent 60%)",
               opacity: glareOpacity,
             }}
           />
