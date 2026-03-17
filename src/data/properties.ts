@@ -1,6 +1,26 @@
 import property1 from "@/assets/property-1.jpg";
 import property2 from "@/assets/property-2.jpg";
 import property3 from "@/assets/property-3.jpg";
+import listingFireflyVilla from "@/assets/listing-firefly-villa.jpg";
+import listingKoraputGarden from "@/assets/listing-koraput-garden.jpg";
+import listingEmberGrounds from "@/assets/listing-ember-grounds.jpg";
+import listingMoonriseTerrace from "@/assets/listing-moonrise-terrace.jpg";
+import listingTribalCamp from "@/assets/listing-tribal-camp.jpg";
+import listingSportsArena from "@/assets/listing-sports-arena.jpg";
+import listingKaraokeCube from "@/assets/listing-karaoke-cube.jpg";
+import listingSunsetPavilion from "@/assets/listing-sunset-pavilion.jpg";
+import listingBirthdayHall from "@/assets/listing-birthday-hall.jpg";
+import listingAnniversaryGarden from "@/assets/listing-anniversary-garden.jpg";
+import listingPickleball from "@/assets/listing-pickleball.jpg";
+import listingKittyParty from "@/assets/listing-kitty-party.jpg";
+import listingHeritageWalk from "@/assets/listing-heritage-walk.jpg";
+import listingPottery from "@/assets/listing-pottery.jpg";
+import listingCoffeeTrail from "@/assets/listing-coffee-trail.jpg";
+import listingHaldiMehndi from "@/assets/listing-haldi-mehndi.jpg";
+import listingStargazing from "@/assets/listing-stargazing.jpg";
+import listingRafting from "@/assets/listing-rafting.jpg";
+import listingMovieAmphitheater from "@/assets/listing-movie-amphitheater.jpg";
+import listingTribalDance from "@/assets/listing-tribal-dance.jpg";
 
 export interface TimeSlot {
   id: string;
