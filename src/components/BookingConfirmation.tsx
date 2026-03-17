@@ -94,7 +94,7 @@ export default function BookingConfirmation({ property, slotId, guests, total, o
 
         {/* Actions */}
         <div className="w-full mt-6 space-y-3 pb-10">
-          <button onClick={onDone} className="w-full py-3.5 rounded-lg bg-primary text-primary-foreground font-semibold text-sm">
+          <button onClick={onDone} className="w-full py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm glow-primary">
             Go to My Trips
           </button>
           <button className="w-full py-3 rounded-lg border border-foreground text-foreground font-medium text-sm">
