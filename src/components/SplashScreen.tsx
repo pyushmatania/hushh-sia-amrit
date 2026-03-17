@@ -1,8 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 
-const letters = ["H", "U", "S", "H", "H"];
-
 export default function SplashScreen({ onComplete }: { onComplete: () => void }) {
   const [show, setShow] = useState(true);
 
@@ -10,7 +8,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
     const timer = setTimeout(() => {
       setShow(false);
       setTimeout(onComplete, 500);
-    }, 2800);
+    }, 3200);
     return () => clearTimeout(timer);
   }, [onComplete]);
 
@@ -24,95 +22,112 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
         >
           {/* Animated gradient orbs */}
           <motion.div
-            className="absolute w-64 h-64 rounded-full"
-            style={{ background: "radial-gradient(circle, hsla(270,80%,65%,0.3), transparent 70%)" }}
+            className="absolute w-80 h-80 rounded-full"
+            style={{ background: "radial-gradient(circle, hsla(270,80%,65%,0.25), transparent 70%)" }}
             animate={{
-              x: [0, 30, -20, 0],
-              y: [0, -40, 20, 0],
-              scale: [1, 1.2, 0.9, 1],
+              x: [0, 40, -30, 0],
+              y: [0, -50, 30, 0],
+              scale: [1, 1.3, 0.8, 1],
             }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
           />
           <motion.div
-            className="absolute w-48 h-48 rounded-full"
-            style={{ background: "radial-gradient(circle, hsla(320,70%,55%,0.2), transparent 70%)" }}
+            className="absolute w-60 h-60 rounded-full"
+            style={{ background: "radial-gradient(circle, hsla(320,70%,55%,0.15), transparent 70%)" }}
             animate={{
-              x: [0, -30, 20, 0],
-              y: [0, 30, -30, 0],
-              scale: [1, 0.8, 1.3, 1],
+              x: [0, -40, 30, 0],
+              y: [0, 40, -40, 0],
+              scale: [1, 0.7, 1.4, 1],
             }}
-            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          />
+          <motion.div
+            className="absolute w-40 h-40 rounded-full"
+            style={{ background: "radial-gradient(circle, hsla(43,96%,56%,0.1), transparent 70%)" }}
+            animate={{
+              x: [30, -20, 40, 30],
+              y: [-30, 20, -10, -30],
+            }}
+            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
           />
 
           {/* Floating particles */}
-          {Array.from({ length: 25 }).map((_, i) => (
+          {Array.from({ length: 30 }).map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-[2px] h-[2px] rounded-full bg-primary/40"
+              className="absolute rounded-full"
+              style={{
+                width: Math.random() * 3 + 1,
+                height: Math.random() * 3 + 1,
+                background: i % 3 === 0
+                  ? "hsl(var(--primary))"
+                  : i % 3 === 1
+                  ? "hsl(var(--gold))"
+                  : "hsl(var(--foreground) / 0.3)",
+              }}
               initial={{
                 x: Math.random() * 400 - 200,
                 y: Math.random() * 400 - 200,
                 opacity: 0,
               }}
               animate={{
-                y: [null, Math.random() * -150 - 50],
-                opacity: [0, 0.8, 0],
+                y: [null, Math.random() * -200 - 50],
+                opacity: [0, 0.9, 0],
               }}
               transition={{
-                duration: 3 + Math.random() * 2,
+                duration: 3 + Math.random() * 3,
                 repeat: Infinity,
                 delay: Math.random() * 2,
               }}
             />
           ))}
 
-          {/* Logo */}
-          <div className="flex items-center gap-1.5 relative z-10">
-            {letters.map((letter, i) => (
-              <motion.span
-                key={i}
-                className="text-5xl font-display font-bold tracking-tight"
-                initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                transition={{
-                  delay: i * 0.12 + 0.3,
-                  type: "spring",
-                  stiffness: 200,
-                  damping: 20,
-                }}
-              >
-                {i === 4 ? (
-                  <span className="text-4xl">🤫</span>
-                ) : (
-                  <span className="text-gradient">{letter}</span>
-                )}
-              </motion.span>
-            ))}
+          {/* Large expressive typography */}
+          <div className="relative z-10 text-center px-8">
+            <motion.h1
+              className="text-6xl font-bold tracking-tight"
+              initial={{ opacity: 0, y: 40, filter: "blur(20px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ delay: 0.3, duration: 0.8, type: "spring", stiffness: 100 }}
+            >
+              <span className="text-gradient">hushh</span>
+            </motion.h1>
+            <motion.div
+              className="flex items-center justify-center gap-2 mt-2"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 }}
+            >
+              <span className="text-3xl">🤫</span>
+            </motion.div>
+            <motion.p
+              className="mt-4 text-sm text-muted-foreground tracking-[0.25em] uppercase font-medium"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.2 }}
+            >
+              Private experiences await
+            </motion.p>
           </div>
 
-          {/* Tagline */}
-          <motion.p
-            className="mt-5 text-sm text-muted-foreground tracking-widest uppercase"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.5 }}
-          >
-            Keep it hushh 🤫
-          </motion.p>
-
-          {/* Glowing ring */}
-          <motion.div
-            className="absolute w-56 h-56 rounded-full border border-primary/20"
-            initial={{ scale: 0.3, opacity: 0 }}
-            animate={{ scale: [0.3, 1.8], opacity: [0.4, 0] }}
-            transition={{ delay: 1.2, duration: 2 }}
-          />
-          <motion.div
-            className="absolute w-40 h-40 rounded-full glow-lg"
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: [0.5, 1.5], opacity: [0.3, 0] }}
-            transition={{ delay: 1.5, duration: 1.8 }}
-          />
+          {/* Expanding rings */}
+          {[0, 1, 2].map((i) => (
+            <motion.div
+              key={i}
+              className="absolute rounded-full border border-primary/15"
+              initial={{ width: 60, height: 60, opacity: 0 }}
+              animate={{
+                width: [60, 400],
+                height: [60, 400],
+                opacity: [0.4, 0],
+              }}
+              transition={{
+                delay: 1.5 + i * 0.4,
+                duration: 2,
+                ease: "easeOut",
+              }}
+            />
+          ))}
         </motion.div>
       )}
     </AnimatePresence>
