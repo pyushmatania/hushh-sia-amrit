@@ -17,7 +17,7 @@ interface HomeScreenProps {
 }
 
 export default function HomeScreen({ onPropertyTap, onSearchTap }: HomeScreenProps) {
-  const [activeCategory, setActiveCategory] = useState("all");
+  const [activeCategory, setActiveCategory] = useState("stays");
 
   const filteredProperties = useMemo(() => {
     if (activeCategory === "all") return properties;
