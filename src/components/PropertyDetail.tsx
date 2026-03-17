@@ -465,7 +465,7 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
             </div>
           </div>
           <div className="flex items-start gap-3">
-            <div className="w-2 h-2 rounded-full bg-yellow-500 mt-1.5 shrink-0" />
+            <div className="w-2 h-2 rounded-full bg-accent mt-1.5 shrink-0" />
             <div>
               <p className="text-sm font-medium text-foreground">50% refund</p>
               <p className="text-xs text-muted-foreground">24-48 hours before check-in</p>
