@@ -18,7 +18,7 @@ export default function BookingConfirmation({ property, slotId, guests, total, o
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="fixed inset-0 z-30 bg-background overflow-y-auto"
+      className="fixed inset-0 z-30 bg-mesh overflow-y-auto"
     >
       <div className="flex flex-col items-center justify-start pt-20 px-6">
         {/* Success icon */}
