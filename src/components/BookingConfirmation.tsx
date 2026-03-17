@@ -1,16 +1,18 @@
 import { motion } from "framer-motion";
-import { Check, MapPin, Calendar, Users, QrCode } from "lucide-react";
+import { Check, MapPin, Calendar, Users, QrCode, Clock } from "lucide-react";
+import { format } from "date-fns";
 import type { Property } from "@/data/properties";
 
 interface BookingConfirmationProps {
   property: Property;
   slotId: string;
   guests: number;
+  date: Date;
   total: number;
   onDone: () => void;
 }
 
-export default function BookingConfirmation({ property, slotId, guests, total, onDone }: BookingConfirmationProps) {
+export default function BookingConfirmation({ property, slotId, guests, date, total, onDone }: BookingConfirmationProps) {
   const slot = property.slots.find((s) => s.id === slotId)!;
   const bookingId = `HUSHH-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 
@@ -62,8 +64,9 @@ export default function BookingConfirmation({ property, slotId, guests, total, o
               <p className="text-xs text-muted-foreground">{property.location}</p>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3 text-sm text-muted-foreground">
-            <span className="flex items-center gap-2"><Calendar size={14} /> {slot.label} · {slot.time}</span>
+          <div className="grid grid-cols-1 gap-2 text-sm text-muted-foreground">
+            <span className="flex items-center gap-2"><Calendar size={14} /> {format(date, "EEEE, d MMMM yyyy")}</span>
+            <span className="flex items-center gap-2"><Clock size={14} /> {slot.label} · {slot.time}</span>
             <span className="flex items-center gap-2"><Users size={14} /> {guests} guests</span>
           </div>
           <div className="flex items-center justify-between pt-3 border-t border-border">

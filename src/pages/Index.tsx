@@ -14,12 +14,23 @@ import MessagesScreen from "@/components/MessagesScreen";
 import SearchScreen from "@/components/SearchScreen";
 import type { Property } from "@/data/properties";
 
+export interface Booking {
+  id: string;
+  propertyId: string;
+  date: string;
+  slot: string;
+  guests: number;
+  total: number;
+  status: "upcoming" | "completed" | "cancelled";
+  bookingId: string;
+}
+
 type Screen =
   | { type: "home" }
   | { type: "detail"; property: Property }
-  | { type: "builder"; property: Property; slotId: string; guests: number }
-  | { type: "checkout"; property: Property; slotId: string; guests: number; selections: Record<string, number>; total: number }
-  | { type: "confirmation"; property: Property; slotId: string; guests: number; total: number };
+  | { type: "builder"; property: Property; slotId: string; guests: number; date: Date }
+  | { type: "checkout"; property: Property; slotId: string; guests: number; date: Date; selections: Record<string, number>; total: number }
+  | { type: "confirmation"; property: Property; slotId: string; guests: number; date: Date; total: number };
 
 export default function Index() {
   const [showSplash, setShowSplash] = useState(true);
@@ -27,6 +38,7 @@ export default function Index() {
   const [screen, setScreen] = useState<Screen>({ type: "home" });
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [showSearch, setShowSearch] = useState(false);
+  const [bookings, setBookings] = useState<Booking[]>([]);
 
   const toggleWishlist = useCallback((id: string) => {
     setWishlist((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
@@ -38,22 +50,34 @@ export default function Index() {
     setActiveTab("home");
   }, []);
 
-  const handleBook = useCallback((property: Property, slotId: string, guests: number) => {
-    setScreen({ type: "builder", property, slotId, guests });
+  const handleBook = useCallback((property: Property, slotId: string, guests: number, date: Date) => {
+    setScreen({ type: "builder", property, slotId, guests, date });
   }, []);
 
   const handleContinue = useCallback(
-    (property: Property, slotId: string, guests: number) =>
+    (property: Property, slotId: string, guests: number, date: Date) =>
       (selections: Record<string, number>, total: number) => {
-        setScreen({ type: "checkout", property, slotId, guests, selections, total });
+        setScreen({ type: "checkout", property, slotId, guests, date, selections, total });
       },
     []
   );
 
   const handleCheckoutConfirm = useCallback(
-    (property: Property, slotId: string, guests: number) =>
+    (property: Property, slotId: string, guests: number, date: Date) =>
       (finalTotal: number) => {
-        setScreen({ type: "confirmation", property, slotId, guests, total: finalTotal });
+        // Create a new booking
+        const newBooking: Booking = {
+          id: String(Date.now()),
+          propertyId: property.id,
+          date: date.toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" }),
+          slot: `${property.slots.find(s => s.id === slotId)?.label} · ${property.slots.find(s => s.id === slotId)?.time}`,
+          guests,
+          total: finalTotal,
+          status: "upcoming",
+          bookingId: `HUSHH-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+        };
+        setBookings(prev => [newBooking, ...prev]);
+        setScreen({ type: "confirmation", property, slotId, guests, date, total: finalTotal });
       },
     []
   );
@@ -84,7 +108,7 @@ export default function Index() {
           />
         )}
         {screen.type === "home" && activeTab === "bookings" && (
-          <TripsScreen key="trips" />
+          <TripsScreen key="trips" bookings={bookings} />
         )}
         {screen.type === "home" && activeTab === "messages" && (
           <MessagesScreen key="messages" />
@@ -106,8 +130,9 @@ export default function Index() {
             property={screen.property}
             slotId={screen.slotId}
             guests={screen.guests}
+            date={screen.date}
             onBack={() => setScreen({ type: "detail", property: screen.property })}
-            onContinue={handleContinue(screen.property, screen.slotId, screen.guests)}
+            onContinue={handleContinue(screen.property, screen.slotId, screen.guests, screen.date)}
           />
         )}
         {screen.type === "checkout" && (
@@ -116,10 +141,11 @@ export default function Index() {
             property={screen.property}
             slotId={screen.slotId}
             guests={screen.guests}
+            date={screen.date}
             selections={screen.selections}
             total={screen.total}
-            onBack={() => setScreen({ type: "builder", property: screen.property, slotId: screen.slotId, guests: screen.guests })}
-            onConfirm={handleCheckoutConfirm(screen.property, screen.slotId, screen.guests)}
+            onBack={() => setScreen({ type: "builder", property: screen.property, slotId: screen.slotId, guests: screen.guests, date: screen.date })}
+            onConfirm={handleCheckoutConfirm(screen.property, screen.slotId, screen.guests, screen.date)}
           />
         )}
         {screen.type === "confirmation" && (
@@ -128,6 +154,7 @@ export default function Index() {
             property={screen.property}
             slotId={screen.slotId}
             guests={screen.guests}
+            date={screen.date}
             total={screen.total}
             onDone={handleDone}
           />

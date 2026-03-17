@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Tag, CreditCard, Smartphone, Banknote, ChevronRight, Shield, Clock, Users, MapPin } from "lucide-react";
+import { ArrowLeft, Tag, CreditCard, Smartphone, Banknote, ChevronRight, Shield, Clock, Users, MapPin, CalendarIcon } from "lucide-react";
 import { useState } from "react";
+import { format } from "date-fns";
 import type { Property } from "@/data/properties";
 import { addons } from "@/data/properties";
 
@@ -8,6 +9,7 @@ interface CheckoutScreenProps {
   property: Property;
   slotId: string;
   guests: number;
+  date: Date;
   selections: Record<string, number>;
   total: number;
   onBack: () => void;
@@ -20,7 +22,7 @@ const paymentMethods = [
   { id: "cod", label: "Pay at Venue", icon: Banknote, sublabel: "Cash or card on arrival" },
 ];
 
-export default function CheckoutScreen({ property, slotId, guests, selections, total, onBack, onConfirm }: CheckoutScreenProps) {
+export default function CheckoutScreen({ property, slotId, guests, date, selections, total, onBack, onConfirm }: CheckoutScreenProps) {
   const slot = property.slots.find((s) => s.id === slotId)!;
   const [coupon, setCoupon] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
@@ -85,7 +87,8 @@ export default function CheckoutScreen({ property, slotId, guests, selections, t
               </p>
             </div>
           </div>
-          <div className="flex gap-4 text-xs text-muted-foreground">
+          <div className="flex gap-4 text-xs text-muted-foreground flex-wrap">
+            <span className="flex items-center gap-1"><CalendarIcon size={12} /> {format(date, "EEE, d MMM")}</span>
             <span className="flex items-center gap-1"><Clock size={12} /> {slot.label} · {slot.time}</span>
             <span className="flex items-center gap-1"><Users size={12} /> {guests} guests</span>
           </div>
