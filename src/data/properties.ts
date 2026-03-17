@@ -119,7 +119,7 @@ export const properties: Property[] = [
     name: "Koraput Garden House",
     description: "Farmhouse · Outdoor dining · Stargazing deck",
     fullDescription: "A sprawling farmhouse with an enchanting outdoor dining setup, surrounded by native flora. The stargazing deck offers unobstructed views of the Odisha night sky. Ideal for romantic dinners, family gatherings, or intimate birthday celebrations.",
-    images: [property2, property3, property1],
+    images: [listingKoraputGarden, property3, property1],
     rating: 4.6,
     reviewCount: 89,
     location: "Jeypore, Odisha",
