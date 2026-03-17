@@ -2,7 +2,8 @@ import { motion } from "framer-motion";
 import {
   ChevronRight, Bell, Settings, HelpCircle, LogOut,
   Shield, Gift, Star, Sun, Moon, Monitor, BadgeCheck,
-  CreditCard, Globe, Accessibility, FileText, Heart
+  CreditCard, Globe, Accessibility, FileText, Heart,
+  Award, Zap, Calendar, TrendingUp, Crown
 } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import profileAvatar from "@/assets/profile-avatar.png";
@@ -29,6 +30,19 @@ const settingsMenu = [
   { icon: FileText, label: "Terms & privacy" },
 ];
 
+const achievements = [
+  { icon: "🔥", title: "Early Adopter", description: "Joined in the first 100 users" },
+  { icon: "⭐", title: "5-Star Guest", description: "Maintained perfect rating" },
+  { icon: "🎉", title: "Party Starter", description: "Booked 3+ party venues" },
+  { icon: "💑", title: "Romantico", description: "Booked a couple experience" },
+];
+
+const recentActivity = [
+  { icon: "🏊", title: "The Firefly Villa", subtitle: "Evening slot · 2 guests", date: "Mar 10" },
+  { icon: "🌌", title: "Koraput Garden House", subtitle: "Night slot · 4 guests", date: "Feb 28" },
+  { icon: "🔥", title: "Ember Grounds", subtitle: "Full Day · 12 guests", date: "Feb 14" },
+];
+
 export default function ProfileScreen() {
   const { theme, setTheme } = useTheme();
 
@@ -46,9 +60,10 @@ export default function ProfileScreen() {
         <motion.button
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-10 h-10 rounded-full border border-border flex items-center justify-center shadow-sm"
+          className="w-10 h-10 rounded-full glass flex items-center justify-center relative"
         >
           <Bell size={20} className="text-foreground" />
+          <span className="absolute top-2 right-2.5 w-2 h-2 bg-primary rounded-full" />
         </motion.button>
       </div>
 
@@ -60,10 +75,9 @@ export default function ProfileScreen() {
         className="mx-5 mt-5 rounded-3xl glass p-6"
       >
         <div className="flex items-start gap-5">
-          {/* Avatar + Name */}
           <div className="flex flex-col items-center">
             <div className="relative">
-              <div className="w-24 h-24 rounded-full overflow-hidden bg-secondary border-2 border-border">
+              <div className="w-24 h-24 rounded-full overflow-hidden bg-secondary border-2 border-primary/30 glow-sm">
                 <img src={profileAvatar} alt="Profile" className="w-full h-full object-cover" />
               </div>
               <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-primary flex items-center justify-center shadow-md">
@@ -73,8 +87,6 @@ export default function ProfileScreen() {
             <h3 className="font-bold text-xl text-foreground mt-3">Akash</h3>
             <p className="text-sm text-muted-foreground">Jeypore, India</p>
           </div>
-
-          {/* Stats */}
           <div className="flex-1 flex flex-col justify-center gap-3 pl-2 pt-1">
             <div className="border-b border-border pb-3">
               <span className="text-2xl font-bold text-foreground block leading-tight">5</span>
@@ -92,29 +104,107 @@ export default function ProfileScreen() {
         </div>
       </motion.div>
 
-      {/* Two Cards Grid: Past Trips + Connections */}
-      <div className="mx-5 mt-4 grid grid-cols-2 gap-3">
+      {/* Membership Badge */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+        className="mx-5 mt-4 rounded-2xl bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/20 p-4 flex items-center gap-3"
+      >
+        <Crown size={28} className="text-primary shrink-0" />
+        <div className="flex-1">
+          <p className="text-sm font-bold text-foreground">Gold Member</p>
+          <p className="text-xs text-muted-foreground">320 loyalty points · ₹200 cashback available</p>
+        </div>
+        <ChevronRight size={18} className="text-muted-foreground" />
+      </motion.div>
+
+      {/* Quick Stats Row */}
+      <div className="mx-5 mt-4 grid grid-cols-3 gap-3">
+        {[
+          { icon: Calendar, value: "5", label: "Bookings", color: "text-primary" },
+          { icon: Heart, value: "8", label: "Wishlisted", color: "text-primary" },
+          { icon: TrendingUp, value: "₹12K", label: "Total Spent", color: "text-primary" },
+        ].map((stat, i) => (
+          <motion.div
+            key={stat.label}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.18 + i * 0.05 }}
+            className="glass rounded-2xl p-3 text-center"
+          >
+            <stat.icon size={20} className={`${stat.color} mx-auto mb-1`} />
+            <p className="text-lg font-bold text-foreground">{stat.value}</p>
+            <p className="text-[10px] text-muted-foreground">{stat.label}</p>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Achievements */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.22 }}
+        className="mx-5 mt-5"
+      >
+        <h3 className="text-base font-bold text-foreground mb-3 flex items-center gap-2">
+          <Award size={16} className="text-primary" /> Achievements
+        </h3>
+        <div className="flex gap-3 overflow-x-auto hide-scrollbar">
+          {achievements.map((a, i) => (
+            <div key={i} className="shrink-0 glass rounded-2xl p-3 w-[130px] text-center">
+              <span className="text-3xl block mb-1">{a.icon}</span>
+              <p className="text-xs font-bold text-foreground">{a.title}</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">{a.description}</p>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Recent Activity */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.25 }}
+        className="mx-5 mt-5"
+      >
+        <h3 className="text-base font-bold text-foreground mb-3 flex items-center gap-2">
+          <Zap size={16} className="text-primary" /> Recent Activity
+        </h3>
+        <div className="space-y-2">
+          {recentActivity.map((item, i) => (
+            <div key={i} className="glass rounded-xl px-4 py-3 flex items-center gap-3">
+              <span className="text-xl">{item.icon}</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-foreground truncate">{item.title}</p>
+                <p className="text-xs text-muted-foreground">{item.subtitle}</p>
+              </div>
+              <span className="text-xs text-muted-foreground shrink-0">{item.date}</span>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Two Cards Grid */}
+      <div className="mx-5 mt-5 grid grid-cols-2 gap-3">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="rounded-2xl bg-card border border-border shadow-sm p-4 cursor-pointer hover:shadow-md transition-shadow"
+          transition={{ delay: 0.28 }}
+          className="rounded-2xl glass p-4 cursor-pointer"
         >
           <div className="h-28 flex items-center justify-center mb-2">
             <img src={pastTripsImg} alt="Past trips" className="h-full object-contain" />
           </div>
           <h4 className="font-semibold text-sm text-foreground">Past trips</h4>
         </motion.div>
-
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="rounded-2xl bg-card border border-border shadow-sm p-4 cursor-pointer hover:shadow-md transition-shadow relative"
+          transition={{ delay: 0.3 }}
+          className="rounded-2xl glass p-4 cursor-pointer relative"
         >
-          <span className="absolute top-3 right-3 text-[9px] font-bold bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
-            NEW
-          </span>
+          <span className="absolute top-3 right-3 text-[9px] font-bold bg-primary text-primary-foreground px-2 py-0.5 rounded-full">NEW</span>
           <div className="h-28 flex items-center justify-center mb-2">
             <img src={connectionsImg} alt="Connections" className="h-full object-contain" />
           </div>
@@ -122,12 +212,12 @@ export default function ProfileScreen() {
         </motion.div>
       </div>
 
-      {/* Become a Host Banner */}
+      {/* Become a Host */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.25 }}
-        className="mx-5 mt-4 rounded-2xl bg-card border border-border shadow-sm p-5 flex items-center gap-4 cursor-pointer hover:shadow-md transition-shadow"
+        transition={{ delay: 0.32 }}
+        className="mx-5 mt-4 rounded-2xl glass p-5 flex items-center gap-4 cursor-pointer"
       >
         <img src={becomeHostImg} alt="Become a host" className="w-16 h-16 object-contain shrink-0" />
         <div className="flex-1">
@@ -140,7 +230,7 @@ export default function ProfileScreen() {
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.28 }}
+        transition={{ delay: 0.34 }}
         className="mx-5 mt-5"
       >
         <div className="rounded-2xl border border-border p-1.5 flex gap-1">
@@ -157,7 +247,7 @@ export default function ProfileScreen() {
                 {isActive && (
                   <motion.div
                     layoutId="themeToggle"
-                    className="absolute inset-0 bg-secondary rounded-xl"
+                    className="absolute inset-0 bg-primary/10 border border-primary/20 rounded-xl"
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   />
                 )}
@@ -175,7 +265,7 @@ export default function ProfileScreen() {
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
+        transition={{ delay: 0.36 }}
         className="mx-5 mt-5"
       >
         {settingsMenu.map((item, i) => (
