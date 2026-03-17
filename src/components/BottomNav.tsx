@@ -21,10 +21,12 @@ export default function BottomNav({ active, onChange }: BottomNavProps) {
         {tabs.map((tab) => {
           const isActive = active === tab.id;
           return (
-            <button
+            <motion.button
               key={tab.id}
               onClick={() => onChange(tab.id)}
               className="flex flex-col items-center gap-0.5 min-w-[60px] py-0.5 relative"
+              whileTap={{ scale: 0.85 }}
+              transition={{ type: "spring", stiffness: 400, damping: 20 }}
             >
               {isActive && (
                 <motion.div
@@ -33,16 +35,21 @@ export default function BottomNav({ active, onChange }: BottomNavProps) {
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 />
               )}
-              <tab.icon
-                size={22}
-                className={`transition-colors ${isActive ? "text-primary" : "text-muted-foreground"}`}
-                strokeWidth={isActive ? 2.5 : 1.5}
-                fill={isActive && tab.id === "wishlists" ? "currentColor" : "none"}
-              />
-              <span className={`text-[10px] font-medium ${isActive ? "text-primary" : "text-muted-foreground"}`}>
+              <motion.div
+                animate={isActive ? { y: [0, -3, 0] } : { y: 0 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              >
+                <tab.icon
+                  size={22}
+                  className={`transition-colors duration-200 ${isActive ? "text-primary" : "text-muted-foreground"}`}
+                  strokeWidth={isActive ? 2.5 : 1.5}
+                  fill={isActive && tab.id === "wishlists" ? "currentColor" : "none"}
+                />
+              </motion.div>
+              <span className={`text-[10px] font-medium transition-colors duration-200 ${isActive ? "text-primary" : "text-muted-foreground"}`}>
                 {tab.label}
               </span>
-            </button>
+            </motion.button>
           );
         })}
       </div>

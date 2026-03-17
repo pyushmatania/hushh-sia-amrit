@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useTransform, animate, PanInfo } from "framer-motion";
 import {
   ArrowLeft, Share2, Heart, Star, BadgeCheck, MapPin,
   ChevronDown, ChevronUp, Minus, Plus, Droplets, Flame,
@@ -11,7 +11,7 @@ import {
   Shield, Zap, Info, Coffee, Utensils, ParkingCircle,
   CalendarIcon
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
@@ -89,6 +89,22 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
   const [expanded, setExpanded] = useState(false);
   const [liked, setLiked] = useState(false);
   const [showAllReviews, setShowAllReviews] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
+
+  const heroX = useMotionValue(0);
+  const heroOpacity = useTransform(heroX, [-120, 0, 120], [0.4, 1, 0.4]);
+
+  const handleHeroDragEnd = useCallback((_: any, info: PanInfo) => {
+    const threshold = 50;
+    if (info.offset.x < -threshold) {
+      setImgIndex((i) => (i === property.images.length - 1 ? 0 : i + 1));
+      setImgLoaded(false);
+    } else if (info.offset.x > threshold) {
+      setImgIndex((i) => (i === 0 ? property.images.length - 1 : i - 1));
+      setImgLoaded(false);
+    }
+    animate(heroX, 0, { type: "spring", stiffness: 300, damping: 30 });
+  }, [property.images.length, heroX]);
 
   const selectedSlotData = property.slots.find((s) => s.id === selectedSlot);
 
@@ -98,30 +114,70 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      initial={{ opacity: 0, x: 40 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -40 }}
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
       className="fixed inset-0 z-30 bg-mesh overflow-y-auto pb-28"
     >
       {/* Hero */}
-      <div className="relative aspect-[4/3]">
-        <img src={property.images[imgIndex]} alt={property.name} className="w-full h-full object-cover" />
+      <div className="relative aspect-[4/3] overflow-hidden">
+        {/* Skeleton */}
+        {!imgLoaded && (
+          <div className="absolute inset-0 bg-secondary animate-pulse">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-muted/50 to-transparent animate-[shimmer_1.5s_infinite]" />
+          </div>
+        )}
+        <motion.img
+          key={imgIndex}
+          src={property.images[imgIndex]}
+          alt={property.name}
+          className="w-full h-full object-cover touch-pan-y"
+          style={{ x: heroX, opacity: heroOpacity }}
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.15}
+          onDragEnd={handleHeroDragEnd}
+          onLoad={() => setImgLoaded(true)}
+          initial={{ opacity: 0, scale: 1.08 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4 }}
+        />
         <div className="absolute top-0 left-0 right-0 flex justify-between items-center p-4">
-          <button onClick={onBack} className="w-9 h-9 rounded-full glass flex items-center justify-center">
+          <motion.button
+            onClick={onBack}
+            className="w-9 h-9 rounded-full glass flex items-center justify-center"
+            whileTap={{ scale: 0.85 }}
+          >
             <ArrowLeft size={18} className="text-foreground" />
-          </button>
+          </motion.button>
           <div className="flex gap-2">
-            <button className="w-9 h-9 rounded-full glass flex items-center justify-center">
+            <motion.button className="w-9 h-9 rounded-full glass flex items-center justify-center" whileTap={{ scale: 0.85 }}>
               <Share2 size={16} className="text-foreground" />
-            </button>
-            <button onClick={() => setLiked(!liked)} className="w-9 h-9 rounded-full glass flex items-center justify-center">
-              <Heart size={16} className={liked ? "fill-primary text-primary" : "text-foreground"} />
-            </button>
+            </motion.button>
+            <motion.button
+              onClick={() => setLiked(!liked)}
+              className="w-9 h-9 rounded-full glass flex items-center justify-center"
+              whileTap={{ scale: 1.2 }}
+            >
+              <Heart size={16} className={`transition-colors duration-200 ${liked ? "fill-primary text-primary" : "text-foreground"}`} />
+            </motion.button>
           </div>
         </div>
+        {/* Animated dots */}
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
           {property.images.map((_, i) => (
-            <button key={i} onClick={() => setImgIndex(i)} className={`w-[6px] h-[6px] rounded-full ${i === imgIndex ? "bg-background" : "bg-background/50"}`} />
+            <motion.button
+              key={i}
+              onClick={() => { setImgIndex(i); setImgLoaded(false); }}
+              className="rounded-full"
+              animate={{
+                width: i === imgIndex ? 18 : 6,
+                height: 6,
+                backgroundColor: i === imgIndex ? "hsl(0 0% 96%)" : "hsla(0 0% 96% / 0.5)",
+              }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            />
           ))}
         </div>
         {/* Tags overlay */}
@@ -535,12 +591,14 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
               <span className="text-muted-foreground text-sm"> / {selectedSlotData.label.toLowerCase()}</span>
               <p className="text-xs text-muted-foreground">{guests} guests</p>
             </div>
-            <button
+            <motion.button
               onClick={() => onBook(property, selectedSlot!, guests, selectedDate)}
               className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold text-sm glow-primary"
+              whileTap={{ scale: 0.93 }}
+              transition={{ type: "spring", stiffness: 400 }}
             >
               Reserve
-            </button>
+            </motion.button>
           </motion.div>
         )}
       </AnimatePresence>
