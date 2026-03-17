@@ -633,7 +633,7 @@ export const properties: Property[] = [
     name: "Koraput Coffee Trail",
     description: "Coffee plantation tour · Tasting · Bean-to-cup",
     fullDescription: "Experience the magic of Koraput's famous Arabica coffee — from bean to cup. Tour a working plantation nestled in the Eastern Ghats, learn about organic farming, roast your own beans, and enjoy a curated tasting of 5 single-origin brews. Includes a take-home pack of fresh-roasted beans. The lush green hills and misty mornings make this a photographer's paradise.",
-    images: [property1, property3, property2],
+    images: [listingCoffeeTrail, property3, property2],
     rating: 4.9,
     reviewCount: 189,
     location: "Koraput, Odisha",
