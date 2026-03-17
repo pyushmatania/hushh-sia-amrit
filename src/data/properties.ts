@@ -401,7 +401,7 @@ export const properties: Property[] = [
     name: "Birthday Bliss Hall",
     description: "Party hall · Balloon décor · DJ + Cake setup",
     fullDescription: "Jeypore's most loved birthday celebration venue! A fully decorated hall with themed balloon arches, neon signboards, fog machines, and a professional DJ. Includes a dedicated cake-cutting stage, photo booth with props, and catering options for up to 50 guests. From 1st birthdays to 50th — we make every year special.",
-    images: [property1, property3, property2],
+    images: [listingBirthdayHall, property3, property2],
     rating: 4.8,
     reviewCount: 210,
     location: "Jeypore, Odisha",
