@@ -200,7 +200,7 @@ export const properties: Property[] = [
     name: "Moonrise Terrace",
     description: "Rooftop lounge · Cocktail bar · City lights view",
     fullDescription: "Perched atop a heritage building in the heart of Jeypore, Moonrise Terrace offers sweeping panoramic views of the city skyline. With a curated cocktail bar, ambient lounge music, and designer furniture — it's the perfect venue for sophisticated celebrations, corporate mixers, or intimate anniversary dinners under the open sky.",
-    images: [property1, property3, property2],
+    images: [listingMoonriseTerrace, property3, property2],
     rating: 4.7,
     reviewCount: 156,
     location: "Jeypore, Odisha",
