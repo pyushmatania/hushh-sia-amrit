@@ -5,6 +5,7 @@ import PropertyCard from "./PropertyCard";
 import PropertyCardSmall from "./PropertyCardSmall";
 import PackageCard from "./PackageCard";
 import { properties, packages, type Property } from "@/data/properties";
+import { Star, Flame, Music, Trophy, Clapperboard, UtensilsCrossed, Telescope, Wrench } from "lucide-react";
 import { useState, useMemo } from "react";
 import property1 from "@/assets/property-1.jpg";
 import property2 from "@/assets/property-2.jpg";
@@ -25,6 +26,50 @@ export default function HomeScreen({ onPropertyTap, onSearchTap }: HomeScreenPro
 
   const topRated = useMemo(() => [...properties].sort((a, b) => b.rating - a.rating).slice(0, 4), []);
   const trendingNow = useMemo(() => properties.filter(p => p.slotsLeft > 0 && p.slotsLeft <= 3), []);
+
+  // Category-specific curated sections
+  const curatedSections = useMemo(() => {
+    const catProps = properties.filter(p => p.category.includes(activeCategory));
+    const topInCategory = [...catProps].sort((a, b) => b.rating - a.rating).slice(0, 4);
+    const availableNow = catProps.filter(p => p.slotsLeft > 0).slice(0, 4);
+
+    const sectionMap: Record<string, { title: string; emoji: string; items: Property[]; subtitle?: string }[]> = {
+      experiences: [
+        { title: "Popular Experiences", emoji: "🔥", items: topInCategory, subtitle: "Most loved by guests" },
+        { title: "Available This Week", emoji: "📅", items: availableNow, subtitle: "Book before slots fill up" },
+      ],
+      party: [
+        { title: "Weekend Party Picks", emoji: "🎉", items: topInCategory, subtitle: "Top celebration venues" },
+        { title: "Slots Open Now", emoji: "⚡", items: availableNow, subtitle: "Grab before they're gone" },
+      ],
+      bonfire: [
+        { title: "Best Bonfire Nights", emoji: "🔥", items: topInCategory, subtitle: "Under the stars" },
+        { title: "Tonight's Picks", emoji: "🌙", items: availableNow, subtitle: "Available for tonight" },
+      ],
+      pool: [
+        { title: "Top Pool Venues", emoji: "🏊", items: topInCategory, subtitle: "Dive right in" },
+        { title: "Open Slots", emoji: "💧", items: availableNow, subtitle: "Ready to splash" },
+      ],
+      movie: [
+        { title: "Best Movie Setups", emoji: "🎬", items: topInCategory, subtitle: "Cinema under the sky" },
+        { title: "Screen Tonight", emoji: "🍿", items: availableNow, subtitle: "Available for a movie night" },
+      ],
+      dining: [
+        { title: "Top Dining Spots", emoji: "🍽️", items: topInCategory, subtitle: "Fine dining experiences" },
+        { title: "Tables Available", emoji: "🪑", items: availableNow, subtitle: "Reserve your table" },
+      ],
+      stargazing: [
+        { title: "Best Stargazing Decks", emoji: "🔭", items: topInCategory, subtitle: "Clear skies await" },
+        { title: "Tonight's Sky", emoji: "✨", items: availableNow, subtitle: "Perfect viewing conditions" },
+      ],
+      services: [
+        { title: "Top Rated Services", emoji: "⭐", items: topInCategory, subtitle: "Highest rated by guests" },
+        { title: "Available Now", emoji: "🟢", items: availableNow, subtitle: "Ready to book" },
+      ],
+    };
+
+    return sectionMap[activeCategory] || [];
+  }, [activeCategory]);
 
   return (
     <div className="pb-24 bg-mesh min-h-screen">
@@ -141,6 +186,32 @@ export default function HomeScreen({ onPropertyTap, onSearchTap }: HomeScreenPro
           </div>
         </div>
       )}
+
+      {/* Category-specific curated sections */}
+      {activeCategory !== "stays" && curatedSections.map((section, si) => (
+        section.items.length > 0 && (
+          <div key={si} className="mt-6">
+            <div className="flex items-center justify-between px-5 mb-3">
+              <div>
+                <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+                  <span>{section.emoji}</span> {section.title}
+                </h2>
+                {section.subtitle && (
+                  <p className="text-xs text-muted-foreground mt-0.5">{section.subtitle}</p>
+                )}
+              </div>
+              <button className="text-xs text-primary font-medium flex items-center gap-1">
+                View all <ArrowRight size={12} />
+              </button>
+            </div>
+            <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
+              {section.items.map((p, i) => (
+                <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} />
+              ))}
+            </div>
+          </div>
+        )
+      ))}
 
       {/* Filtered cards */}
       <div className="mt-7">
