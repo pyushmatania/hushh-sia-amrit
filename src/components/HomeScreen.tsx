@@ -27,6 +27,50 @@ export default function HomeScreen({ onPropertyTap, onSearchTap }: HomeScreenPro
   const topRated = useMemo(() => [...properties].sort((a, b) => b.rating - a.rating).slice(0, 4), []);
   const trendingNow = useMemo(() => properties.filter(p => p.slotsLeft > 0 && p.slotsLeft <= 3), []);
 
+  // Category-specific curated sections
+  const curatedSections = useMemo(() => {
+    const catProps = properties.filter(p => p.category.includes(activeCategory));
+    const topInCategory = [...catProps].sort((a, b) => b.rating - a.rating).slice(0, 4);
+    const availableNow = catProps.filter(p => p.slotsLeft > 0).slice(0, 4);
+
+    const sectionMap: Record<string, { title: string; emoji: string; items: Property[]; subtitle?: string }[]> = {
+      experiences: [
+        { title: "Popular Experiences", emoji: "🔥", items: topInCategory, subtitle: "Most loved by guests" },
+        { title: "Available This Week", emoji: "📅", items: availableNow, subtitle: "Book before slots fill up" },
+      ],
+      party: [
+        { title: "Weekend Party Picks", emoji: "🎉", items: topInCategory, subtitle: "Top celebration venues" },
+        { title: "Slots Open Now", emoji: "⚡", items: availableNow, subtitle: "Grab before they're gone" },
+      ],
+      bonfire: [
+        { title: "Best Bonfire Nights", emoji: "🔥", items: topInCategory, subtitle: "Under the stars" },
+        { title: "Tonight's Picks", emoji: "🌙", items: availableNow, subtitle: "Available for tonight" },
+      ],
+      pool: [
+        { title: "Top Pool Venues", emoji: "🏊", items: topInCategory, subtitle: "Dive right in" },
+        { title: "Open Slots", emoji: "💧", items: availableNow, subtitle: "Ready to splash" },
+      ],
+      movie: [
+        { title: "Best Movie Setups", emoji: "🎬", items: topInCategory, subtitle: "Cinema under the sky" },
+        { title: "Screen Tonight", emoji: "🍿", items: availableNow, subtitle: "Available for a movie night" },
+      ],
+      dining: [
+        { title: "Top Dining Spots", emoji: "🍽️", items: topInCategory, subtitle: "Fine dining experiences" },
+        { title: "Tables Available", emoji: "🪑", items: availableNow, subtitle: "Reserve your table" },
+      ],
+      stargazing: [
+        { title: "Best Stargazing Decks", emoji: "🔭", items: topInCategory, subtitle: "Clear skies await" },
+        { title: "Tonight's Sky", emoji: "✨", items: availableNow, subtitle: "Perfect viewing conditions" },
+      ],
+      services: [
+        { title: "Top Rated Services", emoji: "⭐", items: topInCategory, subtitle: "Highest rated by guests" },
+        { title: "Available Now", emoji: "🟢", items: availableNow, subtitle: "Ready to book" },
+      ],
+    };
+
+    return sectionMap[activeCategory] || [];
+  }, [activeCategory]);
+
   return (
     <div className="pb-24 bg-mesh min-h-screen">
 
