@@ -786,7 +786,7 @@ export const properties: Property[] = [
     name: "Outdoor Movie Amphitheater",
     description: "Giant screen · Bean bags · Popcorn bar",
     fullDescription: "Watch movies under the stars in this gorgeous open-air amphitheater! Featuring a 25-foot LED screen, plush bean bag seating for 30, a gourmet popcorn bar (caramel, cheese, masala), and surround sound. Pick from our curated list of Hollywood and Bollywood classics, or bring your own content. Perfect for friend groups, date nights, or family outings.",
-    images: [property3, property2, property1],
+    images: [listingMovieAmphitheater, property2, property1],
     rating: 4.7,
     reviewCount: 134,
     location: "Jeypore, Odisha",
