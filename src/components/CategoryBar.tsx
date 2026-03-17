@@ -34,26 +34,26 @@ const activeAnimations = {
   bounce: {
     y: [0, -6, 0, -3, 0],
     scale: [1, 1.1, 1, 1.05, 1],
-    transition: { duration: 0.6, ease: "easeOut" },
+    transition: { duration: 0.6, ease: "easeOut" as const },
   },
   wiggle: {
     rotate: [0, -8, 8, -5, 5, 0],
     scale: [1, 1.1, 1.1, 1.05, 1.05, 1],
-    transition: { duration: 0.6, ease: "easeOut" },
+    transition: { duration: 0.6, ease: "easeOut" as const },
   },
   pulse: {
     scale: [1, 1.15, 0.95, 1.08, 1],
-    transition: { duration: 0.5, ease: "easeOut" },
+    transition: { duration: 0.5, ease: "easeOut" as const },
   },
   spin: {
     rotate: [0, 15, -10, 5, 0],
     scale: [1, 1.1, 1.05, 1.08, 1],
-    transition: { duration: 0.6, ease: "easeOut" },
+    transition: { duration: 0.6, ease: "easeOut" as const },
   },
   float: {
     y: [0, -5, 0],
     scale: [1, 1.1, 1],
-    transition: { duration: 0.8, ease: "easeInOut" },
+    transition: { duration: 0.8, ease: "easeInOut" as const },
   },
 };
 
