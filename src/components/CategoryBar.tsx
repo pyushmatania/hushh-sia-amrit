@@ -214,7 +214,7 @@ interface CategoryBarProps {
 
 export default function CategoryBar({ active, onChange }: CategoryBarProps) {
   return (
-    <div className="border-b border-border bg-background">
+    <div className="glass">
       <div className="flex overflow-x-auto hide-scrollbar px-1">
         {categories.map((cat) => {
           const isActive = active === cat.id;
@@ -230,7 +230,7 @@ export default function CategoryBar({ active, onChange }: CategoryBarProps) {
                   <motion.span
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="absolute -top-1 -right-4 text-[7px] font-bold bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full leading-none tracking-wide"
+                    className="absolute -top-1 -right-4 text-[7px] font-bold bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full leading-none tracking-wide glow-sm"
                   >
                     {cat.badge}
                   </motion.span>
@@ -244,7 +244,7 @@ export default function CategoryBar({ active, onChange }: CategoryBarProps) {
               {isActive && (
                 <motion.div
                   layoutId="catUnderline"
-                  className="absolute bottom-0 left-2 right-2 h-[2px] bg-foreground rounded-full"
+                  className="absolute bottom-0 left-2 right-2 h-[2px] bg-primary rounded-full glow-sm"
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 />
               )}
