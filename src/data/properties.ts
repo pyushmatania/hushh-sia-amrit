@@ -748,7 +748,7 @@ export const properties: Property[] = [
     name: "River Rafting & Kayaking",
     description: "Kolab River · Guided rapids · Beginner friendly",
     fullDescription: "Get your adrenaline pumping with river rafting and kayaking on the scenic Kolab River! Grade 1-2 rapids perfect for beginners, guided by certified adventure instructors. Includes safety gear, life jackets, and a riverside snack break. The 2-hour journey passes through lush green gorges and tribal villages. An unforgettable adventure experience!",
-    images: [property1, property2, property3],
+    images: [listingRafting, property2, property3],
     rating: 4.5,
     reviewCount: 72,
     location: "Kolab River, Jeypore",
