@@ -441,7 +441,7 @@ export const properties: Property[] = [
     name: "Anniversary Garden",
     description: "Romantic garden · Candlelight · Live music",
     fullDescription: "Celebrate your love story in this enchanting private garden designed exclusively for couples. With rose petal pathways, floating candles, a candlelight dinner table for two, and optional live acoustic music — every anniversary becomes a memory to treasure forever. Includes complimentary champagne and a personalized love letter setup.",
-    images: [property2, property1, property3],
+    images: [listingAnniversaryGarden, property1, property3],
     rating: 4.9,
     reviewCount: 145,
     location: "Jeypore, Odisha",
