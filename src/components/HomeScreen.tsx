@@ -5,7 +5,7 @@ import PropertyCard from "./PropertyCard";
 import PropertyCardSmall from "./PropertyCardSmall";
 import PackageCard from "./PackageCard";
 import { properties, packages, type Property } from "@/data/properties";
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo } from "react";
 import property1 from "@/assets/property-1.jpg";
 import property2 from "@/assets/property-2.jpg";
 import property3 from "@/assets/property-3.jpg";
