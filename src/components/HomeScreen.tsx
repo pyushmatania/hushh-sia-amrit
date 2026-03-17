@@ -1,4 +1,4 @@
-import { motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { motion } from "framer-motion";
 import { Search, ArrowRight, Sparkles, Bell, TrendingUp, Clock, MapPin } from "lucide-react";
 import CategoryBar from "./CategoryBar";
 import PropertyCard from "./PropertyCard";
