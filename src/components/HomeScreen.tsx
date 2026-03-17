@@ -29,6 +29,11 @@ export default function HomeScreen({ onPropertyTap, onSearchTap }: HomeScreenPro
 
   return (
     <div className="pb-24 bg-mesh min-h-screen">
+      {/* Category Bar */}
+      <div className="sticky top-0 z-20">
+        <CategoryBar active={activeCategory} onChange={setActiveCategory} />
+      </div>
+
       {/* Header */}
       <div className="px-5 pt-5 pb-2 flex items-center justify-between">
         <motion.div
@@ -154,10 +159,6 @@ export default function HomeScreen({ onPropertyTap, onSearchTap }: HomeScreenPro
         </div>
       </div>
 
-      {/* Category Bar */}
-      <div className="sticky top-0 z-20">
-        <CategoryBar active={activeCategory} onChange={setActiveCategory} />
-      </div>
 
       {/* Trending Now */}
       {trendingNow.length > 0 && (
