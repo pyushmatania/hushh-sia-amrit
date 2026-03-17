@@ -194,7 +194,7 @@ export const properties: Property[] = [
     hostName: "Nisha R.",
     hostSince: "2022",
     responseRate: "97%",
-    category: ["couples", "dining", "party"],
+    category: ["stays", "couples", "dining", "party"],
     highlights: ["360° panoramic city views", "Curated cocktail menu with mixologist", "Designer Italian furniture", "Ambient warm string lighting"],
     rules: [
       { icon: "🕐", text: "Check-in at slot start time" },
