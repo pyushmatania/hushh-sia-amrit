@@ -221,28 +221,26 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
 
         {/* Date picker */}
         <h3 className="text-lg font-semibold text-foreground mb-3">Select a date</h3>
-        <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
-          {dates.map((date, i) => {
-            const isToday = i === 0;
-            const isSelected = selectedDate === i;
-            return (
-              <button
-                key={i}
-                onClick={() => setSelectedDate(i)}
-                className={`shrink-0 flex flex-col items-center w-[52px] py-2 rounded-full transition-all border ${
-                  isSelected
-                    ? "bg-foreground text-background border-foreground"
-                    : "border-border text-foreground hover:border-foreground"
-                }`}
-              >
-                <span className="text-[10px] uppercase opacity-60 font-medium">
-                  {isToday ? "Today" : date.toLocaleDateString("en-IN", { weekday: "short" })}
-                </span>
-                <span className="text-lg font-semibold">{date.getDate()}</span>
-              </button>
-            );
-          })}
-        </div>
+        <Popover>
+          <PopoverTrigger asChild>
+            <button className="w-full flex items-center gap-3 rounded-2xl border border-border px-4 py-3.5 text-left transition-all hover:border-foreground/40">
+              <CalendarIcon size={18} className="text-primary shrink-0" />
+              <span className="text-sm font-medium text-foreground">
+                {format(selectedDate, "EEEE, d MMMM yyyy")}
+              </span>
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={(d) => d && setSelectedDate(d)}
+              disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+              initialFocus
+              className={cn("p-3 pointer-events-auto")}
+            />
+          </PopoverContent>
+        </Popover>
 
         <div className="border-b border-border my-5" />
 
