@@ -62,7 +62,7 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
       <div className="relative aspect-[4/3]">
         <img src={property.images[imgIndex]} alt={property.name} className="w-full h-full object-cover" />
         <div className="absolute top-0 left-0 right-0 flex justify-between items-center p-4">
-          <button onClick={onBack} className="w-9 h-9 rounded-full bg-background flex items-center justify-center shadow-md">
+          <button onClick={onBack} className="w-9 h-9 rounded-full glass flex items-center justify-center">
             <ArrowLeft size={18} className="text-foreground" />
           </button>
           <div className="flex gap-2">
