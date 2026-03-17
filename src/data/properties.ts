@@ -314,7 +314,7 @@ export const properties: Property[] = [
     hostName: "Lisa D.",
     hostSince: "2023",
     responseRate: "100%",
-    category: ["karaoke", "party"],
+    category: ["experiences", "party", "services"],
     highlights: ["2000+ songs in 4 languages", "Instagram-worthy neon photo booth", "Unlimited nachos & soft drinks", "Costumes & props for photo ops"],
     rules: [
       { icon: "🕐", text: "Arrive 10 mins early for setup" },
