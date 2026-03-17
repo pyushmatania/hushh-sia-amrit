@@ -113,7 +113,7 @@ export const properties: Property[] = [
     hostName: "Sneha T.",
     hostSince: "2022",
     responseRate: "95%",
-    category: ["family", "stargazing", "dining"],
+    category: ["stays", "family", "stargazing", "dining"],
     highlights: ["360° stargazing deck with telescope", "Farm-to-table dining experience", "Organic herb garden walk", "Hammock lounge under banyan tree"],
     rules: [
       { icon: "🕐", text: "Check-in at slot start time" },
