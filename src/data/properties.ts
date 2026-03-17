@@ -671,7 +671,7 @@ export const properties: Property[] = [
     name: "Haldi & Mehndi Lawn",
     description: "Pre-wedding venue · Floral décor · DJ & Dhol",
     fullDescription: "The perfect pre-wedding celebration venue! A lush green lawn with floral arches, marigold shower setup, professional Dhol players, and a dedicated Mehndi artist corner. Includes a Haldi ceremony platform, photo booth with ethnic props, and catering for traditional snacks. Make your pre-wedding celebrations Instagram-worthy!",
-    images: [property2, property1, property3],
+    images: [listingHaldiMehndi, property1, property3],
     rating: 4.6,
     reviewCount: 78,
     location: "Jeypore, Odisha",
