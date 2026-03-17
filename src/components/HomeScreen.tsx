@@ -10,9 +10,10 @@ import property1 from "@/assets/property-1.jpg";
 
 interface HomeScreenProps {
   onPropertyTap: (property: Property) => void;
+  onSearchTap?: () => void;
 }
 
-export default function HomeScreen({ onPropertyTap }: HomeScreenProps) {
+export default function HomeScreen({ onPropertyTap, onSearchTap }: HomeScreenProps) {
   const [activeCategory, setActiveCategory] = useState("stays");
 
   return (
@@ -23,6 +24,7 @@ export default function HomeScreen({ onPropertyTap }: HomeScreenProps) {
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-3 rounded-full border border-border bg-background px-5 py-3 shadow-[0_3px_12px_rgba(0,0,0,0.08)] cursor-pointer"
+          onClick={onSearchTap}
         >
           <Search size={18} className="text-foreground shrink-0" />
           <span className="text-sm font-medium text-foreground">Start your search</span>
