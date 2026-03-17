@@ -7,6 +7,7 @@ import iconPool from "@/assets/icon-pool.png";
 import iconParty from "@/assets/icon-party.png";
 import iconMovie from "@/assets/icon-movie.png";
 import iconDining from "@/assets/icon-dining.png";
+import iconStargazing from "@/assets/icon-stargazing.png";
 
 interface Category {
   id: string;
@@ -21,9 +22,10 @@ const categories: Category[] = [
   { id: "services", label: "Services", icon: iconServices, badge: "NEW" },
   { id: "bonfire", label: "Bonfire", icon: iconBonfire },
   { id: "pool", label: "Pool", icon: iconPool },
-  { id: "party", label: "Party", icon: iconParty },
+  { id: "party", label: "Celebrate", icon: iconParty },
   { id: "movie", label: "Movie", icon: iconMovie },
   { id: "dining", label: "Dining", icon: iconDining },
+  { id: "stargazing", label: "Stargazing", icon: iconStargazing },
 ];
 
 interface CategoryBarProps {
@@ -33,31 +35,39 @@ interface CategoryBarProps {
 
 export default function CategoryBar({ active, onChange }: CategoryBarProps) {
   return (
-    <div className="border-b border-border">
-      <div className="flex overflow-x-auto hide-scrollbar">
+    <div className="border-b border-border bg-background">
+      <div className="flex overflow-x-auto hide-scrollbar px-2">
         {categories.map((cat) => {
           const isActive = active === cat.id;
           return (
             <button
               key={cat.id}
               onClick={() => onChange(cat.id)}
-              className="relative flex flex-col items-center gap-1 px-5 pt-2 pb-3 shrink-0 group"
+              className="relative flex flex-col items-center gap-1 px-4 pt-3 pb-3 shrink-0 group min-w-[72px]"
             >
               <div className="relative">
-                <img
+                <motion.img
                   src={cat.icon}
                   alt={cat.label}
-                  className={`w-7 h-7 object-contain transition-opacity ${
-                    isActive ? "opacity-100" : "opacity-60 group-hover:opacity-80"
-                  }`}
+                  className="w-10 h-10 object-contain"
+                  style={{
+                    opacity: isActive ? 1 : 0.55,
+                    filter: isActive ? "none" : "grayscale(30%)",
+                  }}
+                  whileTap={{ scale: 1.15, rotate: [0, -5, 5, 0] }}
+                  animate={isActive ? {
+                    scale: [1, 1.08, 1],
+                    transition: { duration: 0.3 }
+                  } : {}}
+                  transition={{ type: "spring", stiffness: 400, damping: 15 }}
                 />
                 {cat.badge && (
-                  <span className="absolute -top-1.5 -right-4 text-[8px] font-bold bg-muted-foreground text-background px-1.5 py-0.5 rounded-full leading-none">
+                  <span className="absolute -top-1 -right-5 text-[7px] font-bold bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full leading-none tracking-wide">
                     {cat.badge}
                   </span>
                 )}
               </div>
-              <span className={`text-[11px] font-medium whitespace-nowrap transition-colors ${
+              <span className={`text-[10px] font-medium whitespace-nowrap transition-colors duration-200 ${
                 isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground/70"
               }`}>
                 {cat.label}
