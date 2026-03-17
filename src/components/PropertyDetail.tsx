@@ -79,7 +79,7 @@ const amenityIconMap: Record<string, React.ReactNode> = {
 interface PropertyDetailProps {
   property: Property;
   onBack: () => void;
-  onBook: (property: Property, slotId: string, guests: number) => void;
+  onBook: (property: Property, slotId: string, guests: number, date: Date) => void;
 }
 
 export default function PropertyDetail({ property, onBack, onBook }: PropertyDetailProps) {
