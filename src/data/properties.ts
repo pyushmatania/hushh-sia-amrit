@@ -780,7 +780,7 @@ export const properties: Property[] = [
     hostName: "Chetan M.",
     hostSince: "2022",
     responseRate: "97%",
-    category: ["movie", "experiences", "couples"],
+    category: ["experiences", "movie", "couples"],
     highlights: ["25-foot outdoor LED screen", "Gourmet popcorn bar with 5 flavors", "Premium bean bag + blanket combo", "BYO content or pick from 200+ titles"],
     rules: [
       { icon: "🕐", text: "Gates open 30 mins before showtime" },
