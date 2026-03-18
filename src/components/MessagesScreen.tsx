@@ -121,7 +121,6 @@ function RealtimeChatView({
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { supabase } = require("@/integrations/supabase/client");
 
   // Load messages & mark read
   useEffect(() => {
