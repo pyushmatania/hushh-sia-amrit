@@ -22,6 +22,8 @@ const steps = ["Basics", "Photos", "Details", "Amenities", "Review"];
 export default function CreateListingScreen({ onBack, onSubmit, initialData }: CreateListingScreenProps) {
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  const { uploadImage, deleteImage, uploading } = useImageUpload();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState({
     name: initialData?.name ?? "",
     description: initialData?.description ?? "",
