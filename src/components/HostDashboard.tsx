@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import {
   Plus, Home, TrendingUp, Eye, IndianRupee,
-  MoreVertical, Pencil, Trash2, Pause, Play, ArrowLeft
+  MoreVertical, Pencil, Trash2, Pause, Play, ArrowLeft, BarChart3
 } from "lucide-react";
 import { useState } from "react";
 import type { HostListing } from "@/hooks/use-host-listings";
