@@ -69,21 +69,20 @@ export default function Index() {
 
   const handleCheckoutConfirm = useCallback(
     (property: Property, slotId: string, guests: number, date: Date) =>
-      (finalTotal: number) => {
-        const newBooking: Booking = {
-          id: String(Date.now()),
+      async (finalTotal: number) => {
+        const bookingData = {
           propertyId: property.id,
           date: date.toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" }),
           slot: `${property.slots.find(s => s.id === slotId)?.label} · ${property.slots.find(s => s.id === slotId)?.time}`,
           guests,
           total: finalTotal,
-          status: "upcoming",
+          status: "upcoming" as const,
           bookingId: `HUSHH-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
         };
-        setBookings(prev => [newBooking, ...prev]);
+        await createBooking(bookingData);
         setScreen({ type: "confirmation", property, slotId, guests, date, total: finalTotal });
       },
-    []
+    [createBooking]
   );
 
   const handleDone = useCallback(() => {
