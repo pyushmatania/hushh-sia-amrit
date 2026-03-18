@@ -279,7 +279,7 @@ export default function Index() {
       </AnimatePresence>
 
       {showBottomNav && (
-        <BottomNav active={activeTab} onChange={setActiveTab} />
+        <BottomNav active={activeTab} onChange={setActiveTab} messageBadge={unreadCount} />
       )}
     </div>
   );
