@@ -13,6 +13,7 @@ import connectionsImg from "@/assets/connections-card.png";
 import becomeHostImg from "@/assets/become-host.png";
 import EditProfileSheet from "./EditProfileSheet";
 import SettingsSheet from "./SettingsSheet";
+import LoyaltyScreen from "./LoyaltyScreen";
 
 const themeOptions = [
   { id: "light" as const, label: "Light", icon: Sun },
