@@ -13,6 +13,7 @@ interface HostDashboardProps {
   onDeleteListing: (id: string) => void;
   onToggleStatus: (id: string, status: "published" | "paused") => void;
   onBack: () => void;
+  onAnalytics: () => void;
 }
 
 const stats = [
