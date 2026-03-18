@@ -55,7 +55,7 @@ export default function WishlistScreen({ wishlist, onToggleWishlist, onPropertyT
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.08 }}
-              className="rounded-2xl border border-border overflow-hidden cursor-pointer"
+              className="rounded-2xl border border-border overflow-hidden cursor-pointer active:scale-[0.98] transition-transform"
               onClick={() => onPropertyTap(property)}
             >
               <div className="relative aspect-[16/9]">
