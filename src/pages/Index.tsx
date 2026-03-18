@@ -44,14 +44,10 @@ export default function Index() {
   const [showSplash, setShowSplash] = useState(true);
   const [activeTab, setActiveTab] = useState("home");
   const [screen, setScreen] = useState<Screen>({ type: "home" });
-  const [wishlist, setWishlist] = useState<string[]>([]);
   const [showSearch, setShowSearch] = useState(false);
   const [showMap, setShowMap] = useState(false);
-  const [bookings, setBookings] = useState<Booking[]>([]);
-
-  const toggleWishlist = useCallback((id: string) => {
-    setWishlist((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
-  }, []);
+  const { wishlist, toggleWishlist } = useWishlists();
+  const { bookings, createBooking, cancelBooking } = useBookings();
 
   const handlePropertyTap = useCallback((property: Property) => {
     setShowSearch(false);
