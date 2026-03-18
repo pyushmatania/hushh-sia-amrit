@@ -178,23 +178,34 @@ export default function AuthScreen() {
             />
           </div>
 
-          <div className="relative">
-            <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/50" />
-            <input
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              type={showPassword ? "text" : "password"}
-              placeholder="Password"
-              onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-              className="w-full bg-white/10 backdrop-blur-md border border-white/10 rounded-xl pl-12 pr-12 py-3.5 text-sm text-foreground placeholder:text-foreground/40 outline-none focus:ring-1 focus:ring-primary/40"
-            />
+          {mode !== "forgot" && (
+            <div className="relative">
+              <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/50" />
+              <input
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+                className="w-full bg-white/10 backdrop-blur-md border border-white/10 rounded-xl pl-12 pr-12 py-3.5 text-sm text-foreground placeholder:text-foreground/40 outline-none focus:ring-1 focus:ring-primary/40"
+              />
+              <button
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground/50"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+          )}
+
+          {mode === "login" && (
             <button
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground/50"
+              onClick={() => { setMode("forgot"); setError(""); }}
+              className="text-xs text-primary font-medium self-end -mt-1"
             >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              Forgot password?
             </button>
-          </div>
+          )}
 
           {error && (
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-xs text-destructive font-medium px-1">
