@@ -285,8 +285,8 @@ export default function CreateListingScreen({ onBack, onSubmit, initialData }: C
             </motion.div>
           )}
 
-          {step === 2 && (
-            <motion.div key="step2" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}>
+          {step === 3 && (
+            <motion.div key="step3" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}>
               <label className="text-sm font-medium text-foreground mb-3 block">Select amenities</label>
               <div className="flex flex-wrap gap-2">
                 {amenityOptions.map((amenity) => {
