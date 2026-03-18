@@ -3,11 +3,12 @@ import {
   ChevronRight, Bell, Settings, HelpCircle, LogOut,
   Shield, Gift, Star, Sun, Moon, Monitor, BadgeCheck,
   CreditCard, Globe, Accessibility, FileText, Heart,
-  Award, Zap, Calendar, TrendingUp, Crown, Pencil
+  Award, Zap, Calendar, TrendingUp, Crown, Pencil, LogIn
 } from "lucide-react";
 import { useState, useCallback } from "react";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
+import AuthScreen from "./AuthScreen";
 import profileAvatar from "@/assets/profile-avatar.png";
 import pastTripsImg from "@/assets/past-trips-card.png";
 import connectionsImg from "@/assets/connections-card.png";
@@ -55,11 +56,12 @@ interface ProfileScreenProps {
 export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
   const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
+  const [showAuth, setShowAuth] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [activeSetting, setActiveSetting] = useState("");
   const [showLoyalty, setShowLoyalty] = useState(false);
   const [profile, setProfile] = useState({
-    name: user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User",
+    name: user?.user_metadata?.full_name || "Guest Explorer",
     location: "Jeypore, India",
     bio: "Explorer of hidden gems 🌿 Love bonfires, stargazing, and good coffee.",
   });
@@ -71,6 +73,21 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
   const handleSettingTap = useCallback((key: string) => {
     if (key) setActiveSetting(key);
   }, []);
+
+  // Show auth screen as overlay
+  if (showAuth) {
+    return (
+      <div className="min-h-screen relative">
+        <AuthScreen />
+        <button
+          onClick={() => setShowAuth(false)}
+          className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white text-sm font-medium"
+        >
+          ✕
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="pb-24 bg-mesh min-h-screen">
@@ -351,9 +368,15 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
         transition={{ delay: 0.4 }}
         className="mx-5 mt-4 mb-4"
       >
-        <button onClick={signOut} className="w-full flex items-center justify-center gap-2 py-3 text-sm font-medium text-foreground underline underline-offset-4">
-          <LogOut size={16} /> Log out
-        </button>
+        {user ? (
+          <button onClick={signOut} className="w-full flex items-center justify-center gap-2 py-3 text-sm font-medium text-foreground underline underline-offset-4">
+            <LogOut size={16} /> Log out
+          </button>
+        ) : (
+          <button onClick={() => setShowAuth(true)} className="w-full flex items-center justify-center gap-2 py-3 text-sm font-semibold text-primary">
+            <LogIn size={16} /> Sign in / Sign up
+          </button>
+        )}
       </motion.div>
 
       {/* Version */}

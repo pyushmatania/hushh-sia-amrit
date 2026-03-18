@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { AnimatePresence } from "framer-motion";
 import SplashScreen from "@/components/SplashScreen";
-import AuthScreen from "@/components/AuthScreen";
+
 import BottomNav from "@/components/BottomNav";
 import HomeScreen from "@/components/HomeScreen";
 import PropertyDetail from "@/components/PropertyDetail";
@@ -131,10 +131,6 @@ export default function Index() {
 
   if (showSplash) {
     return <SplashScreen onComplete={() => setShowSplash(false)} />;
-  }
-
-  if (!loading && !user) {
-    return <AuthScreen />;
   }
 
   if (loading) {
