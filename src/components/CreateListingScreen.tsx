@@ -17,7 +17,7 @@ const amenityOptions = [
   "Projector", "Board Games", "Gym", "Spa", "Rooftop"
 ];
 
-const steps = ["Basics", "Details", "Amenities", "Review"];
+const steps = ["Basics", "Photos", "Details", "Amenities", "Review"];
 
 export default function CreateListingScreen({ onBack, onSubmit, initialData }: CreateListingScreenProps) {
   const [step, setStep] = useState(0);
