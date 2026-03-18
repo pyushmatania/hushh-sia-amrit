@@ -310,9 +310,16 @@ export default function CreateListingScreen({ onBack, onSubmit, initialData }: C
             </motion.div>
           )}
 
-          {step === 3 && (
-            <motion.div key="step3" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}>
+          {step === 4 && (
+            <motion.div key="step4" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}>
               <div className="glass rounded-2xl p-5 space-y-4">
+                {form.imageUrls.length > 0 && (
+                  <div className="flex gap-2 overflow-x-auto hide-scrollbar -mx-1 pb-2">
+                    {form.imageUrls.map((url, i) => (
+                      <img key={url} src={url} alt={`Photo ${i + 1}`} className="w-24 h-24 rounded-xl object-cover shrink-0" />
+                    ))}
+                  </div>
+                )}
                 <h3 className="text-lg font-bold text-foreground">{form.name || "Untitled"}</h3>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
                   <span className="bg-secondary px-3 py-1 rounded-full text-xs font-medium">{form.category}</span>
@@ -328,6 +335,10 @@ export default function CreateListingScreen({ onBack, onSubmit, initialData }: C
                     <p className="text-muted-foreground">Capacity</p>
                     <p className="font-semibold text-foreground">{form.capacity} guests</p>
                   </div>
+                </div>
+                <div className="border-t border-border pt-3">
+                  <p className="text-sm text-muted-foreground mb-1">Photos</p>
+                  <p className="text-sm font-medium text-foreground">{form.imageUrls.length} photo{form.imageUrls.length !== 1 ? "s" : ""}</p>
                 </div>
                 {form.amenities.length > 0 && (
                   <div className="border-t border-border pt-3">
