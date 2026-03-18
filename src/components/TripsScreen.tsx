@@ -33,6 +33,67 @@ const statusConfig: Record<string, { gradient: string; glow: string; label: stri
   },
 };
 
+function SwipeableCard({
+  booking,
+  index,
+  onViewDetail,
+  onRebook,
+  onCancel,
+}: {
+  booking: Booking;
+  index: number;
+  onViewDetail: (b: Booking) => void;
+  onRebook: (id: string) => void;
+  onCancel?: (id: string) => void;
+}) {
+  const controls = useAnimation();
+  const swipeX = useMotionValue(0);
+  const bgOpacity = useTransform(swipeX, [-150, -80, 0], [1, 0.8, 0]);
+  const bgScale = useTransform(swipeX, [-150, -80, 0], [1, 0.9, 0.8]);
+  const canSwipe = booking.status === "upcoming" && !!onCancel;
+
+  const handleDragEnd = async (_: any, info: PanInfo) => {
+    if (!canSwipe) {
+      controls.start({ x: 0 });
+      return;
+    }
+    if (info.offset.x < -120) {
+      await controls.start({ x: -400, opacity: 0, transition: { duration: 0.3 } });
+      onCancel!(booking.id);
+    } else {
+      controls.start({ x: 0 });
+    }
+  };
+
+  return (
+    <div className="relative overflow-hidden rounded-3xl">
+      {/* Cancel background */}
+      {canSwipe && (
+        <motion.div
+          className="absolute inset-0 bg-destructive/90 rounded-3xl flex items-center justify-end pr-8"
+          style={{ opacity: bgOpacity, scale: bgScale }}
+        >
+          <div className="flex flex-col items-center gap-1 text-white">
+            <X size={24} />
+            <span className="text-xs font-semibold">Cancel</span>
+          </div>
+        </motion.div>
+      )}
+
+      <motion.div
+        animate={controls}
+        style={{ x: swipeX }}
+        drag={canSwipe ? "x" : false}
+        dragConstraints={{ left: -150, right: 0 }}
+        dragElastic={0.1}
+        onDragEnd={handleDragEnd}
+      >
+        <TiltCard booking={booking} index={index} onViewDetail={onViewDetail} onRebook={onRebook} />
+      </motion.div>
+    </div>
+  );
+}
+
 function TiltCard({
   booking,
   index,
