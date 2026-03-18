@@ -111,6 +111,22 @@ export default function Index() {
     }
   }, []);
 
+  const handleOpenHostDashboard = useCallback(() => {
+    setScreen({ type: "hostDashboard" });
+  }, []);
+
+  const handleCreateListingSubmit = useCallback(
+    async (listing: Omit<import("@/hooks/use-host-listings").HostListing, "id" | "createdAt">) => {
+      if (screen.type === "createListing" && screen.editListing) {
+        await updateListing(screen.editListing.id, listing);
+      } else {
+        await createListing(listing);
+      }
+      setScreen({ type: "hostDashboard" });
+    },
+    [screen, createListing, updateListing]
+  );
+
   if (showSplash) {
     return <SplashScreen onComplete={() => setShowSplash(false)} />;
   }
