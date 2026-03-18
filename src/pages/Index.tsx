@@ -133,10 +133,6 @@ export default function Index() {
     return <SplashScreen onComplete={() => setShowSplash(false)} />;
   }
 
-  if (!loading && !user) {
-    return <AuthScreen />;
-  }
-
   if (loading) {
     return <div className="min-h-screen bg-background" />;
   }
