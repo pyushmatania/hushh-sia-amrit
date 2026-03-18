@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { useState, useCallback } from "react";
 import { useTheme } from "@/hooks/use-theme";
+import { useAuth } from "@/hooks/use-auth";
 import profileAvatar from "@/assets/profile-avatar.png";
 import pastTripsImg from "@/assets/past-trips-card.png";
 import connectionsImg from "@/assets/connections-card.png";
