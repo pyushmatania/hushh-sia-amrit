@@ -346,7 +346,7 @@ export default function ProfileScreen() {
         transition={{ delay: 0.4 }}
         className="mx-5 mt-4 mb-4"
       >
-        <button className="w-full flex items-center justify-center gap-2 py-3 text-sm font-medium text-foreground underline underline-offset-4">
+        <button onClick={signOut} className="w-full flex items-center justify-center gap-2 py-3 text-sm font-medium text-foreground underline underline-offset-4">
           <LogOut size={16} /> Log out
         </button>
       </motion.div>
