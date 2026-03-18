@@ -308,5 +308,6 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap }: Hom
         <span className="text-sm font-medium text-foreground">Prices include all fees · No hidden charges</span>
       </motion.div>
     </div>
+    </PullToRefresh>
   );
 }
