@@ -289,6 +289,16 @@ export default function Index() {
         )}
       </AnimatePresence>
 
+      {/* Notification Center overlay */}
+      <AnimatePresence>
+        {showNotifications && (
+          <NotificationCenter
+            key="notifications"
+            onBack={() => setShowNotifications(false)}
+          />
+        )}
+      </AnimatePresence>
+
       {showBottomNav && (
         <BottomNav active={activeTab} onChange={setActiveTab} messageBadge={unreadCount} />
       )}
