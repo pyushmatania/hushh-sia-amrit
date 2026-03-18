@@ -1,0 +1,280 @@
+import { motion, AnimatePresence } from "framer-motion";
+import { X, ChevronLeft, Bell, Shield, Globe, Accessibility, Moon } from "lucide-react";
+import { useState } from "react";
+
+interface SettingsSheetProps {
+  open: boolean;
+  onClose: () => void;
+  settingType: string;
+}
+
+function ToggleSwitch({ enabled, onChange }: { enabled: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <button
+      onClick={() => onChange(!enabled)}
+      className={`relative w-11 h-6 rounded-full transition-colors ${enabled ? "bg-primary" : "bg-muted"}`}
+    >
+      <motion.div
+        animate={{ x: enabled ? 20 : 2 }}
+        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+        className="absolute top-1 w-4 h-4 rounded-full bg-foreground"
+      />
+    </button>
+  );
+}
+
+function NotificationSettings() {
+  const [settings, setSettings] = useState({
+    bookingUpdates: true,
+    promotions: true,
+    reminders: true,
+    chatMessages: true,
+    emailDigest: false,
+    sound: true,
+  });
+
+  const toggle = (key: keyof typeof settings) =>
+    setSettings((s) => ({ ...s, [key]: !s[key] }));
+
+  const items = [
+    { key: "bookingUpdates" as const, label: "Booking updates", desc: "Confirmations, cancellations, changes" },
+    { key: "promotions" as const, label: "Promotions & deals", desc: "Special offers and discounts" },
+    { key: "reminders" as const, label: "Trip reminders", desc: "Upcoming visit notifications" },
+    { key: "chatMessages" as const, label: "Chat messages", desc: "Support and host messages" },
+    { key: "emailDigest" as const, label: "Weekly email digest", desc: "Summary of activity and deals" },
+    { key: "sound" as const, label: "Notification sound", desc: "Play sound for new notifications" },
+  ];
+
+  return (
+    <div className="space-y-1">
+      {items.map((item, i) => (
+        <motion.div
+          key={item.key}
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: i * 0.04 }}
+          className="flex items-center justify-between py-4 border-b border-border last:border-0"
+        >
+          <div className="flex-1 min-w-0 pr-4">
+            <p className="text-sm font-medium text-foreground">{item.label}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
+          </div>
+          <ToggleSwitch enabled={settings[item.key]} onChange={() => toggle(item.key)} />
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
+function SecuritySettings() {
+  const items = [
+    { label: "Change password", desc: "Update your account password", action: true },
+    { label: "Two-factor authentication", desc: "Add an extra layer of security", toggle: false },
+    { label: "Active sessions", desc: "1 device logged in", action: true },
+    { label: "Login history", desc: "View recent login activity", action: true },
+  ];
+
+  const [twoFa, setTwoFa] = useState(false);
+
+  return (
+    <div className="space-y-1">
+      {items.map((item, i) => (
+        <motion.div
+          key={item.label}
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: i * 0.04 }}
+          className="flex items-center justify-between py-4 border-b border-border last:border-0"
+        >
+          <div className="flex-1 min-w-0 pr-4">
+            <p className="text-sm font-medium text-foreground">{item.label}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
+          </div>
+          {item.label === "Two-factor authentication" ? (
+            <ToggleSwitch enabled={twoFa} onChange={setTwoFa} />
+          ) : (
+            <ChevronLeft size={16} className="text-muted-foreground rotate-180" />
+          )}
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
+function LanguageSettings() {
+  const [lang, setLang] = useState("en");
+  const [currency, setCurrency] = useState("inr");
+
+  const languages = [
+    { id: "en", label: "English", native: "English" },
+    { id: "hi", label: "Hindi", native: "हिन्दी" },
+    { id: "od", label: "Odia", native: "ଓଡ଼ିଆ" },
+    { id: "te", label: "Telugu", native: "తెలుగు" },
+  ];
+
+  const currencies = [
+    { id: "inr", label: "₹ INR", desc: "Indian Rupee" },
+    { id: "usd", label: "$ USD", desc: "US Dollar" },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Language</h4>
+        <div className="space-y-1">
+          {languages.map((l) => (
+            <button
+              key={l.id}
+              onClick={() => setLang(l.id)}
+              className={`w-full flex items-center justify-between py-3 px-4 rounded-xl transition-all ${
+                lang === l.id ? "bg-primary/10 border border-primary/30" : "border border-transparent"
+              }`}
+            >
+              <div className="text-left">
+                <p className="text-sm font-medium text-foreground">{l.label}</p>
+                <p className="text-xs text-muted-foreground">{l.native}</p>
+              </div>
+              {lang === l.id && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="w-5 h-5 rounded-full bg-primary flex items-center justify-center"
+                >
+                  <div className="w-2 h-2 rounded-full bg-primary-foreground" />
+                </motion.div>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Currency</h4>
+        <div className="space-y-1">
+          {currencies.map((c) => (
+            <button
+              key={c.id}
+              onClick={() => setCurrency(c.id)}
+              className={`w-full flex items-center justify-between py-3 px-4 rounded-xl transition-all ${
+                currency === c.id ? "bg-primary/10 border border-primary/30" : "border border-transparent"
+              }`}
+            >
+              <div className="text-left">
+                <p className="text-sm font-medium text-foreground">{c.label}</p>
+                <p className="text-xs text-muted-foreground">{c.desc}</p>
+              </div>
+              {currency === c.id && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="w-5 h-5 rounded-full bg-primary flex items-center justify-center"
+                >
+                  <div className="w-2 h-2 rounded-full bg-primary-foreground" />
+                </motion.div>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AccessibilitySettings() {
+  const [settings, setSettings] = useState({
+    reduceMotion: false,
+    highContrast: false,
+    largeText: false,
+    screenReader: true,
+  });
+
+  const toggle = (key: keyof typeof settings) =>
+    setSettings((s) => ({ ...s, [key]: !s[key] }));
+
+  const items = [
+    { key: "reduceMotion" as const, label: "Reduce motion", desc: "Minimize animations and transitions" },
+    { key: "highContrast" as const, label: "High contrast", desc: "Increase color contrast for better visibility" },
+    { key: "largeText" as const, label: "Larger text", desc: "Increase font sizes throughout the app" },
+    { key: "screenReader" as const, label: "Screen reader support", desc: "Optimize for assistive technology" },
+  ];
+
+  return (
+    <div className="space-y-1">
+      {items.map((item, i) => (
+        <motion.div
+          key={item.key}
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: i * 0.04 }}
+          className="flex items-center justify-between py-4 border-b border-border last:border-0"
+        >
+          <div className="flex-1 min-w-0 pr-4">
+            <p className="text-sm font-medium text-foreground">{item.label}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
+          </div>
+          <ToggleSwitch enabled={settings[item.key]} onChange={() => toggle(item.key)} />
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
+const settingTitles: Record<string, string> = {
+  notifications: "Notifications",
+  security: "Login & Security",
+  language: "Language & Region",
+  accessibility: "Accessibility",
+};
+
+const settingIcons: Record<string, typeof Bell> = {
+  notifications: Bell,
+  security: Shield,
+  language: Globe,
+  accessibility: Accessibility,
+};
+
+export default function SettingsSheet({ open, onClose, settingType }: SettingsSheetProps) {
+  const Icon = settingIcons[settingType] || Bell;
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="fixed inset-0 bg-black/60 z-50"
+          />
+          <motion.div
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", damping: 28, stiffness: 300 }}
+            className="fixed inset-x-0 bottom-0 z-50 bg-background rounded-t-3xl max-h-[85vh] overflow-y-auto"
+          >
+            <div className="flex justify-center pt-3 pb-1">
+              <div className="w-10 h-1 rounded-full bg-muted" />
+            </div>
+
+            <div className="flex items-center gap-3 px-5 py-3 border-b border-border">
+              <button onClick={onClose} className="text-muted-foreground">
+                <X size={22} />
+              </button>
+              <Icon size={18} className="text-primary" />
+              <h2 className="text-base font-bold text-foreground">{settingTitles[settingType] || "Settings"}</h2>
+            </div>
+
+            <div className="px-5 py-4 pb-8">
+              {settingType === "notifications" && <NotificationSettings />}
+              {settingType === "security" && <SecuritySettings />}
+              {settingType === "language" && <LanguageSettings />}
+              {settingType === "accessibility" && <AccessibilitySettings />}
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
