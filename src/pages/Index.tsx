@@ -204,6 +204,17 @@ export default function Index() {
         )}
       </AnimatePresence>
 
+      {/* Map overlay */}
+      <AnimatePresence>
+        {showMap && (
+          <MapViewScreen
+            key="map"
+            onPropertyTap={(p) => { setShowMap(false); handlePropertyTap(p); }}
+            onClose={() => setShowMap(false)}
+          />
+        )}
+      </AnimatePresence>
+
       {showBottomNav && (
         <BottomNav active={activeTab} onChange={setActiveTab} />
       )}
