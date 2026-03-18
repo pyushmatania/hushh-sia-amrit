@@ -3,6 +3,7 @@ import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Sparkles } from "lucide-reac
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { lovable } from "@/integrations/lovable/index";
+import authBg from "@/assets/auth-bg-night.jpg";
 
 export default function AuthScreen() {
   const [mode, setMode] = useState<"login" | "signup">("login");
