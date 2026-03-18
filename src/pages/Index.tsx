@@ -105,7 +105,7 @@ export default function Index() {
         });
         setScreen({ type: "confirmation", property, slotId, guests, date, total: finalTotal });
       },
-    [createBooking]
+    [createBooking, awardPoints, toast]
   );
 
   const handleDone = useCallback(() => {
