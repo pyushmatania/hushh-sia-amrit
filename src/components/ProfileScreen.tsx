@@ -50,6 +50,7 @@ const recentActivity = [
 
 export default function ProfileScreen() {
   const { theme, setTheme } = useTheme();
+  const { user, signOut } = useAuth();
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [activeSetting, setActiveSetting] = useState("");
   const [showLoyalty, setShowLoyalty] = useState(false);
