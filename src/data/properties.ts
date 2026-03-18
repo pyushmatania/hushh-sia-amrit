@@ -53,6 +53,8 @@ export interface Property {
   rating: number;
   reviewCount: number;
   location: string;
+  lat: number;
+  lng: number;
   amenities: string[];
   amenityIcons: string[];
   slotsLeft: number;
