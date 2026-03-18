@@ -253,9 +253,16 @@ function TiltCard({
   );
 }
 
-export default function TripsScreen({ bookings, onViewDetail, onRebook }: TripsScreenProps) {
+export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel }: TripsScreenProps) {
+  const [refreshKey, setRefreshKey] = useState(0);
+  const handleRefresh = useCallback(async () => {
+    await new Promise((r) => setTimeout(r, 800));
+    setRefreshKey((k) => k + 1);
+  }, []);
+
   return (
-    <div className="pb-24 bg-mesh min-h-screen">
+    <PullToRefresh onRefresh={handleRefresh}>
+    <div key={refreshKey} className="pb-24 bg-mesh min-h-screen">
       <div className="px-5 pt-6 pb-2">
         <motion.h1
           initial={{ opacity: 0, y: -8 }}
@@ -270,7 +277,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook }: TripsS
           transition={{ delay: 0.1 }}
           className="text-sm text-muted-foreground mt-1"
         >
-          Manage your upcoming and past bookings
+          {onCancel ? "Swipe left on upcoming trips to cancel" : "Manage your upcoming and past bookings"}
         </motion.p>
       </div>
 
@@ -296,16 +303,18 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook }: TripsS
       ) : (
         <div className="px-5 pt-4 space-y-6">
           {bookings.map((trip, i) => (
-            <TiltCard
+            <SwipeableCard
               key={trip.id}
               booking={trip}
               index={i}
               onViewDetail={onViewDetail}
               onRebook={onRebook}
+              onCancel={onCancel}
             />
           ))}
         </div>
       )}
     </div>
+    </PullToRefresh>
   );
 }
