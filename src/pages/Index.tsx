@@ -16,6 +16,7 @@ import MessagesScreen from "@/components/MessagesScreen";
 import SearchScreen from "@/components/SearchScreen";
 import MapViewScreen from "@/components/MapViewScreen";
 import HostDashboard from "@/components/HostDashboard";
+import HostAnalyticsScreen from "@/components/HostAnalyticsScreen";
 import CreateListingScreen from "@/components/CreateListingScreen";
 import { useAuth } from "@/hooks/use-auth";
 import { useWishlists } from "@/hooks/use-wishlists";
@@ -42,6 +43,7 @@ type Screen =
   | { type: "confirmation"; property: Property; slotId: string; guests: number; date: Date; total: number }
   | { type: "bookingDetail"; booking: Booking }
   | { type: "hostDashboard" }
+  | { type: "hostAnalytics" }
   | { type: "createListing"; editListing?: import("@/hooks/use-host-listings").HostListing };
 
 export default function Index() {
@@ -229,7 +231,14 @@ export default function Index() {
             onEditListing={(listing) => setScreen({ type: "createListing", editListing: listing })}
             onDeleteListing={deleteListing}
             onToggleStatus={(id, status) => updateListing(id, { status })}
+            onAnalytics={() => setScreen({ type: "hostAnalytics" })}
             onBack={() => { setScreen({ type: "home" }); setActiveTab("profile"); }}
+          />
+        )}
+        {screen.type === "hostAnalytics" && (
+          <HostAnalyticsScreen
+            key="hostAnalytics"
+            onBack={() => setScreen({ type: "hostDashboard" })}
           />
         )}
         {screen.type === "createListing" && (
