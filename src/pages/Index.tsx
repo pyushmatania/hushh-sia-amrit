@@ -94,9 +94,14 @@ export default function Index() {
           bookingId: `HUSHH-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
         };
         await createBooking(bookingData);
+        // Award loyalty points: 5 pts per ₹100 spent
+        const earnedPts = Math.floor(finalTotal / 100) * 5;
+        if (earnedPts > 0) {
+          await awardPoints(earnedPts, `Booking: ${property.name}`, "🏨");
+        }
         toast({
           title: "🎉 Booking Confirmed!",
-          description: `${property.name} on ${bookingData.date}`,
+          description: `${property.name} on ${bookingData.date} · +${earnedPts} pts`,
         });
         setScreen({ type: "confirmation", property, slotId, guests, date, total: finalTotal });
       },
