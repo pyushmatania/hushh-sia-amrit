@@ -103,7 +103,7 @@ export default function BookingConfirmation({ property, slotId, guests, date, to
             whileTap={{ scale: 0.96 }}
           >
             Go to My Trips
-          </button>
+          </motion.button>
           <button className="w-full py-3 rounded-lg border border-foreground text-foreground font-medium text-sm">
             Share with Friends
           </button>
