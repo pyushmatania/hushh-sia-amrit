@@ -106,6 +106,6 @@ export default function WishlistScreen({ wishlist, onToggleWishlist, onPropertyT
           ))}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
