@@ -61,6 +61,7 @@ export default function Index() {
   const { listings: hostListings, createListing, updateListing, deleteListing } = useHostListings();
   const unreadCount = useUnreadCount();
   const { toast } = useToast();
+  const { awardPoints } = useLoyalty();
 
   const handlePropertyTap = useCallback((property: Property) => {
     setShowSearch(false);
