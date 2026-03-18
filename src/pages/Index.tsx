@@ -42,6 +42,7 @@ type Screen =
   | { type: "confirmation"; property: Property; slotId: string; guests: number; date: Date; total: number }
   | { type: "bookingDetail"; booking: Booking }
   | { type: "hostDashboard" }
+  | { type: "hostAnalytics" }
   | { type: "createListing"; editListing?: import("@/hooks/use-host-listings").HostListing };
 
 export default function Index() {
