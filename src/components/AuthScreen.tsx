@@ -3,6 +3,7 @@ import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Sparkles } from "lucide-reac
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { lovable } from "@/integrations/lovable/index";
+import authBg from "@/assets/auth-bg-night.jpg";
 
 export default function AuthScreen() {
   const [mode, setMode] = useState<"login" | "signup">("login");
@@ -65,9 +66,20 @@ export default function AuthScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-mesh flex flex-col">
-      {/* Hero */}
-      <div className="flex-1 flex flex-col justify-center px-8 pt-16 pb-8">
+    <div className="min-h-screen relative flex flex-col overflow-hidden">
+      {/* Background image */}
+      <motion.div
+        className="absolute inset-0"
+        initial={{ scale: 1.1 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 8, ease: "easeOut" }}
+      >
+        <img src={authBg} alt="" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80" />
+      </motion.div>
+
+      {/* Content */}
+      <div className="relative z-10 flex-1 flex flex-col justify-center px-8 pt-16 pb-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-2 mb-6">
             <Sparkles size={28} className="text-primary" />
@@ -97,11 +109,11 @@ export default function AuthScreen() {
               >
                 <div className="relative mb-4">
                   <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <input
+                   <input
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Full name"
-                    className="w-full bg-secondary rounded-xl pl-12 pr-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-primary/40"
+                    className="w-full bg-white/10 backdrop-blur-md border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-sm text-foreground placeholder:text-foreground/40 outline-none focus:ring-1 focus:ring-primary/40"
                   />
                 </div>
               </motion.div>
@@ -109,29 +121,29 @@ export default function AuthScreen() {
           </AnimatePresence>
 
           <div className="relative">
-            <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/50" />
             <input
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               type="email"
               placeholder="Email address"
-              className="w-full bg-secondary rounded-xl pl-12 pr-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-primary/40"
+              className="w-full bg-white/10 backdrop-blur-md border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-sm text-foreground placeholder:text-foreground/40 outline-none focus:ring-1 focus:ring-primary/40"
             />
           </div>
 
           <div className="relative">
-            <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/50" />
             <input
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               type={showPassword ? "text" : "password"}
               placeholder="Password"
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-              className="w-full bg-secondary rounded-xl pl-12 pr-12 py-3.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-primary/40"
+              className="w-full bg-white/10 backdrop-blur-md border border-white/10 rounded-xl pl-12 pr-12 py-3.5 text-sm text-foreground placeholder:text-foreground/40 outline-none focus:ring-1 focus:ring-primary/40"
             />
             <button
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground/50"
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
@@ -179,7 +191,7 @@ export default function AuthScreen() {
               setLoading(false);
             }}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 border border-border rounded-xl py-3.5 text-sm font-semibold text-foreground hover:bg-secondary/50 transition-all disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-3 bg-white/10 backdrop-blur-md border border-white/10 rounded-xl py-3.5 text-sm font-semibold text-foreground hover:bg-white/15 transition-all disabled:opacity-50"
           >
             <svg width="18" height="18" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
@@ -193,8 +205,8 @@ export default function AuthScreen() {
       </div>
 
       {/* Toggle mode */}
-      <div className="pb-[max(2rem,env(safe-area-inset-bottom))] text-center">
-        <p className="text-sm text-muted-foreground">
+      <div className="relative z-10 pb-[max(2rem,env(safe-area-inset-bottom))] text-center">
+        <p className="text-sm text-foreground/70">
           {mode === "login" ? "Don't have an account?" : "Already have an account?"}{" "}
           <button
             onClick={() => { setMode(mode === "login" ? "signup" : "login"); setError(""); }}
