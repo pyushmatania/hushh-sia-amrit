@@ -22,6 +22,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { useWishlists } from "@/hooks/use-wishlists";
 import { useBookings } from "@/hooks/use-bookings";
 import { useHostListings } from "@/hooks/use-host-listings";
+import { useUnreadCount } from "@/hooks/use-unread-count";
+import { useToast } from "@/hooks/use-toast";
 import { properties, type Property } from "@/data/properties";
 
 export interface Booking {
@@ -56,6 +58,8 @@ export default function Index() {
   const { wishlist, toggleWishlist } = useWishlists();
   const { bookings, createBooking, cancelBooking } = useBookings();
   const { listings: hostListings, createListing, updateListing, deleteListing } = useHostListings();
+  const unreadCount = useUnreadCount();
+  const { toast } = useToast();
 
   const handlePropertyTap = useCallback((property: Property) => {
     setShowSearch(false);
@@ -88,6 +92,10 @@ export default function Index() {
           bookingId: `HUSHH-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
         };
         await createBooking(bookingData);
+        toast({
+          title: "🎉 Booking Confirmed!",
+          description: `${property.name} on ${bookingData.date}`,
+        });
         setScreen({ type: "confirmation", property, slotId, guests, date, total: finalTotal });
       },
     [createBooking]
@@ -271,7 +279,7 @@ export default function Index() {
       </AnimatePresence>
 
       {showBottomNav && (
-        <BottomNav active={activeTab} onChange={setActiveTab} />
+        <BottomNav active={activeTab} onChange={setActiveTab} messageBadge={unreadCount} />
       )}
     </div>
   );
