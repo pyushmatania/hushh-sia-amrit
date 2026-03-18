@@ -215,7 +215,7 @@ export default function AuthScreen() {
 
           <motion.button
             whileTap={{ scale: 0.96 }}
-            onClick={handleSubmit}
+            onClick={mode === "forgot" ? handleForgotPassword : handleSubmit}
             disabled={loading}
             className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-xl py-3.5 text-sm font-semibold disabled:opacity-50 transition-all"
           >
@@ -223,7 +223,7 @@ export default function AuthScreen() {
               <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
             ) : (
               <>
-                {mode === "login" ? "Sign In" : "Create Account"}
+                {mode === "login" ? "Sign In" : mode === "signup" ? "Create Account" : "Send Reset Link"}
                 <ArrowRight size={16} />
               </>
             )}
