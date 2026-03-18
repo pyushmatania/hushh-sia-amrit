@@ -16,6 +16,8 @@ import MessagesScreen from "@/components/MessagesScreen";
 import SearchScreen from "@/components/SearchScreen";
 import MapViewScreen from "@/components/MapViewScreen";
 import { useAuth } from "@/hooks/use-auth";
+import { useWishlists } from "@/hooks/use-wishlists";
+import { useBookings } from "@/hooks/use-bookings";
 import { properties, type Property } from "@/data/properties";
 
 export interface Booking {
@@ -42,14 +44,10 @@ export default function Index() {
   const [showSplash, setShowSplash] = useState(true);
   const [activeTab, setActiveTab] = useState("home");
   const [screen, setScreen] = useState<Screen>({ type: "home" });
-  const [wishlist, setWishlist] = useState<string[]>([]);
   const [showSearch, setShowSearch] = useState(false);
   const [showMap, setShowMap] = useState(false);
-  const [bookings, setBookings] = useState<Booking[]>([]);
-
-  const toggleWishlist = useCallback((id: string) => {
-    setWishlist((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
-  }, []);
+  const { wishlist, toggleWishlist } = useWishlists();
+  const { bookings, createBooking, cancelBooking } = useBookings();
 
   const handlePropertyTap = useCallback((property: Property) => {
     setShowSearch(false);
@@ -71,21 +69,20 @@ export default function Index() {
 
   const handleCheckoutConfirm = useCallback(
     (property: Property, slotId: string, guests: number, date: Date) =>
-      (finalTotal: number) => {
-        const newBooking: Booking = {
-          id: String(Date.now()),
+      async (finalTotal: number) => {
+        const bookingData = {
           propertyId: property.id,
           date: date.toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" }),
           slot: `${property.slots.find(s => s.id === slotId)?.label} · ${property.slots.find(s => s.id === slotId)?.time}`,
           guests,
           total: finalTotal,
-          status: "upcoming",
+          status: "upcoming" as const,
           bookingId: `HUSHH-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
         };
-        setBookings(prev => [newBooking, ...prev]);
+        await createBooking(bookingData);
         setScreen({ type: "confirmation", property, slotId, guests, date, total: finalTotal });
       },
-    []
+    [createBooking]
   );
 
   const handleDone = useCallback(() => {
@@ -98,8 +95,8 @@ export default function Index() {
   }, []);
 
   const handleCancelBooking = useCallback((bookingId: string) => {
-    setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: "cancelled" as const } : b));
-  }, []);
+    cancelBooking(bookingId);
+  }, [cancelBooking]);
 
   const handleRebook = useCallback((propertyId: string) => {
     const property = properties.find(p => p.id === propertyId);
