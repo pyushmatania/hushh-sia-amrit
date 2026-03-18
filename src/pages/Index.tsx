@@ -38,6 +38,7 @@ type Screen =
   | { type: "bookingDetail"; booking: Booking };
 
 export default function Index() {
+  const { user, loading } = useAuth();
   const [showSplash, setShowSplash] = useState(true);
   const [activeTab, setActiveTab] = useState("home");
   const [screen, setScreen] = useState<Screen>({ type: "home" });
