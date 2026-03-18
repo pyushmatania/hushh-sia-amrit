@@ -134,6 +134,39 @@ export type Database = {
         }
         Relationships: []
       }
+      loyalty_transactions: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          points: number
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          points: number
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          points?: number
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string
@@ -234,7 +267,24 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      award_loyalty_points: {
+        Args: {
+          _icon?: string
+          _points: number
+          _title: string
+          _user_id: string
+        }
+        Returns: undefined
+      }
+      redeem_loyalty_points: {
+        Args: {
+          _icon?: string
+          _points: number
+          _title: string
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

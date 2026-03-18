@@ -23,6 +23,7 @@ import { useWishlists } from "@/hooks/use-wishlists";
 import { useBookings } from "@/hooks/use-bookings";
 import { useHostListings } from "@/hooks/use-host-listings";
 import { useUnreadCount } from "@/hooks/use-unread-count";
+import { useLoyalty } from "@/hooks/use-loyalty";
 import { useToast } from "@/hooks/use-toast";
 import { properties, type Property } from "@/data/properties";
 
@@ -60,6 +61,7 @@ export default function Index() {
   const { listings: hostListings, createListing, updateListing, deleteListing } = useHostListings();
   const unreadCount = useUnreadCount();
   const { toast } = useToast();
+  const { awardPoints } = useLoyalty();
 
   const handlePropertyTap = useCallback((property: Property) => {
     setShowSearch(false);
@@ -92,13 +94,18 @@ export default function Index() {
           bookingId: `HUSHH-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
         };
         await createBooking(bookingData);
+        // Award loyalty points: 5 pts per ₹100 spent
+        const earnedPts = Math.floor(finalTotal / 100) * 5;
+        if (earnedPts > 0) {
+          await awardPoints(earnedPts, `Booking: ${property.name}`, "🏨");
+        }
         toast({
           title: "🎉 Booking Confirmed!",
-          description: `${property.name} on ${bookingData.date}`,
+          description: `${property.name} on ${bookingData.date} · +${earnedPts} pts`,
         });
         setScreen({ type: "confirmation", property, slotId, guests, date, total: finalTotal });
       },
-    [createBooking]
+    [createBooking, awardPoints, toast]
   );
 
   const handleDone = useCallback(() => {

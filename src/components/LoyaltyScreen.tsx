@@ -1,44 +1,24 @@
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Crown, Gift, Star, Zap, ChevronRight, Copy, Share2,
-  Trophy, Ticket, Coffee, Sparkles, TrendingUp, Check, Users
+  Trophy, Ticket, Coffee, Sparkles, TrendingUp, Check, Users, Loader2
 } from "lucide-react";
 import { useState } from "react";
+import { useLoyalty } from "@/hooks/use-loyalty";
+import { useToast } from "@/hooks/use-toast";
+import { format } from "date-fns";
 
 interface LoyaltyScreenProps {
   onBack: () => void;
 }
 
-/* ── Tier Data ── */
 const tiers = [
-  { name: "Silver", minPts: 0, icon: "🥈", color: "text-muted-foreground" },
-  { name: "Gold", minPts: 200, icon: "🥇", color: "text-gold" },
-  { name: "Platinum", minPts: 500, icon: "💎", color: "text-primary" },
-  { name: "Diamond", minPts: 1000, icon: "👑", color: "text-primary" },
+  { name: "Silver", minPts: 0, icon: "🥈" },
+  { name: "Gold", minPts: 200, icon: "🥇" },
+  { name: "Platinum", minPts: 500, icon: "💎" },
+  { name: "Diamond", minPts: 1000, icon: "👑" },
 ];
 
-const currentPoints = 320;
-const currentTierIdx = tiers.findIndex((t, i) => {
-  const next = tiers[i + 1];
-  return !next || currentPoints < next.minPts;
-});
-const currentTier = tiers[currentTierIdx];
-const nextTier = tiers[currentTierIdx + 1];
-const tierProgress = nextTier
-  ? ((currentPoints - currentTier.minPts) / (nextTier.minPts - currentTier.minPts)) * 100
-  : 100;
-
-/* ── History ── */
-const history = [
-  { id: "1", type: "earn" as const, title: "Booking: Firefly Villa", points: 50, date: "Mar 10", icon: "🏊" },
-  { id: "2", type: "earn" as const, title: "Review submitted", points: 20, date: "Mar 10", icon: "⭐" },
-  { id: "3", type: "redeem" as const, title: "₹100 cashback", points: -50, date: "Feb 28", icon: "💸" },
-  { id: "4", type: "earn" as const, title: "Booking: Koraput Garden", points: 80, date: "Feb 28", icon: "🌌" },
-  { id: "5", type: "earn" as const, title: "Referral bonus", points: 100, date: "Feb 14", icon: "🎁" },
-  { id: "6", type: "earn" as const, title: "Booking: Ember Grounds", points: 120, date: "Feb 14", icon: "🔥" },
-];
-
-/* ── Rewards Catalog ── */
 const rewards = [
   { id: "r1", title: "₹100 Cashback", cost: 50, icon: Ticket, desc: "Apply to any booking", popular: true },
   { id: "r2", title: "Free Slot Upgrade", cost: 100, icon: Zap, desc: "Upgrade to next slot tier", popular: false },
@@ -48,7 +28,6 @@ const rewards = [
   { id: "r6", title: "₹500 Cashback", cost: 250, icon: Sparkles, desc: "Big savings on premium venues", popular: false },
 ];
 
-/* ── Earn Methods ── */
 const earnMethods = [
   { icon: "🏨", title: "Book a venue", desc: "Earn 5 pts per ₹100 spent" },
   { icon: "⭐", title: "Write a review", desc: "Earn 20 pts per review" },
@@ -57,7 +36,6 @@ const earnMethods = [
   { icon: "🔥", title: "Streak bonus", desc: "Book 3 months in a row +50 pts" },
 ];
 
-/* ── Tab Pill ── */
 function TabPill({ active, label, onClick }: { active: boolean; label: string; onClick: () => void }) {
   return (
     <button onClick={onClick} className={`relative px-4 py-2 rounded-full text-sm font-semibold transition-all ${active ? "text-primary-foreground" : "text-muted-foreground"}`}>
@@ -70,15 +48,36 @@ function TabPill({ active, label, onClick }: { active: boolean; label: string; o
 }
 
 export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
+  const { points, tier, transactions, loading, redeemPoints } = useLoyalty();
+  const { toast } = useToast();
   const [tab, setTab] = useState<"rewards" | "history" | "earn" | "referral">("rewards");
   const [redeemed, setRedeemed] = useState<Set<string>>(new Set());
   const [copied, setCopied] = useState(false);
+  const [redeeming, setRedeeming] = useState<string | null>(null);
 
-  const referralCode = "AKASH200";
+  const referralCode = "HUSHH200";
 
-  const handleRedeem = (id: string, cost: number) => {
-    if (cost > currentPoints || redeemed.has(id)) return;
-    setRedeemed((prev) => new Set(prev).add(id));
+  const currentTierIdx = tiers.findIndex((t, i) => {
+    const next = tiers[i + 1];
+    return !next || points < next.minPts;
+  });
+  const currentTier = tiers[currentTierIdx];
+  const nextTier = tiers[currentTierIdx + 1];
+  const tierProgress = nextTier
+    ? ((points - currentTier.minPts) / (nextTier.minPts - currentTier.minPts)) * 100
+    : 100;
+
+  const handleRedeem = async (id: string, cost: number, title: string) => {
+    if (cost > points || redeemed.has(id) || redeeming) return;
+    setRedeeming(id);
+    const success = await redeemPoints(cost, title, "🎁");
+    if (success) {
+      setRedeemed((prev) => new Set(prev).add(id));
+      toast({ title: "🎉 Reward Claimed!", description: title });
+    } else {
+      toast({ title: "Not enough points", description: "Keep booking to earn more!", variant: "destructive" });
+    }
+    setRedeeming(null);
   };
 
   const handleCopyCode = () => {
@@ -86,6 +85,14 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  if (loading) {
+    return (
+      <div className="fixed inset-0 z-50 bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -103,7 +110,7 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
         <h1 className="text-lg font-bold text-foreground flex-1">Loyalty & Rewards</h1>
         <div className="flex items-center gap-1 bg-primary/10 border border-primary/20 rounded-full px-3 py-1.5">
           <Star size={14} className="text-primary fill-primary" />
-          <span className="text-sm font-bold text-primary">{currentPoints}</span>
+          <span className="text-sm font-bold text-primary">{points}</span>
         </div>
       </div>
 
@@ -118,31 +125,30 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
           <span className="text-4xl">{currentTier.icon}</span>
           <div>
             <p className="text-xl font-bold text-foreground">{currentTier.name} Member</p>
-            <p className="text-xs text-muted-foreground">Member since Jan 2025</p>
+            <p className="text-xs text-muted-foreground">{tier} tier · {points} pts</p>
           </div>
         </div>
 
         {nextTier && (
           <>
             <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
-              <span>{currentPoints} pts</span>
+              <span>{points} pts</span>
               <span>{nextTier.name} at {nextTier.minPts} pts</span>
             </div>
             <div className="h-2.5 rounded-full bg-secondary overflow-hidden">
               <motion.div
                 className="h-full rounded-full bg-gradient-to-r from-primary to-gold"
                 initial={{ width: 0 }}
-                animate={{ width: `${tierProgress}%` }}
+                animate={{ width: `${Math.min(tierProgress, 100)}%` }}
                 transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
               />
             </div>
             <p className="text-xs text-muted-foreground mt-2">
-              <span className="font-semibold text-foreground">{nextTier.minPts - currentPoints} pts</span> to unlock {nextTier.icon} {nextTier.name}
+              <span className="font-semibold text-foreground">{nextTier.minPts - points} pts</span> to unlock {nextTier.icon} {nextTier.name}
             </p>
           </>
         )}
 
-        {/* Tier badges */}
         <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/30">
           {tiers.map((t, i) => (
             <div key={t.name} className="flex flex-col items-center gap-1">
@@ -171,11 +177,10 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
       </motion.div>
 
       <AnimatePresence mode="wait">
-        {/* Rewards Tab */}
         {tab === "rewards" && (
           <motion.div key="rewards" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="px-5 space-y-3">
             {rewards.map((r, i) => {
-              const canAfford = currentPoints >= r.cost;
+              const canAfford = points >= r.cost;
               const isRedeemed = redeemed.has(r.id);
               return (
                 <motion.div
@@ -200,8 +205,8 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
                     </div>
                     <motion.button
                       whileTap={{ scale: 0.9 }}
-                      onClick={() => handleRedeem(r.id, r.cost)}
-                      disabled={!canAfford || isRedeemed}
+                      onClick={() => handleRedeem(r.id, r.cost, r.title)}
+                      disabled={!canAfford || isRedeemed || redeeming === r.id}
                       className={`px-3 py-2 rounded-xl text-xs font-bold transition-all ${
                         isRedeemed
                           ? "bg-success/10 text-success border border-success/20"
@@ -210,7 +215,9 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
                             : "bg-secondary text-muted-foreground"
                       }`}
                     >
-                      {isRedeemed ? (
+                      {redeeming === r.id ? (
+                        <Loader2 size={14} className="animate-spin" />
+                      ) : isRedeemed ? (
                         <span className="flex items-center gap-1"><Check size={12} /> Claimed</span>
                       ) : (
                         <span className="flex items-center gap-1"><Star size={10} className="fill-current" /> {r.cost}</span>
@@ -223,7 +230,6 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
           </motion.div>
         )}
 
-        {/* Earn Tab */}
         {tab === "earn" && (
           <motion.div key="earn" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="px-5 space-y-3">
             <p className="text-xs text-muted-foreground mb-2">Ways to earn loyalty points</p>
@@ -246,7 +252,6 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
           </motion.div>
         )}
 
-        {/* Referral Tab */}
         {tab === "referral" && (
           <motion.div key="referral" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="px-5">
             <motion.div
@@ -262,7 +267,6 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
                 Share your referral code with friends. When they book their first experience, you both get ₹200 cashback!
               </p>
 
-              {/* Referral Code */}
               <div className="mt-5 flex items-center gap-2 bg-secondary rounded-xl p-3">
                 <div className="flex-1 text-center">
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Your Code</p>
@@ -285,28 +289,20 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
               >
                 <Share2 size={16} /> Share with Friends
               </motion.button>
-
-              {/* Stats */}
-              <div className="grid grid-cols-3 gap-3 mt-5 pt-5 border-t border-border/40">
-                {[
-                  { value: "3", label: "Referred" },
-                  { value: "2", label: "Joined" },
-                  { value: "₹200", label: "Earned" },
-                ].map((s) => (
-                  <div key={s.label} className="text-center">
-                    <p className="text-lg font-bold text-foreground">{s.value}</p>
-                    <p className="text-[10px] text-muted-foreground">{s.label}</p>
-                  </div>
-                ))}
-              </div>
             </motion.div>
           </motion.div>
         )}
 
-        {/* History Tab */}
         {tab === "history" && (
           <motion.div key="history" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="px-5 space-y-2">
-            {history.map((h, i) => (
+            {transactions.length === 0 && (
+              <div className="glass rounded-2xl p-8 text-center">
+                <Trophy size={36} className="text-muted-foreground mx-auto mb-3" />
+                <p className="text-sm font-semibold text-foreground mb-1">No activity yet</p>
+                <p className="text-xs text-muted-foreground">Book a venue to start earning points!</p>
+              </div>
+            )}
+            {transactions.map((h, i) => (
               <motion.div
                 key={h.id}
                 initial={{ opacity: 0, y: 12 }}
@@ -317,10 +313,10 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
                 <span className="text-xl">{h.icon}</span>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-foreground truncate">{h.title}</p>
-                  <p className="text-xs text-muted-foreground">{h.date}</p>
+                  <p className="text-xs text-muted-foreground">{format(new Date(h.created_at), "MMM d, yyyy")}</p>
                 </div>
                 <span className={`text-sm font-bold ${h.type === "earn" ? "text-success" : "text-destructive"}`}>
-                  {h.type === "earn" ? "+" : ""}{h.points}
+                  {h.points > 0 ? "+" : ""}{h.points}
                 </span>
               </motion.div>
             ))}
