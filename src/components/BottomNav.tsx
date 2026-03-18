@@ -5,7 +5,7 @@ const tabs = [
   { id: "home", icon: Search, label: "Explore" },
   { id: "wishlists", icon: Heart, label: "Wishlists" },
   { id: "bookings", icon: MapPin, label: "Trips" },
-  { id: "messages", icon: MessageCircle, label: "Messages", badge: 3 },
+  { id: "messages", icon: MessageCircle, label: "Messages" },
   { id: "profile", icon: User, label: "Profile" },
 ];
 
