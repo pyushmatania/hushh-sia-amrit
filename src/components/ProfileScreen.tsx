@@ -55,7 +55,7 @@ export default function ProfileScreen() {
   const [activeSetting, setActiveSetting] = useState("");
   const [showLoyalty, setShowLoyalty] = useState(false);
   const [profile, setProfile] = useState({
-    name: "Akash",
+    name: user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User",
     location: "Jeypore, India",
     bio: "Explorer of hidden gems 🌿 Love bonfires, stargazing, and good coffee.",
   });
