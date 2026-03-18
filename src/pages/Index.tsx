@@ -41,6 +41,7 @@ export default function Index() {
   const [screen, setScreen] = useState<Screen>({ type: "home" });
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [showSearch, setShowSearch] = useState(false);
+  const [showMap, setShowMap] = useState(false);
   const [bookings, setBookings] = useState<Booking[]>([]);
 
   const toggleWishlist = useCallback((id: string) => {
