@@ -5,7 +5,7 @@ const tabs = [
   { id: "home", icon: Search, label: "Explore" },
   { id: "wishlists", icon: Heart, label: "Wishlists" },
   { id: "bookings", icon: MapPin, label: "Trips" },
-  { id: "messages", icon: MessageCircle, label: "Messages" },
+  { id: "messages", icon: MessageCircle, label: "Messages", badge: 3 },
   { id: "profile", icon: User, label: "Profile" },
 ];
 
@@ -38,6 +38,7 @@ export default function BottomNav({ active, onChange }: BottomNavProps) {
               <motion.div
                 animate={isActive ? { y: [0, -3, 0] } : { y: 0 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
+                className="relative"
               >
                 <tab.icon
                   size={22}
@@ -45,6 +46,11 @@ export default function BottomNav({ active, onChange }: BottomNavProps) {
                   strokeWidth={isActive ? 2.5 : 1.5}
                   fill={isActive && tab.id === "wishlists" ? "currentColor" : "none"}
                 />
+                {tab.badge && tab.badge > 0 && !isActive && (
+                  <span className="absolute -top-1.5 -right-2.5 min-w-[16px] h-4 rounded-full bg-primary text-primary-foreground text-[9px] font-bold flex items-center justify-center px-1">
+                    {tab.badge}
+                  </span>
+                )}
               </motion.div>
               <span className={`text-[10px] font-medium transition-colors duration-200 ${isActive ? "text-primary" : "text-muted-foreground"}`}>
                 {tab.label}
