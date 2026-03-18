@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ChevronRight, Plus, X, Check } from "lucide-react";
-import { useState, useCallback } from "react";
+import { ArrowLeft, ChevronRight, Plus, X, Check, Camera, ImagePlus, Loader2 } from "lucide-react";
+import { useState, useCallback, useRef } from "react";
 import type { HostListing } from "@/hooks/use-host-listings";
+import { useImageUpload } from "@/hooks/use-image-upload";
 
 interface CreateListingScreenProps {
   onBack: () => void;
@@ -16,11 +17,13 @@ const amenityOptions = [
   "Projector", "Board Games", "Gym", "Spa", "Rooftop"
 ];
 
-const steps = ["Basics", "Details", "Amenities", "Review"];
+const steps = ["Basics", "Photos", "Details", "Amenities", "Review"];
 
 export default function CreateListingScreen({ onBack, onSubmit, initialData }: CreateListingScreenProps) {
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  const { uploadImage, deleteImage, uploading } = useImageUpload();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState({
     name: initialData?.name ?? "",
     description: initialData?.description ?? "",
@@ -61,9 +64,27 @@ export default function CreateListingScreen({ onBack, onSubmit, initialData }: C
     setForm((prev) => ({ ...prev, tags: prev.tags.filter((t) => t !== tag) }));
   }, []);
 
+  const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    for (const file of Array.from(files)) {
+      if (!file.type.startsWith("image/")) continue;
+      const url = await uploadImage(file);
+      if (url) {
+        setForm((prev) => ({ ...prev, imageUrls: [...prev.imageUrls, url] }));
+      }
+    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }, [uploadImage]);
+
+  const handleRemoveImage = useCallback(async (url: string) => {
+    setForm((prev) => ({ ...prev, imageUrls: prev.imageUrls.filter((u) => u !== url) }));
+    await deleteImage(url);
+  }, [deleteImage]);
+
   const canNext = step === 0
     ? form.name.trim().length > 0 && form.basePrice > 0
-    : step === 1
+    : step === 2
     ? form.description.trim().length > 0
     : true;
 
@@ -168,6 +189,57 @@ export default function CreateListingScreen({ onBack, onSubmit, initialData }: C
           {step === 1 && (
             <motion.div key="step1" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="space-y-5">
               <div>
+                <label className="text-sm font-medium text-foreground mb-1.5 block">Property photos</label>
+                <p className="text-xs text-muted-foreground mb-3">Add up to 8 photos. The first photo will be the cover.</p>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={handleFileSelect}
+                />
+                <div className="grid grid-cols-3 gap-2">
+                  {form.imageUrls.map((url, i) => (
+                    <div key={url} className="relative aspect-square rounded-xl overflow-hidden group">
+                      <img src={url} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
+                      {i === 0 && (
+                        <span className="absolute top-1.5 left-1.5 text-[9px] font-bold bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
+                          Cover
+                        </span>
+                      )}
+                      <button
+                        onClick={() => handleRemoveImage(url)}
+                        className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X size={12} className="text-foreground" />
+                      </button>
+                    </div>
+                  ))}
+                  {form.imageUrls.length < 8 && (
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading}
+                      className="aspect-square rounded-xl border-2 border-dashed border-border hover:border-primary/50 flex flex-col items-center justify-center gap-1 transition-colors disabled:opacity-50"
+                    >
+                      {uploading ? (
+                        <Loader2 size={20} className="text-muted-foreground animate-spin" />
+                      ) : (
+                        <>
+                          <ImagePlus size={20} className="text-muted-foreground" />
+                          <span className="text-[10px] text-muted-foreground">Add photo</span>
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {step === 2 && (
+            <motion.div key="step2" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="space-y-5">
+              <div>
                 <label className="text-sm font-medium text-foreground mb-1.5 block">Short description</label>
                 <textarea
                   value={form.description}
@@ -213,8 +285,8 @@ export default function CreateListingScreen({ onBack, onSubmit, initialData }: C
             </motion.div>
           )}
 
-          {step === 2 && (
-            <motion.div key="step2" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}>
+          {step === 3 && (
+            <motion.div key="step3" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}>
               <label className="text-sm font-medium text-foreground mb-3 block">Select amenities</label>
               <div className="flex flex-wrap gap-2">
                 {amenityOptions.map((amenity) => {
@@ -238,9 +310,16 @@ export default function CreateListingScreen({ onBack, onSubmit, initialData }: C
             </motion.div>
           )}
 
-          {step === 3 && (
-            <motion.div key="step3" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}>
+          {step === 4 && (
+            <motion.div key="step4" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}>
               <div className="glass rounded-2xl p-5 space-y-4">
+                {form.imageUrls.length > 0 && (
+                  <div className="flex gap-2 overflow-x-auto hide-scrollbar -mx-1 pb-2">
+                    {form.imageUrls.map((url, i) => (
+                      <img key={url} src={url} alt={`Photo ${i + 1}`} className="w-24 h-24 rounded-xl object-cover shrink-0" />
+                    ))}
+                  </div>
+                )}
                 <h3 className="text-lg font-bold text-foreground">{form.name || "Untitled"}</h3>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
                   <span className="bg-secondary px-3 py-1 rounded-full text-xs font-medium">{form.category}</span>
@@ -256,6 +335,10 @@ export default function CreateListingScreen({ onBack, onSubmit, initialData }: C
                     <p className="text-muted-foreground">Capacity</p>
                     <p className="font-semibold text-foreground">{form.capacity} guests</p>
                   </div>
+                </div>
+                <div className="border-t border-border pt-3">
+                  <p className="text-sm text-muted-foreground mb-1">Photos</p>
+                  <p className="text-sm font-medium text-foreground">{form.imageUrls.length} photo{form.imageUrls.length !== 1 ? "s" : ""}</p>
                 </div>
                 {form.amenities.length > 0 && (
                   <div className="border-t border-border pt-3">
@@ -295,7 +378,7 @@ export default function CreateListingScreen({ onBack, onSubmit, initialData }: C
               Back
             </motion.button>
           )}
-          {step < 3 ? (
+          {step < 4 ? (
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={() => setStep((s) => s + 1)}
