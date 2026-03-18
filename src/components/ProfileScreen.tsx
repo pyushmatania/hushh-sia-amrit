@@ -3,13 +3,16 @@ import {
   ChevronRight, Bell, Settings, HelpCircle, LogOut,
   Shield, Gift, Star, Sun, Moon, Monitor, BadgeCheck,
   CreditCard, Globe, Accessibility, FileText, Heart,
-  Award, Zap, Calendar, TrendingUp, Crown
+  Award, Zap, Calendar, TrendingUp, Crown, Pencil
 } from "lucide-react";
+import { useState, useCallback } from "react";
 import { useTheme } from "@/hooks/use-theme";
 import profileAvatar from "@/assets/profile-avatar.png";
 import pastTripsImg from "@/assets/past-trips-card.png";
 import connectionsImg from "@/assets/connections-card.png";
 import becomeHostImg from "@/assets/become-host.png";
+import EditProfileSheet from "./EditProfileSheet";
+import SettingsSheet from "./SettingsSheet";
 
 const themeOptions = [
   { id: "light" as const, label: "Light", icon: Sun },
@@ -18,16 +21,16 @@ const themeOptions = [
 ];
 
 const settingsMenu = [
-  { icon: Settings, label: "Account settings" },
-  { icon: CreditCard, label: "Payments & payouts" },
-  { icon: Shield, label: "Login & security" },
-  { icon: Bell, label: "Notifications" },
-  { icon: Globe, label: "Language & region" },
-  { icon: Accessibility, label: "Accessibility" },
-  { icon: Gift, label: "Refer a friend", sublabel: "Earn ₹200", badge: "NEW" },
-  { icon: Star, label: "Loyalty points", sublabel: "320 pts" },
-  { icon: HelpCircle, label: "Help centre" },
-  { icon: FileText, label: "Terms & privacy" },
+  { icon: Settings, label: "Account settings", settingKey: "" },
+  { icon: CreditCard, label: "Payments & payouts", settingKey: "" },
+  { icon: Shield, label: "Login & security", settingKey: "security" },
+  { icon: Bell, label: "Notifications", settingKey: "notifications" },
+  { icon: Globe, label: "Language & region", settingKey: "language" },
+  { icon: Accessibility, label: "Accessibility", settingKey: "accessibility" },
+  { icon: Gift, label: "Refer a friend", sublabel: "Earn ₹200", badge: "NEW", settingKey: "" },
+  { icon: Star, label: "Loyalty points", sublabel: "320 pts", settingKey: "" },
+  { icon: HelpCircle, label: "Help centre", settingKey: "" },
+  { icon: FileText, label: "Terms & privacy", settingKey: "" },
 ];
 
 const achievements = [
@@ -45,6 +48,21 @@ const recentActivity = [
 
 export default function ProfileScreen() {
   const { theme, setTheme } = useTheme();
+  const [showEditProfile, setShowEditProfile] = useState(false);
+  const [activeSetting, setActiveSetting] = useState("");
+  const [profile, setProfile] = useState({
+    name: "Akash",
+    location: "Jeypore, India",
+    bio: "Explorer of hidden gems 🌿 Love bonfires, stargazing, and good coffee.",
+  });
+
+  const handleSaveProfile = useCallback((updated: typeof profile) => {
+    setProfile(updated);
+  }, []);
+
+  const handleSettingTap = useCallback((key: string) => {
+    if (key) setActiveSetting(key);
+  }, []);
 
   return (
     <div className="pb-24 bg-mesh min-h-screen">
@@ -72,8 +90,17 @@ export default function ProfileScreen() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="mx-5 mt-5 rounded-3xl glass p-6"
+        className="mx-5 mt-5 rounded-3xl glass p-6 relative"
       >
+        {/* Edit button */}
+        <motion.button
+          whileTap={{ scale: 0.9 }}
+          onClick={() => setShowEditProfile(true)}
+          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center"
+        >
+          <Pencil size={14} className="text-primary" />
+        </motion.button>
+
         <div className="flex items-start gap-5">
           <div className="flex flex-col items-center">
             <div className="relative">
@@ -84,8 +111,8 @@ export default function ProfileScreen() {
                 <BadgeCheck size={16} className="text-primary-foreground" />
               </div>
             </div>
-            <h3 className="font-bold text-xl text-foreground mt-3">Akash</h3>
-            <p className="text-sm text-muted-foreground">Jeypore, India</p>
+            <h3 className="font-bold text-xl text-foreground mt-3">{profile.name}</h3>
+            <p className="text-sm text-muted-foreground">{profile.location}</p>
           </div>
           <div className="flex-1 flex flex-col justify-center gap-3 pl-2 pt-1">
             <div className="border-b border-border pb-3">
@@ -102,6 +129,18 @@ export default function ProfileScreen() {
             </div>
           </div>
         </div>
+
+        {/* Bio */}
+        {profile.bio && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="text-sm text-muted-foreground mt-4 pt-4 border-t border-border/40 leading-relaxed"
+          >
+            {profile.bio}
+          </motion.p>
+        )}
       </motion.div>
 
       {/* Membership Badge */}
@@ -271,6 +310,7 @@ export default function ProfileScreen() {
         {settingsMenu.map((item, i) => (
           <button
             key={item.label}
+            onClick={() => handleSettingTap(item.settingKey)}
             className={`w-full flex items-center gap-3.5 py-4 text-left ${
               i < settingsMenu.length - 1 ? "border-b border-border" : ""
             }`}
@@ -308,6 +348,19 @@ export default function ProfileScreen() {
 
       {/* Version */}
       <p className="text-center text-[11px] text-muted-foreground pb-4">Hushh v1.0 · Made in Jeypore ❤️</p>
+
+      {/* Sheets */}
+      <EditProfileSheet
+        open={showEditProfile}
+        onClose={() => setShowEditProfile(false)}
+        profile={profile}
+        onSave={handleSaveProfile}
+      />
+      <SettingsSheet
+        open={!!activeSetting}
+        onClose={() => setActiveSetting("")}
+        settingType={activeSetting}
+      />
     </div>
   );
 }
