@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Search, ArrowRight, Sparkles, Bell, TrendingUp, Clock, MapPin } from "lucide-react";
+import { Search, ArrowRight, Sparkles, Bell, TrendingUp, Clock, MapPin, Map } from "lucide-react";
 import CategoryBar from "./CategoryBar";
 import PropertyCard from "./PropertyCard";
 import PropertyCardSmall from "./PropertyCardSmall";
