@@ -13,6 +13,7 @@ import TripsScreen from "@/components/TripsScreen";
 import ProfileScreen from "@/components/ProfileScreen";
 import MessagesScreen from "@/components/MessagesScreen";
 import SearchScreen from "@/components/SearchScreen";
+import MapViewScreen from "@/components/MapViewScreen";
 import { properties, type Property } from "@/data/properties";
 
 export interface Booking {
