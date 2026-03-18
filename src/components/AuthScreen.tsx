@@ -128,11 +128,16 @@ export default function AuthScreen() {
             <h1 className="text-3xl font-bold text-foreground tracking-tight">Hushh</h1>
           </div>
           <h2 className="text-2xl font-bold text-foreground leading-tight">
-            {mode === "login" ? "Welcome back" : "Create account"}
+            {mode === "login" ? "Welcome back" : mode === "signup" ? "Create account" : "Reset password"}
           </h2>
           <p className="text-sm text-muted-foreground mt-2">
-            {mode === "login" ? "Sign in to continue your journey" : "Join Hushh and discover private experiences"}
+            {mode === "login" ? "Sign in to continue your journey" : mode === "signup" ? "Join Hushh and discover private experiences" : "Enter your email to receive a reset link"}
           </p>
+          {mode === "forgot" && (
+            <button onClick={() => { setMode("login"); setError(""); }} className="flex items-center gap-1 text-xs text-primary font-semibold mt-2">
+              <ArrowLeft size={14} /> Back to login
+            </button>
+          )}
         </motion.div>
 
         {/* Form */}
