@@ -368,16 +368,15 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
         transition={{ delay: 0.4 }}
         className="mx-5 mt-4 mb-4"
       >
-        <button onClick={signOut} className="w-full flex items-center justify-center gap-2 py-3 text-sm font-medium text-foreground underline underline-offset-4">
-          <LogOut size={16} /> Log out
-        </button>
-      </motion.div>
-
-      {/* Version */}
-      <p className="text-center text-[11px] text-muted-foreground pb-4">Hushh v1.0 · Made in Jeypore ❤️</p>
-
-      {/* Sheets */}
-      <EditProfileSheet
+        {user ? (
+          <button onClick={signOut} className="w-full flex items-center justify-center gap-2 py-3 text-sm font-medium text-foreground underline underline-offset-4">
+            <LogOut size={16} /> Log out
+          </button>
+        ) : (
+          <button onClick={() => setShowAuth(true)} className="w-full flex items-center justify-center gap-2 py-3 text-sm font-semibold text-primary">
+            <LogIn size={16} /> Sign in / Sign up
+          </button>
+        )}
         open={showEditProfile}
         onClose={() => setShowEditProfile(false)}
         profile={profile}
