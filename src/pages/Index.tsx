@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { AnimatePresence } from "framer-motion";
 import SplashScreen from "@/components/SplashScreen";
+import AuthScreen from "@/components/AuthScreen";
 import BottomNav from "@/components/BottomNav";
 import HomeScreen from "@/components/HomeScreen";
 import PropertyDetail from "@/components/PropertyDetail";
@@ -14,6 +15,7 @@ import ProfileScreen from "@/components/ProfileScreen";
 import MessagesScreen from "@/components/MessagesScreen";
 import SearchScreen from "@/components/SearchScreen";
 import MapViewScreen from "@/components/MapViewScreen";
+import { useAuth } from "@/hooks/use-auth";
 import { properties, type Property } from "@/data/properties";
 
 export interface Booking {
