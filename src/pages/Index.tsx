@@ -13,6 +13,7 @@ import TripsScreen from "@/components/TripsScreen";
 import ProfileScreen from "@/components/ProfileScreen";
 import MessagesScreen from "@/components/MessagesScreen";
 import SearchScreen from "@/components/SearchScreen";
+import MapViewScreen from "@/components/MapViewScreen";
 import { properties, type Property } from "@/data/properties";
 
 export interface Booking {
@@ -40,6 +41,7 @@ export default function Index() {
   const [screen, setScreen] = useState<Screen>({ type: "home" });
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [showSearch, setShowSearch] = useState(false);
+  const [showMap, setShowMap] = useState(false);
   const [bookings, setBookings] = useState<Booking[]>([]);
 
   const toggleWishlist = useCallback((id: string) => {
@@ -113,7 +115,7 @@ export default function Index() {
     <div className="min-h-screen bg-background">
       <AnimatePresence mode="wait">
         {screen.type === "home" && activeTab === "home" && (
-          <HomeScreen key="home" onPropertyTap={handlePropertyTap} onSearchTap={() => setShowSearch(true)} />
+          <HomeScreen key="home" onPropertyTap={handlePropertyTap} onSearchTap={() => setShowSearch(true)} onMapTap={() => setShowMap(true)} />
         )}
         {screen.type === "home" && activeTab === "wishlists" && (
           <WishlistScreen
@@ -198,6 +200,17 @@ export default function Index() {
             key="search"
             onPropertyTap={handlePropertyTap}
             onClose={() => setShowSearch(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Map overlay */}
+      <AnimatePresence>
+        {showMap && (
+          <MapViewScreen
+            key="map"
+            onPropertyTap={(p) => { setShowMap(false); handlePropertyTap(p); }}
+            onClose={() => setShowMap(false)}
           />
         )}
       </AnimatePresence>
