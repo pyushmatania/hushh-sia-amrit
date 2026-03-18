@@ -7,7 +7,7 @@ import { lovable } from "@/integrations/lovable/index";
 import authBg from "@/assets/auth-bg-night.jpg";
 
 export default function AuthScreen() {
-  const [mode, setMode] = useState<"login" | "signup">("login");
+  const [mode, setMode] = useState<"login" | "signup" | "forgot">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -15,6 +15,7 @@ export default function AuthScreen() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
 
   const { signIn, signUp } = useAuth();
 
