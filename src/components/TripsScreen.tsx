@@ -1,13 +1,15 @@
-import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
-import { MapPin, Calendar, Clock, ChevronRight, Ticket, QrCode, Users } from "lucide-react";
-import { useRef, useState } from "react";
+import { motion, useMotionValue, useTransform, useSpring, useAnimation, PanInfo } from "framer-motion";
+import { MapPin, Calendar, Clock, ChevronRight, Ticket, QrCode, Users, X } from "lucide-react";
+import { useRef, useState, useCallback } from "react";
 import { properties } from "@/data/properties";
+import PullToRefresh from "./PullToRefresh";
 import type { Booking } from "@/pages/Index";
 
 interface TripsScreenProps {
   bookings: Booking[];
   onViewDetail: (booking: Booking) => void;
   onRebook: (propertyId: string) => void;
+  onCancel?: (bookingId: string) => void;
 }
 
 const statusConfig: Record<string, { gradient: string; glow: string; label: string; dotColor: string }> = {
