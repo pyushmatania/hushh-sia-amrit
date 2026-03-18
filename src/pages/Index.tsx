@@ -92,6 +92,10 @@ export default function Index() {
           bookingId: `HUSHH-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
         };
         await createBooking(bookingData);
+        toast({
+          title: "🎉 Booking Confirmed!",
+          description: `${property.name} on ${bookingData.date}`,
+        });
         setScreen({ type: "confirmation", property, slotId, guests, date, total: finalTotal });
       },
     [createBooking]
