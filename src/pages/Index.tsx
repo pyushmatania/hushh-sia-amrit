@@ -58,6 +58,8 @@ export default function Index() {
   const { wishlist, toggleWishlist } = useWishlists();
   const { bookings, createBooking, cancelBooking } = useBookings();
   const { listings: hostListings, createListing, updateListing, deleteListing } = useHostListings();
+  const unreadCount = useUnreadCount();
+  const { toast } = useToast();
 
   const handlePropertyTap = useCallback((property: Property) => {
     setShowSearch(false);
