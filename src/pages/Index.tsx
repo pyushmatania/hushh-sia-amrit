@@ -18,6 +18,7 @@ import MapViewScreen from "@/components/MapViewScreen";
 import HostDashboard from "@/components/HostDashboard";
 import HostAnalyticsScreen from "@/components/HostAnalyticsScreen";
 import CreateListingScreen from "@/components/CreateListingScreen";
+import NotificationCenter from "@/components/NotificationCenter";
 import { useAuth } from "@/hooks/use-auth";
 import { useWishlists } from "@/hooks/use-wishlists";
 import { useBookings } from "@/hooks/use-bookings";
