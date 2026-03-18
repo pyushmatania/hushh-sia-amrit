@@ -20,6 +20,11 @@ interface HomeScreenProps {
 }
 
 export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap }: HomeScreenProps) {
+  const [refreshKey, setRefreshKey] = useState(0);
+  const handleRefresh = useCallback(async () => {
+    await new Promise((r) => setTimeout(r, 800));
+    setRefreshKey((k) => k + 1);
+  }, []);
   const [activeCategory, setActiveCategory] = useState("stays");
 
   const filteredProperties = useMemo(() => {
