@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { AnimatePresence } from "framer-motion";
 import SplashScreen from "@/components/SplashScreen";
+import AuthScreen from "@/components/AuthScreen";
 import BottomNav from "@/components/BottomNav";
 import HomeScreen from "@/components/HomeScreen";
 import PropertyDetail from "@/components/PropertyDetail";
@@ -14,6 +15,7 @@ import ProfileScreen from "@/components/ProfileScreen";
 import MessagesScreen from "@/components/MessagesScreen";
 import SearchScreen from "@/components/SearchScreen";
 import MapViewScreen from "@/components/MapViewScreen";
+import { useAuth } from "@/hooks/use-auth";
 import { properties, type Property } from "@/data/properties";
 
 export interface Booking {
@@ -36,6 +38,7 @@ type Screen =
   | { type: "bookingDetail"; booking: Booking };
 
 export default function Index() {
+  const { user, loading } = useAuth();
   const [showSplash, setShowSplash] = useState(true);
   const [activeTab, setActiveTab] = useState("home");
   const [screen, setScreen] = useState<Screen>({ type: "home" });
@@ -107,6 +110,14 @@ export default function Index() {
 
   if (showSplash) {
     return <SplashScreen onComplete={() => setShowSplash(false)} />;
+  }
+
+  if (!loading && !user) {
+    return <AuthScreen />;
+  }
+
+  if (loading) {
+    return <div className="min-h-screen bg-background" />;
   }
 
   const showBottomNav = screen.type === "home";

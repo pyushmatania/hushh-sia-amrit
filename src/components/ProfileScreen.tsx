@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { useState, useCallback } from "react";
 import { useTheme } from "@/hooks/use-theme";
+import { useAuth } from "@/hooks/use-auth";
 import profileAvatar from "@/assets/profile-avatar.png";
 import pastTripsImg from "@/assets/past-trips-card.png";
 import connectionsImg from "@/assets/connections-card.png";
@@ -49,11 +50,12 @@ const recentActivity = [
 
 export default function ProfileScreen() {
   const { theme, setTheme } = useTheme();
+  const { user, signOut } = useAuth();
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [activeSetting, setActiveSetting] = useState("");
   const [showLoyalty, setShowLoyalty] = useState(false);
   const [profile, setProfile] = useState({
-    name: "Akash",
+    name: user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User",
     location: "Jeypore, India",
     bio: "Explorer of hidden gems 🌿 Love bonfires, stargazing, and good coffee.",
   });
@@ -344,7 +346,7 @@ export default function ProfileScreen() {
         transition={{ delay: 0.4 }}
         className="mx-5 mt-4 mb-4"
       >
-        <button className="w-full flex items-center justify-center gap-2 py-3 text-sm font-medium text-foreground underline underline-offset-4">
+        <button onClick={signOut} className="w-full flex items-center justify-center gap-2 py-3 text-sm font-medium text-foreground underline underline-offset-4">
           <LogOut size={16} /> Log out
         </button>
       </motion.div>
