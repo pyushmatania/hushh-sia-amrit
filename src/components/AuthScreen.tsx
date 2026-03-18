@@ -205,8 +205,8 @@ export default function AuthScreen() {
       </div>
 
       {/* Toggle mode */}
-      <div className="pb-[max(2rem,env(safe-area-inset-bottom))] text-center">
-        <p className="text-sm text-muted-foreground">
+      <div className="relative z-10 pb-[max(2rem,env(safe-area-inset-bottom))] text-center">
+        <p className="text-sm text-foreground/70">
           {mode === "login" ? "Don't have an account?" : "Already have an account?"}{" "}
           <button
             onClick={() => { setMode(mode === "login" ? "signup" : "login"); setError(""); }}
