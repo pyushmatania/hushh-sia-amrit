@@ -377,6 +377,13 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
             <LogIn size={16} /> Sign in / Sign up
           </button>
         )}
+      </motion.div>
+
+      {/* Version */}
+      <p className="text-center text-[11px] text-muted-foreground pb-4">Hushh v1.0 · Made in Jeypore ❤️</p>
+
+      {/* Sheets */}
+      <EditProfileSheet
         open={showEditProfile}
         onClose={() => setShowEditProfile(false)}
         profile={profile}
