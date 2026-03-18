@@ -107,6 +107,15 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
           className="w-10 h-10 rounded-full glass flex items-center justify-center relative"
         >
           <Bell size={18} className="text-foreground" />
+          {notifCount > 0 && (
+            <motion.span
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="absolute top-1.5 right-1.5 min-w-[16px] h-4 rounded-full bg-primary text-primary-foreground text-[9px] font-bold flex items-center justify-center px-1"
+            >
+              {notifCount > 9 ? "9+" : notifCount}
+            </motion.span>
+          )}
         </motion.button>
       </div>
 
