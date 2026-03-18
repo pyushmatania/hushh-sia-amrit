@@ -17,9 +17,10 @@ interface HomeScreenProps {
   onPropertyTap: (property: Property) => void;
   onSearchTap?: () => void;
   onMapTap?: () => void;
+  onNotificationTap?: () => void;
 }
 
-export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap }: HomeScreenProps) {
+export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNotificationTap }: HomeScreenProps) {
   const [refreshKey, setRefreshKey] = useState(0);
   const handleRefresh = useCallback(async () => {
     await new Promise((r) => setTimeout(r, 800));
