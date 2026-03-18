@@ -16,6 +16,8 @@ import MessagesScreen from "@/components/MessagesScreen";
 import SearchScreen from "@/components/SearchScreen";
 import MapViewScreen from "@/components/MapViewScreen";
 import { useAuth } from "@/hooks/use-auth";
+import { useWishlists } from "@/hooks/use-wishlists";
+import { useBookings } from "@/hooks/use-bookings";
 import { properties, type Property } from "@/data/properties";
 
 export interface Booking {
