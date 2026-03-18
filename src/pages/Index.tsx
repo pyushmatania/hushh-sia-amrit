@@ -221,6 +221,25 @@ export default function Index() {
             onRebook={handleRebook}
           />
         )}
+        {screen.type === "hostDashboard" && (
+          <HostDashboard
+            key="hostDashboard"
+            listings={hostListings}
+            onCreateListing={() => setScreen({ type: "createListing" })}
+            onEditListing={(listing) => setScreen({ type: "createListing", editListing: listing })}
+            onDeleteListing={deleteListing}
+            onToggleStatus={(id, status) => updateListing(id, { status })}
+            onBack={() => { setScreen({ type: "home" }); setActiveTab("profile"); }}
+          />
+        )}
+        {screen.type === "createListing" && (
+          <CreateListingScreen
+            key="createListing"
+            initialData={screen.editListing ?? null}
+            onBack={() => setScreen({ type: "hostDashboard" })}
+            onSubmit={handleCreateListingSubmit}
+          />
+        )}
       </AnimatePresence>
 
       {/* Search overlay */}
