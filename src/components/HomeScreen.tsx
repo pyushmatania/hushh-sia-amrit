@@ -15,6 +15,7 @@ import profileAvatar from "@/assets/profile-avatar.png";
 interface HomeScreenProps {
   onPropertyTap: (property: Property) => void;
   onSearchTap?: () => void;
+  onMapTap?: () => void;
 }
 
 export default function HomeScreen({ onPropertyTap, onSearchTap }: HomeScreenProps) {
