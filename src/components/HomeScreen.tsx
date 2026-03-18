@@ -18,7 +18,7 @@ interface HomeScreenProps {
   onMapTap?: () => void;
 }
 
-export default function HomeScreen({ onPropertyTap, onSearchTap }: HomeScreenProps) {
+export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap }: HomeScreenProps) {
   const [activeCategory, setActiveCategory] = useState("stays");
 
   const filteredProperties = useMemo(() => {
