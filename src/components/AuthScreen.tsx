@@ -85,7 +85,7 @@ export default function AuthScreen() {
     );
   }
 
-
+  if (signupSuccess) {
     return (
       <div className="min-h-screen bg-mesh flex flex-col items-center justify-center px-8 text-center">
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring" }}>
