@@ -101,10 +101,10 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
         <motion.button
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
+          onClick={onNotificationTap}
           className="w-10 h-10 rounded-full glass flex items-center justify-center relative"
         >
           <Bell size={18} className="text-foreground" />
-          <span className="absolute top-2 right-2.5 w-2 h-2 bg-primary rounded-full glow-sm" />
         </motion.button>
       </div>
 
