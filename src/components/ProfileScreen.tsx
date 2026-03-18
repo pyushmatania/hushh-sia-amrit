@@ -48,7 +48,11 @@ const recentActivity = [
   { icon: "🔥", title: "Ember Grounds", subtitle: "Full Day · 12 guests", date: "Feb 14" },
 ];
 
-export default function ProfileScreen() {
+interface ProfileScreenProps {
+  onHostTap?: () => void;
+}
+
+export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
   const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
   const [showEditProfile, setShowEditProfile] = useState(false);
