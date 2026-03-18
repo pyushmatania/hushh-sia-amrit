@@ -121,13 +121,13 @@ export default function AuthScreen() {
           </AnimatePresence>
 
           <div className="relative">
-            <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/50" />
             <input
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               type="email"
               placeholder="Email address"
-              className="w-full bg-secondary rounded-xl pl-12 pr-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-primary/40"
+              className="w-full bg-white/10 backdrop-blur-md border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-sm text-foreground placeholder:text-foreground/40 outline-none focus:ring-1 focus:ring-primary/40"
             />
           </div>
 
