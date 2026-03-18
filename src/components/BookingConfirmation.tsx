@@ -97,9 +97,13 @@ export default function BookingConfirmation({ property, slotId, guests, date, to
 
         {/* Actions */}
         <div className="w-full mt-6 space-y-3 pb-10">
-          <button onClick={onDone} className="w-full py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm glow-primary">
+          <motion.button
+            onClick={onDone}
+            className="w-full py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm animate-pulse-glow"
+            whileTap={{ scale: 0.96 }}
+          >
             Go to My Trips
-          </button>
+          </motion.button>
           <button className="w-full py-3 rounded-lg border border-foreground text-foreground font-medium text-sm">
             Share with Friends
           </button>

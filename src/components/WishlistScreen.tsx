@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Heart, Star, MapPin, BadgeCheck } from "lucide-react";
 import { properties, type Property } from "@/data/properties";
+import { pageSlideUp, cardPress } from "@/lib/animations";
 
 interface WishlistScreenProps {
   wishlist: string[];
@@ -12,7 +13,7 @@ export default function WishlistScreen({ wishlist, onToggleWishlist, onPropertyT
   const wishlisted = properties.filter((p) => wishlist.includes(p.id));
 
   return (
-    <div className="pb-24 bg-mesh min-h-screen">
+    <motion.div variants={pageSlideUp} initial="initial" animate="animate" exit="exit" className="pb-24 bg-mesh min-h-screen">
       <div className="px-5 pt-6 pb-4">
         <motion.h1
           initial={{ opacity: 0, y: -8 }}
@@ -54,7 +55,7 @@ export default function WishlistScreen({ wishlist, onToggleWishlist, onPropertyT
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.08 }}
-              className="rounded-2xl border border-border overflow-hidden cursor-pointer"
+              className="rounded-2xl border border-border overflow-hidden cursor-pointer active:scale-[0.98] transition-transform"
               onClick={() => onPropertyTap(property)}
             >
               <div className="relative aspect-[16/9]">
@@ -105,6 +106,6 @@ export default function WishlistScreen({ wishlist, onToggleWishlist, onPropertyT
           ))}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
