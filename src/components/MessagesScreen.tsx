@@ -8,7 +8,6 @@ import { useAuth } from "@/hooks/use-auth";
 import { useMessages, type Conversation, type Message } from "@/hooks/use-messages";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
-import { formatDistanceToNow } from "date-fns";
 
 /* ── Types ── */
 interface Notification {
