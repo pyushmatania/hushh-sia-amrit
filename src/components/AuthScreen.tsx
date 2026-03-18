@@ -45,7 +45,47 @@ export default function AuthScreen() {
     setLoading(false);
   };
 
-  if (signupSuccess) {
+  const handleForgotPassword = async () => {
+    setError("");
+    if (!email.trim()) {
+      setError("Please enter your email address");
+      return;
+    }
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    if (error) {
+      setError(error.message);
+    } else {
+      setResetSent(true);
+    }
+    setLoading(false);
+  };
+
+  if (resetSent) {
+    return (
+      <div className="min-h-screen bg-mesh flex flex-col items-center justify-center px-8 text-center">
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring" }}>
+          <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+            <Mail size={32} className="text-primary" />
+          </div>
+          <h2 className="text-2xl font-bold text-foreground mb-2">Check your email</h2>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            We've sent a password reset link to <span className="font-semibold text-foreground">{email}</span>.
+          </p>
+          <button
+            onClick={() => { setResetSent(false); setMode("login"); }}
+            className="mt-6 text-sm font-semibold text-primary"
+          >
+            Back to login
+          </button>
+        </motion.div>
+      </div>
+    );
+  }
+
+
     return (
       <div className="min-h-screen bg-mesh flex flex-col items-center justify-center px-8 text-center">
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring" }}>
