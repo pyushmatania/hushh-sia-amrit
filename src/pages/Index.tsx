@@ -23,6 +23,7 @@ import { useWishlists } from "@/hooks/use-wishlists";
 import { useBookings } from "@/hooks/use-bookings";
 import { useHostListings } from "@/hooks/use-host-listings";
 import { useUnreadCount } from "@/hooks/use-unread-count";
+import { useLoyalty } from "@/hooks/use-loyalty";
 import { useToast } from "@/hooks/use-toast";
 import { properties, type Property } from "@/data/properties";
 
