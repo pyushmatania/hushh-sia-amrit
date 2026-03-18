@@ -79,7 +79,8 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap }: Hom
   }, [activeCategory]);
 
   return (
-    <div className="pb-24 bg-mesh min-h-screen">
+    <PullToRefresh onRefresh={handleRefresh}>
+    <div key={refreshKey} className="pb-24 bg-mesh min-h-screen">
 
       {/* Header */}
       <div className="px-5 pt-5 pb-2 flex items-center justify-between">
