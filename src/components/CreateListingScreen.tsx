@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ChevronRight, Plus, X, Check } from "lucide-react";
-import { useState, useCallback } from "react";
+import { ArrowLeft, ChevronRight, Plus, X, Check, Camera, ImagePlus, Loader2 } from "lucide-react";
+import { useState, useCallback, useRef } from "react";
 import type { HostListing } from "@/hooks/use-host-listings";
+import { useImageUpload } from "@/hooks/use-image-upload";
 
 interface CreateListingScreenProps {
   onBack: () => void;
