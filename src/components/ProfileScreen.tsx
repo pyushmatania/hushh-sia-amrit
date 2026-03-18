@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronRight, Bell, Settings, HelpCircle, LogOut,
   Shield, Gift, Star, Sun, Moon, Monitor, BadgeCheck,
@@ -13,6 +13,7 @@ import connectionsImg from "@/assets/connections-card.png";
 import becomeHostImg from "@/assets/become-host.png";
 import EditProfileSheet from "./EditProfileSheet";
 import SettingsSheet from "./SettingsSheet";
+import LoyaltyScreen from "./LoyaltyScreen";
 
 const themeOptions = [
   { id: "light" as const, label: "Light", icon: Sun },
@@ -50,6 +51,7 @@ export default function ProfileScreen() {
   const { theme, setTheme } = useTheme();
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [activeSetting, setActiveSetting] = useState("");
+  const [showLoyalty, setShowLoyalty] = useState(false);
   const [profile, setProfile] = useState({
     name: "Akash",
     location: "Jeypore, India",
@@ -143,12 +145,13 @@ export default function ProfileScreen() {
         )}
       </motion.div>
 
-      {/* Membership Badge */}
+      {/* Membership Badge — opens Loyalty screen */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15 }}
-        className="mx-5 mt-4 rounded-2xl bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/20 p-4 flex items-center gap-3"
+        onClick={() => setShowLoyalty(true)}
+        className="mx-5 mt-4 rounded-2xl bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/20 p-4 flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform"
       >
         <Crown size={28} className="text-primary shrink-0" />
         <div className="flex-1">
@@ -361,6 +364,11 @@ export default function ProfileScreen() {
         onClose={() => setActiveSetting("")}
         settingType={activeSetting}
       />
+      <AnimatePresence>
+        {showLoyalty && (
+          <LoyaltyScreen onBack={() => setShowLoyalty(false)} />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
