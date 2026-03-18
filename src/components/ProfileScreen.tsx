@@ -51,6 +51,7 @@ export default function ProfileScreen() {
   const { theme, setTheme } = useTheme();
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [activeSetting, setActiveSetting] = useState("");
+  const [showLoyalty, setShowLoyalty] = useState(false);
   const [profile, setProfile] = useState({
     name: "Akash",
     location: "Jeypore, India",
