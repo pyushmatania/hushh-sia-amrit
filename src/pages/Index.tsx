@@ -40,7 +40,9 @@ type Screen =
   | { type: "builder"; property: Property; slotId: string; guests: number; date: Date }
   | { type: "checkout"; property: Property; slotId: string; guests: number; date: Date; selections: Record<string, number>; total: number }
   | { type: "confirmation"; property: Property; slotId: string; guests: number; date: Date; total: number }
-  | { type: "bookingDetail"; booking: Booking };
+  | { type: "bookingDetail"; booking: Booking }
+  | { type: "hostDashboard" }
+  | { type: "createListing"; editListing?: import("@/hooks/use-host-listings").HostListing };
 
 export default function Index() {
   const { user, loading } = useAuth();
@@ -51,6 +53,7 @@ export default function Index() {
   const [showMap, setShowMap] = useState(false);
   const { wishlist, toggleWishlist } = useWishlists();
   const { bookings, createBooking, cancelBooking } = useBookings();
+  const { listings: hostListings, createListing, updateListing, deleteListing } = useHostListings();
 
   const handlePropertyTap = useCallback((property: Property) => {
     setShowSearch(false);
