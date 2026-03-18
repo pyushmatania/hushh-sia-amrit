@@ -378,7 +378,7 @@ export default function CreateListingScreen({ onBack, onSubmit, initialData }: C
               Back
             </motion.button>
           )}
-          {step < 3 ? (
+          {step < 4 ? (
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={() => setStep((s) => s + 1)}
