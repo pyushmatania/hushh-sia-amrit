@@ -66,9 +66,20 @@ export default function AuthScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-mesh flex flex-col">
-      {/* Hero */}
-      <div className="flex-1 flex flex-col justify-center px-8 pt-16 pb-8">
+    <div className="min-h-screen relative flex flex-col overflow-hidden">
+      {/* Background image */}
+      <motion.div
+        className="absolute inset-0"
+        initial={{ scale: 1.1 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 8, ease: "easeOut" }}
+      >
+        <img src={authBg} alt="" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80" />
+      </motion.div>
+
+      {/* Content */}
+      <div className="relative z-10 flex-1 flex flex-col justify-center px-8 pt-16 pb-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-2 mb-6">
             <Sparkles size={28} className="text-primary" />
