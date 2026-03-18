@@ -95,8 +95,8 @@ export default function Index() {
   }, []);
 
   const handleCancelBooking = useCallback((bookingId: string) => {
-    setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: "cancelled" as const } : b));
-  }, []);
+    cancelBooking(bookingId);
+  }, [cancelBooking]);
 
   const handleRebook = useCallback((propertyId: string) => {
     const property = properties.find(p => p.id === propertyId);
