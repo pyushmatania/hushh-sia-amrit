@@ -29,7 +29,7 @@ const statusColors: Record<string, string> = {
 };
 
 export default function HostDashboard({
-  listings, onCreateListing, onEditListing, onDeleteListing, onToggleStatus, onBack
+  listings, onCreateListing, onEditListing, onDeleteListing, onToggleStatus, onBack, onAnalytics
 }: HostDashboardProps) {
   const [menuOpen, setMenuOpen] = useState<string | null>(null);
 
