@@ -132,18 +132,28 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap }: Hom
         </motion.div>
       </div>
 
-      {/* Search bar */}
-      <div className="px-5 pb-4">
+      {/* Search bar + Map toggle */}
+      <div className="px-5 pb-4 flex gap-2">
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
-          className="flex items-center gap-3 rounded-2xl glass px-5 py-3.5 cursor-pointer"
+          className="flex-1 flex items-center gap-3 rounded-2xl glass px-5 py-3.5 cursor-pointer"
           onClick={onSearchTap}
         >
           <Search size={18} className="text-primary shrink-0" />
           <span className="text-sm font-medium text-muted-foreground">Search villas, experiences...</span>
         </motion.div>
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={onMapTap}
+          className="w-[52px] h-[52px] rounded-2xl glass flex items-center justify-center shrink-0"
+        >
+          <Map size={20} className="text-primary" />
+        </motion.button>
       </div>
 
 
