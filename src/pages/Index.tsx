@@ -231,7 +231,14 @@ export default function Index() {
             onEditListing={(listing) => setScreen({ type: "createListing", editListing: listing })}
             onDeleteListing={deleteListing}
             onToggleStatus={(id, status) => updateListing(id, { status })}
+            onAnalytics={() => setScreen({ type: "hostAnalytics" })}
             onBack={() => { setScreen({ type: "home" }); setActiveTab("profile"); }}
+          />
+        )}
+        {screen.type === "hostAnalytics" && (
+          <HostAnalyticsScreen
+            key="hostAnalytics"
+            onBack={() => setScreen({ type: "hostDashboard" })}
           />
         )}
         {screen.type === "createListing" && (
