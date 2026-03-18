@@ -22,6 +22,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { useWishlists } from "@/hooks/use-wishlists";
 import { useBookings } from "@/hooks/use-bookings";
 import { useHostListings } from "@/hooks/use-host-listings";
+import { useUnreadCount } from "@/hooks/use-unread-count";
+import { useToast } from "@/hooks/use-toast";
 import { properties, type Property } from "@/data/properties";
 
 export interface Booking {
