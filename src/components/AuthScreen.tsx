@@ -132,14 +132,14 @@ export default function AuthScreen() {
           </div>
 
           <div className="relative">
-            <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/50" />
             <input
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               type={showPassword ? "text" : "password"}
               placeholder="Password"
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-              className="w-full bg-secondary rounded-xl pl-12 pr-12 py-3.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-primary/40"
+              className="w-full bg-white/10 backdrop-blur-md border border-white/10 rounded-xl pl-12 pr-12 py-3.5 text-sm text-foreground placeholder:text-foreground/40 outline-none focus:ring-1 focus:ring-primary/40"
             />
             <button
               onClick={() => setShowPassword(!showPassword)}
