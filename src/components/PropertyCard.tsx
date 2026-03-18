@@ -34,6 +34,7 @@ export default function PropertyCard({ property, index, onTap }: PropertyCardPro
       transition={{ delay: index * 0.06 }}
       className="cursor-pointer px-5 group"
       onClick={() => onTap(property)}
+      {...cardPress}
     >
       {/* Image */}
       <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
