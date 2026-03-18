@@ -58,6 +58,8 @@ export default function Index() {
   const [screen, setScreen] = useState<Screen>({ type: "home" });
   const [showSearch, setShowSearch] = useState(false);
   const [showMap, setShowMap] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const { unreadCount: notifUnreadCount } = useNotifications();
   const { wishlist, toggleWishlist } = useWishlists();
   const { bookings, createBooking, cancelBooking } = useBookings();
   const { listings: hostListings, createListing, updateListing, deleteListing } = useHostListings();
