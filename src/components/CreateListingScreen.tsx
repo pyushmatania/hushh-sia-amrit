@@ -189,6 +189,57 @@ export default function CreateListingScreen({ onBack, onSubmit, initialData }: C
           {step === 1 && (
             <motion.div key="step1" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="space-y-5">
               <div>
+                <label className="text-sm font-medium text-foreground mb-1.5 block">Property photos</label>
+                <p className="text-xs text-muted-foreground mb-3">Add up to 8 photos. The first photo will be the cover.</p>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={handleFileSelect}
+                />
+                <div className="grid grid-cols-3 gap-2">
+                  {form.imageUrls.map((url, i) => (
+                    <div key={url} className="relative aspect-square rounded-xl overflow-hidden group">
+                      <img src={url} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
+                      {i === 0 && (
+                        <span className="absolute top-1.5 left-1.5 text-[9px] font-bold bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
+                          Cover
+                        </span>
+                      )}
+                      <button
+                        onClick={() => handleRemoveImage(url)}
+                        className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X size={12} className="text-foreground" />
+                      </button>
+                    </div>
+                  ))}
+                  {form.imageUrls.length < 8 && (
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading}
+                      className="aspect-square rounded-xl border-2 border-dashed border-border hover:border-primary/50 flex flex-col items-center justify-center gap-1 transition-colors disabled:opacity-50"
+                    >
+                      {uploading ? (
+                        <Loader2 size={20} className="text-muted-foreground animate-spin" />
+                      ) : (
+                        <>
+                          <ImagePlus size={20} className="text-muted-foreground" />
+                          <span className="text-[10px] text-muted-foreground">Add photo</span>
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {step === 2 && (
+            <motion.div key="step2" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="space-y-5">
+              <div>
                 <label className="text-sm font-medium text-foreground mb-1.5 block">Short description</label>
                 <textarea
                   value={form.description}
