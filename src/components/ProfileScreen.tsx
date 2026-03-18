@@ -364,6 +364,11 @@ export default function ProfileScreen() {
         onClose={() => setActiveSetting("")}
         settingType={activeSetting}
       />
+      <AnimatePresence>
+        {showLoyalty && (
+          <LoyaltyScreen onBack={() => setShowLoyalty(false)} />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
