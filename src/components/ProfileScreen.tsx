@@ -145,12 +145,13 @@ export default function ProfileScreen() {
         )}
       </motion.div>
 
-      {/* Membership Badge */}
+      {/* Membership Badge — opens Loyalty screen */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15 }}
-        className="mx-5 mt-4 rounded-2xl bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/20 p-4 flex items-center gap-3"
+        onClick={() => setShowLoyalty(true)}
+        className="mx-5 mt-4 rounded-2xl bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/20 p-4 flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform"
       >
         <Crown size={28} className="text-primary shrink-0" />
         <div className="flex-1">
