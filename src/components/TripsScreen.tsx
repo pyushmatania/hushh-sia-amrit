@@ -1,13 +1,15 @@
-import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
-import { MapPin, Calendar, Clock, ChevronRight, Ticket, QrCode, Users } from "lucide-react";
-import { useRef, useState } from "react";
+import { motion, useMotionValue, useTransform, useSpring, useAnimation, PanInfo } from "framer-motion";
+import { MapPin, Calendar, Clock, ChevronRight, Ticket, QrCode, Users, X } from "lucide-react";
+import { useRef, useState, useCallback } from "react";
 import { properties } from "@/data/properties";
+import PullToRefresh from "./PullToRefresh";
 import type { Booking } from "@/pages/Index";
 
 interface TripsScreenProps {
   bookings: Booking[];
   onViewDetail: (booking: Booking) => void;
   onRebook: (propertyId: string) => void;
+  onCancel?: (bookingId: string) => void;
 }
 
 const statusConfig: Record<string, { gradient: string; glow: string; label: string; dotColor: string }> = {
@@ -30,6 +32,67 @@ const statusConfig: Record<string, { gradient: string; glow: string; label: stri
     dotColor: "bg-destructive",
   },
 };
+
+function SwipeableCard({
+  booking,
+  index,
+  onViewDetail,
+  onRebook,
+  onCancel,
+}: {
+  booking: Booking;
+  index: number;
+  onViewDetail: (b: Booking) => void;
+  onRebook: (id: string) => void;
+  onCancel?: (id: string) => void;
+}) {
+  const controls = useAnimation();
+  const swipeX = useMotionValue(0);
+  const bgOpacity = useTransform(swipeX, [-150, -80, 0], [1, 0.8, 0]);
+  const bgScale = useTransform(swipeX, [-150, -80, 0], [1, 0.9, 0.8]);
+  const canSwipe = booking.status === "upcoming" && !!onCancel;
+
+  const handleDragEnd = async (_: any, info: PanInfo) => {
+    if (!canSwipe) {
+      controls.start({ x: 0 });
+      return;
+    }
+    if (info.offset.x < -120) {
+      await controls.start({ x: -400, opacity: 0, transition: { duration: 0.3 } });
+      onCancel!(booking.id);
+    } else {
+      controls.start({ x: 0 });
+    }
+  };
+
+  return (
+    <div className="relative overflow-hidden rounded-3xl">
+      {/* Cancel background */}
+      {canSwipe && (
+        <motion.div
+          className="absolute inset-0 bg-destructive/90 rounded-3xl flex items-center justify-end pr-8"
+          style={{ opacity: bgOpacity, scale: bgScale }}
+        >
+          <div className="flex flex-col items-center gap-1 text-white">
+            <X size={24} />
+            <span className="text-xs font-semibold">Cancel</span>
+          </div>
+        </motion.div>
+      )}
+
+      <motion.div
+        animate={controls}
+        style={{ x: swipeX }}
+        drag={canSwipe ? "x" : false}
+        dragConstraints={{ left: -150, right: 0 }}
+        dragElastic={0.1}
+        onDragEnd={handleDragEnd}
+      >
+        <TiltCard booking={booking} index={index} onViewDetail={onViewDetail} onRebook={onRebook} />
+      </motion.div>
+    </div>
+  );
+}
 
 function TiltCard({
   booking,
@@ -190,9 +253,16 @@ function TiltCard({
   );
 }
 
-export default function TripsScreen({ bookings, onViewDetail, onRebook }: TripsScreenProps) {
+export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel }: TripsScreenProps) {
+  const [refreshKey, setRefreshKey] = useState(0);
+  const handleRefresh = useCallback(async () => {
+    await new Promise((r) => setTimeout(r, 800));
+    setRefreshKey((k) => k + 1);
+  }, []);
+
   return (
-    <div className="pb-24 bg-mesh min-h-screen">
+    <PullToRefresh onRefresh={handleRefresh}>
+    <div key={refreshKey} className="pb-24 bg-mesh min-h-screen">
       <div className="px-5 pt-6 pb-2">
         <motion.h1
           initial={{ opacity: 0, y: -8 }}
@@ -207,7 +277,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook }: TripsS
           transition={{ delay: 0.1 }}
           className="text-sm text-muted-foreground mt-1"
         >
-          Manage your upcoming and past bookings
+          {onCancel ? "Swipe left on upcoming trips to cancel" : "Manage your upcoming and past bookings"}
         </motion.p>
       </div>
 
@@ -233,16 +303,18 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook }: TripsS
       ) : (
         <div className="px-5 pt-4 space-y-6">
           {bookings.map((trip, i) => (
-            <TiltCard
+            <SwipeableCard
               key={trip.id}
               booking={trip}
               index={i}
               onViewDetail={onViewDetail}
               onRebook={onRebook}
+              onCancel={onCancel}
             />
           ))}
         </div>
       )}
     </div>
+    </PullToRefresh>
   );
 }

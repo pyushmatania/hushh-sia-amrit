@@ -4,9 +4,10 @@ import CategoryBar from "./CategoryBar";
 import PropertyCard from "./PropertyCard";
 import PropertyCardSmall from "./PropertyCardSmall";
 import PackageCard from "./PackageCard";
+import PullToRefresh from "./PullToRefresh";
 import { properties, packages, type Property } from "@/data/properties";
 import { Star, Flame, Music, Trophy, Clapperboard, UtensilsCrossed, Telescope, Wrench } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import property1 from "@/assets/property-1.jpg";
 import property2 from "@/assets/property-2.jpg";
 import property3 from "@/assets/property-3.jpg";
@@ -19,6 +20,11 @@ interface HomeScreenProps {
 }
 
 export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap }: HomeScreenProps) {
+  const [refreshKey, setRefreshKey] = useState(0);
+  const handleRefresh = useCallback(async () => {
+    await new Promise((r) => setTimeout(r, 800));
+    setRefreshKey((k) => k + 1);
+  }, []);
   const [activeCategory, setActiveCategory] = useState("stays");
 
   const filteredProperties = useMemo(() => {
@@ -73,7 +79,8 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap }: Hom
   }, [activeCategory]);
 
   return (
-    <div className="pb-24 bg-mesh min-h-screen">
+    <PullToRefresh onRefresh={handleRefresh}>
+    <div key={refreshKey} className="pb-24 bg-mesh min-h-screen">
 
       {/* Header */}
       <div className="px-5 pt-5 pb-2 flex items-center justify-between">
@@ -301,5 +308,6 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap }: Hom
         <span className="text-sm font-medium text-foreground">Prices include all fees · No hidden charges</span>
       </motion.div>
     </div>
+    </PullToRefresh>
   );
 }

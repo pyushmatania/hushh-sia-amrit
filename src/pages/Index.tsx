@@ -159,6 +159,7 @@ export default function Index() {
             bookings={bookings}
             onViewDetail={handleViewBookingDetail}
             onRebook={handleRebook}
+            onCancel={handleCancelBooking}
           />
         )}
         {screen.type === "home" && activeTab === "messages" && (
