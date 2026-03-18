@@ -64,9 +64,27 @@ export default function CreateListingScreen({ onBack, onSubmit, initialData }: C
     setForm((prev) => ({ ...prev, tags: prev.tags.filter((t) => t !== tag) }));
   }, []);
 
+  const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    for (const file of Array.from(files)) {
+      if (!file.type.startsWith("image/")) continue;
+      const url = await uploadImage(file);
+      if (url) {
+        setForm((prev) => ({ ...prev, imageUrls: [...prev.imageUrls, url] }));
+      }
+    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }, [uploadImage]);
+
+  const handleRemoveImage = useCallback(async (url: string) => {
+    setForm((prev) => ({ ...prev, imageUrls: prev.imageUrls.filter((u) => u !== url) }));
+    await deleteImage(url);
+  }, [deleteImage]);
+
   const canNext = step === 0
     ? form.name.trim().length > 0 && form.basePrice > 0
-    : step === 1
+    : step === 2
     ? form.description.trim().length > 0
     : true;
 
