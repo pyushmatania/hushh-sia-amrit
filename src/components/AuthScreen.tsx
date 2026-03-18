@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import { lovable } from "@/integrations/lovable/index";
 
 export default function AuthScreen() {
   const [mode, setMode] = useState<"login" | "signup">("login");
