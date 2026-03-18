@@ -8,6 +8,7 @@ import PullToRefresh from "./PullToRefresh";
 import { properties, packages, type Property } from "@/data/properties";
 import { Star, Flame, Music, Trophy, Clapperboard, UtensilsCrossed, Telescope, Wrench } from "lucide-react";
 import { useState, useMemo, useCallback } from "react";
+import { useNotifications } from "@/hooks/use-notifications";
 import property1 from "@/assets/property-1.jpg";
 import property2 from "@/assets/property-2.jpg";
 import property3 from "@/assets/property-3.jpg";
