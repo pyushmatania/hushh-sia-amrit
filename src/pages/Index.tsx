@@ -16,6 +16,7 @@ import MessagesScreen from "@/components/MessagesScreen";
 import SearchScreen from "@/components/SearchScreen";
 import MapViewScreen from "@/components/MapViewScreen";
 import HostDashboard from "@/components/HostDashboard";
+import HostAnalyticsScreen from "@/components/HostAnalyticsScreen";
 import CreateListingScreen from "@/components/CreateListingScreen";
 import { useAuth } from "@/hooks/use-auth";
 import { useWishlists } from "@/hooks/use-wishlists";
