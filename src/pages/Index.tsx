@@ -18,11 +18,13 @@ import MapViewScreen from "@/components/MapViewScreen";
 import HostDashboard from "@/components/HostDashboard";
 import HostAnalyticsScreen from "@/components/HostAnalyticsScreen";
 import CreateListingScreen from "@/components/CreateListingScreen";
+import NotificationCenter from "@/components/NotificationCenter";
 import { useAuth } from "@/hooks/use-auth";
 import { useWishlists } from "@/hooks/use-wishlists";
 import { useBookings } from "@/hooks/use-bookings";
 import { useHostListings } from "@/hooks/use-host-listings";
 import { useUnreadCount } from "@/hooks/use-unread-count";
+import { useNotifications } from "@/hooks/use-notifications";
 import { useLoyalty } from "@/hooks/use-loyalty";
 import { useToast } from "@/hooks/use-toast";
 import { properties, type Property } from "@/data/properties";
@@ -56,6 +58,8 @@ export default function Index() {
   const [screen, setScreen] = useState<Screen>({ type: "home" });
   const [showSearch, setShowSearch] = useState(false);
   const [showMap, setShowMap] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const { unreadCount: notifUnreadCount } = useNotifications();
   const { wishlist, toggleWishlist } = useWishlists();
   const { bookings, createBooking, cancelBooking } = useBookings();
   const { listings: hostListings, createListing, updateListing, deleteListing } = useHostListings();
@@ -158,7 +162,7 @@ export default function Index() {
     <div className="min-h-screen bg-background">
       <AnimatePresence mode="wait">
         {screen.type === "home" && activeTab === "home" && (
-          <HomeScreen key="home" onPropertyTap={handlePropertyTap} onSearchTap={() => setShowSearch(true)} onMapTap={() => setShowMap(true)} />
+          <HomeScreen key="home" onPropertyTap={handlePropertyTap} onSearchTap={() => setShowSearch(true)} onMapTap={() => setShowMap(true)} onNotificationTap={() => setShowNotifications(true)} />
         )}
         {screen.type === "home" && activeTab === "wishlists" && (
           <WishlistScreen
@@ -281,6 +285,16 @@ export default function Index() {
             key="map"
             onPropertyTap={(p) => { setShowMap(false); handlePropertyTap(p); }}
             onClose={() => setShowMap(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Notification Center overlay */}
+      <AnimatePresence>
+        {showNotifications && (
+          <NotificationCenter
+            key="notifications"
+            onBack={() => setShowNotifications(false)}
           />
         )}
       </AnimatePresence>

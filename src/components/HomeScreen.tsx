@@ -8,6 +8,7 @@ import PullToRefresh from "./PullToRefresh";
 import { properties, packages, type Property } from "@/data/properties";
 import { Star, Flame, Music, Trophy, Clapperboard, UtensilsCrossed, Telescope, Wrench } from "lucide-react";
 import { useState, useMemo, useCallback } from "react";
+import { useNotifications } from "@/hooks/use-notifications";
 import property1 from "@/assets/property-1.jpg";
 import property2 from "@/assets/property-2.jpg";
 import property3 from "@/assets/property-3.jpg";
@@ -17,9 +18,11 @@ interface HomeScreenProps {
   onPropertyTap: (property: Property) => void;
   onSearchTap?: () => void;
   onMapTap?: () => void;
+  onNotificationTap?: () => void;
 }
 
-export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap }: HomeScreenProps) {
+export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNotificationTap }: HomeScreenProps) {
+  const { unreadCount: notifCount } = useNotifications();
   const [refreshKey, setRefreshKey] = useState(0);
   const handleRefresh = useCallback(async () => {
     await new Promise((r) => setTimeout(r, 800));
@@ -100,10 +103,19 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap }: Hom
         <motion.button
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
+          onClick={onNotificationTap}
           className="w-10 h-10 rounded-full glass flex items-center justify-center relative"
         >
           <Bell size={18} className="text-foreground" />
-          <span className="absolute top-2 right-2.5 w-2 h-2 bg-primary rounded-full glow-sm" />
+          {notifCount > 0 && (
+            <motion.span
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="absolute top-1.5 right-1.5 min-w-[16px] h-4 rounded-full bg-primary text-primary-foreground text-[9px] font-bold flex items-center justify-center px-1"
+            >
+              {notifCount > 9 ? "9+" : notifCount}
+            </motion.span>
+          )}
         </motion.button>
       </div>
 
