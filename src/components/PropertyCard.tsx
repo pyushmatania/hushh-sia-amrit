@@ -1,6 +1,7 @@
 import { motion, useMotionValue, useTransform, animate, PanInfo } from "framer-motion";
 import { Heart, Star, BadgeCheck } from "lucide-react";
 import { useState, useCallback } from "react";
+import { heartPop, cardPress } from "@/lib/animations";
 import type { Property } from "@/data/properties";
 
 interface PropertyCardProps {
