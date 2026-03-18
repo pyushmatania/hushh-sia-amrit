@@ -202,6 +202,42 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          action_url: string | null
+          body: string
+          created_at: string
+          icon: string | null
+          id: string
+          read: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          action_url?: string | null
+          body?: string
+          created_at?: string
+          icon?: string | null
+          id?: string
+          read?: boolean
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          action_url?: string | null
+          body?: string
+          created_at?: string
+          icon?: string | null
+          id?: string
+          read?: boolean
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -272,6 +308,16 @@ export type Database = {
           _icon?: string
           _points: number
           _title: string
+          _user_id: string
+        }
+        Returns: undefined
+      }
+      create_notification: {
+        Args: {
+          _body: string
+          _icon?: string
+          _title: string
+          _type: string
           _user_id: string
         }
         Returns: undefined
