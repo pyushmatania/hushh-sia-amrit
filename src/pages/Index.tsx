@@ -15,9 +15,12 @@ import ProfileScreen from "@/components/ProfileScreen";
 import MessagesScreen from "@/components/MessagesScreen";
 import SearchScreen from "@/components/SearchScreen";
 import MapViewScreen from "@/components/MapViewScreen";
+import HostDashboard from "@/components/HostDashboard";
+import CreateListingScreen from "@/components/CreateListingScreen";
 import { useAuth } from "@/hooks/use-auth";
 import { useWishlists } from "@/hooks/use-wishlists";
 import { useBookings } from "@/hooks/use-bookings";
+import { useHostListings } from "@/hooks/use-host-listings";
 import { properties, type Property } from "@/data/properties";
 
 export interface Booking {
@@ -37,7 +40,9 @@ type Screen =
   | { type: "builder"; property: Property; slotId: string; guests: number; date: Date }
   | { type: "checkout"; property: Property; slotId: string; guests: number; date: Date; selections: Record<string, number>; total: number }
   | { type: "confirmation"; property: Property; slotId: string; guests: number; date: Date; total: number }
-  | { type: "bookingDetail"; booking: Booking };
+  | { type: "bookingDetail"; booking: Booking }
+  | { type: "hostDashboard" }
+  | { type: "createListing"; editListing?: import("@/hooks/use-host-listings").HostListing };
 
 export default function Index() {
   const { user, loading } = useAuth();
@@ -48,6 +53,7 @@ export default function Index() {
   const [showMap, setShowMap] = useState(false);
   const { wishlist, toggleWishlist } = useWishlists();
   const { bookings, createBooking, cancelBooking } = useBookings();
+  const { listings: hostListings, createListing, updateListing, deleteListing } = useHostListings();
 
   const handlePropertyTap = useCallback((property: Property) => {
     setShowSearch(false);
@@ -105,6 +111,22 @@ export default function Index() {
     }
   }, []);
 
+  const handleOpenHostDashboard = useCallback(() => {
+    setScreen({ type: "hostDashboard" });
+  }, []);
+
+  const handleCreateListingSubmit = useCallback(
+    async (listing: Omit<import("@/hooks/use-host-listings").HostListing, "id" | "createdAt">) => {
+      if (screen.type === "createListing" && screen.editListing) {
+        await updateListing(screen.editListing.id, listing);
+      } else {
+        await createListing(listing);
+      }
+      setScreen({ type: "hostDashboard" });
+    },
+    [screen, createListing, updateListing]
+  );
+
   if (showSplash) {
     return <SplashScreen onComplete={() => setShowSplash(false)} />;
   }
@@ -145,7 +167,7 @@ export default function Index() {
           <MessagesScreen key="messages" />
         )}
         {screen.type === "home" && activeTab === "profile" && (
-          <ProfileScreen key="profile" />
+          <ProfileScreen key="profile" onHostTap={handleOpenHostDashboard} />
         )}
         {screen.type === "detail" && (
           <PropertyDetail
@@ -197,6 +219,25 @@ export default function Index() {
             onBack={() => { setScreen({ type: "home" }); setActiveTab("bookings"); }}
             onCancel={handleCancelBooking}
             onRebook={handleRebook}
+          />
+        )}
+        {screen.type === "hostDashboard" && (
+          <HostDashboard
+            key="hostDashboard"
+            listings={hostListings}
+            onCreateListing={() => setScreen({ type: "createListing" })}
+            onEditListing={(listing) => setScreen({ type: "createListing", editListing: listing })}
+            onDeleteListing={deleteListing}
+            onToggleStatus={(id, status) => updateListing(id, { status })}
+            onBack={() => { setScreen({ type: "home" }); setActiveTab("profile"); }}
+          />
+        )}
+        {screen.type === "createListing" && (
+          <CreateListingScreen
+            key="createListing"
+            initialData={screen.editListing ?? null}
+            onBack={() => setScreen({ type: "hostDashboard" })}
+            onSubmit={handleCreateListingSubmit}
           />
         )}
       </AnimatePresence>

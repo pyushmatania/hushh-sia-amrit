@@ -48,7 +48,11 @@ const recentActivity = [
   { icon: "🔥", title: "Ember Grounds", subtitle: "Full Day · 12 guests", date: "Feb 14" },
 ];
 
-export default function ProfileScreen() {
+interface ProfileScreenProps {
+  onHostTap?: () => void;
+}
+
+export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
   const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
   const [showEditProfile, setShowEditProfile] = useState(false);
@@ -261,7 +265,8 @@ export default function ProfileScreen() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.32 }}
-        className="mx-5 mt-4 rounded-2xl glass p-5 flex items-center gap-4 cursor-pointer"
+        onClick={onHostTap}
+        className="mx-5 mt-4 rounded-2xl glass p-5 flex items-center gap-4 cursor-pointer active:scale-[0.98] transition-transform"
       >
         <img src={becomeHostImg} alt="Become a host" className="w-16 h-16 object-contain shrink-0" />
         <div className="flex-1">
