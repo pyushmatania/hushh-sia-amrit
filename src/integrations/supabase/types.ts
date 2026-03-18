@@ -56,6 +56,60 @@ export type Database = {
         }
         Relationships: []
       }
+      host_listings: {
+        Row: {
+          amenities: string[]
+          base_price: number
+          capacity: number
+          category: string
+          created_at: string
+          description: string
+          full_description: string
+          id: string
+          image_urls: string[]
+          location: string
+          name: string
+          status: string
+          tags: string[]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amenities?: string[]
+          base_price?: number
+          capacity?: number
+          category?: string
+          created_at?: string
+          description?: string
+          full_description?: string
+          id?: string
+          image_urls?: string[]
+          location?: string
+          name: string
+          status?: string
+          tags?: string[]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amenities?: string[]
+          base_price?: number
+          capacity?: number
+          category?: string
+          created_at?: string
+          description?: string
+          full_description?: string
+          id?: string
+          image_urls?: string[]
+          location?: string
+          name?: string
+          status?: string
+          tags?: string[]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
