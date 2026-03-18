@@ -89,7 +89,25 @@ export default function HostDashboard({
         ))}
       </div>
 
-      {/* Listings */}
+      {/* Analytics CTA */}
+      <motion.button
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.25 }}
+        whileTap={{ scale: 0.97 }}
+        onClick={onAnalytics}
+        className="mx-5 mb-6 w-[calc(100%-2.5rem)] rounded-2xl glass p-4 flex items-center gap-3 active:scale-[0.98] transition-transform"
+      >
+        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+          <BarChart3 size={18} className="text-primary" />
+        </div>
+        <div className="flex-1 text-left">
+          <p className="text-sm font-bold text-foreground">View Analytics</p>
+          <p className="text-[10px] text-muted-foreground">Revenue, bookings & occupancy insights</p>
+        </div>
+        <TrendingUp size={16} className="text-muted-foreground" />
+      </motion.button>
+
       <div className="px-5">
         <h3 className="text-base font-bold text-foreground mb-3 flex items-center gap-2">
           <Home size={16} className="text-primary" />
