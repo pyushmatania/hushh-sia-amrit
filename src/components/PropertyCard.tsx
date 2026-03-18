@@ -63,12 +63,15 @@ export default function PropertyCard({ property, index, onTap }: PropertyCardPro
         <motion.button
           onClick={(e) => { e.stopPropagation(); setLiked(!liked); }}
           className="absolute top-3 right-3"
+          variants={heartPop}
+          initial="initial"
+          animate={liked ? "liked" : "unliked"}
           whileTap={{ scale: 1.3 }}
           transition={{ type: "spring", stiffness: 500 }}
         >
           <Heart
             size={24}
-            className={`transition-colors duration-200 ${liked ? "fill-primary text-primary" : "fill-foreground/20 text-background"}`}
+            className={`transition-colors duration-200 drop-shadow-lg ${liked ? "fill-primary text-primary" : "fill-foreground/20 text-background"}`}
             strokeWidth={2}
           />
         </motion.button>
