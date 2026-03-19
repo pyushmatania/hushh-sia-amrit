@@ -12,23 +12,38 @@ const foodieVideos = [videoThali.url, videoBbq.url, videoCandlelight.url, videoC
 const foodieOverlays = ["taste the tradition", "sizzle & spice", "rustic flavors", "farm to fire", "under the sky"];
 
 type FoodieAccent = {
-  border: string;
+  color: string;
+  side: "left" | "right" | "top";
   tag: { label: string; bg: string; icon: React.ReactNode };
 } | null;
 
 const foodieAccents: FoodieAccent[] = [
   {
-    border: "linear-gradient(135deg, hsl(43 96% 56%), hsl(30 90% 50%), hsl(43 96% 66%))",
+    color: "hsl(43 96% 56%)",
+    side: "left",
     tag: { label: "MUST TRY", bg: "linear-gradient(135deg, hsl(43 96% 50%), hsl(30 90% 45%))", icon: <Flame size={11} className="text-white" /> },
   },
   null,
   {
-    border: "linear-gradient(135deg, hsl(350 80% 55%), hsl(320 70% 50%), hsl(280 60% 55%))",
+    color: "hsl(350 80% 55%)",
+    side: "right",
     tag: { label: "CHEF'S PICK", bg: "linear-gradient(135deg, hsl(350 80% 55%), hsl(320 70% 50%))", icon: <Sparkles size={11} className="text-white" /> },
   },
   null,
   null,
 ];
+
+function getAccentShadow(color: string, side: string): string {
+  if (side === "left") return `inset 3px 0 0 0 ${color}, inset 2px -10px 14px -12px ${color}, inset 2px 10px 14px -12px ${color}`;
+  if (side === "right") return `inset -3px 0 0 0 ${color}, inset -2px -10px 14px -12px ${color}, inset -2px 10px 14px -12px ${color}`;
+  return `inset 0 3px 0 0 ${color}, inset -10px 2px 14px -12px ${color}, inset 10px 2px 14px -12px ${color}`;
+}
+
+function getGlowGradient(color: string, side: string): string {
+  if (side === "left") return `linear-gradient(to right, ${color}25 0%, transparent 35%)`;
+  if (side === "right") return `linear-gradient(to left, ${color}25 0%, transparent 35%)`;
+  return `linear-gradient(to bottom, ${color}25 0%, transparent 35%)`;
+}
 
 interface FoodieCarouselProps {
   properties: Property[];
@@ -55,9 +70,7 @@ function FoodieVideoCard({
         if (entry.isIntersecting) {
           setShouldLoad(true);
           const video = videoRef.current;
-          if (video && entry.intersectionRatio > 0.5) {
-            video.play().catch(() => {});
-          }
+          if (video && entry.intersectionRatio > 0.5) video.play().catch(() => {});
         } else {
           videoRef.current?.pause();
         }
@@ -67,8 +80,6 @@ function FoodieVideoCard({
     observer.observe(card);
     return () => observer.disconnect();
   }, []);
-
-  const hasAccent = !!accent;
 
   return (
     <div
@@ -80,23 +91,24 @@ function FoodieVideoCard({
         opacity: isActive ? 1 : 0.7,
         transform: isActive ? "scale(1)" : "scale(0.95)",
         transition: "opacity 0.3s, transform 0.3s",
-        ...(hasAccent ? {
-          padding: "2.5px",
-          background: accent!.border,
-          borderRadius: "22px",
-        } : {}),
       }}
       onClick={onTap}
     >
       <div
-        className="relative overflow-hidden"
+        className="relative overflow-hidden rounded-[20px]"
         style={{
           height: "65vh", maxHeight: "520px",
-          borderRadius: "20px",
-          border: hasAccent ? "none" : "1px solid rgba(255,255,255,0.08)",
-          background: "hsl(260 20% 6%)",
+          border: accent ? "none" : "1px solid rgba(255,255,255,0.08)",
+          boxShadow: accent ? getAccentShadow(accent.color, accent.side) : undefined,
         }}
       >
+        {accent && (
+          <div
+            className="absolute inset-0 z-[1] pointer-events-none rounded-[20px]"
+            style={{ background: getGlowGradient(accent.color, accent.side) }}
+          />
+        )}
+
         <img src={property.images[0]} alt={property.name}
           className="absolute inset-0 w-full h-full object-cover"
           style={{ opacity: videoReady ? 0 : 1, transition: "opacity 0.5s" }}
@@ -108,7 +120,6 @@ function FoodieVideoCard({
             style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.5s" }} />
         )}
 
-        {/* Accent tag */}
         {accent?.tag && (
           <span
             className="absolute top-4 left-4 text-[10px] font-bold tracking-wider px-3 py-1.5 rounded-full flex items-center gap-1 shadow-lg z-10"

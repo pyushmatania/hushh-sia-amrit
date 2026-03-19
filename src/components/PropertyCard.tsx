@@ -2,58 +2,78 @@ import { Heart, Star, BadgeCheck, Zap, Flame, Sparkles } from "lucide-react";
 import { useState, useCallback, useRef, useMemo } from "react";
 import type { Property } from "@/data/properties";
 
-// Creative accent styles applied to select listings
+// Accent config — color + side + tag
 type CardAccent = {
-  borderGradient: string;
-  tag: { label: string; bg: string; text: string; icon?: React.ReactNode };
+  color: string; // primary hsl color
+  side: "left" | "right" | "top"; // which side is bold
+  tag: { label: string; bg: string; icon?: React.ReactNode };
 } | null;
 
 function getCardAccent(property: Property, index: number): CardAccent {
-  // Only accent ~40% of cards for variety
   if (property.slotsLeft <= 2 && property.slotsLeft > 0) {
     return {
-      borderGradient: "linear-gradient(135deg, hsl(0 85% 55%), hsl(35 95% 55%), hsl(50 95% 60%))",
+      color: "hsl(0 85% 55%)",
+      side: "left",
       tag: {
         label: "SELLING FAST",
         bg: "linear-gradient(135deg, hsl(0 85% 55%), hsl(35 95% 55%))",
-        text: "white",
         icon: <Flame size={11} className="text-white" />,
       },
     };
   }
   if (property.rating >= 4.9) {
     return {
-      borderGradient: "linear-gradient(135deg, hsl(270 80% 65%), hsl(320 80% 60%), hsl(270 60% 80%))",
+      color: "hsl(270 80% 65%)",
+      side: "left",
       tag: {
         label: "HUSHH PICK",
         bg: "linear-gradient(135deg, hsl(270 80% 65%), hsl(320 80% 60%))",
-        text: "white",
         icon: <Sparkles size={11} className="text-white" />,
       },
     };
   }
   if (property.category.includes("party") && index % 3 === 0) {
     return {
-      borderGradient: "linear-gradient(135deg, hsl(280 90% 60%), hsl(200 90% 55%), hsl(170 80% 50%))",
+      color: "hsl(280 90% 60%)",
+      side: "right",
       tag: {
         label: "HUSHH LIVE",
         bg: "linear-gradient(135deg, hsl(280 90% 60%), hsl(200 90% 55%))",
-        text: "white",
         icon: <Zap size={11} className="text-white" />,
       },
     };
   }
   if (property.basePrice >= 1500 && index % 2 === 1) {
     return {
-      borderGradient: "linear-gradient(135deg, hsl(43 96% 56%), hsl(30 90% 50%), hsl(43 96% 66%))",
+      color: "hsl(43 96% 56%)",
+      side: "top",
       tag: {
         label: "PREMIUM",
         bg: "linear-gradient(135deg, hsl(43 96% 50%), hsl(30 90% 45%))",
-        text: "white",
       },
     };
   }
   return null;
+}
+
+/** Builds a fading border using box-shadows on one side */
+function getAccentShadow(accent: NonNullable<CardAccent>): string {
+  const c = accent.color;
+  if (accent.side === "left") {
+    return `inset 3px 0 0 0 ${c}, inset 2px -8px 12px -10px ${c}, inset 2px 8px 12px -10px ${c}`;
+  }
+  if (accent.side === "right") {
+    return `inset -3px 0 0 0 ${c}, inset -2px -8px 12px -10px ${c}, inset -2px 8px 12px -10px ${c}`;
+  }
+  // top
+  return `inset 0 3px 0 0 ${c}, inset -8px 2px 12px -10px ${c}, inset 8px 2px 12px -10px ${c}`;
+}
+
+function getAccentGlow(accent: NonNullable<CardAccent>): string {
+  const c = accent.color;
+  if (accent.side === "left") return `drop-shadow(-4px 0 10px ${c})`;
+  if (accent.side === "right") return `drop-shadow(4px 0 10px ${c})`;
+  return `drop-shadow(0 -4px 10px ${c})`;
 }
 
 interface PropertyCardProps {
@@ -101,82 +121,90 @@ export default function PropertyCard({ property, index, onTap }: PropertyCardPro
       onClick={handleClick}
       style={{ animationDelay: `${index * 60}ms` }}
     >
-      {/* Image container with optional gradient border */}
+      {/* Image */}
       <div
-        className="relative rounded-2xl overflow-hidden"
+        className="relative aspect-[4/3] rounded-2xl overflow-hidden"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
         style={accent ? {
-          padding: "2px",
-          background: accent.borderGradient,
-          borderRadius: "18px",
+          boxShadow: getAccentShadow(accent),
         } : undefined}
       >
-        <div
-          className={`relative aspect-[4/3] overflow-hidden ${accent ? "rounded-[16px]" : "rounded-2xl"}`}
-          style={accent ? { background: "hsl(260 20% 6%)" } : undefined}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-        >
-          {!imgLoaded && (
-            <div className="absolute inset-0 bg-secondary animate-pulse rounded-2xl">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-muted/50 to-transparent animate-[shimmer_1.5s_infinite]" />
-            </div>
-          )}
-          <img
-            src={property.images[imgIndex]}
-            alt={property.name}
-            className="w-full h-full object-cover touch-pan-y"
-            onLoad={() => setImgLoaded(true)}
-            loading="lazy"
+        {/* Fading glow overlay on the accented side */}
+        {accent && (
+          <div
+            className="absolute inset-0 z-[1] pointer-events-none rounded-2xl"
+            style={{
+              background: accent.side === "left"
+                ? `linear-gradient(to right, ${accent.color}22 0%, transparent 40%)`
+                : accent.side === "right"
+                ? `linear-gradient(to left, ${accent.color}22 0%, transparent 40%)`
+                : `linear-gradient(to bottom, ${accent.color}22 0%, transparent 40%)`,
+            }}
           />
+        )}
 
-          {/* Creative accent tag (top-left) */}
-          {accent?.tag && (
-            <span
-              className="absolute top-3 left-3 text-[10px] font-bold tracking-wider px-3 py-1.5 rounded-full flex items-center gap-1 shadow-lg"
-              style={{
-                background: accent.tag.bg,
-                color: accent.tag.text,
-                letterSpacing: "0.08em",
-              }}
-            >
-              {accent.tag.icon}
-              {accent.tag.label}
-            </span>
-          )}
-
-          {/* Guest favourite (only if no accent tag) */}
-          {!accent?.tag && property.rating >= 4.8 && (
-            <span className="absolute top-3 left-3 text-[11px] font-semibold glass px-3 py-1.5 rounded-full text-foreground">
-              Guest favourite
-            </span>
-          )}
-
-          {/* Heart */}
-          <button
-            onClick={(e) => { e.stopPropagation(); setLiked(!liked); }}
-            className="absolute top-3 right-3 active:scale-125 transition-transform"
-          >
-            <Heart
-              size={24}
-              className={`transition-colors duration-200 drop-shadow-lg ${liked ? "fill-primary text-primary" : "fill-foreground/20 text-background"}`}
-              strokeWidth={2}
-            />
-          </button>
-
-          {/* Dots */}
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-            {property.images.map((_, i) => (
-              <span
-                key={i}
-                className="rounded-full transition-all duration-300"
-                style={{
-                  width: i === imgIndex ? 16 : 6,
-                  height: 6,
-                  backgroundColor: i === imgIndex ? "hsl(270 80% 65%)" : "hsla(0 0% 96% / 0.3)",
-                }}
-              />
-            ))}
+        {!imgLoaded && (
+          <div className="absolute inset-0 bg-secondary animate-pulse rounded-2xl">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-muted/50 to-transparent animate-[shimmer_1.5s_infinite]" />
           </div>
+        )}
+        <img
+          src={property.images[imgIndex]}
+          alt={property.name}
+          className="w-full h-full object-cover touch-pan-y"
+          onLoad={() => setImgLoaded(true)}
+          loading="lazy"
+        />
+
+        {/* Accent tag */}
+        {accent?.tag && (
+          <span
+            className="absolute top-3 left-3 text-[10px] font-bold tracking-wider px-3 py-1.5 rounded-full flex items-center gap-1 shadow-lg z-10"
+            style={{
+              background: accent.tag.bg,
+              color: "white",
+              letterSpacing: "0.08em",
+              filter: getAccentGlow(accent),
+            }}
+          >
+            {accent.tag.icon}
+            {accent.tag.label}
+          </span>
+        )}
+
+        {/* Guest favourite (only if no accent tag) */}
+        {!accent?.tag && property.rating >= 4.8 && (
+          <span className="absolute top-3 left-3 text-[11px] font-semibold glass px-3 py-1.5 rounded-full text-foreground">
+            Guest favourite
+          </span>
+        )}
+
+        {/* Heart */}
+        <button
+          onClick={(e) => { e.stopPropagation(); setLiked(!liked); }}
+          className="absolute top-3 right-3 active:scale-125 transition-transform"
+        >
+          <Heart
+            size={24}
+            className={`transition-colors duration-200 drop-shadow-lg ${liked ? "fill-primary text-primary" : "fill-foreground/20 text-background"}`}
+            strokeWidth={2}
+          />
+        </button>
+
+        {/* Dots */}
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+          {property.images.map((_, i) => (
+            <span
+              key={i}
+              className="rounded-full transition-all duration-300"
+              style={{
+                width: i === imgIndex ? 16 : 6,
+                height: 6,
+                backgroundColor: i === imgIndex ? "hsl(270 80% 65%)" : "hsla(0 0% 96% / 0.3)",
+              }}
+            />
+          ))}
         </div>
       </div>
 
