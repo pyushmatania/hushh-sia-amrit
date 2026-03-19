@@ -241,3 +241,13 @@
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-y: contain;
 }
+
+/* Sport icon float — pure CSS, no JS overhead */
+@keyframes sportFloat {
+  0%, 100% { transform: translateY(-3px); }
+  50% { transform: translateY(3px); }
+}
+.sport-icon-float {
+  animation: sportFloat 3s ease-in-out infinite;
+  will-change: transform;
+}
