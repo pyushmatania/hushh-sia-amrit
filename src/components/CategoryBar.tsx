@@ -208,7 +208,12 @@ interface CategoryBarProps {
 
 export default function CategoryBar({ active, onChange }: CategoryBarProps) {
   return (
-    <div className="glass">
+    <div className="relative overflow-hidden rounded-2xl mx-4"
+      style={{
+        background: "linear-gradient(135deg, rgba(120,80,220,0.15) 0%, rgba(60,40,140,0.08) 50%, rgba(180,100,255,0.12) 100%)",
+        border: "1px solid rgba(255,255,255,0.08)",
+        boxShadow: "0 4px 24px -4px rgba(120,80,220,0.2)",
+      }}>
       <div className="flex justify-around px-1">
         {categories.map((cat) => {
           const isActive = active === cat.id;
