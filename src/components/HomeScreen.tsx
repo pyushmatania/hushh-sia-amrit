@@ -131,6 +131,8 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
       {/* Rotating Search Bar */}
       <RotatingSearchBar onSearchTap={onSearchTap} onMapTap={onMapTap} />
 
+      {/* 3D Icon Category Bar */}
+      <CategoryBar active={activeCategory} onChange={setActiveCategory} />
 
       {/* ═══════ SECTION 1: TONIGHT'S VIBE (Spotlight Video Cards) ═══════ */}
       <SectionDivider title="🔥 TONIGHT'S VIBE" />
