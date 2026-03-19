@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { type Property } from "@/data/properties";
 
 interface WhatsHotGridProps {
@@ -19,30 +18,19 @@ export default function WhatsHotGrid({ properties, onPropertyTap }: WhatsHotGrid
   return (
     <div className="px-4 grid grid-cols-2 gap-3">
       {propSlice.map((p, i) => (
-        <motion.div
-          key={p.id}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: i * 0.08 }}
-          whileTap={{ scale: 0.97 }}
-          className="rounded-[16px] overflow-hidden cursor-pointer"
+        <div key={p.id}
+          className="rounded-[16px] overflow-hidden cursor-pointer active:scale-[0.97] transition-transform"
           style={{
             background: hotItems[i]?.accent || "rgba(255,255,255,0.03)",
             border: "1px solid rgba(255,255,255,0.08)",
           }}
-          onClick={() => onPropertyTap(p)}
-        >
-          <img src={p.images[0]} alt={p.name} className="w-full h-28 object-cover" />
+          onClick={() => onPropertyTap(p)}>
+          <img src={p.images[0]} alt={p.name} className="w-full h-28 object-cover" loading="lazy" />
           <div className="p-3">
-            <p className="text-sm font-bold text-foreground line-clamp-1">
-              {hotItems[i]?.title || p.name}
-            </p>
-            <p className="text-xs text-foreground/50 mt-0.5 line-clamp-1">
-              {hotItems[i]?.desc || p.description}
-            </p>
+            <p className="text-sm font-bold text-foreground line-clamp-1">{hotItems[i]?.title || p.name}</p>
+            <p className="text-xs text-foreground/50 mt-0.5 line-clamp-1">{hotItems[i]?.desc || p.description}</p>
           </div>
-        </motion.div>
+        </div>
       ))}
     </div>
   );
