@@ -131,13 +131,6 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
       {/* Rotating Search Bar */}
       <RotatingSearchBar onSearchTap={onSearchTap} onMapTap={onMapTap} />
 
-      {/* Sticky District-style Tab Bar */}
-      <StickyTabBar active={activeDistrictTab} onChange={setActiveDistrictTab} />
-
-      {/* Original Category Bar (icon-based) */}
-      <div className="mt-1">
-        <CategoryBar active={activeCategory} onChange={setActiveCategory} />
-      </div>
 
       {/* ═══════ SECTION 1: TONIGHT'S VIBE (Spotlight Video Cards) ═══════ */}
       <SectionDivider title="🔥 TONIGHT'S VIBE" />
