@@ -22,12 +22,6 @@ const categories: Category[] = [
   { id: "stays", label: "Stays", icon: iconStays, animationType: "doorSwing" },
   { id: "experiences", label: "Experiences", icon: iconExperiences, badge: "NEW", animationType: "danceSpin" },
   { id: "services", label: "Services", icon: iconServices, badge: "NEW", animationType: "bellRing" },
-  { id: "bonfire", label: "Bonfire", icon: iconBonfire, animationType: "fireFlicker" },
-  { id: "pool", label: "Pool", icon: iconPool, animationType: "waterSplash" },
-  { id: "party", label: "Celebrate", icon: iconParty, animationType: "confettiBurst" },
-  { id: "movie", label: "Movie", icon: iconMovie, animationType: "filmRoll" },
-  { id: "dining", label: "Dining", icon: iconDining, animationType: "plateServe" },
-  { id: "stargazing", label: "Stargazing", icon: iconStargazing, animationType: "starTwinkle" },
 ];
 
 // ─── ENTRANCE (tap) animations ───
