@@ -209,7 +209,7 @@ interface CategoryBarProps {
 export default function CategoryBar({ active, onChange }: CategoryBarProps) {
   return (
     <div className="glass">
-      <div className="flex overflow-x-auto hide-scrollbar px-1">
+      <div className="flex justify-around px-1">
         {categories.map((cat) => {
           const isActive = active === cat.id;
           return (
