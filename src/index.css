@@ -188,6 +188,17 @@
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+/* Smooth horizontal scroll containers */
+.smooth-scroll-x {
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scroll-behavior: smooth;
+}
+.smooth-scroll-x > * {
+  scroll-snap-align: center;
+}
+
 /* Shimmer animation */
 @keyframes shimmer {
   0% { transform: translateX(-100%); }
@@ -223,4 +234,10 @@
 }
 .animate-pulse-glow {
   animation: pulseGlow 2s ease-in-out infinite;
+}
+
+/* GPU-accelerated smooth scrolling for main page */
+.smooth-main-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
 }
