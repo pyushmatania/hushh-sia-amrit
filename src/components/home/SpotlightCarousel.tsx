@@ -16,27 +16,43 @@ const spotlightVideos = [
 const overlayTexts = ["feel the vibe", "dive in", "sizzle & smoke", "into its groove", "under the stars", "game on"];
 
 type VideoAccent = {
-  border: string;
+  color: string;
+  side: "left" | "right" | "top";
   tag: { label: string; bg: string; icon: React.ReactNode };
 } | null;
 
 const accentStyles: VideoAccent[] = [
   {
-    border: "linear-gradient(135deg, hsl(20 90% 50%), hsl(40 95% 55%), hsl(0 85% 55%))",
+    color: "hsl(0 85% 55%)",
+    side: "left",
     tag: { label: "TONIGHT'S PICK", bg: "linear-gradient(135deg, hsl(0 85% 55%), hsl(35 95% 55%))", icon: <Flame size={11} className="text-white" /> },
   },
   null,
   {
-    border: "linear-gradient(135deg, hsl(280 90% 60%), hsl(200 90% 55%), hsl(170 80% 50%))",
+    color: "hsl(280 90% 60%)",
+    side: "right",
     tag: { label: "HUSHH LIVE", bg: "linear-gradient(135deg, hsl(280 90% 60%), hsl(200 90% 55%))", icon: <Zap size={11} className="text-white" /> },
   },
   null,
   {
-    border: "linear-gradient(135deg, hsl(270 80% 65%), hsl(320 80% 60%), hsl(270 60% 80%))",
+    color: "hsl(270 80% 65%)",
+    side: "left",
     tag: { label: "EDITOR'S PICK", bg: "linear-gradient(135deg, hsl(270 80% 65%), hsl(320 80% 60%))", icon: <Sparkles size={11} className="text-white" /> },
   },
   null,
 ];
+
+function getAccentShadow(color: string, side: string): string {
+  if (side === "left") return `inset 3px 0 0 0 ${color}, inset 2px -10px 14px -12px ${color}, inset 2px 10px 14px -12px ${color}`;
+  if (side === "right") return `inset -3px 0 0 0 ${color}, inset -2px -10px 14px -12px ${color}, inset -2px 10px 14px -12px ${color}`;
+  return `inset 0 3px 0 0 ${color}, inset -10px 2px 14px -12px ${color}, inset 10px 2px 14px -12px ${color}`;
+}
+
+function getGlowGradient(color: string, side: string): string {
+  if (side === "left") return `linear-gradient(to right, ${color}25 0%, transparent 35%)`;
+  if (side === "right") return `linear-gradient(to left, ${color}25 0%, transparent 35%)`;
+  return `linear-gradient(to bottom, ${color}25 0%, transparent 35%)`;
+}
 
 interface SpotlightCarouselProps {
   properties: Property[];
@@ -64,9 +80,7 @@ function VideoCard({
         if (entry.isIntersecting) {
           setShouldLoad(true);
           const video = videoRef.current;
-          if (video && entry.intersectionRatio > 0.5) {
-            video.play().catch(() => {});
-          }
+          if (video && entry.intersectionRatio > 0.5) video.play().catch(() => {});
         } else {
           videoRef.current?.pause();
         }
@@ -76,8 +90,6 @@ function VideoCard({
     observer.observe(card);
     return () => observer.disconnect();
   }, []);
-
-  const hasAccent = !!accent;
 
   return (
     <div
@@ -89,23 +101,25 @@ function VideoCard({
         opacity: isActive ? 1 : 0.7,
         transform: isActive ? "scale(1)" : "scale(0.95)",
         transition: "opacity 0.3s, transform 0.3s",
-        ...(hasAccent ? {
-          padding: "2.5px",
-          background: accent!.border,
-          borderRadius: "22px",
-        } : {}),
       }}
       onClick={onTap}
     >
       <div
-        className="relative overflow-hidden"
+        className="relative overflow-hidden rounded-[20px]"
         style={{
           height: "70vh", maxHeight: "580px",
-          borderRadius: hasAccent ? "20px" : "20px",
-          border: hasAccent ? "none" : "1px solid rgba(255,255,255,0.08)",
-          background: "hsl(260 20% 6%)",
+          border: accent ? "none" : "1px solid rgba(255,255,255,0.08)",
+          boxShadow: accent ? getAccentShadow(accent.color, accent.side) : undefined,
         }}
       >
+        {/* Fading glow overlay */}
+        {accent && (
+          <div
+            className="absolute inset-0 z-[1] pointer-events-none rounded-[20px]"
+            style={{ background: getGlowGradient(accent.color, accent.side) }}
+          />
+        )}
+
         <img
           src={property.images[0]} alt={property.name}
           className="absolute inset-0 w-full h-full object-cover"
@@ -115,8 +129,7 @@ function VideoCard({
         {shouldLoad && (
           <video
             ref={videoRef} src={videoSrc} muted={muted} loop playsInline
-            preload="metadata"
-            onCanPlay={() => setVideoReady(true)}
+            preload="metadata" onCanPlay={() => setVideoReady(true)}
             className="absolute inset-0 w-full h-full object-cover"
             style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.5s" }}
           />
