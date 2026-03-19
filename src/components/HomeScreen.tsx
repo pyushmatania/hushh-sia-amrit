@@ -1,18 +1,27 @@
 import { motion } from "framer-motion";
-import { Search, ArrowRight, Sparkles, Bell, TrendingUp, Clock, MapPin, Map } from "lucide-react";
+import { Bell, MapPin, Sparkles, ArrowRight } from "lucide-react";
+import PullToRefresh from "./PullToRefresh";
 import CategoryBar from "./CategoryBar";
 import PropertyCard from "./PropertyCard";
 import PropertyCardSmall from "./PropertyCardSmall";
 import PackageCard from "./PackageCard";
-import PullToRefresh from "./PullToRefresh";
 import { properties, packages, type Property } from "@/data/properties";
-import { Star, Flame, Music, Trophy, Clapperboard, UtensilsCrossed, Telescope, Wrench } from "lucide-react";
 import { useState, useMemo, useCallback } from "react";
 import { useNotifications } from "@/hooks/use-notifications";
-import property1 from "@/assets/property-1.jpg";
-import property2 from "@/assets/property-2.jpg";
-import property3 from "@/assets/property-3.jpg";
 import profileAvatar from "@/assets/profile-avatar.png";
+
+// District-style homepage sections
+import RotatingSearchBar from "./home/RotatingSearchBar";
+import StickyTabBar from "./home/StickyTabBar";
+import SectionDivider from "./home/SectionDivider";
+import SpotlightCarousel from "./home/SpotlightCarousel";
+import SportsCards from "./home/SportsCards";
+import FoodieCarousel from "./home/FoodieCarousel";
+import CoupleSpecials from "./home/CoupleSpecials";
+import UpcomingEvents from "./home/UpcomingEvents";
+import WhatsHotGrid from "./home/WhatsHotGrid";
+import BlockbusterBanner from "./home/BlockbusterBanner";
+import BackToTopButton from "./home/BackToTopButton";
 
 interface HomeScreenProps {
   onPropertyTap: (property: Property) => void;
@@ -29,6 +38,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
     setRefreshKey((k) => k + 1);
   }, []);
   const [activeCategory, setActiveCategory] = useState("stays");
+  const [activeDistrictTab, setActiveDistrictTab] = useState("home");
 
   const filteredProperties = useMemo(() => {
     return properties.filter(p => p.category.includes(activeCategory));
@@ -37,7 +47,6 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
   const topRated = useMemo(() => [...properties].sort((a, b) => b.rating - a.rating).slice(0, 4), []);
   const trendingNow = useMemo(() => properties.filter(p => p.slotsLeft > 0 && p.slotsLeft <= 3), []);
 
-  // Category-specific curated sections
   const curatedSections = useMemo(() => {
     const catProps = properties.filter(p => p.category.includes(activeCategory));
     const topInCategory = [...catProps].sort((a, b) => b.rating - a.rating).slice(0, 4);
@@ -83,9 +92,9 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
-    <div key={refreshKey} className="pb-24 bg-mesh min-h-screen">
+    <div key={refreshKey} className="pb-24 min-h-screen" style={{ background: "linear-gradient(180deg, #0C0B1D 0%, #111028 100%)" }}>
 
-      {/* Header */}
+      {/* Header with avatar + bell */}
       <div className="px-5 pt-5 pb-2 flex items-center justify-between">
         <motion.div
           initial={{ opacity: 0, x: -10 }}
@@ -119,75 +128,59 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
         </motion.button>
       </div>
 
+      {/* Rotating Search Bar */}
+      <RotatingSearchBar onSearchTap={onSearchTap} onMapTap={onMapTap} />
 
-      {/* Hero Typography */}
-      <div className="px-5 pt-4 pb-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.6 }}
-          className="space-y-1"
-        >
-          <h1 className="text-[2.8rem] leading-[1.05] font-bold tracking-tight text-foreground">Explore</h1>
-          <div className="flex items-center gap-3">
-            <h1 className="text-[2.8rem] leading-[1.05] font-bold tracking-tight text-gradient">Private</h1>
-            <motion.div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-primary/30 shrink-0" animate={{ rotate: [0, 3, -3, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}>
-              <img src={property1} alt="" className="w-full h-full object-cover" />
-            </motion.div>
-          </div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-[2.8rem] leading-[1.05] font-bold tracking-tight text-foreground">experiences</h1>
-            <motion.div className="w-12 h-12 rounded-full overflow-hidden border-2 border-gold/40 shrink-0" animate={{ y: [0, -4, 0] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}>
-              <img src={property2} alt="" className="w-full h-full object-cover" />
-            </motion.div>
-          </div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-[2.8rem] leading-[1.05] font-bold tracking-tight text-muted-foreground">in</h1>
-            <motion.div className="w-11 h-11 rounded-xl overflow-hidden border-2 border-accent/30 shrink-0" animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}>
-              <img src={property3} alt="" className="w-full h-full object-cover" />
-            </motion.div>
-          </div>
-          <h1 className="text-[2.8rem] leading-[1.05] font-bold tracking-tight text-foreground">Jeypore<span className="text-gradient-warm">.</span></h1>
-        </motion.div>
-      </div>
+      {/* Sticky District-style Tab Bar */}
+      <StickyTabBar active={activeDistrictTab} onChange={setActiveDistrictTab} />
 
-      {/* Search bar + Map toggle */}
-      <div className="px-5 pb-4 flex gap-2">
-        <motion.div
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="flex-1 flex items-center gap-3 rounded-2xl glass px-5 py-3.5 cursor-pointer"
-          onClick={onSearchTap}
-        >
-          <Search size={18} className="text-primary shrink-0" />
-          <span className="text-sm font-medium text-muted-foreground">Search villas, experiences...</span>
-        </motion.div>
-        <motion.button
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={onMapTap}
-          className="w-[52px] h-[52px] rounded-2xl glass flex items-center justify-center shrink-0"
-        >
-          <Map size={20} className="text-primary" />
-        </motion.button>
-      </div>
-
-
-
-      {/* Category Bar */}
-      <div className="sticky top-0 z-20">
+      {/* Original Category Bar (icon-based) */}
+      <div className="mt-1">
         <CategoryBar active={activeCategory} onChange={setActiveCategory} />
       </div>
 
+      {/* ═══════ SECTION 1: TONIGHT'S VIBE (Spotlight Video Cards) ═══════ */}
+      <SectionDivider title="🔥 TONIGHT'S VIBE" />
+      <SpotlightCarousel properties={properties} onPropertyTap={onPropertyTap} />
 
+      {/* ═══════ SECTION 2: BOOK YOUR EXPERIENCE (Quick Packages) ═══════ */}
+      <SectionDivider title="BOOK YOUR EXPERIENCE" />
+      <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4">
+        {packages.map((pkg, i) => (
+          <PackageCard key={pkg.id} pkg={pkg} index={i} />
+        ))}
+      </div>
+
+      {/* ═══════ SECTION 3: PLAY YOUR GAME (Sports Cards) ═══════ */}
+      <SectionDivider title="PLAY YOUR GAME" />
+      <SportsCards properties={properties} onPropertyTap={onPropertyTap} />
+
+      {/* ═══════ SECTION 4: FOODIE FRONT ROW ═══════ */}
+      <SectionDivider title="FOODIE FRONT ROW" />
+      <FoodieCarousel properties={properties} onPropertyTap={onPropertyTap} />
+
+      {/* ═══════ SECTION 5: COUPLE SPECIALS ═══════ */}
+      <SectionDivider title="COUPLE SPECIALS 💑" />
+      <CoupleSpecials properties={properties} onPropertyTap={onPropertyTap} />
+
+      {/* ═══════ SECTION 6: UPCOMING EVENTS ═══════ */}
+      <SectionDivider title="UPCOMING EVENTS" />
+      <UpcomingEvents />
+
+      {/* ═══════ SECTION 7: WHAT'S HOT ON HUSHH ═══════ */}
+      <SectionDivider title="WHAT'S HOT ON HUSHH" />
+      <WhatsHotGrid properties={properties} onPropertyTap={onPropertyTap} />
+
+      {/* ═══════ SECTION 8: BLOCKBUSTER RELEASE ═══════ */}
+      <SectionDivider title="BLOCKBUSTER RELEASE" />
+      <BlockbusterBanner />
+
+      {/* ═══════ EXISTING SECTIONS (Trending, Top Rated, Category) ═══════ */}
       {activeCategory === "stays" && trendingNow.length > 0 && (
         <div className="mt-6">
           <div className="flex items-center justify-between px-5 mb-3">
             <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
-              <TrendingUp size={16} className="text-primary" /> Trending now
+              🔥 Trending now
             </h2>
             <button className="text-xs text-primary font-medium flex items-center gap-1">
               View all <ArrowRight size={12} />
@@ -217,7 +210,6 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
         </div>
       )}
 
-      {/* Category-specific curated sections */}
       {activeCategory !== "stays" && curatedSections.map((section, si) => (
         section.items.length > 0 && (
           <div key={si} className="mt-6">
@@ -266,49 +258,6 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
         )}
       </div>
 
-      {/* Packages */}
-      <div className="mt-7">
-        <div className="flex items-center justify-between px-5 mb-3">
-          <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
-            <Sparkles size={16} className="text-primary" /> One-tap packages
-          </h2>
-        </div>
-        <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
-          {packages.map((pkg, i) => (
-            <PackageCard key={pkg.id} pkg={pkg} index={i} />
-          ))}
-        </div>
-      </div>
-
-      {/* Recent Searches */}
-      <div className="mt-7 px-5">
-        <h2 className="text-lg font-bold text-foreground mb-3 flex items-center gap-2">
-          <Clock size={16} className="text-muted-foreground" /> Recent Searches
-        </h2>
-        <div className="space-y-2">
-          {[
-            { icon: "🏊", text: "Pool villas for 2 guests..." },
-            { icon: "🔥", text: "Bonfire night this weekend..." },
-            { icon: "🎂", text: "Birthday party venues for 15..." },
-            { icon: "🎤", text: "Karaoke rooms near Jeypore..." },
-            { icon: "⚽", text: "Sports turf for team outing..." },
-          ].map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 + i * 0.05 }}
-              className="flex items-center gap-3 glass rounded-xl px-4 py-3 cursor-pointer"
-              onClick={onSearchTap}
-            >
-              <span className="text-lg">{item.icon}</span>
-              <span className="text-sm text-muted-foreground flex-1">{item.text}</span>
-              <ArrowRight size={14} className="text-muted-foreground" />
-            </motion.div>
-          ))}
-        </div>
-      </div>
-
       {/* Banner */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
@@ -319,6 +268,12 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
         <span className="text-lg">🏷️</span>
         <span className="text-sm font-medium text-foreground">Prices include all fees · No hidden charges</span>
       </motion.div>
+
+      {/* Footer spacer */}
+      <div className="h-20" />
+
+      {/* Back to top button */}
+      <BackToTopButton />
     </div>
     </PullToRefresh>
   );
