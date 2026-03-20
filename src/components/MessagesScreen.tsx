@@ -3,7 +3,7 @@ import {
   MessageCircle, Bell, Clock, ChevronRight, Sparkles, Calendar,
   CheckCircle2, Send, ArrowLeft, Phone, MoreVertical, Search,
   Image, Smile, Mic, Check, CheckCheck, Pin, Archive,
-  HeadphonesIcon, ShieldCheck, Star, Gift, Megaphone, X,
+  HeadphonesIcon, ShieldCheck, Star, Gift, Megaphone, X, Loader2,
 } from "lucide-react";
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useAuth } from "@/hooks/use-auth";
@@ -98,7 +98,7 @@ const mockThreads = [
   },
 ];
 
-const mockMessages: Record<string, Array<{ id: string; text: string; sender: "user" | "other"; time: string; reactions?: string[]; status?: "sent" | "delivered" | "read" }>> = {
+const mockMessages: Record<string, Array<{ id: string; text: string; sender: "user" | "other"; time: string; reactions?: string[]; status?: "sent" | "delivered" | "read"; imageUrl?: string }>> = {
   c1: [
     { id: "m1", text: "Hi, I need help with my Ember Grounds refund", sender: "user", time: "Yesterday 10:30 AM", status: "read" },
     { id: "m2", text: "Sure! Let me check your booking details. One moment please… 🔍", sender: "other", time: "Yesterday 10:31 AM" },
@@ -132,7 +132,61 @@ const quickReplies = [
   "See you there!",
 ];
 
-/* ═══ Helpers ═══ */
+/* ═══ Image Upload Helper ═══ */
+async function uploadChatImage(file: File, userId: string): Promise<string | null> {
+  const ext = file.name.split(".").pop() || "jpg";
+  const path = `${userId}/${Date.now()}.${ext}`;
+  const { error } = await supabase.storage.from("chat-images").upload(path, file, { contentType: file.type });
+  if (error) { console.error("Upload error:", error); return null; }
+  const { data } = supabase.storage.from("chat-images").getPublicUrl(path);
+  return data.publicUrl;
+}
+
+/* ═══ Image Preview Bar ═══ */
+function ImagePreviewBar({ file, onRemove }: { file: File; onRemove: () => void }) {
+  const url = useMemo(() => URL.createObjectURL(file), [file]);
+  useEffect(() => () => URL.revokeObjectURL(url), [url]);
+  return (
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }}
+      className="px-4 pb-2">
+      <div className="relative inline-block rounded-xl overflow-hidden border border-border bg-secondary">
+        <img src={url} alt="Preview" className="w-20 h-20 object-cover" />
+        <button onClick={onRemove}
+          className="absolute top-1 right-1 w-5 h-5 rounded-full bg-foreground/70 text-background flex items-center justify-center">
+          <X size={12} />
+        </button>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ═══ Image Message Bubble ═══ */
+function ImageBubble({ url, onClick }: { url: string; onClick?: () => void }) {
+  return (
+    <motion.img
+      src={url} alt="Shared image"
+      onClick={onClick}
+      className="rounded-xl max-w-[220px] max-h-[220px] object-cover cursor-pointer"
+      initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+      whileTap={{ scale: 0.95 }}
+    />
+  );
+}
+
+/* ═══ Fullscreen Image Viewer ═══ */
+function ImageViewer({ url, onClose }: { url: string; onClose: () => void }) {
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center" onClick={onClose}>
+      <button className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 flex items-center justify-center" onClick={onClose}>
+        <X size={20} className="text-white" />
+      </button>
+      <img src={url} alt="" className="max-w-[90vw] max-h-[80vh] object-contain rounded-lg" />
+    </motion.div>
+  );
+}
+
+
 function formatDateHeader(dateStr: string): string {
   try {
     const date = new Date(dateStr);
@@ -420,8 +474,11 @@ function MockChatView({ threadId, thread, onBack }: {
   const [messages, setMessages] = useState(mockMessages[threadId] || []);
   const [input, setInput] = useState("");
   const [showQuickReplies, setShowQuickReplies] = useState(true);
+  const [pendingImage, setPendingImage] = useState<File | null>(null);
+  const [viewingImage, setViewingImage] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -429,20 +486,31 @@ function MockChatView({ threadId, thread, onBack }: {
 
   const handleSend = (text?: string) => {
     const msg = text || input.trim();
-    if (!msg) return;
+    if (!msg && !pendingImage) return;
+
+    const imageUrl = pendingImage ? URL.createObjectURL(pendingImage) : undefined;
     setMessages((prev) => [...prev, {
-      id: `u-${Date.now()}`, text: msg, sender: "user", time: "Just now", status: "sent" as const,
+      id: `u-${Date.now()}`, text: msg || "", sender: "user", time: "Just now", status: "sent" as const,
+      imageUrl,
     }]);
     setInput("");
+    setPendingImage(null);
     setShowQuickReplies(false);
 
-    // Simulate typing then reply
     setTimeout(() => {
       setMessages((prev) => [...prev, {
-        id: `r-${Date.now()}`, text: "Thanks for your message! I'll get back to you shortly. 😊",
+        id: `r-${Date.now()}`, text: imageUrl ? "Nice photo! 📸" : "Thanks for your message! I'll get back to you shortly. 😊",
         sender: "other", time: "Just now",
       }]);
     }, 2000);
+  };
+
+  const handleImagePick = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith("image/")) {
+      setPendingImage(file);
+    }
+    e.target.value = "";
   };
 
   // Group messages by date
@@ -529,7 +597,10 @@ function MockChatView({ threadId, thread, onBack }: {
                       }`}
                         style={isUser ? { boxShadow: "0 2px 8px hsl(var(--primary) / 0.25)" } : undefined}
                       >
-                        <p className="text-[13px] leading-relaxed">{msg.text}</p>
+                        {msg.imageUrl && (
+                          <ImageBubble url={msg.imageUrl} onClick={() => setViewingImage(msg.imageUrl!)} />
+                        )}
+                        {msg.text && <p className="text-[13px] leading-relaxed">{msg.text}</p>}
                         <div className={`flex items-center justify-end gap-1 mt-1 ${isUser ? "text-primary-foreground/50" : "text-muted-foreground"}`}>
                           <span className="text-[10px]">
                             {msg.time.includes(",") ? msg.time.split(",")[1]?.trim() : msg.time}
@@ -588,11 +659,17 @@ function MockChatView({ threadId, thread, onBack }: {
         )}
       </AnimatePresence>
 
+      {/* Image Preview */}
+      <AnimatePresence>
+        {pendingImage && <ImagePreviewBar file={pendingImage} onRemove={() => setPendingImage(null)} />}
+      </AnimatePresence>
+
       {/* Input */}
       <div className="px-3 py-3 border-t border-border bg-background/95 backdrop-blur-md pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+        <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImagePick} />
         <div className="flex items-end gap-2">
           <div className="flex gap-1">
-            <button className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground active:scale-90 transition-transform">
+            <button onClick={() => fileInputRef.current?.click()} className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground active:scale-90 transition-transform">
               <Image size={18} />
             </button>
           </div>
@@ -610,7 +687,7 @@ function MockChatView({ threadId, thread, onBack }: {
               <Smile size={18} />
             </button>
           </div>
-          {input.trim() ? (
+          {(input.trim() || pendingImage) ? (
             <motion.button
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -627,6 +704,11 @@ function MockChatView({ threadId, thread, onBack }: {
           )}
         </div>
       </div>
+
+      {/* Fullscreen Image Viewer */}
+      <AnimatePresence>
+        {viewingImage && <ImageViewer url={viewingImage} onClose={() => setViewingImage(null)} />}
+      </AnimatePresence>
     </motion.div>
   );
 }
@@ -639,7 +721,11 @@ function RealtimeChatView({ conversation, onBack }: { conversation: Conversation
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [showQuickReplies, setShowQuickReplies] = useState(true);
+  const [pendingImage, setPendingImage] = useState<File | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [viewingImage, setViewingImage] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchMessages(conversation.id).then((msgs) => {
@@ -666,12 +752,34 @@ function RealtimeChatView({ conversation, onBack }: { conversation: Conversation
 
   const handleSend = async (text?: string) => {
     const msg = text || input.trim();
-    if (!msg || sending) return;
+    if ((!msg && !pendingImage) || sending) return;
     setSending(true);
     setShowQuickReplies(false);
-    await sendMessage(conversation.id, msg);
+
+    let finalMsg = msg;
+    if (pendingImage && user) {
+      setUploadingImage(true);
+      const imageUrl = await uploadChatImage(pendingImage, user.id);
+      setUploadingImage(false);
+      if (imageUrl) {
+        finalMsg = msg ? `[image:${imageUrl}] ${msg}` : `[image:${imageUrl}]`;
+      }
+      setPendingImage(null);
+    }
+
+    if (finalMsg) {
+      await sendMessage(conversation.id, finalMsg);
+    }
     setInput("");
     setSending(false);
+  };
+
+  const handleImagePick = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith("image/")) {
+      setPendingImage(file);
+    }
+    e.target.value = "";
   };
 
   const avatarEmoji = conversation.other_user_name.includes("Support") ? "💎" : "🏡";
@@ -739,7 +847,17 @@ function RealtimeChatView({ conversation, onBack }: { conversation: Conversation
                     <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 ${
                       isUser ? "bg-primary text-primary-foreground rounded-br-md" : "bg-secondary text-foreground rounded-bl-md"
                     }`} style={isUser ? { boxShadow: "0 2px 8px hsl(var(--primary) / 0.25)" } : undefined}>
-                      <p className="text-[13px] leading-relaxed">{msg.content}</p>
+                      {/* Check for image in content */}
+                      {msg.content.includes("[image:") && (
+                        <ImageBubble
+                          url={msg.content.match(/\[image:(.*?)\]/)?.[1] || ""}
+                          onClick={() => setViewingImage(msg.content.match(/\[image:(.*?)\]/)?.[1] || "")}
+                        />
+                      )}
+                      {(() => {
+                        const textOnly = msg.content.replace(/\[image:.*?\]\s?/, "").trim();
+                        return textOnly ? <p className="text-[13px] leading-relaxed">{textOnly}</p> : null;
+                      })()}
                       <p className={`text-[10px] mt-1 text-right ${isUser ? "text-primary-foreground/50" : "text-muted-foreground"}`}>
                         {format(new Date(msg.created_at), "h:mm a")}
                       </p>
@@ -768,10 +886,16 @@ function RealtimeChatView({ conversation, onBack }: { conversation: Conversation
         )}
       </AnimatePresence>
 
+      {/* Image Preview */}
+      <AnimatePresence>
+        {pendingImage && <ImagePreviewBar file={pendingImage} onRemove={() => setPendingImage(null)} />}
+      </AnimatePresence>
+
       {/* Input */}
       <div className="px-3 py-3 border-t border-border bg-background/95 backdrop-blur-md pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+        <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImagePick} />
         <div className="flex items-end gap-2">
-          <button className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground active:scale-90 transition-transform">
+          <button onClick={() => fileInputRef.current?.click()} className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground active:scale-90 transition-transform">
             <Image size={18} />
           </button>
           <div className="flex-1 bg-secondary rounded-2xl flex items-end">
@@ -780,11 +904,11 @@ function RealtimeChatView({ conversation, onBack }: { conversation: Conversation
               placeholder="Type a message..." className="flex-1 bg-transparent px-4 py-3 text-[13px] text-foreground placeholder:text-muted-foreground outline-none" />
             <button className="px-3 py-3 text-muted-foreground"><Smile size={18} /></button>
           </div>
-          {input.trim() ? (
-            <motion.button initial={{ scale: 0 }} animate={{ scale: 1 }} onClick={() => handleSend()} disabled={sending}
+          {(input.trim() || pendingImage) ? (
+            <motion.button initial={{ scale: 0 }} animate={{ scale: 1 }} onClick={() => handleSend()} disabled={sending || uploadingImage}
               className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center disabled:opacity-50 active:scale-90 transition-transform"
               style={{ boxShadow: "0 2px 8px hsl(var(--primary) / 0.3)" }}>
-              <Send size={17} className="text-primary-foreground ml-0.5" />
+              {uploadingImage ? <Loader2 size={17} className="text-primary-foreground animate-spin" /> : <Send size={17} className="text-primary-foreground ml-0.5" />}
             </motion.button>
           ) : (
             <button className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground active:scale-90 transition-transform">
@@ -793,6 +917,11 @@ function RealtimeChatView({ conversation, onBack }: { conversation: Conversation
           )}
         </div>
       </div>
+
+      {/* Fullscreen Image Viewer */}
+      <AnimatePresence>
+        {viewingImage && <ImageViewer url={viewingImage} onClose={() => setViewingImage(null)} />}
+      </AnimatePresence>
     </motion.div>
   );
 }
