@@ -46,6 +46,8 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
   }, []);
   const [activeCategory, setActiveCategory] = useState("home");
   const [subFilter, setSubFilter] = useState("All");
+  const [activeMood, setActiveMood] = useState<Mood>(null);
+  const [activePackFilter, setActivePackFilter] = useState("tonight");
   const contentRef = useRef<HTMLDivElement>(null);
 
   const scrollToTop = useCallback(() => {
