@@ -61,6 +61,7 @@ interface ProfileScreenProps {
 }
 
 export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingDetail, onRebook }: ProfileScreenProps) {
+  const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
   const [showAuth, setShowAuth] = useState(false);
