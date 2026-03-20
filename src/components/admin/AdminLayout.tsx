@@ -109,6 +109,7 @@ export default function AdminLayout({ activePage, onNavigate, children }: AdminL
 
   return (
     <div className="h-screen flex bg-background overflow-hidden">
+      <CommandPalette onNavigate={onNavigate} />
       <div className="hidden md:flex relative">
         <Sidebar />
         <button
