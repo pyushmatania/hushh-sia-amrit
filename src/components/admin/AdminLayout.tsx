@@ -4,8 +4,10 @@ import {
   LayoutDashboard, Building2, CalendarCheck, Users, BarChart3,
   Sparkles, Tag, Megaphone, Ticket, ShoppingCart, LogOut,
   ChevronLeft, ChevronRight, Shield, Menu, X, FileSpreadsheet,
-  Bot, Bell, ScrollText, Wallet, Zap, Trophy, Search, UserCheck, Package
+  Bot, Bell, ScrollText, Wallet, Zap, Trophy, Search, UserCheck, Package,
+  Home
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import CommandPalette from "./CommandPalette";
 import FloatingChecklist from "./FloatingChecklist";
 import { useAuth } from "@/hooks/use-auth";
