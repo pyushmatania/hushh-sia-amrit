@@ -638,35 +638,64 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
               )}
               {!isMultiDay && <div className="mb-3" />}
               <div className="grid grid-cols-2 gap-2.5">
-                {filteredSlots.map((slot) => (
-                  <button
-                    key={slot.id}
-                    onClick={() => slot.available && setSelectedSlot(slot.id)}
-                    disabled={!slot.available}
-                    className={`p-3.5 rounded-xl text-left border transition-all ${
-                      selectedSlot === slot.id
-                        ? "border-primary bg-primary/[0.08] shadow-sm glow-sm"
-                        : slot.available
-                          ? "border-border hover:border-foreground/40"
-                          : "border-border opacity-35"
-                    }`}
-                  >
-                    <div className="flex items-center gap-1.5">
-                      <span className="font-medium text-sm text-foreground">{slot.label}</span>
-                      {slot.popular && <span className="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-semibold">Popular</span>}
-                    </div>
-                    <span className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                      <Clock size={10} /> {slot.time}
-                    </span>
-                    <div className="mt-1.5">
-                      {slot.available ? (
-                        <span className="font-semibold text-sm text-gradient-warm">₹{slot.price.toLocaleString()}</span>
-                      ) : (
-                        <span className="text-xs text-destructive font-medium">Booked</span>
+                {filteredSlots.map((slot) => {
+                  const tagConfig: Record<string, { label: string; color: string; bg: string }> = {
+                    almost_full: { label: "Almost Full", color: "text-red-400", bg: "bg-red-500/15" },
+                    best_price: { label: "Best Price", color: "text-emerald-400", bg: "bg-emerald-500/15" },
+                    trending: { label: "Trending", color: "text-amber-400", bg: "bg-amber-500/15" },
+                    last_slot: { label: "Last Slot!", color: "text-red-400", bg: "bg-red-500/15" },
+                    couple_pick: { label: "Couple Pick", color: "text-pink-400", bg: "bg-pink-500/15" },
+                    work_best: { label: "Work Best", color: "text-blue-400", bg: "bg-blue-500/15" },
+                  };
+                  const slotTag = slot.tag ? tagConfig[slot.tag] : null;
+
+                  return (
+                    <button
+                      key={slot.id}
+                      onClick={() => slot.available && setSelectedSlot(slot.id)}
+                      disabled={!slot.available}
+                      className={`p-3.5 rounded-xl text-left border transition-all relative overflow-hidden ${
+                        selectedSlot === slot.id
+                          ? "border-primary bg-primary/[0.08] shadow-sm glow-sm"
+                          : slot.available
+                            ? "border-border hover:border-foreground/40"
+                            : "border-border opacity-35"
+                      }`}
+                    >
+                      {/* Smart tag */}
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="font-medium text-sm text-foreground">{slot.label}</span>
+                        {slot.popular && !slot.tag && <span className="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-semibold">Popular</span>}
+                        {slotTag && (
+                          <span className={`text-[8px] ${slotTag.bg} ${slotTag.color} px-1.5 py-0.5 rounded font-bold`}>
+                            {slotTag.label}
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                        <Clock size={10} /> {slot.time}
+                      </span>
+                      {/* Viewers microcopy */}
+                      {slot.viewersNow && slot.viewersNow > 0 && (
+                        <p className="text-[9px] text-amber-400 font-medium mt-1 animate-pulse">
+                          👀 {slot.viewersNow} people viewing
+                        </p>
                       )}
-                    </div>
-                  </button>
-                ))}
+                      <div className="mt-1.5 flex items-baseline gap-1.5">
+                        {slot.available ? (
+                          <>
+                            <span className="font-semibold text-sm text-gradient-warm">₹{slot.price.toLocaleString()}</span>
+                            {slot.originalPrice && (
+                              <span className="text-[10px] text-muted-foreground line-through">₹{slot.originalPrice.toLocaleString()}</span>
+                            )}
+                          </>
+                        ) : (
+                          <span className="text-xs text-destructive font-medium">Booked</span>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </>
           );
