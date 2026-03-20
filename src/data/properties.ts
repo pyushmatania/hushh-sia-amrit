@@ -21,6 +21,11 @@ import listingStargazing from "@/assets/listing-stargazing.jpg";
 import listingRafting from "@/assets/listing-rafting.jpg";
 import listingMovieAmphitheater from "@/assets/listing-movie-amphitheater.jpg";
 import listingTribalDance from "@/assets/listing-tribal-dance.jpg";
+// New listings
+import listingWorkPod from "@/assets/listing-work-pod.jpg";
+import listingCoupleCocoon from "@/assets/listing-couple-cocoon.jpg";
+import listingBlueLagoon from "@/assets/listing-blue-lagoon.jpg";
+import listingGreenLawn from "@/assets/listing-green-lawn.jpg";
 
 export interface TimeSlot {
   id: string;
