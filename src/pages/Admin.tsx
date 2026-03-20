@@ -52,6 +52,8 @@ export default function Admin() {
   const renderPage = () => {
     switch (page) {
       case "dashboard": return <CommandCenter />;
+      case "ai": return <AdminAI />;
+      case "alerts": return <AdminAlerts />;
       case "properties": return <AdminProperties />;
       case "bookings": return <AdminBookings />;
       case "users": return <AdminUsers />;
