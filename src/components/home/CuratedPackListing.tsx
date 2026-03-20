@@ -92,6 +92,13 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
   const [videoReady, setVideoReady] = useState(false);
   const [shouldLoad, setShouldLoad] = useState(false);
 
+  // Eagerly load first 2 cards, lazy load rest
+  useEffect(() => {
+    if (index < 2) {
+      setShouldLoad(true);
+    }
+  }, [index]);
+
   useEffect(() => {
     const card = cardRef.current;
     if (!card) return;
@@ -99,14 +106,14 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
       ([entry]) => {
         if (entry.isIntersecting) {
           setShouldLoad(true);
-          if (videoRef.current && entry.intersectionRatio > 0.5) {
+          if (videoRef.current && entry.intersectionRatio > 0.3) {
             videoRef.current.play().catch(() => {});
           }
         } else {
           videoRef.current?.pause();
         }
       },
-      { threshold: [0, 0.5], rootMargin: "200px" }
+      { threshold: [0, 0.3], rootMargin: "400px" }
     );
     observer.observe(card);
     return () => observer.disconnect();
@@ -131,8 +138,8 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
             src={media.poster}
             alt={pack.name}
             className="absolute inset-0 w-full h-full object-cover"
-            style={{ opacity: videoReady ? 0 : 1, transition: "opacity 0.5s" }}
-            loading="lazy"
+            style={{ opacity: videoReady ? 0 : 1, transition: "opacity 0.3s" }}
+            loading={index < 2 ? "eager" : "lazy"}
           />
 
           {/* Autoplay video */}
@@ -143,10 +150,10 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
               muted={muted}
               loop
               playsInline
-              preload="metadata"
+              preload="auto"
               onCanPlay={() => setVideoReady(true)}
               className="absolute inset-0 w-full h-full object-cover"
-              style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.5s" }}
+              style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.3s" }}
             />
           )}
 
