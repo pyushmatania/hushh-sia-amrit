@@ -21,6 +21,23 @@ export default function BookingConfirmation({ property, slotId, guests, date, to
   const slot = property.slots.find((s) => s.id === slotId)!;
   const bookingId = `HUSHH-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
   const [orderingOpen, setOrderingOpen] = useState(false);
+  const [idSheetOpen, setIdSheetOpen] = useState(false);
+  const [idVerified, setIdVerified] = useState<boolean | null>(null);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const check = async () => {
+      if (!user) { setIdVerified(false); return; }
+      const { data } = await supabase
+        .from("identity_verifications")
+        .select("status")
+        .eq("user_id", user.id)
+        .order("submitted_at", { ascending: false })
+        .limit(1);
+      setIdVerified(data && data.length > 0 && data[0].status === "approved");
+    };
+    check();
+  }, [user]);
 
   return (
     <motion.div
