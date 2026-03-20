@@ -1,11 +1,14 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Bell, MapPin, ArrowRight } from "lucide-react";
+import { hapticSelection } from "@/lib/haptics";
 import PullToRefresh from "./PullToRefresh";
 import CategoryBar from "./CategoryBar";
 import PropertyCard from "./PropertyCard";
 import PropertyCardSmall from "./PropertyCardSmall";
 import PackageCard from "./PackageCard";
 import { properties, packages, curatedCombos, type Property } from "@/data/properties";
+import MoodSelector, { type Mood } from "./home/MoodSelector";
+import CuratedPackCard, { experiencePacks, tonightTags, type ExperiencePack } from "./home/CuratedPackCard";
 import { useState, useMemo, useCallback, useRef } from "react";
 import { useNotifications } from "@/hooks/use-notifications";
 import profileAvatar from "@/assets/profile-avatar.png";
@@ -44,6 +47,8 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
   }, []);
   const [activeCategory, setActiveCategory] = useState("home");
   const [subFilter, setSubFilter] = useState("All");
+  const [activeMood, setActiveMood] = useState<Mood>(null);
+  const [activePackFilter, setActivePackFilter] = useState("tonight");
   const contentRef = useRef<HTMLDivElement>(null);
 
   const scrollToTop = useCallback(() => {
@@ -139,6 +144,42 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
   const trendingNow = useMemo(() => filteredProperties.filter(p => p.slotsLeft > 0 && p.slotsLeft <= 3), [filteredProperties]);
   const budgetPicks = useMemo(() => [...filteredProperties].sort((a, b) => a.basePrice - b.basePrice).slice(0, 4), [filteredProperties]);
 
+  // Filter experience packs by mood and tonight tags
+  const filteredPacks = useMemo(() => {
+    let packs = experiencePacks;
+    if (activeMood) {
+      packs = packs.filter(p => p.mood.includes(activeMood));
+    }
+    const tagFilter = tonightTags.find(t => t.id === activePackFilter);
+    if (tagFilter) {
+      packs = packs.filter(tagFilter.filter);
+    }
+    return packs;
+  }, [activeMood, activePackFilter]);
+
+  // Handle mood change — also affects main property filtering
+  const handleMoodChange = useCallback((mood: Mood) => {
+    setActiveMood(mood);
+    hapticSelection();
+  }, []);
+
+  const handlePackTap = useCallback((pack: ExperiencePack) => {
+    const property = properties.find(p => p.id === pack.propertyId);
+    if (property) onPropertyTap(property);
+  }, [onPropertyTap]);
+
+  // Filter properties by mood
+  const moodFilteredProperties = useMemo(() => {
+    if (!activeMood) return filteredProperties;
+    const moodMap: Record<string, (p: Property) => boolean> = {
+      romantic: (p) => p.category.includes("couples") || p.tags.some(t => t.toLowerCase().includes("couple")),
+      party: (p) => p.category.includes("party") || p.tags.some(t => t.toLowerCase().includes("party")),
+      chill: (p) => p.category.includes("bonfire") || p.category.includes("pool") || p.tags.some(t => t.toLowerCase().includes("chill")),
+      work: (p) => p.propertyType === "Work Pod" || p.category.includes("work") || p.tags.some(t => t.toLowerCase().includes("work")),
+    };
+    return filteredProperties.filter(moodMap[activeMood] || (() => true));
+  }, [filteredProperties, activeMood]);
+
   return (
     <PullToRefresh onRefresh={handleRefresh}>
     <div ref={contentRef} key={refreshKey} className="pb-24 min-h-screen overflow-y-auto" style={{ background: "linear-gradient(180deg, #0C0B1D 0%, #111028 100%)" }}>
@@ -185,8 +226,51 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
           {/* ═══════ HOME TAB — Full Discovery Feed ═══════ */}
           {activeCategory === "home" && (
             <>
+              {/* Mood Selector */}
+              <MoodSelector activeMood={activeMood} onMoodChange={handleMoodChange} />
+
+              {/* Curated Experience Packs — Primary Discovery */}
+              <div className="mt-1">
+                <div className="flex items-center justify-between px-5 mb-2">
+                  <h2 className="text-base font-bold text-foreground" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                    ✨ Curated Packs
+                  </h2>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full font-bold" style={{ background: "hsl(var(--primary) / 0.15)", color: "hsl(var(--primary))" }}>
+                    1-TAP BOOK
+                  </span>
+                </div>
+                {/* Tonight tags */}
+                <div className="flex gap-2 overflow-x-auto hide-scrollbar px-4 mb-3">
+                  {tonightTags.map(tag => (
+                    <button
+                      key={tag.id}
+                      onClick={() => { hapticSelection(); setActivePackFilter(tag.id); }}
+                      className={`text-[10px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 flex items-center gap-1 ${
+                        activePackFilter === tag.id
+                          ? "bg-primary text-primary-foreground font-semibold shadow-md"
+                          : "bg-foreground/5 text-foreground/80 border border-foreground/10"
+                      }`}
+                    >
+                      <span>{tag.emoji}</span> {tag.label}
+                    </button>
+                  ))}
+                </div>
+                {/* Pack cards */}
+                <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2">
+                  {filteredPacks.map((pack, i) => (
+                    <CuratedPackCard key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
+                  ))}
+                  {filteredPacks.length === 0 && (
+                    <div className="w-full py-8 text-center">
+                      <p className="text-2xl mb-1">🔍</p>
+                      <p className="text-xs text-muted-foreground">No packs match this vibe</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
               <SectionDivider title="🔥 TONIGHT'S VIBE" />
-              <SpotlightCarousel properties={properties} onPropertyTap={onPropertyTap} category="home" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
+              <SpotlightCarousel properties={activeMood ? moodFilteredProperties : properties} onPropertyTap={onPropertyTap} category="home" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
 
               <SectionDivider title="BOOK YOUR EXPERIENCE" />
               <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4">
@@ -434,13 +518,13 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
             <div className="mt-7">
               <div className="flex items-center justify-between px-5 mb-3">
                 <h2 className="text-lg font-bold text-foreground">
-                  {activeCategory === "home" ? "All Listings" : `All ${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)}s`}
+                  {activeCategory === "home" ? (activeMood ? `${activeMood.charAt(0).toUpperCase() + activeMood.slice(1)} Vibes` : "All Listings") : `All ${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)}s`}
                 </h2>
-                <span className="text-xs text-muted-foreground">{filteredProperties.length} found</span>
+                <span className="text-xs text-muted-foreground">{(activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties).length} found</span>
               </div>
-              {filteredProperties.length > 0 ? (
+              {(activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties).length > 0 ? (
                 <div className="space-y-5">
-                  {filteredProperties.map((p, i) => (
+                  {(activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties).map((p, i) => (
                     <PropertyCard key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
                   ))}
                 </div>

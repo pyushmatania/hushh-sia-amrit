@@ -38,6 +38,11 @@ export interface TimeSlot {
   price: number;
   available: boolean;
   popular?: boolean;
+  // Slot Intelligence (v1.11)
+  originalPrice?: number; // for strikethrough pricing
+  tag?: "almost_full" | "best_price" | "trending" | "last_slot" | "couple_pick" | "work_best";
+  demandScore?: number; // 0-100
+  viewersNow?: number; // "3 people viewing"
 }
 
 export interface PropertyReview {
@@ -124,11 +129,11 @@ export const properties: Property[] = [
       { id: "r3", name: "Ananya R.", avatar: "👩", rating: 4, date: "1 month ago", comment: "Great vibe, clean pool. Only wish the BBQ area was a bit larger. Otherwise perfect!" },
     ],
     slots: [
-      { id: "s1", label: "Morning", time: "8 AM - 12 PM", price: 999, available: true },
-      { id: "s2", label: "Afternoon", time: "12 PM - 4 PM", price: 1299, available: true },
-      { id: "s3", label: "Evening", time: "4 PM - 8 PM", price: 1499, available: true, popular: true },
-      { id: "s4", label: "Night", time: "8 PM - 12 AM", price: 1799, available: true },
-      { id: "s5", label: "Full Day", time: "8 AM - 12 AM", price: 3999, available: true },
+      { id: "s1", label: "Morning", time: "8 AM - 12 PM", price: 999, available: true, tag: "best_price", demandScore: 30 },
+      { id: "s2", label: "Afternoon", time: "12 PM - 4 PM", price: 1299, available: true, tag: "work_best", demandScore: 45 },
+      { id: "s3", label: "Evening", time: "4 PM - 8 PM", price: 1499, available: true, popular: true, tag: "almost_full", demandScore: 85, viewersNow: 5, originalPrice: 1799 },
+      { id: "s4", label: "Night", time: "8 PM - 12 AM", price: 1799, available: true, tag: "trending", demandScore: 72, viewersNow: 3 },
+      { id: "s5", label: "Full Day", time: "8 AM - 12 AM", price: 3999, available: true, tag: "couple_pick", originalPrice: 4999 },
     ],
     entryInstructions: "Take the back gate off NH-26. Call +91-98765-43210 on arrival.",
   },
