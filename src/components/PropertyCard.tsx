@@ -163,7 +163,6 @@ export default function PropertyCard({ property, index, onTap }: PropertyCardPro
               background: accent.tag.bg,
               color: "white",
               letterSpacing: "0.08em",
-              filter: getAccentGlow(accent),
             }}
           >
             {accent.tag.icon}
