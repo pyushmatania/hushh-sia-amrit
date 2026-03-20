@@ -196,9 +196,13 @@ function AddonChip({ addon }: { addon: import("@/data/properties").Addon }) {
   );
 }
 
-function RelatedPropertyRow({ relatedProperty, onTap }: { relatedProperty: Property; onTap: (p: Property) => void }) {
+function RelatedPropertyRow({ relatedProperty, added, onToggle, onViewDetails }: { 
+  relatedProperty: Property; 
+  added: boolean;
+  onToggle: () => void;
+  onViewDetails: () => void;
+}) {
   const [expanded, setExpanded] = useState(false);
-  const [added, setAdded] = useState(false);
   const cheapestSlot = relatedProperty.slots.filter(s => s.available).sort((a, b) => a.price - b.price)[0];
 
   return (
@@ -232,20 +236,14 @@ function RelatedPropertyRow({ relatedProperty, onTap }: { relatedProperty: Prope
         <div className="flex items-center gap-2 shrink-0">
           {!added ? (
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setAdded(true);
-              }}
+              onClick={(e) => { e.stopPropagation(); onToggle(); }}
               className="text-[10px] font-bold text-primary border border-primary/30 bg-primary/10 px-3 py-1.5 rounded-full"
             >
               + ₹{cheapestSlot?.price.toLocaleString() || relatedProperty.basePrice.toLocaleString()}
             </button>
           ) : (
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setAdded(false);
-              }}
+              onClick={(e) => { e.stopPropagation(); onToggle(); }}
               className="text-[10px] font-bold text-primary-foreground bg-primary px-3 py-1.5 rounded-full flex items-center gap-1"
             >
               <Check size={10} /> Added
@@ -268,7 +266,6 @@ function RelatedPropertyRow({ relatedProperty, onTap }: { relatedProperty: Prope
             className="overflow-hidden"
           >
             <div className="px-3 pb-3 pt-1.5 border-t border-border/30 space-y-2">
-              {/* Highlights as pills */}
               {relatedProperty.highlights.length > 0 && (
                 <div className="flex flex-wrap gap-1">
                   {relatedProperty.highlights.slice(0, 4).map((h, i) => (
@@ -278,8 +275,6 @@ function RelatedPropertyRow({ relatedProperty, onTap }: { relatedProperty: Prope
                   ))}
                 </div>
               )}
-
-              {/* Meta row */}
               <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
                 <span className="flex items-center gap-0.5">
                   <Star size={9} className="fill-primary text-primary" />
@@ -291,13 +286,8 @@ function RelatedPropertyRow({ relatedProperty, onTap }: { relatedProperty: Prope
                 <span>•</span>
                 <span>Up to {relatedProperty.capacity} ppl</span>
               </div>
-
-              {/* View full details link */}
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onTap(relatedProperty);
-                }}
+                onClick={(e) => { e.stopPropagation(); onViewDetails(); }}
                 className="text-[10px] text-primary font-medium flex items-center gap-1"
               >
                 View full details →
