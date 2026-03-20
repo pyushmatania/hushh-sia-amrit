@@ -1,5 +1,5 @@
 import { motion, useAnimation } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import iconHome from "@/assets/icon-home.png";
 import iconStays from "@/assets/icon-stays-new.png";
 import iconExperiences from "@/assets/icon-experiences-new.png";
