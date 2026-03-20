@@ -153,19 +153,15 @@ export default function PropertyCard({ property, index, onTap }: PropertyCardPro
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Fading accent border — rendered outside overflow clip via pointer-events-none overlay */}
-        {accent && <div style={getAccentBorderStyle(accent)} />}
+        {/* L-shaped fading accent border */}
+        {accent && <AccentBorder color={accent.color} radius="1rem" />}
 
-        {/* Subtle inner glow */}
+        {/* Subtle corner glow */}
         {accent && (
           <div
             className="absolute inset-0 z-[1] pointer-events-none rounded-2xl"
             style={{
-              background: accent.side === "left"
-                ? `linear-gradient(to right, ${accent.color}12 0%, transparent 30%)`
-                : accent.side === "right"
-                ? `linear-gradient(to left, ${accent.color}12 0%, transparent 30%)`
-                : `linear-gradient(to bottom, ${accent.color}12 0%, transparent 30%)`,
+              background: `radial-gradient(ellipse at top left, ${accent.color}15 0%, transparent 50%)`,
             }}
           />
         )}
