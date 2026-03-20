@@ -475,6 +475,70 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
 
         <div className="border-b border-border my-5" />
 
+        {/* ═══════ ADD-ON EXPERIENCES & SERVICES ═══════ */}
+        {property.primaryCategory === "stay" && (
+          <>
+            <h3 className="text-lg font-semibold text-foreground mb-2">🎯 Enhance Your Stay</h3>
+            <p className="text-sm text-muted-foreground mb-4">Add experiences & services to make it unforgettable</p>
+
+            {/* Quick add-ons from addon data */}
+            {Object.entries(addons).slice(0, 4).map(([category, items]) => (
+              <div key={category} className="mb-4">
+                <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5">
+                  {items[0]?.categoryEmoji} {category}
+                </h4>
+                <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
+                  {items.slice(0, 4).map((addon) => (
+                    <AddonChip key={addon.id} addon={addon} />
+                  ))}
+                </div>
+              </div>
+            ))}
+
+            {/* Related experiences */}
+            {(() => {
+              const relatedExperiences = allProperties.filter(
+                p => p.id !== property.id && p.primaryCategory === "experience"
+              ).slice(0, 4);
+              if (relatedExperiences.length === 0) return null;
+              return (
+                <div className="mb-4">
+                  <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5">
+                    🎉 Available Experiences
+                  </h4>
+                  <div className="space-y-2">
+                    {relatedExperiences.map((exp) => (
+                      <RelatedPropertyRow key={exp.id} relatedProperty={exp} onTap={onPropertyTap} />
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Related services */}
+            {(() => {
+              const relatedServices = allProperties.filter(
+                p => p.id !== property.id && p.primaryCategory === "service"
+              ).slice(0, 4);
+              if (relatedServices.length === 0) return null;
+              return (
+                <div className="mb-4">
+                  <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5">
+                    🛎️ Add Services
+                  </h4>
+                  <div className="space-y-2">
+                    {relatedServices.map((svc) => (
+                      <RelatedPropertyRow key={svc.id} relatedProperty={svc} onTap={onPropertyTap} />
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+
+            <div className="border-b border-border my-5" />
+          </>
+        )}
+
         {/* House Rules */}
         <h3 className="text-lg font-semibold text-foreground mb-3">📋 House Rules</h3>
         <div className="space-y-2 mb-5">
