@@ -93,6 +93,9 @@ export default function AdminAlerts({ onNavigate }: Props) {
         </div>
       ) : (
         <>
+          {/* Auto Actions */}
+          <AutoActionsPanel />
+
           {/* Severity summary */}
           <div className="flex gap-3">
             {["high", "medium", "low"].map(sev => {
