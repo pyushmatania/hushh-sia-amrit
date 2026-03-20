@@ -54,6 +54,8 @@ interface LiveOrderingSheetProps {
   open: boolean;
   onClose: () => void;
   propertyName: string;
+  propertyId?: string;
+  bookingId?: string;
 }
 
 export default function LiveOrderingSheet({ open, onClose, propertyName }: LiveOrderingSheetProps) {
