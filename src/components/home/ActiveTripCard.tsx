@@ -12,6 +12,7 @@ interface ActiveTripCardProps {
 }
 
 export default function ActiveTripCard({ onViewTrip }: ActiveTripCardProps) {
+  const { properties } = usePropertiesData();
   const { bookings } = useBookings();
   const [orderingOpen, setOrderingOpen] = useState(false);
 
