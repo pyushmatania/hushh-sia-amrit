@@ -214,6 +214,7 @@ export const changeLog = [
       "PrivacyModeProvider — context provider wrapping the app for global privacy state",
       "LiveOrderingSheet — accessible from booking confirmation page via 'Order Food & Drinks' button",
       "New DB tables: orders, order_items, spin_history, user_milestones (total: 16 tables)",
+      "Order History section on Trips screen — expandable cards showing past in-stay orders fetched from DB with item details",
     ],
   },
 ];
