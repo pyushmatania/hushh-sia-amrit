@@ -4,8 +4,9 @@ import {
   Building2, Search, Plus, Trash2, Pause, Play, Pencil,
   X, Upload, Image, MapPin, DollarSign, Users, Tag, Star,
   Clock, ChevronDown, ChevronRight, Eye, Copy, MoreHorizontal,
-  Sparkles, Filter, LayoutGrid, LayoutList, Hash
+  Sparkles, Filter, LayoutGrid, LayoutList, Hash, GripVertical
 } from "lucide-react";
+import { useDragReorder } from "@/hooks/use-drag-reorder";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
