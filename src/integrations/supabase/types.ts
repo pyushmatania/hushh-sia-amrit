@@ -545,6 +545,8 @@ export type Database = {
       }
       orders: {
         Row: {
+          assigned_name: string | null
+          assigned_to: string | null
           booking_id: string | null
           created_at: string
           id: string
@@ -555,6 +557,8 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          assigned_name?: string | null
+          assigned_to?: string | null
           booking_id?: string | null
           created_at?: string
           id?: string
@@ -565,6 +569,8 @@ export type Database = {
           user_id: string
         }
         Update: {
+          assigned_name?: string | null
+          assigned_to?: string | null
           booking_id?: string | null
           created_at?: string
           id?: string
