@@ -29,7 +29,7 @@ import ExperienceCard from "./home/ExperienceCard";
 import { CurationHeroCard, CurationMiniCard } from "./home/CurationHeroCard";
 import ServiceGrid from "./home/ServiceGrid";
 import CurationGrid from "./home/CurationGrid";
-
+import LastVibeCard from "./home/LastVibeCard";
 interface HomeScreenProps {
   onPropertyTap: (property: Property) => void;
   onSearchTap?: () => void;
@@ -228,6 +228,9 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
           {/* ═══════ HOME TAB — Full Discovery Feed ═══════ */}
           {activeCategory === "home" && (
             <>
+              {/* Last Vibe — Repeat Booking */}
+              <LastVibeCard onRebook={onPropertyTap} />
+
               {/* Mood Selector */}
               <MoodSelector activeMood={activeMood} onMoodChange={handleMoodChange} />
 
