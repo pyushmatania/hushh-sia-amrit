@@ -116,82 +116,147 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
         </motion.button>
       </div>
 
-      {/* Profile Card */}
+      {/* Profile Hero Card — reimagined */}
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="mx-5 mt-5 rounded-3xl glass p-6 relative"
+        transition={{ delay: 0.1, type: "spring", stiffness: 200, damping: 22 }}
+        className="mx-5 mt-5 rounded-[28px] overflow-hidden relative"
+        style={{
+          background: "linear-gradient(145deg, hsl(var(--primary) / 0.12) 0%, hsl(var(--primary) / 0.04) 50%, hsl(var(--background)) 100%)",
+          border: "1px solid hsl(var(--primary) / 0.15)",
+          boxShadow: "0 8px 32px -8px hsl(var(--primary) / 0.15), inset 0 1px 0 hsl(0 0% 100% / 0.05)",
+        }}
       >
-        {/* Edit & View Public Profile buttons */}
-        <div className="absolute top-4 right-4 flex gap-2">
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setShowPublicProfile(true)}
-            className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center"
-          >
-            <Globe size={14} className="text-primary" />
-          </motion.button>
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setShowEditProfile(true)}
-            className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center"
-          >
-            <Pencil size={14} className="text-primary" />
-          </motion.button>
-        </div>
+        {/* Ambient glow */}
+        <div className="absolute -top-20 -left-20 w-48 h-48 rounded-full opacity-30 pointer-events-none" style={{ background: "radial-gradient(circle, hsl(var(--primary) / 0.4), transparent 70%)" }} />
+        <div className="absolute -bottom-16 -right-16 w-40 h-40 rounded-full opacity-20 pointer-events-none" style={{ background: "radial-gradient(circle, hsl(var(--primary) / 0.3), transparent 70%)" }} />
 
-        <div className="flex items-start gap-5">
-          <div className="flex flex-col items-center">
-            <div className="relative">
-              <div className="w-24 h-24 rounded-full overflow-hidden bg-secondary border-2 border-primary/30 glow-sm">
+        <div className="relative p-6">
+          {/* Action buttons row */}
+          <div className="flex justify-end gap-2 mb-4">
+            <motion.button
+              whileTap={{ scale: 0.88 }}
+              onClick={() => setShowPublicProfile(true)}
+              className="w-9 h-9 rounded-full bg-primary/10 backdrop-blur-sm border border-primary/20 flex items-center justify-center"
+            >
+              <Globe size={15} className="text-primary" />
+            </motion.button>
+            <motion.button
+              whileTap={{ scale: 0.88 }}
+              onClick={() => setShowEditProfile(true)}
+              className="w-9 h-9 rounded-full bg-primary/10 backdrop-blur-sm border border-primary/20 flex items-center justify-center"
+            >
+              <Pencil size={15} className="text-primary" />
+            </motion.button>
+          </div>
+
+          {/* Avatar + Info — centered layout */}
+          <div className="flex flex-col items-center text-center">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.15, type: "spring", stiffness: 250 }}
+              className="relative mb-4"
+            >
+              <div
+                className="w-[100px] h-[100px] rounded-full overflow-hidden border-[3px] border-primary/40"
+                style={{ boxShadow: "0 0 28px hsl(var(--primary) / 0.25), 0 0 8px hsl(var(--primary) / 0.15)" }}
+              >
                 <img src={profileAvatar} alt="Profile" className="w-full h-full object-cover" />
               </div>
-              <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-primary flex items-center justify-center shadow-md">
-                <BadgeCheck size={16} className="text-primary-foreground" />
-              </div>
-            </div>
-            <h3 className="font-bold text-xl text-foreground mt-3">{profile.name}</h3>
-            <p className="text-sm text-muted-foreground">{profile.location}</p>
-          </div>
-          <div className="flex-1 flex flex-col justify-center gap-3 pl-2 pt-1">
-            <div className="border-b border-border pb-3">
-              <span className="text-2xl font-bold text-foreground block leading-tight">5</span>
-              <span className="text-xs text-muted-foreground font-medium">Trips</span>
-            </div>
-            <div className="border-b border-border pb-3">
-              <span className="text-2xl font-bold text-foreground block leading-tight">4</span>
-              <span className="text-xs text-muted-foreground font-medium">Reviews</span>
-            </div>
-            <div>
-              <span className="text-2xl font-bold text-foreground block leading-tight">1</span>
-              <span className="text-xs text-muted-foreground font-medium">Year on Hushh</span>
-            </div>
-          </div>
-        </div>
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.35, type: "spring", stiffness: 400 }}
+                className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-lg"
+                style={{ boxShadow: "0 2px 12px hsl(var(--primary) / 0.4)" }}
+              >
+                <BadgeCheck size={17} className="text-primary-foreground" />
+              </motion.div>
+            </motion.div>
 
-        {/* Bio */}
-        {profile.bio && (
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-sm text-muted-foreground mt-4 pt-4 border-t border-border/40 leading-relaxed"
+            <motion.h3
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-xl font-bold text-foreground"
+            >
+              {profile.name}
+            </motion.h3>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.25 }}
+              className="text-sm text-muted-foreground mt-0.5"
+            >
+              {profile.location}
+            </motion.p>
+
+            {/* Bio */}
+            {profile.bio && (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="text-[13px] text-muted-foreground mt-3 max-w-[260px] leading-relaxed"
+              >
+                {profile.bio}
+              </motion.p>
+            )}
+          </div>
+
+          {/* Stats row */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="grid grid-cols-3 gap-3 mt-5"
           >
-            {profile.bio}
-          </motion.p>
-        )}
+            {[
+              { value: "5", label: "Trips", icon: Calendar },
+              { value: "4", label: "Reviews", icon: Star },
+              { value: "1yr", label: "Member", icon: Award },
+            ].map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.35 + i * 0.06 }}
+                className="rounded-2xl py-3 text-center"
+                style={{
+                  background: "hsl(var(--primary) / 0.06)",
+                  border: "1px solid hsl(var(--primary) / 0.1)",
+                }}
+              >
+                <stat.icon size={16} className="text-primary mx-auto mb-1.5" />
+                <p className="text-lg font-bold text-foreground leading-none">{stat.value}</p>
+                <p className="text-[10px] text-muted-foreground font-medium mt-1">{stat.label}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
       </motion.div>
 
       {/* Membership Badge — opens Loyalty screen */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.15 }}
+        transition={{ delay: 0.2 }}
         onClick={() => setShowLoyalty(true)}
-        className="mx-5 mt-4 rounded-2xl bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/20 p-4 flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform"
+        className="mx-5 mt-4 rounded-2xl p-4 flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform"
+        style={{
+          background: "linear-gradient(135deg, hsl(var(--primary) / 0.18) 0%, hsl(var(--primary) / 0.08) 100%)",
+          border: "1px solid hsl(var(--primary) / 0.2)",
+          boxShadow: "0 4px 20px -4px hsl(var(--primary) / 0.15)",
+        }}
       >
-        <Crown size={28} className="text-primary shrink-0" />
+        <div
+          className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+          style={{ background: "hsl(var(--primary) / 0.15)" }}
+        >
+          <Crown size={22} className="text-primary" />
+        </div>
         <div className="flex-1">
           <p className="text-sm font-bold text-foreground">Gold Member</p>
           <p className="text-xs text-muted-foreground">320 loyalty points · ₹200 cashback available</p>
