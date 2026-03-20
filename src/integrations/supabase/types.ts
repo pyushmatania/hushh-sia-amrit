@@ -298,6 +298,77 @@ export type Database = {
         }
         Relationships: []
       }
+      order_items: {
+        Row: {
+          created_at: string
+          id: string
+          item_emoji: string
+          item_name: string
+          order_id: string
+          quantity: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          item_emoji?: string
+          item_name: string
+          order_id: string
+          quantity?: number
+          unit_price?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          item_emoji?: string
+          item_name?: string
+          order_id?: string
+          quantity?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          booking_id: string | null
+          created_at: string
+          id: string
+          property_id: string
+          status: string
+          total: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          booking_id?: string | null
+          created_at?: string
+          id?: string
+          property_id: string
+          status?: string
+          total?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          booking_id?: string | null
+          created_at?: string
+          id?: string
+          property_id?: string
+          status?: string
+          total?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -477,6 +548,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      spin_history: {
+        Row: {
+          id: string
+          points_won: number
+          prize_emoji: string
+          prize_label: string
+          spun_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          points_won?: number
+          prize_emoji?: string
+          prize_label: string
+          spun_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          points_won?: number
+          prize_emoji?: string
+          prize_label?: string
+          spun_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_milestones: {
+        Row: {
+          achieved_at: string
+          id: string
+          milestone_id: string
+          user_id: string
+        }
+        Insert: {
+          achieved_at?: string
+          id?: string
+          milestone_id: string
+          user_id: string
+        }
+        Update: {
+          achieved_at?: string
+          id?: string
+          milestone_id?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       wishlists: {
         Row: {
