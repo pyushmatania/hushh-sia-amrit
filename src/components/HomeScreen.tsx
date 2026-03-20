@@ -411,7 +411,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                   </div>
                   <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-1">
                     {filteredCombos.slice(1).map((combo, i) => (
-                      <CurationMiniCard key={combo.id} combo={combo} index={i} onTap={() => toast.info(`${combo.name} — coming soon!`)} />
+                      <CurationMiniCard key={combo.id} combo={combo} index={i} onTap={(c) => onPropertyTap(comboToProperty(c))} />
                     ))}
                   </div>
                 </div>
