@@ -20,6 +20,8 @@ import HostEarnings from "@/components/admin/HostEarnings";
 import DynamicPricing from "@/components/admin/DynamicPricing";
 import AdminAchievements from "@/components/admin/AdminAchievements";
 import AdminLoyaltyReferrals from "@/components/admin/AdminLoyaltyReferrals";
+import HostCalendar from "@/components/admin/HostCalendar";
+import BookingRequests from "@/components/admin/BookingRequests";
 import AuthScreen from "@/components/AuthScreen";
 import { Shield, Loader2 } from "lucide-react";
 
