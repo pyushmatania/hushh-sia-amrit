@@ -236,6 +236,17 @@ export default function AdminProperties() {
 
   const filters = ["all", "published", "draft", "paused"];
 
+  const { getDragHandleProps, getDropTargetProps, handleDragEnd, isDragging, isDragOver } = useDragReorder({
+    items: filtered,
+    getId: (l) => l.id,
+    onReorder: async (updates) => {
+      setListings(prev => prev.map(l => { const u = updates.find(u => u.id === l.id); return u ? { ...l, sort_order: u.sort_order } : l; }));
+      for (const u of updates) { await supabase.from("host_listings").update({ sort_order: u.sort_order }).eq("id", u.id); }
+      toast({ title: "Order saved" });
+      notifyListingsUpdated();
+    },
+  });
+
   return (
     <div className="space-y-5">
       {/* Header */}
