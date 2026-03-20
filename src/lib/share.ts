@@ -9,7 +9,7 @@ interface ShareData {
 function buildShareData(property: Property): ShareData {
   return {
     title: `${property.name} — Hushh`,
-    text: `Check out ${property.name} in ${property.location} on Hushh! ⭐ ${property.rating} · Starting at ₹${property.price.toLocaleString()}`,
+    text: `Check out ${property.name} in ${property.location} on Hushh! ⭐ ${property.rating} · Starting at ₹${property.basePrice.toLocaleString()}`,
     url: `${window.location.origin}/?property=${property.id}`,
   };
 }
