@@ -341,8 +341,8 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
             />
           ))}
         </div>
-      )}
-    </div>
+      ))}
+      </div>
     </PullToRefresh>
   );
 }
