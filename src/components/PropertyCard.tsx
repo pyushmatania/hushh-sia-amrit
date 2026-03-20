@@ -138,7 +138,7 @@ export default function PropertyCard({ property, index, onTap, isWishlisted = fa
         <button
           onClick={(e) => {
             e.stopPropagation();
-            setLiked(!liked);
+            onToggleWishlist?.(property.id);
           }}
           className="absolute top-3 right-3 active:scale-125 transition-transform"
         >

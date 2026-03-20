@@ -194,6 +194,8 @@ export default function Index() {
             onBack={() => setScreen({ type: "home" })}
             onBook={handleBook}
             onPropertyTap={handlePropertyTap}
+            isWishlisted={wishlist.includes(screen.property.id)}
+            onToggleWishlist={toggleWishlist}
           />
         )}
         {screen.type === "builder" && (

@@ -441,7 +441,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
               {filteredProperties.length > 0 ? (
                 <div className="space-y-5">
                   {filteredProperties.map((p, i) => (
-                    <PropertyCard key={p.id} property={p} index={i} onTap={onPropertyTap} />
+                    <PropertyCard key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
                   ))}
                 </div>
               ) : (

@@ -395,7 +395,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
               <Share2 size={16} className="text-foreground" />
             </motion.button>
             <motion.button
-              onClick={() => setLiked(!liked)}
+              onClick={() => onToggleWishlist?.(property.id)}
               className="w-9 h-9 rounded-full glass flex items-center justify-center"
               whileTap={{ scale: 1.2 }}
             >
