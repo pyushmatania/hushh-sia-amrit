@@ -226,8 +226,51 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
           {/* ═══════ HOME TAB — Full Discovery Feed ═══════ */}
           {activeCategory === "home" && (
             <>
+              {/* Mood Selector */}
+              <MoodSelector activeMood={activeMood} onMoodChange={handleMoodChange} />
+
+              {/* Curated Experience Packs — Primary Discovery */}
+              <div className="mt-1">
+                <div className="flex items-center justify-between px-5 mb-2">
+                  <h2 className="text-base font-bold text-foreground" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                    ✨ Curated Packs
+                  </h2>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full font-bold" style={{ background: "hsl(var(--primary) / 0.15)", color: "hsl(var(--primary))" }}>
+                    1-TAP BOOK
+                  </span>
+                </div>
+                {/* Tonight tags */}
+                <div className="flex gap-2 overflow-x-auto hide-scrollbar px-4 mb-3">
+                  {tonightTags.map(tag => (
+                    <button
+                      key={tag.id}
+                      onClick={() => { hapticSelection(); setActivePackFilter(tag.id); }}
+                      className={`text-[10px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 flex items-center gap-1 ${
+                        activePackFilter === tag.id
+                          ? "bg-primary text-primary-foreground font-semibold shadow-md"
+                          : "bg-foreground/5 text-foreground/80 border border-foreground/10"
+                      }`}
+                    >
+                      <span>{tag.emoji}</span> {tag.label}
+                    </button>
+                  ))}
+                </div>
+                {/* Pack cards */}
+                <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2">
+                  {filteredPacks.map((pack, i) => (
+                    <CuratedPackCard key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
+                  ))}
+                  {filteredPacks.length === 0 && (
+                    <div className="w-full py-8 text-center">
+                      <p className="text-2xl mb-1">🔍</p>
+                      <p className="text-xs text-muted-foreground">No packs match this vibe</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
               <SectionDivider title="🔥 TONIGHT'S VIBE" />
-              <SpotlightCarousel properties={properties} onPropertyTap={onPropertyTap} category="home" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
+              <SpotlightCarousel properties={activeMood ? moodFilteredProperties : properties} onPropertyTap={onPropertyTap} category="home" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
 
               <SectionDivider title="BOOK YOUR EXPERIENCE" />
               <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4">
