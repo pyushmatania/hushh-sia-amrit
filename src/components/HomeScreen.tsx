@@ -266,7 +266,6 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
           {/* ═══════ EXPERIENCES TAB ═══════ */}
           {activeCategory === "experience" && (
             <>
-              {/* Spotlight Video Cards for Experiences */}
               <SectionDivider title="🎉 TOP EXPERIENCES" />
               <SpotlightCarousel properties={experienceProperties} onPropertyTap={onPropertyTap} category="experience" />
 
@@ -287,29 +286,37 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 ))}
               </div>
 
+              {/* Slots filling up — horizontal scroll with stacked cards */}
               {trendingNow.length > 0 && (
                 <div className="mt-4">
                   <div className="flex items-center justify-between px-5 mb-3">
                     <h2 className="text-lg font-bold text-foreground">⚡ Slots Filling Up</h2>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 font-semibold animate-pulse">LIVE</span>
                   </div>
-                  <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
-                    {trendingNow.map((p, i) => (
-                      <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} />
+                  <div className="grid grid-cols-2 gap-3 px-5">
+                    {trendingNow.slice(0, 4).map((p, i) => (
+                      <ExperienceCard key={p.id} property={p} index={i} onTap={onPropertyTap} variant="stacked" />
                     ))}
                   </div>
                 </div>
               )}
 
+              {/* All experiences — wide list cards */}
               <div className="mt-6">
                 <div className="flex items-center justify-between px-5 mb-3">
-                  <h2 className="text-lg font-bold text-foreground">🔥 Most Popular</h2>
-                  <span className="text-xs text-muted-foreground">{experienceProperties.length} experiences</span>
+                  <h2 className="text-lg font-bold text-foreground">🔥 All Experiences</h2>
+                  <span className="text-xs text-muted-foreground">{filteredProperties.length} found</span>
                 </div>
-                <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
-                  {topRated.map((p, i) => (
-                    <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} />
-                  ))}
-                </div>
+                {filteredProperties.map((p, i) => (
+                  <ExperienceCard key={p.id} property={p} index={i} onTap={onPropertyTap} variant="wide" />
+                ))}
+                {filteredProperties.length === 0 && (
+                  <div className="px-5 py-12 text-center">
+                    <p className="text-3xl mb-2">🔍</p>
+                    <p className="text-foreground font-semibold">No experiences match this filter</p>
+                    <button onClick={() => handleSubFilter("All")} className="text-xs text-primary mt-2 font-medium">Show all experiences</button>
+                  </div>
+                )}
               </div>
             </>
           )}
