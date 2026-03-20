@@ -6,6 +6,8 @@ import PropertyCard from "./PropertyCard";
 import PropertyCardSmall from "./PropertyCardSmall";
 import PackageCard from "./PackageCard";
 import { properties, packages, curatedCombos, type Property } from "@/data/properties";
+import MoodSelector, { type Mood } from "./home/MoodSelector";
+import CuratedPackCard, { experiencePacks, tonightTags, type ExperiencePack } from "./home/CuratedPackCard";
 import { useState, useMemo, useCallback, useRef } from "react";
 import { useNotifications } from "@/hooks/use-notifications";
 import profileAvatar from "@/assets/profile-avatar.png";
