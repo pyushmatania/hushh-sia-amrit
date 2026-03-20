@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Bell, MapPin, Sparkles, ArrowRight } from "lucide-react";
 import PullToRefresh from "./PullToRefresh";
 import CategoryBar from "./CategoryBar";
