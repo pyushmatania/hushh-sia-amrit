@@ -91,10 +91,10 @@ export default function LiveOrderingSheet({ open, onClose, propertyName, propert
 
   const cartItems = useMemo(() => {
     return Object.entries(cart).map(([id, qty]) => {
-      const item = menuItems.find(i => i.id === id)!;
+      const item = dbMenuItems.find(i => i.id === id)!;
       return { ...item, qty };
     });
-  }, [cart]);
+  }, [cart, dbMenuItems]);
 
   const cartTotal = cartItems.reduce((sum, i) => sum + i.price * i.qty, 0);
   const cartCount = Object.values(cart).reduce((a, b) => a + b, 0);
