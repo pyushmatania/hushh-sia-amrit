@@ -41,7 +41,20 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
       .then(({ data }) => { setItems((data as InventoryItem[]) ?? []); setLoading(false); });
   }, []);
 
-  const filtered = items.filter(i =>
+  // Apply external filter from Catalog tabs
+  const scopedItems = filterCategory === "food-drinks"
+    ? items.filter(i => foodDrinksCategories.includes(i.category))
+    : filterCategory === "addons"
+    ? items.filter(i => addonsCategories.includes(i.category))
+    : items;
+
+  const availableCats = filterCategory === "food-drinks"
+    ? foodDrinksCategories
+    : filterCategory === "addons"
+    ? addonsCategories
+    : categoryOptions;
+
+  const filtered = scopedItems.filter(i =>
     (catFilter === "all" || i.category === catFilter) &&
     i.name.toLowerCase().includes(search.toLowerCase())
   );

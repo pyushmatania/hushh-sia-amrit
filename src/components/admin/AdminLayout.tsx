@@ -14,7 +14,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useAdmin } from "@/hooks/use-admin";
 
 export type AdminPage =
-  | "dashboard" | "properties" | "bookings" | "users" | "clients"
+  | "dashboard" | "catalog" | "properties" | "bookings" | "users" | "clients"
   | "analytics" | "curations" | "tags" | "campaigns"
   | "coupons" | "orders" | "exports" | "ai" | "alerts" | "audit"
   | "earnings" | "pricing" | "achievements" | "loyalty"
@@ -33,16 +33,14 @@ const navItems: { id: AdminPage; label: string; icon: typeof LayoutDashboard; ad
   { id: "pricing", label: "Dynamic Pricing", icon: Zap },
   { id: "calendar", label: "Calendar", icon: CalendarCheck },
   { id: "requests", label: "Booking Requests", icon: CalendarCheck },
-  { id: "properties", label: "Properties", icon: Building2 },
+  { id: "catalog", label: "Catalog Manager", icon: Package },
   { id: "bookings", label: "Bookings", icon: CalendarCheck },
   { id: "orders", label: "Live Orders", icon: ShoppingCart },
-  { id: "inventory", label: "Inventory", icon: Package },
   { id: "clients", label: "Client Directory", icon: UserCheck },
   { id: "history", label: "Property History", icon: ScrollText },
   { id: "users", label: "Users (CRM)", icon: Users, adminOnly: true },
   { id: "analytics", label: "Analytics", icon: BarChart3 },
   { id: "earnings", label: "Earnings", icon: Wallet },
-  { id: "curations", label: "Curations", icon: Sparkles },
   { id: "campaigns", label: "Campaigns", icon: Megaphone },
   { id: "coupons", label: "Coupons", icon: Ticket },
   { id: "tags", label: "Tags", icon: Tag },
