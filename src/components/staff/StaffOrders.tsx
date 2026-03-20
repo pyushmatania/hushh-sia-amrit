@@ -23,6 +23,7 @@ export default function StaffOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("active");
+  const initialLoadDone = useRef(false);
 
   const loadOrders = async () => {
     const { data: ordersData } = await supabase.from("orders").select("*")
