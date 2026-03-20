@@ -315,6 +315,23 @@ export default function AdminCurations() {
                   <div className="flex items-center gap-2">
                     <h3 className="font-semibold text-sm text-foreground">{c.name}</h3>
                     {c.badge && <span className="text-[10px] bg-primary/15 text-primary px-2 py-0.5 rounded-full">{c.badge}</span>}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (!confirm(`Delete "${c.name}"?`)) return;
+                        supabase.from("curations").delete().eq("id", c.id).then(({ error }) => {
+                          if (error) {
+                            toast({ title: "Delete failed", description: error.message, variant: "destructive" });
+                          } else {
+                            setCurations(prev => prev.filter(x => x.id !== c.id));
+                            toast({ title: "Curation deleted" });
+                          }
+                        });
+                      }}
+                      className="ml-auto p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition"
+                    >
+                      <Trash2 size={14} />
+                    </button>
                   </div>
                   <p className="text-xs text-muted-foreground mt-0.5">{c.tagline}</p>
                   <div className="flex items-center gap-2 mt-2">
