@@ -7,10 +7,12 @@ interface PropertyCardSmallProps {
   property: Property;
   index: number;
   onTap: (property: Property) => void;
+  isWishlisted?: boolean;
+  onToggleWishlist?: (id: string) => void;
 }
 
-export default function PropertyCardSmall({ property, index, onTap }: PropertyCardSmallProps) {
-  const [liked, setLiked] = useState(false);
+export default function PropertyCardSmall({ property, index, onTap, isWishlisted = false, onToggleWishlist }: PropertyCardSmallProps) {
+  const liked = isWishlisted;
   const [imgLoaded, setImgLoaded] = useState(false);
 
   return (
@@ -38,7 +40,7 @@ export default function PropertyCardSmall({ property, index, onTap }: PropertyCa
         <motion.button
           onClick={(e) => {
             e.stopPropagation();
-            setLiked(!liked);
+            onToggleWishlist?.(property.id);
           }}
           className="absolute top-2.5 right-2.5"
           whileTap={{ scale: 1.3 }}

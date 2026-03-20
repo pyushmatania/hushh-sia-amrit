@@ -103,6 +103,8 @@ interface SpotlightCarouselProps {
   properties: Property[];
   onPropertyTap: (property: Property) => void;
   category?: string;
+  wishlist?: string[];
+  onToggleWishlist?: (id: string) => void;
 }
 
 function VideoCard({
@@ -113,6 +115,8 @@ function VideoCard({
   onTap,
   dateLabel,
   accent,
+  isSaved,
+  onToggleSave,
 }: {
   property: Property;
   videoSrc: string;
@@ -121,11 +125,13 @@ function VideoCard({
   onTap: () => void;
   dateLabel: string;
   accent: VideoAccent;
+  isSaved?: boolean;
+  onToggleSave?: (id: string) => void;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const [muted, setMuted] = useState(true);
-  const [saved, setSaved] = useState(false);
+  const saved = isSaved ?? false;
   const [videoReady, setVideoReady] = useState(false);
   const [shouldLoad, setShouldLoad] = useState(false);
 
@@ -225,7 +231,7 @@ function VideoCard({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                setSaved(!saved);
+                onToggleSave?.(property.id);
               }}
               className="w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md ml-3 shrink-0 active:scale-110 transition-transform"
               style={{ background: "hsl(var(--foreground) / 0.36)" }}
@@ -240,7 +246,7 @@ function VideoCard({
   );
 }
 
-export default function SpotlightCarousel({ properties, onPropertyTap, category = "home" }: SpotlightCarouselProps) {
+export default function SpotlightCarousel({ properties, onPropertyTap, category = "home", wishlist = [], onToggleWishlist }: SpotlightCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const topProperties = properties.slice(0, 6);
@@ -286,6 +292,8 @@ export default function SpotlightCarousel({ properties, onPropertyTap, category 
             dateLabel={dateLabels[i]}
             accent={accentStyles[i % accentStyles.length]}
             onTap={() => onPropertyTap(p)}
+            isSaved={wishlist.includes(p.id)}
+            onToggleSave={onToggleWishlist}
           />
         ))}
       </div>

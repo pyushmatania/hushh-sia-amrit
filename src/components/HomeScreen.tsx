@@ -186,7 +186,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
           {activeCategory === "home" && (
             <>
               <SectionDivider title="🔥 TONIGHT'S VIBE" />
-              <SpotlightCarousel properties={properties} onPropertyTap={onPropertyTap} category="home" />
+              <SpotlightCarousel properties={properties} onPropertyTap={onPropertyTap} category="home" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
 
               <SectionDivider title="BOOK YOUR EXPERIENCE" />
               <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4">
@@ -220,7 +220,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
             <>
               {/* Spotlight Video Cards for Stays */}
               <SectionDivider title="🏡 FEATURED STAYS" />
-              <SpotlightCarousel properties={stayProperties} onPropertyTap={onPropertyTap} category="stay" />
+              <SpotlightCarousel properties={stayProperties} onPropertyTap={onPropertyTap} category="stay" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
 
               {/* Property Type Tags */}
               <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
@@ -247,7 +247,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                   </div>
                   <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
                     {trendingNow.map((p, i) => (
-                      <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} />
+                      <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
                     ))}
                   </div>
                 </div>
@@ -261,7 +261,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                   </div>
                   <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
                     {budgetPicks.map((p, i) => (
-                      <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} />
+                      <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
                     ))}
                   </div>
                 </div>
@@ -274,7 +274,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 </div>
                 <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
                   {topRated.map((p, i) => (
-                    <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} />
+                    <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
                   ))}
                 </div>
               </div>
@@ -285,7 +285,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
           {activeCategory === "experience" && (
             <>
               <SectionDivider title="🎉 TOP EXPERIENCES" />
-              <SpotlightCarousel properties={experienceProperties} onPropertyTap={onPropertyTap} category="experience" />
+              <SpotlightCarousel properties={experienceProperties} onPropertyTap={onPropertyTap} category="experience" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
 
               {/* Sub-categories */}
               <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
