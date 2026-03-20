@@ -237,7 +237,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
             className="grid grid-cols-3 gap-3 mt-5"
           >
             {[
-              { value: "5", label: "Trips", icon: Calendar },
+              { value: String(bookings.length), label: "Trips", icon: Calendar },
               { value: "4", label: "Reviews", icon: Star },
               { value: "1yr", label: "Member", icon: Award },
             ].map((stat, i) => (
