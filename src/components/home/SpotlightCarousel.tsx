@@ -3,15 +3,45 @@ import { VolumeX, Volume2, Bookmark, Flame, Zap, Sparkles } from "lucide-react";
 import { type Property } from "@/data/properties";
 import { AccentFrame, AccentTag } from "@/components/shared/AccentFrame";
 
+// Home / generic
 import videoBonfire from "@/assets/video-bonfire-night.mp4.asset.json";
 import videoPool from "@/assets/video-pool-lights.mp4.asset.json";
 import videoBbq from "@/assets/video-bbq-grill.mp4.asset.json";
 import videoDj from "@/assets/video-dj-lights.mp4.asset.json";
 import videoRooftop from "@/assets/video-rooftop-dinner.mp4.asset.json";
 import videoPickleball from "@/assets/video-pickleball.mp4.asset.json";
+// Stay
+import videoVillaNight from "@/assets/video-villa-night.mp4.asset.json";
+import videoFarmhouseDinner from "@/assets/video-farmhouse-dinner.mp4.asset.json";
+import videoWorkPod from "@/assets/video-work-pod.mp4.asset.json";
+import videoCoupleRetreat from "@/assets/video-couple-retreat.mp4.asset.json";
+// Experience
+import videoCandleDinner from "@/assets/video-candle-dinner.mp4.asset.json";
+import videoBirthdayParty from "@/assets/video-birthday-party.mp4.asset.json";
+import videoTribalDance from "@/assets/video-tribal-dance.mp4.asset.json";
+import videoSportsAction from "@/assets/video-sports-action.mp4.asset.json";
+import videoMovieNight from "@/assets/video-movie-night.mp4.asset.json";
+// Service
+import videoChefCooking from "@/assets/video-chef-cooking.mp4.asset.json";
+import videoDecorSetup from "@/assets/video-decor-setup.mp4.asset.json";
+import videoRideService from "@/assets/video-ride-service.mp4.asset.json";
 
-const spotlightVideos = [videoBonfire.url, videoPool.url, videoBbq.url, videoDj.url, videoRooftop.url, videoPickleball.url];
-const overlayTexts = ["feel the vibe", "dive in", "sizzle & smoke", "into its groove", "under the stars", "game on"];
+// Category-specific video pools
+const videosByCategory: Record<string, string[]> = {
+  home: [videoBonfire.url, videoPool.url, videoBbq.url, videoDj.url, videoRooftop.url, videoPickleball.url],
+  stay: [videoVillaNight.url, videoFarmhouseDinner.url, videoPool.url, videoCoupleRetreat.url, videoWorkPod.url, videoBonfire.url],
+  experience: [videoCandleDinner.url, videoBirthdayParty.url, videoTribalDance.url, videoSportsAction.url, videoMovieNight.url, videoDj.url],
+  service: [videoChefCooking.url, videoDecorSetup.url, videoRideService.url, videoDj.url, videoBbq.url, videoChefCooking.url],
+  curation: [videoBonfire.url, videoCandleDinner.url, videoBirthdayParty.url, videoWorkPod.url, videoMovieNight.url, videoCoupleRetreat.url],
+};
+
+const overlaysByCategory: Record<string, string[]> = {
+  home: ["feel the vibe", "dive in", "sizzle & smoke", "into its groove", "under the stars", "game on"],
+  stay: ["your private escape", "farm to table", "chill by the pool", "just us two", "work in peace", "warmth awaits"],
+  experience: ["romance redefined", "celebrate big", "tribal rhythms", "game on", "cinema magic", "drop the beat"],
+  service: ["flavours on fire", "set the scene", "ride in style", "sound check", "smoky perfection", "taste the magic"],
+  curation: ["after hours", "just us", "party mode", "focus time", "movie magic", "escape together"],
+};
 
 type VideoAccent = {
   color: string;
@@ -72,6 +102,7 @@ const accentStyles: VideoAccent[] = [
 interface SpotlightCarouselProps {
   properties: Property[];
   onPropertyTap: (property: Property) => void;
+  category?: string;
 }
 
 function VideoCard({
@@ -209,11 +240,14 @@ function VideoCard({
   );
 }
 
-export default function SpotlightCarousel({ properties, onPropertyTap }: SpotlightCarouselProps) {
+export default function SpotlightCarousel({ properties, onPropertyTap, category = "home" }: SpotlightCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const topProperties = properties.slice(0, 6);
   const rafRef = useRef<number>(0);
+
+  const videos = videosByCategory[category] || videosByCategory.home;
+  const overlays = overlaysByCategory[category] || overlaysByCategory.home;
 
   const dateLabels = useMemo(
     () =>
@@ -246,8 +280,8 @@ export default function SpotlightCarousel({ properties, onPropertyTap }: Spotlig
           <VideoCard
             key={p.id}
             property={p}
-            videoSrc={spotlightVideos[i % spotlightVideos.length]}
-            overlayText={overlayTexts[i % overlayTexts.length]}
+            videoSrc={videos[i % videos.length]}
+            overlayText={overlays[i % overlays.length]}
             isActive={i === activeIndex}
             dateLabel={dateLabels[i]}
             accent={accentStyles[i % accentStyles.length]}

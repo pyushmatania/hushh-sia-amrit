@@ -99,7 +99,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
           {activeCategory === "home" && (
             <>
               <SectionDivider title="🔥 TONIGHT'S VIBE" />
-              <SpotlightCarousel properties={properties} onPropertyTap={onPropertyTap} />
+              <SpotlightCarousel properties={properties} onPropertyTap={onPropertyTap} category="home" />
 
               <SectionDivider title="BOOK YOUR EXPERIENCE" />
               <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4">
@@ -133,7 +133,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
             <>
               {/* Spotlight Video Cards for Stays */}
               <SectionDivider title="🏡 FEATURED STAYS" />
-              <SpotlightCarousel properties={stayProperties} onPropertyTap={onPropertyTap} />
+              <SpotlightCarousel properties={stayProperties} onPropertyTap={onPropertyTap} category="stay" />
 
               {/* Property Type Tags */}
               <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
@@ -191,7 +191,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
             <>
               {/* Spotlight Video Cards for Experiences */}
               <SectionDivider title="🎉 TOP EXPERIENCES" />
-              <SpotlightCarousel properties={experienceProperties} onPropertyTap={onPropertyTap} />
+              <SpotlightCarousel properties={experienceProperties} onPropertyTap={onPropertyTap} category="experience" />
 
               {/* Sub-categories */}
               <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
@@ -234,7 +234,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
             <>
               {/* Spotlight Video Cards for Services */}
               <SectionDivider title="🛎️ PREMIUM SERVICES" />
-              <SpotlightCarousel properties={serviceProperties} onPropertyTap={onPropertyTap} />
+              <SpotlightCarousel properties={serviceProperties} onPropertyTap={onPropertyTap} category="service" />
 
               <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
                 {["👨‍🍳 Food", "🎈 Decoration", "🚗 Transport", "🎧 Entertainment", "📸 Photography", "🧹 Staff"].map(tag => (
@@ -257,7 +257,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
             <>
               {/* Spotlight Video Cards for Curations — uses top-rated properties */}
               <SectionDivider title="✨ CURATED FOR YOU" />
-              <SpotlightCarousel properties={topRated.slice(0, 4)} onPropertyTap={onPropertyTap} />
+              <SpotlightCarousel properties={topRated.slice(0, 4)} onPropertyTap={onPropertyTap} category="curation" />
 
               <div className="px-5 pt-4 pb-2">
                 <h2 className="text-lg font-bold text-foreground mb-1">✨ Ready-Made Experiences</h2>
