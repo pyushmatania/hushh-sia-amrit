@@ -377,16 +377,15 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
             </>
           )}
 
-          {/* ═══════ CURATIONS TAB — Editorial Magazine Layout ═══════ */}
+          {/* ═══════ CURATIONS TAB — Minimal Emoji-Forward Grid ═══════ */}
           {activeCategory === "curation" && (
             <>
-              {/* Editorial header */}
               <div className="px-5 pt-6 pb-2">
                 <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                   Curated for You ✨
                 </h1>
                 <p className="text-sm text-muted-foreground mt-1" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  One-tap bundles, crafted by locals, ready to book
+                  One-tap bundles, crafted by locals
                 </p>
               </div>
 
@@ -407,37 +406,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 ))}
               </div>
 
-              {/* Hero featured combo — first popular one */}
-              {filteredCombos.length > 0 && (
-                <CurationHeroCard combo={filteredCombos[0]} index={0} onTap={(c) => onPropertyTap(comboToProperty(c))} />
-              )}
-
-              {/* Quick picks row */}
-              {filteredCombos.length > 1 && (
-                <div className="mt-2">
-                  <div className="flex items-center justify-between px-5 mb-3">
-                    <h2 className="text-base font-bold text-foreground">⚡ Quick Picks</h2>
-                    <span className="text-[10px] text-muted-foreground">{filteredCombos.length} combos</span>
-                  </div>
-                  <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-1">
-                    {filteredCombos.slice(1).map((combo, i) => (
-                      <CurationMiniCard key={combo.id} combo={combo} index={i} onTap={(c) => onPropertyTap(comboToProperty(c))} />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Full-width editorial cards for remaining */}
-              {filteredCombos.length > 3 && (
-                <div className="mt-6">
-                  <div className="px-5 mb-3">
-                    <h2 className="text-base font-bold text-foreground">🎯 More Combos</h2>
-                  </div>
-                  {filteredCombos.slice(3).map((combo, i) => (
-                    <CurationHeroCard key={combo.id} combo={combo} index={i} onTap={(c) => onPropertyTap(comboToProperty(c))} />
-                  ))}
-                </div>
-              )}
+              <CurationGrid combos={filteredCombos} onComboTap={(c) => onPropertyTap(comboToProperty(c))} />
 
               {filteredCombos.length === 0 && (
                 <div className="px-5 py-12 text-center">
@@ -447,13 +416,13 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 </div>
               )}
 
-              {/* Budget highlight banner */}
-              <div className="mx-5 mt-6 p-4 rounded-2xl border border-foreground/10" style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(6,95,70,0.15) 100%)" }}>
-                <div className="flex items-center gap-2 mb-2">
+              {/* Budget highlight */}
+              <div className="mx-4 mt-6 p-4 rounded-2xl border border-foreground/10" style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(6,95,70,0.15) 100%)" }}>
+                <div className="flex items-center gap-2 mb-1">
                   <span className="text-lg">💸</span>
                   <h3 className="text-sm font-bold text-foreground">Budget Combos from ₹299</h3>
                 </div>
-                <p className="text-xs text-muted-foreground">Work & Chill Pass, Day Escape, Game Night — perfect for weekdays!</p>
+                <p className="text-xs text-muted-foreground">Work & Chill, Day Escape, Game Night — perfect for weekdays!</p>
               </div>
             </>
           )}
