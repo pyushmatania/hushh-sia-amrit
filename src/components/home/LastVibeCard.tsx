@@ -12,16 +12,15 @@ interface LastVibeCardProps {
 export default function LastVibeCard({ onRebook }: LastVibeCardProps) {
   const { user } = useAuth();
   const { bookings } = useBookings();
+  const { properties } = useDbListings();
 
   // Find the most recent completed or upcoming booking
   const lastBooking = bookings.find(
     (b) => b.status === "completed" || b.status === "upcoming"
   );
 
-  if (!lastBooking) return null;
-
-  const property = properties.find((p) => p.id === lastBooking.propertyId);
-  if (!property) return null;
+  const property = lastBooking ? properties.find((p) => p.id === lastBooking.propertyId) : undefined;
+  if (!lastBooking || !property) return null;
 
   return (
     <div className="px-4 pt-3 pb-1">

@@ -11,6 +11,7 @@ interface WishlistScreenProps {
 }
 
 export default function WishlistScreen({ wishlist, onToggleWishlist, onPropertyTap }: WishlistScreenProps) {
+  const { properties } = useDbListings();
   const wishlisted = properties.filter((p) => wishlist.includes(p.id));
 
   return (

@@ -40,6 +40,7 @@ const sortLabels: Record<SortOption, string> = {
 };
 
 export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenProps) {
+  const { properties } = useDbListings();
   const [query, setQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);

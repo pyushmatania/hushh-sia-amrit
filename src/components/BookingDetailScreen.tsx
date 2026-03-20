@@ -20,6 +20,7 @@ interface BookingDetailScreenProps {
 }
 
 export default function BookingDetailScreen({ booking, onBack, onCancel, onRebook }: BookingDetailScreenProps) {
+  const { properties } = useDbListings();
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [showAddonsSheet, setShowAddonsSheet] = useState(false);
   const [showFoodOrder, setShowFoodOrder] = useState(false);
@@ -29,7 +30,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
   const [cancelled, setCancelled] = useState(false);
   const { toast } = useToast();
 
-  const property = useMemo(() => properties.find((p) => p.id === booking.propertyId), [booking.propertyId]);
+  const property = useMemo(() => properties.find((p) => p.id === booking.propertyId), [booking.propertyId, properties]);
 
   const addonTotal = useMemo(() => {
     return Object.entries(addonSelections).reduce((sum, [id, qty]) => {
