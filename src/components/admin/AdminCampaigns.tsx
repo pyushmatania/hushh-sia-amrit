@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Megaphone, Plus, Calendar, Users, Zap, Clock, Percent,
-  IndianRupee, Trash2, Power, X
+  IndianRupee, Trash2, Power, X, Save, Loader2, Pencil, Search
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,19 @@ interface Campaign {
   start_date: string; end_date: string | null;
   active: boolean; banner_color: string; created_at: string;
 }
+
+interface CampaignForm {
+  title: string; description: string; type: string;
+  discount_type: string; discount_value: number;
+  target_audience: string[]; start_date: string; end_date: string;
+  banner_color: string;
+}
+
+const emptyForm: CampaignForm = {
+  title: "", description: "", type: "flash_deal",
+  discount_type: "percentage", discount_value: 10,
+  target_audience: [], start_date: "", end_date: "", banner_color: "from-primary to-accent",
+};
 
 const typeConfig: Record<string, { icon: typeof Zap; color: string; label: string }> = {
   flash_deal: { icon: Zap, color: "text-amber-400", label: "Flash Deal" },
@@ -29,31 +42,58 @@ export default function AdminCampaigns() {
   const { user } = useAuth();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showCreate, setShowCreate] = useState(false);
-  const [form, setForm] = useState({
-    title: "", description: "", type: "flash_deal",
-    discount_type: "percentage", discount_value: 10,
-    target_audience: [] as string[], start_date: "", end_date: "",
-  });
+  const [search, setSearch] = useState("");
+  const [editing, setEditing] = useState<CampaignForm | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
+  const load = () => {
     supabase.from("campaigns").select("*").order("created_at", { ascending: false })
       .then(({ data }) => { setCampaigns((data as any) ?? []); setLoading(false); });
-  }, []);
+  };
 
-  const create = async () => {
-    if (!form.title || !user) return;
-    const { data } = await supabase.from("campaigns").insert({
-      title: form.title, description: form.description, type: form.type,
-      discount_type: form.discount_type, discount_value: form.discount_value,
-      target_audience: form.target_audience,
-      start_date: form.start_date || new Date().toISOString(),
-      end_date: form.end_date || null,
-      created_by: user.id,
-    } as any).select().single();
-    if (data) setCampaigns(prev => [data as any, ...prev]);
-    setShowCreate(false);
-    setForm({ title: "", description: "", type: "flash_deal", discount_type: "percentage", discount_value: 10, target_audience: [], start_date: "", end_date: "" });
+  useEffect(() => { load(); }, []);
+
+  const filtered = campaigns.filter(c =>
+    c.title.toLowerCase().includes(search.toLowerCase()) ||
+    c.description.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const startCreate = () => { setEditing({ ...emptyForm }); setEditingId(null); };
+
+  const startEdit = (c: Campaign) => {
+    setEditing({
+      title: c.title, description: c.description, type: c.type,
+      discount_type: c.discount_type, discount_value: c.discount_value,
+      target_audience: c.target_audience || [],
+      start_date: c.start_date ? c.start_date.slice(0, 16) : "",
+      end_date: c.end_date ? c.end_date.slice(0, 16) : "",
+      banner_color: c.banner_color || "from-primary to-accent",
+    });
+    setEditingId(c.id);
+  };
+
+  const save = async () => {
+    if (!editing || !editing.title) return;
+    setSaving(true);
+    const payload = {
+      title: editing.title, description: editing.description, type: editing.type,
+      discount_type: editing.discount_type, discount_value: editing.discount_value,
+      target_audience: editing.target_audience,
+      start_date: editing.start_date || new Date().toISOString(),
+      end_date: editing.end_date || null,
+      banner_color: editing.banner_color,
+    };
+
+    if (editingId) {
+      await supabase.from("campaigns").update(payload as any).eq("id", editingId);
+    } else {
+      await supabase.from("campaigns").insert({ ...payload, created_by: user?.id } as any);
+    }
+    setSaving(false);
+    setEditing(null);
+    setEditingId(null);
+    load();
   };
 
   const toggle = async (id: string, active: boolean) => {
@@ -66,6 +106,107 @@ export default function AdminCampaigns() {
     setCampaigns(prev => prev.filter(c => c.id !== id));
   };
 
+  const toggleAudience = (a: string) => {
+    if (!editing) return;
+    setEditing({
+      ...editing,
+      target_audience: editing.target_audience.includes(a)
+        ? editing.target_audience.filter(x => x !== a)
+        : [...editing.target_audience, a],
+    });
+  };
+
+  if (editing) {
+    return (
+      <div className="space-y-5">
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
+            <Megaphone size={20} className="text-primary" />
+            {editingId ? "Edit Campaign" : "Create Campaign"}
+          </h1>
+          <button onClick={() => { setEditing(null); setEditingId(null); }}
+            className="p-2 rounded-lg hover:bg-secondary"><X size={18} className="text-muted-foreground" /></button>
+        </div>
+
+        <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
+          <div>
+            <label className="text-[10px] text-muted-foreground mb-1 block">Title</label>
+            <Input placeholder="Campaign title" value={editing.title}
+              onChange={e => setEditing({ ...editing, title: e.target.value })} />
+          </div>
+          <div>
+            <label className="text-[10px] text-muted-foreground mb-1 block">Description</label>
+            <Input placeholder="What's this campaign about?" value={editing.description}
+              onChange={e => setEditing({ ...editing, description: e.target.value })} />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-[10px] text-muted-foreground mb-1 block">Type</label>
+              <select value={editing.type} onChange={e => setEditing({ ...editing, type: e.target.value })}
+                className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm text-foreground">
+                {Object.entries(typeConfig).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-[10px] text-muted-foreground mb-1 block">Discount</label>
+              <div className="flex gap-2">
+                <select value={editing.discount_type}
+                  onChange={e => setEditing({ ...editing, discount_type: e.target.value })}
+                  className="bg-secondary border border-border rounded-lg px-2 py-2 text-sm text-foreground">
+                  <option value="percentage">%</option>
+                  <option value="flat">₹</option>
+                </select>
+                <Input type="number" value={editing.discount_value}
+                  onChange={e => setEditing({ ...editing, discount_value: Number(e.target.value) })} />
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-[10px] text-muted-foreground mb-1 block">Start Date</label>
+              <Input type="datetime-local" value={editing.start_date}
+                onChange={e => setEditing({ ...editing, start_date: e.target.value })} />
+            </div>
+            <div>
+              <label className="text-[10px] text-muted-foreground mb-1 block">End Date</label>
+              <Input type="datetime-local" value={editing.end_date}
+                onChange={e => setEditing({ ...editing, end_date: e.target.value })} />
+            </div>
+          </div>
+
+          <div>
+            <label className="text-[10px] text-muted-foreground mb-2 block">Target Audience</label>
+            <div className="flex flex-wrap gap-2">
+              {audiences.map(a => (
+                <button key={a} onClick={() => toggleAudience(a)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition ${
+                    editing.target_audience.includes(a)
+                      ? "bg-primary/15 text-primary ring-1 ring-primary/30"
+                      : "bg-secondary text-muted-foreground"
+                  }`}>{a.replace("_", " ")}</button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="text-[10px] text-muted-foreground mb-1 block">Banner Gradient</label>
+            <Input placeholder="e.g. from-primary to-accent" value={editing.banner_color}
+              onChange={e => setEditing({ ...editing, banner_color: e.target.value })} />
+            <div className={`mt-2 h-8 rounded-lg bg-gradient-to-r ${editing.banner_color}`} />
+          </div>
+
+          <motion.button whileTap={{ scale: 0.97 }} onClick={save} disabled={saving || !editing.title}
+            className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-50">
+            {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+            {editingId ? "Update Campaign" : "Launch Campaign"}
+          </motion.button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
@@ -75,90 +216,34 @@ export default function AdminCampaigns() {
           </h1>
           <p className="text-sm text-muted-foreground">{campaigns.length} campaigns</p>
         </div>
-        <button onClick={() => setShowCreate(true)}
+        <motion.button whileTap={{ scale: 0.95 }} onClick={startCreate}
           className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-semibold">
           <Plus size={16} /> Create
-        </button>
+        </motion.button>
       </div>
 
-      {/* Create modal */}
-      {showCreate && (
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl border border-border bg-card p-5 space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="font-bold text-foreground">New Campaign</h3>
-            <button onClick={() => setShowCreate(false)}><X size={18} className="text-muted-foreground" /></button>
-          </div>
-          <Input placeholder="Campaign title" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
-          <Input placeholder="Description" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} />
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Type</label>
-              <select value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}
-                className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm text-foreground">
-                {Object.entries(typeConfig).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Discount</label>
-              <div className="flex gap-2">
-                <select value={form.discount_type} onChange={e => setForm(f => ({ ...f, discount_type: e.target.value }))}
-                  className="bg-secondary border border-border rounded-lg px-2 py-2 text-sm text-foreground">
-                  <option value="percentage">%</option>
-                  <option value="flat">₹</option>
-                </select>
-                <Input type="number" value={form.discount_value} onChange={e => setForm(f => ({ ...f, discount_value: Number(e.target.value) }))} />
-              </div>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Start</label>
-              <Input type="datetime-local" value={form.start_date} onChange={e => setForm(f => ({ ...f, start_date: e.target.value }))} />
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground mb-1 block">End</label>
-              <Input type="datetime-local" value={form.end_date} onChange={e => setForm(f => ({ ...f, end_date: e.target.value }))} />
-            </div>
-          </div>
-          <div>
-            <label className="text-xs text-muted-foreground mb-1 block">Target Audience</label>
-            <div className="flex flex-wrap gap-1.5">
-              {audiences.map(a => (
-                <button key={a} onClick={() => setForm(f => ({
-                  ...f, target_audience: f.target_audience.includes(a)
-                    ? f.target_audience.filter(x => x !== a) : [...f.target_audience, a]
-                }))}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-medium capitalize transition ${
-                    form.target_audience.includes(a) ? "bg-primary/15 text-primary" : "bg-secondary text-muted-foreground"
-                  }`}>{a}</button>
-              ))}
-            </div>
-          </div>
-          <button onClick={create}
-            className="w-full py-2.5 bg-primary text-primary-foreground rounded-xl font-semibold text-sm">
-            Launch Campaign
-          </button>
-        </motion.div>
-      )}
+      <div className="relative">
+        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+        <Input placeholder="Search campaigns..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
+      </div>
 
       {loading ? (
         <div className="space-y-3">{[1,2,3].map(i => <div key={i} className="h-24 rounded-xl bg-secondary animate-pulse" />)}</div>
-      ) : campaigns.length === 0 ? (
+      ) : filtered.length === 0 ? (
         <div className="text-center py-16">
           <Megaphone size={40} className="mx-auto text-muted-foreground mb-3" />
-          <p className="text-muted-foreground">No campaigns yet</p>
+          <p className="text-muted-foreground">{search ? "No matches" : "No campaigns yet"}</p>
         </div>
       ) : (
         <div className="space-y-3">
-          {campaigns.map((c, i) => {
+          {filtered.map((c, i) => {
             const tc = typeConfig[c.type] || typeConfig.flash_deal;
             return (
               <motion.div key={c.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.04 }}
                 className={`rounded-xl border bg-card p-4 ${c.active ? "border-border" : "border-border opacity-60"}`}>
                 <div className="flex items-start gap-3">
-                  <div className={`w-10 h-10 rounded-xl bg-secondary flex items-center justify-center shrink-0`}>
+                  <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center shrink-0">
                     <tc.icon size={18} className={tc.color} />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -180,7 +265,10 @@ export default function AdminCampaigns() {
                       )}
                     </div>
                   </div>
-                  <div className="flex gap-1">
+                  <div className="flex gap-1 shrink-0">
+                    <button onClick={() => startEdit(c)} className="p-1.5 rounded-lg hover:bg-secondary transition">
+                      <Pencil size={14} className="text-muted-foreground" />
+                    </button>
                     <button onClick={() => toggle(c.id, c.active)} className="p-1.5 rounded-lg hover:bg-secondary transition">
                       <Power size={14} className={c.active ? "text-emerald-400" : "text-muted-foreground"} />
                     </button>
