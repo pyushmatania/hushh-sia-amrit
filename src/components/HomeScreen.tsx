@@ -1,5 +1,4 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { toast } from "sonner";
 import { Bell, MapPin, ArrowRight } from "lucide-react";
 import PullToRefresh from "./PullToRefresh";
 import CategoryBar from "./CategoryBar";
@@ -98,6 +97,20 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
     return filterFn ? curatedCombos.filter(filterFn) : curatedCombos;
   }, [activeCategory, subFilter]);
 
+  // Map a combo to the best matching property for navigation
+  const comboToProperty = useCallback((combo: typeof curatedCombos[0]): Property => {
+    // Try matching by image (combo images are property images)
+    const byImage = properties.find(p => p.images.some(img => img === combo.image));
+    if (byImage) return byImage;
+    // Try matching by tags
+    if (combo.tags.some(t => t.includes("Couple"))) return properties.find(p => p.category.includes("couples")) || properties[0];
+    if (combo.tags.some(t => t.includes("Party") || t.includes("Birthday"))) return properties.find(p => p.category.includes("party")) || properties[0];
+    if (combo.tags.some(t => t.includes("Work"))) return properties.find(p => p.propertyType === "Work Pod") || properties[0];
+    if (combo.tags.some(t => t.includes("Movie"))) return properties.find(p => p.name.toLowerCase().includes("movie") || p.name.toLowerCase().includes("amphitheater")) || properties[0];
+    if (combo.tags.some(t => t.includes("Pool"))) return properties.find(p => p.category.includes("pool")) || properties[0];
+    return properties[0];
+  }, []);
+
   // Filter by primaryCategory
   const filteredProperties = useMemo(() => {
     let list = activeCategory === "home" ? properties : properties.filter(p => p.primaryCategory === activeCategory);
@@ -174,7 +187,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
               <SectionDivider title="BOOK YOUR EXPERIENCE" />
               <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4">
                 {packages.map((pkg, i) => (
-                  <PackageCard key={pkg.id} pkg={pkg} index={i} />
+                  <PackageCard key={pkg.id} pkg={pkg} index={i} properties={properties} onPropertyTap={onPropertyTap} />
                 ))}
               </div>
 
@@ -188,13 +201,13 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
               <CoupleSpecials properties={properties} onPropertyTap={onPropertyTap} />
 
               <SectionDivider title="UPCOMING EVENTS" />
-              <UpcomingEvents />
+              <UpcomingEvents properties={properties} onPropertyTap={onPropertyTap} />
 
               <SectionDivider title="WHAT'S HOT ON HUSHH" />
               <WhatsHotGrid properties={properties} onPropertyTap={onPropertyTap} />
 
               <SectionDivider title="BLOCKBUSTER RELEASE" />
-              <BlockbusterBanner />
+              <BlockbusterBanner properties={properties} onPropertyTap={onPropertyTap} />
             </>
           )}
 
@@ -385,7 +398,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
 
               {/* Hero featured combo — first popular one */}
               {filteredCombos.length > 0 && (
-                <CurationHeroCard combo={filteredCombos[0]} index={0} onTap={() => toast.info(`${filteredCombos[0].name} — coming soon!`)} />
+                <CurationHeroCard combo={filteredCombos[0]} index={0} onTap={(c) => onPropertyTap(comboToProperty(c))} />
               )}
 
               {/* Quick picks row */}
@@ -397,7 +410,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                   </div>
                   <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-1">
                     {filteredCombos.slice(1).map((combo, i) => (
-                      <CurationMiniCard key={combo.id} combo={combo} index={i} onTap={() => toast.info(`${combo.name} — coming soon!`)} />
+                      <CurationMiniCard key={combo.id} combo={combo} index={i} onTap={(c) => onPropertyTap(comboToProperty(c))} />
                     ))}
                   </div>
                 </div>
@@ -410,7 +423,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                     <h2 className="text-base font-bold text-foreground">🎯 More Combos</h2>
                   </div>
                   {filteredCombos.slice(3).map((combo, i) => (
-                    <CurationHeroCard key={combo.id} combo={combo} index={i} onTap={() => toast.info(`${combo.name} — coming soon!`)} />
+                    <CurationHeroCard key={combo.id} combo={combo} index={i} onTap={(c) => onPropertyTap(comboToProperty(c))} />
                   ))}
                 </div>
               )}

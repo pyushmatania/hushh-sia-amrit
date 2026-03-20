@@ -1,17 +1,10 @@
 import { ChevronRight } from "lucide-react";
 import { type Property } from "@/data/properties";
-import { toast } from "sonner";
 
 import icon3dPickleball from "@/assets/icon-3d-pickleball.png";
 import icon3dBadminton from "@/assets/icon-3d-badminton.png";
 import icon3dArchery from "@/assets/icon-3d-archery.png";
 import icon3dSwimming from "@/assets/icon-3d-swimming.png";
-
-interface SportActivity {
-  name: string;
-  icon: string;
-  venues: { name: string; image: string; distance: string; area: string; slots: string[] }[];
-}
 
 interface SportsCardsProps {
   properties: Property[];
@@ -19,31 +12,35 @@ interface SportsCardsProps {
 }
 
 export default function SportsCards({ properties, onPropertyTap }: SportsCardsProps) {
-  const sportsData: SportActivity[] = [
+  // Find the best matching property for each sport
+  const sportsProperty = properties.find(p => p.category.includes("sports") || p.propertyType === "Sports Arena") || properties[0];
+  const poolProperty = properties.find(p => p.category.includes("pool") || p.amenities.some(a => a.toLowerCase().includes("pool"))) || properties[0];
+
+  const sportsData = [
     {
-      name: "Pickleball", icon: icon3dPickleball,
+      name: "Pickleball", icon: icon3dPickleball, property: sportsProperty,
       venues: [
-        { name: "Hushh Farmhouse | Court 1", image: properties[0]?.images[0] || "", distance: "0.5 km", area: "Jeypore", slots: ["6 PM", "7 PM", "8 PM"] },
-        { name: "Sports Arena Jeypore", image: properties[5]?.images[0] || "", distance: "1.2 km", area: "Station Rd", slots: ["8 PM", "9 PM", "10 PM"] },
+        { name: "Hushh Farmhouse | Court 1", image: properties[0]?.images[0] || "", distance: "0.5 km", area: "Jeypore", slots: ["6 PM", "7 PM", "8 PM"], property: properties[0] },
+        { name: "Sports Arena Jeypore", image: properties[5]?.images[0] || "", distance: "1.2 km", area: "Station Rd", slots: ["8 PM", "9 PM", "10 PM"], property: sportsProperty },
       ],
     },
     {
-      name: "Badminton", icon: icon3dBadminton,
+      name: "Badminton", icon: icon3dBadminton, property: sportsProperty,
       venues: [
-        { name: "Indoor Sports Hub", image: properties[1]?.images[0] || "", distance: "0.8 km", area: "Main Market", slots: ["7 PM", "8 PM", "9 PM"] },
-        { name: "Club Court Jeypore", image: properties[3]?.images[0] || "", distance: "1.5 km", area: "College Rd", slots: ["6:30 PM", "7:30 PM", "8:30 PM"] },
+        { name: "Indoor Sports Hub", image: properties[1]?.images[0] || "", distance: "0.8 km", area: "Main Market", slots: ["7 PM", "8 PM", "9 PM"], property: properties[1] },
+        { name: "Club Court Jeypore", image: properties[3]?.images[0] || "", distance: "1.5 km", area: "College Rd", slots: ["6:30 PM", "7:30 PM", "8:30 PM"], property: properties[3] },
       ],
     },
     {
-      name: "Archery", icon: icon3dArchery,
+      name: "Archery", icon: icon3dArchery, property: sportsProperty,
       venues: [
-        { name: "Adventure Zone", image: properties[2]?.images[0] || "", distance: "2 km", area: "Outskirts", slots: ["5 PM", "6 PM", "7 PM"] },
+        { name: "Adventure Zone", image: properties[2]?.images[0] || "", distance: "2 km", area: "Outskirts", slots: ["5 PM", "6 PM", "7 PM"], property: properties[2] },
       ],
     },
     {
-      name: "Swimming", icon: icon3dSwimming,
+      name: "Swimming", icon: icon3dSwimming, property: poolProperty,
       venues: [
-        { name: "Firefly Villa Pool", image: properties[0]?.images[0] || "", distance: "0.5 km", area: "Jeypore", slots: ["10 AM", "2 PM", "5 PM"] },
+        { name: "Firefly Villa Pool", image: properties[0]?.images[0] || "", distance: "0.5 km", area: "Jeypore", slots: ["10 AM", "2 PM", "5 PM"], property: properties[0] },
       ],
     },
   ];
@@ -71,11 +68,7 @@ export default function SportsCards({ properties, onPropertyTap }: SportsCardsPr
             {sport.venues.map((venue, vi) => (
               <div key={vi}>
                 <div className="flex items-center gap-3 mb-2.5 cursor-pointer active:opacity-70 transition-opacity"
-                  onClick={() => {
-                    const match = properties.find(p => p.name.toLowerCase().includes(venue.name.split("|")[0].trim().toLowerCase()));
-                    if (match) onPropertyTap(match);
-                    else toast.info(`${venue.name} — details coming soon!`);
-                  }}>
+                  onClick={() => onPropertyTap(venue.property)}>
                   <img src={venue.image} alt={venue.name}
                     className="w-12 h-12 rounded-[10px] object-cover" loading="lazy" />
                   <div className="flex-1 min-w-0">
@@ -86,7 +79,7 @@ export default function SportsCards({ properties, onPropertyTap }: SportsCardsPr
                 <div className="flex gap-2 flex-wrap">
                   {venue.slots.map((slot) => (
                     <button key={slot}
-                      onClick={() => toast.success(`${sport.name} at ${slot} — Slot reserved!`)}
+                      onClick={() => onPropertyTap(venue.property)}
                       className="rounded-full px-4 py-2 text-sm text-foreground font-medium active:scale-95 transition-transform hover:bg-white/[0.08]"
                       style={{ border: "1px solid rgba(255,255,255,0.15)" }}>
                       {slot}
@@ -98,7 +91,7 @@ export default function SportsCards({ properties, onPropertyTap }: SportsCardsPr
           </div>
           <div className="mt-5 flex justify-center">
             <button
-              onClick={() => toast.info(`All ${sport.name} venues — coming soon!`)}
+              onClick={() => onPropertyTap(sport.property)}
               className="flex items-center gap-1.5 rounded-full px-6 py-2.5 text-sm text-foreground/50 font-medium active:scale-95 transition-transform"
               style={{ border: "1px solid rgba(255,255,255,0.1)" }}>
               View all venues <ChevronRight size={14} />

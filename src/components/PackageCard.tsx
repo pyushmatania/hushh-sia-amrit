@@ -1,10 +1,28 @@
 import { motion } from "framer-motion";
-import { toast } from "sonner";
-import type { ExperiencePackage } from "@/data/properties";
+import type { ExperiencePackage, Property } from "@/data/properties";
 
-export default function PackageCard({ pkg, index }: { pkg: ExperiencePackage; index: number }) {
-  const handleBook = () => {
-    toast.success(`${pkg.name} added! Redirecting to checkout…`);
+// Map packages to property categories for smart matching
+const packagePropertyMap: Record<string, (p: Property) => boolean> = {
+  "p1": (p) => p.category.includes("couples") || p.tags.some(t => t.includes("Couple")), // Romantic Date
+  "p2": (p) => p.name.toLowerCase().includes("birthday") || p.propertyType === "Party Hall", // Birthday Bash
+  "p3": (p) => p.category.includes("party") || p.propertyType === "Open Lawn", // Weekend Party
+  "p4": (p) => p.name.toLowerCase().includes("karaoke") || p.propertyType === "Indoor Lounge", // Karaoke Night
+  "p5": (p) => p.category.includes("bonfire") || p.propertyType === "Camping", // Camping Trip
+  "p6": (p) => p.category.includes("sports") || p.propertyType === "Sports Arena", // Sports Day
+};
+
+interface PackageCardProps {
+  pkg: ExperiencePackage;
+  index: number;
+  properties: Property[];
+  onPropertyTap: (property: Property) => void;
+}
+
+export default function PackageCard({ pkg, index, properties, onPropertyTap }: PackageCardProps) {
+  const handleTap = () => {
+    const matcher = packagePropertyMap[pkg.id];
+    const match = matcher ? properties.find(matcher) : properties[0];
+    if (match) onPropertyTap(match);
   };
 
   return (
@@ -12,8 +30,8 @@ export default function PackageCard({ pkg, index }: { pkg: ExperiencePackage; in
       initial={{ opacity: 0, scale: 0.97 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: index * 0.08 }}
-      className="shrink-0 w-[240px] rounded-2xl overflow-hidden glass cursor-pointer"
-      onClick={handleBook}
+      className="shrink-0 w-[240px] rounded-2xl overflow-hidden glass cursor-pointer active:scale-[0.97] transition-transform"
+      onClick={handleTap}
     >
       <div className="p-5 space-y-2">
         <span className="text-3xl">{pkg.emoji}</span>

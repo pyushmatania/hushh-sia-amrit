@@ -1,10 +1,22 @@
 import { Sparkles } from "lucide-react";
-import { toast } from "sonner";
+import type { Property } from "@/data/properties";
 
-export default function BlockbusterBanner() {
+interface BlockbusterBannerProps {
+  properties: Property[];
+  onPropertyTap: (property: Property) => void;
+}
+
+export default function BlockbusterBanner({ properties, onPropertyTap }: BlockbusterBannerProps) {
+  const handleReserve = () => {
+    // Navigate to the top-rated party venue
+    const match = properties.find(p => p.category.includes("party") && p.rating >= 4.5) || properties[0];
+    if (match) onPropertyTap(match);
+  };
+
   return (
     <div className="px-4">
-      <div className="relative rounded-[20px] overflow-hidden p-6"
+      <div className="relative rounded-[20px] overflow-hidden p-6 cursor-pointer active:scale-[0.98] transition-transform"
+        onClick={handleReserve}
         style={{
           background: "linear-gradient(135deg, hsl(270, 60%, 25%), hsl(320, 50%, 20%), hsl(270, 40%, 15%))",
           border: "1px solid rgba(255,255,255,0.12)",
@@ -15,9 +27,7 @@ export default function BlockbusterBanner() {
         </div>
         <h3 className="text-2xl font-extrabold text-foreground leading-tight">New Year's Eve 2026</h3>
         <p className="text-sm text-foreground/60 mt-1">Bookings open for the biggest night of the year 🥂</p>
-        <button
-          onClick={() => toast.success("NYE 2026 — Spot reserved! We'll notify you when bookings open.")}
-          className="mt-4 px-6 py-2.5 rounded-full text-sm font-bold bg-primary text-primary-foreground active:scale-95 transition-transform">
+        <button className="mt-4 px-6 py-2.5 rounded-full text-sm font-bold bg-primary text-primary-foreground active:scale-95 transition-transform">
           Reserve Now
         </button>
         <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-30"
