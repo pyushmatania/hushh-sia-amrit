@@ -102,6 +102,7 @@ const accentStyles: VideoAccent[] = [
 interface SpotlightCarouselProps {
   properties: Property[];
   onPropertyTap: (property: Property) => void;
+  category?: string;
 }
 
 function VideoCard({
