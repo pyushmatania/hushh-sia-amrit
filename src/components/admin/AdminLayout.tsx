@@ -55,6 +55,7 @@ const navItems: { id: AdminPage; label: string; icon: typeof LayoutDashboard; ad
 export default function AdminLayout({ activePage, onNavigate, children }: AdminLayoutProps) {
   const { signOut, user } = useAuth();
   const { isAdmin } = useAdmin();
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
