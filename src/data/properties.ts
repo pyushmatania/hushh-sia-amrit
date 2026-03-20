@@ -38,6 +38,11 @@ export interface TimeSlot {
   price: number;
   available: boolean;
   popular?: boolean;
+  // Slot Intelligence (v1.11)
+  originalPrice?: number; // for strikethrough pricing
+  tag?: "almost_full" | "best_price" | "trending" | "last_slot" | "couple_pick" | "work_best";
+  demandScore?: number; // 0-100
+  viewersNow?: number; // "3 people viewing"
 }
 
 export interface PropertyReview {
