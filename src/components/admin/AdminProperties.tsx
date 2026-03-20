@@ -88,7 +88,7 @@ export default function AdminProperties() {
   const [expandedSection, setExpandedSection] = useState<string>("basic");
 
   useEffect(() => {
-    supabase.from("host_listings").select("*").order("created_at", { ascending: false })
+    supabase.from("host_listings").select("*").order("sort_order").order("created_at", { ascending: false })
       .then(({ data }) => { setListings((data as Listing[]) ?? []); setLoading(false); });
   }, []);
 
