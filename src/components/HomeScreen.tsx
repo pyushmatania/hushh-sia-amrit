@@ -204,7 +204,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 <div className="mt-6">
                   <div className="flex items-center justify-between px-5 mb-3">
                     <h2 className="text-lg font-bold text-foreground">💸 Budget Friendly</h2>
-                    <button className="text-xs text-primary font-medium flex items-center gap-1">View all <ArrowRight size={12} /></button>
+                    <button onClick={() => setSubFilter("All")} className="text-xs text-primary font-medium flex items-center gap-1">View all <ArrowRight size={12} /></button>
                   </div>
                   <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
                     {budgetPicks.map((p, i) => (
