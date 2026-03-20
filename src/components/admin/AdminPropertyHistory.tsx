@@ -562,7 +562,39 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
             </div>
           )}
 
-          {/* Analytics tab */}
+          {/* Timeline tab */}
+          {activeTab === "timeline" && (
+            <div className="space-y-1">
+              {timelineEvents.length === 0 ? (
+                <div className="text-center py-12">
+                  <Activity size={32} className="mx-auto text-muted-foreground/30 mb-2" />
+                  <p className="text-sm text-muted-foreground">No activity yet</p>
+                </div>
+              ) : timelineEvents.map((ev, i) => (
+                <motion.div key={i}
+                  initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.02, duration: 0.3 }}
+                  className="flex gap-3 group"
+                >
+                  {/* Timeline line */}
+                  <div className="flex flex-col items-center">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm shrink-0 ${
+                      ev.type === "booking" ? "bg-primary/10" : "bg-amber-500/10"
+                    }`}>
+                      {ev.icon}
+                    </div>
+                    {i < timelineEvents.length - 1 && <div className="w-px flex-1 bg-border min-h-[16px]" />}
+                  </div>
+                  <button onClick={() => ev.userId && onUserClick(ev.userId)}
+                    className="flex-1 rounded-xl bg-secondary/30 p-2.5 mb-1.5 text-left hover:bg-secondary/60 transition active:scale-[0.98]">
+                    <p className="text-[11px] font-semibold text-foreground">{ev.label}</p>
+                    <p className="text-[9px] text-muted-foreground mt-0.5 leading-relaxed">{ev.detail}</p>
+                    <p className="text-[8px] text-muted-foreground/60 mt-1">{formatDate(ev.date)} · {timeAgo(ev.date)}</p>
+                  </button>
+                </motion.div>
+              ))}
+            </div>
+          )}
+
           {activeTab === "analytics" && (
             <div className="space-y-4">
               {/* Revenue trend */}
