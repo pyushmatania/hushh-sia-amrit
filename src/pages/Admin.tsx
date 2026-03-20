@@ -65,6 +65,7 @@ export default function Admin() {
       case "tags": return <AdminTags />;
       case "orders": return <AdminOrders />;
       case "exports": return <AdminExports />;
+      case "audit": return <AdminAuditLog />;
       default: return <CommandCenter />;
     }
   };
