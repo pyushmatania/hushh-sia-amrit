@@ -51,10 +51,14 @@ function TabPill({ active, label, onClick }: { active: boolean; label: string; o
 export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
   const { points, tier, transactions, loading, redeemPoints } = useLoyalty();
   const { toast } = useToast();
-  const [tab, setTab] = useState<"rewards" | "history" | "earn" | "referral">("rewards");
+  const [tab, setTab] = useState<"rewards" | "history" | "earn" | "referral" | "spin" | "milestones">("rewards");
   const [redeemed, setRedeemed] = useState<Set<string>>(new Set());
   const [copied, setCopied] = useState(false);
   const [redeeming, setRedeeming] = useState<string | null>(null);
+  const [spunToday, setSpunToday] = useState(() => {
+    const last = localStorage.getItem("hushh_last_spin");
+    return last === new Date().toDateString();
+  });
 
   const referralCode = "HUSHH200";
 
