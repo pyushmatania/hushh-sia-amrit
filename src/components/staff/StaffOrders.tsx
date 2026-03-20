@@ -22,26 +22,36 @@ export default function StaffOrders() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("active");
 
+  const loadOrders = async () => {
+    const { data: ordersData } = await supabase.from("orders").select("*")
+      .order("created_at", { ascending: false }).limit(50);
+    if (!ordersData) { setLoading(false); return; }
+
+    const { data: items } = await supabase.from("order_items").select("*")
+      .in("order_id", ordersData.map(o => o.id));
+
+    const itemMap = new Map<string, any[]>();
+    (items ?? []).forEach(item => {
+      const list = itemMap.get(item.order_id) || [];
+      list.push(item);
+      itemMap.set(item.order_id, list);
+    });
+
+    setOrders(ordersData.map(o => ({ ...o, items: itemMap.get(o.id) || [] })));
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const load = async () => {
-      const { data: ordersData } = await supabase.from("orders").select("*")
-        .order("created_at", { ascending: false }).limit(50);
-      if (!ordersData) { setLoading(false); return; }
+    loadOrders();
 
-      const { data: items } = await supabase.from("order_items").select("*")
-        .in("order_id", ordersData.map(o => o.id));
+    const channel = supabase
+      .channel('staff-orders-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => {
+        loadOrders();
+      })
+      .subscribe();
 
-      const itemMap = new Map<string, any[]>();
-      (items ?? []).forEach(item => {
-        const list = itemMap.get(item.order_id) || [];
-        list.push(item);
-        itemMap.set(item.order_id, list);
-      });
-
-      setOrders(ordersData.map(o => ({ ...o, items: itemMap.get(o.id) || [] })));
-      setLoading(false);
-    };
-    load();
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   const advance = async (id: string, current: string) => {
