@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Clock, ArrowRight, Sparkles } from "lucide-react";
 import { hapticSelection } from "@/lib/haptics";
 import type { ExperiencePack } from "@/components/home/CuratedPackCard";
-import AccentFrame from "@/components/shared/AccentFrame";
+import { AccentFrame } from "@/components/shared/AccentFrame";
 
 // Pack images
 import packChillNight from "@/assets/pack-chill-night.jpg";
