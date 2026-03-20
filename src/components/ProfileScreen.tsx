@@ -289,10 +289,10 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
 
       {/* Quick Stats Row */}
       <div className="mx-5 mt-4 grid grid-cols-3 gap-3">
-        {[
-          { icon: Calendar, value: "5", label: "Bookings", color: "text-primary" },
-          { icon: Heart, value: "8", label: "Wishlisted", color: "text-primary" },
-          { icon: TrendingUp, value: "₹12K", label: "Total Spent", color: "text-primary" },
+          {[
+            { icon: Calendar, value: String(bookings.filter(b => b.status !== "cancelled").length), label: "Bookings", color: "text-primary" },
+            { icon: Heart, value: "8", label: "Wishlisted", color: "text-primary" },
+            { icon: TrendingUp, value: `₹${(bookings.reduce((s, b) => s + (b.status !== "cancelled" ? b.total : 0), 0) / 1000).toFixed(0)}K`, label: "Total Spent", color: "text-primary" },
         ].map((stat, i) => (
           <motion.div
             key={stat.label}
