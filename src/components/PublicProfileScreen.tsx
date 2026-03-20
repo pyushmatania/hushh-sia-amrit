@@ -83,6 +83,19 @@ export default function PublicProfileScreen({ userId, onBack, onMessage }: Publi
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = useCallback(async () => {
+    // Check if this is a mock user
+    if (userId.startsWith("mock-")) {
+      const mockProfile = mockProfiles[userId];
+      if (mockProfile) {
+        setProfile(mockProfile as PublicProfile);
+        setReviews(mockUserReviews as PublicReview[]);
+        setBookingCount(5);
+        setWishlistCount(8);
+      }
+      setLoading(false);
+      return;
+    }
+
     const [{ data: prof }, { data: revs }, { count: bookings }, { count: wishlists }] = await Promise.all([
       supabase.from("profiles").select("*").eq("user_id", userId).single(),
       supabase.from("reviews").select("*").eq("user_id", userId).order("created_at", { ascending: false }).limit(10),

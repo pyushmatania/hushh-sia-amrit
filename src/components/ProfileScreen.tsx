@@ -420,8 +420,8 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
         )}
       </AnimatePresence>
       <AnimatePresence>
-        {showPublicProfile && user && (
-          <PublicProfileScreen userId={user.id} onBack={() => setShowPublicProfile(false)} />
+        {showPublicProfile && (
+          <PublicProfileScreen userId={user?.id || "mock-guest"} onBack={() => setShowPublicProfile(false)} />
         )}
       </AnimatePresence>
     </div>
