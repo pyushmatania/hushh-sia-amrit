@@ -93,7 +93,7 @@ interface CuratedPackListingProps {
 
 export default function CuratedPackListing({ pack, index, onTap }: CuratedPackListingProps) {
   const savings = pack.originalPrice ? pack.originalPrice - pack.price : 0;
-  const media = packMedia[pack.id] || { poster: packChillNight, video: videoPackChill.url };
+  const media = packMedia[pack.id] || { poster: packChillNight, video: videoCurationChill.url };
   const accent = packAccents[pack.id] || defaultAccent;
 
   const videoRef = useRef<HTMLVideoElement>(null);
