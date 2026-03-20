@@ -420,7 +420,7 @@ export default function ReviewSection({ propertyId, reviews: staticReviews, rati
       {dbReviews.length > 0 && (
         <div className="space-y-3 mb-3">
           {displayedDbReviews.map((review, i) => (
-            <DBReviewCard key={review.id} review={review} index={i} onImageTap={setViewingImage} />
+            <DBReviewCard key={review.id} review={review} index={i} onImageTap={setViewingImage} onProfileTap={setViewingProfile} />
           ))}
         </div>
       )}
