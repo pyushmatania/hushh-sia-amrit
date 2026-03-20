@@ -11,7 +11,7 @@ import {
   Shield, Zap, Info, Coffee, Utensils, ParkingCircle,
   CalendarIcon, Monitor, BatteryCharging, VolumeX,
   Armchair, GlassWater, Bell, Truck, Radio, Disc3,
-  Wind, Tag
+  Wind, Tag, Check
 } from "lucide-react";
 import { useState, useCallback } from "react";
 import { format, differenceInDays } from "date-fns";
@@ -198,108 +198,110 @@ function AddonChip({ addon }: { addon: import("@/data/properties").Addon }) {
 
 function RelatedPropertyRow({ relatedProperty, onTap }: { relatedProperty: Property; onTap: (p: Property) => void }) {
   const [expanded, setExpanded] = useState(false);
+  const [added, setAdded] = useState(false);
   const cheapestSlot = relatedProperty.slots.filter(s => s.available).sort((a, b) => a.price - b.price)[0];
 
   return (
-    <div className="glass rounded-xl overflow-hidden transition-all">
+    <div className={`rounded-xl overflow-hidden transition-all border ${added ? "border-primary/30 bg-primary/[0.03]" : "border-border bg-foreground/[0.02]"}`}>
       {/* Main row — tap to expand */}
       <div
         onClick={() => setExpanded(!expanded)}
-        className="flex items-center gap-3 px-3 py-2.5 cursor-pointer active:scale-[0.98] transition-transform"
+        className="flex items-center gap-3 px-3 py-2.5 cursor-pointer"
       >
-        <img
-          src={relatedProperty.images[0]}
-          alt={relatedProperty.name}
-          className="w-14 h-14 rounded-lg object-cover shrink-0"
-          loading="lazy"
-        />
+        <div className="relative shrink-0">
+          <img
+            src={relatedProperty.images[0]}
+            alt={relatedProperty.name}
+            className="w-12 h-12 rounded-xl object-cover"
+            loading="lazy"
+          />
+          {added && (
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary flex items-center justify-center"
+            >
+              <Check size={10} className="text-primary-foreground" />
+            </motion.div>
+          )}
+        </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-foreground truncate">{relatedProperty.name}</p>
-          <p className="text-[11px] text-muted-foreground truncate">{relatedProperty.description}</p>
+          <p className="text-[13px] font-semibold text-foreground truncate">{relatedProperty.name}</p>
+          <p className="text-[10px] text-muted-foreground truncate">{relatedProperty.description}</p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <div className="text-right">
-            <p className="text-sm font-bold text-gradient-warm">₹{relatedProperty.basePrice.toLocaleString()}</p>
-            <p className="text-[10px] text-muted-foreground">onwards</p>
-          </div>
+          {!added ? (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setAdded(true);
+              }}
+              className="text-[10px] font-bold text-primary border border-primary/30 bg-primary/10 px-3 py-1.5 rounded-full"
+            >
+              + ₹{cheapestSlot?.price.toLocaleString() || relatedProperty.basePrice.toLocaleString()}
+            </button>
+          ) : (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setAdded(false);
+              }}
+              className="text-[10px] font-bold text-primary-foreground bg-primary px-3 py-1.5 rounded-full flex items-center gap-1"
+            >
+              <Check size={10} /> Added
+            </button>
+          )}
           <motion.div animate={{ rotate: expanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
             <ChevronDown size={14} className="text-muted-foreground" />
           </motion.div>
         </div>
       </div>
 
-      {/* Expanded details */}
+      {/* Expanded — compact info panel */}
       <AnimatePresence>
         {expanded && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
+            transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="px-3 pb-3 pt-1 border-t border-border/50">
-              {/* Image strip */}
-              <div className="flex gap-1.5 mb-2.5 overflow-x-auto hide-scrollbar">
-                {relatedProperty.images.slice(0, 4).map((img, i) => (
-                  <img
-                    key={i}
-                    src={img}
-                    alt=""
-                    className="w-16 h-12 rounded-lg object-cover shrink-0"
-                    loading="lazy"
-                  />
-                ))}
-              </div>
-
-              {/* Quick info */}
-              <p className="text-[11px] text-muted-foreground line-clamp-2 mb-2">
-                {relatedProperty.fullDescription?.slice(0, 120) || relatedProperty.description}...
-              </p>
-
-              {/* Highlights */}
+            <div className="px-3 pb-3 pt-1.5 border-t border-border/30 space-y-2">
+              {/* Highlights as pills */}
               {relatedProperty.highlights.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 mb-2.5">
-                  {relatedProperty.highlights.slice(0, 3).map((h, i) => (
-                    <span key={i} className="text-[9px] px-2 py-0.5 rounded-full bg-foreground/[0.05] text-foreground/70 border border-foreground/[0.08]">
+                <div className="flex flex-wrap gap-1">
+                  {relatedProperty.highlights.slice(0, 4).map((h, i) => (
+                    <span key={i} className="text-[9px] px-2 py-0.5 rounded-full bg-foreground/[0.05] text-foreground/60">
                       {h}
                     </span>
                   ))}
                 </div>
               )}
 
-              {/* Rating + slots */}
-              <div className="flex items-center gap-3 mb-3 text-[11px] text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <Star size={10} className="fill-primary text-primary" />
+              {/* Meta row */}
+              <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+                <span className="flex items-center gap-0.5">
+                  <Star size={9} className="fill-primary text-primary" />
                   <span className="font-medium text-foreground">{relatedProperty.rating}</span>
                   ({relatedProperty.reviewCount})
                 </span>
+                <span>•</span>
                 <span>{relatedProperty.slotsLeft} slots left</span>
-                <span>Up to {relatedProperty.capacity} guests</span>
+                <span>•</span>
+                <span>Up to {relatedProperty.capacity} ppl</span>
               </div>
 
-              {/* Action buttons */}
-              <div className="flex gap-2">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onTap(relatedProperty);
-                  }}
-                  className="flex-1 text-[11px] font-medium text-foreground/80 py-2 rounded-lg border border-border text-center"
-                >
-                  View Details
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onTap(relatedProperty);
-                  }}
-                  className="flex-1 text-[11px] font-semibold text-primary-foreground py-2 rounded-lg bg-primary text-center"
-                >
-                  Add · ₹{cheapestSlot?.price.toLocaleString() || relatedProperty.basePrice.toLocaleString()}+
-                </button>
-              </div>
+              {/* View full details link */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onTap(relatedProperty);
+                }}
+                className="text-[10px] text-primary font-medium flex items-center gap-1"
+              >
+                View full details →
+              </button>
             </div>
           </motion.div>
         )}
