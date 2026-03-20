@@ -383,7 +383,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
           </h3>
         </div>
         <div className="px-5 pb-4 space-y-1.5">
-          {recentActivity.map((item, i) => (
+          {recentActivityFromBookings.map((item, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, x: -12 }}
