@@ -14,60 +14,70 @@ import packGameNight from "@/assets/pack-game-night.jpg";
 import packWorkEscape from "@/assets/pack-work-escape.jpg";
 import packTeamWork from "@/assets/pack-team-work.jpg";
 
-// Pack videos
-import videoPackChill from "@/assets/video-pack-chill.mp4.asset.json";
-import videoPackRomantic from "@/assets/video-pack-romantic.mp4.asset.json";
-import videoPackParty from "@/assets/video-pack-party.mp4.asset.json";
-import videoPackBbq from "@/assets/video-pack-bbq.mp4.asset.json";
-import videoPackMovie from "@/assets/video-pack-movie.mp4.asset.json";
-import videoPackGame from "@/assets/video-pack-game.mp4.asset.json";
-import videoPackWork from "@/assets/video-pack-work.mp4.asset.json";
-import videoPackTeam from "@/assets/video-pack-team.mp4.asset.json";
+// Unique generated videos per curation theme
+import videoCurationChill from "@/assets/video-curation-chill.mp4.asset.json";
+import videoCurationParty from "@/assets/video-curation-party.mp4.asset.json";
+import videoCurationRomantic from "@/assets/video-curation-romantic.mp4.asset.json";
+import videoCurationBbq from "@/assets/video-curation-bbq.mp4.asset.json";
+import videoCurationMovie from "@/assets/video-curation-movie.mp4.asset.json";
+import videoCurationGame from "@/assets/video-curation-game.mp4.asset.json";
+import videoCurationWork from "@/assets/video-curation-work.mp4.asset.json";
+import videoCurationTeam from "@/assets/video-curation-team.mp4.asset.json";
 
 const packMedia: Record<string, { poster: string; video: string }> = {
-  "ep-1": { poster: packChillNight, video: videoPackChill.url },
-  "ep-2": { poster: packRomanticNight, video: videoPackRomantic.url },
-  "ep-3": { poster: packPartyScene, video: videoPackParty.url },
-  "ep-4": { poster: packBbqBonfire, video: videoPackBbq.url },
-  "ep-5": { poster: packMovieNight, video: videoPackMovie.url },
-  "ep-6": { poster: packGameNight, video: videoPackGame.url },
-  "ep-7": { poster: packWorkEscape, video: videoPackWork.url },
-  "ep-8": { poster: packTeamWork, video: videoPackTeam.url },
+  // DB UUIDs
+  "afc5ded6-c6cf-45c7-bc3c-e9e9e8c939ac": { poster: packChillNight, video: videoCurationChill.url },
+  "99e244ea-e3df-4674-8177-03533b906f49": { poster: packPartyScene, video: videoCurationParty.url },
+  "12269e8f-5d2e-4406-87f9-359603ba474a": { poster: packRomanticNight, video: videoCurationRomantic.url },
+  "990fd140-1ee6-41d4-bf95-7e0461ef7942": { poster: packBbqBonfire, video: videoCurationBbq.url },
+  "d2f8cc4f-ae9a-4fab-83a6-1a803e273d38": { poster: packMovieNight, video: videoCurationMovie.url },
+  "78e62799-1125-4db2-9e49-7527c7d02eb7": { poster: packGameNight, video: videoCurationGame.url },
+  "96e01ca0-f198-4c1a-8b36-690d5e91d2e1": { poster: packWorkEscape, video: videoCurationWork.url },
+  "3b9a0f7b-ba37-4a75-9ef7-897d11f4e8ff": { poster: packTeamWork, video: videoCurationTeam.url },
+  // Legacy static IDs
+  "ep-1": { poster: packChillNight, video: videoCurationChill.url },
+  "ep-2": { poster: packRomanticNight, video: videoCurationRomantic.url },
+  "ep-3": { poster: packPartyScene, video: videoCurationParty.url },
+  "ep-4": { poster: packBbqBonfire, video: videoCurationBbq.url },
+  "ep-5": { poster: packMovieNight, video: videoCurationMovie.url },
+  "ep-6": { poster: packGameNight, video: videoCurationGame.url },
+  "ep-7": { poster: packWorkEscape, video: videoCurationWork.url },
+  "ep-8": { poster: packTeamWork, video: videoCurationTeam.url },
 };
 
-const packAccents: Record<string, { color: string; tag: { label: string; bg: string; icon?: React.ReactNode } }> = {
-  "ep-1": {
-    color: "hsl(270 80% 65%)",
-    tag: { label: "🔥 POPULAR", bg: "linear-gradient(135deg, hsl(270 80% 65%), hsl(320 80% 60%))", icon: <Sparkles size={11} className="text-primary-foreground" /> },
-  },
-  "ep-2": {
-    color: "hsl(340 75% 55%)",
-    tag: { label: "💕 #1 PICK", bg: "linear-gradient(135deg, hsl(340 75% 55%), hsl(320 80% 60%))", icon: <Sparkles size={11} className="text-primary-foreground" /> },
-  },
-  "ep-3": {
-    color: "hsl(35 95% 55%)",
-    tag: { label: "🎉 TRENDING", bg: "linear-gradient(135deg, hsl(35 95% 50%), hsl(15 90% 50%))", icon: <Sparkles size={11} className="text-primary-foreground" /> },
-  },
-  "ep-4": {
-    color: "hsl(0 85% 55%)",
-    tag: { label: "🔥 HOT", bg: "linear-gradient(135deg, hsl(0 85% 55%), hsl(35 95% 55%))" },
-  },
-  "ep-5": {
-    color: "hsl(280 90% 60%)",
-    tag: { label: "🎬 CINEMA", bg: "linear-gradient(135deg, hsl(280 90% 60%), hsl(260 80% 55%))" },
-  },
-  "ep-6": {
-    color: "hsl(150 80% 45%)",
-    tag: { label: "🎮 FUN", bg: "linear-gradient(135deg, hsl(150 80% 45%), hsl(170 75% 40%))" },
-  },
-  "ep-7": {
-    color: "hsl(190 80% 50%)",
-    tag: { label: "💸 BEST VALUE", bg: "linear-gradient(135deg, hsl(190 80% 50%), hsl(210 80% 50%))", icon: <Sparkles size={11} className="text-primary-foreground" /> },
-  },
-  "ep-8": {
-    color: "hsl(220 75% 55%)",
-    tag: { label: "👥 TEAM", bg: "linear-gradient(135deg, hsl(220 75% 55%), hsl(250 70% 55%))" },
-  },
+// Accent config helper
+const accentDef = (color: string, label: string, bg: string, icon?: React.ReactNode) => ({ color, tag: { label, bg, icon } });
+
+const accentPresets = {
+  chill: accentDef("hsl(270 80% 65%)", "🔥 POPULAR", "linear-gradient(135deg, hsl(270 80% 65%), hsl(320 80% 60%))", <Sparkles size={11} className="text-primary-foreground" />),
+  romantic: accentDef("hsl(340 75% 55%)", "💕 #1 PICK", "linear-gradient(135deg, hsl(340 75% 55%), hsl(320 80% 60%))", <Sparkles size={11} className="text-primary-foreground" />),
+  party: accentDef("hsl(35 95% 55%)", "🎉 TRENDING", "linear-gradient(135deg, hsl(35 95% 50%), hsl(15 90% 50%))", <Sparkles size={11} className="text-primary-foreground" />),
+  bbq: accentDef("hsl(0 85% 55%)", "🔥 HOT", "linear-gradient(135deg, hsl(0 85% 55%), hsl(35 95% 55%))"),
+  movie: accentDef("hsl(280 90% 60%)", "🎬 CINEMA", "linear-gradient(135deg, hsl(280 90% 60%), hsl(260 80% 55%))"),
+  game: accentDef("hsl(150 80% 45%)", "🎮 FUN", "linear-gradient(135deg, hsl(150 80% 45%), hsl(170 75% 40%))"),
+  work: accentDef("hsl(190 80% 50%)", "💸 BEST VALUE", "linear-gradient(135deg, hsl(190 80% 50%), hsl(210 80% 50%))", <Sparkles size={11} className="text-primary-foreground" />),
+  team: accentDef("hsl(220 75% 55%)", "👥 TEAM", "linear-gradient(135deg, hsl(220 75% 55%), hsl(250 70% 55%))"),
+};
+
+const packAccents: Record<string, typeof accentPresets.chill> = {
+  // DB UUIDs
+  "afc5ded6-c6cf-45c7-bc3c-e9e9e8c939ac": accentPresets.chill,
+  "99e244ea-e3df-4674-8177-03533b906f49": accentPresets.party,
+  "12269e8f-5d2e-4406-87f9-359603ba474a": accentPresets.romantic,
+  "990fd140-1ee6-41d4-bf95-7e0461ef7942": accentPresets.bbq,
+  "d2f8cc4f-ae9a-4fab-83a6-1a803e273d38": accentPresets.movie,
+  "78e62799-1125-4db2-9e49-7527c7d02eb7": accentPresets.game,
+  "96e01ca0-f198-4c1a-8b36-690d5e91d2e1": accentPresets.work,
+  "3b9a0f7b-ba37-4a75-9ef7-897d11f4e8ff": accentPresets.team,
+  // Legacy
+  "ep-1": accentPresets.chill,
+  "ep-2": accentPresets.romantic,
+  "ep-3": accentPresets.party,
+  "ep-4": accentPresets.bbq,
+  "ep-5": accentPresets.movie,
+  "ep-6": accentPresets.game,
+  "ep-7": accentPresets.work,
+  "ep-8": accentPresets.team,
 };
 
 const defaultAccent = {
@@ -83,7 +93,7 @@ interface CuratedPackListingProps {
 
 export default function CuratedPackListing({ pack, index, onTap }: CuratedPackListingProps) {
   const savings = pack.originalPrice ? pack.originalPrice - pack.price : 0;
-  const media = packMedia[pack.id] || { poster: packChillNight, video: videoPackChill.url };
+  const media = packMedia[pack.id] || { poster: packChillNight, video: videoCurationChill.url };
   const accent = packAccents[pack.id] || defaultAccent;
 
   const videoRef = useRef<HTMLVideoElement>(null);
