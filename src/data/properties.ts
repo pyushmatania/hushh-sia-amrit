@@ -71,6 +71,9 @@ export interface Property {
   rules: PropertyRule[];
   reviews: PropertyReview[];
   highlights: string[];
+  primaryCategory: "stay" | "experience" | "service" | "curation";
+  propertyType?: string;
+  discountLabel?: string;
   category: string[];
 }
 
@@ -96,6 +99,8 @@ export const properties: Property[] = [
     hostName: "Rahul M.",
     hostSince: "2023",
     responseRate: "98%",
+    primaryCategory: "stay",
+    propertyType: "Private Villa",
     category: ["stays", "couples", "party", "bonfire", "pool"],
     highlights: ["Heated pool open till midnight", "Bose premium sound system", "Instagram-worthy fairy light setup", "Private bonfire with marshmallow kit"],
     rules: [
@@ -139,6 +144,8 @@ export const properties: Property[] = [
     hostName: "Sneha T.",
     hostSince: "2022",
     responseRate: "95%",
+    primaryCategory: "stay",
+    propertyType: "Farmhouse",
     category: ["stays", "family", "stargazing", "dining"],
     highlights: ["360° stargazing deck with telescope", "Farm-to-table dining experience", "Organic herb garden walk", "Hammock lounge under banyan tree"],
     rules: [
@@ -181,6 +188,8 @@ export const properties: Property[] = [
     hostName: "Vikram S.",
     hostSince: "2021",
     responseRate: "99%",
+    primaryCategory: "experience",
+    propertyType: "Open Lawn",
     category: ["stays", "party", "bonfire", "movie"],
     highlights: ["20-foot outdoor cinema screen", "Professional DJ booth with lighting", "Massive bonfire circle fits 30 people", "Full bar counter with mixologist option"],
     rules: [
@@ -224,6 +233,8 @@ export const properties: Property[] = [
     hostName: "Nisha R.",
     hostSince: "2022",
     responseRate: "97%",
+    primaryCategory: "stay",
+    propertyType: "Rooftop Space",
     category: ["stays", "couples", "dining", "party"],
     highlights: ["360° panoramic city views", "Curated cocktail menu with mixologist", "Designer Italian furniture", "Ambient warm string lighting"],
     rules: [
@@ -266,6 +277,8 @@ export const properties: Property[] = [
     hostName: "Biju N.",
     hostSince: "2023",
     responseRate: "92%",
+    primaryCategory: "stay",
+    propertyType: "Camping",
     category: ["stays", "family", "bonfire", "experiences"],
     highlights: ["Authentic tribal drum circle experience", "Guided nature trail with bird spotting", "Hand-painted Dongria Kondh art tents", "Organic campfire dinner included"],
     rules: [
@@ -308,6 +321,8 @@ export const properties: Property[] = [
     hostName: "Amit K.",
     hostSince: "2024",
     responseRate: "96%",
+    primaryCategory: "experience",
+    propertyType: "Sports Arena",
     category: ["experiences", "services", "pool"],
     highlights: ["Professional-grade pickleball court", "Floodlit turf for night matches", "Cricket bowling machine available", "Tournament hosting with trophies"],
     rules: [
@@ -350,6 +365,8 @@ export const properties: Property[] = [
     hostName: "Lisa D.",
     hostSince: "2023",
     responseRate: "100%",
+    primaryCategory: "experience",
+    propertyType: "Indoor Lounge",
     category: ["experiences", "party", "services"],
     highlights: ["2000+ songs in 4 languages", "Instagram-worthy neon photo booth", "Unlimited nachos & soft drinks", "Costumes & props for photo ops"],
     rules: [
@@ -392,6 +409,8 @@ export const properties: Property[] = [
     hostName: "Deepa M.",
     hostSince: "2021",
     responseRate: "100%",
+    primaryCategory: "experience",
+    propertyType: "Garden Space",
     category: ["stays", "couples", "dining", "stargazing"],
     highlights: ["Direct lake-facing sunset view", "Floating candles on water surface", "Optional live acoustic guitar", "Private chef 5-course dinner available"],
     rules: [
@@ -435,6 +454,8 @@ export const properties: Property[] = [
     hostName: "Suman P.",
     hostSince: "2022",
     responseRate: "99%",
+    primaryCategory: "experience",
+    propertyType: "Party Hall",
     category: ["experiences", "party", "services"],
     highlights: ["Themed balloon arch included", "Fog machine grand entrance", "Professional cake-cutting stage", "Photo booth with 50+ props"],
     rules: [
@@ -477,6 +498,8 @@ export const properties: Property[] = [
     hostName: "Rekha S.",
     hostSince: "2021",
     responseRate: "100%",
+    primaryCategory: "experience",
+    propertyType: "Garden Space",
     category: ["experiences", "couples", "dining"],
     highlights: ["Rose petal pathway to table", "Complimentary champagne toast", "Personalized love letter scroll", "Optional surprise proposal setup"],
     rules: [
@@ -518,6 +541,8 @@ export const properties: Property[] = [
     hostName: "Coach Ravi",
     hostSince: "2024",
     responseRate: "98%",
+    primaryCategory: "experience",
+    propertyType: "Sports Arena",
     category: ["experiences", "services", "pool"],
     highlights: ["2 professional-grade courts", "Equipment rental included", "Certified coaching available", "Cold towels & energy drinks"],
     rules: [
@@ -559,6 +584,8 @@ export const properties: Property[] = [
     hostName: "Priya N.",
     hostSince: "2023",
     responseRate: "97%",
+    primaryCategory: "experience",
+    propertyType: "Indoor Lounge",
     category: ["experiences", "party", "dining"],
     highlights: ["Curated high tea with 12 items", "Tambola, trivia & card games included", "Goodie bag for every guest", "Instagram-worthy flower wall"],
     rules: [
@@ -600,6 +627,8 @@ export const properties: Property[] = [
     hostName: "Dr. Patnaik",
     hostSince: "2020",
     responseRate: "95%",
+    primaryCategory: "experience",
+    propertyType: "Walking Tour",
     category: ["experiences"],
     highlights: ["300-year-old colonial architecture", "Authentic Koraput coffee tasting", "Tribal market visit (on market days)", "Led by certified local historian"],
     rules: [
@@ -639,6 +668,8 @@ export const properties: Property[] = [
     hostName: "Artisan Ganga",
     hostSince: "2023",
     responseRate: "90%",
+    primaryCategory: "experience",
+    propertyType: "Workshop",
     category: ["experiences"],
     highlights: ["Learn from Dongria Kondh tribal artisans", "Take home your handmade pottery", "Natural dye painting session", "Tribal chai & snacks included"],
     rules: [
@@ -679,6 +710,8 @@ export const properties: Property[] = [
     hostName: "Mohan R.",
     hostSince: "2019",
     responseRate: "96%",
+    primaryCategory: "experience",
+    propertyType: "Plantation Tour",
     category: ["experiences", "dining"],
     highlights: ["Walk through a real coffee plantation", "Roast your own beans hands-on", "Tasting of 5 single-origin brews", "Take-home pack of fresh beans"],
     rules: [
@@ -719,6 +752,8 @@ export const properties: Property[] = [
     hostName: "Ritu B.",
     hostSince: "2022",
     responseRate: "98%",
+    primaryCategory: "experience",
+    propertyType: "Open Lawn",
     category: ["experiences", "party", "services"],
     highlights: ["Marigold flower shower setup", "Professional Dhol + Nagada players", "Mehndi artist corner for 10 guests", "Ethnic photo booth with props"],
     rules: [
@@ -760,6 +795,8 @@ export const properties: Property[] = [
     hostName: "Astro Sameer",
     hostSince: "2023",
     responseRate: "94%",
+    primaryCategory: "experience",
+    propertyType: "Observatory",
     category: ["experiences", "stargazing", "couples"],
     highlights: ["8-inch Dobsonian telescope", "See Saturn's rings with your eyes", "Milky Way photography guidance", "Hot cocoa & blankets provided"],
     rules: [
@@ -800,6 +837,8 @@ export const properties: Property[] = [
     hostName: "Captain Rao",
     hostSince: "2021",
     responseRate: "93%",
+    primaryCategory: "experience",
+    propertyType: "Adventure",
     category: ["experiences", "sports"],
     highlights: ["Grade 1-2 rapids, beginner friendly", "Certified adventure instructors", "Scenic gorge & tribal village views", "Riverside chai & snack break"],
     rules: [
@@ -840,6 +879,8 @@ export const properties: Property[] = [
     hostName: "Chetan M.",
     hostSince: "2022",
     responseRate: "97%",
+    primaryCategory: "experience",
+    propertyType: "Open Lawn",
     category: ["experiences", "movie", "couples"],
     highlights: ["25-foot outdoor LED screen", "Gourmet popcorn bar with 5 flavors", "Premium bean bag + blanket combo", "BYO content or pick from 200+ titles"],
     rules: [
@@ -880,6 +921,8 @@ export const properties: Property[] = [
     hostName: "Santosh T.",
     hostSince: "2022",
     responseRate: "91%",
+    primaryCategory: "experience",
+    propertyType: "Cultural",
     category: ["experiences", "family"],
     highlights: ["Dhemsa & Ghumura dance performances", "Try traditional tribal costumes", "Participate in live drum circle", "Handmade tribal souvenir included"],
     rules: [
