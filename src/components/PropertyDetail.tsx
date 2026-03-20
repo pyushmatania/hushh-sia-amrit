@@ -607,38 +607,56 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
         <div className="border-b border-border my-5" />
 
         {/* Time slots */}
-        <h3 className="text-lg font-semibold text-foreground mb-3">Choose your slot</h3>
-        <div className="grid grid-cols-2 gap-2.5">
-          {property.slots.map((slot) => (
-            <button
-              key={slot.id}
-              onClick={() => slot.available && setSelectedSlot(slot.id)}
-              disabled={!slot.available}
-              className={`p-3.5 rounded-xl text-left border transition-all ${
-                selectedSlot === slot.id
-                  ? "border-primary bg-primary/[0.08] shadow-sm glow-sm"
-                  : slot.available
-                    ? "border-border hover:border-foreground/40"
-                    : "border-border opacity-35"
-              }`}
-            >
-              <div className="flex items-center gap-1.5">
-                <span className="font-medium text-sm text-foreground">{slot.label}</span>
-                {slot.popular && <span className="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-semibold">Popular</span>}
+        {(() => {
+          // For multi-day stays, only show Full Day slot
+          const isMultiDay = isStay && nightCount > 1;
+          const filteredSlots = isMultiDay
+            ? property.slots.filter(s => s.label === "Full Day")
+            : property.slots;
+
+          return (
+            <>
+              <h3 className="text-lg font-semibold text-foreground mb-1">Choose your slot</h3>
+              {isMultiDay && (
+                <p className="text-[11px] text-muted-foreground mb-3">
+                  Multi-day stays are full-day bookings only
+                </p>
+              )}
+              {!isMultiDay && <div className="mb-3" />}
+              <div className="grid grid-cols-2 gap-2.5">
+                {filteredSlots.map((slot) => (
+                  <button
+                    key={slot.id}
+                    onClick={() => slot.available && setSelectedSlot(slot.id)}
+                    disabled={!slot.available}
+                    className={`p-3.5 rounded-xl text-left border transition-all ${
+                      selectedSlot === slot.id
+                        ? "border-primary bg-primary/[0.08] shadow-sm glow-sm"
+                        : slot.available
+                          ? "border-border hover:border-foreground/40"
+                          : "border-border opacity-35"
+                    }`}
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-medium text-sm text-foreground">{slot.label}</span>
+                      {slot.popular && <span className="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-semibold">Popular</span>}
+                    </div>
+                    <span className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                      <Clock size={10} /> {slot.time}
+                    </span>
+                    <div className="mt-1.5">
+                      {slot.available ? (
+                        <span className="font-semibold text-sm text-gradient-warm">₹{slot.price.toLocaleString()}</span>
+                      ) : (
+                        <span className="text-xs text-destructive font-medium">Booked</span>
+                      )}
+                    </div>
+                  </button>
+                ))}
               </div>
-              <span className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                <Clock size={10} /> {slot.time}
-              </span>
-              <div className="mt-1.5">
-                {slot.available ? (
-                  <span className="font-semibold text-sm text-gradient-warm">₹{slot.price.toLocaleString()}</span>
-                ) : (
-                  <span className="text-xs text-destructive font-medium">Booked</span>
-                )}
-              </div>
-            </button>
-          ))}
-        </div>
+            </>
+          );
+        })()}
 
         <div className="border-b border-border my-5" />
 
