@@ -424,7 +424,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                     <h2 className="text-base font-bold text-foreground">🎯 More Combos</h2>
                   </div>
                   {filteredCombos.slice(3).map((combo, i) => (
-                    <CurationHeroCard key={combo.id} combo={combo} index={i} onTap={() => toast.info(`${combo.name} — coming soon!`)} />
+                    <CurationHeroCard key={combo.id} combo={combo} index={i} onTap={(c) => onPropertyTap(comboToProperty(c))} />
                   ))}
                 </div>
               )}
