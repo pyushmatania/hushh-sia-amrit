@@ -103,6 +103,8 @@ interface SpotlightCarouselProps {
   properties: Property[];
   onPropertyTap: (property: Property) => void;
   category?: string;
+  wishlist?: string[];
+  onToggleWishlist?: (id: string) => void;
 }
 
 function VideoCard({
