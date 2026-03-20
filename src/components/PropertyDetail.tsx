@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { Property } from "@/data/properties";
+import { properties as allProperties, addons } from "@/data/properties";
 import ReviewSection from "@/components/ReviewSection";
 
 const amenityIconMap: Record<string, React.ReactNode> = {
