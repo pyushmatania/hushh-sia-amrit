@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { VolumeX, Volume2, Bookmark, Flame, Sparkles } from "lucide-react";
 import { type Property } from "@/data/properties";
+import { AccentFrame, AccentTag } from "@/components/shared/AccentFrame";
 
 import videoThali from "@/assets/video-tribal-thali.mp4.asset.json";
 import videoBbq from "@/assets/video-bbq-grill.mp4.asset.json";
@@ -13,62 +14,51 @@ const foodieOverlays = ["taste the tradition", "sizzle & spice", "rustic flavors
 
 type FoodieAccent = {
   color: string;
-  side: "left" | "right" | "top";
-  tag: { label: string; bg: string; icon: React.ReactNode };
-} | null;
+  tag: { label: string; bg: string; icon?: React.ReactNode };
+};
 
 const foodieAccents: FoodieAccent[] = [
   {
     color: "hsl(43 96% 56%)",
-    side: "left",
-    tag: { label: "MUST TRY", bg: "linear-gradient(135deg, hsl(43 96% 50%), hsl(30 90% 45%))", icon: <Flame size={11} className="text-white" /> },
+    tag: {
+      label: "MUST TRY",
+      bg: "linear-gradient(135deg, hsl(43 96% 50%), hsl(30 90% 45%))",
+      icon: <Flame size={11} className="text-primary-foreground" />,
+    },
   },
-  null,
+  {
+    color: "hsl(var(--primary))",
+    tag: {
+      label: "CURATED",
+      bg: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))",
+      icon: <Sparkles size={11} className="text-primary-foreground" />,
+    },
+  },
   {
     color: "hsl(350 80% 55%)",
-    side: "right",
-    tag: { label: "CHEF'S PICK", bg: "linear-gradient(135deg, hsl(350 80% 55%), hsl(320 70% 50%))", icon: <Sparkles size={11} className="text-white" /> },
+    tag: {
+      label: "CHEF'S PICK",
+      bg: "linear-gradient(135deg, hsl(350 80% 55%), hsl(320 70% 50%))",
+      icon: <Sparkles size={11} className="text-primary-foreground" />,
+    },
   },
-  null,
-  null,
+  {
+    color: "hsl(25 90% 55%)",
+    tag: {
+      label: "LOCAL FAVORITE",
+      bg: "linear-gradient(135deg, hsl(25 90% 55%), hsl(8 85% 54%))",
+      icon: <Sparkles size={11} className="text-primary-foreground" />,
+    },
+  },
+  {
+    color: "hsl(var(--primary))",
+    tag: {
+      label: "TRENDING",
+      bg: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))",
+      icon: <Sparkles size={11} className="text-primary-foreground" />,
+    },
+  },
 ];
-
-function AccentBorder({ color, radius }: { color: string; radius: string }) {
-  return (
-    <>
-      <div style={{
-        position: "absolute", left: 0, top: 0, bottom: 0, width: "2.5px", zIndex: 3,
-        pointerEvents: "none", borderRadius: radius,
-        background: color,
-        maskImage: "linear-gradient(to bottom, black 0%, black 40%, transparent 85%)",
-        WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 40%, transparent 85%)",
-      }} />
-      <div style={{
-        position: "absolute", left: 0, top: 0, right: 0, height: "2.5px", zIndex: 3,
-        pointerEvents: "none", borderRadius: radius,
-        background: color,
-        maskImage: "linear-gradient(to right, black 0%, black 30%, transparent 70%)",
-        WebkitMaskImage: "linear-gradient(to right, black 0%, black 30%, transparent 70%)",
-      }} />
-    </>
-  );
-}
-
-function AccentTag({ tag }: { tag: { label: string; bg: string; icon: React.ReactNode } }) {
-  return (
-    <span
-      className="absolute top-4 left-4 text-[10px] font-bold tracking-wider pl-3 pr-4 py-1.5 flex items-center gap-1 shadow-lg z-10"
-      style={{
-        background: tag.bg, color: "white", letterSpacing: "0.08em",
-        clipPath: "polygon(0 0, 100% 0, 88% 100%, 0 100%)",
-        borderRadius: "4px 8px 8px 4px",
-      }}
-    >
-      {tag.icon}
-      {tag.label}
-    </span>
-  );
-}
 
 interface FoodieCarouselProps {
   properties: Property[];
@@ -76,10 +66,19 @@ interface FoodieCarouselProps {
 }
 
 function FoodieVideoCard({
-  property, videoSrc, overlayText, isActive, onTap, accent,
+  property,
+  videoSrc,
+  overlayText,
+  isActive,
+  onTap,
+  accent,
 }: {
-  property: Property; videoSrc: string; overlayText: string;
-  isActive: boolean; onTap: () => void; accent: FoodieAccent;
+  property: Property;
+  videoSrc: string;
+  overlayText: string;
+  isActive: boolean;
+  onTap: () => void;
+  accent: FoodieAccent;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -111,7 +110,8 @@ function FoodieVideoCard({
       ref={cardRef}
       className="shrink-0 cursor-pointer"
       style={{
-        width: "85vw", maxWidth: "380px",
+        width: "85vw",
+        maxWidth: "380px",
         scrollSnapAlign: "center",
         opacity: isActive ? 1 : 0.7,
         transform: isActive ? "scale(1)" : "scale(0.95)",
@@ -119,59 +119,72 @@ function FoodieVideoCard({
       }}
       onClick={onTap}
     >
-        <div
-          className="relative overflow-hidden rounded-[20px]"
-          style={{
-            height: "65vh", maxHeight: "520px",
-            border: accent ? "none" : "1px solid rgba(255,255,255,0.08)",
-          }}
-        >
-          {/* L-shaped fading border */}
-          {accent && <AccentBorder color={accent.color} radius="20px" />}
-          {/* Subtle corner glow */}
-          {accent && (
-            <div
-              className="absolute inset-0 z-[1] pointer-events-none rounded-[20px]"
-              style={{ background: `radial-gradient(ellipse at top left, ${accent.color}12 0%, transparent 50%)` }}
-            />
-          )}
+      <div
+        className="relative overflow-hidden rounded-[20px]"
+        style={{
+          height: "65vh",
+          maxHeight: "520px",
+          border: "1px solid hsl(var(--border) / 0.24)",
+        }}
+      >
+        <AccentFrame color={accent.color} radius="20px" glowAlpha={0.08} />
 
-        <img src={property.images[0]} alt={property.name}
+        <img
+          src={property.images[0]}
+          alt={property.name}
           className="absolute inset-0 w-full h-full object-cover"
           style={{ opacity: videoReady ? 0 : 1, transition: "opacity 0.5s" }}
-          loading="lazy" />
+          loading="lazy"
+        />
         {shouldLoad && (
-          <video ref={videoRef} src={videoSrc} muted={muted} loop playsInline
-            preload="metadata" onCanPlay={() => setVideoReady(true)}
+          <video
+            ref={videoRef}
+            src={videoSrc}
+            muted={muted}
+            loop
+            playsInline
+            preload="metadata"
+            onCanPlay={() => setVideoReady(true)}
             className="absolute inset-0 w-full h-full object-cover"
-            style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.5s" }} />
+            style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.5s" }}
+          />
         )}
 
-        {/* Asymmetrical accent tag */}
-        {accent?.tag && <AccentTag tag={accent.tag} />}
+        <AccentTag tag={accent.tag} className="absolute top-4 left-4 z-10" />
 
-        <button onClick={(e) => { e.stopPropagation(); setMuted(!muted); }}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setMuted(!muted);
+          }}
           className="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md z-10"
-          style={{ background: "rgba(60,60,60,0.7)" }}>
+          style={{ background: "hsl(var(--foreground) / 0.36)" }}
+        >
           {muted ? <VolumeX size={18} className="text-white" /> : <Volume2 size={18} className="text-white" />}
         </button>
 
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <p className="text-3xl font-bold italic text-white/70"
-            style={{ fontFamily: "'Playfair Display', serif", textShadow: "0 2px 20px rgba(0,0,0,0.6)" }}>
+          <p
+            className="text-3xl font-bold italic text-white/70"
+            style={{ fontFamily: "'Playfair Display', serif", textShadow: "0 2px 20px rgba(0,0,0,0.6)" }}
+          >
             {overlayText}
           </p>
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 p-5"
-          style={{ background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%)" }}>
+        <div
+          className="absolute bottom-0 left-0 right-0 p-5"
+          style={{ background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%)" }}
+        >
           <div className="flex items-end justify-between">
             <div className="flex-1 min-w-0">
               <h3 className="text-lg font-bold text-white leading-tight line-clamp-2">{property.name}</h3>
               <p className="text-[13px] text-white/60 mt-1">{property.description}</p>
             </div>
-            <div className="w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md ml-3 shrink-0"
-              style={{ background: "rgba(60,60,60,0.7)" }}>
+            <div
+              className="w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md ml-3 shrink-0"
+              style={{ background: "hsl(var(--foreground) / 0.36)" }}
+            >
               <Bookmark size={18} className="text-white" />
             </div>
           </div>
@@ -200,16 +213,22 @@ export default function FoodieCarousel({ properties, onPropertyTap }: FoodieCaro
 
   return (
     <div>
-      <div ref={scrollRef} onScroll={handleScroll}
+      <div
+        ref={scrollRef}
+        onScroll={handleScroll}
         className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2"
-        style={{ scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" }}>
+        style={{ scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" }}
+      >
         {items.map((p, i) => (
-          <FoodieVideoCard key={p.id} property={p}
+          <FoodieVideoCard
+            key={p.id}
+            property={p}
             videoSrc={foodieVideos[i % foodieVideos.length]}
             overlayText={foodieOverlays[i % foodieOverlays.length]}
             isActive={i === activeIndex}
             accent={foodieAccents[i % foodieAccents.length]}
-            onTap={() => onPropertyTap(p)} />
+            onTap={() => onPropertyTap(p)}
+          />
         ))}
       </div>
     </div>
