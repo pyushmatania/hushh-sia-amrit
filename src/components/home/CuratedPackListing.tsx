@@ -14,25 +14,35 @@ import packGameNight from "@/assets/pack-game-night.jpg";
 import packWorkEscape from "@/assets/pack-work-escape.jpg";
 import packTeamWork from "@/assets/pack-team-work.jpg";
 
-// Pack videos
-import videoPackChill from "@/assets/video-pack-chill.mp4.asset.json";
-import videoPackRomantic from "@/assets/video-pack-romantic.mp4.asset.json";
-import videoPackParty from "@/assets/video-pack-party.mp4.asset.json";
-import videoPackBbq from "@/assets/video-pack-bbq.mp4.asset.json";
-import videoPackMovie from "@/assets/video-pack-movie.mp4.asset.json";
-import videoPackGame from "@/assets/video-pack-game.mp4.asset.json";
-import videoPackWork from "@/assets/video-pack-work.mp4.asset.json";
-import videoPackTeam from "@/assets/video-pack-team.mp4.asset.json";
+// Unique generated videos per curation theme
+import videoCurationChill from "@/assets/video-curation-chill.mp4.asset.json";
+import videoCurationParty from "@/assets/video-curation-party.mp4.asset.json";
+import videoCurationRomantic from "@/assets/video-curation-romantic.mp4.asset.json";
+import videoCurationBbq from "@/assets/video-curation-bbq.mp4.asset.json";
+import videoCurationMovie from "@/assets/video-curation-movie.mp4.asset.json";
+import videoCurationGame from "@/assets/video-curation-game.mp4.asset.json";
+import videoCurationWork from "@/assets/video-curation-work.mp4.asset.json";
+import videoCurationTeam from "@/assets/video-curation-team.mp4.asset.json";
 
 const packMedia: Record<string, { poster: string; video: string }> = {
-  "ep-1": { poster: packChillNight, video: videoPackChill.url },
-  "ep-2": { poster: packRomanticNight, video: videoPackRomantic.url },
-  "ep-3": { poster: packPartyScene, video: videoPackParty.url },
-  "ep-4": { poster: packBbqBonfire, video: videoPackBbq.url },
-  "ep-5": { poster: packMovieNight, video: videoPackMovie.url },
-  "ep-6": { poster: packGameNight, video: videoPackGame.url },
-  "ep-7": { poster: packWorkEscape, video: videoPackWork.url },
-  "ep-8": { poster: packTeamWork, video: videoPackTeam.url },
+  // DB UUIDs
+  "afc5ded6-c6cf-45c7-bc3c-e9e9e8c939ac": { poster: packChillNight, video: videoCurationChill.url },
+  "99e244ea-e3df-4674-8177-03533b906f49": { poster: packPartyScene, video: videoCurationParty.url },
+  "12269e8f-5d2e-4406-87f9-359603ba474a": { poster: packRomanticNight, video: videoCurationRomantic.url },
+  "990fd140-1ee6-41d4-bf95-7e0461ef7942": { poster: packBbqBonfire, video: videoCurationBbq.url },
+  "d2f8cc4f-ae9a-4fab-83a6-1a803e273d38": { poster: packMovieNight, video: videoCurationMovie.url },
+  "78e62799-1125-4db2-9e49-7527c7d02eb7": { poster: packGameNight, video: videoCurationGame.url },
+  "96e01ca0-f198-4c1a-8b36-690d5e91d2e1": { poster: packWorkEscape, video: videoCurationWork.url },
+  "3b9a0f7b-ba37-4a75-9ef7-897d11f4e8ff": { poster: packTeamWork, video: videoCurationTeam.url },
+  // Legacy static IDs
+  "ep-1": { poster: packChillNight, video: videoCurationChill.url },
+  "ep-2": { poster: packRomanticNight, video: videoCurationRomantic.url },
+  "ep-3": { poster: packPartyScene, video: videoCurationParty.url },
+  "ep-4": { poster: packBbqBonfire, video: videoCurationBbq.url },
+  "ep-5": { poster: packMovieNight, video: videoCurationMovie.url },
+  "ep-6": { poster: packGameNight, video: videoCurationGame.url },
+  "ep-7": { poster: packWorkEscape, video: videoCurationWork.url },
+  "ep-8": { poster: packTeamWork, video: videoCurationTeam.url },
 };
 
 const packAccents: Record<string, { color: string; tag: { label: string; bg: string; icon?: React.ReactNode } }> = {
