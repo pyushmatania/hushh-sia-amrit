@@ -14,6 +14,7 @@ interface Booking {
 const statusConfig: Record<string, { color: string; icon: typeof Clock }> = {
   upcoming: { color: "bg-blue-500/15 text-blue-400", icon: Clock },
   active: { color: "bg-emerald-500/15 text-emerald-400", icon: CheckCircle2 },
+  confirmed: { color: "bg-emerald-500/15 text-emerald-400", icon: CheckCircle2 },
   completed: { color: "bg-muted text-muted-foreground", icon: CheckCircle2 },
   cancelled: { color: "bg-destructive/15 text-destructive", icon: Ban },
   pending: { color: "bg-amber-500/15 text-amber-400", icon: Clock },
