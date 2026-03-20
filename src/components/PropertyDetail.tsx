@@ -560,20 +560,24 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
         <h3 className="text-lg font-semibold text-foreground mb-3">💰 Pricing Details</h3>
         <div className="glass rounded-2xl p-4 mb-5 space-y-3">
           <div className="flex justify-between text-sm">
-            <span className="text-foreground/80">Base price (per slot)</span>
+            <span className="text-foreground/80">Base price {property.primaryCategory === "service" ? "(per booking)" : "(per slot)"}</span>
             <span className="text-foreground font-medium">₹{property.basePrice.toLocaleString()}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-foreground/80">Service fee</span>
+            <span className="text-foreground/80">{property.primaryCategory === "service" ? "Platform fee" : "Service fee"}</span>
             <span className="text-foreground font-medium">₹{Math.round(property.basePrice * 0.1).toLocaleString()}</span>
           </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-foreground/80">Cleaning fee</span>
-            <span className="text-foreground font-medium">₹199</span>
-          </div>
+          {property.primaryCategory !== "service" && (
+            <div className="flex justify-between text-sm">
+              <span className="text-foreground/80">Cleaning fee</span>
+              <span className="text-foreground font-medium">₹199</span>
+            </div>
+          )}
           <div className="border-t border-border pt-2 flex justify-between text-sm">
             <span className="text-foreground font-semibold">Estimated total</span>
-            <span className="text-gradient-warm font-bold">₹{(property.basePrice + Math.round(property.basePrice * 0.1) + 199).toLocaleString()}</span>
+            <span className="text-gradient-warm font-bold">
+              ₹{(property.basePrice + Math.round(property.basePrice * 0.1) + (property.primaryCategory !== "service" ? 199 : 0)).toLocaleString()}
+            </span>
           </div>
           <p className="text-[11px] text-muted-foreground">* Final price depends on selected slot & guest count</p>
         </div>
