@@ -226,7 +226,7 @@ interface PropertyDetailProps {
   onPropertyTap?: (property: Property) => void;
 }
 
-export default function PropertyDetail({ property, onBack, onBook }: PropertyDetailProps) {
+export default function PropertyDetail({ property, onBack, onBook, onPropertyTap }: PropertyDetailProps) {
   const [imgIndex, setImgIndex] = useState(0);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [guests, setGuests] = useState(2);
