@@ -217,7 +217,8 @@ export default function Index() {
             date={screen.date}
             selections={screen.selections}
             total={screen.total}
-            onBack={() => setScreen({ type: "builder", property: screen.property, slotId: screen.slotId, guests: screen.guests, date: screen.date })}
+            onBack={() => setScreen({ type: "builder", property: screen.property, slotId: screen.slotId, guests: screen.guests, date: screen.date, extras: screen.extras })}
+            extras={screen.extras}
             onConfirm={handleCheckoutConfirm(screen.property, screen.slotId, screen.guests, screen.date)}
           />
         )}
