@@ -240,94 +240,175 @@ function NotificationCard({ notif, index, isRead, onRead }: {
   );
 }
 
-/* ═══ Chat Thread Card ═══ */
-function ThreadCard({ thread, index, onClick }: {
+/* ═══ Chat Thread Card with Swipe Gestures ═══ */
+function ThreadCard({ thread, index, onClick, onPin, onArchive }: {
   thread: typeof mockThreads[0]; index: number; onClick: () => void;
+  onPin?: (id: string) => void; onArchive?: (id: string) => void;
 }) {
+  const [swipeState, setSwipeState] = useState<"idle" | "pin" | "archive">("idle");
+  const [dismissed, setDismissed] = useState(false);
+  const constraintsRef = useRef<HTMLDivElement>(null);
+
+  const SWIPE_THRESHOLD = 80;
+
+  const handleDragEnd = (_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
+    const swipedFar = Math.abs(info.offset.x) > SWIPE_THRESHOLD || Math.abs(info.velocity.x) > 500;
+    if (swipedFar && info.offset.x > 0) {
+      // Swiped right → pin/unpin
+      onPin?.(thread.id);
+      setSwipeState("idle");
+    } else if (swipedFar && info.offset.x < 0) {
+      // Swiped left → archive
+      setDismissed(true);
+      setTimeout(() => onArchive?.(thread.id), 300);
+    }
+    setSwipeState("idle");
+  };
+
+  if (dismissed) {
+    return (
+      <motion.div
+        initial={{ height: "auto", opacity: 1 }}
+        animate={{ height: 0, opacity: 0, marginBottom: 0 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className="overflow-hidden"
+      />
+    );
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.04 + index * 0.04, duration: 0.35 }}
-      onClick={onClick}
-      className={`group rounded-2xl cursor-pointer transition-all active:scale-[0.98] ${
-        thread.unread > 0 ? "bg-primary/[0.04]" : "bg-secondary/30"
-      }`}
-      style={{ border: thread.unread > 0 ? "1px solid hsl(var(--primary) / 0.15)" : "1px solid hsl(var(--border))" }}
+      className="relative rounded-2xl overflow-hidden"
+      ref={constraintsRef}
     >
-      <div className="p-3.5">
-        <div className="flex gap-3 items-center">
-          {/* Avatar */}
-          <div className="relative shrink-0">
-            <div className="w-[52px] h-[52px] rounded-2xl bg-secondary flex items-center justify-center text-2xl"
-              style={{ boxShadow: thread.unread > 0 ? "0 0 0 2px hsl(var(--primary) / 0.2)" : "none" }}>
-              {thread.avatar}
-            </div>
-            {thread.online && (
-              <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-[2.5px] border-background" />
-            )}
-            {thread.pinned && (
-              <div className="absolute -top-1 -left-1 w-5 h-5 rounded-full bg-amber-500/90 flex items-center justify-center">
-                <Pin size={10} className="text-white rotate-45" />
+      {/* Background actions revealed on swipe */}
+      <div className="absolute inset-0 flex">
+        {/* Right-swipe: Pin action (left side) */}
+        <div className={`flex items-center justify-center w-1/2 transition-colors duration-200 ${
+          swipeState === "pin" ? "bg-amber-500" : "bg-amber-500/70"
+        }`}>
+          <motion.div
+            animate={{ scale: swipeState === "pin" ? 1.2 : 1 }}
+            className="flex flex-col items-center gap-1"
+          >
+            <Pin size={20} className="text-white rotate-45" />
+            <span className="text-[10px] font-bold text-white">
+              {thread.pinned ? "Unpin" : "Pin"}
+            </span>
+          </motion.div>
+        </div>
+        {/* Left-swipe: Archive action (right side) */}
+        <div className={`flex items-center justify-center w-1/2 transition-colors duration-200 ${
+          swipeState === "archive" ? "bg-red-500" : "bg-red-500/70"
+        }`}>
+          <motion.div
+            animate={{ scale: swipeState === "archive" ? 1.2 : 1 }}
+            className="flex flex-col items-center gap-1"
+          >
+            <Archive size={20} className="text-white" />
+            <span className="text-[10px] font-bold text-white">Archive</span>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Draggable card foreground */}
+      <motion.div
+        drag="x"
+        dragConstraints={{ left: -120, right: 120 }}
+        dragElastic={0.15}
+        onDrag={(_, info) => {
+          if (info.offset.x > SWIPE_THRESHOLD) setSwipeState("pin");
+          else if (info.offset.x < -SWIPE_THRESHOLD) setSwipeState("archive");
+          else setSwipeState("idle");
+        }}
+        onDragEnd={handleDragEnd}
+        onClick={onClick}
+        className={`relative z-10 rounded-2xl cursor-pointer transition-shadow ${
+          thread.unread > 0 ? "bg-primary/[0.04]" : "bg-secondary/30"
+        }`}
+        style={{
+          border: thread.unread > 0 ? "1px solid hsl(var(--primary) / 0.15)" : "1px solid hsl(var(--border))",
+          backgroundColor: "hsl(var(--background))",
+        }}
+        whileTap={{ scale: 0.98 }}
+      >
+        <div className="p-3.5">
+          <div className="flex gap-3 items-center">
+            {/* Avatar */}
+            <div className="relative shrink-0">
+              <div className="w-[52px] h-[52px] rounded-2xl bg-secondary flex items-center justify-center text-2xl"
+                style={{ boxShadow: thread.unread > 0 ? "0 0 0 2px hsl(var(--primary) / 0.2)" : "none" }}>
+                {thread.avatar}
               </div>
-            )}
-          </div>
+              {thread.online && (
+                <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-[2.5px] border-background" />
+              )}
+              {thread.pinned && (
+                <div className="absolute -top-1 -left-1 w-5 h-5 rounded-full bg-amber-500/90 flex items-center justify-center">
+                  <Pin size={10} className="text-white rotate-45" />
+                </div>
+              )}
+            </div>
 
-          {/* Content */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-1.5 min-w-0">
-                <h4 className={`text-[14px] truncate ${thread.unread > 0 ? "font-bold" : "font-medium"} text-foreground`}>
-                  {thread.name}
-                </h4>
-                {thread.verified && <ShieldCheck size={13} className="text-primary shrink-0" />}
+            {/* Content */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <h4 className={`text-[14px] truncate ${thread.unread > 0 ? "font-bold" : "font-medium"} text-foreground`}>
+                    {thread.name}
+                  </h4>
+                  {thread.verified && <ShieldCheck size={13} className="text-primary shrink-0" />}
+                </div>
+                <span className={`text-[10px] whitespace-nowrap shrink-0 ${thread.unread > 0 ? "text-primary font-semibold" : "text-muted-foreground"}`}>
+                  {thread.time}
+                </span>
               </div>
-              <span className={`text-[10px] whitespace-nowrap shrink-0 ${thread.unread > 0 ? "text-primary font-semibold" : "text-muted-foreground"}`}>
-                {thread.time}
-              </span>
-            </div>
 
-            {/* Role badge */}
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-md bg-secondary text-muted-foreground">
-                {thread.role}
-              </span>
-            </div>
+              {/* Role badge */}
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-md bg-secondary text-muted-foreground">
+                  {thread.role}
+                </span>
+              </div>
 
-            {/* Last message + unread */}
-            <div className="flex items-center justify-between gap-2 mt-1">
-              {thread.typing ? (
-                <p className="text-[12px] text-primary font-medium italic flex items-center gap-1">
-                  typing
-                  <span className="flex gap-0.5">
-                    {[0, 1, 2].map(i => (
-                      <motion.span
-                        key={i}
-                        className="w-1 h-1 rounded-full bg-primary inline-block"
-                        animate={{ opacity: [0.3, 1, 0.3] }}
-                        transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.15 }}
-                      />
-                    ))}
-                  </span>
-                </p>
-              ) : (
-                <p className={`text-[12px] truncate ${thread.unread > 0 ? "text-foreground font-medium" : "text-muted-foreground"}`}>
-                  {thread.lastMessage}
-                </p>
-              )}
-              {thread.unread > 0 && (
-                <motion.span
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="shrink-0 min-w-[22px] h-[22px] rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center px-1"
-                >
-                  {thread.unread}
-                </motion.span>
-              )}
+              {/* Last message + unread */}
+              <div className="flex items-center justify-between gap-2 mt-1">
+                {thread.typing ? (
+                  <p className="text-[12px] text-primary font-medium italic flex items-center gap-1">
+                    typing
+                    <span className="flex gap-0.5">
+                      {[0, 1, 2].map(i => (
+                        <motion.span
+                          key={i}
+                          className="w-1 h-1 rounded-full bg-primary inline-block"
+                          animate={{ opacity: [0.3, 1, 0.3] }}
+                          transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.15 }}
+                        />
+                      ))}
+                    </span>
+                  </p>
+                ) : (
+                  <p className={`text-[12px] truncate ${thread.unread > 0 ? "text-foreground font-medium" : "text-muted-foreground"}`}>
+                    {thread.lastMessage}
+                  </p>
+                )}
+                {thread.unread > 0 && (
+                  <motion.span
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="shrink-0 min-w-[22px] h-[22px] rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center px-1"
+                  >
+                    {thread.unread}
+                  </motion.span>
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
@@ -726,6 +807,21 @@ export default function MessagesScreen() {
   const [readNotifications, setReadNotifications] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
+  const [pinnedIds, setPinnedIds] = useState<Set<string>>(new Set(["c1"]));
+  const [archivedIds, setArchivedIds] = useState<Set<string>>(new Set());
+
+  const handlePin = useCallback((id: string) => {
+    setPinnedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
+  const handleArchive = useCallback((id: string) => {
+    setArchivedIds(prev => new Set(prev).add(id));
+  }, []);
 
   const unreadNotifCount = notifications.filter((n) => !n.read && !readNotifications.has(n.id)).length;
   const unreadChatCount = user
@@ -741,16 +837,15 @@ export default function MessagesScreen() {
         lastMessage: c.last_message,
         time: formatDistanceToNow(new Date(c.last_message_time), { addSuffix: true }),
         unread: c.unread_count, online: false, verified: false, role: "Host" as string,
-        typing: false, pinned: false, conversation: c,
+        typing: false, pinned: pinnedIds.has(c.id), conversation: c,
       }))
-    : mockThreads.map((t) => ({ ...t, conversation: null as Conversation | null }));
+    : mockThreads.map((t) => ({ ...t, pinned: pinnedIds.has(t.id), conversation: null as Conversation | null }));
 
-  // Filter chats by search
+  const visibleChats = chatThreads.filter(t => !archivedIds.has(t.id));
   const filteredChats = searchQuery
-    ? chatThreads.filter(t => t.name.toLowerCase().includes(searchQuery.toLowerCase()) || t.lastMessage.toLowerCase().includes(searchQuery.toLowerCase()))
-    : chatThreads;
+    ? visibleChats.filter(t => t.name.toLowerCase().includes(searchQuery.toLowerCase()) || t.lastMessage.toLowerCase().includes(searchQuery.toLowerCase()))
+    : visibleChats;
 
-  // Split pinned and unpinned
   const pinnedChats = filteredChats.filter(t => t.pinned);
   const otherChats = filteredChats.filter(t => !t.pinned);
 
@@ -842,7 +937,7 @@ export default function MessagesScreen() {
                 </p>
                 <div className="space-y-2">
                   {pinnedChats.map((t, i) => (
-                    <ThreadCard key={t.id} thread={t} index={i} onClick={() => {
+                    <ThreadCard key={t.id} thread={t} index={i} onPin={handlePin} onArchive={handleArchive} onClick={() => {
                       if (t.conversation) setActiveConvo(t.conversation);
                       else setActiveMockThread(mockThreads.find(mt => mt.id === t.id) || null);
                     }} />
@@ -859,7 +954,7 @@ export default function MessagesScreen() {
                 )}
                 <div className="space-y-2">
                   {otherChats.map((t, i) => (
-                    <ThreadCard key={t.id} thread={t} index={i + pinnedChats.length} onClick={() => {
+                    <ThreadCard key={t.id} thread={t} index={i + pinnedChats.length} onPin={handlePin} onArchive={handleArchive} onClick={() => {
                       if (t.conversation) setActiveConvo(t.conversation);
                       else setActiveMockThread(mockThreads.find(mt => mt.id === t.id) || null);
                     }} />
