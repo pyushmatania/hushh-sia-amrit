@@ -67,11 +67,13 @@ interface PropertyCardProps {
   property: Property;
   index: number;
   onTap: (property: Property) => void;
+  isWishlisted?: boolean;
+  onToggleWishlist?: (id: string) => void;
 }
 
-export default function PropertyCard({ property, index, onTap }: PropertyCardProps) {
+export default function PropertyCard({ property, index, onTap, isWishlisted = false, onToggleWishlist }: PropertyCardProps) {
   const [imgIndex, setImgIndex] = useState(0);
-  const [liked, setLiked] = useState(false);
+  const liked = isWishlisted;
   const [imgLoaded, setImgLoaded] = useState(false);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const swiping = useRef(false);
@@ -136,7 +138,7 @@ export default function PropertyCard({ property, index, onTap }: PropertyCardPro
         <button
           onClick={(e) => {
             e.stopPropagation();
-            setLiked(!liked);
+            onToggleWishlist?.(property.id);
           }}
           className="absolute top-3 right-3 active:scale-125 transition-transform"
         >

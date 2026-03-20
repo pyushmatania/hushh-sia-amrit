@@ -305,9 +305,11 @@ interface PropertyDetailProps {
   onBack: () => void;
   onBook: (property: Property, slotId: string, guests: number, date: Date, extras?: Property[]) => void;
   onPropertyTap?: (property: Property) => void;
+  isWishlisted?: boolean;
+  onToggleWishlist?: (id: string) => void;
 }
 
-export default function PropertyDetail({ property, onBack, onBook, onPropertyTap }: PropertyDetailProps) {
+export default function PropertyDetail({ property, onBack, onBook, onPropertyTap, isWishlisted = false, onToggleWishlist }: PropertyDetailProps) {
   const [imgIndex, setImgIndex] = useState(0);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [guests, setGuests] = useState(2);
@@ -324,7 +326,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
   }, []);
 
   const addedExtras = allProperties.filter(p => addedExtraIds.has(p.id));
-  const [liked, setLiked] = useState(false);
+  const liked = isWishlisted;
   const [imgLoaded, setImgLoaded] = useState(false);
 
   const heroX = useMotionValue(0);
@@ -393,7 +395,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
               <Share2 size={16} className="text-foreground" />
             </motion.button>
             <motion.button
-              onClick={() => setLiked(!liked)}
+              onClick={() => onToggleWishlist?.(property.id)}
               className="w-9 h-9 rounded-full glass flex items-center justify-center"
               whileTap={{ scale: 1.2 }}
             >
