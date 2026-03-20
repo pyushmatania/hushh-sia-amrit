@@ -23,11 +23,16 @@ const paymentMethods = [
   { id: "cod", label: "Pay at Venue", icon: Banknote, sublabel: "Cash or card on arrival" },
 ];
 
-export default function CheckoutScreen({ property, slotId, guests, date, selections, total, onBack, onConfirm, extras }: CheckoutScreenProps) {
+export default function CheckoutScreen({ property, slotId, guests, date, selections, total, onBack, onConfirm, extras: initialExtras }: CheckoutScreenProps) {
   const slot = property.slots.find((s) => s.id === slotId)!;
   const [coupon, setCoupon] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState("upi");
+  const [extras, setExtras] = useState<Property[]>(initialExtras || []);
+
+  const removeExtra = (id: string) => {
+    setExtras(prev => prev.filter(e => e.id !== id));
+  };
 
   // Calculate extras total (cheapest available slot for each extra)
   const extrasTotal = (extras || []).reduce((sum, ext) => {
