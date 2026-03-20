@@ -38,11 +38,25 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
   }, []);
   const [activeCategory, setActiveCategory] = useState("home");
   const [subFilter, setSubFilter] = useState("All");
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  const scrollToTop = useCallback(() => {
+    contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   // Reset sub-filter when switching categories
   const handleCategoryChange = useCallback((id: string) => {
     setActiveCategory(id);
     setSubFilter("All");
+    scrollToTop();
+  }, [scrollToTop]);
+
+  const handleSubFilter = useCallback((filter: string) => {
+    setSubFilter(filter);
+    // Scroll just below the category bar area
+    setTimeout(() => {
+      contentRef.current?.scrollTo({ top: 280, behavior: "smooth" });
+    }, 50);
   }, []);
 
   // Sub-filter definitions mapped to propertyType or tag keywords
