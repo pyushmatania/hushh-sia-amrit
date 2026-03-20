@@ -433,32 +433,30 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
             </>
           )}
 
-          {/* ═══════ ALL LISTINGS for current tab ═══════ */}
-          <div className="mt-7">
-            <div className="flex items-center justify-between px-5 mb-3">
-              <h2 className="text-lg font-bold text-foreground">
-                {activeCategory === "home" ? "All Listings" :
-                 activeCategory === "curation" ? "" :
-                 `All ${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)}s`}
-              </h2>
-              {activeCategory !== "curation" && (
+          {/* ═══════ ALL LISTINGS for current tab (skip experience & curation — they have their own layouts) ═══════ */}
+          {activeCategory !== "experience" && activeCategory !== "curation" && (
+            <div className="mt-7">
+              <div className="flex items-center justify-between px-5 mb-3">
+                <h2 className="text-lg font-bold text-foreground">
+                  {activeCategory === "home" ? "All Listings" : `All ${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)}s`}
+                </h2>
                 <span className="text-xs text-muted-foreground">{filteredProperties.length} found</span>
+              </div>
+              {filteredProperties.length > 0 ? (
+                <div className="space-y-5">
+                  {filteredProperties.map((p, i) => (
+                    <PropertyCard key={p.id} property={p} index={i} onTap={onPropertyTap} />
+                  ))}
+                </div>
+              ) : (
+                <div className="px-5 py-12 text-center">
+                  <p className="text-4xl mb-3">🔍</p>
+                  <p className="text-foreground font-semibold">No listings in this category yet</p>
+                  <p className="text-sm text-muted-foreground mt-1">Check back soon!</p>
+                </div>
               )}
             </div>
-            {activeCategory !== "curation" && filteredProperties.length > 0 ? (
-              <div className="space-y-5">
-                {filteredProperties.map((p, i) => (
-                  <PropertyCard key={p.id} property={p} index={i} onTap={onPropertyTap} />
-                ))}
-              </div>
-            ) : activeCategory !== "curation" ? (
-              <div className="px-5 py-12 text-center">
-                <p className="text-4xl mb-3">🔍</p>
-                <p className="text-foreground font-semibold">No listings in this category yet</p>
-                <p className="text-sm text-muted-foreground mt-1">Check back soon!</p>
-              </div>
-            ) : null}
-          </div>
+          )}
         </motion.div>
       </AnimatePresence>
 
