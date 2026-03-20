@@ -3,9 +3,12 @@ import {
   MessageCircle, Bell, Clock, ChevronRight, Sparkles, Calendar,
   CheckCircle2, Send, ArrowLeft, Phone, MoreVertical, Search,
   Image, Smile, Mic, Check, CheckCheck, Pin, Archive,
-  HeadphonesIcon, ShieldCheck, Star, Gift, Megaphone, X,
+  HeadphonesIcon, ShieldCheck, Star, Gift, Megaphone, X, Loader2,
 } from "lucide-react";
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { useAuth } from "@/hooks/use-auth";
+import { useMessages, type Conversation, type Message } from "@/hooks/use-messages";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useMessages, type Conversation, type Message } from "@/hooks/use-messages";
 import { supabase } from "@/integrations/supabase/client";
