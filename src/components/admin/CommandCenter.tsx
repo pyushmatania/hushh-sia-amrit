@@ -45,7 +45,7 @@ const mockChartData = Array.from({ length: 14 }, (_, i) => ({
   revenue: Math.floor(Math.random() * 15000) + 5000,
 }));
 
-export default function CommandCenter() {
+export default function CommandCenter({ onNavigate }: { onNavigate?: (page: AdminPage) => void }) {
   const [stats, setStats] = useState<Stats>({ revenue: 0, bookings: 0, activeListings: 0, totalUsers: 0 });
 
   useEffect(() => {
