@@ -125,15 +125,13 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
       >
         {/* Edit & View Public Profile buttons */}
         <div className="absolute top-4 right-4 flex gap-2">
-          {user && (
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={() => setShowPublicProfile(true)}
-              className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center"
-            >
-              <Globe size={14} className="text-primary" />
-            </motion.button>
-          )}
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setShowPublicProfile(true)}
+            className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center"
+          >
+            <Globe size={14} className="text-primary" />
+          </motion.button>
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={() => setShowEditProfile(true)}
