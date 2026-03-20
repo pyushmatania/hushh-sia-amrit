@@ -295,13 +295,13 @@ Profile → Loyalty, Referrals, Host Dashboard, Settings, Theme, Auth
 
 React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion 12 · React Query · React Router v6 · Lovable Cloud · Recharts · React Hook Form + Zod
 
-40+ components, 15 hooks, 12 database tables
+40+ components, 15 hooks, 16 database tables
 
 ---
 
 ## 🗄 Database Tables
 
-profiles, bookings, wishlists, conversations, messages, notifications, reviews, review_responses, loyalty_transactions, referral_codes, referral_uses, host_listings
+profiles, bookings, wishlists, conversations, messages, notifications, reviews, review_responses, loyalty_transactions, referral_codes, referral_uses, host_listings, curations, orders, order_items, spin_history, user_milestones
 
 ---
 

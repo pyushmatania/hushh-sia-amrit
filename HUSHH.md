@@ -267,8 +267,8 @@ src/
 | `useHostAnalytics` | Analytics data | — |
 | `useImageUpload` | Storage upload | — |
 | `useTheme` | Theme management | — |
-| `useMobile` | Mobile detection | — |
-| `useUnreadCount` | Unread badge | — |
+| `usePrivacyMode` | Privacy toggle + name masking | ✅ localStorage |
+| `useCurations` | Fetch curated packs from DB | ✅ Static fallback |
 
 ---
 
