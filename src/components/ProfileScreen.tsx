@@ -84,11 +84,30 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
   const [showDocs, setShowDocs] = useState(false);
   const versionTapCount = useRef(0);
   const versionTapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [showPastTrips, setShowPastTrips] = useState(false);
   const [profile, setProfile] = useState({
     name: user?.user_metadata?.full_name || "Guest Explorer",
     location: "Jeypore, India",
     bio: "Explorer of hidden gems 🌿 Love bonfires, stargazing, and good coffee.",
   });
+
+  const pastTrips = useMemo(() => {
+    const completed = bookings.filter(b => b.status === "completed");
+    return completed.length > 0 ? completed : demoPastTrips;
+  }, [bookings]);
+
+  const recentActivityFromBookings = useMemo(() => {
+    const all = bookings.length > 0 ? bookings : demoPastTrips;
+    return all.slice(0, 3).map(b => {
+      const prop = properties.find(p => p.id === b.propertyId);
+      return {
+        icon: prop?.amenityIcons[0] || "🏨",
+        title: prop?.name || "Property",
+        subtitle: `${b.slot} · ${b.guests} guests`,
+        date: b.date.split(",")[0]?.trim() || b.date,
+      };
+    });
+  }, [bookings]);
 
   const handleSaveProfile = useCallback((updated: typeof profile) => {
     setProfile(updated);
