@@ -98,6 +98,20 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
     return filterFn ? curatedCombos.filter(filterFn) : curatedCombos;
   }, [activeCategory, subFilter]);
 
+  // Map a combo to the best matching property for navigation
+  const comboToProperty = useCallback((combo: typeof curatedCombos[0]): Property => {
+    // Try matching by image (combo images are property images)
+    const byImage = properties.find(p => p.images.some(img => img === combo.image));
+    if (byImage) return byImage;
+    // Try matching by tags
+    if (combo.tags.some(t => t.includes("Couple"))) return properties.find(p => p.category.includes("couples")) || properties[0];
+    if (combo.tags.some(t => t.includes("Party") || t.includes("Birthday"))) return properties.find(p => p.category.includes("party")) || properties[0];
+    if (combo.tags.some(t => t.includes("Work"))) return properties.find(p => p.propertyType === "Work Pod") || properties[0];
+    if (combo.tags.some(t => t.includes("Movie"))) return properties.find(p => p.name.toLowerCase().includes("movie") || p.name.toLowerCase().includes("amphitheater")) || properties[0];
+    if (combo.tags.some(t => t.includes("Pool"))) return properties.find(p => p.category.includes("pool")) || properties[0];
+    return properties[0];
+  }, []);
+
   // Filter by primaryCategory
   const filteredProperties = useMemo(() => {
     let list = activeCategory === "home" ? properties : properties.filter(p => p.primaryCategory === activeCategory);
