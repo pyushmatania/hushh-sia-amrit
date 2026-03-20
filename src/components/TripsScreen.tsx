@@ -1,4 +1,4 @@
-import { motion, useMotionValue, useTransform, useSpring, useAnimation, PanInfo } from "framer-motion";
+import { motion, useMotionValue, useTransform, useSpring, useAnimation, useScroll, PanInfo } from "framer-motion";
 import { MapPin, Calendar, Clock, ChevronRight, Ticket, QrCode, Users, X } from "lucide-react";
 import { useRef, useState, useCallback, useMemo } from "react";
 import { properties } from "@/data/properties";
