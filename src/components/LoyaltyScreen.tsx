@@ -176,6 +176,8 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
         className="mx-5 mt-5 mb-4 flex gap-1 p-1 rounded-full border border-border bg-secondary/50"
       >
         <TabPill active={tab === "rewards"} label="Rewards" onClick={() => setTab("rewards")} />
+        <TabPill active={tab === "spin"} label="🎰 Spin" onClick={() => setTab("spin")} />
+        <TabPill active={tab === "milestones"} label="🏆" onClick={() => setTab("milestones")} />
         <TabPill active={tab === "earn"} label="Earn" onClick={() => setTab("earn")} />
         <TabPill active={tab === "referral"} label="Refer" onClick={() => setTab("referral")} />
         <TabPill active={tab === "history"} label="History" onClick={() => setTab("history")} />
