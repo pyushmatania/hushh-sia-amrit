@@ -172,8 +172,8 @@ export function PropertiesProvider({ children }: { children: ReactNode }) {
 
   const load = useCallback(async () => {
     const [listingsRes, inventoryRes, curationsRes, packagesRes] = await Promise.all([
-      supabase.from("host_listings").select("*").eq("status", "published").order("created_at", { ascending: true }),
-      supabase.from("inventory").select("*").order("category").order("name"),
+      supabase.from("host_listings").select("*").eq("status", "published").order("sort_order", { ascending: true }).order("created_at", { ascending: true }),
+      supabase.from("inventory").select("*").order("sort_order", { ascending: true }).order("category").order("name"),
       supabase.from("curations").select("*").eq("active", true).order("sort_order", { ascending: true }),
       supabase.from("experience_packages").select("*").eq("active", true).order("sort_order", { ascending: true }),
     ]);
