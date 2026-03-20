@@ -26,7 +26,7 @@ export default function Admin() {
   }
 
   if (!user) {
-    return <AuthScreen onClose={() => {}} />;
+    return <AuthScreen />;
   }
 
   if (!hasAdminAccess) {
