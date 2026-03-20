@@ -1,11 +1,14 @@
 import { motion, useMotionValue, useTransform, useSpring, useAnimation, useScroll, PanInfo } from "framer-motion";
-import { MapPin, Calendar, Clock, ChevronRight, Ticket, QrCode, Users, X, Utensils, ShoppingCart } from "lucide-react";
-import { useRef, useState, useCallback, useMemo } from "react";
+import { MapPin, Calendar, Clock, ChevronRight, Ticket, QrCode, Users, X, Utensils, ShoppingCart, Shield, Upload } from "lucide-react";
+import { useRef, useState, useCallback, useMemo, useEffect } from "react";
 import { properties } from "@/data/properties";
 import PullToRefresh from "./PullToRefresh";
 import type { Booking } from "@/pages/Index";
 import OrderHistorySection from "./OrderHistorySection";
 import LiveOrderingSheet from "./LiveOrderingSheet";
+import IdentityUploadSheet from "./IdentityUploadSheet";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 
 interface TripsScreenProps {
   bookings: Booking[];
