@@ -2,12 +2,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, MapPin, Calendar, Clock, Users, QrCode,
   Phone, MessageCircle, X, AlertTriangle, Check, ChevronRight,
-  Navigation, Share2, Plus, Minus, Sparkles, ShoppingBag
+  Navigation, Share2, Plus, Minus, Sparkles, ShoppingBag,
+  Utensils, Star, Shield, Wifi, Music, Flame, Home, Info
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { properties, addons } from "@/data/properties";
 import { useToast } from "@/hooks/use-toast";
 import type { Booking } from "@/pages/Index";
+import LiveOrderingSheet from "./LiveOrderingSheet";
 
 interface BookingDetailScreenProps {
   booking: Booking;
@@ -19,6 +21,7 @@ interface BookingDetailScreenProps {
 export default function BookingDetailScreen({ booking, onBack, onCancel, onRebook }: BookingDetailScreenProps) {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [showAddonsSheet, setShowAddonsSheet] = useState(false);
+  const [showFoodOrder, setShowFoodOrder] = useState(false);
   const [addonSelections, setAddonSelections] = useState<Record<string, number>>({});
   const [orderedAddons, setOrderedAddons] = useState<{ name: string; qty: number; price: number }[]>([]);
   const [cancelling, setCancelling] = useState(false);
@@ -41,6 +44,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
 
   if (!property) return null;
 
+  const isActive = booking.status === "active";
   const isUpcoming = booking.status === "upcoming";
   const isCompleted = booking.status === "completed";
   const isCancelled = booking.status === "cancelled" || cancelled;
@@ -122,28 +126,35 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
               ? "bg-destructive/10 border border-destructive/20"
               : isCompleted
                 ? "bg-success/10 border border-success/20"
-                : "bg-primary/10 border border-primary/20"
+                : isActive
+                  ? "bg-success/10 border border-success/20"
+                  : "bg-primary/10 border border-primary/20"
           }`}
         >
           <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-            isCancelled ? "bg-destructive/20" : isCompleted ? "bg-success/20" : "bg-primary/20"
+            isCancelled ? "bg-destructive/20" : isCompleted ? "bg-success/20" : isActive ? "bg-success/20" : "bg-primary/20"
           }`}>
             {isCancelled ? <X size={20} className="text-destructive" /> :
              isCompleted ? <Check size={20} className="text-success" /> :
+             isActive ? <Flame size={20} className="text-success" /> :
              <Calendar size={20} className="text-primary" />}
           </div>
-          <div>
+          <div className="flex-1">
             <p className={`text-sm font-semibold ${
-              isCancelled ? "text-destructive" : isCompleted ? "text-success" : "text-primary"
+              isCancelled ? "text-destructive" : isCompleted ? "text-success" : isActive ? "text-success" : "text-primary"
             }`}>
-              {isCancelled ? "Booking Cancelled" : isCompleted ? "Trip Completed" : "Upcoming Trip"}
+              {isCancelled ? "Booking Cancelled" : isCompleted ? "Trip Completed" : isActive ? "You're Checked In!" : "Upcoming Trip"}
             </p>
             <p className="text-xs text-muted-foreground">
               {isCancelled ? "Refund will be processed in 3-5 days" :
                isCompleted ? "We hope you had a great time!" :
+               isActive ? "Enjoy your stay — order food & services anytime" :
                "Show QR code at entry"}
             </p>
           </div>
+          {isActive && (
+            <span className="w-2.5 h-2.5 rounded-full bg-success animate-pulse" />
+          )}
         </motion.div>
 
         {/* Property card */}
@@ -155,12 +166,93 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
         >
           <div className="relative h-40">
             <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover" />
+            {isActive && (
+              <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-success/90 backdrop-blur-sm">
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                <span className="text-[10px] font-bold text-white">LIVE</span>
+              </div>
+            )}
           </div>
           <div className="p-4">
             <h3 className="font-semibold text-foreground text-[15px]">{property.name}</h3>
             <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
               <MapPin size={11} /> {property.location}
             </p>
+            <div className="flex items-center gap-2 mt-1.5">
+              <span className="flex items-center gap-1 text-xs text-foreground">
+                <Star size={11} className="text-amber-500 fill-amber-500" /> {property.rating}
+              </span>
+              <span className="text-xs text-muted-foreground">({property.reviewCount} reviews)</span>
+              <span className="text-xs text-muted-foreground">· Up to {property.capacity} guests</span>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* 🍽️ Order Food CTA — only for active trips */}
+        {isActive && !isCancelled && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.07 }}
+            className="rounded-2xl overflow-hidden border-2 border-success/30"
+            style={{ background: "linear-gradient(135deg, hsl(160 60% 42% / 0.1) 0%, hsl(160 60% 42% / 0.04) 100%)" }}
+          >
+            <div className="p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: "hsl(160 84% 39%)" }}>
+                  <Utensils size={16} className="text-white" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-sm text-foreground">Order Food & Drinks</h4>
+                  <p className="text-[11px] text-muted-foreground">Delivered right to your spot — snacks, meals, drinks & more</p>
+                </div>
+              </div>
+              <motion.button
+                onClick={() => setShowFoodOrder(true)}
+                className="w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2"
+                style={{ background: "hsl(160 84% 39%)", color: "white", boxShadow: "0 4px 16px hsl(160 84% 39% / 0.3)" }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Utensils size={14} /> Browse Menu & Order
+              </motion.button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Property details — amenities & highlights */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.08 }}
+          className="rounded-2xl border border-border p-4 space-y-3"
+        >
+          <h4 className="font-semibold text-sm text-foreground flex items-center gap-2">
+            <Info size={14} className="text-primary" /> About this place
+          </h4>
+          <p className="text-xs text-muted-foreground leading-relaxed">{property.fullDescription}</p>
+
+          {/* Highlights */}
+          {property.highlights.length > 0 && (
+            <div className="space-y-1.5 pt-2">
+              {property.highlights.slice(0, 4).map((h, i) => (
+                <div key={i} className="flex items-center gap-2 text-xs text-foreground">
+                  <span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px]">✨</span>
+                  {h}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Amenities */}
+          <div className="pt-2 border-t border-border/50">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Amenities</p>
+            <div className="flex flex-wrap gap-2">
+              {property.amenities.map((amenity, i) => (
+                <span key={i} className="flex items-center gap-1 bg-secondary/80 rounded-lg px-2.5 py-1.5 text-[11px] text-foreground">
+                  <span>{property.amenityIcons[i] || "•"}</span> {amenity}
+                </span>
+              ))}
+            </div>
           </div>
         </motion.div>
 
@@ -204,7 +296,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
         </motion.div>
 
         {/* ✨ Enhance Your Trip — add experiences & services */}
-        {(isUpcoming || isCompleted) && !isCancelled && (
+        {(isActive || isUpcoming || isCompleted) && !isCancelled && (
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -298,7 +390,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
         </motion.div>
 
         {/* QR Code - only for upcoming */}
-        {isUpcoming && !isCancelled && (
+        {(isUpcoming || isActive) && !isCancelled && (
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -314,7 +406,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
         )}
 
         {/* Entry instructions */}
-        {(isUpcoming && !isCancelled) && (
+        {((isUpcoming || isActive) && !isCancelled) && (
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -366,7 +458,25 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
 
       {/* Bottom actions */}
       <div className="fixed bottom-0 left-0 right-0 glass px-5 py-3.5 z-40">
-        {isUpcoming && !isCancelled ? (
+        {isActive && !isCancelled ? (
+          <div className="flex gap-3">
+            <motion.button
+              onClick={() => setShowFoodOrder(true)}
+              className="flex-1 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2"
+              style={{ background: "hsl(160 84% 39%)", color: "white", boxShadow: "0 4px 16px hsl(160 84% 39% / 0.3)" }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Utensils size={14} /> Order Food
+            </motion.button>
+            <motion.button
+              onClick={() => setShowAddonsSheet(true)}
+              className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm glow-primary flex items-center justify-center gap-1"
+              whileTap={{ scale: 0.95 }}
+            >
+              <Plus size={14} /> Add Extras
+            </motion.button>
+          </div>
+        ) : isUpcoming && !isCancelled ? (
           <div className="flex gap-3">
             <motion.button
               onClick={() => setShowCancelDialog(true)}
@@ -596,6 +706,15 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Live Food Ordering Sheet */}
+      <LiveOrderingSheet
+        open={showFoodOrder}
+        onClose={() => setShowFoodOrder(false)}
+        propertyName={property.name}
+        propertyId={booking.propertyId}
+        bookingId={booking.bookingId}
+      />
     </motion.div>
   );
 }
