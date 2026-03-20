@@ -44,7 +44,9 @@ export function useWishlists() {
       };
       load();
     } else {
-      setWishlist(getLocalWishlist());
+      // Guest — use localStorage, fallback to demo wishlists
+      const local = getLocalWishlist();
+      setWishlist(local.length > 0 ? local : ["1", "3", "5", "7", "10"]);
       setLoading(false);
     }
   }, [user]);
