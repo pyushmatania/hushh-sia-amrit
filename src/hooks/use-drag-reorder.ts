@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 
 interface UseDragReorderOptions<T> {
   items: T[];
@@ -24,35 +24,42 @@ export function useDragReorder<T>({ items, getId, getCategory, onReorder }: UseD
   const onReorderRef = useRef(onReorder);
   onReorderRef.current = onReorder;
 
-  const getDragHandleProps = useCallback((item: T) => {
-    const id = getIdRef.current(item);
-    const cat = getCategoryRef.current?.(item) ?? "__all__";
+  const pointerIdRef = useRef<number | null>(null);
+  const detachPointerListenersRef = useRef<(() => void) | null>(null);
+
+  const clearDragState = useCallback(() => {
+    dragIdRef.current = null;
+    dragCatRef.current = null;
+    pointerIdRef.current = null;
+    setDragId(null);
+    setDragOverId(null);
+  }, []);
+
+  const getDropTargetFromPoint = useCallback((x: number, y: number) => {
+    if (typeof document === "undefined") return null;
+
+    const element = document.elementFromPoint(x, y) as HTMLElement | null;
+    const target = element?.closest<HTMLElement>("[data-reorder-id]");
+    const targetId = target?.dataset.reorderId;
+
+    if (!targetId) return null;
+
     return {
-      draggable: true,
-      onDragStart: (e: React.DragEvent) => {
-        e.dataTransfer.effectAllowed = "move";
-        e.dataTransfer.setData("text/plain", id);
-        dragIdRef.current = id;
-        dragCatRef.current = cat;
-        setDragId(id);
-      },
+      id: targetId,
+      category: target.dataset.reorderCategory ?? "__all__",
     };
   }, []);
 
   const executeDrop = useCallback((targetId: string, targetCat: string) => {
     const currentDragId = dragIdRef.current;
     if (!currentDragId || currentDragId === targetId) {
-      dragIdRef.current = null;
-      setDragId(null);
-      setDragOverId(null);
+      clearDragState();
       return;
     }
 
     const gc = getCategoryRef.current;
     if (gc && targetCat !== dragCatRef.current) {
-      dragIdRef.current = null;
-      setDragId(null);
-      setDragOverId(null);
+      clearDragState();
       return;
     }
 
@@ -68,9 +75,7 @@ export function useDragReorder<T>({ items, getId, getCategory, onReorder }: UseD
     const toIdx = ids.indexOf(targetId);
 
     if (fromIdx === -1 || toIdx === -1) {
-      dragIdRef.current = null;
-      setDragId(null);
-      setDragOverId(null);
+      clearDragState();
       return;
     }
 
@@ -80,17 +85,82 @@ export function useDragReorder<T>({ items, getId, getCategory, onReorder }: UseD
 
     const updates = reordered.map((id, idx) => ({ id, sort_order: idx }));
 
-    dragIdRef.current = null;
-    setDragId(null);
-    setDragOverId(null);
+    clearDragState();
 
     onReorderRef.current(updates);
-  }, []);
+  }, [clearDragState]);
+
+  const getDragHandleProps = useCallback((item: T) => {
+    const id = getIdRef.current(item);
+    const cat = getCategoryRef.current?.(item) ?? "__all__";
+
+    const attachPointerListeners = () => {
+      if (detachPointerListenersRef.current) return;
+
+      const onPointerMove = (event: PointerEvent) => {
+        if (pointerIdRef.current !== event.pointerId) return;
+        const target = getDropTargetFromPoint(event.clientX, event.clientY);
+        setDragOverId(target?.id ?? null);
+      };
+
+      const finishPointerDrag = (event: PointerEvent) => {
+        if (pointerIdRef.current !== event.pointerId) return;
+
+        const target = getDropTargetFromPoint(event.clientX, event.clientY);
+
+        if (target) {
+          executeDrop(target.id, target.category);
+        } else {
+          clearDragState();
+        }
+
+        detachPointerListenersRef.current?.();
+        detachPointerListenersRef.current = null;
+      };
+
+      window.addEventListener("pointermove", onPointerMove);
+      window.addEventListener("pointerup", finishPointerDrag);
+      window.addEventListener("pointercancel", finishPointerDrag);
+
+      detachPointerListenersRef.current = () => {
+        window.removeEventListener("pointermove", onPointerMove);
+        window.removeEventListener("pointerup", finishPointerDrag);
+        window.removeEventListener("pointercancel", finishPointerDrag);
+      };
+    };
+
+    return {
+      draggable: true,
+      onDragStart: (e: React.DragEvent) => {
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", id);
+        dragIdRef.current = id;
+        dragCatRef.current = cat;
+        setDragId(id);
+      },
+      onPointerDown: (e: React.PointerEvent) => {
+        if (e.pointerType === "mouse") return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        dragIdRef.current = id;
+        dragCatRef.current = cat;
+        pointerIdRef.current = e.pointerId;
+        setDragId(id);
+        setDragOverId(id);
+
+        attachPointerListeners();
+      },
+    };
+  }, [clearDragState, executeDrop, getDropTargetFromPoint]);
 
   const getDropTargetProps = useCallback((item: T) => {
     const id = getIdRef.current(item);
     const cat = getCategoryRef.current?.(item) ?? "__all__";
     return {
+      "data-reorder-id": id,
+      "data-reorder-category": cat,
       onDragOver: (e: React.DragEvent) => {
         e.preventDefault();
         e.dataTransfer.dropEffect = "move";
@@ -107,9 +177,16 @@ export function useDragReorder<T>({ items, getId, getCategory, onReorder }: UseD
   }, [executeDrop]);
 
   const handleDragEnd = useCallback(() => {
-    dragIdRef.current = null;
-    setDragId(null);
-    setDragOverId(null);
+    detachPointerListenersRef.current?.();
+    detachPointerListenersRef.current = null;
+    clearDragState();
+  }, [clearDragState]);
+
+  useEffect(() => {
+    return () => {
+      detachPointerListenersRef.current?.();
+      detachPointerListenersRef.current = null;
+    };
   }, []);
 
   const isDragging = (item: T) => getIdRef.current(item) === dragId;
