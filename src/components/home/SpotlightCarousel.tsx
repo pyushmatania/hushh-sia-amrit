@@ -280,8 +280,8 @@ export default function SpotlightCarousel({ properties, onPropertyTap, category 
           <VideoCard
             key={p.id}
             property={p}
-            videoSrc={spotlightVideos[i % spotlightVideos.length]}
-            overlayText={overlayTexts[i % overlayTexts.length]}
+            videoSrc={videos[i % videos.length]}
+            overlayText={overlays[i % overlays.length]}
             isActive={i === activeIndex}
             dateLabel={dateLabels[i]}
             accent={accentStyles[i % accentStyles.length]}
