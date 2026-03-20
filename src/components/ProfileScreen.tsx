@@ -59,15 +59,6 @@ interface ProfileScreenProps {
   onRebook?: (propertyId: string) => void;
 }
 
-// Demo past trips for when no real data
-const demoPastTrips: Booking[] = [
-  { id: "demo-p1", propertyId: "2", date: "Mar 10, 2026", slot: "Full Day · 10 AM – 10 PM", guests: 8, total: 15200, status: "completed", bookingId: "HUSHH-CP0012" },
-  { id: "demo-p2", propertyId: "5", date: "Feb 28, 2026", slot: "Evening · 5 PM – 10 PM", guests: 6, total: 9800, status: "completed", bookingId: "HUSHH-CP0011" },
-  { id: "demo-p3", propertyId: "7", date: "Feb 14, 2026", slot: "Night · 8 PM – 12 AM", guests: 2, total: 3500, status: "completed", bookingId: "HUSHH-CP0010" },
-  { id: "demo-p4", propertyId: "3", date: "Jan 26, 2026", slot: "Full Day · 10 AM – 10 PM", guests: 15, total: 22000, status: "completed", bookingId: "HUSHH-CP0009" },
-  { id: "demo-p5", propertyId: "6", date: "Jan 1, 2026", slot: "Night · 9 PM – 2 AM", guests: 10, total: 14500, status: "completed", bookingId: "HUSHH-CP0008" },
-];
-
 export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingDetail, onRebook }: ProfileScreenProps) {
   const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
@@ -87,14 +78,11 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
     bio: "Explorer of hidden gems 🌿 Love bonfires, stargazing, and good coffee.",
   });
 
-  const pastTrips = useMemo(() => {
-    const completed = bookings.filter(b => b.status === "completed");
-    return completed.length > 0 ? completed : demoPastTrips;
-  }, [bookings]);
+  // bookings already includes demo data for guests (from useBookings hook)
+  const pastTrips = useMemo(() => bookings.filter(b => b.status === "completed"), [bookings]);
 
   const recentActivityFromBookings = useMemo(() => {
-    const all = bookings.length > 0 ? bookings : demoPastTrips;
-    return all.slice(0, 3).map(b => {
+    return bookings.slice(0, 3).map(b => {
       const prop = properties.find(p => p.id === b.propertyId);
       return {
         icon: prop?.amenityIcons[0] || "🏨",
