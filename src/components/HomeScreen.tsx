@@ -518,13 +518,13 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
             <div className="mt-7">
               <div className="flex items-center justify-between px-5 mb-3">
                 <h2 className="text-lg font-bold text-foreground">
-                  {activeCategory === "home" ? "All Listings" : `All ${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)}s`}
+                  {activeCategory === "home" ? (activeMood ? `${activeMood.charAt(0).toUpperCase() + activeMood.slice(1)} Vibes` : "All Listings") : `All ${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)}s`}
                 </h2>
-                <span className="text-xs text-muted-foreground">{filteredProperties.length} found</span>
+                <span className="text-xs text-muted-foreground">{(activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties).length} found</span>
               </div>
-              {filteredProperties.length > 0 ? (
+              {(activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties).length > 0 ? (
                 <div className="space-y-5">
-                  {filteredProperties.map((p, i) => (
+                  {(activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties).map((p, i) => (
                     <PropertyCard key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
                   ))}
                 </div>
