@@ -326,7 +326,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
   }, []);
 
   const addedExtras = allProperties.filter(p => addedExtraIds.has(p.id));
-  const [liked, setLiked] = useState(false);
+  const liked = isWishlisted;
   const [imgLoaded, setImgLoaded] = useState(false);
 
   const heroX = useMotionValue(0);
