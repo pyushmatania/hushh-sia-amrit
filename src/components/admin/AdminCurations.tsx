@@ -114,6 +114,7 @@ export default function AdminCurations() {
     setEditing(null);
     setEditingId(null);
     loadCurations();
+    window.dispatchEvent(new Event("hushh:listings-updated"));
   };
 
   // Builder UI
