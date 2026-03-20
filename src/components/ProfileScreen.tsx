@@ -341,7 +341,7 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
         {settingsMenu.map((item, i) => (
           <button
             key={item.label}
-            onClick={() => handleSettingTap(item.settingKey)}
+            onClick={() => handleSettingTap(item.settingKey, item.label)}
             className={`w-full flex items-center gap-3.5 py-4 text-left ${
               i < settingsMenu.length - 1 ? "border-b border-border" : ""
             }`}
