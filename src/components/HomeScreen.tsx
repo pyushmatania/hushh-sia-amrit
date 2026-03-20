@@ -21,6 +21,8 @@ import WhatsHotGrid from "./home/WhatsHotGrid";
 import BlockbusterBanner from "./home/BlockbusterBanner";
 import BackToTopButton from "./home/BackToTopButton";
 import CuratedComboCard from "./home/CuratedComboCard";
+import ExperienceCard from "./home/ExperienceCard";
+import { CurationHeroCard, CurationMiniCard } from "./home/CurationHeroCard";
 
 interface HomeScreenProps {
   onPropertyTap: (property: Property) => void;
