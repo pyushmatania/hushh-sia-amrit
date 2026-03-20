@@ -847,7 +847,19 @@ function RealtimeChatView({ conversation, onBack }: { conversation: Conversation
                     <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 ${
                       isUser ? "bg-primary text-primary-foreground rounded-br-md" : "bg-secondary text-foreground rounded-bl-md"
                     }`} style={isUser ? { boxShadow: "0 2px 8px hsl(var(--primary) / 0.25)" } : undefined}>
-                      <p className="text-[13px] leading-relaxed">{msg.content}</p>
+                      {/* Check for image in content */}
+                      {msg.content.startsWith("[image:") && (
+                        <ImageBubble
+                          url={msg.content.match(/\[image:(.*?)\]/)?.[1] || ""}
+                          onClick={() => setViewingImage(msg.content.match(/\[image:(.*?)\]/)?.[1] || "")}
+                        />
+                      )}
+                      {msg.content.replace(/\[image:.*?\]\s?/, "").trim() && (
+                        <p className="text-[13px] leading-relaxed">{msg.content.replace(/\[image:.*?\]\s?/, "").trim()}</p>
+                      )}
+                      {!msg.content.startsWith("[image:") && (
+                        <p className="text-[13px] leading-relaxed">{msg.content}</p>
+                      )}
                       <p className={`text-[10px] mt-1 text-right ${isUser ? "text-primary-foreground/50" : "text-muted-foreground"}`}>
                         {format(new Date(msg.created_at), "h:mm a")}
                       </p>
