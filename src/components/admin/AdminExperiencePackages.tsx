@@ -51,9 +51,9 @@ export default function AdminExperiencePackages() {
 
   useEffect(() => { loadPackages(); }, []);
 
-  const filtered = packages.filter(p =>
-    p.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = [...packages]
+    .filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => a.sort_order - b.sort_order);
 
   const openCreate = () => {
     setEditing({
@@ -138,6 +138,7 @@ export default function AdminExperiencePackages() {
   const { getDragHandleProps, getDropTargetProps, handleDragEnd, isDragging, isDragOver } = useDragReorder({
     items: [...packages].sort((a, b) => a.sort_order - b.sort_order),
     getId: (p) => p.id,
+    getA11yLabel: (p) => `Reorder ${p.name}`,
     onReorder: async (updates) => {
       setPackages(prev => prev.map(p => { const u = updates.find(u => u.id === p.id); return u ? { ...p, sort_order: u.sort_order } : p; }));
       for (const u of updates) { await supabase.from("experience_packages").update({ sort_order: u.sort_order }).eq("id", u.id); }
@@ -195,12 +196,6 @@ export default function AdminExperiencePackages() {
                 !pkg.active ? "opacity-50" : ""
               } ${isDragging(pkg) ? "opacity-40 scale-[0.97]" : ""} ${isDragOver(pkg) ? "border-primary shadow-sm shadow-primary/20" : "border-border"}`}
             >
-              <div
-                {...getDragHandleProps(pkg)}
-                className="text-muted-foreground/40 hover:text-muted-foreground transition shrink-0 cursor-grab active:cursor-grabbing"
-              >
-                <GripVertical size={16} />
-              </div>
               <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${pkg.gradient} flex items-center justify-center text-lg`}>
                 {pkg.emoji}
               </div>
@@ -238,6 +233,13 @@ export default function AdminExperiencePackages() {
                   <Trash2 size={13} className="text-destructive" />
                 </button>
               </div>
+              <button
+                type="button"
+                {...getDragHandleProps(pkg)}
+                className="ml-1 h-10 w-10 rounded-lg flex items-center justify-center text-muted-foreground/50 hover:text-foreground hover:bg-secondary transition shrink-0 cursor-grab active:cursor-grabbing touch-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                <GripVertical size={20} />
+              </button>
             </div>
           ))}
         </div>
