@@ -33,6 +33,7 @@ const settingsMenu = [
   { icon: Bell, label: "Notifications", settingKey: "notifications" },
   { icon: Globe, label: "Language & region", settingKey: "language" },
   { icon: Accessibility, label: "Accessibility", settingKey: "accessibility" },
+  { icon: EyeOff, label: "Privacy mode", sublabel: "🤫", settingKey: "privacy" },
   { icon: Gift, label: "Refer a friend", sublabel: "Earn ₹200", badge: "NEW", settingKey: "" },
   { icon: Star, label: "Loyalty points", sublabel: "320 pts", settingKey: "" },
   { icon: HelpCircle, label: "Help centre", settingKey: "" },
