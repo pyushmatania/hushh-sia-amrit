@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   properties as staticProperties,
@@ -96,48 +96,96 @@ function mergeDbRow(row: any, staticMatch: Property | undefined): Property {
   };
 }
 
+const LISTING_LINKS_STORAGE_KEY = "hushh_db_static_listing_links_v1";
+
+function readListingLinks(): Record<string, string> {
+  try {
+    const raw = localStorage.getItem(LISTING_LINKS_STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as Record<string, string>) : {};
+  } catch {
+    return {};
+  }
+}
+
+function writeListingLinks(links: Record<string, string>) {
+  try {
+    localStorage.setItem(LISTING_LINKS_STORAGE_KEY, JSON.stringify(links));
+  } catch {
+    // ignore storage issues
+  }
+}
+
 export function PropertiesProvider({ children }: { children: ReactNode }) {
   const [properties, setProperties] = useState<Property[]>(staticProperties);
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const load = async () => {
-    const { data } = await supabase
+  const load = useCallback(async () => {
+    const { data, error } = await supabase
       .from("host_listings")
       .select("*")
       .eq("status", "published")
       .order("created_at", { ascending: true });
 
+    if (error) {
+      setProperties(staticProperties);
+      setLoading(false);
+      return;
+    }
+
     if (data && data.length > 0) {
       const staticByName = new Map(staticProperties.map((p) => [p.name.toLowerCase().trim(), p]));
+      const staticById = new Map(staticProperties.map((p) => [p.id, p]));
+      const links = readListingLinks();
+      const nextLinks = { ...links };
+      const matchedStaticIds = new Set<string>();
+
       const merged = data.map((row) => {
-        const staticMatch = staticByName.get(row.name.toLowerCase().trim());
+        const linkedStatic = links[row.id] ? staticById.get(links[row.id]) : undefined;
+        const staticMatch = linkedStatic || staticByName.get((row.name || "").toLowerCase().trim());
+
+        if (staticMatch) {
+          matchedStaticIds.add(staticMatch.id);
+          if (!links[row.id]) nextLinks[row.id] = staticMatch.id;
+        }
+
         return mergeDbRow(row, staticMatch);
       });
-      const dbNames = new Set(data.map((r) => r.name.toLowerCase().trim()));
-      const missing = staticProperties.filter((p) => !dbNames.has(p.name.toLowerCase().trim()));
+
+      if (Object.keys(nextLinks).length !== Object.keys(links).length) {
+        writeListingLinks(nextLinks);
+      }
+
+      const missing = staticProperties.filter((p) => !matchedStaticIds.has(p.id));
       setProperties([...merged, ...missing]);
+    } else {
+      setProperties(staticProperties);
     }
     setLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
     load();
-  }, [refreshKey]);
+  }, [load, refreshKey]);
 
   // Re-fetch when tab becomes visible (e.g. returning from /admin)
   useEffect(() => {
     const onVisible = () => {
       if (document.visibilityState === "visible") load();
     };
+    const onFocus = () => load();
+    const onListingsUpdated = () => load();
+
     document.addEventListener("visibilitychange", onVisible);
-    // Also re-fetch on popstate (back/forward navigation)
-    window.addEventListener("focus", () => load());
+    window.addEventListener("focus", onFocus);
+    window.addEventListener("hushh:listings-updated", onListingsUpdated);
+
     return () => {
       document.removeEventListener("visibilitychange", onVisible);
-      window.removeEventListener("focus", () => load());
+      window.removeEventListener("focus", onFocus);
+      window.removeEventListener("hushh:listings-updated", onListingsUpdated);
     };
-  }, []);
+  }, [load]);
 
   const refresh = () => setRefreshKey((k) => k + 1);
 
