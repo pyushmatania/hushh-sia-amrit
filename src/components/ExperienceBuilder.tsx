@@ -357,6 +357,8 @@ export default function ExperienceBuilder({ property, slotId, guests, date, onBa
               return (
                 <motion.div
                   key={item.id}
+                  animate={hapticId === item.id ? { scale: [1, 1.04, 0.97, 1], rotate: [0, 1, -1, 0] } : { scale: 1 }}
+                  transition={hapticId === item.id ? { duration: 0.35, ease: "easeOut" } : {}}
                   className={`rounded-2xl border overflow-hidden transition-all ${
                     qty > 0
                       ? "border-primary/40 bg-primary/[0.04] shadow-[0_0_20px_-6px_hsl(var(--primary)/0.15)]"
