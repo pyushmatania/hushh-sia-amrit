@@ -62,6 +62,25 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
     "Walking Tour": (p) => p.propertyType === "Walking Tour" || p.propertyType === "Observatory",
   };
 
+  const curationFilters = ["All", "🔥 Popular", "💑 Romantic", "🎉 Party", "🍗 Foodie", "💻 Work", "🎬 Entertainment", "💸 Budget"];
+
+  const curationFilterMap: Record<string, (c: typeof curatedCombos[0]) => boolean> = {
+    "All": () => true,
+    "🔥 Popular": (c) => !!c.popular,
+    "💑 Romantic": (c) => c.tags.some(t => t.includes("Couple")),
+    "🎉 Party": (c) => c.tags.some(t => t.includes("Party") || t.includes("Birthday") || t.includes("Celebration") || t.includes("Fun")),
+    "🍗 Foodie": (c) => c.tags.some(t => t.includes("Foodie") || t.includes("Hot")),
+    "💻 Work": (c) => c.tags.some(t => t.includes("Work")),
+    "🎬 Entertainment": (c) => c.tags.some(t => t.includes("Movie") || t.includes("Gaming")),
+    "💸 Budget": (c) => c.priceRange[0] <= 999,
+  };
+
+  const filteredCombos = useMemo(() => {
+    if (activeCategory !== "curation" || subFilter === "All") return curatedCombos;
+    const filterFn = curationFilterMap[subFilter];
+    return filterFn ? curatedCombos.filter(filterFn) : curatedCombos;
+  }, [activeCategory, subFilter]);
+
   // Filter by primaryCategory
   const filteredProperties = useMemo(() => {
     let list = activeCategory === "home" ? properties : properties.filter(p => p.primaryCategory === activeCategory);
@@ -317,34 +336,61 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
               <SectionDivider title="✨ CURATED FOR YOU" />
               <SpotlightCarousel properties={topRated.slice(0, 4)} onPropertyTap={onPropertyTap} category="curation" />
 
-              <div className="px-5 pt-4 pb-2">
-                <h2 className="text-lg font-bold text-foreground mb-1">✨ Ready-Made Experiences</h2>
+              {/* Filter pills */}
+              <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
+                {curationFilters.map(tag => (
+                  <button
+                    key={tag}
+                    onClick={() => setSubFilter(tag)}
+                    className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 ${
+                      subFilter === tag
+                        ? "bg-primary text-primary-foreground font-semibold shadow-md"
+                        : "bg-foreground/5 text-foreground/80 border border-foreground/10"
+                    }`}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+
+              <div className="px-5 pt-2 pb-2">
                 <p className="text-xs text-muted-foreground">Pre-built combos for instant booking. One tap, full experience!</p>
               </div>
 
-              {/* Popular Combos */}
-              <div className="mt-2">
-                <div className="flex items-center justify-between px-5 mb-3">
-                  <h2 className="text-base font-bold text-foreground">🔥 Most Popular</h2>
+              {/* Popular Combos — only show when "All" or "Popular" */}
+              {(subFilter === "All" || subFilter === "🔥 Popular") && filteredCombos.filter(c => c.popular).length > 0 && (
+                <div className="mt-2">
+                  <div className="flex items-center justify-between px-5 mb-3">
+                    <h2 className="text-base font-bold text-foreground">🔥 Most Popular</h2>
+                  </div>
+                  <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4">
+                    {filteredCombos.filter(c => c.popular).map((combo, i) => (
+                      <CuratedComboCard key={combo.id} combo={combo} index={i} />
+                    ))}
+                  </div>
                 </div>
-                <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4">
-                  {curatedCombos.filter(c => c.popular).map((combo, i) => (
-                    <CuratedComboCard key={combo.id} combo={combo} index={i} />
-                  ))}
-                </div>
-              </div>
+              )}
 
-              {/* All Combos */}
+              {/* Filtered Combos */}
               <div className="mt-6">
                 <div className="flex items-center justify-between px-5 mb-3">
-                  <h2 className="text-base font-bold text-foreground">🎯 All Curated Combos</h2>
-                  <span className="text-xs text-muted-foreground">{curatedCombos.length} combos</span>
+                  <h2 className="text-base font-bold text-foreground">
+                    {subFilter === "All" ? "🎯 All Curated Combos" : subFilter}
+                  </h2>
+                  <span className="text-xs text-muted-foreground">{filteredCombos.length} combos</span>
                 </div>
-                <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4">
-                  {curatedCombos.map((combo, i) => (
-                    <CuratedComboCard key={combo.id} combo={combo} index={i} />
-                  ))}
-                </div>
+                {filteredCombos.length > 0 ? (
+                  <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4">
+                    {filteredCombos.map((combo, i) => (
+                      <CuratedComboCard key={combo.id} combo={combo} index={i} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="px-5 py-8 text-center">
+                    <p className="text-2xl mb-2">🔍</p>
+                    <p className="text-sm text-muted-foreground">No combos in this category yet</p>
+                  </div>
+                )}
               </div>
 
               {/* Budget Combos Highlight */}
