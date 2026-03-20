@@ -26,6 +26,7 @@ import listingWorkPod from "@/assets/listing-work-pod.jpg";
 import listingCoupleCocoon from "@/assets/listing-couple-cocoon.jpg";
 import listingBlueLagoon from "@/assets/listing-blue-lagoon.jpg";
 import listingGreenLawn from "@/assets/listing-green-lawn.jpg";
+import listingHushhRides from "@/assets/listing-hushh-rides.jpg";
 
 export interface TimeSlot {
   id: string;
@@ -195,7 +196,7 @@ export const properties: Property[] = [
     responseRate: "99%",
     primaryCategory: "experience",
     propertyType: "Open Lawn",
-    category: ["stays", "party", "bonfire", "movie"],
+    category: ["experiences", "party", "bonfire", "movie"],
     highlights: ["20-foot outdoor cinema screen", "Professional DJ booth with lighting", "Massive bonfire circle fits 30 people", "Full bar counter with mixologist option"],
     rules: [
       { icon: "🕐", text: "Check-in at slot start time" },
@@ -328,7 +329,7 @@ export const properties: Property[] = [
     responseRate: "96%",
     primaryCategory: "experience",
     propertyType: "Sports Arena",
-    category: ["experiences", "services", "pool"],
+    category: ["experiences", "sports"],
     highlights: ["Professional-grade pickleball court", "Floodlit turf for night matches", "Cricket bowling machine available", "Tournament hosting with trophies"],
     rules: [
       { icon: "🕐", text: "Check-in 15 mins before slot" },
@@ -416,7 +417,7 @@ export const properties: Property[] = [
     responseRate: "100%",
     primaryCategory: "experience",
     propertyType: "Garden Space",
-    category: ["stays", "couples", "dining", "stargazing"],
+    category: ["experiences", "couples", "dining", "stargazing"],
     highlights: ["Direct lake-facing sunset view", "Floating candles on water surface", "Optional live acoustic guitar", "Private chef 5-course dinner available"],
     rules: [
       { icon: "🕐", text: "Arrive 30 mins before sunset" },
@@ -548,7 +549,7 @@ export const properties: Property[] = [
     responseRate: "98%",
     primaryCategory: "experience",
     propertyType: "Sports Arena",
-    category: ["experiences", "services", "pool"],
+    category: ["experiences", "sports"],
     highlights: ["2 professional-grade courts", "Equipment rental included", "Certified coaching available", "Cold towels & energy drinks"],
     rules: [
       { icon: "👟", text: "Non-marking shoes mandatory" },
@@ -1210,7 +1211,7 @@ export const properties: Property[] = [
     name: "Hushh Rides",
     description: "Pickup · Drop · Outstation · Airport transfers",
     fullDescription: "Hassle-free transport for all your Hushh experiences. Airport pickups, venue transfers, outstation trips, and late-night drops. Clean, air-conditioned vehicles with professional drivers. Track your ride in real-time.",
-    images: [property1, property2, property3],
+    images: [listingHushhRides, property2, property3],
     rating: 4.5,
     reviewCount: 89,
     location: "Jeypore, Odisha",
