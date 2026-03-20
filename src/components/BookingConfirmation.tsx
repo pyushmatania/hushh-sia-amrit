@@ -17,6 +17,7 @@ interface BookingConfirmationProps {
 export default function BookingConfirmation({ property, slotId, guests, date, total, onDone }: BookingConfirmationProps) {
   const slot = property.slots.find((s) => s.id === slotId)!;
   const bookingId = `HUSHH-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+  const [orderingOpen, setOrderingOpen] = useState(false);
 
   return (
     <motion.div
