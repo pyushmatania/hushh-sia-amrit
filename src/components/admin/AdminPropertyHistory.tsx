@@ -256,7 +256,7 @@ function AISearchBar({ onResult, properties }: { onResult: (answer: string) => v
 function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
   property: PropertySummary; users: Map<string, UserMini>; onClose: () => void; onUserClick: (userId: string) => void;
 }) {
-  const [activeTab, setActiveTab] = useState<"calendar" | "guests" | "orders" | "analytics">("calendar");
+  const [activeTab, setActiveTab] = useState<"calendar" | "guests" | "orders" | "timeline" | "analytics">("calendar");
   const [selectedDay, setSelectedDay] = useState<{ date: string; bookings: PropertyBooking[] } | null>(null);
 
   const uniqueGuestList = useMemo(() => {
@@ -310,10 +310,26 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
 
   const maxRevenue = Math.max(...monthlyRevenue.map(m => m[1]), 1);
 
+  // Timeline events
+  const timelineEvents = useMemo(() => {
+    const events: { type: string; icon: string; label: string; detail: string; date: string; userId?: string }[] = [];
+    property.bookings.forEach(b => {
+      const u = users.get(b.user_id)?.display_name || b.userName || "Guest";
+      events.push({ type: "booking", icon: "🎫", label: `${u} booked ${b.slot}`, detail: `${b.guests} guests · ₹${Number(b.total).toLocaleString("en-IN")} · ${b.status}`, date: b.created_at, userId: b.user_id });
+    });
+    property.orders.forEach(o => {
+      const u = users.get(o.user_id)?.display_name || o.userName || "Guest";
+      const items = o.items.map(i => `${i.item_emoji}${i.item_name}`).join(", ");
+      events.push({ type: "order", icon: "🍽️", label: `${u} ordered food`, detail: `${items} · ₹${Number(o.total).toLocaleString("en-IN")} · Chef: ${o.assigned_name || "—"}`, date: o.created_at, userId: o.user_id });
+    });
+    return events.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [property, users]);
+
   const tabs = [
     { id: "calendar" as const, label: "Calendar", icon: CalendarCheck },
     { id: "guests" as const, label: `Guests (${property.uniqueGuests})`, icon: Users },
     { id: "orders" as const, label: `Food (${foodAnalytics.length})`, icon: Utensils },
+    { id: "timeline" as const, label: `Timeline`, icon: Activity },
     { id: "analytics" as const, label: "Analytics", icon: BarChart3 },
   ];
 
@@ -546,7 +562,39 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
             </div>
           )}
 
-          {/* Analytics tab */}
+          {/* Timeline tab */}
+          {activeTab === "timeline" && (
+            <div className="space-y-1">
+              {timelineEvents.length === 0 ? (
+                <div className="text-center py-12">
+                  <Activity size={32} className="mx-auto text-muted-foreground/30 mb-2" />
+                  <p className="text-sm text-muted-foreground">No activity yet</p>
+                </div>
+              ) : timelineEvents.map((ev, i) => (
+                <motion.div key={i}
+                  initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.02, duration: 0.3 }}
+                  className="flex gap-3 group"
+                >
+                  {/* Timeline line */}
+                  <div className="flex flex-col items-center">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm shrink-0 ${
+                      ev.type === "booking" ? "bg-primary/10" : "bg-amber-500/10"
+                    }`}>
+                      {ev.icon}
+                    </div>
+                    {i < timelineEvents.length - 1 && <div className="w-px flex-1 bg-border min-h-[16px]" />}
+                  </div>
+                  <button onClick={() => ev.userId && onUserClick(ev.userId)}
+                    className="flex-1 rounded-xl bg-secondary/30 p-2.5 mb-1.5 text-left hover:bg-secondary/60 transition active:scale-[0.98]">
+                    <p className="text-[11px] font-semibold text-foreground">{ev.label}</p>
+                    <p className="text-[9px] text-muted-foreground mt-0.5 leading-relaxed">{ev.detail}</p>
+                    <p className="text-[8px] text-muted-foreground/60 mt-1">{formatDate(ev.date)} · {timeAgo(ev.date)}</p>
+                  </button>
+                </motion.div>
+              ))}
+            </div>
+          )}
+
           {activeTab === "analytics" && (
             <div className="space-y-4">
               {/* Revenue trend */}
