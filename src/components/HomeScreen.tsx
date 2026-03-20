@@ -37,12 +37,46 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
     setRefreshKey((k) => k + 1);
   }, []);
   const [activeCategory, setActiveCategory] = useState("home");
+  const [subFilter, setSubFilter] = useState("All");
+
+  // Reset sub-filter when switching categories
+  const handleCategoryChange = useCallback((id: string) => {
+    setActiveCategory(id);
+    setSubFilter("All");
+  }, []);
+
+  // Sub-filter definitions mapped to propertyType or tag keywords
+  const stayFilters = ["All", "Private Villa", "Pool Villa", "Farmhouse", "Rooftop Space", "Work Pod", "Couple Room", "Open Lawn", "Camping"];
+  const experienceFilters = ["All", "Romantic", "Celebration", "Party", "Adventure", "Cultural", "Sports", "Workshop", "Walking Tour"];
+  const serviceFilters = ["All", "Chef Service", "Decoration", "Transport", "Entertainment"];
+
+  const experienceFilterMap: Record<string, (p: Property) => boolean> = {
+    "All": () => true,
+    "Romantic": (p) => p.category.includes("couples") || p.tags.some(t => t.toLowerCase().includes("romantic")),
+    "Celebration": (p) => ["Party Hall", "Garden Space", "Open Lawn"].includes(p.propertyType || "") && (p.tags.some(t => t.toLowerCase().includes("birthday") || t.toLowerCase().includes("anniversary") || t.toLowerCase().includes("wedding") || t.toLowerCase().includes("celebration"))),
+    "Party": (p) => p.category.includes("party"),
+    "Adventure": (p) => p.propertyType === "Adventure" || p.tags.some(t => t.toLowerCase().includes("adventure")),
+    "Cultural": (p) => p.propertyType === "Cultural" || p.propertyType === "Workshop" || p.tags.some(t => t.toLowerCase().includes("cultural") || t.toLowerCase().includes("heritage")),
+    "Sports": (p) => p.propertyType === "Sports Arena" || p.category.includes("sports"),
+    "Workshop": (p) => p.propertyType === "Workshop" || p.propertyType === "Plantation Tour",
+    "Walking Tour": (p) => p.propertyType === "Walking Tour" || p.propertyType === "Observatory",
+  };
 
   // Filter by primaryCategory
   const filteredProperties = useMemo(() => {
-    if (activeCategory === "home") return properties;
-    return properties.filter(p => p.primaryCategory === activeCategory);
-  }, [activeCategory]);
+    let list = activeCategory === "home" ? properties : properties.filter(p => p.primaryCategory === activeCategory);
+
+    if (subFilter !== "All") {
+      if (activeCategory === "stay" || activeCategory === "service") {
+        list = list.filter(p => p.propertyType === subFilter);
+      } else if (activeCategory === "experience") {
+        const filterFn = experienceFilterMap[subFilter];
+        if (filterFn) list = list.filter(filterFn);
+      }
+    }
+
+    return list;
+  }, [activeCategory, subFilter]);
 
   const stayProperties = useMemo(() => properties.filter(p => p.primaryCategory === "stay"), []);
   const experienceProperties = useMemo(() => properties.filter(p => p.primaryCategory === "experience"), []);
@@ -83,7 +117,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
         borderBottom: "1px solid rgba(255,255,255,0.08)",
       }}>
         <RotatingSearchBar onSearchTap={onSearchTap} onMapTap={onMapTap} />
-        <CategoryBar active={activeCategory} onChange={setActiveCategory} />
+        <CategoryBar active={activeCategory} onChange={handleCategoryChange} />
       </div>
 
       <AnimatePresence mode="wait">
@@ -137,10 +171,18 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
 
               {/* Property Type Tags */}
               <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
-                {["All", "Private Villa", "Pool Villa", "Farmhouse", "Rooftop Space", "Work Pod", "Couple Room", "Open Lawn"].map(type => (
-                  <span key={type} className="text-[11px] px-3 py-1.5 rounded-full bg-foreground/5 text-foreground/80 border border-foreground/10 whitespace-nowrap shrink-0">
+                {stayFilters.map(type => (
+                  <button
+                    key={type}
+                    onClick={() => setSubFilter(type)}
+                    className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 ${
+                      subFilter === type
+                        ? "bg-primary text-primary-foreground font-semibold shadow-md"
+                        : "bg-foreground/5 text-foreground/80 border border-foreground/10"
+                    }`}
+                  >
                     {type}
-                  </span>
+                  </button>
                 ))}
               </div>
 
@@ -148,7 +190,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 <div className="mt-4">
                   <div className="flex items-center justify-between px-5 mb-3">
                     <h2 className="text-lg font-bold text-foreground">🔥 Trending Stays</h2>
-                    <button className="text-xs text-primary font-medium flex items-center gap-1">View all <ArrowRight size={12} /></button>
+                    <button onClick={() => setSubFilter("All")} className="text-xs text-primary font-medium flex items-center gap-1">View all <ArrowRight size={12} /></button>
                   </div>
                   <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
                     {trendingNow.map((p, i) => (
@@ -162,7 +204,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 <div className="mt-6">
                   <div className="flex items-center justify-between px-5 mb-3">
                     <h2 className="text-lg font-bold text-foreground">💸 Budget Friendly</h2>
-                    <button className="text-xs text-primary font-medium flex items-center gap-1">View all <ArrowRight size={12} /></button>
+                    <button onClick={() => setSubFilter("All")} className="text-xs text-primary font-medium flex items-center gap-1">View all <ArrowRight size={12} /></button>
                   </div>
                   <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
                     {budgetPicks.map((p, i) => (
@@ -195,10 +237,18 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
 
               {/* Sub-categories */}
               <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
-                {["💑 Romantic", "🎂 Celebration", "🎉 Party", "🔥 Chill", "💻 Work", "👩‍💼 Social", "🏕️ Adventure", "🎨 Cultural"].map(tag => (
-                  <span key={tag} className="text-[11px] px-3 py-1.5 rounded-full bg-foreground/5 text-foreground/80 border border-foreground/10 whitespace-nowrap shrink-0">
+                {experienceFilters.map(tag => (
+                  <button
+                    key={tag}
+                    onClick={() => setSubFilter(tag)}
+                    className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 ${
+                      subFilter === tag
+                        ? "bg-primary text-primary-foreground font-semibold shadow-md"
+                        : "bg-foreground/5 text-foreground/80 border border-foreground/10"
+                    }`}
+                  >
                     {tag}
-                  </span>
+                  </button>
                 ))}
               </div>
 
@@ -237,10 +287,18 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
               <SpotlightCarousel properties={serviceProperties} onPropertyTap={onPropertyTap} category="service" />
 
               <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
-                {["👨‍🍳 Food", "🎈 Decoration", "🚗 Transport", "🎧 Entertainment", "📸 Photography", "🧹 Staff"].map(tag => (
-                  <span key={tag} className="text-[11px] px-3 py-1.5 rounded-full bg-foreground/5 text-foreground/80 border border-foreground/10 whitespace-nowrap shrink-0">
+                {serviceFilters.map(tag => (
+                  <button
+                    key={tag}
+                    onClick={() => setSubFilter(tag)}
+                    className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 ${
+                      subFilter === tag
+                        ? "bg-primary text-primary-foreground font-semibold shadow-md"
+                        : "bg-foreground/5 text-foreground/80 border border-foreground/10"
+                    }`}
+                  >
                     {tag}
-                  </span>
+                  </button>
                 ))}
               </div>
 
