@@ -55,6 +55,17 @@ export default function AdminCurations() {
 
   const filtered = curations.filter(c => c.name.toLowerCase().includes(search.toLowerCase()));
 
+  const { getDragHandleProps, getDropTargetProps, handleDragEnd, isDragging, isDragOver } = useDragReorder({
+    items: [...curations].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0)),
+    getId: (c: any) => c.id,
+    onReorder: async (updates) => {
+      setCurations(prev => prev.map(c => { const u = updates.find(u => u.id === c.id); return u ? { ...c, sort_order: u.sort_order } : c; }));
+      for (const u of updates) { await supabase.from("curations").update({ sort_order: u.sort_order }).eq("id", u.id); }
+      toast({ title: "Order saved" });
+      window.dispatchEvent(new Event("hushh:listings-updated"));
+    },
+  });
+
   const startCreate = () => {
     setEditing({ ...emptyDraft });
     setEditingId(null);
