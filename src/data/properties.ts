@@ -1256,7 +1256,7 @@ export const properties: Property[] = [
     name: "DJ & Sound System",
     description: "Professional DJ · Lights · Sound · Fog machine",
     fullDescription: "Full DJ setup with professional sound system, intelligent lighting, fog machine, and a curated playlist across Bollywood, EDM, retro, and regional music. Our DJ arrives at your venue, sets up, and runs the show. Perfect for house parties, birthdays, and celebrations.",
-    images: [listingEmberGrounds, property3, property2],
+    images: [listingDjSound, property3, property2],
     rating: 4.8,
     reviewCount: 156,
     location: "Jeypore, Odisha",
