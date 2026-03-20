@@ -403,6 +403,11 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
           <LoyaltyScreen onBack={() => setShowLoyalty(false)} />
         )}
       </AnimatePresence>
+      <AnimatePresence>
+        {showReferral && (
+          <ReferralScreen onBack={() => setShowReferral(false)} />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
