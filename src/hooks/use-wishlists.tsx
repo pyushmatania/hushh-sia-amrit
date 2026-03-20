@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./use-auth";
 import { useToast } from "./use-toast";
-import { properties } from "@/data/properties";
+import { usePropertiesData } from "@/contexts/PropertiesContext";
 
 const LOCAL_KEY = "hushh_wishlists";
 const DEMO_WISHLIST_IDS = ["1", "3", "5", "7", "10"];

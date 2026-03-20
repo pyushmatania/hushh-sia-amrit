@@ -6,7 +6,8 @@ import {
   Utensils, Star, Shield, Wifi, Music, Flame, Home, Info
 } from "lucide-react";
 import { useState, useMemo } from "react";
-import { properties, addons } from "@/data/properties";
+import { addons } from "@/data/properties";
+import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { useToast } from "@/hooks/use-toast";
 import type { Booking } from "@/pages/Index";
 import LiveOrderingSheet from "./LiveOrderingSheet";

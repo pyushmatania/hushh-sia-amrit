@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { useState, useCallback, useRef, useMemo } from "react";
 import type { Booking } from "@/pages/Index";
-import { properties } from "@/data/properties";
+import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
 import AuthScreen from "./AuthScreen";
