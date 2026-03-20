@@ -183,11 +183,12 @@ function TiltCard({
           }}
         >
           {/* Background image with overlay */}
-          <div className="relative h-[220px]">
-            <img
+          <div className="relative h-[220px] overflow-hidden">
+            <motion.img
               src={property.images[0]}
               alt={property.name}
-              className="w-full h-full object-cover"
+              className="w-full h-[260px] object-cover"
+              style={{ y: imgY }}
             />
             {/* Dark gradient overlay — deeper for contrast */}
             <div className="absolute inset-0 bg-gradient-to-t from-card via-card/80 to-transparent" />
