@@ -29,6 +29,7 @@ export default function Admin() {
   const { user, loading: authLoading } = useAuth();
   const { hasAdminAccess, loading: roleLoading } = useAdmin();
   const [page, setPage] = useState<AdminPage>("dashboard");
+  const [skipAuth, setSkipAuth] = useState(false);
 
   if (authLoading || roleLoading) {
     return (
@@ -38,11 +39,23 @@ export default function Admin() {
     );
   }
 
-  if (!user) {
-    return <AuthScreen />;
+  if (!user && !skipAuth) {
+    return (
+      <div className="relative">
+        <AuthScreen />
+        <div className="fixed bottom-8 inset-x-0 flex justify-center z-50">
+          <button
+            onClick={() => setSkipAuth(true)}
+            className="px-6 py-3 rounded-full bg-card border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition shadow-lg backdrop-blur-lg"
+          >
+            Skip for now →
+          </button>
+        </div>
+      </div>
+    );
   }
 
-  if (!hasAdminAccess) {
+  if (!hasAdminAccess && !skipAuth) {
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-background px-6 text-center">
         <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center mb-4">
