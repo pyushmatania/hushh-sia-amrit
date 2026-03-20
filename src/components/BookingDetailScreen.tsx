@@ -640,10 +640,15 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
                         return (
                           <div
                             key={item.id}
-                            className={`rounded-xl border p-3 flex items-center justify-between transition-all ${
+                            className={`rounded-xl border p-3 flex items-center gap-3 transition-all ${
                               qty > 0 ? "border-primary/30 bg-primary/5" : "border-border"
                             }`}
                           >
+                            <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 text-lg ${
+                              qty > 0 ? "bg-primary/15" : "bg-secondary"
+                            }`}>
+                              {item.emoji}
+                            </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-1.5">
                                 <span className="font-medium text-sm text-foreground truncate">{item.name}</span>
