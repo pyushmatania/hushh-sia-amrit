@@ -791,6 +791,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
           <Star size={18} className="fill-primary text-primary" /> Reviews
         </h3>
         <ReviewSection
+          propertyId={property.id}
           reviews={property.reviews}
           rating={property.rating}
           reviewCount={property.reviewCount}
