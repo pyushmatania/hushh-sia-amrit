@@ -232,6 +232,7 @@ export default function ReviewSection({ propertyId, reviews: staticReviews, rati
   const [photos, setPhotos] = useState<File[]>([]);
   const [photoPreviewUrls, setPhotoPreviewUrls] = useState<string[]>([]);
   const [viewingImage, setViewingImage] = useState<string | null>(null);
+  const [viewingProfile, setViewingProfile] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Merge DB + static reviews for display
