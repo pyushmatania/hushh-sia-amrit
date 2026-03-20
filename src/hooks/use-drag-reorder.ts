@@ -50,6 +50,46 @@ export function useDragReorder<T>({ items, getId, getCategory, onReorder }: UseD
     };
   }, []);
 
+  const executeDrop = useCallback((targetId: string, targetCat: string) => {
+    const currentDragId = dragIdRef.current;
+    if (!currentDragId || currentDragId === targetId) {
+      clearDragState();
+      return;
+    }
+
+    const gc = getCategoryRef.current;
+    if (gc && targetCat !== dragCatRef.current) {
+      clearDragState();
+      return;
+    }
+
+    const currentItems = itemsRef.current;
+    const gid = getIdRef.current;
+
+    const relevantItems = gc
+      ? currentItems.filter(i => gc(i) === targetCat)
+      : currentItems;
+
+    const ids = relevantItems.map(gid);
+    const fromIdx = ids.indexOf(currentDragId);
+    const toIdx = ids.indexOf(targetId);
+
+    if (fromIdx === -1 || toIdx === -1) {
+      clearDragState();
+      return;
+    }
+
+    const reordered = [...ids];
+    const [moved] = reordered.splice(fromIdx, 1);
+    reordered.splice(toIdx, 0, moved);
+
+    const updates = reordered.map((id, idx) => ({ id, sort_order: idx }));
+
+    clearDragState();
+
+    onReorderRef.current(updates);
+  }, [clearDragState]);
+
   const getDragHandleProps = useCallback((item: T) => {
     const id = getIdRef.current(item);
     const cat = getCategoryRef.current?.(item) ?? "__all__";
@@ -114,46 +154,6 @@ export function useDragReorder<T>({ items, getId, getCategory, onReorder }: UseD
       },
     };
   }, [clearDragState, executeDrop, getDropTargetFromPoint]);
-
-  const executeDrop = useCallback((targetId: string, targetCat: string) => {
-    const currentDragId = dragIdRef.current;
-    if (!currentDragId || currentDragId === targetId) {
-      clearDragState();
-      return;
-    }
-
-    const gc = getCategoryRef.current;
-    if (gc && targetCat !== dragCatRef.current) {
-      clearDragState();
-      return;
-    }
-
-    const currentItems = itemsRef.current;
-    const gid = getIdRef.current;
-
-    const relevantItems = gc
-      ? currentItems.filter(i => gc(i) === targetCat)
-      : currentItems;
-
-    const ids = relevantItems.map(gid);
-    const fromIdx = ids.indexOf(currentDragId);
-    const toIdx = ids.indexOf(targetId);
-
-    if (fromIdx === -1 || toIdx === -1) {
-      clearDragState();
-      return;
-    }
-
-    const reordered = [...ids];
-    const [moved] = reordered.splice(fromIdx, 1);
-    reordered.splice(toIdx, 0, moved);
-
-    const updates = reordered.map((id, idx) => ({ id, sort_order: idx }));
-
-    clearDragState();
-
-    onReorderRef.current(updates);
-  }, [clearDragState]);
 
   const getDropTargetProps = useCallback((item: T) => {
     const id = getIdRef.current(item);
