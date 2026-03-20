@@ -896,7 +896,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
 
       {/* Sticky bottom */}
       <AnimatePresence>
-        {selectedSlotData && (
+        {selectedSlotData && selectedDate && (
           <motion.div
             initial={{ y: 80 }}
             animate={{ y: 0 }}
@@ -906,7 +906,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
             <div>
               <span className="font-semibold text-gradient-warm text-lg">₹{selectedSlotData.price.toLocaleString()}</span>
               <span className="text-muted-foreground text-sm"> / {selectedSlotData.label.toLowerCase()}</span>
-              <p className="text-xs text-muted-foreground">{guests} guests</p>
+              <p className="text-xs text-muted-foreground">{guests} guests · {format(selectedDate, "d MMM")}</p>
             </div>
             <motion.button
               onClick={() => onBook(property, selectedSlot!, guests, selectedDate)}
