@@ -6,6 +6,7 @@ import {
   ShoppingCart, Package
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import AutoActionsPanel from "./AutoActionsPanel";
 
 interface SmartAlert {
   id: string;
