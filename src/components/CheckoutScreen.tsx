@@ -424,8 +424,15 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
         <div className="flex items-center justify-between">
           <span className="font-bold text-xl text-gradient-warm">₹{finalTotal.toLocaleString()}</span>
           <button
-            onClick={() => onConfirm(finalTotal)}
-            className="bg-primary text-primary-foreground px-8 py-3.5 rounded-xl font-semibold text-sm flex items-center gap-2 glow-primary"
+            onClick={() => {
+              if (liveGuests < 1) {
+                setEditingGuests(true);
+                return;
+              }
+              onConfirm(finalTotal);
+            }}
+            disabled={liveGuests < 1}
+            className="bg-primary text-primary-foreground px-8 py-3.5 rounded-xl font-semibold text-sm flex items-center gap-2 glow-primary disabled:opacity-50"
           >
             Pay Now <ChevronRight size={16} />
           </button>
