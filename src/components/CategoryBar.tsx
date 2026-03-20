@@ -1,14 +1,9 @@
 import { motion, useAnimation, type Variants } from "framer-motion";
 import { useEffect, useState } from "react";
-import iconStays from "@/assets/icon-stays.png";
-import iconExperiences from "@/assets/icon-experiences.png";
-import iconServices from "@/assets/icon-services.png";
-import iconBonfire from "@/assets/icon-bonfire.png";
-import iconPool from "@/assets/icon-pool.png";
-import iconParty from "@/assets/icon-party.png";
-import iconMovie from "@/assets/icon-movie.png";
-import iconDining from "@/assets/icon-dining.png";
-import iconStargazing from "@/assets/icon-stargazing.png";
+import iconHome from "@/assets/icon-home.png";
+import iconStays from "@/assets/icon-stays-new.png";
+import iconExperiences from "@/assets/icon-experiences-new.png";
+import iconServices from "@/assets/icon-services-new.png";
 
 interface Category {
   id: string;
@@ -19,8 +14,9 @@ interface Category {
 }
 
 const categories: Category[] = [
-  { id: "stays", label: "Stays", icon: iconStays, animationType: "doorSwing" },
-  { id: "experiences", label: "Experiences", icon: iconExperiences, badge: "NEW", animationType: "danceSpin" },
+  { id: "stays", label: "Home", icon: iconHome, animationType: "doorSwing" },
+  { id: "stays-book", label: "Stays", icon: iconStays, badge: "NEW", animationType: "waterSplash" },
+  { id: "experiences", label: "Experiences", icon: iconExperiences, animationType: "danceSpin" },
   { id: "services", label: "Services", icon: iconServices, badge: "NEW", animationType: "bellRing" },
 ];
 
@@ -188,7 +184,7 @@ function AnimatedIcon({ cat, isActive }: { cat: Category; isActive: boolean }) {
     <motion.img
       src={cat.icon}
       alt={cat.label}
-      className="w-12 h-12 object-contain"
+      className="w-16 h-16 object-contain"
       style={{
         opacity: isActive ? 1 : 0.85,
         ...(isActive ? activeEffects[cat.animationType] || {} : {}),
@@ -223,7 +219,7 @@ export default function CategoryBar({ active, onChange }: CategoryBarProps) {
               onClick={() => onChange(cat.id)}
               className="relative flex flex-col items-center gap-1.5 px-3 pt-3 pb-3 shrink-0 group min-w-[76px]"
             >
-              <div className="relative h-12 flex items-center justify-center">
+              <div className="relative h-16 flex items-center justify-center">
                 <AnimatedIcon cat={cat} isActive={isActive} />
                 {cat.badge && (
                   <motion.span
