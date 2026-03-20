@@ -113,6 +113,7 @@ export default function ActiveTripCard({ onViewTrip }: ActiveTripCardProps) {
       <LiveOrderingSheet
         open={orderingOpen}
         onClose={() => setOrderingOpen(false)}
+        propertyName={property.name}
         propertyId={activeBooking.propertyId}
         bookingId={activeBooking.bookingId}
       />

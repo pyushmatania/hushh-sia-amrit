@@ -488,14 +488,18 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
       <OrderHistorySection />
 
       {/* Live ordering sheet for active trip */}
-      {orderingBooking && (
-        <LiveOrderingSheet
-          open={!!orderingBooking}
-          onClose={() => setOrderingBooking(null)}
-          propertyId={orderingBooking.propertyId}
-          bookingId={orderingBooking.bookingId}
-        />
-      )}
+      {orderingBooking && (() => {
+        const orderProp = properties.find(p => p.id === orderingBooking.propertyId);
+        return (
+          <LiveOrderingSheet
+            open={!!orderingBooking}
+            onClose={() => setOrderingBooking(null)}
+            propertyName={orderProp?.name || ""}
+            propertyId={orderingBooking.propertyId}
+            bookingId={orderingBooking.bookingId}
+          />
+        );
+      })()}
     </div>
     </PullToRefresh>
   );
