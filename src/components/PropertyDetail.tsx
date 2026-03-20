@@ -560,7 +560,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
                   </h4>
                   <div className="space-y-2">
                     {relatedExperiences.map((exp) => (
-                      <RelatedPropertyRow key={exp.id} relatedProperty={exp} onTap={onPropertyTap} />
+                      <RelatedPropertyRow key={exp.id} relatedProperty={exp} onTap={onPropertyTap || (() => {})} />
                     ))}
                   </div>
                 </div>
