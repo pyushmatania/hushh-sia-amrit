@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Plus, Minus, Check, ChefHat, Palette, Music, Gamepad2, Wifi, Armchair, Camera, Flame, Star, Sparkles, X, ChevronRight } from "lucide-react";
+import { ArrowLeft, Plus, Minus, Check, ChefHat, Palette, Music, Gamepad2, Wifi, Armchair, Camera, Flame, Star, Sparkles, X, ChevronRight, Search } from "lucide-react";
 import { useState, useMemo, useRef } from "react";
 import type { Property } from "@/data/properties";
 import { addons } from "@/data/properties";
