@@ -148,106 +148,171 @@ function TiltCard({
         onPointerMove={handlePointerMove}
         onPointerLeave={handlePointerLeave}
         onClick={() => onViewDetail(booking)}
-        className={`relative rounded-3xl overflow-hidden cursor-pointer ${status.glow} transition-shadow duration-300`}
+        className={`relative rounded-3xl overflow-hidden cursor-pointer transition-shadow duration-300`}
+        // Deep layered shadow for thickness
+        whileHover={{ y: -4 }}
       >
-        {/* Background image with overlay */}
-        <div className="relative h-[220px]">
-          <img
-            src={property.images[0]}
-            alt={property.name}
-            className="w-full h-full object-cover"
-          />
-          {/* Dark gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
-
-          {/* Holographic glare effect */}
-          <motion.div
-            className="absolute inset-0 pointer-events-none rounded-3xl"
-            style={{
-              background: "radial-gradient(circle at 50% 50%, hsla(270, 80%, 75%, 0.25) 0%, transparent 60%)",
-              opacity: glareOpacity,
-            }}
-          />
-
-          {/* Status pill */}
-          <div className="absolute top-4 right-4" style={{ transform: "translateZ(30px)" }}>
-            <div className={`flex items-center gap-1.5 bg-gradient-to-r ${status.gradient} backdrop-blur-md px-3 py-1.5 rounded-full`}>
-              <span className={`w-1.5 h-1.5 rounded-full ${status.dotColor} animate-pulse`} />
-              <span className="text-[11px] font-semibold text-primary-foreground">{status.label}</span>
-            </div>
-          </div>
-
-          {/* Floating QR mini badge for upcoming */}
-          {booking.status === "upcoming" && (
-            <motion.div
-              className="absolute top-4 left-4 w-10 h-10 glass rounded-xl flex items-center justify-center"
-              style={{ transform: "translateZ(25px)" }}
-              animate={{ rotate: [0, 2, -2, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            >
-              <QrCode size={18} className="text-foreground" />
-            </motion.div>
-          )}
-        </div>
-
-        {/* Card content — floating above */}
+        {/* Multi-layer depth shadow */}
         <div
-          className="relative px-5 pb-5 -mt-8"
-          style={{ transform: "translateZ(20px)" }}
+          className="absolute -inset-[1px] rounded-3xl pointer-events-none"
+          style={{
+            boxShadow: `
+              0 2px 4px hsla(0,0%,0%,0.3),
+              0 8px 16px hsla(0,0%,0%,0.25),
+              0 16px 32px hsla(0,0%,0%,0.2),
+              0 24px 48px -8px hsla(270,60%,50%,0.15),
+              inset 0 1px 0 hsla(0,0%,100%,0.08)
+            `,
+          }}
+        />
+
+        {/* Card body with subtle inner glow */}
+        <div className="relative bg-card rounded-3xl overflow-hidden border border-border/40"
+          style={{
+            boxShadow: `
+              inset 0 1px 0 hsla(0,0%,100%,0.06),
+              inset 0 -1px 0 hsla(0,0%,0%,0.2)
+            `,
+          }}
         >
-          {/* Glass info card */}
-          <div className="glass rounded-2xl p-4 space-y-3">
-            {/* Title row */}
-            <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0">
-                <h3 className="font-bold text-base text-foreground truncate">{property.name}</h3>
-                <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                  <MapPin size={11} /> {property.location}
-                </p>
+          {/* Background image with overlay */}
+          <div className="relative h-[220px]">
+            <img
+              src={property.images[0]}
+              alt={property.name}
+              className="w-full h-full object-cover"
+            />
+            {/* Dark gradient overlay — deeper for contrast */}
+            <div className="absolute inset-0 bg-gradient-to-t from-card via-card/80 to-transparent" />
+
+            {/* Top edge highlight for raised look */}
+            <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+            {/* Holographic glare effect */}
+            <motion.div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: `radial-gradient(ellipse at 30% 20%, hsla(270, 80%, 75%, 0.2) 0%, transparent 50%),
+                             radial-gradient(ellipse at 70% 80%, hsla(200, 80%, 70%, 0.1) 0%, transparent 50%)`,
+                opacity: glareOpacity,
+              }}
+            />
+
+            {/* Status pill */}
+            <div className="absolute top-4 right-4" style={{ transform: "translateZ(30px)" }}>
+              <div className={`flex items-center gap-1.5 bg-gradient-to-r ${status.gradient} backdrop-blur-md px-3 py-1.5 rounded-full`}
+                style={{ boxShadow: "0 4px 12px hsla(0,0%,0%,0.3)" }}
+              >
+                <span className={`w-1.5 h-1.5 rounded-full ${status.dotColor} animate-pulse`} />
+                <span className="text-[11px] font-semibold text-primary-foreground">{status.label}</span>
               </div>
-              <span className="text-foreground font-bold text-lg shrink-0 text-gradient-warm">
-                ₹{booking.total.toLocaleString()}
-              </span>
             </div>
 
-            {/* Info chips */}
-            <div className="flex flex-wrap gap-2">
-              <span className="flex items-center gap-1.5 bg-secondary rounded-lg px-2.5 py-1.5 text-xs text-foreground">
-                <Calendar size={12} className="text-primary" /> {booking.date}
-              </span>
-              <span className="flex items-center gap-1.5 bg-secondary rounded-lg px-2.5 py-1.5 text-xs text-foreground">
-                <Clock size={12} className="text-primary" /> {booking.slot}
-              </span>
-              <span className="flex items-center gap-1.5 bg-secondary rounded-lg px-2.5 py-1.5 text-xs text-foreground">
-                <Users size={12} className="text-primary" /> {booking.guests}
-              </span>
-            </div>
+            {/* Floating QR mini badge for upcoming */}
+            {booking.status === "upcoming" && (
+              <motion.div
+                className="absolute top-4 left-4 w-10 h-10 glass rounded-xl flex items-center justify-center"
+                style={{
+                  transform: "translateZ(25px)",
+                  boxShadow: "0 4px 16px hsla(0,0%,0%,0.3)",
+                }}
+                animate={{ rotate: [0, 2, -2, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <QrCode size={18} className="text-foreground" />
+              </motion.div>
+            )}
+          </div>
 
-            {/* Footer */}
-            <div className="flex items-center justify-between pt-2 border-t border-border/50">
-              <span className="text-[10px] text-muted-foreground font-mono tracking-wide">{booking.bookingId}</span>
-              {booking.status === "upcoming" && (
-                <span className="flex items-center gap-1 text-xs font-semibold text-primary">
-                  View <ChevronRight size={14} />
+          {/* Card content — floating above */}
+          <div
+            className="relative px-5 pb-5 -mt-8"
+            style={{ transform: "translateZ(20px)" }}
+          >
+            {/* Glass info card with depth */}
+            <div className="rounded-2xl p-4 space-y-3 border border-border/40"
+              style={{
+                background: "linear-gradient(135deg, hsla(0,0%,100%,0.06) 0%, hsla(0,0%,100%,0.02) 100%)",
+                backdropFilter: "blur(20px) saturate(1.4)",
+                boxShadow: `
+                  0 4px 16px hsla(0,0%,0%,0.3),
+                  0 1px 3px hsla(0,0%,0%,0.2),
+                  inset 0 1px 0 hsla(0,0%,100%,0.08),
+                  inset 0 -1px 0 hsla(0,0%,0%,0.15)
+                `,
+              }}
+            >
+              {/* Title row */}
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <h3 className="font-bold text-base text-foreground truncate">{property.name}</h3>
+                  <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                    <MapPin size={11} /> {property.location}
+                  </p>
+                </div>
+                <span className="text-foreground font-bold text-lg shrink-0 text-gradient-warm">
+                  ₹{booking.total.toLocaleString()}
                 </span>
-              )}
-              {booking.status === "completed" && (
-                <button
-                  onClick={(e) => { e.stopPropagation(); onRebook(booking.propertyId); }}
-                  className="flex items-center gap-1 text-xs font-semibold text-foreground"
+              </div>
+
+              {/* Info chips */}
+              <div className="flex flex-wrap gap-2">
+                <span className="flex items-center gap-1.5 bg-secondary/80 rounded-lg px-2.5 py-1.5 text-xs text-foreground"
+                  style={{ boxShadow: "inset 0 1px 0 hsla(0,0%,100%,0.04), 0 1px 2px hsla(0,0%,0%,0.15)" }}
                 >
-                  Book Again <ChevronRight size={14} />
-                </button>
-              )}
-              {booking.status === "cancelled" && (
-                <span className="text-xs text-destructive/70">Refund processing</span>
-              )}
+                  <Calendar size={12} className="text-primary" /> {booking.date}
+                </span>
+                <span className="flex items-center gap-1.5 bg-secondary/80 rounded-lg px-2.5 py-1.5 text-xs text-foreground"
+                  style={{ boxShadow: "inset 0 1px 0 hsla(0,0%,100%,0.04), 0 1px 2px hsla(0,0%,0%,0.15)" }}
+                >
+                  <Clock size={12} className="text-primary" /> {booking.slot}
+                </span>
+                <span className="flex items-center gap-1.5 bg-secondary/80 rounded-lg px-2.5 py-1.5 text-xs text-foreground"
+                  style={{ boxShadow: "inset 0 1px 0 hsla(0,0%,100%,0.04), 0 1px 2px hsla(0,0%,0%,0.15)" }}
+                >
+                  <Users size={12} className="text-primary" /> {booking.guests}
+                </span>
+              </div>
+
+              {/* Footer */}
+              <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                <span className="text-[10px] text-muted-foreground font-mono tracking-wide">{booking.bookingId}</span>
+                {booking.status === "upcoming" && (
+                  <span className="flex items-center gap-1 text-xs font-semibold text-primary">
+                    View <ChevronRight size={14} />
+                  </span>
+                )}
+                {booking.status === "completed" && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onRebook(booking.propertyId); }}
+                    className="flex items-center gap-1 text-xs font-semibold text-foreground"
+                  >
+                    Book Again <ChevronRight size={14} />
+                  </button>
+                )}
+                {booking.status === "cancelled" && (
+                  <span className="text-xs text-destructive/70">Refund processing</span>
+                )}
+              </div>
             </div>
           </div>
+
+          {/* Bottom edge shadow for thickness illusion */}
+          <div className="absolute bottom-0 left-2 right-2 h-[6px] rounded-b-3xl pointer-events-none"
+            style={{ background: "linear-gradient(to bottom, transparent, hsla(0,0%,0%,0.25))" }}
+          />
         </div>
 
-        {/* Subtle border shine */}
-        <div className="absolute inset-0 rounded-3xl pointer-events-none border border-border/30" />
+        {/* Outer rim highlight */}
+        <div className="absolute inset-0 rounded-3xl pointer-events-none border border-white/[0.06]" />
+        
+        {/* Side edge shadows for 3D thickness */}
+        <div className="absolute top-2 bottom-2 -left-[1px] w-[2px] pointer-events-none rounded-l-3xl"
+          style={{ background: "linear-gradient(to right, hsla(0,0%,0%,0.3), transparent)" }}
+        />
+        <div className="absolute top-2 bottom-2 -right-[1px] w-[2px] pointer-events-none rounded-r-3xl"
+          style={{ background: "linear-gradient(to left, hsla(0,0%,0%,0.3), transparent)" }}
+        />
       </motion.div>
     </motion.div>
   );
