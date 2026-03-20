@@ -28,14 +28,14 @@ const menuCategories = [
 // Map DB inventory rows to MenuItem shape
 function mapInventoryToMenu(rows: any[]): MenuItem[] {
   return rows
-    .filter((r: any) => r.available && ["food", "drinks"].includes(r.category))
+    .filter((r: any) => r.available)
     .map((r: any) => ({
       id: r.id,
       name: r.name,
       emoji: r.emoji || "🍽️",
       price: Number(r.unit_price),
       category: r.category,
-      prepTime: "10 min",
+      prepTime: r.category === "food" ? "10 min" : r.category === "drinks" ? "5 min" : "Instant",
       veg: true,
     }));
 }
