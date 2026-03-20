@@ -107,7 +107,7 @@ export default function AdminBookings() {
                         onChange={e => updateStatus(b.id, e.target.value)}
                         className="text-[11px] bg-secondary border border-border rounded-lg px-2 py-1 text-foreground"
                       >
-                        {["pending","upcoming","active","completed","cancelled"].map(s =>
+                        {["pending","upcoming","confirmed","active","completed","cancelled"].map(s =>
                           <option key={s} value={s}>{s}</option>
                         )}
                       </select>
