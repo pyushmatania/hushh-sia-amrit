@@ -188,7 +188,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
               <CoupleSpecials properties={properties} onPropertyTap={onPropertyTap} />
 
               <SectionDivider title="UPCOMING EVENTS" />
-              <UpcomingEvents />
+              <UpcomingEvents properties={properties} onPropertyTap={onPropertyTap} />
 
               <SectionDivider title="WHAT'S HOT ON HUSHH" />
               <WhatsHotGrid properties={properties} onPropertyTap={onPropertyTap} />
