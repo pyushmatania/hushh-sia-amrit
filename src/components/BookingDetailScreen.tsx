@@ -2,10 +2,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, MapPin, Calendar, Clock, Users, QrCode,
   Phone, MessageCircle, X, AlertTriangle, Check, ChevronRight,
-  Navigation, Share2
+  Navigation, Share2, Plus, Minus, Sparkles, ShoppingBag
 } from "lucide-react";
-import { useState } from "react";
-import { properties } from "@/data/properties";
+import { useState, useMemo } from "react";
+import { properties, addons } from "@/data/properties";
+import { useToast } from "@/hooks/use-toast";
 import type { Booking } from "@/pages/Index";
 
 interface BookingDetailScreenProps {
@@ -17,15 +18,61 @@ interface BookingDetailScreenProps {
 
 export default function BookingDetailScreen({ booking, onBack, onCancel, onRebook }: BookingDetailScreenProps) {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [showAddonsSheet, setShowAddonsSheet] = useState(false);
+  const [addonSelections, setAddonSelections] = useState<Record<string, number>>({});
+  const [orderedAddons, setOrderedAddons] = useState<{ name: string; qty: number; price: number }[]>([]);
   const [cancelling, setCancelling] = useState(false);
   const [cancelled, setCancelled] = useState(false);
+  const { toast } = useToast();
 
-  const property = properties.find((p) => p.id === booking.propertyId);
+  const property = useMemo(() => properties.find((p) => p.id === booking.propertyId), [booking.propertyId]);
+
+  const addonTotal = useMemo(() => {
+    return Object.entries(addonSelections).reduce((sum, [id, qty]) => {
+      for (const group of Object.values(addons)) {
+        const item = group.find((a) => a.id === id);
+        if (item) return sum + item.price * qty * (item.perPerson ? booking.guests : 1);
+      }
+      return sum;
+    }, 0);
+  }, [addonSelections, booking.guests]);
+
+  const orderedTotal = useMemo(() => orderedAddons.reduce((s, a) => s + a.price, 0), [orderedAddons]);
+
   if (!property) return null;
 
   const isUpcoming = booking.status === "upcoming";
   const isCompleted = booking.status === "completed";
   const isCancelled = booking.status === "cancelled" || cancelled;
+
+  const toggleAddon = (id: string, delta: number) => {
+    setAddonSelections((prev) => {
+      const next = { ...prev };
+      const val = (next[id] || 0) + delta;
+      if (val <= 0) delete next[id];
+      else next[id] = val;
+      return next;
+    });
+  };
+
+  const handleOrderAddons = () => {
+    const items: { name: string; qty: number; price: number }[] = [];
+    Object.entries(addonSelections).forEach(([id, qty]) => {
+      for (const group of Object.values(addons)) {
+        const item = group.find((a) => a.id === id);
+        if (item) {
+          items.push({ name: item.name, qty, price: item.price * qty * (item.perPerson ? booking.guests : 1) });
+        }
+      }
+    });
+    setOrderedAddons((prev) => [...prev, ...items]);
+    setAddonSelections({});
+    setShowAddonsSheet(false);
+    toast({
+      title: "🎉 Add-ons Ordered!",
+      description: `₹${addonTotal.toLocaleString()} extra added to your trip`,
+    });
+  };
 
   const handleConfirmCancel = () => {
     setCancelling(true);
@@ -156,6 +203,64 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
           </div>
         </motion.div>
 
+        {/* ✨ Enhance Your Trip — add experiences & services */}
+        {(isUpcoming || isCompleted) && !isCancelled && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.12 }}
+            className="rounded-2xl border border-primary/20 bg-primary/5 p-4 space-y-3"
+          >
+            <div className="flex items-center gap-2">
+              <Sparkles size={16} className="text-primary" />
+              <h4 className="font-semibold text-sm text-foreground">Enhance Your Trip</h4>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Add food, decor, music, activities & more — pay only for what you add.
+            </p>
+
+            {/* Quick category chips */}
+            <div className="flex flex-wrap gap-2">
+              {Object.entries(addons).slice(0, 4).map(([category, items]) => (
+                <motion.button
+                  key={category}
+                  onClick={() => setShowAddonsSheet(true)}
+                  className="flex items-center gap-1.5 bg-secondary rounded-full px-3 py-1.5 text-xs font-medium text-foreground"
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <span>{items[0].categoryEmoji}</span>
+                  {category}
+                </motion.button>
+              ))}
+            </div>
+
+            <motion.button
+              onClick={() => setShowAddonsSheet(true)}
+              className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center gap-2"
+              whileTap={{ scale: 0.95 }}
+            >
+              <ShoppingBag size={14} /> Browse All Add-ons
+            </motion.button>
+
+            {/* Already ordered add-ons */}
+            {orderedAddons.length > 0 && (
+              <div className="space-y-1.5 pt-2 border-t border-border/50">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Ordered</p>
+                {orderedAddons.map((a, i) => (
+                  <div key={i} className="flex items-center justify-between text-xs">
+                    <span className="text-foreground">{a.name} × {a.qty}</span>
+                    <span className="text-foreground font-medium">₹{a.price.toLocaleString()}</span>
+                  </div>
+                ))}
+                <div className="flex justify-between text-sm font-semibold text-foreground pt-1 border-t border-border/30">
+                  <span>Add-on Total</span>
+                  <span>₹{orderedTotal.toLocaleString()}</span>
+                </div>
+              </div>
+            )}
+          </motion.div>
+        )}
+
         {/* Payment summary */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -164,11 +269,25 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
           className="rounded-2xl border border-border p-4"
         >
           <h4 className="font-semibold text-sm text-foreground mb-3">Payment Summary</h4>
-          <div className="flex justify-between items-center pt-2 border-t border-border">
-            <span className="text-sm text-muted-foreground">Total paid</span>
-            <span className={`font-bold text-lg ${isCancelled ? "line-through text-muted-foreground" : "text-foreground"}`}>
-              ₹{booking.total.toLocaleString()}
-            </span>
+          <div className="space-y-2">
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-muted-foreground">Booking</span>
+              <span className={`font-medium ${isCancelled ? "line-through text-muted-foreground" : "text-foreground"}`}>
+                ₹{booking.total.toLocaleString()}
+              </span>
+            </div>
+            {orderedTotal > 0 && (
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-muted-foreground">Add-ons</span>
+                <span className="font-medium text-foreground">₹{orderedTotal.toLocaleString()}</span>
+              </div>
+            )}
+            <div className="flex justify-between items-center pt-2 border-t border-border">
+              <span className="text-sm font-semibold text-foreground">Grand Total</span>
+              <span className={`font-bold text-lg ${isCancelled ? "line-through text-muted-foreground" : "text-foreground"}`}>
+                ₹{(booking.total + orderedTotal).toLocaleString()}
+              </span>
+            </div>
           </div>
           {isCancelled && (
             <div className="flex justify-between items-center mt-2">
@@ -257,20 +376,23 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
               Cancel Booking
             </motion.button>
             <motion.button
+              onClick={() => setShowAddonsSheet(true)}
               className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm glow-primary flex items-center justify-center gap-1"
               whileTap={{ scale: 0.95 }}
             >
-              <Phone size={14} /> Contact Host
+              <Plus size={14} /> Add Extras
             </motion.button>
           </div>
         ) : isCompleted ? (
-          <motion.button
-            onClick={() => onRebook(booking.propertyId)}
-            className="w-full py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm glow-primary flex items-center justify-center gap-2"
-            whileTap={{ scale: 0.95 }}
-          >
-            Book Again <ChevronRight size={16} />
-          </motion.button>
+          <div className="flex gap-3">
+            <motion.button
+              onClick={() => onRebook(booking.propertyId)}
+              className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm glow-primary flex items-center justify-center gap-2"
+              whileTap={{ scale: 0.95 }}
+            >
+              Book Again <ChevronRight size={16} />
+            </motion.button>
+          </div>
         ) : (
           <motion.button
             onClick={onBack}
@@ -291,12 +413,10 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-end justify-center"
           >
-            {/* Backdrop */}
             <div
               className="absolute inset-0 bg-background/80 backdrop-blur-sm"
               onClick={() => !cancelling && setShowCancelDialog(false)}
             />
-            {/* Sheet */}
             <motion.div
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
@@ -305,7 +425,6 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
               className="relative w-full max-w-md rounded-t-3xl border border-border bg-card p-6 space-y-5"
             >
               <div className="w-10 h-1 rounded-full bg-muted mx-auto" />
-              
               <div className="flex flex-col items-center text-center">
                 <div className="w-14 h-14 rounded-full bg-destructive/10 flex items-center justify-center mb-3">
                   <AlertTriangle size={28} className="text-destructive" />
@@ -316,8 +435,6 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
                   <span className="text-foreground font-medium">{booking.date}</span> will be cancelled.
                 </p>
               </div>
-
-              {/* Refund info */}
               <div className="rounded-xl bg-secondary p-4 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Booking amount</span>
@@ -329,7 +446,6 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
                 </div>
                 <p className="text-[11px] text-muted-foreground">Refund will be credited in 3-5 business days</p>
               </div>
-
               <div className="flex gap-3">
                 <motion.button
                   onClick={() => setShowCancelDialog(false)}
@@ -354,6 +470,126 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
                   ) : (
                     "Yes, Cancel"
                   )}
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Add-ons bottom sheet */}
+      <AnimatePresence>
+        {showAddonsSheet && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-end justify-center"
+          >
+            <div
+              className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+              onClick={() => setShowAddonsSheet(false)}
+            />
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="relative w-full max-w-md rounded-t-3xl border border-border bg-card max-h-[85vh] flex flex-col"
+            >
+              {/* Sheet header */}
+              <div className="px-6 pt-4 pb-3 border-b border-border/50 shrink-0">
+                <div className="w-10 h-1 rounded-full bg-muted mx-auto mb-3" />
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                      <Sparkles size={18} className="text-primary" /> Add Extras
+                    </h3>
+                    <p className="text-xs text-muted-foreground">{booking.guests} guests · prices adjusted per person where applicable</p>
+                  </div>
+                  <motion.button
+                    onClick={() => setShowAddonsSheet(false)}
+                    className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center"
+                    whileTap={{ scale: 0.85 }}
+                  >
+                    <X size={16} className="text-foreground" />
+                  </motion.button>
+                </div>
+              </div>
+
+              {/* Scrollable add-on list */}
+              <div className="overflow-y-auto flex-1 px-6 py-4 space-y-5">
+                {Object.entries(addons).map(([category, items]) => (
+                  <div key={category}>
+                    <h4 className="font-semibold text-sm text-foreground mb-2.5 flex items-center gap-1.5">
+                      <span>{items[0].categoryEmoji}</span> {category}
+                    </h4>
+                    <div className="space-y-2">
+                      {items.map((item) => {
+                        const qty = addonSelections[item.id] || 0;
+                        return (
+                          <div
+                            key={item.id}
+                            className={`rounded-xl border p-3 flex items-center justify-between transition-all ${
+                              qty > 0 ? "border-primary/30 bg-primary/5" : "border-border"
+                            }`}
+                          >
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <span className="font-medium text-sm text-foreground truncate">{item.name}</span>
+                                {qty > 0 && <Check size={12} className="text-success shrink-0" />}
+                              </div>
+                              <p className="text-[11px] text-muted-foreground truncate">{item.description}</p>
+                              <span className="text-xs font-medium text-foreground">
+                                {item.price === 0 ? "Free" : `₹${item.price}`}
+                                {item.perPerson ? "/person" : ""}
+                              </span>
+                            </div>
+                            {item.price > 0 && (
+                              <div className="flex items-center gap-2 ml-2 shrink-0">
+                                {qty > 0 && (
+                                  <motion.button
+                                    onClick={() => toggleAddon(item.id, -1)}
+                                    className="w-7 h-7 rounded-full border border-muted-foreground/50 flex items-center justify-center"
+                                    whileTap={{ scale: 0.85 }}
+                                  >
+                                    <Minus size={12} className="text-foreground" />
+                                  </motion.button>
+                                )}
+                                {qty > 0 && (
+                                  <span className="text-sm font-semibold text-foreground w-4 text-center">{qty}</span>
+                                )}
+                                <motion.button
+                                  onClick={() => toggleAddon(item.id, 1)}
+                                  className="w-7 h-7 rounded-full border border-muted-foreground/50 flex items-center justify-center"
+                                  whileTap={{ scale: 0.85 }}
+                                >
+                                  <Plus size={12} className="text-foreground" />
+                                </motion.button>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Sheet footer */}
+              <div className="px-6 py-3.5 border-t border-border/50 shrink-0">
+                <div className="flex items-center justify-between mb-1.5 text-xs text-muted-foreground">
+                  <span>{Object.keys(addonSelections).length} items selected</span>
+                  {addonTotal > 0 && <span>Extra: ₹{addonTotal.toLocaleString()}</span>}
+                </div>
+                <motion.button
+                  onClick={handleOrderAddons}
+                  disabled={addonTotal === 0}
+                  className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm glow-primary flex items-center justify-center gap-2 disabled:opacity-40"
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <ShoppingBag size={14} />
+                  {addonTotal > 0 ? `Order Add-ons · ₹${addonTotal.toLocaleString()}` : "Select items to order"}
                 </motion.button>
               </div>
             </motion.div>
