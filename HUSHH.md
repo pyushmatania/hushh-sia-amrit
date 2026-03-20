@@ -137,10 +137,16 @@ Active Trip → Order Food (live ordering sheet) / Add Extras (per-item emoji ic
 - Grid of wishlisted properties, empty state illustration
 
 ### 10. Trips Screen (`TripsScreen.tsx`)
-- Tabs: Upcoming/Completed/Cancelled, booking cards, View/Cancel/Rebook actions
+- Tabs: Active (checked-in) / Upcoming / Past / Cancelled
+- Active trips show live ordering CTA and "Add Extras" with per-item emoji icons
+- Booking cards with status-colored badges, View/Cancel/Rebook actions
 
 ### 11. Booking Detail (`BookingDetailScreen.tsx`)
-- Full booking info, status badge, cancel/rebook buttons
+- Full booking info, status banner (Active/Upcoming/Completed/Cancelled)
+- Property card with live badge for active trips
+- **Order Food**: Swiggy-style live ordering sheet for checked-in guests
+- **Add Extras**: Bottom sheet with categorized add-ons, per-item emoji icons, quantity selectors, running total
+- Cancel dialog with confirmation, rebook flow
 
 ### 12. Messages Screen (`MessagesScreen.tsx`)
 - Conversation list, unread badges, chat thread, message input
