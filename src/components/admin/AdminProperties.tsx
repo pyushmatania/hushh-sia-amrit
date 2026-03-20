@@ -39,6 +39,7 @@ interface Listing {
   entry_instructions: string;
   slots: any;
   rules: any;
+  sort_order: number;
 }
 
 const parseNumberInput = (value: string): number | undefined => {
