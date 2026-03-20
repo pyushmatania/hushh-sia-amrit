@@ -11,6 +11,8 @@ interface UseDragReorderOptions<T> {
 export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onReorder }: UseDragReorderOptions<T>) {
   const [dragId, setDragId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
+  const [justDroppedId, setJustDroppedId] = useState<string | null>(null);
+  const dropTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const dragIdRef = useRef<string | null>(null);
   const dragCatRef = useRef<string | null>(null);
