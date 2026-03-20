@@ -3,11 +3,13 @@ import {
   ArrowLeft, Crown, Gift, Star, Zap, ChevronRight, Copy, Share2,
   Trophy, Ticket, Coffee, Sparkles, TrendingUp, Check, Users, Loader2, Target
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLoyalty } from "@/hooks/use-loyalty";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
-import SpinWheel, { milestones, type Prize } from "./SpinWheel";
+import SpinWheel, { milestones as defaultMilestones, type Prize, type Milestone } from "./SpinWheel";
 
 interface LoyaltyScreenProps {
   onBack: () => void;
