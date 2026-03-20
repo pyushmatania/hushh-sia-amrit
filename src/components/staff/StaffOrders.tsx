@@ -42,6 +42,7 @@ export default function StaffOrders() {
 
     setOrders(ordersData.map(o => ({ ...o, items: itemMap.get(o.id) || [] })));
     setLoading(false);
+    initialLoadDone.current = true;
   };
 
   useEffect(() => {
