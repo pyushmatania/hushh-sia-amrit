@@ -7,8 +7,8 @@ import PropertyCard from "./PropertyCard";
 import PropertyCardSmall from "./PropertyCardSmall";
 import PackageCard from "./PackageCard";
 import { properties, packages, curatedCombos, type Property } from "@/data/properties";
-import MoodSelector, { type Mood } from "./home/MoodSelector";
 import CuratedPackCard, { tonightTags, type ExperiencePack } from "./home/CuratedPackCard";
+import CuratedPackListing from "./home/CuratedPackListing";
 import { useState, useMemo, useCallback, useRef } from "react";
 import { useCurations } from "@/hooks/use-curations";
 import { useNotifications } from "@/hooks/use-notifications";
@@ -49,7 +49,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
   }, []);
   const [activeCategory, setActiveCategory] = useState("home");
   const [subFilter, setSubFilter] = useState("All");
-  const [activeMood, setActiveMood] = useState<Mood>(null);
+  const [activeMood, setActiveMood] = useState<"romantic" | "party" | "chill" | "work" | null>(null);
   const [activePackFilter, setActivePackFilter] = useState("tonight");
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -160,7 +160,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
   }, [activeMood, activePackFilter]);
 
   // Handle mood change — also affects main property filtering
-  const handleMoodChange = useCallback((mood: Mood) => {
+  const handleMoodChange = useCallback((mood: "romantic" | "party" | "chill" | "work" | null) => {
     setActiveMood(mood);
     hapticSelection();
   }, []);
@@ -231,49 +231,6 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
               {/* Last Vibe — Repeat Booking */}
               <LastVibeCard onRebook={onPropertyTap} />
 
-              {/* Mood Selector */}
-              <MoodSelector activeMood={activeMood} onMoodChange={handleMoodChange} />
-
-              {/* Curated Experience Packs — Primary Discovery */}
-              <div className="mt-1">
-                <div className="flex items-center justify-between px-5 mb-2">
-                  <h2 className="text-base font-bold text-foreground" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                    ✨ Curated Packs
-                  </h2>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full font-bold" style={{ background: "hsl(var(--primary) / 0.15)", color: "hsl(var(--primary))" }}>
-                    1-TAP BOOK
-                  </span>
-                </div>
-                {/* Tonight tags */}
-                <div className="flex gap-2 overflow-x-auto hide-scrollbar px-4 mb-3">
-                  {tonightTags.map(tag => (
-                    <button
-                      key={tag.id}
-                      onClick={() => { hapticSelection(); setActivePackFilter(tag.id); }}
-                      className={`text-[10px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 flex items-center gap-1 ${
-                        activePackFilter === tag.id
-                          ? "bg-primary text-primary-foreground font-semibold shadow-md"
-                          : "bg-foreground/5 text-foreground/80 border border-foreground/10"
-                      }`}
-                    >
-                      <span>{tag.emoji}</span> {tag.label}
-                    </button>
-                  ))}
-                </div>
-                {/* Pack cards */}
-                <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2">
-                  {filteredPacks.map((pack, i) => (
-                    <CuratedPackCard key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
-                  ))}
-                  {filteredPacks.length === 0 && (
-                    <div className="w-full py-8 text-center">
-                      <p className="text-2xl mb-1">🔍</p>
-                      <p className="text-xs text-muted-foreground">No packs match this vibe</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-
               <SectionDivider title="🔥 TONIGHT'S VIBE" />
               <SpotlightCarousel properties={activeMood ? moodFilteredProperties : properties} onPropertyTap={onPropertyTap} category="home" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
 
@@ -301,6 +258,14 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
 
               <SectionDivider title="BLOCKBUSTER RELEASE" />
               <BlockbusterBanner properties={properties} onPropertyTap={onPropertyTap} />
+
+              {/* ✨ Curated Packs — Bottom of Home */}
+              <SectionDivider title="✨ CURATED PACKS" />
+              <div className="px-4 space-y-4 pb-2">
+                {filteredPacks.slice(0, 4).map((pack, i) => (
+                  <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
+                ))}
+              </div>
             </>
           )}
 
@@ -506,6 +471,14 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                   <button onClick={() => handleSubFilter("All")} className="text-xs text-primary mt-2 font-medium">Show all combos</button>
                 </div>
               )}
+
+              {/* Curated Packs in Curations tab */}
+              <SectionDivider title="✨ EXPERIENCE PACKS" />
+              <div className="px-4 space-y-4 pb-2">
+                {experiencePacks.map((pack, i) => (
+                  <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
+                ))}
+              </div>
 
               {/* Budget highlight */}
               <div className="mx-4 mt-6 p-4 rounded-2xl border border-foreground/10" style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(6,95,70,0.15) 100%)" }}>
