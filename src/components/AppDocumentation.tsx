@@ -335,13 +335,23 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
               <p className="text-[11px] text-muted-foreground">v1.0 · Internal Blueprint</p>
             </div>
           </div>
-          <motion.button
-            whileTap={{ scale: 0.85 }}
-            onClick={onClose}
-            className="w-9 h-9 rounded-full bg-muted flex items-center justify-center"
-          >
-            <X size={18} className="text-foreground" />
-          </motion.button>
+          <div className="flex items-center gap-2">
+            <motion.button
+              whileTap={{ scale: 0.85 }}
+              onClick={handleCopyDoc}
+              className="h-9 px-3 rounded-full bg-primary/10 border border-primary/20 flex items-center gap-1.5 text-xs font-medium text-primary"
+            >
+              {copied ? <Check size={14} /> : <Copy size={14} />}
+              {copied ? "Copied!" : "Copy"}
+            </motion.button>
+            <motion.button
+              whileTap={{ scale: 0.85 }}
+              onClick={onClose}
+              className="w-9 h-9 rounded-full bg-muted flex items-center justify-center"
+            >
+              <X size={18} className="text-foreground" />
+            </motion.button>
+          </div>
         </div>
       </div>
 
