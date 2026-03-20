@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 
 const MOOD_OPTIONS = ["Romantic", "Party", "Chill", "Adventure", "Work", "Celebration", "Family"];
 const INCLUDE_OPTIONS = [
