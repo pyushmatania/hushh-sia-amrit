@@ -74,7 +74,7 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
             )}
           </div>
           {savings > 0 && (
-            <span className="text-[9px] font-bold px-2 py-1 rounded-full bg-emerald-500/90 text-white">
+            <span className="text-[9px] font-bold px-2 py-1 rounded-full text-primary-foreground" style={{ background: "hsl(160 84% 39% / 0.9)" }}>
               Save ₹{savings}
             </span>
           )}
