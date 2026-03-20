@@ -285,7 +285,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
           {activeCategory === "experience" && (
             <>
               <SectionDivider title="🎉 TOP EXPERIENCES" />
-              <SpotlightCarousel properties={experienceProperties} onPropertyTap={onPropertyTap} category="experience" />
+              <SpotlightCarousel properties={experienceProperties} onPropertyTap={onPropertyTap} category="experience" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
 
               {/* Sub-categories */}
               <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
