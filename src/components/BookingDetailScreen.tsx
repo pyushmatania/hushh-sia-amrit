@@ -458,7 +458,25 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
 
       {/* Bottom actions */}
       <div className="fixed bottom-0 left-0 right-0 glass px-5 py-3.5 z-40">
-        {isUpcoming && !isCancelled ? (
+        {isActive && !isCancelled ? (
+          <div className="flex gap-3">
+            <motion.button
+              onClick={() => setShowFoodOrder(true)}
+              className="flex-1 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2"
+              style={{ background: "hsl(160 84% 39%)", color: "white", boxShadow: "0 4px 16px hsl(160 84% 39% / 0.3)" }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Utensils size={14} /> Order Food
+            </motion.button>
+            <motion.button
+              onClick={() => setShowAddonsSheet(true)}
+              className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm glow-primary flex items-center justify-center gap-1"
+              whileTap={{ scale: 0.95 }}
+            >
+              <Plus size={14} /> Add Extras
+            </motion.button>
+          </div>
+        ) : isUpcoming && !isCancelled ? (
           <div className="flex gap-3">
             <motion.button
               onClick={() => setShowCancelDialog(true)}
