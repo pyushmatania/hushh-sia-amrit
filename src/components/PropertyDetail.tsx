@@ -739,7 +739,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
                         </h4>
                         <div className="space-y-2">
                           {relatedServices.map((svc) => (
-                            <RelatedPropertyRow key={svc.id} relatedProperty={svc} onTap={onPropertyTap || (() => {})} />
+                            <RelatedPropertyRow key={svc.id} relatedProperty={svc} added={addedExtraIds.has(svc.id)} onToggle={() => toggleExtra(svc.id)} onViewDetails={() => onPropertyTap?.(svc)} />
                           ))}
                         </div>
                       </div>
