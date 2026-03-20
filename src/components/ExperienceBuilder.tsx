@@ -117,7 +117,14 @@ export default function ExperienceBuilder({ property, slotId, guests, date, onBa
     return sum + (cheapest?.price || ext.basePrice);
   }, 0);
 
-  const activeItems = addons[activeCategory] || [];
+  // Filter items based on search query — when searching, show across all categories
+  const isSearching = searchQuery.trim().length > 0;
+  const activeItems = isSearching
+    ? Object.values(addons).flat().filter(item =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.description.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : addons[activeCategory] || [];
 
   return (
     <motion.div
