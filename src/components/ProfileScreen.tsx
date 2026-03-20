@@ -557,6 +557,11 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
           <PublicProfileScreen userId={user?.id || "mock-guest"} onBack={() => setShowPublicProfile(false)} />
         )}
       </AnimatePresence>
+      <AnimatePresence>
+        {showDocs && (
+          <AppDocumentation open={showDocs} onClose={() => setShowDocs(false)} />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
