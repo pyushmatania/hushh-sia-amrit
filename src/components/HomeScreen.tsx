@@ -117,7 +117,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
         borderBottom: "1px solid rgba(255,255,255,0.08)",
       }}>
         <RotatingSearchBar onSearchTap={onSearchTap} onMapTap={onMapTap} />
-        <CategoryBar active={activeCategory} onChange={setActiveCategory} />
+        <CategoryBar active={activeCategory} onChange={handleCategoryChange} />
       </div>
 
       <AnimatePresence mode="wait">
