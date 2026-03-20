@@ -376,8 +376,9 @@ export default function ExperienceBuilder({ property, slotId, guests, date, onBa
                     )}
                     {qty > 0 && (
                       <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
+                        initial={{ scale: 0, rotate: -90 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ type: "spring", stiffness: 500, damping: 15 }}
                         className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary flex items-center justify-center"
                       >
                         <Check size={12} className="text-primary-foreground" />
