@@ -363,6 +363,28 @@ React 18 · TypeScript 5.8 · Vite 8 · Tailwind CSS 3.4 · shadcn/ui · CVA · 
 - HUSHH.md + in-app documentation (easter egg: tap version 5×)
 - Change history convention established
 
+### v1.11 — Curations & Mood Discovery
+- Mood Selector — emoji-based vibe picker filters entire feed
+- 8 Curated Experience Packs with 1-tap booking (After Hours Chill, Just Us Night, Party Scene, BBQ Bonfire, Movie Night, Game Night, Work Escape, Team Work Day)
+- Tonight Tags — quick discovery filters
+- CuratedPackCard with gradient headers, savings badges, strikethrough pricing
+- Slot Intelligence — smart tags on time slots (Almost Full, Best Price, Trending)
+- Dynamic Pricing — strikethrough prices, savings badges, viewers-now microcopy
+- `curations` table created in DB with public read RLS, 8 seeded packs
+- `use-curations` hook fetches from DB with fallback to static data
+
+### v1.12 — Monetization & Gamification (DB-Wired)
+- Live Service Ordering — Swiggy-style bottom sheet, 20-item menu, category filters, cart
+  - Wired to `orders` + `order_items` tables with authenticated RLS
+  - Accessible from booking confirmation via "Order Food & Drinks" button
+- Privacy Mode — toggle masks names & booking IDs, persisted in localStorage
+- Experience Builder Smart Nudges — contextual "People also added" suggestions
+- Spin Wheel — daily spin-to-win with weighted prizes (5–100 pts)
+  - Wired to `spin_history` table, 1 spin/day enforced via DB check
+- Milestone Rewards — 6 achievements with point rewards
+  - Wired to `user_milestones` table with unique(user_id, milestone_id)
+- PrivacyModeProvider wraps entire app
+
 ---
 
 ## 📐 Conventions & Guidelines
