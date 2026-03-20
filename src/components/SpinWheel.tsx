@@ -1,6 +1,7 @@
 import { motion, AnimatePresence, useMotionValue, animate } from "framer-motion";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { hapticSuccess } from "@/lib/haptics";
+import { playTick, playWinJingle } from "@/lib/spin-sounds";
 
 interface SpinWheelProps {
   onWin: (prize: Prize) => void;
@@ -40,12 +41,39 @@ export default function SpinWheel({ onWin, disabled }: SpinWheelProps) {
   const [result, setResult] = useState<Prize | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const rotation = useMotionValue(0);
+  const tickInterval = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const tickCount = useRef(0);
+
+  // Cleanup tick interval on unmount
+  useEffect(() => () => { if (tickInterval.current) clearInterval(tickInterval.current); }, []);
+
+  const startTicking = useCallback(() => {
+    tickCount.current = 0;
+    // Start fast, slow down over time
+    const tick = () => {
+      tickCount.current++;
+      const progress = Math.min(tickCount.current / 60, 1); // ~60 ticks over spin
+      const pitch = 1 + (1 - progress) * 0.5; // higher pitch at start
+      playTick(pitch);
+      const delay = 40 + progress * 200; // 40ms → 240ms
+      tickInterval.current = setTimeout(tick, delay);
+    };
+    tick();
+  }, []);
+
+  const stopTicking = useCallback(() => {
+    if (tickInterval.current) {
+      clearTimeout(tickInterval.current);
+      tickInterval.current = null;
+    }
+  }, []);
 
   const handleSpin = useCallback(() => {
     if (spinning || disabled) return;
     setSpinning(true);
     setResult(null);
     setShowConfetti(false);
+    startTicking();
 
     const weights = [30, 25, 30, 5, 20, 2];
     const totalWeight = weights.reduce((a, b) => a + b, 0);
@@ -62,7 +90,9 @@ export default function SpinWheel({ onWin, disabled }: SpinWheelProps) {
       duration: 5,
       ease: [0.15, 0.85, 0.35, 1],
       onComplete: () => {
+        stopTicking();
         hapticSuccess();
+        playWinJingle();
         setResult(prizes[winIdx]);
         setSpinning(false);
         setShowConfetti(true);
@@ -70,7 +100,7 @@ export default function SpinWheel({ onWin, disabled }: SpinWheelProps) {
         setTimeout(() => setShowConfetti(false), 3000);
       },
     });
-  }, [spinning, disabled, rotation, onWin]);
+  }, [spinning, disabled, rotation, onWin, startTicking, stopTicking]);
 
   // Generate confetti particles
   const confettiParticles = Array.from({ length: 24 }, (_, i) => ({
