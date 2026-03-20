@@ -256,7 +256,7 @@ function AISearchBar({ onResult, properties }: { onResult: (answer: string) => v
 function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
   property: PropertySummary; users: Map<string, UserMini>; onClose: () => void; onUserClick: (userId: string) => void;
 }) {
-  const [activeTab, setActiveTab] = useState<"calendar" | "guests" | "orders" | "analytics">("calendar");
+  const [activeTab, setActiveTab] = useState<"calendar" | "guests" | "orders" | "timeline" | "analytics">("calendar");
   const [selectedDay, setSelectedDay] = useState<{ date: string; bookings: PropertyBooking[] } | null>(null);
 
   const uniqueGuestList = useMemo(() => {
