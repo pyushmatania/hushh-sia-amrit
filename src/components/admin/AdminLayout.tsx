@@ -11,7 +11,7 @@ import { useAdmin } from "@/hooks/use-admin";
 export type AdminPage =
   | "dashboard" | "properties" | "bookings" | "users"
   | "analytics" | "curations" | "tags" | "campaigns"
-  | "coupons" | "orders";
+  | "coupons" | "orders" | "exports";
 
 interface AdminLayoutProps {
   activePage: AdminPage;
