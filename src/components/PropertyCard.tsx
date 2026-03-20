@@ -109,12 +109,13 @@ export default function PropertyCard({ property, index, onTap }: PropertyCardPro
       style={{ animationDelay: `${index * 60}ms` }}
     >
       {/* Image */}
-      <div
-        className="relative aspect-[4/3] rounded-2xl overflow-hidden"
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-      >
+      <div className="relative aspect-[4/3]">
         <AccentFrame color={accent.color} radius="1rem" glowAlpha={0.08} />
+        <div
+          className="relative w-full h-full rounded-2xl overflow-hidden"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
 
         {!imgLoaded && (
           <div className="absolute inset-0 bg-secondary animate-pulse rounded-2xl">
@@ -161,7 +162,7 @@ export default function PropertyCard({ property, index, onTap }: PropertyCardPro
           ))}
         </div>
       </div>
-
+      </div>
       {/* Info */}
       <div className="pt-2.5 pb-1">
         <div className="flex items-start justify-between gap-2">
