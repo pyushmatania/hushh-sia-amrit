@@ -22,9 +22,22 @@ export default function StaffInventory() {
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({ name: "", category: "food", emoji: "🍔", unit_price: 0, stock: 100 });
 
-  useEffect(() => {
+  const loadInventory = () => {
     supabase.from("inventory").select("*").order("category").order("name")
       .then(({ data }) => { setItems((data as any) ?? []); setLoading(false); });
+  };
+
+  useEffect(() => {
+    loadInventory();
+
+    const channel = supabase
+      .channel('staff-inventory-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'inventory' }, () => {
+        loadInventory();
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   const addItem = async () => {
