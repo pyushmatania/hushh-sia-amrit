@@ -305,9 +305,11 @@ interface PropertyDetailProps {
   onBack: () => void;
   onBook: (property: Property, slotId: string, guests: number, date: Date, extras?: Property[]) => void;
   onPropertyTap?: (property: Property) => void;
+  isWishlisted?: boolean;
+  onToggleWishlist?: (id: string) => void;
 }
 
-export default function PropertyDetail({ property, onBack, onBook, onPropertyTap }: PropertyDetailProps) {
+export default function PropertyDetail({ property, onBack, onBook, onPropertyTap, isWishlisted = false, onToggleWishlist }: PropertyDetailProps) {
   const [imgIndex, setImgIndex] = useState(0);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [guests, setGuests] = useState(2);
