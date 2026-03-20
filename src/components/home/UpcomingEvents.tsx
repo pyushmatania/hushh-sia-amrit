@@ -1,3 +1,5 @@
+import { toast } from "sonner";
+
 const events = [
   { emoji: "🎉", name: "Holi Bash 2026", date: "Mar 28", price: "₹999/person", color: "hsl(var(--primary))" },
   { emoji: "🏏", name: "IPL Screening Night", date: "Mar 30", price: "Free with booking", color: "hsl(var(--success))" },
@@ -20,7 +22,9 @@ export default function UpcomingEvents() {
             <p className="text-[15px] font-bold text-foreground">{event.name}</p>
             <p className="text-[13px] text-foreground/40 mt-0.5">{event.date} · {event.price}</p>
           </div>
-          <button className="px-4 py-2 rounded-full text-sm font-semibold text-primary-foreground shrink-0"
+          <button
+            onClick={() => toast.success(`${event.name} — Booking confirmed!`)}
+            className="px-4 py-2 rounded-full text-sm font-semibold text-primary-foreground shrink-0 active:scale-95 transition-transform"
             style={{ background: event.color }}>
             Book
           </button>

@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import { Bell, MapPin, ArrowRight } from "lucide-react";
 import PullToRefresh from "./PullToRefresh";
 import CategoryBar from "./CategoryBar";
@@ -384,7 +385,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
 
               {/* Hero featured combo — first popular one */}
               {filteredCombos.length > 0 && (
-                <CurationHeroCard combo={filteredCombos[0]} index={0} />
+                <CurationHeroCard combo={filteredCombos[0]} index={0} onTap={() => toast.info(`${filteredCombos[0].name} — coming soon!`)} />
               )}
 
               {/* Quick picks row */}
@@ -396,7 +397,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                   </div>
                   <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-1">
                     {filteredCombos.slice(1).map((combo, i) => (
-                      <CurationMiniCard key={combo.id} combo={combo} index={i} />
+                      <CurationMiniCard key={combo.id} combo={combo} index={i} onTap={() => toast.info(`${combo.name} — coming soon!`)} />
                     ))}
                   </div>
                 </div>
@@ -409,7 +410,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                     <h2 className="text-base font-bold text-foreground">🎯 More Combos</h2>
                   </div>
                   {filteredCombos.slice(3).map((combo, i) => (
-                    <CurationHeroCard key={combo.id} combo={combo} index={i} />
+                    <CurationHeroCard key={combo.id} combo={combo} index={i} onTap={() => toast.info(`${combo.name} — coming soon!`)} />
                   ))}
                 </div>
               )}

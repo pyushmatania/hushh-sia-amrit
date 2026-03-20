@@ -1,6 +1,6 @@
-import { useRef } from "react";
 import { ChevronRight } from "lucide-react";
 import { type Property } from "@/data/properties";
+import { toast } from "sonner";
 
 import icon3dPickleball from "@/assets/icon-3d-pickleball.png";
 import icon3dBadminton from "@/assets/icon-3d-badminton.png";
@@ -18,7 +18,7 @@ interface SportsCardsProps {
   onPropertyTap: (property: Property) => void;
 }
 
-export default function SportsCards({ properties }: SportsCardsProps) {
+export default function SportsCards({ properties, onPropertyTap }: SportsCardsProps) {
   const sportsData: SportActivity[] = [
     {
       name: "Pickleball", icon: icon3dPickleball,
@@ -70,7 +70,12 @@ export default function SportsCards({ properties }: SportsCardsProps) {
           <div className="space-y-4">
             {sport.venues.map((venue, vi) => (
               <div key={vi}>
-                <div className="flex items-center gap-3 mb-2.5">
+                <div className="flex items-center gap-3 mb-2.5 cursor-pointer active:opacity-70 transition-opacity"
+                  onClick={() => {
+                    const match = properties.find(p => p.name.toLowerCase().includes(venue.name.split("|")[0].trim().toLowerCase()));
+                    if (match) onPropertyTap(match);
+                    else toast.info(`${venue.name} — details coming soon!`);
+                  }}>
                   <img src={venue.image} alt={venue.name}
                     className="w-12 h-12 rounded-[10px] object-cover" loading="lazy" />
                   <div className="flex-1 min-w-0">
@@ -81,6 +86,7 @@ export default function SportsCards({ properties }: SportsCardsProps) {
                 <div className="flex gap-2 flex-wrap">
                   {venue.slots.map((slot) => (
                     <button key={slot}
+                      onClick={() => toast.success(`${sport.name} at ${slot} — Slot reserved!`)}
                       className="rounded-full px-4 py-2 text-sm text-foreground font-medium active:scale-95 transition-transform hover:bg-white/[0.08]"
                       style={{ border: "1px solid rgba(255,255,255,0.15)" }}>
                       {slot}
@@ -91,7 +97,9 @@ export default function SportsCards({ properties }: SportsCardsProps) {
             ))}
           </div>
           <div className="mt-5 flex justify-center">
-            <button className="flex items-center gap-1.5 rounded-full px-6 py-2.5 text-sm text-foreground/50 font-medium"
+            <button
+              onClick={() => toast.info(`All ${sport.name} venues — coming soon!`)}
+              className="flex items-center gap-1.5 rounded-full px-6 py-2.5 text-sm text-foreground/50 font-medium active:scale-95 transition-transform"
               style={{ border: "1px solid rgba(255,255,255,0.1)" }}>
               View all venues <ChevronRight size={14} />
             </button>
