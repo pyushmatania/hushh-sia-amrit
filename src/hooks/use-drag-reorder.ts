@@ -113,7 +113,14 @@ export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onR
     const reordered = [...ids];
     [reordered[fromIdx], reordered[toIdx]] = [reordered[toIdx], reordered[fromIdx]];
     const updates = reordered.map((id, idx) => ({ id, sort_order: idx }));
+    const droppedId = currentDragId;
     clearDragState();
+
+    // Trigger spring settle animation
+    setJustDroppedId(droppedId);
+    if (dropTimerRef.current) clearTimeout(dropTimerRef.current);
+    dropTimerRef.current = setTimeout(() => setJustDroppedId(null), 500);
+
     onReorderRef.current(updates);
   }, [clearDragState]);
 
