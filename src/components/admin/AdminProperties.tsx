@@ -419,6 +419,18 @@ export default function AdminProperties() {
                   <p className="text-xs text-muted-foreground">{isCreating ? "Fill in the details" : editingListing.name}</p>
                 </div>
                 <div className="flex gap-2">
+                  {!isCreating && editingListing.id && (
+                    <button
+                      onClick={() => {
+                        setEditingListing(null);
+                        // Navigate to property detail in the app
+                        window.location.href = `/?property=${editingListing.id}`;
+                      }}
+                      className="px-3 py-2 rounded-xl bg-secondary text-foreground text-sm font-medium hover:bg-secondary/80 active:scale-95 transition flex items-center gap-1.5"
+                    >
+                      <Eye size={14} /> Preview
+                    </button>
+                  )}
                   <button onClick={saveListing}
                     className="px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 active:scale-95 transition">
                     {isCreating ? "Create" : "Save"}
