@@ -4,8 +4,10 @@ import {
   LayoutDashboard, Building2, CalendarCheck, Users, BarChart3,
   Sparkles, Tag, Megaphone, Ticket, ShoppingCart, LogOut,
   ChevronLeft, ChevronRight, Shield, Menu, X, FileSpreadsheet,
-  Bot, Bell, ScrollText, Wallet, Zap, Trophy, Search, UserCheck, Package
+  Bot, Bell, ScrollText, Wallet, Zap, Trophy, Search, UserCheck, Package,
+  Home
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import CommandPalette from "./CommandPalette";
 import FloatingChecklist from "./FloatingChecklist";
 import { useAuth } from "@/hooks/use-auth";
@@ -53,6 +55,7 @@ const navItems: { id: AdminPage; label: string; icon: typeof LayoutDashboard; ad
 export default function AdminLayout({ activePage, onNavigate, children }: AdminLayoutProps) {
   const { signOut, user } = useAuth();
   const { isAdmin } = useAdmin();
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -104,6 +107,13 @@ export default function AdminLayout({ activePage, onNavigate, children }: AdminL
             <p className="text-[10px] text-muted-foreground">{isAdmin ? "Super Admin" : "Manager"}</p>
           </div>
         )}
+        <button
+          onClick={() => navigate("/")}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition"
+        >
+          <Home size={18} />
+          {(!collapsed || mobile) && <span>Back to App</span>}
+        </button>
         <button
           onClick={signOut}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-destructive hover:bg-destructive/10 transition"
