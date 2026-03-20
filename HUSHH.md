@@ -108,9 +108,11 @@ Active Trip → Order Food (live ordering sheet) / Add Extras (per-item emoji ic
 ### 2. Home / Explore (`HomeScreen.tsx`)
 - **Header**: Profile avatar, location pill, notification bell (unread badge)
 - **Rotating Search Bar**: Cycles through placeholder suggestions
+- **Active Trip Card**: Shows current checked-in booking with 1-tap food ordering and trip view
 - **Category Bar**: Horizontal tabs — Home, Stays, Experiences, Services, Curations, Work
   - Sub-filters per category, smooth scroll on switch (offset 280px on sub-filter)
-- **Content Sections**: Spotlight Carousel, Property Cards (video thumbnails + AccentFrame), Sports Cards, Curated Combos, Foodie Carousel, Couple Specials, Service Grid, Curation Grid/Hero, What's Hot, Events, Blockbuster Banner, Experience Cards
+- **Content Sections**: Spotlight Carousel, Property Cards (video thumbnails + AccentFrame), Sports Cards, Foodie Carousel, Couple Specials, Service Grid, Curated Pack Listings (vertical cards with autoplay video backgrounds), What's Hot, Events, Blockbuster Banner, Experience Cards
+- **Pull-to-refresh** + **Back-to-top button**
 - **Pull-to-refresh** + **Back-to-top button**
 
 ### 3. Property Detail (`PropertyDetail.tsx`)
