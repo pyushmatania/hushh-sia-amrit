@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
+import { playDragStartSound, playDropSound } from "@/lib/drag-sounds";
 
 interface UseDragReorderOptions<T> {
   items: T[];
@@ -116,7 +117,8 @@ export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onR
     const droppedId = currentDragId;
     clearDragState();
 
-    // Trigger spring settle animation
+    // Trigger spring settle animation + drop sound
+    playDropSound();
     setJustDroppedId(droppedId);
     if (dropTimerRef.current) clearTimeout(dropTimerRef.current);
     dropTimerRef.current = setTimeout(() => setJustDroppedId(null), 500);
@@ -241,6 +243,7 @@ export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onR
         const rowEl = handleEl.closest<HTMLElement>("[data-reorder-id]");
         if (rowEl) {
           createGhost(rowEl, e.clientX, e.clientY);
+          playDragStartSound();
         }
 
         dragIdRef.current = id;
