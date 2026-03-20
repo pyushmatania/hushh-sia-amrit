@@ -29,6 +29,7 @@ export default function Admin() {
   const { user, loading: authLoading } = useAuth();
   const { hasAdminAccess, loading: roleLoading } = useAdmin();
   const [page, setPage] = useState<AdminPage>("dashboard");
+  const [skipAuth, setSkipAuth] = useState(false);
 
   if (authLoading || roleLoading) {
     return (
