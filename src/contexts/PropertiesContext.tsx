@@ -164,16 +164,18 @@ function curationsToCombo(row: any, staticMatch: CuratedCombo | undefined): Cura
 
 export function PropertiesProvider({ children }: { children: ReactNode }) {
   const [properties, setProperties] = useState<Property[]>(staticProperties);
+  const [packages, setPackages] = useState<ExperiencePackage[]>(staticPackages);
   const [addons, setAddons] = useState<Record<string, Addon[]>>(staticAddons);
   const [curatedCombos, setCuratedCombos] = useState<CuratedCombo[]>(staticCombos);
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const load = useCallback(async () => {
-    const [listingsRes, inventoryRes, curationsRes] = await Promise.all([
+    const [listingsRes, inventoryRes, curationsRes, packagesRes] = await Promise.all([
       supabase.from("host_listings").select("*").eq("status", "published").order("created_at", { ascending: true }),
       supabase.from("inventory").select("*").order("category").order("name"),
       supabase.from("curations").select("*").eq("active", true).order("sort_order", { ascending: true }),
+      supabase.from("experience_packages").select("*").eq("active", true).order("sort_order", { ascending: true }),
     ]);
 
     // Process listings
@@ -228,6 +230,22 @@ export function PropertiesProvider({ children }: { children: ReactNode }) {
       setCuratedCombos(staticCombos);
     }
 
+    // Process experience packages
+    if (!packagesRes.error && packagesRes.data && packagesRes.data.length > 0) {
+      setPackages(
+        packagesRes.data.map((row: any) => ({
+          id: row.id,
+          name: row.name,
+          emoji: row.emoji || "✨",
+          price: Number(row.price),
+          includes: row.includes || [],
+          gradient: row.gradient || "from-primary/80 to-primary/40",
+        }))
+      );
+    } else {
+      setPackages(staticPackages);
+    }
+
     setLoading(false);
   }, []);
 
@@ -259,7 +277,7 @@ export function PropertiesProvider({ children }: { children: ReactNode }) {
     <PropertiesContext.Provider
       value={{
         properties,
-        packages: staticPackages,
+        packages,
         curatedCombos,
         addons,
         loading,
