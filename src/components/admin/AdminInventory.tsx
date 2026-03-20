@@ -74,7 +74,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
     const defaultEmoji = filterCategory === "addons" ? "🎉" : "🍽️";
     setEditing({ name: "", emoji: defaultEmoji, category: defaultCat, unit_price: 0, stock: 100, low_stock_threshold: 10, available: true, property_id: null, sort_order: 0 });
     setIsCreating(true);
-  };
+    setPreviewMode(false);
 
   const save = async () => {
     if (!editing?.name) { toast({ title: "Name required", variant: "destructive" }); return; }
