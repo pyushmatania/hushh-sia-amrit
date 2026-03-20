@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Package, Search, Plus, Trash2, Pencil, X, AlertTriangle } from "lucide-react";
+import { Package, Search, Plus, Trash2, Pencil, X, AlertTriangle, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -188,6 +188,8 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
                       className={`px-2 py-1 rounded-lg text-[10px] font-medium transition ${
                         item.available ? "bg-emerald-500/15 text-emerald-400" : "bg-muted text-muted-foreground"
                       }`}>{item.available ? "Available" : "Unavailable"}</button>
+                    <button onClick={() => window.location.href = "/"}
+                      className="p-1.5 rounded-lg hover:bg-secondary transition" title="Preview in app"><Eye size={13} className="text-muted-foreground" /></button>
                     <button onClick={() => { setEditing({ ...item }); setIsCreating(false); }}
                       className="p-1.5 rounded-lg hover:bg-secondary transition"><Pencil size={13} className="text-muted-foreground" /></button>
                     <button onClick={() => deleteItem(item.id)}

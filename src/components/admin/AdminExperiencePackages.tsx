@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Gift, Search, Plus, Trash2, Pencil, X, GripVertical } from "lucide-react";
+import { Gift, Search, Plus, Trash2, Pencil, X, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -205,6 +205,13 @@ export default function AdminExperiencePackages() {
                   }`}
                 >
                   {pkg.active ? "Active" : "Inactive"}
+                </button>
+                <button
+                  onClick={() => window.location.href = "/"}
+                  className="p-1.5 rounded-lg hover:bg-secondary transition"
+                  title="Preview in app"
+                >
+                  <Eye size={13} className="text-muted-foreground" />
                 </button>
                 <button
                   onClick={() => { setEditing({ ...pkg }); setIsCreating(false); setIncludeInput(""); }}
