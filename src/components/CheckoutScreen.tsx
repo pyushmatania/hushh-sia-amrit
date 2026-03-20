@@ -1,9 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Tag, CreditCard, Smartphone, Banknote, ChevronRight, Shield, Clock, Users, MapPin, CalendarIcon, X, Heart, Bookmark } from "lucide-react";
+import { ArrowLeft, Tag, CreditCard, Smartphone, Banknote, ChevronRight, Shield, Clock, Users, MapPin, CalendarIcon, X, Heart, Bookmark, Pencil, Minus, Plus, Check as CheckIcon } from "lucide-react";
 import { useState } from "react";
 import { format } from "date-fns";
 import type { Property } from "@/data/properties";
 import { addons } from "@/data/properties";
+import { Calendar } from "@/components/ui/calendar";
 
 interface CheckoutScreenProps {
   property: Property;
@@ -25,7 +26,11 @@ const paymentMethods = [
   { id: "cod", label: "Pay at Venue", icon: Banknote, sublabel: "Cash or card on arrival" },
 ];
 
-export default function CheckoutScreen({ property, slotId, guests, date, selections: initialSelections, total: initialTotal, onBack, onConfirm, extras: initialExtras, isWishlisted, onToggleWishlist }: CheckoutScreenProps) {
+export default function CheckoutScreen({ property, slotId, guests: initialGuests, date: initialDate, selections: initialSelections, total: initialTotal, onBack, onConfirm, extras: initialExtras, isWishlisted, onToggleWishlist }: CheckoutScreenProps) {
+  const [liveDate, setLiveDate] = useState<Date>(initialDate);
+  const [liveGuests, setLiveGuests] = useState(initialGuests);
+  const [editingDate, setEditingDate] = useState(false);
+  const [editingGuests, setEditingGuests] = useState(false);
   const slot = property.slots.find((s) => s.id === slotId)!;
   const [coupon, setCoupon] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
@@ -49,7 +54,7 @@ export default function CheckoutScreen({ property, slotId, guests, date, selecti
   const addonTotal = Object.entries(liveSelections).reduce((sum, [id, qty]) => {
     for (const group of Object.values(addons)) {
       const item = group.find((a) => a.id === id);
-      if (item) return sum + item.price * qty * (item.perPerson ? guests : 1);
+      if (item) return sum + item.price * qty * (item.perPerson ? liveGuests : 1);
     }
     return sum;
   }, 0);
@@ -70,7 +75,7 @@ export default function CheckoutScreen({ property, slotId, guests, date, selecti
     for (const group of Object.values(addons)) {
       const item = group.find((a) => a.id === id);
       if (item) {
-        const unitPrice = item.price * (item.perPerson ? guests : 1);
+        const unitPrice = item.price * (item.perPerson ? liveGuests : 1);
         lineItems.push({ id, name: item.name, qty, unitPrice: item.price, subtotal: unitPrice * qty });
       }
     }
@@ -136,11 +141,87 @@ export default function CheckoutScreen({ property, slotId, guests, date, selecti
               <span className="text-[9px] px-2 py-1 rounded-full bg-red-500/10 text-red-400 font-semibold">Saved ♥</span>
             )}
           </div>
-          <div className="flex gap-4 text-xs text-muted-foreground flex-wrap">
-            <span className="flex items-center gap-1"><CalendarIcon size={12} /> {format(date, "EEE, d MMM")}</span>
-            <span className="flex items-center gap-1"><Clock size={12} /> {slot.label} · {slot.time}</span>
-            <span className="flex items-center gap-1"><Users size={12} /> {guests} guests</span>
+          <div className="flex gap-2 text-xs text-muted-foreground flex-wrap mt-3">
+            {/* Editable date */}
+            <button
+              onClick={() => { setEditingDate(!editingDate); setEditingGuests(false); }}
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-secondary/80 border border-border/50 hover:border-primary/30 transition-colors"
+            >
+              <CalendarIcon size={12} /> {format(liveDate, "EEE, d MMM")}
+              <Pencil size={9} className="text-primary ml-0.5" />
+            </button>
+            <span className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-secondary/80">
+              <Clock size={12} /> {slot.label} · {slot.time}
+            </span>
+            {/* Editable guests */}
+            <button
+              onClick={() => { setEditingGuests(!editingGuests); setEditingDate(false); }}
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-secondary/80 border border-border/50 hover:border-primary/30 transition-colors"
+            >
+              <Users size={12} /> {liveGuests} guests
+              <Pencil size={9} className="text-primary ml-0.5" />
+            </button>
           </div>
+
+          {/* Inline date editor */}
+          <AnimatePresence>
+            {editingDate && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="overflow-hidden mt-3"
+              >
+                <div className="rounded-xl border border-primary/20 bg-secondary/50 p-2">
+                  <Calendar
+                    mode="single"
+                    selected={liveDate}
+                    onSelect={(d) => { if (d) { setLiveDate(d); setEditingDate(false); } }}
+                    disabled={(d) => d < new Date()}
+                    className="rounded-xl"
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Inline guest editor */}
+          <AnimatePresence>
+            {editingGuests && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="overflow-hidden mt-3"
+              >
+                <div className="flex items-center justify-between rounded-xl border border-primary/20 bg-secondary/50 px-4 py-3">
+                  <span className="text-sm text-foreground font-medium">Guests</span>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setLiveGuests(Math.max(1, liveGuests - 1))}
+                      disabled={liveGuests <= 1}
+                      className="w-8 h-8 rounded-full border border-border flex items-center justify-center disabled:opacity-30 active:scale-90 transition-transform"
+                    >
+                      <Minus size={14} className="text-foreground" />
+                    </button>
+                    <span className="text-lg font-bold text-foreground w-6 text-center">{liveGuests}</span>
+                    <button
+                      onClick={() => setLiveGuests(Math.min(property.capacity || 50, liveGuests + 1))}
+                      className="w-8 h-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center active:scale-90 transition-transform"
+                    >
+                      <Plus size={14} className="text-primary" />
+                    </button>
+                  </div>
+                  <button
+                    onClick={() => setEditingGuests(false)}
+                    className="w-7 h-7 rounded-full bg-primary flex items-center justify-center"
+                  >
+                    <CheckIcon size={12} className="text-primary-foreground" />
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         {/* Price Breakdown */}
