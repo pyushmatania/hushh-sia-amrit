@@ -194,7 +194,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
               <WhatsHotGrid properties={properties} onPropertyTap={onPropertyTap} />
 
               <SectionDivider title="BLOCKBUSTER RELEASE" />
-              <BlockbusterBanner />
+              <BlockbusterBanner properties={properties} onPropertyTap={onPropertyTap} />
             </>
           )}
 
