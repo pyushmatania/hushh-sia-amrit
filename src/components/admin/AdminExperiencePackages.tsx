@@ -236,14 +236,7 @@ export default function AdminExperiencePackages() {
                   {pkg.active ? "Active" : "Inactive"}
                 </button>
                 <button
-                  onClick={() => window.location.href = "/"}
-                  className="p-1.5 rounded-lg hover:bg-secondary transition"
-                  title="Preview in app"
-                >
-                  <Eye size={13} className="text-muted-foreground" />
-                </button>
-                <button
-                  onClick={() => { setEditing({ ...pkg }); setIsCreating(false); setIncludeInput(""); }}
+                  onClick={() => { setEditing({ ...pkg }); setIsCreating(false); setIncludeInput(""); setPreviewMode(false); }}
                   className="p-1.5 rounded-lg hover:bg-secondary transition"
                 >
                   <Pencil size={13} className="text-muted-foreground" />
