@@ -22,6 +22,8 @@ interface AdminLayoutProps {
 
 const navItems: { id: AdminPage; label: string; icon: typeof LayoutDashboard; adminOnly?: boolean }[] = [
   { id: "dashboard", label: "Command Center", icon: LayoutDashboard },
+  { id: "ai", label: "AI Assistant", icon: Bot },
+  { id: "alerts", label: "Smart Alerts", icon: Bell },
   { id: "properties", label: "Properties", icon: Building2 },
   { id: "bookings", label: "Bookings", icon: CalendarCheck },
   { id: "users", label: "Users (CRM)", icon: Users, adminOnly: true },

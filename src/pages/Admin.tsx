@@ -13,6 +13,8 @@ import AdminCampaigns from "@/components/admin/AdminCampaigns";
 import AdminCoupons from "@/components/admin/AdminCoupons";
 import AdminTags from "@/components/admin/AdminTags";
 import AdminExports from "@/components/admin/AdminExports";
+import AdminAI from "@/components/admin/AdminAI";
+import AdminAlerts from "@/components/admin/AdminAlerts";
 import AuthScreen from "@/components/AuthScreen";
 import { Shield, Loader2 } from "lucide-react";
 
