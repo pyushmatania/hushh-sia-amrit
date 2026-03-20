@@ -36,6 +36,7 @@ const emptyDraft: CurationDraft = {
 };
 
 export default function AdminCurations() {
+  const { toast } = useToast();
   const [curations, setCurations] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
