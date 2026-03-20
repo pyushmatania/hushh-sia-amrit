@@ -445,6 +445,13 @@ export default function ReviewSection({ propertyId, reviews: staticReviews, rati
       <AnimatePresence>
         {viewingImage && <ImageViewer url={viewingImage} onClose={() => setViewingImage(null)} />}
       </AnimatePresence>
+
+      {/* Public profile viewer */}
+      <AnimatePresence>
+        {viewingProfile && (
+          <PublicProfileScreen userId={viewingProfile} onBack={() => setViewingProfile(null)} />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
