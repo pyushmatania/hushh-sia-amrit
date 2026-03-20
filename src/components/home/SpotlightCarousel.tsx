@@ -240,11 +240,14 @@ function VideoCard({
   );
 }
 
-export default function SpotlightCarousel({ properties, onPropertyTap }: SpotlightCarouselProps) {
+export default function SpotlightCarousel({ properties, onPropertyTap, category = "home" }: SpotlightCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const topProperties = properties.slice(0, 6);
   const rafRef = useRef<number>(0);
+
+  const videos = videosByCategory[category] || videosByCategory.home;
+  const overlays = overlaysByCategory[category] || overlaysByCategory.home;
 
   const dateLabels = useMemo(
     () =>
