@@ -417,7 +417,7 @@ export const properties: Property[] = [
     responseRate: "100%",
     primaryCategory: "experience",
     propertyType: "Garden Space",
-    category: ["stays", "couples", "dining", "stargazing"],
+    category: ["experiences", "couples", "dining", "stargazing"],
     highlights: ["Direct lake-facing sunset view", "Floating candles on water surface", "Optional live acoustic guitar", "Private chef 5-course dinner available"],
     rules: [
       { icon: "🕐", text: "Arrive 30 mins before sunset" },
