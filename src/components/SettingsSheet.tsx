@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronLeft, Bell, Shield, Globe, Accessibility, Moon } from "lucide-react";
+import { X, ChevronLeft, Bell, Shield, Globe, Accessibility, Moon, EyeOff } from "lucide-react";
 import { useState } from "react";
+import { usePrivacyMode } from "@/hooks/use-privacy-mode";
 
 interface SettingsSheetProps {
   open: boolean;
