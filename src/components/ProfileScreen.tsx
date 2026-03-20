@@ -65,6 +65,9 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
   const [showLoyalty, setShowLoyalty] = useState(false);
   const [showReferral, setShowReferral] = useState(false);
   const [showPublicProfile, setShowPublicProfile] = useState(false);
+  const [showDocs, setShowDocs] = useState(false);
+  const versionTapCount = useRef(0);
+  const versionTapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [profile, setProfile] = useState({
     name: user?.user_metadata?.full_name || "Guest Explorer",
     location: "Jeypore, India",
