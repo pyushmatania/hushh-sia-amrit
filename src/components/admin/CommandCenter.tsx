@@ -7,8 +7,10 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from "recharts";
 import LiveActivityFeed from "./LiveActivityFeed";
+import LiveOrdersWidget from "./LiveOrdersWidget";
 import BookingHeatmap from "./BookingHeatmap";
 import WeeklyDigestPreview from "./WeeklyDigestPreview";
+import type { AdminPage } from "./AdminLayout";
 
 interface Stats {
   revenue: number;
@@ -43,7 +45,7 @@ const mockChartData = Array.from({ length: 14 }, (_, i) => ({
   revenue: Math.floor(Math.random() * 15000) + 5000,
 }));
 
-export default function CommandCenter() {
+export default function CommandCenter({ onNavigate }: { onNavigate?: (page: AdminPage) => void }) {
   const [stats, setStats] = useState<Stats>({ revenue: 0, bookings: 0, activeListings: 0, totalUsers: 0 });
 
   useEffect(() => {
@@ -115,6 +117,9 @@ export default function CommandCenter() {
           </motion.div>
         ))}
       </div>
+
+      {/* Live Orders Widget - pinned to top */}
+      <LiveOrdersWidget onViewAll={() => onNavigate?.("orders")} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <BookingHeatmap />

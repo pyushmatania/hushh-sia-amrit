@@ -4,14 +4,15 @@ import {
   LayoutDashboard, Building2, CalendarCheck, Users, BarChart3,
   Sparkles, Tag, Megaphone, Ticket, ShoppingCart, LogOut,
   ChevronLeft, ChevronRight, Shield, Menu, X, FileSpreadsheet,
-  Bot, Bell, ScrollText, Wallet, Zap, Trophy, Search
+  Bot, Bell, ScrollText, Wallet, Zap, Trophy, Search, UserCheck
 } from "lucide-react";
 import CommandPalette from "./CommandPalette";
+import FloatingChecklist from "./FloatingChecklist";
 import { useAuth } from "@/hooks/use-auth";
 import { useAdmin } from "@/hooks/use-admin";
 
 export type AdminPage =
-  | "dashboard" | "properties" | "bookings" | "users"
+  | "dashboard" | "properties" | "bookings" | "users" | "clients"
   | "analytics" | "curations" | "tags" | "campaigns"
   | "coupons" | "orders" | "exports" | "ai" | "alerts" | "audit"
   | "earnings" | "pricing" | "achievements" | "loyalty"
@@ -32,6 +33,8 @@ const navItems: { id: AdminPage; label: string; icon: typeof LayoutDashboard; ad
   { id: "requests", label: "Booking Requests", icon: CalendarCheck },
   { id: "properties", label: "Properties", icon: Building2 },
   { id: "bookings", label: "Bookings", icon: CalendarCheck },
+  { id: "orders", label: "Live Orders", icon: ShoppingCart },
+  { id: "clients", label: "Client Directory", icon: UserCheck },
   { id: "users", label: "Users (CRM)", icon: Users, adminOnly: true },
   { id: "analytics", label: "Analytics", icon: BarChart3 },
   { id: "earnings", label: "Earnings", icon: Wallet },
@@ -39,7 +42,6 @@ const navItems: { id: AdminPage; label: string; icon: typeof LayoutDashboard; ad
   { id: "campaigns", label: "Campaigns", icon: Megaphone },
   { id: "coupons", label: "Coupons", icon: Ticket },
   { id: "tags", label: "Tags", icon: Tag },
-  { id: "orders", label: "Live Orders", icon: ShoppingCart },
   { id: "exports", label: "Exports", icon: FileSpreadsheet },
   { id: "achievements", label: "Achievements", icon: Trophy },
   { id: "loyalty", label: "Loyalty & Referrals", icon: Sparkles },
@@ -161,6 +163,7 @@ export default function AdminLayout({ activePage, onNavigate, children }: AdminL
           {children}
         </main>
       </div>
+      <FloatingChecklist />
     </div>
   );
 }

@@ -23,6 +23,7 @@ import SettingsSheet from "./SettingsSheet";
 import LoyaltyScreen from "./LoyaltyScreen";
 import ReferralScreen from "./ReferralScreen";
 import AppDocumentation from "./AppDocumentation";
+import IdentityUploadSheet from "./IdentityUploadSheet";
 
 const themeOptions = [
   { id: "light" as const, label: "Light", icon: Sun },
@@ -34,6 +35,7 @@ const settingsMenu = [
   { icon: Settings, label: "Account settings", settingKey: "" },
   { icon: CreditCard, label: "Payments & payouts", settingKey: "" },
   { icon: Shield, label: "Login & security", settingKey: "security" },
+  { icon: Shield, label: "Verify Identity", sublabel: "Upload ID", badge: "NEW", settingKey: "identity" },
   { icon: Bell, label: "Notifications", settingKey: "notifications" },
   { icon: Globe, label: "Language & region", settingKey: "language" },
   { icon: Accessibility, label: "Accessibility", settingKey: "accessibility" },
@@ -70,6 +72,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
   const [showLoyalty, setShowLoyalty] = useState(false);
   const [showReferral, setShowReferral] = useState(false);
   const [showPublicProfile, setShowPublicProfile] = useState(false);
+  const [showIdentityUpload, setShowIdentityUpload] = useState(false);
   const [showDocs, setShowDocs] = useState(false);
   const versionTapCount = useRef(0);
   const versionTapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -102,6 +105,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
   const handleSettingTap = useCallback((key: string, label: string) => {
     if (label === "Refer a friend") { setShowReferral(true); return; }
     if (label === "Loyalty points") { setShowLoyalty(true); return; }
+    if (label === "Verify Identity") { setShowIdentityUpload(true); return; }
     if (key) setActiveSetting(key);
   }, []);
 
@@ -597,6 +601,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
           <ReferralScreen onBack={() => setShowReferral(false)} />
         )}
       </AnimatePresence>
+      <IdentityUploadSheet open={showIdentityUpload} onClose={() => setShowIdentityUpload(false)} />
       <AnimatePresence>
         {showPublicProfile && (
           <PublicProfileScreen userId={user?.id || "mock-guest"} onBack={() => setShowPublicProfile(false)} />
