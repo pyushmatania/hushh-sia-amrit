@@ -27,6 +27,9 @@ import listingCoupleCocoon from "@/assets/listing-couple-cocoon.jpg";
 import listingBlueLagoon from "@/assets/listing-blue-lagoon.jpg";
 import listingGreenLawn from "@/assets/listing-green-lawn.jpg";
 import listingHushhRides from "@/assets/listing-hushh-rides.jpg";
+import listingChefOnCall from "@/assets/listing-chef-on-call.jpg";
+import listingPartyDecor from "@/assets/listing-party-decor.jpg";
+import listingDjSound from "@/assets/listing-dj-sound.jpg";
 
 export interface TimeSlot {
   id: string;
