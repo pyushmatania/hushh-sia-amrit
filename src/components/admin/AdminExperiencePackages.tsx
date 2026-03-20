@@ -1,9 +1,10 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Gift, Search, Plus, Trash2, Pencil, X, Eye, GripVertical } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { useDragReorder } from "@/hooks/use-drag-reorder";
 
 interface PackageRow {
   id: string;
@@ -134,25 +135,16 @@ export default function AdminExperiencePackages() {
     setPackages(prev => prev.map(p => p.id === pkg.id ? { ...p, active: next } : p));
   };
 
-  // --- Drag & Drop ---
-  const [dragId, setDragId] = useState<string | null>(null);
-  const [dragOverId, setDragOverId] = useState<string | null>(null);
-
-  const handleDrop = useCallback(async (targetId: string) => {
-    if (!dragId || dragId === targetId) { setDragId(null); setDragOverId(null); return; }
-    const sorted = [...packages].sort((a, b) => a.sort_order - b.sort_order);
-    const fromIdx = sorted.findIndex(p => p.id === dragId);
-    const toIdx = sorted.findIndex(p => p.id === targetId);
-    if (fromIdx === -1 || toIdx === -1) { setDragId(null); setDragOverId(null); return; }
-    const [moved] = sorted.splice(fromIdx, 1);
-    sorted.splice(toIdx, 0, moved);
-    const updates = sorted.map((p, i) => ({ id: p.id, sort_order: i }));
-    setPackages(prev => prev.map(p => { const u = updates.find(u => u.id === p.id); return u ? { ...p, sort_order: u.sort_order } : p; }));
-    setDragId(null); setDragOverId(null);
-    for (const u of updates) { await supabase.from("experience_packages").update({ sort_order: u.sort_order }).eq("id", u.id); }
-    toast({ title: "Order saved" });
-    window.dispatchEvent(new Event("hushh:listings-updated"));
-  }, [dragId, packages, toast]);
+  const { getDragHandleProps, getDropTargetProps, handleDragEnd, isDragging, isDragOver } = useDragReorder({
+    items: [...packages].sort((a, b) => a.sort_order - b.sort_order),
+    getId: (p) => p.id,
+    onReorder: async (updates) => {
+      setPackages(prev => prev.map(p => { const u = updates.find(u => u.id === p.id); return u ? { ...p, sort_order: u.sort_order } : p; }));
+      for (const u of updates) { await supabase.from("experience_packages").update({ sort_order: u.sort_order }).eq("id", u.id); }
+      toast({ title: "Order saved" });
+      window.dispatchEvent(new Event("hushh:listings-updated"));
+    },
+  });
 
   return (
     <div className="space-y-5">
@@ -194,22 +186,19 @@ export default function AdminExperiencePackages() {
         </div>
       ) : (
         <div className="space-y-2">
-          {filtered.map((pkg, i) => (
-            <motion.div
+          {filtered.map((pkg) => (
+            <div
               key={pkg.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: i * 0.03 }}
-              draggable
-              onDragStart={() => setDragId(pkg.id)}
-              onDragOver={(e) => { e.preventDefault(); setDragOverId(pkg.id); }}
-              onDrop={() => handleDrop(pkg.id)}
-              onDragEnd={() => { setDragId(null); setDragOverId(null); }}
-              className={`rounded-xl border bg-card p-4 flex items-center gap-2 transition-all cursor-grab active:cursor-grabbing ${
+              {...getDropTargetProps(pkg)}
+              onDragEnd={handleDragEnd}
+              className={`rounded-xl border bg-card p-4 flex items-center gap-2 transition-all ${
                 !pkg.active ? "opacity-50" : ""
-              } ${dragId === pkg.id ? "opacity-40 scale-[0.97]" : ""} ${dragOverId === pkg.id && dragId !== pkg.id ? "border-primary shadow-sm shadow-primary/20" : "border-border"}`}
+              } ${isDragging(pkg) ? "opacity-40 scale-[0.97]" : ""} ${isDragOver(pkg) ? "border-primary shadow-sm shadow-primary/20" : "border-border"}`}
             >
-              <div className="text-muted-foreground/40 hover:text-muted-foreground transition shrink-0">
+              <div
+                {...getDragHandleProps(pkg)}
+                className="text-muted-foreground/40 hover:text-muted-foreground transition shrink-0 cursor-grab active:cursor-grabbing"
+              >
                 <GripVertical size={16} />
               </div>
               <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${pkg.gradient} flex items-center justify-center text-lg`}>
@@ -249,7 +238,7 @@ export default function AdminExperiencePackages() {
                   <Trash2 size={13} className="text-destructive" />
                 </button>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       )}

@@ -4,6 +4,7 @@ import {
   Sparkles, Search, Plus, Save, X, Eye, Trash2,
   GripVertical, Loader2, ChevronDown
 } from "lucide-react";
+import { useDragReorder } from "@/hooks/use-drag-reorder";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -44,8 +45,6 @@ export default function AdminCurations() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
-  const [dragId, setDragId] = useState<string | null>(null);
-  const [dragOverId, setDragOverId] = useState<string | null>(null);
 
   const loadCurations = () => {
     supabase.from("curations").select("*").order("sort_order")
@@ -275,21 +274,16 @@ export default function AdminCurations() {
     );
   }
 
-  const handleCurationDrop = async (targetId: string) => {
-    if (!dragId || dragId === targetId) { setDragId(null); setDragOverId(null); return; }
-    const sorted = [...curations].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
-    const fromIdx = sorted.findIndex(c => c.id === dragId);
-    const toIdx = sorted.findIndex(c => c.id === targetId);
-    if (fromIdx === -1 || toIdx === -1) { setDragId(null); setDragOverId(null); return; }
-    const [moved] = sorted.splice(fromIdx, 1);
-    sorted.splice(toIdx, 0, moved);
-    const updates = sorted.map((c, i) => ({ id: c.id, sort_order: i }));
-    setCurations(prev => prev.map(c => { const u = updates.find(u => u.id === c.id); return u ? { ...c, sort_order: u.sort_order } : c; }));
-    setDragId(null); setDragOverId(null);
-    for (const u of updates) { await supabase.from("curations").update({ sort_order: u.sort_order }).eq("id", u.id); }
-    toast({ title: "Order saved" });
-    window.dispatchEvent(new Event("hushh:listings-updated"));
-  };
+  const { getDragHandleProps, getDropTargetProps, handleDragEnd, isDragging, isDragOver } = useDragReorder({
+    items: [...curations].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0)),
+    getId: (c) => c.id,
+    onReorder: async (updates) => {
+      setCurations(prev => prev.map(c => { const u = updates.find(u => u.id === c.id); return u ? { ...c, sort_order: u.sort_order } : c; }));
+      for (const u of updates) { await supabase.from("curations").update({ sort_order: u.sort_order }).eq("id", u.id); }
+      toast({ title: "Order saved" });
+      window.dispatchEvent(new Event("hushh:listings-updated"));
+    },
+  });
 
   // List view
   return (
@@ -319,24 +313,22 @@ export default function AdminCurations() {
         <div className="space-y-3">{[1,2,3].map(i => <div key={i} className="h-24 rounded-xl bg-secondary animate-pulse" />)}</div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {filtered.map((c, i) => (
-            <motion.div
+          {filtered.map((c) => (
+            <div
               key={c.id}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.04 }}
-              draggable
-              onDragStart={() => setDragId(c.id)}
-              onDragOver={(e) => { e.preventDefault(); setDragOverId(c.id); }}
-              onDrop={() => handleCurationDrop(c.id)}
-              onDragEnd={() => { setDragId(null); setDragOverId(null); }}
-              className={`rounded-xl border bg-card p-4 cursor-grab active:cursor-grabbing hover:border-primary/30 transition-all ${
-                dragId === c.id ? "opacity-40 scale-[0.97]" : ""
-              } ${dragOverId === c.id && dragId !== c.id ? "border-primary shadow-sm shadow-primary/20" : "border-border"}`}
+              {...getDropTargetProps(c)}
+              onDragEnd={handleDragEnd}
+              className={`rounded-xl border bg-card p-4 hover:border-primary/30 transition-all ${
+                isDragging(c) ? "opacity-40 scale-[0.97]" : ""
+              } ${isDragOver(c) ? "border-primary shadow-sm shadow-primary/20" : "border-border"}`}
               onClick={() => startEdit(c)}
             >
               <div className="flex items-start gap-2">
-                <div className="text-muted-foreground/40 hover:text-muted-foreground transition shrink-0 mt-1">
+                <div
+                  {...getDragHandleProps(c)}
+                  onClick={(e) => e.stopPropagation()}
+                  className="text-muted-foreground/40 hover:text-muted-foreground transition shrink-0 mt-1 cursor-grab active:cursor-grabbing"
+                >
                   <GripVertical size={16} />
                 </div>
                 <span className="text-2xl">{c.emoji}</span>
@@ -392,7 +384,7 @@ export default function AdminCurations() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       )}

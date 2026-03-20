@@ -4,8 +4,9 @@ import {
   Building2, Search, Plus, Trash2, Pause, Play, Pencil,
   X, Upload, Image, MapPin, DollarSign, Users, Tag, Star,
   Clock, ChevronDown, ChevronRight, Eye, Copy, MoreHorizontal,
-  Sparkles, Filter, LayoutGrid, LayoutList, Hash
+  Sparkles, Filter, LayoutGrid, LayoutList, Hash, GripVertical
 } from "lucide-react";
+import { useDragReorder } from "@/hooks/use-drag-reorder";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -38,6 +39,7 @@ interface Listing {
   entry_instructions: string;
   slots: any;
   rules: any;
+  sort_order: number;
 }
 
 const parseNumberInput = (value: string): number | undefined => {
@@ -87,7 +89,7 @@ export default function AdminProperties() {
   const [expandedSection, setExpandedSection] = useState<string>("basic");
 
   useEffect(() => {
-    supabase.from("host_listings").select("*").order("created_at", { ascending: false })
+    supabase.from("host_listings").select("*").order("sort_order").order("created_at", { ascending: false })
       .then(({ data }) => { setListings((data as Listing[]) ?? []); setLoading(false); });
   }, []);
 
@@ -235,6 +237,17 @@ export default function AdminProperties() {
 
   const filters = ["all", "published", "draft", "paused"];
 
+  const { getDragHandleProps, getDropTargetProps, handleDragEnd, isDragging, isDragOver } = useDragReorder({
+    items: filtered,
+    getId: (l) => l.id,
+    onReorder: async (updates) => {
+      setListings(prev => prev.map(l => { const u = updates.find(u => u.id === l.id); return u ? { ...l, sort_order: u.sort_order } : l; }));
+      for (const u of updates) { await supabase.from("host_listings").update({ sort_order: u.sort_order }).eq("id", u.id); }
+      toast({ title: "Order saved" });
+      notifyListingsUpdated();
+    },
+  });
+
   return (
     <div className="space-y-5">
       {/* Header */}
@@ -243,7 +256,7 @@ export default function AdminProperties() {
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Building2 size={22} className="text-primary" /> Properties
           </h1>
-          <p className="text-sm text-muted-foreground">{stats.total} total · {stats.published} live · {stats.draft} drafts</p>
+          <p className="text-sm text-muted-foreground">{stats.total} total · {stats.published} live · Drag ⠿ to reorder</p>
         </div>
         <button onClick={openCreate}
           className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 active:scale-95 transition">
@@ -345,11 +358,23 @@ export default function AdminProperties() {
         </div>
       ) : (
         <div className="space-y-2">
-          {filtered.map((listing, i) => (
-            <motion.div key={listing.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.03 }}
-              className="rounded-xl border border-border bg-card p-3 flex gap-3 cursor-pointer hover:border-primary/30 transition"
-              onClick={() => openEdit(listing)}>
+          {filtered.map((listing) => (
+            <div
+              key={listing.id}
+              {...getDropTargetProps(listing)}
+              onDragEnd={handleDragEnd}
+              className={`rounded-xl border bg-card p-3 flex gap-2 cursor-pointer hover:border-primary/30 transition-all ${
+                isDragging(listing) ? "opacity-40 scale-[0.97]" : ""
+              } ${isDragOver(listing) ? "border-primary shadow-sm shadow-primary/20" : "border-border"}`}
+              onClick={() => openEdit(listing)}
+            >
+              <div
+                {...getDragHandleProps(listing)}
+                onClick={(e) => e.stopPropagation()}
+                className="text-muted-foreground/40 hover:text-muted-foreground transition shrink-0 cursor-grab active:cursor-grabbing self-center"
+              >
+                <GripVertical size={16} />
+              </div>
               <div className="w-16 h-16 rounded-lg bg-secondary shrink-0 overflow-hidden">
                 {listing.image_urls?.[0] ? (
                   <img src={listing.image_urls[0]} alt="" className="w-full h-full object-cover" />
@@ -397,7 +422,7 @@ export default function AdminProperties() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       )}
