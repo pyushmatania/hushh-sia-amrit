@@ -283,7 +283,7 @@ export default function AdminCurations() {
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Sparkles size={22} className="text-primary" /> Curations
           </h1>
-          <p className="text-sm text-muted-foreground">{curations.length} curated experiences</p>
+          <p className="text-sm text-muted-foreground">{curations.length} curated experiences · Drag to reorder</p>
         </div>
         <motion.button
           whileTap={{ scale: 0.95 }}
