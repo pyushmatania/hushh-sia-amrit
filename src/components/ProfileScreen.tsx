@@ -4,9 +4,12 @@ import {
   ChevronRight, Bell, Settings, HelpCircle, LogOut,
   Shield, Gift, Star, Sun, Moon, Monitor, BadgeCheck,
   CreditCard, Globe, Accessibility, FileText, Heart,
-  Award, Zap, Calendar, TrendingUp, Crown, Pencil, LogIn, EyeOff
+  Award, Zap, Calendar, TrendingUp, Crown, Pencil, LogIn, EyeOff,
+  MapPin, Clock, Users, ArrowLeft, ChevronLeft
 } from "lucide-react";
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useMemo } from "react";
+import type { Booking } from "@/pages/Index";
+import { properties } from "@/data/properties";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
 import AuthScreen from "./AuthScreen";
@@ -47,17 +50,25 @@ const achievements = [
   { icon: "💑", title: "Romantico", description: "Booked a couple experience" },
 ];
 
-const recentActivity = [
-  { icon: "🏊", title: "The Firefly Villa", subtitle: "Evening slot · 2 guests", date: "Mar 10" },
-  { icon: "🌌", title: "Koraput Garden House", subtitle: "Night slot · 4 guests", date: "Feb 28" },
-  { icon: "🔥", title: "Ember Grounds", subtitle: "Full Day · 12 guests", date: "Feb 14" },
-];
+// recentActivity is now computed from bookings in the component
 
 interface ProfileScreenProps {
   onHostTap?: () => void;
+  bookings?: Booking[];
+  onViewBookingDetail?: (booking: Booking) => void;
+  onRebook?: (propertyId: string) => void;
 }
 
-export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
+// Demo past trips for when no real data
+const demoPastTrips: Booking[] = [
+  { id: "demo-p1", propertyId: "2", date: "Mar 10, 2026", slot: "Full Day · 10 AM – 10 PM", guests: 8, total: 15200, status: "completed", bookingId: "HUSHH-CP0012" },
+  { id: "demo-p2", propertyId: "5", date: "Feb 28, 2026", slot: "Evening · 5 PM – 10 PM", guests: 6, total: 9800, status: "completed", bookingId: "HUSHH-CP0011" },
+  { id: "demo-p3", propertyId: "7", date: "Feb 14, 2026", slot: "Night · 8 PM – 12 AM", guests: 2, total: 3500, status: "completed", bookingId: "HUSHH-CP0010" },
+  { id: "demo-p4", propertyId: "3", date: "Jan 26, 2026", slot: "Full Day · 10 AM – 10 PM", guests: 15, total: 22000, status: "completed", bookingId: "HUSHH-CP0009" },
+  { id: "demo-p5", propertyId: "6", date: "Jan 1, 2026", slot: "Night · 9 PM – 2 AM", guests: 10, total: 14500, status: "completed", bookingId: "HUSHH-CP0008" },
+];
+
+export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingDetail, onRebook }: ProfileScreenProps) {
   const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
   const [showAuth, setShowAuth] = useState(false);
@@ -69,11 +80,30 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
   const [showDocs, setShowDocs] = useState(false);
   const versionTapCount = useRef(0);
   const versionTapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [showPastTrips, setShowPastTrips] = useState(false);
   const [profile, setProfile] = useState({
     name: user?.user_metadata?.full_name || "Guest Explorer",
     location: "Jeypore, India",
     bio: "Explorer of hidden gems 🌿 Love bonfires, stargazing, and good coffee.",
   });
+
+  const pastTrips = useMemo(() => {
+    const completed = bookings.filter(b => b.status === "completed");
+    return completed.length > 0 ? completed : demoPastTrips;
+  }, [bookings]);
+
+  const recentActivityFromBookings = useMemo(() => {
+    const all = bookings.length > 0 ? bookings : demoPastTrips;
+    return all.slice(0, 3).map(b => {
+      const prop = properties.find(p => p.id === b.propertyId);
+      return {
+        icon: prop?.amenityIcons[0] || "🏨",
+        title: prop?.name || "Property",
+        subtitle: `${b.slot} · ${b.guests} guests`,
+        date: b.date.split(",")[0]?.trim() || b.date,
+      };
+    });
+  }, [bookings]);
 
   const handleSaveProfile = useCallback((updated: typeof profile) => {
     setProfile(updated);
@@ -353,7 +383,7 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
           </h3>
         </div>
         <div className="px-5 pb-4 space-y-1.5">
-          {recentActivity.map((item, i) => (
+          {recentActivityFromBookings.map((item, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, x: -12 }}
@@ -389,12 +419,14 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.28 }}
-          className="rounded-2xl glass p-4 cursor-pointer"
+          onClick={() => setShowPastTrips(true)}
+          className="rounded-2xl glass p-4 cursor-pointer active:scale-[0.97] transition-transform"
         >
           <div className="h-28 flex items-center justify-center mb-2">
             <img src={pastTripsImg} alt="Past trips" className="h-full object-contain" />
           </div>
           <h4 className="font-semibold text-sm text-foreground">Past trips</h4>
+          <p className="text-[10px] text-muted-foreground mt-0.5">{pastTrips.length} trips</p>
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -561,6 +593,93 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
       <AnimatePresence>
         {showDocs && (
           <AppDocumentation open={showDocs} onClose={() => setShowDocs(false)} />
+        )}
+      </AnimatePresence>
+
+      {/* Past Trips Full Screen */}
+      <AnimatePresence>
+        {showPastTrips && (
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 40 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed inset-0 z-50 bg-mesh overflow-y-auto"
+          >
+            <div className="sticky top-0 z-10 glass px-5 py-3">
+              <div className="flex items-center gap-3">
+                <motion.button
+                  onClick={() => setShowPastTrips(false)}
+                  className="w-9 h-9 rounded-full border border-border flex items-center justify-center"
+                  whileTap={{ scale: 0.85 }}
+                >
+                  <ArrowLeft size={16} className="text-foreground" />
+                </motion.button>
+                <div className="flex-1">
+                  <h2 className="font-semibold text-base text-foreground">Past Trips</h2>
+                  <p className="text-xs text-muted-foreground">{pastTrips.length} completed trips</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="px-5 py-4 space-y-4 pb-24">
+              {pastTrips.map((trip, i) => {
+                const prop = properties.find(p => p.id === trip.propertyId);
+                if (!prop) return null;
+                return (
+                  <motion.div
+                    key={trip.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.08, type: "spring", stiffness: 200, damping: 22 }}
+                    onClick={() => onViewBookingDetail?.(trip)}
+                    className="rounded-2xl border border-border overflow-hidden cursor-pointer active:scale-[0.98] transition-transform"
+                    style={{ boxShadow: "0 4px 16px -4px hsl(0 0% 0% / 0.15)" }}
+                  >
+                    <div className="relative h-36">
+                      <img src={prop.images[0]} alt={prop.name} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-card via-card/60 to-transparent" />
+                      <div className="absolute top-3 right-3 flex items-center gap-1 bg-muted-foreground/80 backdrop-blur-sm px-2 py-1 rounded-full">
+                        <span className="w-1.5 h-1.5 rounded-full bg-white/70" />
+                        <span className="text-[10px] font-semibold text-white">Completed</span>
+                      </div>
+                    </div>
+                    <div className="p-4 -mt-6 relative">
+                      <h3 className="font-bold text-[15px] text-foreground">{prop.name}</h3>
+                      <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                        <MapPin size={11} /> {prop.location}
+                      </p>
+                      <div className="flex flex-wrap gap-2 mt-2.5">
+                        <span className="flex items-center gap-1 bg-secondary/80 rounded-lg px-2 py-1 text-[11px] text-foreground">
+                          <Calendar size={10} className="text-primary" /> {trip.date}
+                        </span>
+                        <span className="flex items-center gap-1 bg-secondary/80 rounded-lg px-2 py-1 text-[11px] text-foreground">
+                          <Clock size={10} className="text-primary" /> {trip.slot.split("·")[0]?.trim()}
+                        </span>
+                        <span className="flex items-center gap-1 bg-secondary/80 rounded-lg px-2 py-1 text-[11px] text-foreground">
+                          <Users size={10} className="text-primary" /> {trip.guests}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-border/50">
+                        <span className="text-xs text-muted-foreground font-mono">{trip.bookingId}</span>
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm font-bold text-foreground">₹{trip.total.toLocaleString()}</span>
+                          {onRebook && (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); onRebook(trip.propertyId); }}
+                              className="text-xs font-semibold text-primary flex items-center gap-0.5"
+                            >
+                              Book Again <ChevronRight size={14} />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>

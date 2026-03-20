@@ -277,6 +277,7 @@ function TiltCard({
 
 // Comprehensive demo trips for all statuses
 const demoTrips: Booking[] = [
+  // Active trips
   {
     id: "demo-active",
     propertyId: "1",
@@ -287,6 +288,7 @@ const demoTrips: Booking[] = [
     status: "active",
     bookingId: "HUSHH-ACT001",
   },
+  // Upcoming trips
   {
     id: "demo-up-1",
     propertyId: "10",
@@ -307,6 +309,17 @@ const demoTrips: Booking[] = [
     status: "upcoming",
     bookingId: "HUSHH-UP0026",
   },
+  {
+    id: "demo-up-3",
+    propertyId: "14",
+    date: "Apr 10, 2026",
+    slot: "Morning · 9 AM – 1 PM",
+    guests: 8,
+    total: 6400,
+    status: "upcoming",
+    bookingId: "HUSHH-UP0027",
+  },
+  // Completed (past) trips
   {
     id: "demo-comp-1",
     propertyId: "2",
@@ -338,8 +351,39 @@ const demoTrips: Booking[] = [
     bookingId: "HUSHH-CP0010",
   },
   {
-    id: "demo-cancel-1",
+    id: "demo-comp-4",
     propertyId: "3",
+    date: "Jan 26, 2026",
+    slot: "Full Day · 10 AM – 10 PM",
+    guests: 15,
+    total: 22000,
+    status: "completed",
+    bookingId: "HUSHH-CP0009",
+  },
+  {
+    id: "demo-comp-5",
+    propertyId: "6",
+    date: "Jan 1, 2026",
+    slot: "Night · 9 PM – 2 AM",
+    guests: 10,
+    total: 14500,
+    status: "completed",
+    bookingId: "HUSHH-CP0008",
+  },
+  {
+    id: "demo-comp-6",
+    propertyId: "8",
+    date: "Dec 25, 2025",
+    slot: "Evening · 5 PM – 11 PM",
+    guests: 4,
+    total: 7200,
+    status: "completed",
+    bookingId: "HUSHH-CP0007",
+  },
+  // Cancelled trips
+  {
+    id: "demo-cancel-1",
+    propertyId: "4",
     date: "Feb 20, 2026",
     slot: "Night · 8 PM – 1 AM",
     guests: 2,
@@ -349,7 +393,7 @@ const demoTrips: Booking[] = [
   },
   {
     id: "demo-cancel-2",
-    propertyId: "4",
+    propertyId: "11",
     date: "Jan 15, 2026",
     slot: "Morning · 10 AM – 2 PM",
     guests: 4,

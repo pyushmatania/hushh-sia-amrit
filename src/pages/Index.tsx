@@ -187,7 +187,7 @@ export default function Index() {
           <MessagesScreen key="messages" />
         )}
         {screen.type === "home" && activeTab === "profile" && (
-          <ProfileScreen key="profile" onHostTap={handleOpenHostDashboard} />
+          <ProfileScreen key="profile" onHostTap={handleOpenHostDashboard} bookings={bookings} onViewBookingDetail={handleViewBookingDetail} onRebook={handleRebook} />
         )}
         {screen.type === "detail" && (
           <PropertyDetail
