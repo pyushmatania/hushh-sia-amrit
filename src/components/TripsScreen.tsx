@@ -4,6 +4,7 @@ import { useRef, useState, useCallback, useMemo } from "react";
 import { properties } from "@/data/properties";
 import PullToRefresh from "./PullToRefresh";
 import type { Booking } from "@/pages/Index";
+import OrderHistorySection from "./OrderHistorySection";
 
 interface TripsScreenProps {
   bookings: Booking[];
@@ -472,6 +473,9 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
           ))}
         </div>
       )}
+
+      {/* Order History */}
+      <OrderHistorySection />
     </div>
     </PullToRefresh>
   );
