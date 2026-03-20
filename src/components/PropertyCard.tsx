@@ -161,8 +161,9 @@ export default function PropertyCard({ property, index, onTap }: PropertyCardPro
             />
           ))}
         </div>
+        </div>
+        </div>
       </div>
-
       {/* Info */}
       <div className="pt-2.5 pb-1">
         <div className="flex items-start justify-between gap-2">
