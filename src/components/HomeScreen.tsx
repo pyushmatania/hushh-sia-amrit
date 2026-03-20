@@ -62,6 +62,25 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
     "Walking Tour": (p) => p.propertyType === "Walking Tour" || p.propertyType === "Observatory",
   };
 
+  const curationFilters = ["All", "🔥 Popular", "💑 Romantic", "🎉 Party", "🍗 Foodie", "💻 Work", "🎬 Entertainment", "💸 Budget"];
+
+  const curationFilterMap: Record<string, (c: typeof curatedCombos[0]) => boolean> = {
+    "All": () => true,
+    "🔥 Popular": (c) => !!c.popular,
+    "💑 Romantic": (c) => c.tags.some(t => t.includes("Couple")),
+    "🎉 Party": (c) => c.tags.some(t => t.includes("Party") || t.includes("Birthday") || t.includes("Celebration") || t.includes("Fun")),
+    "🍗 Foodie": (c) => c.tags.some(t => t.includes("Foodie") || t.includes("Hot")),
+    "💻 Work": (c) => c.tags.some(t => t.includes("Work")),
+    "🎬 Entertainment": (c) => c.tags.some(t => t.includes("Movie") || t.includes("Gaming")),
+    "💸 Budget": (c) => c.priceRange[0] <= 999,
+  };
+
+  const filteredCombos = useMemo(() => {
+    if (activeCategory !== "curation" || subFilter === "All") return curatedCombos;
+    const filterFn = curationFilterMap[subFilter];
+    return filterFn ? curatedCombos.filter(filterFn) : curatedCombos;
+  }, [activeCategory, subFilter]);
+
   // Filter by primaryCategory
   const filteredProperties = useMemo(() => {
     let list = activeCategory === "home" ? properties : properties.filter(p => p.primaryCategory === activeCategory);
