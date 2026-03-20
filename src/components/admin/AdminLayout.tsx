@@ -108,6 +108,13 @@ export default function AdminLayout({ activePage, onNavigate, children }: AdminL
           </div>
         )}
         <button
+          onClick={() => navigate("/")}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition"
+        >
+          <Home size={18} />
+          {(!collapsed || mobile) && <span>Back to App</span>}
+        </button>
+        <button
           onClick={signOut}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-destructive hover:bg-destructive/10 transition"
         >
