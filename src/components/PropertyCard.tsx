@@ -124,20 +124,20 @@ export default function PropertyCard({ property, index, onTap }: PropertyCardPro
         className="relative aspect-[4/3] rounded-2xl overflow-hidden"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        style={accent ? {
-          boxShadow: getAccentShadow(accent),
-        } : undefined}
       >
-        {/* Fading glow overlay on the accented side */}
+        {/* Fading accent border — rendered outside overflow clip via pointer-events-none overlay */}
+        {accent && <div style={getAccentBorderStyle(accent)} />}
+
+        {/* Subtle inner glow */}
         {accent && (
           <div
             className="absolute inset-0 z-[1] pointer-events-none rounded-2xl"
             style={{
               background: accent.side === "left"
-                ? `linear-gradient(to right, ${accent.color}22 0%, transparent 40%)`
+                ? `linear-gradient(to right, ${accent.color}12 0%, transparent 30%)`
                 : accent.side === "right"
-                ? `linear-gradient(to left, ${accent.color}22 0%, transparent 40%)`
-                : `linear-gradient(to bottom, ${accent.color}22 0%, transparent 40%)`,
+                ? `linear-gradient(to left, ${accent.color}12 0%, transparent 30%)`
+                : `linear-gradient(to bottom, ${accent.color}12 0%, transparent 30%)`,
             }}
           />
         )}
