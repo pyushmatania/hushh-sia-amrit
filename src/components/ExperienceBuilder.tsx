@@ -279,7 +279,7 @@ export default function ExperienceBuilder({ property, slotId, guests, date, onBa
       <div className="flex-1 overflow-y-auto pb-36 px-4 pt-3">
         <AnimatePresence mode="wait">
           <motion.div
-            key={activeCategory}
+            key={isSearching ? `search-${searchQuery}` : activeCategory}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
