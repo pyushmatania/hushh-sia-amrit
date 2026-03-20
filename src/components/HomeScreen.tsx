@@ -255,6 +255,10 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
           {/* ═══════ CURATIONS TAB ═══════ */}
           {activeCategory === "curation" && (
             <>
+              {/* Spotlight Video Cards for Curations — uses top-rated properties */}
+              <SectionDivider title="✨ CURATED FOR YOU" />
+              <SpotlightCarousel properties={topRated.slice(0, 4)} onPropertyTap={onPropertyTap} />
+
               <div className="px-5 pt-4 pb-2">
                 <h2 className="text-lg font-bold text-foreground mb-1">✨ Ready-Made Experiences</h2>
                 <p className="text-xs text-muted-foreground">Pre-built combos for instant booking. One tap, full experience!</p>
