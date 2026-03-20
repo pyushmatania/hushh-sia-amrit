@@ -26,7 +26,11 @@ const navItems: { id: AdminPage; label: string; icon: typeof LayoutDashboard; ad
   { id: "users", label: "Users (CRM)", icon: Users, adminOnly: true },
   { id: "analytics", label: "Analytics", icon: BarChart3 },
   { id: "curations", label: "Curations", icon: Sparkles },
+  { id: "campaigns", label: "Campaigns", icon: Megaphone },
+  { id: "coupons", label: "Coupons", icon: Ticket },
+  { id: "tags", label: "Tags", icon: Tag },
   { id: "orders", label: "Live Orders", icon: ShoppingCart },
+  { id: "exports", label: "Exports", icon: FileSpreadsheet },
 ];
 
 export default function AdminLayout({ activePage, onNavigate, children }: AdminLayoutProps) {
