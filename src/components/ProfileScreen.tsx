@@ -4,9 +4,12 @@ import {
   ChevronRight, Bell, Settings, HelpCircle, LogOut,
   Shield, Gift, Star, Sun, Moon, Monitor, BadgeCheck,
   CreditCard, Globe, Accessibility, FileText, Heart,
-  Award, Zap, Calendar, TrendingUp, Crown, Pencil, LogIn, EyeOff
+  Award, Zap, Calendar, TrendingUp, Crown, Pencil, LogIn, EyeOff,
+  MapPin, Clock, Users, ArrowLeft, ChevronLeft
 } from "lucide-react";
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useMemo } from "react";
+import type { Booking } from "@/pages/Index";
+import { properties } from "@/data/properties";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
 import AuthScreen from "./AuthScreen";
