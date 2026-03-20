@@ -287,10 +287,18 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
               <SpotlightCarousel properties={serviceProperties} onPropertyTap={onPropertyTap} category="service" />
 
               <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
-                {["👨‍🍳 Food", "🎈 Decoration", "🚗 Transport", "🎧 Entertainment", "📸 Photography", "🧹 Staff"].map(tag => (
-                  <span key={tag} className="text-[11px] px-3 py-1.5 rounded-full bg-foreground/5 text-foreground/80 border border-foreground/10 whitespace-nowrap shrink-0">
+                {serviceFilters.map(tag => (
+                  <button
+                    key={tag}
+                    onClick={() => setSubFilter(tag)}
+                    className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 ${
+                      subFilter === tag
+                        ? "bg-primary text-primary-foreground font-semibold shadow-md"
+                        : "bg-foreground/5 text-foreground/80 border border-foreground/10"
+                    }`}
+                  >
                     {tag}
-                  </span>
+                  </button>
                 ))}
               </div>
 
