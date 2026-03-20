@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Building2, CalendarCheck, Users, BarChart3,
   Sparkles, Tag, Megaphone, Ticket, ShoppingCart, LogOut,
   ChevronLeft, ChevronRight, Shield, Menu, X, FileSpreadsheet,
-  Bot, Bell, ScrollText, Wallet, Zap, Trophy, Search, UserCheck
+  Bot, Bell, ScrollText, Wallet, Zap, Trophy, Search, UserCheck, Package
 } from "lucide-react";
 import CommandPalette from "./CommandPalette";
 import FloatingChecklist from "./FloatingChecklist";
