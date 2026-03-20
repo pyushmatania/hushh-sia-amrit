@@ -133,7 +133,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
             <>
               {/* Spotlight Video Cards for Stays */}
               <SectionDivider title="🏡 FEATURED STAYS" />
-              <SpotlightCarousel properties={stayProperties} onPropertyTap={onPropertyTap} />
+              <SpotlightCarousel properties={stayProperties} onPropertyTap={onPropertyTap} category="stay" />
 
               {/* Property Type Tags */}
               <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
