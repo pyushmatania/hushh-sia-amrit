@@ -146,17 +146,34 @@ function inventoryToAddons(rows: any[]): Record<string, Addon[]> {
   return grouped;
 }
 
+function curationsToCombo(row: any, staticMatch: CuratedCombo | undefined): CuratedCombo {
+  return {
+    id: staticMatch?.id || row.id,
+    name: row.name,
+    tagline: row.tagline || staticMatch?.tagline || "",
+    emoji: row.emoji || staticMatch?.emoji || "✨",
+    time: row.slot || staticMatch?.time || "",
+    priceRange: [Number(row.price), Number(row.original_price || row.price)],
+    includes: row.includes?.length ? row.includes : staticMatch?.includes || [],
+    image: staticMatch?.image || "",
+    gradient: row.gradient || staticMatch?.gradient || "from-primary/80 to-primary/40",
+    tags: row.tags?.length ? row.tags : staticMatch?.tags || [],
+    popular: !!row.badge || staticMatch?.popular,
+  };
+}
+
 export function PropertiesProvider({ children }: { children: ReactNode }) {
   const [properties, setProperties] = useState<Property[]>(staticProperties);
   const [addons, setAddons] = useState<Record<string, Addon[]>>(staticAddons);
+  const [curatedCombos, setCuratedCombos] = useState<CuratedCombo[]>(staticCombos);
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const load = useCallback(async () => {
-    // Fetch listings and inventory in parallel
-    const [listingsRes, inventoryRes] = await Promise.all([
+    const [listingsRes, inventoryRes, curationsRes] = await Promise.all([
       supabase.from("host_listings").select("*").eq("status", "published").order("created_at", { ascending: true }),
       supabase.from("inventory").select("*").order("category").order("name"),
+      supabase.from("curations").select("*").eq("active", true).order("sort_order", { ascending: true }),
     ]);
 
     // Process listings
@@ -190,7 +207,6 @@ export function PropertiesProvider({ children }: { children: ReactNode }) {
     // Process inventory → addons
     if (!inventoryRes.error && inventoryRes.data && inventoryRes.data.length > 0) {
       const dbAddons = inventoryToAddons(inventoryRes.data);
-      // Merge: use DB data for groups that exist in DB, fall back to static for others
       const merged = { ...staticAddons };
       for (const [group, items] of Object.entries(dbAddons)) {
         merged[group] = items;
@@ -198,6 +214,18 @@ export function PropertiesProvider({ children }: { children: ReactNode }) {
       setAddons(merged);
     } else {
       setAddons(staticAddons);
+    }
+
+    // Process curations → curatedCombos
+    if (!curationsRes.error && curationsRes.data && curationsRes.data.length > 0) {
+      const staticByName = new Map(staticCombos.map((c) => [c.name.toLowerCase().trim(), c]));
+      const merged = curationsRes.data.map((row) => {
+        const staticMatch = staticByName.get((row.name || "").toLowerCase().trim());
+        return curationsToCombo(row, staticMatch);
+      });
+      setCuratedCombos(merged);
+    } else {
+      setCuratedCombos(staticCombos);
     }
 
     setLoading(false);
@@ -232,7 +260,7 @@ export function PropertiesProvider({ children }: { children: ReactNode }) {
       value={{
         properties,
         packages: staticPackages,
-        curatedCombos: staticCombos,
+        curatedCombos,
         addons,
         loading,
         refresh,
