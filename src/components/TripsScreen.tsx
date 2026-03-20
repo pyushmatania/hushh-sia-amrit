@@ -473,6 +473,9 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
           ))}
         </div>
       )}
+
+      {/* Order History */}
+      <OrderHistorySection />
     </div>
     </PullToRefresh>
   );
