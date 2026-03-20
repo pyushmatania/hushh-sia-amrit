@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Tag, CreditCard, Smartphone, Banknote, ChevronRight, Shield, Clock, Users, MapPin, CalendarIcon } from "lucide-react";
+import { ArrowLeft, Tag, CreditCard, Smartphone, Banknote, ChevronRight, Shield, Clock, Users, MapPin, CalendarIcon, X } from "lucide-react";
 import { useState } from "react";
 import { format } from "date-fns";
 import type { Property } from "@/data/properties";
@@ -23,11 +23,16 @@ const paymentMethods = [
   { id: "cod", label: "Pay at Venue", icon: Banknote, sublabel: "Cash or card on arrival" },
 ];
 
-export default function CheckoutScreen({ property, slotId, guests, date, selections, total, onBack, onConfirm, extras }: CheckoutScreenProps) {
+export default function CheckoutScreen({ property, slotId, guests, date, selections, total, onBack, onConfirm, extras: initialExtras }: CheckoutScreenProps) {
   const slot = property.slots.find((s) => s.id === slotId)!;
   const [coupon, setCoupon] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState("upi");
+  const [extras, setExtras] = useState<Property[]>(initialExtras || []);
+
+  const removeExtra = (id: string) => {
+    setExtras(prev => prev.filter(e => e.id !== id));
+  };
 
   // Calculate extras total (cheapest available slot for each extra)
   const extrasTotal = (extras || []).reduce((sum, ext) => {
@@ -127,22 +132,36 @@ export default function CheckoutScreen({ property, slotId, guests, date, selecti
           ))}
 
           {/* Extra experiences/services */}
-          {extras && extras.length > 0 && (
+          {extras.length > 0 && (
             <>
               <div className="border-t border-border/50 pt-2 mt-1">
                 <span className="text-[11px] font-semibold text-primary uppercase tracking-wide">Added Extras</span>
               </div>
-              {extras.map((ext) => {
-                const cheapest = ext.slots.filter(s => s.available).sort((a, b) => a.price - b.price)[0];
-                const price = cheapest?.price || ext.basePrice;
-                return (
-                  <div key={ext.id} className="flex items-center gap-2 text-sm">
-                    <img src={ext.images[0]} alt="" className="w-8 h-8 rounded-lg object-cover shrink-0" />
-                    <span className="text-muted-foreground flex-1 truncate">{ext.name}</span>
-                    <span className="text-foreground font-medium">₹{price.toLocaleString()}</span>
-                  </div>
-                );
-              })}
+              <AnimatePresence>
+                {extras.map((ext) => {
+                  const cheapest = ext.slots.filter(s => s.available).sort((a, b) => a.price - b.price)[0];
+                  const price = cheapest?.price || ext.basePrice;
+                  return (
+                    <motion.div
+                      key={ext.id}
+                      initial={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex items-center gap-2 text-sm"
+                    >
+                      <img src={ext.images[0]} alt="" className="w-8 h-8 rounded-lg object-cover shrink-0" />
+                      <span className="text-muted-foreground flex-1 truncate">{ext.name}</span>
+                      <span className="text-foreground font-medium">₹{price.toLocaleString()}</span>
+                      <button
+                        onClick={() => removeExtra(ext.id)}
+                        className="w-6 h-6 rounded-full border border-border flex items-center justify-center hover:bg-destructive/10 hover:border-destructive/30 transition-colors shrink-0"
+                      >
+                        <X size={12} className="text-muted-foreground" />
+                      </button>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
             </>
           )}
 
