@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronDown, ChevronRight, BookOpen, Layers, MapPin, Users, Palette, Database, History, Sparkles, Shield, Zap } from "lucide-react";
-import { useState } from "react";
+import { X, ChevronDown, ChevronRight, BookOpen, Layers, MapPin, Users, Palette, Database, History, Sparkles, Shield, Zap, Copy, Check, FileText } from "lucide-react";
+import { useState, useCallback } from "react";
 
 interface AppDocumentationProps {
   open: boolean;
