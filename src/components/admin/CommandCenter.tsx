@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   IndianRupee, CalendarCheck, Eye, Users, TrendingUp,
-  ArrowUpRight, ArrowDownRight, Flame, Clock, Sparkles
+  ArrowUpRight, Flame, Clock, Sparkles
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from "recharts";
+import LiveActivityFeed from "./LiveActivityFeed";
+import BookingHeatmap from "./BookingHeatmap";
 
 interface Stats {
   revenue: number;
@@ -38,12 +40,10 @@ const smartCards = [
 const mockChartData = Array.from({ length: 14 }, (_, i) => ({
   day: `Day ${i + 1}`,
   revenue: Math.floor(Math.random() * 15000) + 5000,
-  bookings: Math.floor(Math.random() * 12) + 2,
 }));
 
 export default function CommandCenter() {
   const [stats, setStats] = useState<Stats>({ revenue: 0, bookings: 0, activeListings: 0, totalUsers: 0 });
-  const [recentActivity, setRecentActivity] = useState<any[]>([]);
 
   useEffect(() => {
     Promise.all([
@@ -61,9 +61,6 @@ export default function CommandCenter() {
         totalUsers: users.length,
       });
     });
-
-    supabase.from("bookings").select("*").order("created_at", { ascending: false }).limit(8)
-      .then(({ data }) => setRecentActivity(data ?? []));
   }, []);
 
   const statCards = [
@@ -80,7 +77,6 @@ export default function CommandCenter() {
         <p className="text-sm text-muted-foreground mt-1">Real-time overview of your operations</p>
       </div>
 
-      {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         {statCards.map((card, i) => (
           <motion.div
@@ -104,7 +100,6 @@ export default function CommandCenter() {
         ))}
       </div>
 
-      {/* Smart insight cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {smartCards.map((card, i) => (
           <motion.div
@@ -120,7 +115,11 @@ export default function CommandCenter() {
         ))}
       </div>
 
-      {/* Revenue chart */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <BookingHeatmap />
+        <LiveActivityFeed />
+      </div>
+
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -147,41 +146,6 @@ export default function CommandCenter() {
             </AreaChart>
           </ResponsiveContainer>
         </div>
-      </motion.div>
-
-      {/* Recent activity */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-        className="rounded-2xl border border-border bg-card p-4"
-      >
-        <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
-          <Sparkles size={14} className="text-primary" /> Recent Activity
-        </h3>
-        {recentActivity.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-4 text-center">No activity yet</p>
-        ) : (
-          <div className="space-y-2">
-            {recentActivity.map((a, i) => (
-              <div key={a.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
-                <div>
-                  <p className="text-sm text-foreground font-medium">Booking #{a.booking_id?.slice(0, 8)}</p>
-                  <p className="text-[11px] text-muted-foreground">{a.date} · {a.slot}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-semibold text-foreground tabular-nums">₹{Number(a.total).toLocaleString()}</p>
-                  <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
-                    a.status === "completed" ? "bg-emerald-500/15 text-emerald-400" :
-                    a.status === "cancelled" ? "bg-destructive/15 text-destructive" :
-                    a.status === "active" ? "bg-blue-500/15 text-blue-400" :
-                    "bg-amber-500/15 text-amber-400"
-                  }`}>{a.status}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </motion.div>
     </div>
   );
