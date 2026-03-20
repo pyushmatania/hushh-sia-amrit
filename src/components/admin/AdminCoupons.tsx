@@ -32,19 +32,20 @@ export default function AdminCoupons() {
 
   const create = async () => {
     const code = form.code || genCode();
-    const { data } = await supabase.from("coupons").insert({
+    const { data, error } = await supabase.from("coupons").insert({
       code, description: form.description, discount_type: form.discount_type,
       discount_value: form.discount_value, min_order: form.min_order,
       max_uses: form.max_uses ? Number(form.max_uses) : null,
       expires_at: form.expires_at || null,
-    } as any).select().single();
+    } as any).select().maybeSingle();
+    if (error) return;
     if (data) setCoupons(prev => [data as any, ...prev]);
     setShowCreate(false);
     setForm({ code: "", description: "", discount_type: "percentage", discount_value: 10, min_order: 0, max_uses: "", expires_at: "" });
   };
 
   const toggle = async (id: string, active: boolean) => {
-    await supabase.from("coupons").update({ active: !active } as any).eq("id", id);
+    await supabase.from("coupons").update({ active: !active }).eq("id", id);
     setCoupons(prev => prev.map(c => c.id === id ? { ...c, active: !active } : c));
   };
 

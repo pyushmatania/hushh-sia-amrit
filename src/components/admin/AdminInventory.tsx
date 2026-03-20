@@ -64,10 +64,13 @@ export default function AdminInventory() {
     };
 
     if (isCreating) {
-      const { data } = await supabase.from("inventory").insert(payload).select().single();
-      if (data) { setItems(prev => [...prev, data as InventoryItem]); toast({ title: "Item added!" }); }
+      const { data, error } = await supabase.from("inventory").insert(payload).select().maybeSingle();
+      if (error) { toast({ title: "Failed to add", description: error.message, variant: "destructive" }); return; }
+      if (data) { setItems(prev => [...prev, data as InventoryItem]); }
+      toast({ title: "Item added!" });
     } else {
-      await supabase.from("inventory").update(payload).eq("id", editing.id!);
+      const { error } = await supabase.from("inventory").update(payload).eq("id", editing.id!);
+      if (error) { toast({ title: "Update failed", description: error.message, variant: "destructive" }); return; }
       setItems(prev => prev.map(i => i.id === editing.id ? { ...i, ...payload } : i));
       toast({ title: "Item updated!" });
     }
