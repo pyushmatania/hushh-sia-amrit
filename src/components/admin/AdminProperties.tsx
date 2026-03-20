@@ -521,40 +521,107 @@ export default function AdminProperties() {
 
                 {/* Time Slots */}
                 <EditSection title="Time Slots" icon={<Clock size={16} />} id="slots" expanded={expandedSection} onToggle={setExpandedSection}>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     {(Array.isArray(editingListing.slots) ? editingListing.slots : []).map((slot: any, i: number) => (
-                      <div key={i} className="flex items-center gap-2 p-2 rounded-lg bg-secondary/50">
-                        <div className="flex-1 grid grid-cols-3 gap-2">
-                          <Input value={slot.label || ""} onChange={e => {
-                            const slots = [...(editingListing.slots || [])];
-                            slots[i] = { ...slots[i], label: e.target.value };
-                            setEditingListing(p => ({ ...p!, slots }));
-                          }} placeholder="Label" className="text-xs" />
-                          <Input value={slot.time || ""} onChange={e => {
-                            const slots = [...(editingListing.slots || [])];
-                            slots[i] = { ...slots[i], time: e.target.value };
-                            setEditingListing(p => ({ ...p!, slots }));
-                          }} placeholder="8 AM - 12 PM" className="text-xs" />
-                          <Input type="number" value={slot.price || 0} onChange={e => {
-                            const slots = [...(editingListing.slots || [])];
-                            slots[i] = { ...slots[i], price: Number(e.target.value) };
-                            setEditingListing(p => ({ ...p!, slots }));
-                          }} placeholder="Price" className="text-xs" />
+                      <div key={i} className="p-3 rounded-xl border border-border bg-secondary/30 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-semibold text-foreground">{slot.label || `Slot ${i + 1}`}</span>
+                          <div className="flex items-center gap-2">
+                            <button onClick={() => {
+                              const slots = [...(editingListing.slots || [])];
+                              slots[i] = { ...slots[i], available: !slots[i].available };
+                              setEditingListing(p => ({ ...p!, slots }));
+                            }} className={`px-2 py-0.5 rounded-full text-[10px] font-medium transition ${slot.available !== false ? "bg-emerald-500/15 text-emerald-400" : "bg-muted text-muted-foreground"}`}>
+                              {slot.available !== false ? "Available" : "Unavailable"}
+                            </button>
+                            <button onClick={() => {
+                              const slots = [...(editingListing.slots || [])];
+                              slots.splice(i, 1);
+                              setEditingListing(p => ({ ...p!, slots }));
+                            }} className="p-1 hover:bg-destructive/10 rounded transition">
+                              <X size={12} className="text-destructive" />
+                            </button>
+                          </div>
                         </div>
-                        <button onClick={() => {
-                          const slots = [...(editingListing.slots || [])];
-                          slots.splice(i, 1);
-                          setEditingListing(p => ({ ...p!, slots }));
-                        }} className="p-1 hover:bg-destructive/10 rounded transition">
-                          <X size={12} className="text-destructive" />
-                        </button>
+                        <div className="grid grid-cols-2 gap-2">
+                          <Field label="Label">
+                            <Input value={slot.label || ""} onChange={e => {
+                              const slots = [...(editingListing.slots || [])];
+                              slots[i] = { ...slots[i], label: e.target.value };
+                              setEditingListing(p => ({ ...p!, slots }));
+                            }} placeholder="Morning" className="text-xs" />
+                          </Field>
+                          <Field label="Time Range">
+                            <Input value={slot.time || ""} onChange={e => {
+                              const slots = [...(editingListing.slots || [])];
+                              slots[i] = { ...slots[i], time: e.target.value };
+                              setEditingListing(p => ({ ...p!, slots }));
+                            }} placeholder="8 AM - 12 PM" className="text-xs" />
+                          </Field>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <Field label="Price (₹)">
+                            <Input type="number" value={slot.price || 0} onChange={e => {
+                              const slots = [...(editingListing.slots || [])];
+                              slots[i] = { ...slots[i], price: Number(e.target.value) };
+                              setEditingListing(p => ({ ...p!, slots }));
+                            }} className="text-xs" />
+                          </Field>
+                          <Field label="Original Price (₹)">
+                            <Input type="number" value={slot.originalPrice || ""} onChange={e => {
+                              const slots = [...(editingListing.slots || [])];
+                              slots[i] = { ...slots[i], originalPrice: e.target.value ? Number(e.target.value) : undefined };
+                              setEditingListing(p => ({ ...p!, slots }));
+                            }} placeholder="Strikethrough" className="text-xs" />
+                          </Field>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2">
+                          <Field label="Tag">
+                            <select value={slot.tag || ""} onChange={e => {
+                              const slots = [...(editingListing.slots || [])];
+                              slots[i] = { ...slots[i], tag: e.target.value || undefined };
+                              setEditingListing(p => ({ ...p!, slots }));
+                            }} className="w-full rounded-lg border border-input bg-background px-2 py-1.5 text-xs">
+                              <option value="">None</option>
+                              <option value="Best Price">Best Price</option>
+                              <option value="Work Best">Work Best</option>
+                              <option value="Almost Full">Almost Full</option>
+                              <option value="Trending">Trending</option>
+                              <option value="Couple Pick">Couple Pick</option>
+                              <option value="Popular">Popular</option>
+                              <option value="New">New</option>
+                            </select>
+                          </Field>
+                          <Field label="Demand (0-100)">
+                            <Input type="number" min="0" max="100" value={slot.demandScore || ""} onChange={e => {
+                              const slots = [...(editingListing.slots || [])];
+                              slots[i] = { ...slots[i], demandScore: e.target.value ? Number(e.target.value) : undefined };
+                              setEditingListing(p => ({ ...p!, slots }));
+                            }} placeholder="0" className="text-xs" />
+                          </Field>
+                          <Field label="Viewers Now">
+                            <Input type="number" min="0" value={slot.viewersNow || ""} onChange={e => {
+                              const slots = [...(editingListing.slots || [])];
+                              slots[i] = { ...slots[i], viewersNow: e.target.value ? Number(e.target.value) : undefined };
+                              setEditingListing(p => ({ ...p!, slots }));
+                            }} placeholder="0" className="text-xs" />
+                          </Field>
+                        </div>
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input type="checkbox" checked={slot.popular || false} onChange={e => {
+                            const slots = [...(editingListing.slots || [])];
+                            slots[i] = { ...slots[i], popular: e.target.checked };
+                            setEditingListing(p => ({ ...p!, slots }));
+                          }} className="rounded border-border" />
+                          <span className="text-[11px] text-muted-foreground">Mark as Popular</span>
+                        </label>
                       </div>
                     ))}
                     <button onClick={() => {
-                      const slots = [...(editingListing.slots || []), { id: `s${Date.now()}`, label: "", time: "", price: 0, available: true }];
+                      const slots = [...(editingListing.slots || []), { id: `s${Date.now()}`, label: "", time: "", price: 0, available: true, popular: false }];
                       setEditingListing(p => ({ ...p!, slots }));
-                    }} className="w-full py-2 rounded-lg border border-dashed border-border text-xs text-muted-foreground hover:text-foreground hover:border-primary/30 transition">
-                      + Add Slot
+                    }} className="w-full py-2.5 rounded-xl border border-dashed border-border text-xs text-muted-foreground hover:text-foreground hover:border-primary/30 transition">
+                      + Add Time Slot
                     </button>
                   </div>
                 </EditSection>
