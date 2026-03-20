@@ -319,35 +319,25 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
         </motion.p>
       </div>
 
-      {bookings.length === 0 ? (
+      {isDemo && (
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center justify-center px-5 pt-20"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="mx-5 mt-2 mb-1 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20"
         >
-          <motion.div
-            className="w-24 h-24 rounded-full bg-secondary/50 flex items-center justify-center mb-5"
-            animate={{ rotateY: [0, 180, 360] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            style={{ perspective: 600, transformStyle: "preserve-3d" }}
-          >
-            <Ticket size={36} className="text-muted-foreground" />
-          </motion.div>
-          <h3 className="text-lg font-semibold text-foreground mb-1">No trips yet</h3>
-          <p className="text-sm text-muted-foreground text-center max-w-[260px]">
-            When you book a venue or experience, it will show up here.
-          </p>
+          <p className="text-[11px] text-primary font-medium text-center">✨ These are sample trips — book a venue to see your real trips here!</p>
         </motion.div>
-      ) : (
-        <div className="px-5 pt-4 space-y-6">
-          {bookings.map((trip, i) => (
-            <SwipeableCard
-              key={trip.id}
-              booking={trip}
-              index={i}
-              onViewDetail={onViewDetail}
-              onRebook={onRebook}
-              onCancel={onCancel}
+      )}
+
+      <div className="px-5 pt-4 space-y-6">
+        {displayBookings.map((trip, i) => (
+          <SwipeableCard
+            key={trip.id}
+            booking={trip}
+            index={i}
+            onViewDetail={onViewDetail}
+            onRebook={onRebook}
+            onCancel={isDemo ? undefined : onCancel}
             />
           ))}
         </div>
