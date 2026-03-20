@@ -253,12 +253,50 @@ function TiltCard({
   );
 }
 
+// Demo trips shown when no real bookings exist
+const demoTrips: Booking[] = [
+  {
+    id: "demo-1",
+    propertyId: "1",
+    date: "Mar 25, 2026",
+    slot: "Evening · 6 PM – 11 PM",
+    guests: 4,
+    total: 8500,
+    status: "upcoming",
+    bookingId: "HUSHH-DEMO01",
+  },
+  {
+    id: "demo-2",
+    propertyId: "2",
+    date: "Mar 10, 2026",
+    slot: "Full Day · 10 AM – 10 PM",
+    guests: 8,
+    total: 15200,
+    status: "completed",
+    bookingId: "HUSHH-DEMO02",
+  },
+  {
+    id: "demo-3",
+    propertyId: "3",
+    date: "Feb 14, 2026",
+    slot: "Night · 8 PM – 1 AM",
+    guests: 2,
+    total: 6000,
+    status: "cancelled",
+    bookingId: "HUSHH-DEMO03",
+  },
+];
+
 export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel }: TripsScreenProps) {
   const [refreshKey, setRefreshKey] = useState(0);
   const handleRefresh = useCallback(async () => {
     await new Promise((r) => setTimeout(r, 800));
     setRefreshKey((k) => k + 1);
   }, []);
+
+  // Show demo trips when no real bookings exist
+  const displayBookings = useMemo(() => bookings.length > 0 ? bookings : demoTrips, [bookings]);
+  const isDemo = bookings.length === 0;
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
