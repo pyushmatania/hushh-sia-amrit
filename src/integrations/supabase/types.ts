@@ -444,6 +444,7 @@ export type Database = {
           low_stock_threshold: number
           name: string
           property_id: string | null
+          sort_order: number
           stock: number
           unit_price: number
           updated_at: string
@@ -457,6 +458,7 @@ export type Database = {
           low_stock_threshold?: number
           name: string
           property_id?: string | null
+          sort_order?: number
           stock?: number
           unit_price?: number
           updated_at?: string
@@ -470,6 +472,7 @@ export type Database = {
           low_stock_threshold?: number
           name?: string
           property_id?: string | null
+          sort_order?: number
           stock?: number
           unit_price?: number
           updated_at?: string
