@@ -45,39 +45,39 @@ const packMedia: Record<string, { poster: string; video: string }> = {
   "ep-8": { poster: packTeamWork, video: videoCurationTeam.url },
 };
 
-const packAccents: Record<string, { color: string; tag: { label: string; bg: string; icon?: React.ReactNode } }> = {
-  "ep-1": {
-    color: "hsl(270 80% 65%)",
-    tag: { label: "🔥 POPULAR", bg: "linear-gradient(135deg, hsl(270 80% 65%), hsl(320 80% 60%))", icon: <Sparkles size={11} className="text-primary-foreground" /> },
-  },
-  "ep-2": {
-    color: "hsl(340 75% 55%)",
-    tag: { label: "💕 #1 PICK", bg: "linear-gradient(135deg, hsl(340 75% 55%), hsl(320 80% 60%))", icon: <Sparkles size={11} className="text-primary-foreground" /> },
-  },
-  "ep-3": {
-    color: "hsl(35 95% 55%)",
-    tag: { label: "🎉 TRENDING", bg: "linear-gradient(135deg, hsl(35 95% 50%), hsl(15 90% 50%))", icon: <Sparkles size={11} className="text-primary-foreground" /> },
-  },
-  "ep-4": {
-    color: "hsl(0 85% 55%)",
-    tag: { label: "🔥 HOT", bg: "linear-gradient(135deg, hsl(0 85% 55%), hsl(35 95% 55%))" },
-  },
-  "ep-5": {
-    color: "hsl(280 90% 60%)",
-    tag: { label: "🎬 CINEMA", bg: "linear-gradient(135deg, hsl(280 90% 60%), hsl(260 80% 55%))" },
-  },
-  "ep-6": {
-    color: "hsl(150 80% 45%)",
-    tag: { label: "🎮 FUN", bg: "linear-gradient(135deg, hsl(150 80% 45%), hsl(170 75% 40%))" },
-  },
-  "ep-7": {
-    color: "hsl(190 80% 50%)",
-    tag: { label: "💸 BEST VALUE", bg: "linear-gradient(135deg, hsl(190 80% 50%), hsl(210 80% 50%))", icon: <Sparkles size={11} className="text-primary-foreground" /> },
-  },
-  "ep-8": {
-    color: "hsl(220 75% 55%)",
-    tag: { label: "👥 TEAM", bg: "linear-gradient(135deg, hsl(220 75% 55%), hsl(250 70% 55%))" },
-  },
+// Accent config helper
+const accentDef = (color: string, label: string, bg: string, icon?: React.ReactNode) => ({ color, tag: { label, bg, icon } });
+
+const accentPresets = {
+  chill: accentDef("hsl(270 80% 65%)", "🔥 POPULAR", "linear-gradient(135deg, hsl(270 80% 65%), hsl(320 80% 60%))", <Sparkles size={11} className="text-primary-foreground" />),
+  romantic: accentDef("hsl(340 75% 55%)", "💕 #1 PICK", "linear-gradient(135deg, hsl(340 75% 55%), hsl(320 80% 60%))", <Sparkles size={11} className="text-primary-foreground" />),
+  party: accentDef("hsl(35 95% 55%)", "🎉 TRENDING", "linear-gradient(135deg, hsl(35 95% 50%), hsl(15 90% 50%))", <Sparkles size={11} className="text-primary-foreground" />),
+  bbq: accentDef("hsl(0 85% 55%)", "🔥 HOT", "linear-gradient(135deg, hsl(0 85% 55%), hsl(35 95% 55%))"),
+  movie: accentDef("hsl(280 90% 60%)", "🎬 CINEMA", "linear-gradient(135deg, hsl(280 90% 60%), hsl(260 80% 55%))"),
+  game: accentDef("hsl(150 80% 45%)", "🎮 FUN", "linear-gradient(135deg, hsl(150 80% 45%), hsl(170 75% 40%))"),
+  work: accentDef("hsl(190 80% 50%)", "💸 BEST VALUE", "linear-gradient(135deg, hsl(190 80% 50%), hsl(210 80% 50%))", <Sparkles size={11} className="text-primary-foreground" />),
+  team: accentDef("hsl(220 75% 55%)", "👥 TEAM", "linear-gradient(135deg, hsl(220 75% 55%), hsl(250 70% 55%))"),
+};
+
+const packAccents: Record<string, typeof accentPresets.chill> = {
+  // DB UUIDs
+  "afc5ded6-c6cf-45c7-bc3c-e9e9e8c939ac": accentPresets.chill,
+  "99e244ea-e3df-4674-8177-03533b906f49": accentPresets.party,
+  "12269e8f-5d2e-4406-87f9-359603ba474a": accentPresets.romantic,
+  "990fd140-1ee6-41d4-bf95-7e0461ef7942": accentPresets.bbq,
+  "d2f8cc4f-ae9a-4fab-83a6-1a803e273d38": accentPresets.movie,
+  "78e62799-1125-4db2-9e49-7527c7d02eb7": accentPresets.game,
+  "96e01ca0-f198-4c1a-8b36-690d5e91d2e1": accentPresets.work,
+  "3b9a0f7b-ba37-4a75-9ef7-897d11f4e8ff": accentPresets.team,
+  // Legacy
+  "ep-1": accentPresets.chill,
+  "ep-2": accentPresets.romantic,
+  "ep-3": accentPresets.party,
+  "ep-4": accentPresets.bbq,
+  "ep-5": accentPresets.movie,
+  "ep-6": accentPresets.game,
+  "ep-7": accentPresets.work,
+  "ep-8": accentPresets.team,
 };
 
 const defaultAccent = {
