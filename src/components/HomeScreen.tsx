@@ -228,6 +228,9 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
           {/* ═══════ HOME TAB — Full Discovery Feed ═══════ */}
           {activeCategory === "home" && (
             <>
+              {/* Last Vibe — Repeat Booking */}
+              <LastVibeCard onRebook={onPropertyTap} />
+
               {/* Mood Selector */}
               <MoodSelector activeMood={activeMood} onMoodChange={handleMoodChange} />
 
