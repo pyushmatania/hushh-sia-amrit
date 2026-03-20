@@ -2,8 +2,7 @@ import { motion } from "framer-motion";
 import { RotateCcw, MapPin, Calendar, Clock, Users, ChevronRight } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useBookings } from "@/hooks/use-bookings";
-import { type Property } from "@/data/properties";
-import { useDbListings } from "@/hooks/use-db-listings";
+import { properties, type Property } from "@/data/properties";
 
 interface LastVibeCardProps {
   onRebook: (property: Property) => void;
@@ -12,15 +11,16 @@ interface LastVibeCardProps {
 export default function LastVibeCard({ onRebook }: LastVibeCardProps) {
   const { user } = useAuth();
   const { bookings } = useBookings();
-  const { properties } = useDbListings();
 
   // Find the most recent completed or upcoming booking
   const lastBooking = bookings.find(
     (b) => b.status === "completed" || b.status === "upcoming"
   );
 
-  const property = lastBooking ? properties.find((p) => p.id === lastBooking.propertyId) : undefined;
-  if (!lastBooking || !property) return null;
+  if (!lastBooking) return null;
+
+  const property = properties.find((p) => p.id === lastBooking.propertyId);
+  if (!property) return null;
 
   return (
     <div className="px-4 pt-3 pb-1">

@@ -1,7 +1,7 @@
 import { motion, useMotionValue, useTransform, useSpring, useAnimation, useScroll, PanInfo } from "framer-motion";
 import { MapPin, Calendar, Clock, ChevronRight, Ticket, QrCode, Users, X, Utensils, ShoppingCart, Shield, Upload } from "lucide-react";
 import { useRef, useState, useCallback, useMemo, useEffect } from "react";
-import { useDbListings } from "@/hooks/use-db-listings";
+import { properties } from "@/data/properties";
 import PullToRefresh from "./PullToRefresh";
 import type { Booking } from "@/pages/Index";
 import OrderHistorySection from "./OrderHistorySection";
@@ -119,7 +119,6 @@ function TiltCard({
   onRebook: (id: string) => void;
   onOrderFood?: (b: Booking) => void;
 }) {
-  const { properties } = useDbListings();
   const cardRef = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -288,7 +287,6 @@ const filterTabs = [
 ] as const;
 
 export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel }: TripsScreenProps) {
-  const { properties } = useDbListings();
   const [refreshKey, setRefreshKey] = useState(0);
   const [activeFilter, setActiveFilter] = useState<string>("all");
   const [orderingBooking, setOrderingBooking] = useState<Booking | null>(null);

@@ -6,8 +6,7 @@ import {
   Utensils, Star, Shield, Wifi, Music, Flame, Home, Info
 } from "lucide-react";
 import { useState, useMemo } from "react";
-import { addons } from "@/data/properties";
-import { useDbListings } from "@/hooks/use-db-listings";
+import { properties, addons } from "@/data/properties";
 import { useToast } from "@/hooks/use-toast";
 import type { Booking } from "@/pages/Index";
 import LiveOrderingSheet from "./LiveOrderingSheet";
@@ -20,7 +19,6 @@ interface BookingDetailScreenProps {
 }
 
 export default function BookingDetailScreen({ booking, onBack, onCancel, onRebook }: BookingDetailScreenProps) {
-  const { properties } = useDbListings();
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [showAddonsSheet, setShowAddonsSheet] = useState(false);
   const [showFoodOrder, setShowFoodOrder] = useState(false);
@@ -30,7 +28,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
   const [cancelled, setCancelled] = useState(false);
   const { toast } = useToast();
 
-  const property = useMemo(() => properties.find((p) => p.id === booking.propertyId), [booking.propertyId, properties]);
+  const property = useMemo(() => properties.find((p) => p.id === booking.propertyId), [booking.propertyId]);
 
   const addonTotal = useMemo(() => {
     return Object.entries(addonSelections).reduce((sum, [id, qty]) => {

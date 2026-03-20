@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { Heart, Star, MapPin, BadgeCheck } from "lucide-react";
-import { type Property } from "@/data/properties";
-import { useDbListings } from "@/hooks/use-db-listings";
+import { properties, type Property } from "@/data/properties";
 import { pageSlideUp, cardPress } from "@/lib/animations";
 
 interface WishlistScreenProps {
@@ -11,7 +10,6 @@ interface WishlistScreenProps {
 }
 
 export default function WishlistScreen({ wishlist, onToggleWishlist, onPropertyTap }: WishlistScreenProps) {
-  const { properties } = useDbListings();
   const wishlisted = properties.filter((p) => wishlist.includes(p.id));
 
   return (

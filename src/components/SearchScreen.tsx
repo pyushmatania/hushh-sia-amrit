@@ -5,8 +5,7 @@ import {
 } from "lucide-react";
 import { useState, useMemo, useCallback } from "react";
 import { format } from "date-fns";
-import { type Property } from "@/data/properties";
-import { useDbListings } from "@/hooks/use-db-listings";
+import { properties, type Property } from "@/data/properties";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
@@ -40,7 +39,6 @@ const sortLabels: Record<SortOption, string> = {
 };
 
 export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenProps) {
-  const { properties } = useDbListings();
   const [query, setQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
