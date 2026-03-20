@@ -4,14 +4,15 @@ import {
   LayoutDashboard, Building2, CalendarCheck, Users, BarChart3,
   Sparkles, Tag, Megaphone, Ticket, ShoppingCart, LogOut,
   ChevronLeft, ChevronRight, Shield, Menu, X, FileSpreadsheet,
-  Bot, Bell, ScrollText, Wallet, Zap, Trophy, Search
+  Bot, Bell, ScrollText, Wallet, Zap, Trophy, Search, UserCheck
 } from "lucide-react";
 import CommandPalette from "./CommandPalette";
+import FloatingChecklist from "./FloatingChecklist";
 import { useAuth } from "@/hooks/use-auth";
 import { useAdmin } from "@/hooks/use-admin";
 
 export type AdminPage =
-  | "dashboard" | "properties" | "bookings" | "users"
+  | "dashboard" | "properties" | "bookings" | "users" | "clients"
   | "analytics" | "curations" | "tags" | "campaigns"
   | "coupons" | "orders" | "exports" | "ai" | "alerts" | "audit"
   | "earnings" | "pricing" | "achievements" | "loyalty"
