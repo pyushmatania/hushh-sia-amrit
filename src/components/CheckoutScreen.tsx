@@ -126,7 +126,26 @@ export default function CheckoutScreen({ property, slotId, guests, date, selecti
             </div>
           ))}
 
-          {/* Platform fee */}
+          {/* Extra experiences/services */}
+          {extras && extras.length > 0 && (
+            <>
+              <div className="border-t border-border/50 pt-2 mt-1">
+                <span className="text-[11px] font-semibold text-primary uppercase tracking-wide">Added Extras</span>
+              </div>
+              {extras.map((ext) => {
+                const cheapest = ext.slots.filter(s => s.available).sort((a, b) => a.price - b.price)[0];
+                const price = cheapest?.price || ext.basePrice;
+                return (
+                  <div key={ext.id} className="flex items-center gap-2 text-sm">
+                    <img src={ext.images[0]} alt="" className="w-8 h-8 rounded-lg object-cover shrink-0" />
+                    <span className="text-muted-foreground flex-1 truncate">{ext.name}</span>
+                    <span className="text-foreground font-medium">₹{price.toLocaleString()}</span>
+                  </div>
+                );
+              })}
+            </>
+          )}
+
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Platform fee</span>
             <span className="text-foreground font-medium">₹{platformFee}</span>
