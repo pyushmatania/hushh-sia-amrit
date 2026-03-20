@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Search, Heart, MapPin, MessageCircle, User } from "lucide-react";
+import { hapticSelection } from "@/lib/haptics";
 
 const tabs = [
   { id: "home", icon: Search, label: "Explore" },
