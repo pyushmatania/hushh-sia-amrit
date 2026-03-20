@@ -6,7 +6,8 @@ import {
   Utensils, Star, Shield, Wifi, Music, Flame, Home, Info
 } from "lucide-react";
 import { useState, useMemo } from "react";
-import { properties, addons } from "@/data/properties";
+import { addons } from "@/data/properties";
+import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { useToast } from "@/hooks/use-toast";
 import type { Booking } from "@/pages/Index";
 import LiveOrderingSheet from "./LiveOrderingSheet";
@@ -19,6 +20,7 @@ interface BookingDetailScreenProps {
 }
 
 export default function BookingDetailScreen({ booking, onBack, onCancel, onRebook }: BookingDetailScreenProps) {
+  const { properties } = usePropertiesData();
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [showAddonsSheet, setShowAddonsSheet] = useState(false);
   const [showFoodOrder, setShowFoodOrder] = useState(false);

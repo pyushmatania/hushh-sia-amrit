@@ -3,7 +3,8 @@ import { Utensils, MapPin, Calendar, Clock, Users, ChevronRight, Zap } from "luc
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useBookings } from "@/hooks/use-bookings";
-import { properties, type Property } from "@/data/properties";
+import { type Property } from "@/data/properties";
+import { usePropertiesData } from "@/contexts/PropertiesContext";
 import LiveOrderingSheet from "@/components/LiveOrderingSheet";
 
 interface ActiveTripCardProps {
@@ -11,6 +12,7 @@ interface ActiveTripCardProps {
 }
 
 export default function ActiveTripCard({ onViewTrip }: ActiveTripCardProps) {
+  const { properties } = usePropertiesData();
   const { bookings } = useBookings();
   const [orderingOpen, setOrderingOpen] = useState(false);
 
