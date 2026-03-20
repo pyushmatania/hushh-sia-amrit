@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Package, Search, Plus, Trash2, Pencil, X, AlertTriangle, Eye } from "lucide-react";
+import { Package, Search, Plus, Trash2, Pencil, X, AlertTriangle, Eye, GripVertical } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -15,6 +15,7 @@ interface InventoryItem {
   low_stock_threshold: number;
   available: boolean;
   property_id: string | null;
+  sort_order: number;
   created_at: string;
 }
 
@@ -36,12 +37,16 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
   const [editing, setEditing] = useState<Partial<InventoryItem> | null>(null);
   const [isCreating, setIsCreating] = useState(false);
 
+  // Drag state
+  const [dragId, setDragId] = useState<string | null>(null);
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
+  const dragCat = useRef<string | null>(null);
+
   useEffect(() => {
-    supabase.from("inventory").select("*").order("category").order("name")
+    supabase.from("inventory").select("*").order("sort_order").order("name")
       .then(({ data }) => { setItems((data as InventoryItem[]) ?? []); setLoading(false); });
   }, []);
 
-  // Apply external filter from Catalog tabs
   const scopedItems = filterCategory === "food-drinks"
     ? items.filter(i => foodDrinksCategories.includes(i.category))
     : filterCategory === "addons"
@@ -67,7 +72,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
   const openCreate = () => {
     const defaultCat = filterCategory === "food-drinks" ? "food" : filterCategory === "addons" ? "decoration" : "food";
     const defaultEmoji = filterCategory === "addons" ? "🎉" : "🍽️";
-    setEditing({ name: "", emoji: defaultEmoji, category: defaultCat, unit_price: 0, stock: 100, low_stock_threshold: 10, available: true, property_id: null });
+    setEditing({ name: "", emoji: defaultEmoji, category: defaultCat, unit_price: 0, stock: 100, low_stock_threshold: 10, available: true, property_id: null, sort_order: 0 });
     setIsCreating(true);
   };
 
@@ -83,6 +88,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
       low_stock_threshold: editing.low_stock_threshold || 10,
       available: editing.available ?? true,
       property_id: editing.property_id || null,
+      sort_order: editing.sort_order || 0,
     };
 
     if (isCreating) {
@@ -114,8 +120,59 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
     setItems(prev => prev.map(i => i.id === item.id ? { ...i, available: next } : i));
   };
 
-  const lowStock = scopedItems.filter(i => i.stock <= i.low_stock_threshold && i.available);
+  // --- Drag & Drop ---
+  const handleDragStart = useCallback((id: string, category: string) => {
+    setDragId(id);
+    dragCat.current = category;
+  }, []);
 
+  const handleDragOver = useCallback((e: React.DragEvent, id: string) => {
+    e.preventDefault();
+    if (id !== dragOverId) setDragOverId(id);
+  }, [dragOverId]);
+
+  const handleDrop = useCallback(async (targetId: string, category: string) => {
+    if (!dragId || dragId === targetId || category !== dragCat.current) {
+      setDragId(null);
+      setDragOverId(null);
+      return;
+    }
+
+    // Reorder within category
+    const catItems = [...items.filter(i => i.category === category)].sort((a, b) => a.sort_order - b.sort_order);
+    const fromIdx = catItems.findIndex(i => i.id === dragId);
+    const toIdx = catItems.findIndex(i => i.id === targetId);
+    if (fromIdx === -1 || toIdx === -1) { setDragId(null); setDragOverId(null); return; }
+
+    const [moved] = catItems.splice(fromIdx, 1);
+    catItems.splice(toIdx, 0, moved);
+
+    // Assign new sort orders
+    const updates = catItems.map((item, idx) => ({ id: item.id, sort_order: idx }));
+
+    // Optimistic update
+    setItems(prev => prev.map(i => {
+      const u = updates.find(u => u.id === i.id);
+      return u ? { ...i, sort_order: u.sort_order } : i;
+    }));
+
+    setDragId(null);
+    setDragOverId(null);
+
+    // Persist
+    for (const u of updates) {
+      await supabase.from("inventory").update({ sort_order: u.sort_order }).eq("id", u.id);
+    }
+    toast({ title: "Order saved" });
+    window.dispatchEvent(new Event("hushh:listings-updated"));
+  }, [dragId, items, toast]);
+
+  const handleDragEnd = useCallback(() => {
+    setDragId(null);
+    setDragOverId(null);
+  }, []);
+
+  const lowStock = scopedItems.filter(i => i.stock <= i.low_stock_threshold && i.available);
   const sectionTitle = filterCategory === "food-drinks" ? "Food & Drinks" : filterCategory === "addons" ? "Add-ons & Services" : "Inventory";
 
   return (
@@ -125,7 +182,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Package size={22} className="text-primary" /> {sectionTitle}
           </h1>
-          <p className="text-sm text-muted-foreground">{scopedItems.length} items · {lowStock.length} low stock</p>
+          <p className="text-sm text-muted-foreground">{scopedItems.length} items · {lowStock.length} low stock · Drag to reorder</p>
         </div>
         <button onClick={openCreate}
           className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 active:scale-95 transition">
@@ -133,7 +190,6 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
         </button>
       </div>
 
-      {/* Low stock alert */}
       {lowStock.length > 0 && (
         <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 flex items-start gap-2">
           <AlertTriangle size={16} className="text-amber-400 mt-0.5 shrink-0" />
@@ -144,7 +200,6 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
         </div>
       )}
 
-      {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -160,7 +215,6 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
         </div>
       </div>
 
-      {/* Items grouped */}
       {loading ? (
         <div className="space-y-3">{[1,2,3].map(i => <div key={i} className="h-16 rounded-xl bg-secondary animate-pulse" />)}</div>
       ) : Object.keys(grouped).length === 0 ? (
@@ -169,37 +223,55 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
           <p className="text-muted-foreground">No items found</p>
         </div>
       ) : (
-        Object.entries(grouped).map(([cat, catItems]) => (
-          <div key={cat}>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 capitalize">{cat}</h3>
-            <div className="space-y-1.5">
-              {catItems.map((item, i) => (
-                <motion.div key={item.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.02 }}
-                  className={`rounded-xl border bg-card p-3 flex items-center gap-3 transition ${
-                    item.stock <= item.low_stock_threshold ? "border-amber-500/30" : "border-border"
-                  } ${!item.available ? "opacity-50" : ""}`}>
-                  <span className="text-xl">{item.emoji}</span>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-medium text-foreground">{item.name}</h4>
-                    <p className="text-[11px] text-muted-foreground tabular-nums">₹{item.unit_price} · Stock: {item.stock}</p>
-                  </div>
-                  <div className="flex gap-1">
-                    <button onClick={() => toggleAvailability(item)}
-                      className={`px-2 py-1 rounded-lg text-[10px] font-medium transition ${
-                        item.available ? "bg-emerald-500/15 text-emerald-400" : "bg-muted text-muted-foreground"
-                      }`}>{item.available ? "Available" : "Unavailable"}</button>
-                    <button onClick={() => window.location.href = "/"}
-                      className="p-1.5 rounded-lg hover:bg-secondary transition" title="Preview in app"><Eye size={13} className="text-muted-foreground" /></button>
-                    <button onClick={() => { setEditing({ ...item }); setIsCreating(false); }}
-                      className="p-1.5 rounded-lg hover:bg-secondary transition"><Pencil size={13} className="text-muted-foreground" /></button>
-                    <button onClick={() => deleteItem(item.id)}
-                      className="p-1.5 rounded-lg hover:bg-destructive/10 transition"><Trash2 size={13} className="text-destructive" /></button>
-                  </div>
-                </motion.div>
-              ))}
+        Object.entries(grouped).map(([cat, catItems]) => {
+          const sorted = [...catItems].sort((a, b) => a.sort_order - b.sort_order);
+          return (
+            <div key={cat}>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 capitalize">{cat}</h3>
+              <div className="space-y-1.5">
+                {sorted.map((item, i) => (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: i * 0.02 }}
+                    draggable
+                    onDragStart={() => handleDragStart(item.id, cat)}
+                    onDragOver={(e) => handleDragOver(e, item.id)}
+                    onDrop={() => handleDrop(item.id, cat)}
+                    onDragEnd={handleDragEnd}
+                    className={`rounded-xl border bg-card p-3 flex items-center gap-2 transition-all cursor-grab active:cursor-grabbing ${
+                      item.stock <= item.low_stock_threshold ? "border-amber-500/30" : "border-border"
+                    } ${!item.available ? "opacity-50" : ""} ${
+                      dragId === item.id ? "opacity-40 scale-[0.97]" : ""
+                    } ${dragOverId === item.id && dragId !== item.id ? "border-primary shadow-sm shadow-primary/20" : ""}`}
+                  >
+                    <div className="text-muted-foreground/40 hover:text-muted-foreground transition shrink-0">
+                      <GripVertical size={16} />
+                    </div>
+                    <span className="text-xl">{item.emoji}</span>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-medium text-foreground">{item.name}</h4>
+                      <p className="text-[11px] text-muted-foreground tabular-nums">₹{item.unit_price} · Stock: {item.stock}</p>
+                    </div>
+                    <div className="flex gap-1">
+                      <button onClick={() => toggleAvailability(item)}
+                        className={`px-2 py-1 rounded-lg text-[10px] font-medium transition ${
+                          item.available ? "bg-emerald-500/15 text-emerald-400" : "bg-muted text-muted-foreground"
+                        }`}>{item.available ? "Available" : "Unavailable"}</button>
+                      <button onClick={() => window.location.href = "/"}
+                        className="p-1.5 rounded-lg hover:bg-secondary transition" title="Preview in app"><Eye size={13} className="text-muted-foreground" /></button>
+                      <button onClick={() => { setEditing({ ...item }); setIsCreating(false); }}
+                        className="p-1.5 rounded-lg hover:bg-secondary transition"><Pencil size={13} className="text-muted-foreground" /></button>
+                      <button onClick={() => deleteItem(item.id)}
+                        className="p-1.5 rounded-lg hover:bg-destructive/10 transition"><Trash2 size={13} className="text-destructive" /></button>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
             </div>
-          </div>
-        ))
+          );
+        })
       )}
 
       {/* Edit/Create Sheet */}
