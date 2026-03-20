@@ -126,28 +126,35 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
               ? "bg-destructive/10 border border-destructive/20"
               : isCompleted
                 ? "bg-success/10 border border-success/20"
-                : "bg-primary/10 border border-primary/20"
+                : isActive
+                  ? "bg-success/10 border border-success/20"
+                  : "bg-primary/10 border border-primary/20"
           }`}
         >
           <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-            isCancelled ? "bg-destructive/20" : isCompleted ? "bg-success/20" : "bg-primary/20"
+            isCancelled ? "bg-destructive/20" : isCompleted ? "bg-success/20" : isActive ? "bg-success/20" : "bg-primary/20"
           }`}>
             {isCancelled ? <X size={20} className="text-destructive" /> :
              isCompleted ? <Check size={20} className="text-success" /> :
+             isActive ? <Flame size={20} className="text-success" /> :
              <Calendar size={20} className="text-primary" />}
           </div>
-          <div>
+          <div className="flex-1">
             <p className={`text-sm font-semibold ${
-              isCancelled ? "text-destructive" : isCompleted ? "text-success" : "text-primary"
+              isCancelled ? "text-destructive" : isCompleted ? "text-success" : isActive ? "text-success" : "text-primary"
             }`}>
-              {isCancelled ? "Booking Cancelled" : isCompleted ? "Trip Completed" : "Upcoming Trip"}
+              {isCancelled ? "Booking Cancelled" : isCompleted ? "Trip Completed" : isActive ? "You're Checked In!" : "Upcoming Trip"}
             </p>
             <p className="text-xs text-muted-foreground">
               {isCancelled ? "Refund will be processed in 3-5 days" :
                isCompleted ? "We hope you had a great time!" :
+               isActive ? "Enjoy your stay — order food & services anytime" :
                "Show QR code at entry"}
             </p>
           </div>
+          {isActive && (
+            <span className="w-2.5 h-2.5 rounded-full bg-success animate-pulse" />
+          )}
         </motion.div>
 
         {/* Property card */}
