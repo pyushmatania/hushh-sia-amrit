@@ -238,7 +238,7 @@ export default function AdminExperiencePackages() {
                   <Trash2 size={13} className="text-destructive" />
                 </button>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       )}
