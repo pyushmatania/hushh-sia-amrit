@@ -231,6 +231,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [guests, setGuests] = useState(2);
   const [expanded, setExpanded] = useState(false);
+  const [enhanceOpen, setEnhanceOpen] = useState(false);
   const [liked, setLiked] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
 
