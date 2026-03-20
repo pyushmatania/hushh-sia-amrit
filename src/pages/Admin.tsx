@@ -15,6 +15,7 @@ import AdminTags from "@/components/admin/AdminTags";
 import AdminExports from "@/components/admin/AdminExports";
 import AdminAI from "@/components/admin/AdminAI";
 import AdminAlerts from "@/components/admin/AdminAlerts";
+import AdminAuditLog from "@/components/admin/AdminAuditLog";
 import AuthScreen from "@/components/AuthScreen";
 import { Shield, Loader2 } from "lucide-react";
 
