@@ -303,7 +303,7 @@ function RelatedPropertyRow({ relatedProperty, added, onToggle, onViewDetails }:
 interface PropertyDetailProps {
   property: Property;
   onBack: () => void;
-  onBook: (property: Property, slotId: string, guests: number, date: Date) => void;
+  onBook: (property: Property, slotId: string, guests: number, date: Date, extras?: Property[]) => void;
   onPropertyTap?: (property: Property) => void;
 }
 
@@ -313,6 +313,17 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
   const [guests, setGuests] = useState(2);
   const [expanded, setExpanded] = useState(false);
   const [enhanceOpen, setEnhanceOpen] = useState(false);
+  const [addedExtraIds, setAddedExtraIds] = useState<Set<string>>(new Set());
+
+  const toggleExtra = useCallback((id: string) => {
+    setAddedExtraIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  }, []);
+
+  const addedExtras = allProperties.filter(p => addedExtraIds.has(p.id));
   const [liked, setLiked] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
 
