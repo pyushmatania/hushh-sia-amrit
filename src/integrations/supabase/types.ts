@@ -277,11 +277,23 @@ export type Database = {
           category: string
           created_at: string
           description: string
+          discount_label: string | null
+          entry_instructions: string | null
           full_description: string
+          highlights: string[] | null
+          host_name: string | null
           id: string
           image_urls: string[]
+          lat: number | null
+          lng: number | null
           location: string
           name: string
+          primary_category: string | null
+          property_type: string | null
+          rating: number | null
+          review_count: number | null
+          rules: Json | null
+          slots: Json | null
           status: string
           tags: string[]
           updated_at: string
@@ -294,11 +306,23 @@ export type Database = {
           category?: string
           created_at?: string
           description?: string
+          discount_label?: string | null
+          entry_instructions?: string | null
           full_description?: string
+          highlights?: string[] | null
+          host_name?: string | null
           id?: string
           image_urls?: string[]
+          lat?: number | null
+          lng?: number | null
           location?: string
           name: string
+          primary_category?: string | null
+          property_type?: string | null
+          rating?: number | null
+          review_count?: number | null
+          rules?: Json | null
+          slots?: Json | null
           status?: string
           tags?: string[]
           updated_at?: string
@@ -311,11 +335,23 @@ export type Database = {
           category?: string
           created_at?: string
           description?: string
+          discount_label?: string | null
+          entry_instructions?: string | null
           full_description?: string
+          highlights?: string[] | null
+          host_name?: string | null
           id?: string
           image_urls?: string[]
+          lat?: number | null
+          lng?: number | null
           location?: string
           name?: string
+          primary_category?: string | null
+          property_type?: string | null
+          rating?: number | null
+          review_count?: number | null
+          rules?: Json | null
+          slots?: Json | null
           status?: string
           tags?: string[]
           updated_at?: string
