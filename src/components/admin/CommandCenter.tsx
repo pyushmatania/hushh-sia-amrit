@@ -7,8 +7,10 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from "recharts";
 import LiveActivityFeed from "./LiveActivityFeed";
+import LiveOrdersWidget from "./LiveOrdersWidget";
 import BookingHeatmap from "./BookingHeatmap";
 import WeeklyDigestPreview from "./WeeklyDigestPreview";
+import type { AdminPage } from "./AdminLayout";
 
 interface Stats {
   revenue: number;
