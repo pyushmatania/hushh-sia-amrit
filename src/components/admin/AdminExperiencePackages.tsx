@@ -198,10 +198,18 @@ export default function AdminExperiencePackages() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: i * 0.03 }}
-              className={`rounded-xl border bg-card p-4 flex items-center gap-3 transition ${
+              draggable
+              onDragStart={() => setDragId(pkg.id)}
+              onDragOver={(e) => { e.preventDefault(); setDragOverId(pkg.id); }}
+              onDrop={() => handleDrop(pkg.id)}
+              onDragEnd={() => { setDragId(null); setDragOverId(null); }}
+              className={`rounded-xl border bg-card p-4 flex items-center gap-2 transition-all cursor-grab active:cursor-grabbing ${
                 !pkg.active ? "opacity-50" : ""
-              } border-border`}
+              } ${dragId === pkg.id ? "opacity-40 scale-[0.97]" : ""} ${dragOverId === pkg.id && dragId !== pkg.id ? "border-primary shadow-sm shadow-primary/20" : "border-border"}`}
             >
+              <div className="text-muted-foreground/40 hover:text-muted-foreground transition shrink-0">
+                <GripVertical size={16} />
+              </div>
               <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${pkg.gradient} flex items-center justify-center text-lg`}>
                 {pkg.emoji}
               </div>
