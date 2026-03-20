@@ -118,6 +118,9 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
         ))}
       </div>
 
+      {/* Live Orders Widget - pinned to top */}
+      <LiveOrdersWidget onViewAll={() => onNavigate?.("orders")} />
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <BookingHeatmap />
         <LiveActivityFeed />

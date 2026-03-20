@@ -6,6 +6,7 @@ import CommandCenter from "@/components/admin/CommandCenter";
 import AdminProperties from "@/components/admin/AdminProperties";
 import AdminBookings from "@/components/admin/AdminBookings";
 import AdminUsers from "@/components/admin/AdminUsers";
+import AdminClients from "@/components/admin/AdminClients";
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
 import AdminCurations from "@/components/admin/AdminCurations";
 import AdminOrders from "@/components/admin/AdminOrders";
@@ -71,13 +72,14 @@ export default function Admin() {
 
   const renderPage = () => {
     switch (page) {
-      case "dashboard": return <CommandCenter />;
+      case "dashboard": return <CommandCenter onNavigate={setPage} />;
       case "ai": return <AdminAI />;
       case "alerts": return <AdminAlerts onNavigate={(p) => setPage(p as AdminPage)} />;
       case "pricing": return <DynamicPricing />;
       case "properties": return <AdminProperties />;
       case "bookings": return <AdminBookings />;
       case "users": return <AdminUsers />;
+      case "clients": return <AdminClients />;
       case "analytics": return <AdminAnalytics />;
       case "earnings": return <HostEarnings />;
       case "curations": return <AdminCurations />;
@@ -91,7 +93,7 @@ export default function Admin() {
       case "calendar": return <HostCalendar />;
       case "requests": return <BookingRequests />;
       case "audit": return <AdminAuditLog />;
-      default: return <CommandCenter />;
+      default: return <CommandCenter onNavigate={setPage} />;
     }
   };
 
