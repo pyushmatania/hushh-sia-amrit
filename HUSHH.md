@@ -194,6 +194,10 @@ Everything works without login using mock data:
 | Reviews | `reviews` + `review_responses` | Ratings, photos, host responses |
 | Loyalty | `loyalty_transactions` | Earn 5 pts/₹100, tier progression |
 | Referrals | `referral_codes` + `referral_uses` | Unique codes, point rewards |
+| Curations | `curations` | 8 experience packs, public read, DB-seeded |
+| Orders | `orders` + `order_items` | In-stay live ordering (Swiggy-style), saved per user |
+| Spin Wheel | `spin_history` | Daily spin results, 1 spin/day enforced via DB query |
+| Milestones | `user_milestones` | Achievement tracking, unique per user+milestone |
 
 ---
 
