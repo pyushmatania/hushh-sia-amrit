@@ -73,14 +73,14 @@ export default function Index() {
     setActiveTab("home");
   }, []);
 
-  const handleBook = useCallback((property: Property, slotId: string, guests: number, date: Date) => {
-    setScreen({ type: "builder", property, slotId, guests, date });
+  const handleBook = useCallback((property: Property, slotId: string, guests: number, date: Date, extras?: Property[]) => {
+    setScreen({ type: "builder", property, slotId, guests, date, extras });
   }, []);
 
   const handleContinue = useCallback(
-    (property: Property, slotId: string, guests: number, date: Date) =>
+    (property: Property, slotId: string, guests: number, date: Date, extras?: Property[]) =>
       (selections: Record<string, number>, total: number) => {
-        setScreen({ type: "checkout", property, slotId, guests, date, selections, total });
+        setScreen({ type: "checkout", property, slotId, guests, date, selections, total, extras });
       },
     []
   );
