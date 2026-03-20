@@ -204,7 +204,8 @@ export default function Index() {
             guests={screen.guests}
             date={screen.date}
             onBack={() => setScreen({ type: "detail", property: screen.property })}
-            onContinue={handleContinue(screen.property, screen.slotId, screen.guests, screen.date)}
+            onContinue={handleContinue(screen.property, screen.slotId, screen.guests, screen.date, screen.extras)}
+            extras={screen.extras}
           />
         )}
         {screen.type === "checkout" && (
