@@ -549,7 +549,7 @@ export const properties: Property[] = [
     responseRate: "98%",
     primaryCategory: "experience",
     propertyType: "Sports Arena",
-    category: ["experiences", "services", "pool"],
+    category: ["experiences", "sports"],
     highlights: ["2 professional-grade courts", "Equipment rental included", "Certified coaching available", "Cold towels & energy drinks"],
     rules: [
       { icon: "👟", text: "Non-marking shoes mandatory" },
