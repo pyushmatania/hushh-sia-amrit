@@ -115,6 +115,8 @@ function VideoCard({
   onTap,
   dateLabel,
   accent,
+  isSaved,
+  onToggleSave,
 }: {
   property: Property;
   videoSrc: string;
@@ -123,11 +125,13 @@ function VideoCard({
   onTap: () => void;
   dateLabel: string;
   accent: VideoAccent;
+  isSaved?: boolean;
+  onToggleSave?: (id: string) => void;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const [muted, setMuted] = useState(true);
-  const [saved, setSaved] = useState(false);
+  const saved = isSaved ?? false;
   const [videoReady, setVideoReady] = useState(false);
   const [shouldLoad, setShouldLoad] = useState(false);
 
