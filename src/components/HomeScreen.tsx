@@ -131,6 +131,10 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
           {/* ═══════ STAYS TAB ═══════ */}
           {activeCategory === "stay" && (
             <>
+              {/* Spotlight Video Cards for Stays */}
+              <SectionDivider title="🏡 FEATURED STAYS" />
+              <SpotlightCarousel properties={stayProperties} onPropertyTap={onPropertyTap} />
+
               {/* Property Type Tags */}
               <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
                 {["All", "Private Villa", "Pool Villa", "Farmhouse", "Rooftop Space", "Work Pod", "Couple Room", "Open Lawn"].map(type => (
@@ -185,6 +189,10 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
           {/* ═══════ EXPERIENCES TAB ═══════ */}
           {activeCategory === "experience" && (
             <>
+              {/* Spotlight Video Cards for Experiences */}
+              <SectionDivider title="🎉 TOP EXPERIENCES" />
+              <SpotlightCarousel properties={experienceProperties} onPropertyTap={onPropertyTap} />
+
               {/* Sub-categories */}
               <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
                 {["💑 Romantic", "🎂 Celebration", "🎉 Party", "🔥 Chill", "💻 Work", "👩‍💼 Social", "🏕️ Adventure", "🎨 Cultural"].map(tag => (
@@ -224,6 +232,10 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
           {/* ═══════ SERVICES TAB ═══════ */}
           {activeCategory === "service" && (
             <>
+              {/* Spotlight Video Cards for Services */}
+              <SectionDivider title="🛎️ PREMIUM SERVICES" />
+              <SpotlightCarousel properties={serviceProperties} onPropertyTap={onPropertyTap} />
+
               <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
                 {["👨‍🍳 Food", "🎈 Decoration", "🚗 Transport", "🎧 Entertainment", "📸 Photography", "🧹 Staff"].map(tag => (
                   <span key={tag} className="text-[11px] px-3 py-1.5 rounded-full bg-foreground/5 text-foreground/80 border border-foreground/10 whitespace-nowrap shrink-0">
