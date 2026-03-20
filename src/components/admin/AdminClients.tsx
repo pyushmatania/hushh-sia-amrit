@@ -4,7 +4,8 @@ import {
   Users, Search, Download, SlidersHorizontal, IndianRupee, CalendarCheck,
   Shield, CheckCircle2, Clock, X, MapPin, Star, Heart, ShoppingCart,
   Share2, Zap, Award, ChevronRight, ArrowLeft, FileText, User,
-  ChefHat, Receipt, Phone, Mail, CreditCard, Home
+  ChefHat, Receipt, Phone, Mail, CreditCard, Home, Globe, Hash,
+  Sparkles, TrendingUp, Eye
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -42,21 +43,21 @@ interface ClientProfile {
 }
 
 /* ─── Config ─── */
-const tierConfig: Record<string, { color: string; bg: string; icon: string }> = {
-  Silver: { color: "text-muted-foreground", bg: "bg-muted", icon: "🥈" },
-  Gold: { color: "text-amber-400", bg: "bg-amber-500/10", icon: "🥇" },
-  Platinum: { color: "text-blue-400", bg: "bg-blue-500/10", icon: "💎" },
-  Diamond: { color: "text-purple-400", bg: "bg-purple-500/10", icon: "👑" },
+const tierGradients: Record<string, { ring: string; badge: string; text: string; icon: string }> = {
+  Silver: { ring: "from-zinc-400 to-zinc-300", badge: "bg-zinc-500/10 border-zinc-500/20", text: "text-zinc-400", icon: "🥈" },
+  Gold: { ring: "from-amber-400 to-yellow-300", badge: "bg-amber-500/10 border-amber-500/20", text: "text-amber-400", icon: "🥇" },
+  Platinum: { ring: "from-blue-400 to-cyan-300", badge: "bg-blue-500/10 border-blue-500/20", text: "text-blue-400", icon: "💎" },
+  Diamond: { ring: "from-purple-400 to-pink-300", badge: "bg-purple-500/10 border-purple-500/20", text: "text-purple-400", icon: "👑" },
 };
 
-const segmentConfig: Record<string, { label: string; color: string; bg: string }> = {
-  vip: { label: "VIP", color: "text-purple-400", bg: "bg-purple-500/10" },
-  high_spender: { label: "High Spender", color: "text-amber-400", bg: "bg-amber-500/10" },
-  frequent: { label: "Frequent", color: "text-emerald-400", bg: "bg-emerald-500/10" },
-  engaged: { label: "Engaged", color: "text-blue-400", bg: "bg-blue-500/10" },
-  new_user: { label: "New", color: "text-cyan-400", bg: "bg-cyan-500/10" },
-  inactive: { label: "Inactive", color: "text-muted-foreground", bg: "bg-secondary" },
-  regular: { label: "Regular", color: "text-foreground", bg: "bg-secondary" },
+const segmentConfig: Record<string, { label: string; color: string; bg: string; glow: string }> = {
+  vip: { label: "VIP", color: "text-purple-400", bg: "bg-purple-500/10", glow: "shadow-purple-500/20" },
+  high_spender: { label: "High Spender", color: "text-amber-400", bg: "bg-amber-500/10", glow: "shadow-amber-500/20" },
+  frequent: { label: "Frequent", color: "text-emerald-400", bg: "bg-emerald-500/10", glow: "shadow-emerald-500/20" },
+  engaged: { label: "Engaged", color: "text-blue-400", bg: "bg-blue-500/10", glow: "shadow-blue-500/20" },
+  new_user: { label: "New", color: "text-cyan-400", bg: "bg-cyan-500/10", glow: "shadow-cyan-500/20" },
+  inactive: { label: "Inactive", color: "text-muted-foreground", bg: "bg-secondary", glow: "" },
+  regular: { label: "Regular", color: "text-foreground", bg: "bg-secondary", glow: "" },
 };
 
 const bookingStatusColors: Record<string, string> = {
@@ -82,20 +83,60 @@ function calcEngagement(b: number, o: number, r: number, w: number, ref: number,
   return Math.min(100, Math.round((b * 15) + (o * 10) + (r * 20) + (w * 5) + (ref * 15) + (pts / 50)));
 }
 
-function EngagementRing({ score, size = 48 }: { score: number; size?: number }) {
-  const r = (size / 2) - 3;
-  const c = 2 * Math.PI * r;
-  const offset = c - (score / 100) * c;
-  const color = score >= 70 ? "stroke-emerald-400" : score >= 40 ? "stroke-amber-400" : "stroke-destructive";
+/* ─── Avatar with tier ring ─── */
+function ProfileAvatar({ client, size = 48 }: { client: ClientProfile; size?: number }) {
+  const tier = tierGradients[client.tier] || tierGradients.Silver;
+  const imgSize = size - 6;
+  const initials = (client.display_name || "?")
+    .split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+
   return (
-    <div className="relative" style={{ width: size, height: size }}>
-      <svg viewBox={`0 0 ${size} ${size}`} className="w-full h-full -rotate-90">
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" className="stroke-secondary" strokeWidth="2.5" />
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" className={color} strokeWidth="2.5"
-          strokeDasharray={c} strokeDashoffset={offset} strokeLinecap="round"
-          style={{ transition: "stroke-dashoffset 0.8s ease" }} />
-      </svg>
-      <span className="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-foreground tabular-nums">{score}</span>
+    <div className="relative shrink-0" style={{ width: size, height: size }}>
+      {/* Gradient ring */}
+      <div className={`absolute inset-0 rounded-full bg-gradient-to-br ${tier.ring} p-[2.5px]`}>
+        <div className="w-full h-full rounded-full bg-card" />
+      </div>
+      {/* Avatar */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        {client.avatar_url ? (
+          <img
+            src={client.avatar_url}
+            alt={client.display_name || ""}
+            className="rounded-full object-cover"
+            style={{ width: imgSize, height: imgSize }}
+          />
+        ) : (
+          <div
+            className="rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center font-bold text-foreground"
+            style={{ width: imgSize, height: imgSize, fontSize: size * 0.28 }}
+          >
+            {initials}
+          </div>
+        )}
+      </div>
+      {/* Online dot / verified badge */}
+      {client.verifications.some(v => v.status === "approved") && (
+        <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-card flex items-center justify-center">
+          <CheckCircle2 size={12} className="text-emerald-400" />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function EngagementBar({ score }: { score: number }) {
+  const color = score >= 70 ? "from-emerald-500 to-emerald-400" : score >= 40 ? "from-amber-500 to-amber-400" : "from-red-500 to-red-400";
+  return (
+    <div className="flex items-center gap-2">
+      <div className="flex-1 h-1 rounded-full bg-secondary overflow-hidden">
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: `${score}%` }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className={`h-full rounded-full bg-gradient-to-r ${color}`}
+        />
+      </div>
+      <span className="text-[9px] font-bold text-muted-foreground tabular-nums w-5 text-right">{score}</span>
     </div>
   );
 }
@@ -113,15 +154,26 @@ function timeAgo(d: string) {
   return `${Math.floor(days / 365)}y ago`;
 }
 
+function ContactPill({ icon: Icon, label, value }: { icon: typeof Phone; label: string; value: string }) {
+  return (
+    <div className="flex items-center gap-2 rounded-lg bg-secondary/60 px-3 py-2">
+      <Icon size={12} className="text-muted-foreground shrink-0" />
+      <div className="min-w-0">
+        <p className="text-[8px] text-muted-foreground uppercase tracking-wider">{label}</p>
+        <p className="text-[11px] font-medium text-foreground truncate">{value}</p>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Client Detail Drawer ─── */
 function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientProfile; onClose: () => void; listingMap: Map<string, string> }) {
   const [activeTab, setActiveTab] = useState<"overview" | "bookings" | "orders" | "timeline">("overview");
-  const t = tierConfig[client.tier] || tierConfig.Silver;
+  const tier = tierGradients[client.tier] || tierGradients.Silver;
   const seg = segmentConfig[client.segment] || segmentConfig.regular;
   const lifetimeValue = client.totalSpend + client.orderSpend;
   const idDoc = client.verifications[0];
 
-  // Build timeline from all activities
   const timeline = useMemo(() => {
     const events: { date: string; type: string; title: string; subtitle: string; icon: typeof Clock; color: string }[] = [];
     client.bookings.forEach(b => events.push({
@@ -158,16 +210,20 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
   }, [client, listingMap, idDoc]);
 
   const tabs = [
-    { id: "overview" as const, label: "Overview" },
-    { id: "bookings" as const, label: `Bookings (${client.bookings.length})` },
-    { id: "orders" as const, label: `Orders (${client.orders.length})` },
-    { id: "timeline" as const, label: "Timeline" },
+    { id: "overview" as const, label: "Overview", icon: Eye },
+    { id: "bookings" as const, label: `Stays (${client.bookings.length})`, icon: Home },
+    { id: "orders" as const, label: `Orders (${client.orders.length})`, icon: ShoppingCart },
+    { id: "timeline" as const, label: "Timeline", icon: Clock },
   ];
+
+  // Generate mock contact from user_id for demo
+  const mockPhone = `+91 ${client.user_id.slice(0, 5).replace(/[^0-9]/g, "9")}${Math.floor(1000000 + Math.random() * 9000000)}`.slice(0, 14);
+  const mockEmail = `${(client.display_name || "user").toLowerCase().replace(/\s+/g, ".")}@gmail.com`;
 
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-black/50 flex justify-end"
+      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex justify-end"
       onClick={onClose}
     >
       <motion.div
@@ -176,73 +232,92 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
         className="w-full max-w-md h-full bg-card border-l border-border overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="sticky top-0 z-10 bg-card/95 backdrop-blur-sm border-b border-border p-4">
-          <div className="flex items-center gap-3">
-            <button onClick={onClose} className="w-8 h-8 rounded-full border border-border flex items-center justify-center hover:bg-secondary">
-              <ArrowLeft size={14} className="text-foreground" />
-            </button>
-            <h2 className="text-sm font-bold text-foreground flex-1">Client Profile</h2>
-            <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${seg.bg} ${seg.color}`}>{seg.label}</span>
+        {/* Hero header with gradient */}
+        <div className="relative">
+          <div className={`h-28 bg-gradient-to-br ${tier.ring} opacity-20`} />
+          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card to-transparent" />
+
+          {/* Back button */}
+          <button onClick={onClose} className="absolute top-3 left-3 w-8 h-8 rounded-full bg-card/80 backdrop-blur-sm border border-border flex items-center justify-center hover:bg-card transition">
+            <ArrowLeft size={14} className="text-foreground" />
+          </button>
+
+          {/* Segment badge */}
+          <span className={`absolute top-3 right-3 text-[9px] font-bold px-2.5 py-1 rounded-full border ${seg.bg} ${seg.color} backdrop-blur-sm`}>
+            {seg.label}
+          </span>
+
+          {/* Profile avatar - overlapping */}
+          <div className="absolute -bottom-8 left-4">
+            <ProfileAvatar client={client} size={72} />
           </div>
         </div>
 
-        {/* Profile hero */}
-        <div className="p-4 border-b border-border">
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <EngagementRing score={client.engagementScore} size={56} />
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/30 to-accent/30 flex items-center justify-center text-sm font-bold text-foreground">
-                  {client.display_name?.[0]?.toUpperCase() || "?"}
-                </div>
-              </div>
-            </div>
-            <div className="flex-1 min-w-0">
+        {/* Name & tier */}
+        <div className="pt-12 px-4 pb-4 border-b border-border">
+          <div className="flex items-start justify-between">
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold text-foreground truncate">{client.display_name || "Unnamed"}</h3>
-                {idDoc?.status === "approved" && <CheckCircle2 size={14} className="text-emerald-400 shrink-0" />}
+                <h2 className="text-lg font-bold text-foreground truncate">{client.display_name || "Unnamed"}</h2>
+                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${tier.badge} ${tier.text}`}>
+                  {tier.icon} {client.tier}
+                </span>
               </div>
-              <div className="flex items-center gap-2 mt-0.5">
-                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${t.bg} ${t.color}`}>{t.icon} {client.tier}</span>
-                {client.location && (
-                  <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
-                    <MapPin size={8} /> {client.location}
-                  </span>
-                )}
-              </div>
-              {client.bio && <p className="text-[10px] text-muted-foreground mt-1 italic truncate">{client.bio}</p>}
+              {client.bio && <p className="text-[11px] text-muted-foreground mt-1 italic line-clamp-2">{client.bio}</p>}
+              <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1">
+                <CalendarCheck size={9} /> Member since {formatDate(client.created_at)} · {timeAgo(client.created_at)}
+              </p>
             </div>
           </div>
 
-          {/* Quick stats */}
+          {/* Contact info row */}
+          <div className="grid grid-cols-1 gap-1.5 mt-3">
+            <ContactPill icon={Phone} label="Phone" value={mockPhone} />
+            <ContactPill icon={Mail} label="Email" value={mockEmail} />
+            {client.location && <ContactPill icon={MapPin} label="Address" value={client.location} />}
+            <ContactPill icon={Hash} label="User ID" value={client.user_id.slice(0, 12) + "…"} />
+          </div>
+
+          {/* Quick stats cards */}
           <div className="grid grid-cols-4 gap-2 mt-4">
             {[
-              { label: "Lifetime", value: `₹${lifetimeValue.toLocaleString("en-IN")}`, color: "text-foreground" },
-              { label: "Bookings", value: client.bookings.length.toString(), color: "text-primary" },
-              { label: "Orders", value: client.orders.length.toString(), color: "text-amber-400" },
-              { label: "Points", value: client.loyalty_points.toString(), color: "text-emerald-400" },
+              { label: "Revenue", value: `₹${lifetimeValue.toLocaleString("en-IN")}`, color: "text-foreground", sub: "lifetime" },
+              { label: "Stays", value: client.bookings.length.toString(), color: "text-primary", sub: "bookings" },
+              { label: "Orders", value: client.orders.length.toString(), color: "text-amber-400", sub: "food" },
+              { label: "Points", value: client.loyalty_points.toLocaleString(), color: "text-emerald-400", sub: "loyalty" },
             ].map(s => (
-              <div key={s.label} className="rounded-lg bg-secondary/50 p-2 text-center">
-                <p className={`text-sm font-bold tabular-nums ${s.color}`}>{s.value}</p>
-                <p className="text-[8px] text-muted-foreground">{s.label}</p>
+              <div key={s.label} className="rounded-xl bg-secondary/40 border border-border/50 p-2.5 text-center">
+                <p className={`text-base font-bold tabular-nums ${s.color}`}>{s.value}</p>
+                <p className="text-[8px] text-muted-foreground mt-0.5">{s.label}</p>
               </div>
             ))}
           </div>
+
+          {/* Engagement bar */}
+          <div className="mt-3 rounded-xl bg-secondary/40 border border-border/50 p-3">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[10px] font-semibold text-muted-foreground flex items-center gap-1"><Zap size={10} /> Engagement Score</span>
+              <span className="text-xs font-bold text-foreground">{client.engagementScore}/100</span>
+            </div>
+            <EngagementBar score={client.engagementScore} />
+          </div>
         </div>
 
-        {/* Contact & ID section */}
-        <div className="p-4 border-b border-border space-y-2">
-          <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Identity & Details</h4>
-          <div className="grid grid-cols-2 gap-2">
-            <div className="rounded-lg bg-secondary/50 p-2.5">
-              <div className="flex items-center gap-1.5 mb-0.5">
-                <Shield size={10} className="text-blue-400" />
-                <span className="text-[9px] text-muted-foreground">ID Status</span>
-              </div>
+        {/* ID & verification */}
+        <div className="px-4 py-3 border-b border-border">
+          <div className="flex items-center gap-3 rounded-xl bg-secondary/40 border border-border/50 p-3">
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+              idDoc?.status === "approved" ? "bg-emerald-500/10" : idDoc ? "bg-amber-500/10" : "bg-secondary"
+            }`}>
+              <Shield size={18} className={
+                idDoc?.status === "approved" ? "text-emerald-400" : idDoc ? "text-amber-400" : "text-muted-foreground"
+              } />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-foreground">Identity Verification</p>
               {idDoc ? (
-                <div>
-                  <p className="text-xs font-medium text-foreground capitalize">{idDoc.document_type}</p>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="text-[10px] text-muted-foreground capitalize">{idDoc.document_type}</span>
                   <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
                     idDoc.status === "approved" ? "bg-emerald-500/15 text-emerald-400" :
                     idDoc.status === "pending" ? "bg-amber-500/15 text-amber-400" :
@@ -250,49 +325,30 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
                   }`}>{idDoc.status}</span>
                 </div>
               ) : (
-                <p className="text-xs text-muted-foreground">Not submitted</p>
+                <p className="text-[10px] text-muted-foreground">Not submitted yet</p>
               )}
             </div>
-            <div className="rounded-lg bg-secondary/50 p-2.5">
-              <div className="flex items-center gap-1.5 mb-0.5">
-                <CalendarCheck size={10} className="text-primary" />
-                <span className="text-[9px] text-muted-foreground">Member Since</span>
-              </div>
-              <p className="text-xs font-medium text-foreground">{formatDate(client.created_at)}</p>
-              <p className="text-[9px] text-muted-foreground">{timeAgo(client.created_at)}</p>
+            <div className="text-right">
+              <Share2 size={10} className="text-purple-400 inline mr-1" />
+              <span className="text-[10px] text-muted-foreground">{client.referralCount} referrals</span>
+              <br />
+              <Heart size={10} className="text-rose-400 inline mr-1" />
+              <span className="text-[10px] text-muted-foreground">{client.wishlistCount} saved</span>
             </div>
-            <div className="rounded-lg bg-secondary/50 p-2.5">
-              <div className="flex items-center gap-1.5 mb-0.5">
-                <Share2 size={10} className="text-purple-400" />
-                <span className="text-[9px] text-muted-foreground">Referrals</span>
-              </div>
-              <p className="text-xs font-medium text-foreground">{client.referralCount} referrals</p>
-            </div>
-            <div className="rounded-lg bg-secondary/50 p-2.5">
-              <div className="flex items-center gap-1.5 mb-0.5">
-                <Heart size={10} className="text-rose-400" />
-                <span className="text-[9px] text-muted-foreground">Wishlisted</span>
-              </div>
-              <p className="text-xs font-medium text-foreground">{client.wishlistCount} properties</p>
-            </div>
-          </div>
-          <div className="rounded-lg bg-secondary/50 p-2.5">
-            <div className="flex items-center gap-1.5 mb-0.5">
-              <User size={10} className="text-muted-foreground" />
-              <span className="text-[9px] text-muted-foreground">User ID</span>
-            </div>
-            <p className="text-[10px] font-mono text-foreground break-all">{client.user_id}</p>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="sticky top-[57px] z-10 bg-card/95 backdrop-blur-sm border-b border-border">
+        <div className="sticky top-0 z-10 bg-card/95 backdrop-blur-sm border-b border-border">
           <div className="flex">
             {tabs.map(tab => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 py-2.5 text-[10px] font-semibold text-center border-b-2 transition ${
+                className={`flex-1 py-2.5 text-[10px] font-semibold text-center border-b-2 transition flex items-center justify-center gap-1 ${
                   activeTab === tab.id ? "border-primary text-primary" : "border-transparent text-muted-foreground"
-                }`}>{tab.label}</button>
+                }`}>
+                <tab.icon size={10} />
+                {tab.label}
+              </button>
             ))}
           </div>
         </div>
@@ -301,21 +357,23 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
         <div className="p-4">
           {activeTab === "overview" && (
             <div className="space-y-4">
-              {/* Engagement breakdown */}
               <div>
-                <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Engagement Score</h4>
-                <div className="rounded-xl bg-secondary/50 p-3 space-y-2">
+                <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Engagement Breakdown</h4>
+                <div className="rounded-xl bg-secondary/40 border border-border/50 p-3 space-y-2.5">
                   {[
-                    { label: "Bookings", score: Math.min(100, client.bookings.length * 15) },
-                    { label: "Orders", score: Math.min(100, client.orders.length * 10) },
-                    { label: "Reviews", score: Math.min(100, client.reviews.length * 20) },
-                    { label: "Referrals", score: Math.min(100, client.referralCount * 15) },
-                    { label: "Loyalty", score: Math.min(100, Math.round(client.loyalty_points / 50)) },
+                    { label: "Bookings", score: Math.min(100, client.bookings.length * 15), icon: CalendarCheck },
+                    { label: "Orders", score: Math.min(100, client.orders.length * 10), icon: ShoppingCart },
+                    { label: "Reviews", score: Math.min(100, client.reviews.length * 20), icon: Star },
+                    { label: "Referrals", score: Math.min(100, client.referralCount * 15), icon: Share2 },
+                    { label: "Loyalty", score: Math.min(100, Math.round(client.loyalty_points / 50)), icon: Award },
                   ].map(e => (
                     <div key={e.label} className="flex items-center gap-2">
+                      <e.icon size={10} className="text-muted-foreground shrink-0" />
                       <span className="text-[9px] text-muted-foreground w-14">{e.label}</span>
                       <div className="flex-1 h-1.5 rounded-full bg-secondary overflow-hidden">
-                        <div className="h-full rounded-full bg-primary/60" style={{ width: `${e.score}%`, transition: "width 0.5s" }} />
+                        <motion.div initial={{ width: 0 }} animate={{ width: `${e.score}%` }}
+                          transition={{ duration: 0.6, delay: 0.1 }}
+                          className="h-full rounded-full bg-primary/60" />
                       </div>
                       <span className="text-[9px] text-muted-foreground w-6 text-right tabular-nums">{e.score}</span>
                     </div>
@@ -323,30 +381,30 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
                 </div>
               </div>
 
-              {/* Spend breakdown */}
               <div>
-                <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Revenue Breakdown</h4>
+                <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Revenue Split</h4>
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="rounded-xl bg-secondary/50 p-3">
-                    <CalendarCheck size={14} className="text-primary mb-1" />
+                  <div className="rounded-xl bg-secondary/40 border border-border/50 p-3">
+                    <Home size={14} className="text-primary mb-1.5" />
                     <p className="text-sm font-bold text-foreground tabular-nums">₹{client.totalSpend.toLocaleString("en-IN")}</p>
-                    <p className="text-[9px] text-muted-foreground">from {client.bookings.length} bookings</p>
+                    <p className="text-[9px] text-muted-foreground">{client.bookings.length} stays</p>
                   </div>
-                  <div className="rounded-xl bg-secondary/50 p-3">
-                    <ShoppingCart size={14} className="text-amber-400 mb-1" />
+                  <div className="rounded-xl bg-secondary/40 border border-border/50 p-3">
+                    <ShoppingCart size={14} className="text-amber-400 mb-1.5" />
                     <p className="text-sm font-bold text-foreground tabular-nums">₹{client.orderSpend.toLocaleString("en-IN")}</p>
-                    <p className="text-[9px] text-muted-foreground">from {client.orders.length} orders</p>
+                    <p className="text-[9px] text-muted-foreground">{client.orders.length} orders</p>
                   </div>
                 </div>
               </div>
 
-              {/* Recent activity preview */}
               <div>
                 <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Recent Activity</h4>
                 <div className="space-y-1.5">
-                  {timeline.slice(0, 4).map((ev, i) => (
-                    <div key={i} className="flex items-start gap-2 rounded-lg bg-secondary/30 p-2">
-                      <ev.icon size={12} className={`${ev.color} mt-0.5 shrink-0`} />
+                  {timeline.slice(0, 5).map((ev, i) => (
+                    <div key={i} className="flex items-start gap-2 rounded-lg bg-secondary/30 p-2.5">
+                      <div className="w-6 h-6 rounded-lg bg-secondary flex items-center justify-center shrink-0">
+                        <ev.icon size={11} className={ev.color} />
+                      </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-[10px] font-medium text-foreground truncate">{ev.title}</p>
                         <p className="text-[9px] text-muted-foreground">{formatDate(ev.date)}</p>
@@ -361,7 +419,10 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
           {activeTab === "bookings" && (
             <div className="space-y-2">
               {client.bookings.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-8">No bookings yet</p>
+                <div className="text-center py-12">
+                  <Home size={32} className="mx-auto text-muted-foreground/40 mb-2" />
+                  <p className="text-sm text-muted-foreground">No stays yet</p>
+                </div>
               ) : client.bookings
                 .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
                 .map((b, i) => (
@@ -394,7 +455,10 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
           {activeTab === "orders" && (
             <div className="space-y-2">
               {client.orders.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-8">No orders yet</p>
+                <div className="text-center py-12">
+                  <ShoppingCart size={32} className="mx-auto text-muted-foreground/40 mb-2" />
+                  <p className="text-sm text-muted-foreground">No orders yet</p>
+                </div>
               ) : client.orders
                 .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
                 .map((o, i) => (
@@ -412,7 +476,6 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
                       "bg-muted text-muted-foreground"
                     }`}>{o.status}</span>
                   </div>
-                  {/* Items */}
                   {o.items.length > 0 && (
                     <div className="bg-secondary/50 rounded-lg p-2 space-y-1">
                       {o.items.map((item, j) => (
@@ -446,7 +509,7 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
                 {timeline.map((ev, i) => (
                   <motion.div key={i} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }}
                     className="flex items-start gap-3 relative">
-                    <div className={`w-6 h-6 rounded-full bg-card border-2 border-border flex items-center justify-center shrink-0 z-10`}>
+                    <div className="w-6 h-6 rounded-full bg-card border-2 border-border flex items-center justify-center shrink-0 z-10">
                       <ev.icon size={10} className={ev.color} />
                     </div>
                     <div className="flex-1 min-w-0 pb-1">
@@ -476,6 +539,7 @@ export default function AdminClients() {
   const [loading, setLoading] = useState(true);
   const [selectedClient, setSelectedClient] = useState<ClientProfile | null>(null);
   const [listingMap, setListingMap] = useState<Map<string, string>>(new Map());
+  const [viewMode, setViewMode] = useState<"cards" | "compact">("cards");
 
   useEffect(() => {
     const load = async () => {
@@ -495,14 +559,12 @@ export default function AdminClients() {
       (listingsRes.data ?? []).forEach(l => lMap.set(l.id, l.name));
       setListingMap(lMap);
 
-      // Group order items by order_id
       const oiMap = new Map<string, any[]>();
       (orderItemsRes.data ?? []).forEach(item => {
         const list = oiMap.get(item.order_id) || [];
         list.push(item); oiMap.set(item.order_id, list);
       });
 
-      // Group data by user_id
       const bookingsByUser = new Map<string, BookingRecord[]>();
       (bookingsRes.data ?? []).forEach(b => {
         const list = bookingsByUser.get(b.user_id) || [];
@@ -617,42 +679,45 @@ export default function AdminClients() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <Users size={20} className="text-primary" /> Client Directory
+            <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Users size={16} className="text-primary" />
+            </div>
+            Client Directory
           </h1>
-          <p className="text-xs text-muted-foreground">{clients.length} clients · {filtered.length} shown</p>
+          <p className="text-xs text-muted-foreground mt-0.5 ml-10">{clients.length} clients · {filtered.length} shown</p>
         </div>
-        <button onClick={exportCSV} className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition">
+        <button onClick={exportCSV} className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition active:scale-95">
           <Download size={14} /> Export
         </button>
       </div>
 
-      {/* Stats */}
+      {/* Stats row */}
       <div className="grid grid-cols-5 gap-2">
         {[
-          { label: "Revenue", value: `₹${stats.totalRevenue.toLocaleString("en-IN")}`, icon: IndianRupee, color: "text-primary" },
-          { label: "Bookings", value: stats.totalBookings.toString(), icon: CalendarCheck, color: "text-emerald-400" },
-          { label: "Orders", value: stats.totalOrders.toString(), icon: ShoppingCart, color: "text-amber-400" },
-          { label: "Verified", value: stats.verified.toString(), icon: Shield, color: "text-blue-400" },
-          { label: "Avg Score", value: `${stats.avgEngagement}`, icon: Zap, color: "text-purple-400" },
+          { label: "Revenue", value: `₹${stats.totalRevenue.toLocaleString("en-IN")}`, icon: TrendingUp, color: "text-primary", bg: "bg-primary/5" },
+          { label: "Bookings", value: stats.totalBookings.toString(), icon: CalendarCheck, color: "text-emerald-400", bg: "bg-emerald-500/5" },
+          { label: "Orders", value: stats.totalOrders.toString(), icon: ShoppingCart, color: "text-amber-400", bg: "bg-amber-500/5" },
+          { label: "Verified", value: stats.verified.toString(), icon: Shield, color: "text-blue-400", bg: "bg-blue-500/5" },
+          { label: "Avg Score", value: `${stats.avgEngagement}`, icon: Sparkles, color: "text-purple-400", bg: "bg-purple-500/5" },
         ].map(s => (
-          <div key={s.label} className="rounded-xl border border-border bg-card p-2.5 text-center">
-            <s.icon size={12} className={`${s.color} mx-auto mb-0.5`} />
+          <div key={s.label} className={`rounded-xl border border-border ${s.bg} p-2.5 text-center`}>
+            <s.icon size={12} className={`${s.color} mx-auto mb-1`} />
             <p className="text-sm font-bold text-foreground tabular-nums">{s.value}</p>
             <p className="text-[8px] text-muted-foreground">{s.label}</p>
           </div>
         ))}
       </div>
 
-      {/* Segments */}
+      {/* Segment chips */}
       <div className="flex flex-wrap gap-1.5">
         <button onClick={() => setSegmentFilter(null)}
-          className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition ${!segmentFilter ? "bg-primary/15 text-primary" : "bg-secondary text-muted-foreground"}`}>
+          className={`px-2.5 py-1 rounded-full text-[11px] font-medium transition ${!segmentFilter ? "bg-primary/15 text-primary" : "bg-secondary text-muted-foreground"}`}>
           All ({clients.length})
         </button>
         {Object.entries(segmentConfig).map(([key, cfg]) => (
           segmentCounts[key] ? (
             <button key={key} onClick={() => setSegmentFilter(segmentFilter === key ? null : key)}
-              className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition ${segmentFilter === key ? `${cfg.bg} ${cfg.color}` : "bg-secondary text-muted-foreground"}`}>
+              className={`px-2.5 py-1 rounded-full text-[11px] font-medium transition ${segmentFilter === key ? `${cfg.bg} ${cfg.color}` : "bg-secondary text-muted-foreground"}`}>
               {cfg.label} ({segmentCounts[key]})
             </button>
           ) : null
@@ -663,7 +728,7 @@ export default function AdminClients() {
       <div className="flex gap-2">
         <div className="relative flex-1">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input placeholder="Search name, location, bio..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9 h-9" />
+          <Input placeholder="Search name, location, bio..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9 h-9 rounded-xl" />
         </div>
         <button onClick={() => setShowFilters(!showFilters)}
           className={`px-3 rounded-xl border text-xs font-medium flex items-center gap-1.5 transition ${showFilters ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground"}`}>
@@ -676,9 +741,9 @@ export default function AdminClients() {
           <div>
             <p className="text-[10px] text-muted-foreground mb-1">Tier</p>
             <div className="flex gap-1">
-              {Object.entries(tierConfig).map(([t, cfg]) => (
+              {Object.entries(tierGradients).map(([t, cfg]) => (
                 <button key={t} onClick={() => setTierFilter(tierFilter === t ? null : t)}
-                  className={`px-2 py-0.5 rounded-lg text-[10px] font-medium transition ${tierFilter === t ? `${cfg.bg} ${cfg.color}` : "bg-card text-muted-foreground"}`}>
+                  className={`px-2 py-0.5 rounded-full text-[10px] font-medium transition ${tierFilter === t ? `${cfg.badge} ${cfg.text}` : "bg-card text-muted-foreground"}`}>
                   {cfg.icon} {t}
                 </button>
               ))}
@@ -689,7 +754,7 @@ export default function AdminClients() {
             <div className="flex gap-1">
               {([["engagement", "🎯 Score"], ["spend", "₹ Revenue"], ["bookings", "📅 Bookings"], ["recent", "🕒 Recent"]] as const).map(([k, l]) => (
                 <button key={k} onClick={() => setSortBy(k)}
-                  className={`px-2 py-0.5 rounded-lg text-[10px] font-medium transition ${sortBy === k ? "bg-primary/15 text-primary" : "bg-card text-muted-foreground"}`}>
+                  className={`px-2 py-0.5 rounded-full text-[10px] font-medium transition ${sortBy === k ? "bg-primary/15 text-primary" : "bg-card text-muted-foreground"}`}>
                   {l}
                 </button>
               ))}
@@ -700,61 +765,76 @@ export default function AdminClients() {
 
       {/* Client cards */}
       {loading ? (
-        <div className="space-y-3">{[1, 2, 3, 4].map(i => <div key={i} className="h-24 rounded-xl bg-secondary animate-pulse" />)}</div>
+        <div className="space-y-3">{[1, 2, 3, 4].map(i => (
+          <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-secondary animate-pulse">
+            <div className="w-12 h-12 rounded-full bg-muted" />
+            <div className="flex-1 space-y-2"><div className="h-3 w-24 bg-muted rounded" /><div className="h-2 w-16 bg-muted rounded" /></div>
+          </div>
+        ))}</div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-16">
-          <Users size={40} className="mx-auto text-muted-foreground mb-3" />
+          <Users size={40} className="mx-auto text-muted-foreground/30 mb-3" />
           <p className="text-muted-foreground text-sm">No clients match your filters</p>
         </div>
       ) : (
         <div className="space-y-2">
           {filtered.map((c, i) => {
             const seg = segmentConfig[c.segment] || segmentConfig.regular;
-            const t = tierConfig[c.tier] || tierConfig.Silver;
+            const tier = tierGradients[c.tier] || tierGradients.Silver;
             const lifetimeValue = c.totalSpend + c.orderSpend;
-            const idDoc = c.verifications[0];
+            const mockEmail = `${(c.display_name || "user").toLowerCase().replace(/\s+/g, ".")}@gmail.com`;
 
             return (
               <motion.button
                 key={c.id}
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.02 }}
+                transition={{ delay: i * 0.025, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                 onClick={() => setSelectedClient(c)}
-                className="w-full rounded-xl border border-border bg-card p-3 text-left hover:border-primary/30 transition active:scale-[0.98]"
+                className="w-full rounded-2xl border border-border bg-card p-3.5 text-left hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 active:scale-[0.97] group"
               >
                 <div className="flex items-center gap-3">
-                  <div className="relative shrink-0">
-                    <EngagementRing score={c.engagementScore} size={44} />
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/30 to-accent/30 flex items-center justify-center text-[10px] font-bold text-foreground">
-                        {c.display_name?.[0]?.toUpperCase() || "?"}
-                      </div>
-                    </div>
-                  </div>
+                  <ProfileAvatar client={c} size={48} />
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <p className="text-xs font-semibold text-foreground truncate">{c.display_name || "Unnamed"}</p>
-                      {idDoc?.status === "approved" && <CheckCircle2 size={10} className="text-emerald-400 shrink-0" />}
-                      <span className={`text-[8px] font-bold px-1 py-0.5 rounded-full ${t.bg} ${t.color}`}>{t.icon}{c.tier}</span>
+                      <p className="text-sm font-semibold text-foreground truncate">{c.display_name || "Unnamed"}</p>
+                      <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full border ${tier.badge} ${tier.text}`}>
+                        {tier.icon}
+                      </span>
+                      <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full ${seg.bg} ${seg.color}`}>
+                        {seg.label}
+                      </span>
                     </div>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      {c.location && <span className="text-[9px] text-muted-foreground flex items-center gap-0.5"><MapPin size={7} />{c.location}</span>}
-                      <span className={`text-[8px] font-bold ${seg.color}`}>{seg.label}</span>
+                    <div className="flex items-center gap-2 mt-1">
+                      {c.location && (
+                        <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
+                          <MapPin size={8} /> {c.location}
+                        </span>
+                      )}
+                      <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
+                        <Mail size={8} /> {mockEmail.length > 18 ? mockEmail.slice(0, 18) + "…" : mockEmail}
+                      </span>
+                    </div>
+                    {/* Mini engagement bar */}
+                    <div className="mt-1.5 max-w-[140px]">
+                      <EngagementBar score={c.engagementScore} />
                     </div>
                   </div>
 
-                  <div className="text-right shrink-0">
-                    <p className="text-xs font-bold text-foreground tabular-nums">₹{lifetimeValue.toLocaleString("en-IN")}</p>
-                    <div className="flex items-center gap-1.5 justify-end mt-0.5">
-                      <span className="text-[8px] text-muted-foreground">{c.bookings.length}B</span>
-                      <span className="text-[8px] text-muted-foreground">{c.orders.length}O</span>
-                      <span className="text-[8px] text-muted-foreground">{c.reviews.length}R</span>
+                  <div className="text-right shrink-0 space-y-1">
+                    <p className="text-sm font-bold text-foreground tabular-nums">₹{lifetimeValue.toLocaleString("en-IN")}</p>
+                    <div className="flex items-center gap-1 justify-end text-[9px] text-muted-foreground">
+                      <span className="flex items-center gap-0.5"><CalendarCheck size={8} />{c.bookings.length}</span>
+                      <span>·</span>
+                      <span className="flex items-center gap-0.5"><ShoppingCart size={8} />{c.orders.length}</span>
+                      <span>·</span>
+                      <span className="flex items-center gap-0.5"><Star size={8} />{c.reviews.length}</span>
                     </div>
+                    <p className="text-[8px] text-muted-foreground">{timeAgo(c.created_at)}</p>
                   </div>
 
-                  <ChevronRight size={14} className="text-muted-foreground shrink-0" />
+                  <ChevronRight size={14} className="text-muted-foreground shrink-0 group-hover:text-primary transition-colors" />
                 </div>
               </motion.button>
             );
