@@ -325,10 +325,20 @@ export default function AdminCurations() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04 }}
-              className="rounded-xl border border-border bg-card p-4 cursor-pointer hover:border-primary/30 transition"
+              draggable
+              onDragStart={() => setDragId(c.id)}
+              onDragOver={(e) => { e.preventDefault(); setDragOverId(c.id); }}
+              onDrop={() => handleCurationDrop(c.id)}
+              onDragEnd={() => { setDragId(null); setDragOverId(null); }}
+              className={`rounded-xl border bg-card p-4 cursor-grab active:cursor-grabbing hover:border-primary/30 transition-all ${
+                dragId === c.id ? "opacity-40 scale-[0.97]" : ""
+              } ${dragOverId === c.id && dragId !== c.id ? "border-primary shadow-sm shadow-primary/20" : "border-border"}`}
               onClick={() => startEdit(c)}
             >
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-2">
+                <div className="text-muted-foreground/40 hover:text-muted-foreground transition shrink-0 mt-1">
+                  <GripVertical size={16} />
+                </div>
                 <span className="text-2xl">{c.emoji}</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
