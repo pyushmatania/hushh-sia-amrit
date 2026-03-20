@@ -5,7 +5,7 @@ import {
   Shield, CheckCircle2, Clock, X, MapPin, Star, Heart, ShoppingCart,
   Share2, Zap, Award, ChevronRight, ArrowLeft, FileText, User,
   ChefHat, Receipt, Phone, Mail, CreditCard, Home, Globe, Hash,
-  Sparkles, TrendingUp, Eye
+  Sparkles, TrendingUp, Eye, Bot, Send, Loader2
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
