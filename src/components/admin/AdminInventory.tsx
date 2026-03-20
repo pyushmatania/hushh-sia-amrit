@@ -38,9 +38,16 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
   const [isCreating, setIsCreating] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
 
-  useEffect(() => {
+  const loadInventory = () => {
     supabase.from("inventory").select("*").order("sort_order").order("name")
       .then(({ data }) => { setItems((data as InventoryItem[]) ?? []); setLoading(false); });
+  };
+
+  useEffect(() => {
+    loadInventory();
+    const onRefresh = () => loadInventory();
+    window.addEventListener("hushh:listings-updated", onRefresh);
+    return () => window.removeEventListener("hushh:listings-updated", onRefresh);
   }, []);
 
   const scopedItems = filterCategory === "food-drinks"
