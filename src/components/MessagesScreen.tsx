@@ -888,10 +888,16 @@ function RealtimeChatView({ conversation, onBack }: { conversation: Conversation
         )}
       </AnimatePresence>
 
+      {/* Image Preview */}
+      <AnimatePresence>
+        {pendingImage && <ImagePreviewBar file={pendingImage} onRemove={() => setPendingImage(null)} />}
+      </AnimatePresence>
+
       {/* Input */}
       <div className="px-3 py-3 border-t border-border bg-background/95 backdrop-blur-md pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+        <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImagePick} />
         <div className="flex items-end gap-2">
-          <button className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground active:scale-90 transition-transform">
+          <button onClick={() => fileInputRef.current?.click()} className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground active:scale-90 transition-transform">
             <Image size={18} />
           </button>
           <div className="flex-1 bg-secondary rounded-2xl flex items-end">
@@ -900,11 +906,11 @@ function RealtimeChatView({ conversation, onBack }: { conversation: Conversation
               placeholder="Type a message..." className="flex-1 bg-transparent px-4 py-3 text-[13px] text-foreground placeholder:text-muted-foreground outline-none" />
             <button className="px-3 py-3 text-muted-foreground"><Smile size={18} /></button>
           </div>
-          {input.trim() ? (
-            <motion.button initial={{ scale: 0 }} animate={{ scale: 1 }} onClick={() => handleSend()} disabled={sending}
+          {(input.trim() || pendingImage) ? (
+            <motion.button initial={{ scale: 0 }} animate={{ scale: 1 }} onClick={() => handleSend()} disabled={sending || uploadingImage}
               className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center disabled:opacity-50 active:scale-90 transition-transform"
               style={{ boxShadow: "0 2px 8px hsl(var(--primary) / 0.3)" }}>
-              <Send size={17} className="text-primary-foreground ml-0.5" />
+              {uploadingImage ? <Loader2 size={17} className="text-primary-foreground animate-spin" /> : <Send size={17} className="text-primary-foreground ml-0.5" />}
             </motion.button>
           ) : (
             <button className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground active:scale-90 transition-transform">
@@ -913,6 +919,11 @@ function RealtimeChatView({ conversation, onBack }: { conversation: Conversation
           )}
         </div>
       </div>
+
+      {/* Fullscreen Image Viewer */}
+      <AnimatePresence>
+        {viewingImage && <ImageViewer url={viewingImage} onClose={() => setViewingImage(null)} />}
+      </AnimatePresence>
     </motion.div>
   );
 }
