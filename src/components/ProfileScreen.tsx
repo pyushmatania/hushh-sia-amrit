@@ -295,13 +295,30 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
         <h3 className="text-base font-bold text-foreground mb-3 flex items-center gap-2">
           <Award size={16} className="text-primary" /> Achievements
         </h3>
-        <div className="flex gap-3 overflow-x-auto hide-scrollbar">
+        <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-1">
           {achievements.map((a, i) => (
-            <div key={i} className="shrink-0 glass rounded-2xl p-3 w-[130px] text-center">
-              <span className="text-3xl block mb-1">{a.icon}</span>
-              <p className="text-xs font-bold text-foreground">{a.title}</p>
-              <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">{a.description}</p>
-            </div>
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.24 + i * 0.06 }}
+              className="shrink-0 rounded-[20px] p-4 w-[140px] text-center relative overflow-hidden"
+              style={{
+                background: "linear-gradient(145deg, hsl(var(--primary) / 0.12) 0%, hsl(var(--primary) / 0.04) 50%, hsl(var(--background)) 100%)",
+                border: "1px solid hsl(var(--primary) / 0.15)",
+                boxShadow: "0 4px 20px -4px hsl(var(--primary) / 0.1), inset 0 1px 0 hsl(0 0% 100% / 0.05)",
+              }}
+            >
+              <div className="absolute -top-8 -right-8 w-20 h-20 rounded-full opacity-20 pointer-events-none" style={{ background: "radial-gradient(circle, hsl(var(--primary) / 0.4), transparent 70%)" }} />
+              <div
+                className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-2.5"
+                style={{ background: "hsl(var(--primary) / 0.1)", border: "1px solid hsl(var(--primary) / 0.15)" }}
+              >
+                <span className="text-2xl">{a.icon}</span>
+              </div>
+              <p className="text-xs font-bold text-foreground leading-tight">{a.title}</p>
+              <p className="text-[10px] text-muted-foreground mt-1 leading-tight">{a.description}</p>
+            </motion.div>
           ))}
         </div>
       </motion.div>
@@ -311,21 +328,52 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.25 }}
-        className="mx-5 mt-5"
+        className="mx-5 mt-5 rounded-[24px] overflow-hidden relative"
+        style={{
+          background: "linear-gradient(145deg, hsl(var(--primary) / 0.08) 0%, hsl(var(--primary) / 0.02) 50%, hsl(var(--background)) 100%)",
+          border: "1px solid hsl(var(--primary) / 0.12)",
+          boxShadow: "0 6px 24px -6px hsl(var(--primary) / 0.1), inset 0 1px 0 hsl(0 0% 100% / 0.04)",
+        }}
       >
-        <h3 className="text-base font-bold text-foreground mb-3 flex items-center gap-2">
-          <Zap size={16} className="text-primary" /> Recent Activity
-        </h3>
-        <div className="space-y-2">
+        <div className="absolute -bottom-12 -right-12 w-32 h-32 rounded-full opacity-15 pointer-events-none" style={{ background: "radial-gradient(circle, hsl(var(--primary) / 0.3), transparent 70%)" }} />
+        <div className="p-5 pb-2">
+          <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+            <div
+              className="w-8 h-8 rounded-xl flex items-center justify-center"
+              style={{ background: "hsl(var(--primary) / 0.12)" }}
+            >
+              <Zap size={15} className="text-primary" />
+            </div>
+            Recent Activity
+          </h3>
+        </div>
+        <div className="px-5 pb-4 space-y-1.5">
           {recentActivity.map((item, i) => (
-            <div key={i} className="glass rounded-xl px-4 py-3 flex items-center gap-3">
-              <span className="text-xl">{item.icon}</span>
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, x: -12 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 + i * 0.06 }}
+              className="rounded-2xl px-4 py-3.5 flex items-center gap-3.5"
+              style={{
+                background: "hsl(var(--primary) / 0.05)",
+                border: "1px solid hsl(var(--primary) / 0.08)",
+              }}
+            >
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                style={{ background: "hsl(var(--primary) / 0.1)", border: "1px solid hsl(var(--primary) / 0.12)" }}
+              >
+                <span className="text-lg">{item.icon}</span>
+              </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-foreground truncate">{item.title}</p>
-                <p className="text-xs text-muted-foreground">{item.subtitle}</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">{item.subtitle}</p>
               </div>
-              <span className="text-xs text-muted-foreground shrink-0">{item.date}</span>
-            </div>
+              <div className="text-right shrink-0">
+                <span className="text-[11px] font-medium text-muted-foreground">{item.date}</span>
+              </div>
+            </motion.div>
           ))}
         </div>
       </motion.div>
