@@ -186,6 +186,7 @@ function FoodieVideoCard({
             </div>
           </div>
         </div>
+        </div>
       </div>
     </div>
   );
