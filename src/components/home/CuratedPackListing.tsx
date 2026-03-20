@@ -138,8 +138,8 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
             src={media.poster}
             alt={pack.name}
             className="absolute inset-0 w-full h-full object-cover"
-            style={{ opacity: videoReady ? 0 : 1, transition: "opacity 0.5s" }}
-            loading="lazy"
+            style={{ opacity: videoReady ? 0 : 1, transition: "opacity 0.3s" }}
+            loading={index < 2 ? "eager" : "lazy"}
           />
 
           {/* Autoplay video */}
