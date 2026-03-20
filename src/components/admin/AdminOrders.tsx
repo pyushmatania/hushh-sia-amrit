@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ShoppingCart, Clock, CheckCircle2, Loader2, Search, Filter, User, MapPin, UtensilsCrossed } from "lucide-react";
+import { ShoppingCart, Clock, CheckCircle2, Loader2, Search, UtensilsCrossed, MapPin, ChefHat, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 
 interface Order {
   id: string; user_id: string; property_id: string; booking_id: string | null;
-  total: number; status: string; created_at: string;
+  total: number; status: string; created_at: string; assigned_name: string | null;
   items?: { item_name: string; item_emoji: string; quantity: number; unit_price: number }[];
   guestName?: string; propertyName?: string;
 }
@@ -19,11 +19,11 @@ const statusColors: Record<string, string> = {
 };
 
 const statusIcons: Record<string, typeof Clock> = {
-  pending: Clock,
-  preparing: UtensilsCrossed,
-  delivered: CheckCircle2,
-  completed: CheckCircle2,
+  pending: Clock, preparing: UtensilsCrossed, delivered: CheckCircle2, completed: CheckCircle2,
 };
+
+const staffNames = ["Raju K.", "Priya M.", "Suresh B.", "Anita D.", "Mohan S."];
+const statusSteps = ["pending", "preparing", "delivered", "completed"];
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -45,38 +45,34 @@ export default function AdminOrders() {
       const itemMap = new Map<string, any[]>();
       (itemsRes.data ?? []).forEach(item => {
         const list = itemMap.get(item.order_id) || [];
-        list.push(item);
-        itemMap.set(item.order_id, list);
+        list.push(item); itemMap.set(item.order_id, list);
       });
-
       const profileMap = new Map<string, string>();
       (profilesRes.data ?? []).forEach(p => profileMap.set(p.user_id, p.display_name || "Guest"));
-
       const listingMap = new Map<string, string>();
       (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, l.name));
 
       setOrders(ordersRes.data.map(o => ({
         ...o,
+        assigned_name: (o as any).assigned_name || null,
         items: itemMap.get(o.id) || [],
         guestName: profileMap.get(o.user_id) || "Unknown Guest",
-        propertyName: listingMap.get(o.property_id) || `Property ${o.property_id}`,
+        propertyName: listingMap.get(o.property_id) || `Property`,
       })));
       setLoading(false);
     };
     load();
 
-    // Realtime
     const ch = supabase
       .channel("admin-orders-rt")
       .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, () => load())
       .subscribe();
-
     return () => { supabase.removeChannel(ch); };
   }, []);
 
-  const updateOrderStatus = async (id: string, status: string) => {
-    await supabase.from("orders").update({ status }).eq("id", id);
-    setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
+  const updateOrder = async (id: string, updates: Record<string, any>) => {
+    await supabase.from("orders").update(updates).eq("id", id);
+    setOrders(prev => prev.map(o => o.id === id ? { ...o, ...updates } : o));
   };
 
   const statuses = ["all", "pending", "preparing", "delivered", "completed"];
@@ -86,6 +82,7 @@ export default function AdminOrders() {
     const matchSearch = !search ||
       o.guestName?.toLowerCase().includes(search.toLowerCase()) ||
       o.propertyName?.toLowerCase().includes(search.toLowerCase()) ||
+      o.assigned_name?.toLowerCase().includes(search.toLowerCase()) ||
       o.id.includes(search.toLowerCase());
     return matchStatus && matchSearch;
   });
@@ -130,7 +127,7 @@ export default function AdminOrders() {
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input placeholder="Search guest, property, or order ID..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder="Search guest, property, staff..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
         </div>
         <div className="flex gap-1.5 flex-wrap">
           {statuses.map(s => (
@@ -153,18 +150,18 @@ export default function AdminOrders() {
         <div className="space-y-3">
           {filtered.map((order, i) => {
             const StatusIcon = statusIcons[order.status] || Clock;
+            const stepIdx = statusSteps.indexOf(order.status);
             return (
               <motion.div
                 key={order.id}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.03 }}
                 className={`rounded-xl border bg-card p-4 ${
                   order.status === "pending" ? "border-amber-500/30" :
                   order.status === "preparing" ? "border-blue-500/30" : "border-border"
                 }`}
               >
-                {/* Header with guest + property + time */}
+                {/* Header */}
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/30 to-accent/30 flex items-center justify-center text-xs font-bold text-foreground">
@@ -191,7 +188,7 @@ export default function AdminOrders() {
                   <p className="text-xs font-mono text-muted-foreground">#{order.id.slice(0, 8)}</p>
                 </div>
 
-                {/* Items list */}
+                {/* Food items */}
                 {(order.items || []).length > 0 && (
                   <div className="bg-secondary/50 rounded-lg p-3 mb-3 space-y-1.5">
                     {order.items!.map((item, j) => (
@@ -207,24 +204,49 @@ export default function AdminOrders() {
                   </div>
                 )}
 
-                {/* Footer */}
+                {/* Zomato-style progress tracker */}
+                <div className="mb-3">
+                  <div className="flex items-center gap-1">
+                    {statusSteps.map((step, si) => (
+                      <div key={step} className="flex items-center flex-1">
+                        <div className={`h-1.5 w-full rounded-full ${
+                          si <= stepIdx
+                            ? si <= 0 ? "bg-amber-400" : si === 1 ? "bg-blue-400" : "bg-emerald-400"
+                            : "bg-secondary"
+                        }`} />
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex justify-between mt-1">
+                    {statusSteps.map((step) => (
+                      <span key={step} className="text-[8px] text-muted-foreground capitalize">{step}</span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Footer: Total + Assigned staff + Actions */}
                 <div className="flex items-center justify-between pt-2 border-t border-border">
                   <div className="flex items-center gap-3">
                     <p className="text-sm font-bold text-foreground tabular-nums">₹{Number(order.total).toLocaleString()}</p>
-                    {order.booking_id && (
-                      <span className="text-[10px] text-muted-foreground bg-secondary px-2 py-0.5 rounded-lg">
-                        Booking: {order.booking_id.slice(0, 10)}
-                      </span>
-                    )}
+                    {/* Assigned staff */}
+                    <div className="flex items-center gap-1.5">
+                      <ChefHat size={12} className="text-primary" />
+                      <select
+                        value={order.assigned_name || ""}
+                        onChange={e => updateOrder(order.id, { assigned_name: e.target.value || null })}
+                        className="text-[11px] bg-secondary border border-border rounded-lg px-2 py-1 text-foreground min-w-[90px]"
+                      >
+                        <option value="">Unassigned</option>
+                        {staffNames.map(n => <option key={n} value={n}>{n}</option>)}
+                      </select>
+                    </div>
                   </div>
                   <select
                     value={order.status}
-                    onChange={e => updateOrderStatus(order.id, e.target.value)}
+                    onChange={e => updateOrder(order.id, { status: e.target.value })}
                     className="text-[11px] bg-secondary border border-border rounded-lg px-2 py-1 text-foreground"
                   >
-                    {["pending","preparing","delivered","completed"].map(s =>
-                      <option key={s} value={s}>{s}</option>
-                    )}
+                    {statusSteps.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
               </motion.div>
