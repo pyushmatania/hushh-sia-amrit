@@ -80,6 +80,66 @@ export type Database = {
         }
         Relationships: []
       }
+      curations: {
+        Row: {
+          active: boolean
+          badge: string | null
+          created_at: string
+          emoji: string
+          gradient: string
+          id: string
+          includes: string[]
+          mood: string[]
+          name: string
+          original_price: number | null
+          price: number
+          property_id: string
+          slot: string
+          sort_order: number
+          tagline: string
+          tags: string[]
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          badge?: string | null
+          created_at?: string
+          emoji?: string
+          gradient?: string
+          id?: string
+          includes?: string[]
+          mood?: string[]
+          name: string
+          original_price?: number | null
+          price?: number
+          property_id: string
+          slot?: string
+          sort_order?: number
+          tagline?: string
+          tags?: string[]
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          badge?: string | null
+          created_at?: string
+          emoji?: string
+          gradient?: string
+          id?: string
+          includes?: string[]
+          mood?: string[]
+          name?: string
+          original_price?: number | null
+          price?: number
+          property_id?: string
+          slot?: string
+          sort_order?: number
+          tagline?: string
+          tags?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       host_listings: {
         Row: {
           amenities: string[]
