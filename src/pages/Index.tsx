@@ -19,6 +19,8 @@ import HostDashboard from "@/components/HostDashboard";
 import HostAnalyticsScreen from "@/components/HostAnalyticsScreen";
 import CreateListingScreen from "@/components/CreateListingScreen";
 import NotificationCenter from "@/components/NotificationCenter";
+import NotificationToastProvider from "@/components/NotificationToastProvider";
+import NotificationPermissionBanner from "@/components/NotificationPermissionBanner";
 import { useAuth } from "@/hooks/use-auth";
 import { useWishlists } from "@/hooks/use-wishlists";
 import { useBookings } from "@/hooks/use-bookings";
