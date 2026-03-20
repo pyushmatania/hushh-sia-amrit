@@ -160,7 +160,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
   }, [activeMood, activePackFilter]);
 
   // Handle mood change — also affects main property filtering
-  const handleMoodChange = useCallback((mood: Mood) => {
+  const handleMoodChange = useCallback((mood: "romantic" | "party" | "chill" | "work" | null) => {
     setActiveMood(mood);
     hapticSelection();
   }, []);
