@@ -56,22 +56,50 @@ function getCardAccent(property: Property, index: number): CardAccent {
   return null;
 }
 
-/** Builds a border style on one side with fading edges using box-shadow on a wrapper (no overflow clip) */
-function getAccentBorderStyle(accent: NonNullable<CardAccent>): React.CSSProperties {
-  const c = accent.color;
-  const base: React.CSSProperties = {
-    position: "absolute",
-    pointerEvents: "none",
-    zIndex: 2,
-    borderRadius: "1rem",
-  };
-  if (accent.side === "left") {
-    return { ...base, inset: 0, borderLeft: `2.5px solid ${c}`, maskImage: "linear-gradient(to bottom, transparent 5%, black 30%, black 70%, transparent 95%)", WebkitMaskImage: "linear-gradient(to bottom, transparent 5%, black 30%, black 70%, transparent 95%)" };
-  }
-  if (accent.side === "right") {
-    return { ...base, inset: 0, borderRight: `2.5px solid ${c}`, maskImage: "linear-gradient(to bottom, transparent 5%, black 30%, black 70%, transparent 95%)", WebkitMaskImage: "linear-gradient(to bottom, transparent 5%, black 30%, black 70%, transparent 95%)" };
-  }
-  return { ...base, inset: 0, borderTop: `2.5px solid ${c}`, maskImage: "linear-gradient(to right, transparent 5%, black 30%, black 70%, transparent 95%)", WebkitMaskImage: "linear-gradient(to right, transparent 5%, black 30%, black 70%, transparent 95%)" };
+/**
+ * Two-element L-shaped border: solid at top-left corner, fading down left + across top.
+ * Returns an array of style objects for left-edge and top-edge divs.
+ */
+function AccentBorder({ color, radius }: { color: string; radius: string }) {
+  return (
+    <>
+      {/* Left edge: solid at top, fades toward bottom */}
+      <div style={{
+        position: "absolute", left: 0, top: 0, bottom: 0, width: "2.5px", zIndex: 3,
+        pointerEvents: "none", borderRadius: radius,
+        background: color,
+        maskImage: "linear-gradient(to bottom, black 0%, black 40%, transparent 85%)",
+        WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 40%, transparent 85%)",
+      }} />
+      {/* Top edge: solid at left, fades toward right */}
+      <div style={{
+        position: "absolute", left: 0, top: 0, right: 0, height: "2.5px", zIndex: 3,
+        pointerEvents: "none", borderRadius: radius,
+        background: color,
+        maskImage: "linear-gradient(to right, black 0%, black 30%, transparent 70%)",
+        WebkitMaskImage: "linear-gradient(to right, black 0%, black 30%, transparent 70%)",
+      }} />
+    </>
+  );
+}
+
+/** Asymmetrical tag with slanted right edge */
+function AccentTag({ tag, color }: { tag: NonNullable<NonNullable<CardAccent>["tag"]>; color: string }) {
+  return (
+    <span
+      className="absolute top-3 left-3 text-[10px] font-bold tracking-wider pl-3 pr-4 py-1.5 flex items-center gap-1 shadow-lg z-10"
+      style={{
+        background: tag.bg,
+        color: "white",
+        letterSpacing: "0.08em",
+        clipPath: "polygon(0 0, 100% 0, 88% 100%, 0 100%)",
+        borderRadius: "4px 8px 8px 4px",
+      }}
+    >
+      {tag.icon}
+      {tag.label}
+    </span>
+  );
 }
 
 interface PropertyCardProps {
