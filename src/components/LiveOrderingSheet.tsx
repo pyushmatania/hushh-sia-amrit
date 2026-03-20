@@ -62,7 +62,7 @@ export default function LiveOrderingSheet({ open, onClose, propertyName, propert
   // Fetch menu from inventory DB
   useEffect(() => {
     if (!open) return;
-    supabase.from("inventory").select("*").eq("available", true).order("name")
+    supabase.from("inventory").select("*").eq("available", true).order("sort_order", { ascending: true }).order("name")
       .then(({ data }) => {
         if (data && data.length > 0) {
           setDbMenuItems(mapInventoryToMenu(data));

@@ -23,7 +23,7 @@ export default function StaffInventory() {
   const [form, setForm] = useState({ name: "", category: "food", emoji: "🍔", unit_price: 0, stock: 100 });
 
   const loadInventory = () => {
-    supabase.from("inventory").select("*").order("category").order("name")
+    supabase.from("inventory").select("*").order("sort_order", { ascending: true }).order("category").order("name")
       .then(({ data }) => { setItems((data as any) ?? []); setLoading(false); });
   };
 
