@@ -215,7 +215,7 @@ export const changeLog = [
       "LiveOrderingSheet — accessible from booking confirmation page via 'Order Food & Drinks' button",
       "New DB tables: orders, order_items, spin_history, user_milestones (total: 16 tables)",
       "Order History section on Trips screen — expandable cards showing past in-stay orders fetched from DB with item details",
-      "Repeat Booking Engine — 'Your Last Vibe 🔁' card on home screen showing last booking with 1-tap rebook CTA",
+      "Repeat Booking Engine — 'Your Last Vibe 🔁' card on home screen, reads from bookings table (DB-wired), 1-tap rebook CTA, guest fallback via localStorage",
     ],
   },
 ];
