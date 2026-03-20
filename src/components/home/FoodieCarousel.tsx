@@ -95,20 +95,22 @@ function FoodieVideoCard({
       }}
       onClick={onTap}
     >
-      <div
-        className="relative overflow-hidden rounded-[20px]"
-        style={{
-          height: "65vh", maxHeight: "520px",
-          border: accent ? "none" : "1px solid rgba(255,255,255,0.08)",
-          boxShadow: accent ? getAccentShadow(accent.color, accent.side) : undefined,
-        }}
-      >
-        {accent && (
-          <div
-            className="absolute inset-0 z-[1] pointer-events-none rounded-[20px]"
-            style={{ background: getGlowGradient(accent.color, accent.side) }}
-          />
-        )}
+        <div
+          className="relative overflow-hidden rounded-[20px]"
+          style={{
+            height: "65vh", maxHeight: "520px",
+            border: accent ? "none" : "1px solid rgba(255,255,255,0.08)",
+          }}
+        >
+          {/* Fading accent border */}
+          {accent && <div style={getAccentBorderStyle(accent.color, accent.side)} />}
+          {/* Subtle glow */}
+          {accent && (
+            <div
+              className="absolute inset-0 z-[1] pointer-events-none rounded-[20px]"
+              style={{ background: getGlowGradient(accent.color, accent.side) }}
+            />
+          )}
 
         <img src={property.images[0]} alt={property.name}
           className="absolute inset-0 w-full h-full object-cover"
