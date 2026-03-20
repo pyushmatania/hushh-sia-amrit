@@ -310,10 +310,26 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
 
   const maxRevenue = Math.max(...monthlyRevenue.map(m => m[1]), 1);
 
+  // Timeline events
+  const timelineEvents = useMemo(() => {
+    const events: { type: string; icon: string; label: string; detail: string; date: string; userId?: string }[] = [];
+    property.bookings.forEach(b => {
+      const u = users.get(b.user_id)?.display_name || b.userName || "Guest";
+      events.push({ type: "booking", icon: "🎫", label: `${u} booked ${b.slot}`, detail: `${b.guests} guests · ₹${Number(b.total).toLocaleString("en-IN")} · ${b.status}`, date: b.created_at, userId: b.user_id });
+    });
+    property.orders.forEach(o => {
+      const u = users.get(o.user_id)?.display_name || o.userName || "Guest";
+      const items = o.items.map(i => `${i.item_emoji}${i.item_name}`).join(", ");
+      events.push({ type: "order", icon: "🍽️", label: `${u} ordered food`, detail: `${items} · ₹${Number(o.total).toLocaleString("en-IN")} · Chef: ${o.assigned_name || "—"}`, date: o.created_at, userId: o.user_id });
+    });
+    return events.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [property, users]);
+
   const tabs = [
     { id: "calendar" as const, label: "Calendar", icon: CalendarCheck },
     { id: "guests" as const, label: `Guests (${property.uniqueGuests})`, icon: Users },
     { id: "orders" as const, label: `Food (${foodAnalytics.length})`, icon: Utensils },
+    { id: "timeline" as const, label: `Timeline`, icon: Activity },
     { id: "analytics" as const, label: "Analytics", icon: BarChart3 },
   ];
 
