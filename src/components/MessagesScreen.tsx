@@ -721,7 +721,11 @@ function RealtimeChatView({ conversation, onBack }: { conversation: Conversation
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [showQuickReplies, setShowQuickReplies] = useState(true);
+  const [pendingImage, setPendingImage] = useState<File | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [viewingImage, setViewingImage] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchMessages(conversation.id).then((msgs) => {
@@ -748,12 +752,34 @@ function RealtimeChatView({ conversation, onBack }: { conversation: Conversation
 
   const handleSend = async (text?: string) => {
     const msg = text || input.trim();
-    if (!msg || sending) return;
+    if ((!msg && !pendingImage) || sending) return;
     setSending(true);
     setShowQuickReplies(false);
-    await sendMessage(conversation.id, msg);
+
+    let finalMsg = msg;
+    if (pendingImage && user) {
+      setUploadingImage(true);
+      const imageUrl = await uploadChatImage(pendingImage, user.id);
+      setUploadingImage(false);
+      if (imageUrl) {
+        finalMsg = msg ? `[image:${imageUrl}] ${msg}` : `[image:${imageUrl}]`;
+      }
+      setPendingImage(null);
+    }
+
+    if (finalMsg) {
+      await sendMessage(conversation.id, finalMsg);
+    }
     setInput("");
     setSending(false);
+  };
+
+  const handleImagePick = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith("image/")) {
+      setPendingImage(file);
+    }
+    e.target.value = "";
   };
 
   const avatarEmoji = conversation.other_user_name.includes("Support") ? "💎" : "🏡";
