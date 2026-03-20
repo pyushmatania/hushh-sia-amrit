@@ -31,18 +31,19 @@ export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onR
   const activeHandleRef = useRef<HTMLElement | null>(null);
   const originalBodyUserSelectRef = useRef<string | null>(null);
   const originalBodyCursorRef = useRef<string | null>(null);
+  const ghostRef = useRef<HTMLElement | null>(null);
+  const sourceRowRef = useRef<HTMLElement | null>(null);
+  const pointerOffsetRef = useRef({ x: 0, y: 0 });
 
   const lockSelectionWhileDragging = useCallback(() => {
     if (typeof document === "undefined") return;
     const { body } = document;
-
     if (originalBodyUserSelectRef.current === null) {
       originalBodyUserSelectRef.current = body.style.userSelect;
     }
     if (originalBodyCursorRef.current === null) {
       originalBodyCursorRef.current = body.style.cursor;
     }
-
     body.style.userSelect = "none";
     body.style.cursor = "grabbing";
   }, []);
@@ -50,12 +51,18 @@ export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onR
   const unlockSelectionAfterDrag = useCallback(() => {
     if (typeof document === "undefined") return;
     const { body } = document;
-
     body.style.userSelect = originalBodyUserSelectRef.current ?? "";
     body.style.cursor = originalBodyCursorRef.current ?? "";
-
     originalBodyUserSelectRef.current = null;
     originalBodyCursorRef.current = null;
+  }, []);
+
+  const removeGhost = useCallback(() => {
+    if (ghostRef.current) {
+      ghostRef.current.remove();
+      ghostRef.current = null;
+    }
+    sourceRowRef.current = null;
   }, []);
 
   const clearDragState = useCallback(() => {
@@ -64,6 +71,7 @@ export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onR
       activeHandleRef.current.releasePointerCapture(pointerId);
     }
 
+    removeGhost();
     activeHandleRef.current = null;
     dragIdRef.current = null;
     dragCatRef.current = null;
@@ -71,11 +79,15 @@ export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onR
     unlockSelectionAfterDrag();
     setDragId(null);
     setDragOverId(null);
-  }, [unlockSelectionAfterDrag]);
+  }, [unlockSelectionAfterDrag, removeGhost]);
 
   const getDropTargetFromPoint = useCallback((x: number, y: number) => {
     if (typeof document === "undefined") return null;
+    // Temporarily hide ghost so elementFromPoint hits the real DOM
+    const ghost = ghostRef.current;
+    if (ghost) ghost.style.pointerEvents = "none";
     const el = document.elementFromPoint(x, y) as HTMLElement | null;
+    if (ghost) ghost.style.pointerEvents = "";
     const target = el?.closest<HTMLElement>("[data-reorder-id]");
     if (!target?.dataset.reorderId) return null;
     return { id: target.dataset.reorderId, category: target.dataset.reorderCategory ?? "__all__" };
@@ -103,6 +115,45 @@ export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onR
     onReorderRef.current(updates);
   }, [clearDragState]);
 
+  const createGhost = useCallback((sourceRow: HTMLElement, clientX: number, clientY: number) => {
+    const rect = sourceRow.getBoundingClientRect();
+    const clone = sourceRow.cloneNode(true) as HTMLElement;
+
+    // Store pointer offset relative to element top-left
+    pointerOffsetRef.current = { x: clientX - rect.left, y: clientY - rect.top };
+
+    Object.assign(clone.style, {
+      position: "fixed",
+      left: `${rect.left}px`,
+      top: `${rect.top}px`,
+      width: `${rect.width}px`,
+      height: `${rect.height}px`,
+      margin: "0",
+      zIndex: "9999",
+      pointerEvents: "none",
+      transform: "scale(1.04) rotate(1.2deg)",
+      boxShadow: "0 20px 50px -8px rgba(0,0,0,0.5), 0 0 0 1px hsl(var(--primary) / 0.3)",
+      borderRadius: "12px",
+      opacity: "0.95",
+      transition: "transform 180ms cubic-bezier(0.16,1,0.3,1), box-shadow 180ms ease-out",
+      willChange: "transform",
+    });
+
+    clone.removeAttribute("data-reorder-id");
+    document.body.appendChild(clone);
+    ghostRef.current = clone;
+    sourceRowRef.current = sourceRow;
+  }, []);
+
+  const moveGhost = useCallback((clientX: number, clientY: number) => {
+    const ghost = ghostRef.current;
+    if (!ghost) return;
+    const x = clientX - pointerOffsetRef.current.x;
+    const y = clientY - pointerOffsetRef.current.y;
+    ghost.style.left = `${x}px`;
+    ghost.style.top = `${y}px`;
+  }, []);
+
   const getDragHandleProps = useCallback((item: T) => {
     const id = getIdRef.current(item);
     const cat = getCategoryRef.current?.(item) ?? "__all__";
@@ -112,6 +163,8 @@ export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onR
       if (detachRef.current) return;
       const onMove = (e: PointerEvent) => {
         if (pointerIdRef.current !== e.pointerId) return;
+
+        moveGhost(e.clientX, e.clientY);
 
         const edgeThreshold = 88;
         const scrollStep = 16;
@@ -175,6 +228,12 @@ export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onR
         handleEl.setPointerCapture(e.pointerId);
         lockSelectionWhileDragging();
 
+        // Find the row element (closest [data-reorder-id]) and create ghost
+        const rowEl = handleEl.closest<HTMLElement>("[data-reorder-id]");
+        if (rowEl) {
+          createGhost(rowEl, e.clientX, e.clientY);
+        }
+
         dragIdRef.current = id;
         dragCatRef.current = cat;
         pointerIdRef.current = e.pointerId;
@@ -183,7 +242,7 @@ export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onR
         attachPointerListeners();
       },
     };
-  }, [clearDragState, executeDrop, getDropTargetFromPoint, lockSelectionWhileDragging]);
+  }, [clearDragState, executeDrop, getDropTargetFromPoint, lockSelectionWhileDragging, createGhost, moveGhost]);
 
   const getDropTargetProps = useCallback((item: T) => {
     const id = getIdRef.current(item);
@@ -203,7 +262,7 @@ export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onR
     clearDragState();
   }, [clearDragState]);
 
-  useEffect(() => () => { detachRef.current?.(); detachRef.current = null; }, []);
+  useEffect(() => () => { detachRef.current?.(); detachRef.current = null; removeGhost(); }, [removeGhost]);
 
   const isDragging = (item: T) => getIdRef.current(item) === dragId;
   const isDragOver = (item: T) => { const id = getIdRef.current(item); return id === dragOverId && id !== dragId; };
@@ -212,24 +271,26 @@ export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onR
   const getDragItemStyle = useCallback((item: T): React.CSSProperties => {
     const id = getIdRef.current(item);
     if (id === dragId) {
+      // The original row becomes a collapsed placeholder
       return {
-        transform: "scale(1.03) rotate(0.8deg)",
-        boxShadow: "0 16px 40px -6px rgba(0,0,0,0.4), 0 0 0 1px hsl(var(--primary) / 0.25)",
-        zIndex: 50,
-        position: "relative",
-        transition: "transform 180ms cubic-bezier(0.16,1,0.3,1), box-shadow 180ms ease-out",
+        opacity: 0.25,
+        transform: "scale(0.96)",
+        border: "2px dashed hsl(var(--primary) / 0.4)",
+        background: "hsl(var(--primary) / 0.04)",
+        transition: "opacity 200ms ease-out, transform 200ms cubic-bezier(0.16,1,0.3,1)",
       };
     }
     if (id === dragOverId && id !== dragId) {
       return {
-        transform: "scale(0.97)",
-        opacity: 0.7,
-        transition: "transform 200ms cubic-bezier(0.16,1,0.3,1), opacity 200ms ease-out",
+        transform: "scale(0.97) translateY(-2px)",
+        boxShadow: "0 0 0 2px hsl(var(--primary) / 0.4)",
+        transition: "transform 200ms cubic-bezier(0.16,1,0.3,1), box-shadow 200ms ease-out",
       };
     }
     return {
       transform: "scale(1) rotate(0deg)",
-      transition: "transform 250ms cubic-bezier(0.16,1,0.3,1), box-shadow 250ms ease-out, opacity 250ms ease-out",
+      opacity: 1,
+      transition: "transform 250ms cubic-bezier(0.16,1,0.3,1), box-shadow 250ms ease-out, opacity 250ms ease-out, border 250ms ease-out",
     };
   }, [dragId, dragOverId]);
 
