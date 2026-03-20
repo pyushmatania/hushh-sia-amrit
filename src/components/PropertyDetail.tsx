@@ -196,9 +196,13 @@ function AddonChip({ addon }: { addon: import("@/data/properties").Addon }) {
   );
 }
 
-function RelatedPropertyRow({ relatedProperty, onTap }: { relatedProperty: Property; onTap: (p: Property) => void }) {
+function RelatedPropertyRow({ relatedProperty, added, onToggle, onViewDetails }: { 
+  relatedProperty: Property; 
+  added: boolean;
+  onToggle: () => void;
+  onViewDetails: () => void;
+}) {
   const [expanded, setExpanded] = useState(false);
-  const [added, setAdded] = useState(false);
   const cheapestSlot = relatedProperty.slots.filter(s => s.available).sort((a, b) => a.price - b.price)[0];
 
   return (
@@ -232,20 +236,14 @@ function RelatedPropertyRow({ relatedProperty, onTap }: { relatedProperty: Prope
         <div className="flex items-center gap-2 shrink-0">
           {!added ? (
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setAdded(true);
-              }}
+              onClick={(e) => { e.stopPropagation(); onToggle(); }}
               className="text-[10px] font-bold text-primary border border-primary/30 bg-primary/10 px-3 py-1.5 rounded-full"
             >
               + ₹{cheapestSlot?.price.toLocaleString() || relatedProperty.basePrice.toLocaleString()}
             </button>
           ) : (
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setAdded(false);
-              }}
+              onClick={(e) => { e.stopPropagation(); onToggle(); }}
               className="text-[10px] font-bold text-primary-foreground bg-primary px-3 py-1.5 rounded-full flex items-center gap-1"
             >
               <Check size={10} /> Added
@@ -268,7 +266,6 @@ function RelatedPropertyRow({ relatedProperty, onTap }: { relatedProperty: Prope
             className="overflow-hidden"
           >
             <div className="px-3 pb-3 pt-1.5 border-t border-border/30 space-y-2">
-              {/* Highlights as pills */}
               {relatedProperty.highlights.length > 0 && (
                 <div className="flex flex-wrap gap-1">
                   {relatedProperty.highlights.slice(0, 4).map((h, i) => (
@@ -278,8 +275,6 @@ function RelatedPropertyRow({ relatedProperty, onTap }: { relatedProperty: Prope
                   ))}
                 </div>
               )}
-
-              {/* Meta row */}
               <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
                 <span className="flex items-center gap-0.5">
                   <Star size={9} className="fill-primary text-primary" />
@@ -291,13 +286,8 @@ function RelatedPropertyRow({ relatedProperty, onTap }: { relatedProperty: Prope
                 <span>•</span>
                 <span>Up to {relatedProperty.capacity} ppl</span>
               </div>
-
-              {/* View full details link */}
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onTap(relatedProperty);
-                }}
+                onClick={(e) => { e.stopPropagation(); onViewDetails(); }}
                 className="text-[10px] text-primary font-medium flex items-center gap-1"
               >
                 View full details →
@@ -313,7 +303,7 @@ function RelatedPropertyRow({ relatedProperty, onTap }: { relatedProperty: Prope
 interface PropertyDetailProps {
   property: Property;
   onBack: () => void;
-  onBook: (property: Property, slotId: string, guests: number, date: Date) => void;
+  onBook: (property: Property, slotId: string, guests: number, date: Date, extras?: Property[]) => void;
   onPropertyTap?: (property: Property) => void;
 }
 
@@ -323,6 +313,17 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
   const [guests, setGuests] = useState(2);
   const [expanded, setExpanded] = useState(false);
   const [enhanceOpen, setEnhanceOpen] = useState(false);
+  const [addedExtraIds, setAddedExtraIds] = useState<Set<string>>(new Set());
+
+  const toggleExtra = useCallback((id: string) => {
+    setAddedExtraIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  }, []);
+
+  const addedExtras = allProperties.filter(p => addedExtraIds.has(p.id));
   const [liked, setLiked] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
 
@@ -718,7 +719,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
                         </h4>
                         <div className="space-y-2">
                           {relatedExperiences.map((exp) => (
-                            <RelatedPropertyRow key={exp.id} relatedProperty={exp} onTap={onPropertyTap || (() => {})} />
+                            <RelatedPropertyRow key={exp.id} relatedProperty={exp} added={addedExtraIds.has(exp.id)} onToggle={() => toggleExtra(exp.id)} onViewDetails={() => onPropertyTap?.(exp)} />
                           ))}
                         </div>
                       </div>
@@ -738,7 +739,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
                         </h4>
                         <div className="space-y-2">
                           {relatedServices.map((svc) => (
-                            <RelatedPropertyRow key={svc.id} relatedProperty={svc} onTap={onPropertyTap || (() => {})} />
+                            <RelatedPropertyRow key={svc.id} relatedProperty={svc} added={addedExtraIds.has(svc.id)} onToggle={() => toggleExtra(svc.id)} onViewDetails={() => onPropertyTap?.(svc)} />
                           ))}
                         </div>
                       </div>
@@ -933,15 +934,18 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
             <div>
               <span className="font-semibold text-gradient-warm text-lg">₹{selectedSlotData.price.toLocaleString()}</span>
               <span className="text-muted-foreground text-sm"> / {selectedSlotData.label.toLowerCase()}</span>
-              <p className="text-xs text-muted-foreground">{guests} guests · {format(selectedDate, "d MMM")}</p>
+              <p className="text-xs text-muted-foreground">
+                {guests} guests · {format(selectedDate, "d MMM")}
+                {addedExtras.length > 0 && <span className="text-primary font-medium"> · +{addedExtras.length} extra{addedExtras.length > 1 ? "s" : ""}</span>}
+              </p>
             </div>
             <motion.button
-              onClick={() => onBook(property, selectedSlot!, guests, selectedDate)}
+              onClick={() => onBook(property, selectedSlot!, guests, selectedDate, addedExtras.length > 0 ? addedExtras : undefined)}
               className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold text-sm glow-primary"
               whileTap={{ scale: 0.93 }}
               transition={{ type: "spring", stiffness: 400 }}
             >
-              Reserve
+              Reserve{addedExtras.length > 0 ? ` (${addedExtras.length + 1})` : ""}
             </motion.button>
           </motion.div>
         )}

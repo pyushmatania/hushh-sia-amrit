@@ -43,8 +43,8 @@ export interface Booking {
 type Screen =
   | { type: "home" }
   | { type: "detail"; property: Property }
-  | { type: "builder"; property: Property; slotId: string; guests: number; date: Date }
-  | { type: "checkout"; property: Property; slotId: string; guests: number; date: Date; selections: Record<string, number>; total: number }
+  | { type: "builder"; property: Property; slotId: string; guests: number; date: Date; extras?: Property[] }
+  | { type: "checkout"; property: Property; slotId: string; guests: number; date: Date; selections: Record<string, number>; total: number; extras?: Property[] }
   | { type: "confirmation"; property: Property; slotId: string; guests: number; date: Date; total: number }
   | { type: "bookingDetail"; booking: Booking }
   | { type: "hostDashboard" }
@@ -73,14 +73,14 @@ export default function Index() {
     setActiveTab("home");
   }, []);
 
-  const handleBook = useCallback((property: Property, slotId: string, guests: number, date: Date) => {
-    setScreen({ type: "builder", property, slotId, guests, date });
+  const handleBook = useCallback((property: Property, slotId: string, guests: number, date: Date, extras?: Property[]) => {
+    setScreen({ type: "builder", property, slotId, guests, date, extras });
   }, []);
 
   const handleContinue = useCallback(
-    (property: Property, slotId: string, guests: number, date: Date) =>
+    (property: Property, slotId: string, guests: number, date: Date, extras?: Property[]) =>
       (selections: Record<string, number>, total: number) => {
-        setScreen({ type: "checkout", property, slotId, guests, date, selections, total });
+        setScreen({ type: "checkout", property, slotId, guests, date, selections, total, extras });
       },
     []
   );
@@ -204,7 +204,8 @@ export default function Index() {
             guests={screen.guests}
             date={screen.date}
             onBack={() => setScreen({ type: "detail", property: screen.property })}
-            onContinue={handleContinue(screen.property, screen.slotId, screen.guests, screen.date)}
+            onContinue={handleContinue(screen.property, screen.slotId, screen.guests, screen.date, screen.extras)}
+            extras={screen.extras}
           />
         )}
         {screen.type === "checkout" && (
@@ -216,7 +217,8 @@ export default function Index() {
             date={screen.date}
             selections={screen.selections}
             total={screen.total}
-            onBack={() => setScreen({ type: "builder", property: screen.property, slotId: screen.slotId, guests: screen.guests, date: screen.date })}
+            onBack={() => setScreen({ type: "builder", property: screen.property, slotId: screen.slotId, guests: screen.guests, date: screen.date, extras: screen.extras })}
+            extras={screen.extras}
             onConfirm={handleCheckoutConfirm(screen.property, screen.slotId, screen.guests, screen.date)}
           />
         )}
