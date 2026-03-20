@@ -1,12 +1,13 @@
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Crown, Gift, Star, Zap, ChevronRight, Copy, Share2,
-  Trophy, Ticket, Coffee, Sparkles, TrendingUp, Check, Users, Loader2
+  Trophy, Ticket, Coffee, Sparkles, TrendingUp, Check, Users, Loader2, Target
 } from "lucide-react";
 import { useState } from "react";
 import { useLoyalty } from "@/hooks/use-loyalty";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import SpinWheel, { milestones, type Prize } from "./SpinWheel";
 
 interface LoyaltyScreenProps {
   onBack: () => void;
