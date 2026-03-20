@@ -2,13 +2,31 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./use-auth";
 import { useToast } from "./use-toast";
+import { properties } from "@/data/properties";
 
 const LOCAL_KEY = "hushh_wishlists";
+const DEMO_WISHLIST_IDS = ["1", "3", "5", "7", "10"];
 
-function getLocalWishlist(): string[] {
+function sanitizeWishlist(ids: string[]): string[] {
+  const validIds = new Set(properties.map((p) => p.id));
+  return Array.from(new Set(ids.filter((id) => validIds.has(id))));
+}
+
+function readLocalWishlist(): { hasStoredValue: boolean; ids: string[] } {
   try {
-    return JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]");
-  } catch { return []; }
+    const raw = localStorage.getItem(LOCAL_KEY);
+    if (raw === null) return { hasStoredValue: false, ids: [] };
+
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return { hasStoredValue: true, ids: [] };
+
+    return {
+      hasStoredValue: true,
+      ids: parsed.map(String),
+    };
+  } catch {
+    return { hasStoredValue: true, ids: [] };
+  }
 }
 
 function setLocalWishlist(ids: string[]) {
@@ -28,34 +46,49 @@ export function useWishlists() {
           .from("wishlists")
           .select("property_id")
           .eq("user_id", user.id);
-        const ids = data?.map((w) => w.property_id) ?? [];
+
+        const dbIds = sanitizeWishlist(data?.map((w) => w.property_id) ?? []);
+
         // Merge any local wishlists into DB on login
-        const local = getLocalWishlist();
-        const toSync = local.filter((id) => !ids.includes(id));
+        const local = sanitizeWishlist(readLocalWishlist().ids);
+        const toSync = local.filter((id) => !dbIds.includes(id));
+
         if (toSync.length > 0) {
           await supabase.from("wishlists").insert(
             toSync.map((property_id) => ({ user_id: user.id, property_id }))
           );
-          ids.push(...toSync);
+          dbIds.push(...toSync);
           localStorage.removeItem(LOCAL_KEY);
         }
-        setWishlist(ids);
+
+        setWishlist(sanitizeWishlist(dbIds));
         setLoading(false);
       };
+
       load();
-    } else {
-      // Guest — use localStorage, fallback to demo wishlists
-      const local = getLocalWishlist();
-      setWishlist(local.length > 0 ? local : ["1", "3", "5", "7", "10"]);
-      setLoading(false);
+      return;
     }
+
+    const { hasStoredValue, ids } = readLocalWishlist();
+    const sanitized = sanitizeWishlist(ids);
+
+    // Guest mode: always show demo data unless user has valid saved ids
+    if (!hasStoredValue || sanitized.length === 0) {
+      setWishlist(DEMO_WISHLIST_IDS);
+    } else {
+      setWishlist(sanitized);
+    }
+
+    setLoading(false);
   }, [user]);
 
   const toggleWishlist = useCallback(
     async (propertyId: string) => {
       const exists = wishlist.includes(propertyId);
       const next = exists ? wishlist.filter((id) => id !== propertyId) : [...wishlist, propertyId];
-      setWishlist(next);
+      const sanitizedNext = sanitizeWishlist(next);
+
+      setWishlist(sanitizedNext);
 
       toast({
         title: exists ? "💔 Removed from Wishlist" : "❤️ Saved to Wishlist",
@@ -69,10 +102,10 @@ export function useWishlists() {
           await supabase.from("wishlists").insert({ user_id: user.id, property_id: propertyId });
         }
       } else {
-        setLocalWishlist(next);
+        setLocalWishlist(sanitizedNext);
       }
     },
-    [user, wishlist]
+    [user, wishlist, toast]
   );
 
   return { wishlist, toggleWishlist, loading };
