@@ -611,61 +611,72 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
             </div>
 
             <div className="px-5 py-4 space-y-4 pb-24">
-              {pastTrips.map((trip, i) => {
-                const prop = properties.find(p => p.id === trip.propertyId);
-                if (!prop) return null;
-                return (
-                  <motion.div
-                    key={trip.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.08, type: "spring", stiffness: 200, damping: 22 }}
-                    onClick={() => onViewBookingDetail?.(trip)}
-                    className="rounded-2xl border border-border overflow-hidden cursor-pointer active:scale-[0.98] transition-transform"
-                    style={{ boxShadow: "0 4px 16px -4px hsl(0 0% 0% / 0.15)" }}
-                  >
-                    <div className="relative h-36">
-                      <img src={prop.images[0]} alt={prop.name} className="w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-card via-card/60 to-transparent" />
-                      <div className="absolute top-3 right-3 flex items-center gap-1 bg-muted-foreground/80 backdrop-blur-sm px-2 py-1 rounded-full">
-                        <span className="w-1.5 h-1.5 rounded-full bg-white/70" />
-                        <span className="text-[10px] font-semibold text-white">Completed</span>
-                      </div>
-                    </div>
-                    <div className="p-4 -mt-6 relative">
-                      <h3 className="font-bold text-[15px] text-foreground">{prop.name}</h3>
-                      <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                        <MapPin size={11} /> {prop.location}
-                      </p>
-                      <div className="flex flex-wrap gap-2 mt-2.5">
-                        <span className="flex items-center gap-1 bg-secondary/80 rounded-lg px-2 py-1 text-[11px] text-foreground">
-                          <Calendar size={10} className="text-primary" /> {trip.date}
-                        </span>
-                        <span className="flex items-center gap-1 bg-secondary/80 rounded-lg px-2 py-1 text-[11px] text-foreground">
-                          <Clock size={10} className="text-primary" /> {trip.slot.split("·")[0]?.trim()}
-                        </span>
-                        <span className="flex items-center gap-1 bg-secondary/80 rounded-lg px-2 py-1 text-[11px] text-foreground">
-                          <Users size={10} className="text-primary" /> {trip.guests}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-border/50">
-                        <span className="text-xs text-muted-foreground font-mono">{trip.bookingId}</span>
-                        <div className="flex items-center gap-3">
-                          <span className="text-sm font-bold text-foreground">₹{trip.total.toLocaleString()}</span>
-                          {onRebook && (
-                            <button
-                              onClick={(e) => { e.stopPropagation(); onRebook(trip.propertyId); }}
-                              className="text-xs font-semibold text-primary flex items-center gap-0.5"
-                            >
-                              Book Again <ChevronRight size={14} />
-                            </button>
-                          )}
+              {pastTrips.length === 0 ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="rounded-2xl border border-border p-8 text-center"
+                >
+                  <p className="text-sm font-semibold text-foreground">No past trips yet</p>
+                  <p className="text-xs text-muted-foreground mt-1">Completed trips will appear here automatically.</p>
+                </motion.div>
+              ) : (
+                pastTrips.map((trip, i) => {
+                  const prop = properties.find(p => p.id === trip.propertyId);
+                  if (!prop) return null;
+                  return (
+                    <motion.div
+                      key={trip.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.08, type: "spring", stiffness: 200, damping: 22 }}
+                      onClick={() => onViewBookingDetail?.(trip)}
+                      className="rounded-2xl border border-border overflow-hidden cursor-pointer active:scale-[0.98] transition-transform"
+                      style={{ boxShadow: "0 4px 16px -4px hsl(0 0% 0% / 0.15)" }}
+                    >
+                      <div className="relative h-36">
+                        <img src={prop.images[0]} alt={prop.name} className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-card via-card/60 to-transparent" />
+                        <div className="absolute top-3 right-3 flex items-center gap-1 bg-muted-foreground/80 backdrop-blur-sm px-2 py-1 rounded-full">
+                          <span className="w-1.5 h-1.5 rounded-full bg-white/70" />
+                          <span className="text-[10px] font-semibold text-white">Completed</span>
                         </div>
                       </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
+                      <div className="p-4 -mt-6 relative">
+                        <h3 className="font-bold text-[15px] text-foreground">{prop.name}</h3>
+                        <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                          <MapPin size={11} /> {prop.location}
+                        </p>
+                        <div className="flex flex-wrap gap-2 mt-2.5">
+                          <span className="flex items-center gap-1 bg-secondary/80 rounded-lg px-2 py-1 text-[11px] text-foreground">
+                            <Calendar size={10} className="text-primary" /> {trip.date}
+                          </span>
+                          <span className="flex items-center gap-1 bg-secondary/80 rounded-lg px-2 py-1 text-[11px] text-foreground">
+                            <Clock size={10} className="text-primary" /> {trip.slot.split("·")[0]?.trim()}
+                          </span>
+                          <span className="flex items-center gap-1 bg-secondary/80 rounded-lg px-2 py-1 text-[11px] text-foreground">
+                            <Users size={10} className="text-primary" /> {trip.guests}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-border/50">
+                          <span className="text-xs text-muted-foreground font-mono">{trip.bookingId}</span>
+                          <div className="flex items-center gap-3">
+                            <span className="text-sm font-bold text-foreground">₹{trip.total.toLocaleString()}</span>
+                            {onRebook && (
+                              <button
+                                onClick={(e) => { e.stopPropagation(); onRebook(trip.propertyId); }}
+                                className="text-xs font-semibold text-primary flex items-center gap-0.5"
+                              >
+                                Book Again <ChevronRight size={14} />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })
+              )}
             </div>
           </motion.div>
         )}

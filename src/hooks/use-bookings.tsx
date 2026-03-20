@@ -5,9 +5,15 @@ import type { Booking } from "@/pages/Index";
 
 const LOCAL_KEY = "hushh_bookings";
 
+const STATUS_ORDER: Record<Booking["status"], number> = {
+  active: 0,
+  upcoming: 1,
+  completed: 2,
+  cancelled: 3,
+};
+
 // Demo bookings shown for guest users — covers all statuses
 const guestDemoBookings: Booking[] = [
-  // Active (checked in)
   {
     id: "demo-active",
     propertyId: "1",
@@ -18,7 +24,6 @@ const guestDemoBookings: Booking[] = [
     status: "active",
     bookingId: "HUSHH-ACT001",
   },
-  // Upcoming
   {
     id: "demo-up-1",
     propertyId: "10",
@@ -49,7 +54,6 @@ const guestDemoBookings: Booking[] = [
     status: "upcoming",
     bookingId: "HUSHH-UP0027",
   },
-  // Completed (past)
   {
     id: "demo-comp-1",
     propertyId: "2",
@@ -110,7 +114,6 @@ const guestDemoBookings: Booking[] = [
     status: "completed",
     bookingId: "HUSHH-CP0007",
   },
-  // Cancelled
   {
     id: "demo-cancel-1",
     propertyId: "4",
@@ -136,11 +139,67 @@ const guestDemoBookings: Booking[] = [
 function getLocalBookings(): Booking[] {
   try {
     return JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]");
-  } catch { return []; }
+  } catch {
+    return [];
+  }
 }
 
 function setLocalBookings(bookings: Booking[]) {
   localStorage.setItem(LOCAL_KEY, JSON.stringify(bookings));
+}
+
+function parseBookingDate(dateText: string): Date | null {
+  const parsed = new Date(dateText);
+  if (Number.isNaN(parsed.getTime())) return null;
+  parsed.setHours(0, 0, 0, 0);
+  return parsed;
+}
+
+function isPastDate(dateText: string): boolean {
+  const parsed = parseBookingDate(dateText);
+  if (!parsed) return false;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return parsed < today;
+}
+
+function normalizeStatus(rawStatus: string | null | undefined, dateText: string): Booking["status"] {
+  const value = (rawStatus || "").toLowerCase().trim();
+
+  if (["active", "checked_in", "checked-in", "ongoing", "in_stay", "in-stay"].includes(value)) {
+    return "active";
+  }
+  if (["cancelled", "canceled"].includes(value)) {
+    return "cancelled";
+  }
+  if (["completed", "complete", "past", "done", "finished"].includes(value)) {
+    return "completed";
+  }
+
+  // If date has already passed and it isn't active/cancelled, treat as completed
+  if (isPastDate(dateText)) {
+    return "completed";
+  }
+
+  return "upcoming";
+}
+
+function normalizeBooking(booking: Booking): Booking {
+  return {
+    ...booking,
+    status: normalizeStatus(booking.status, booking.date),
+  };
+}
+
+function sortBookings(input: Booking[]) {
+  return [...input].sort((a, b) => (STATUS_ORDER[a.status] ?? 9) - (STATUS_ORDER[b.status] ?? 9));
+}
+
+function mergeGuestBookings(local: Booking[]): Booking[] {
+  const normalizedLocal = local.map(normalizeBooking);
+  const localIds = new Set(normalizedLocal.map((b) => b.id));
+  const demoMissing = guestDemoBookings.filter((b) => !localIds.has(b.id));
+  return sortBookings([...normalizedLocal, ...demoMissing]);
 }
 
 export function useBookings() {
@@ -148,12 +207,10 @@ export function useBookings() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Whether we're showing demo data (guest with no local bookings)
-  const isDemo = !user && bookings === guestDemoBookings;
+  const isDemo = !user;
 
   useEffect(() => {
     if (user) {
-      // Logged in → fetch from DB
       const load = async () => {
         const { data } = await supabase
           .from("bookings")
@@ -162,8 +219,8 @@ export function useBookings() {
           .order("created_at", { ascending: false });
 
         if (data && data.length > 0) {
-          setBookings(
-            data.map((b) => ({
+          const mapped = data.map((b) =>
+            normalizeBooking({
               id: b.id,
               propertyId: b.property_id,
               date: b.date,
@@ -172,20 +229,22 @@ export function useBookings() {
               total: Number(b.total),
               status: b.status as Booking["status"],
               bookingId: b.booking_id,
-            }))
+            })
           );
+          setBookings(sortBookings(mapped));
         } else {
           setBookings([]);
         }
         setLoading(false);
       };
+
       load();
-    } else {
-      // Guest → use localStorage, fallback to demo data
-      const local = getLocalBookings();
-      setBookings(local.length > 0 ? local : guestDemoBookings);
-      setLoading(false);
+      return;
     }
+
+    const local = getLocalBookings();
+    setBookings(mergeGuestBookings(local));
+    setLoading(false);
   }, [user]);
 
   const createBooking = useCallback(
@@ -207,7 +266,7 @@ export function useBookings() {
           .single();
 
         if (data) {
-          const newBooking: Booking = {
+          const newBooking: Booking = normalizeBooking({
             id: data.id,
             propertyId: data.property_id,
             date: data.date,
@@ -216,25 +275,27 @@ export function useBookings() {
             total: Number(data.total),
             status: data.status as Booking["status"],
             bookingId: data.booking_id,
-          };
-          setBookings((prev) => [newBooking, ...prev]);
+          });
+          setBookings((prev) => sortBookings([newBooking, ...prev]));
           return newBooking;
         }
+
         return null;
-      } else {
-        // Guest mode — store locally
-        const newBooking: Booking = {
-          ...booking,
-          id: `local-${Date.now()}`,
-        };
-        setBookings((prev) => {
-          const base = prev === guestDemoBookings ? [] : prev;
-          const next = [newBooking, ...base];
-          setLocalBookings(next);
-          return next;
-        });
-        return newBooking;
       }
+
+      const newBooking: Booking = normalizeBooking({
+        ...booking,
+        id: `local-${Date.now()}`,
+      });
+
+      setBookings((prev) => {
+        const localOnly = prev.filter((b) => !b.id.startsWith("demo-"));
+        const nextLocal = [newBooking, ...localOnly];
+        setLocalBookings(nextLocal);
+        return mergeGuestBookings(nextLocal);
+      });
+
+      return newBooking;
     },
     [user]
   );
@@ -242,10 +303,19 @@ export function useBookings() {
   const cancelBooking = useCallback(
     async (bookingId: string) => {
       setBookings((prev) => {
-        const next = prev.map((b) => (b.id === bookingId ? { ...b, status: "cancelled" as const } : b));
-        if (!user) setLocalBookings(next);
-        return next;
+        const updated = prev.map((b) =>
+          b.id === bookingId ? { ...b, status: "cancelled" as const } : b
+        );
+
+        if (!user) {
+          const localOnly = updated.filter((b) => !b.id.startsWith("demo-"));
+          setLocalBookings(localOnly);
+          return mergeGuestBookings(localOnly);
+        }
+
+        return sortBookings(updated);
       });
+
       if (user) {
         await supabase.from("bookings").update({ status: "cancelled" }).eq("id", bookingId);
       }
