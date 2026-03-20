@@ -132,7 +132,61 @@ const quickReplies = [
   "See you there!",
 ];
 
-/* ═══ Helpers ═══ */
+/* ═══ Image Upload Helper ═══ */
+async function uploadChatImage(file: File, userId: string): Promise<string | null> {
+  const ext = file.name.split(".").pop() || "jpg";
+  const path = `${userId}/${Date.now()}.${ext}`;
+  const { error } = await supabase.storage.from("chat-images").upload(path, file, { contentType: file.type });
+  if (error) { console.error("Upload error:", error); return null; }
+  const { data } = supabase.storage.from("chat-images").getPublicUrl(path);
+  return data.publicUrl;
+}
+
+/* ═══ Image Preview Bar ═══ */
+function ImagePreviewBar({ file, onRemove }: { file: File; onRemove: () => void }) {
+  const url = useMemo(() => URL.createObjectURL(file), [file]);
+  useEffect(() => () => URL.revokeObjectURL(url), [url]);
+  return (
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }}
+      className="px-4 pb-2">
+      <div className="relative inline-block rounded-xl overflow-hidden border border-border bg-secondary">
+        <img src={url} alt="Preview" className="w-20 h-20 object-cover" />
+        <button onClick={onRemove}
+          className="absolute top-1 right-1 w-5 h-5 rounded-full bg-foreground/70 text-background flex items-center justify-center">
+          <X size={12} />
+        </button>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ═══ Image Message Bubble ═══ */
+function ImageBubble({ url, onClick }: { url: string; onClick?: () => void }) {
+  return (
+    <motion.img
+      src={url} alt="Shared image"
+      onClick={onClick}
+      className="rounded-xl max-w-[220px] max-h-[220px] object-cover cursor-pointer"
+      initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+      whileTap={{ scale: 0.95 }}
+    />
+  );
+}
+
+/* ═══ Fullscreen Image Viewer ═══ */
+function ImageViewer({ url, onClose }: { url: string; onClose: () => void }) {
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center" onClick={onClose}>
+      <button className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 flex items-center justify-center" onClick={onClose}>
+        <X size={20} className="text-white" />
+      </button>
+      <img src={url} alt="" className="max-w-[90vw] max-h-[80vh] object-contain rounded-lg" />
+    </motion.div>
+  );
+}
+
+
 function formatDateHeader(dateStr: string): string {
   try {
     const date = new Date(dateStr);
