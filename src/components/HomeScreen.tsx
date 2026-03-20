@@ -37,12 +37,46 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
     setRefreshKey((k) => k + 1);
   }, []);
   const [activeCategory, setActiveCategory] = useState("home");
+  const [subFilter, setSubFilter] = useState("All");
+
+  // Reset sub-filter when switching categories
+  const handleCategoryChange = useCallback((id: string) => {
+    setActiveCategory(id);
+    setSubFilter("All");
+  }, []);
+
+  // Sub-filter definitions mapped to propertyType or tag keywords
+  const stayFilters = ["All", "Private Villa", "Pool Villa", "Farmhouse", "Rooftop Space", "Work Pod", "Couple Room", "Open Lawn", "Camping"];
+  const experienceFilters = ["All", "Romantic", "Celebration", "Party", "Adventure", "Cultural", "Sports", "Workshop", "Walking Tour"];
+  const serviceFilters = ["All", "Chef Service", "Decoration", "Transport", "Entertainment"];
+
+  const experienceFilterMap: Record<string, (p: Property) => boolean> = {
+    "All": () => true,
+    "Romantic": (p) => p.category.includes("couples") || p.tags.some(t => t.toLowerCase().includes("romantic")),
+    "Celebration": (p) => ["Party Hall", "Garden Space", "Open Lawn"].includes(p.propertyType || "") && (p.tags.some(t => t.toLowerCase().includes("birthday") || t.toLowerCase().includes("anniversary") || t.toLowerCase().includes("wedding") || t.toLowerCase().includes("celebration"))),
+    "Party": (p) => p.category.includes("party"),
+    "Adventure": (p) => p.propertyType === "Adventure" || p.tags.some(t => t.toLowerCase().includes("adventure")),
+    "Cultural": (p) => p.propertyType === "Cultural" || p.propertyType === "Workshop" || p.tags.some(t => t.toLowerCase().includes("cultural") || t.toLowerCase().includes("heritage")),
+    "Sports": (p) => p.propertyType === "Sports Arena" || p.category.includes("sports"),
+    "Workshop": (p) => p.propertyType === "Workshop" || p.propertyType === "Plantation Tour",
+    "Walking Tour": (p) => p.propertyType === "Walking Tour" || p.propertyType === "Observatory",
+  };
 
   // Filter by primaryCategory
   const filteredProperties = useMemo(() => {
-    if (activeCategory === "home") return properties;
-    return properties.filter(p => p.primaryCategory === activeCategory);
-  }, [activeCategory]);
+    let list = activeCategory === "home" ? properties : properties.filter(p => p.primaryCategory === activeCategory);
+
+    if (subFilter !== "All") {
+      if (activeCategory === "stay" || activeCategory === "service") {
+        list = list.filter(p => p.propertyType === subFilter);
+      } else if (activeCategory === "experience") {
+        const filterFn = experienceFilterMap[subFilter];
+        if (filterFn) list = list.filter(filterFn);
+      }
+    }
+
+    return list;
+  }, [activeCategory, subFilter]);
 
   const stayProperties = useMemo(() => properties.filter(p => p.primaryCategory === "stay"), []);
   const experienceProperties = useMemo(() => properties.filter(p => p.primaryCategory === "experience"), []);
