@@ -319,6 +319,7 @@ export default function SettingsSheet({ open, onClose, settingType }: SettingsSh
               {settingType === "security" && <SecuritySettings />}
               {settingType === "language" && <LanguageSettings />}
               {settingType === "accessibility" && <AccessibilitySettings />}
+              {settingType === "privacy" && <PrivacySettings />}
             </div>
           </motion.div>
         </>
