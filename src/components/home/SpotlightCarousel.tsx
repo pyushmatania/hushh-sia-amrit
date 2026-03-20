@@ -231,7 +231,7 @@ function VideoCard({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                setSaved(!saved);
+                onToggleSave?.(property.id);
               }}
               className="w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md ml-3 shrink-0 active:scale-110 transition-transform"
               style={{ background: "hsl(var(--foreground) / 0.36)" }}
