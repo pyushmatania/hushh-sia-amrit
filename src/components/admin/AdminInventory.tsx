@@ -97,6 +97,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
       toast({ title: "Item updated!" });
     }
     setEditing(null);
+    window.dispatchEvent(new Event("hushh:listings-updated"));
   };
 
   const deleteItem = async (id: string) => {
