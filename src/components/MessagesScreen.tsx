@@ -687,7 +687,7 @@ function MockChatView({ threadId, thread, onBack }: {
               <Smile size={18} />
             </button>
           </div>
-          {input.trim() ? (
+          {(input.trim() || pendingImage) ? (
             <motion.button
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -704,6 +704,11 @@ function MockChatView({ threadId, thread, onBack }: {
           )}
         </div>
       </div>
+
+      {/* Fullscreen Image Viewer */}
+      <AnimatePresence>
+        {viewingImage && <ImageViewer url={viewingImage} onClose={() => setViewingImage(null)} />}
+      </AnimatePresence>
     </motion.div>
   );
 }
