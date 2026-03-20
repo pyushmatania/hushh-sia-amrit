@@ -2,10 +2,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, MapPin, Calendar, Clock, Users, QrCode,
   Phone, MessageCircle, X, AlertTriangle, Check, ChevronRight,
-  Navigation, Share2
+  Navigation, Share2, Plus, Minus, Sparkles, ShoppingBag
 } from "lucide-react";
-import { useState } from "react";
-import { properties } from "@/data/properties";
+import { useState, useMemo } from "react";
+import { properties, addons, type Addon } from "@/data/properties";
+import { useToast } from "@/hooks/use-toast";
 import type { Booking } from "@/pages/Index";
 
 interface BookingDetailScreenProps {
