@@ -117,7 +117,8 @@ export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onR
     const droppedId = currentDragId;
     clearDragState();
 
-    // Trigger spring settle animation
+    // Trigger spring settle animation + drop sound
+    playDropSound();
     setJustDroppedId(droppedId);
     if (dropTimerRef.current) clearTimeout(dropTimerRef.current);
     dropTimerRef.current = setTimeout(() => setJustDroppedId(null), 500);
