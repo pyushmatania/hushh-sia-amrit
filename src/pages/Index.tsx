@@ -193,6 +193,7 @@ export default function Index() {
             property={screen.property}
             onBack={() => setScreen({ type: "home" })}
             onBook={handleBook}
+            onPropertyTap={handlePropertyTap}
           />
         )}
         {screen.type === "builder" && (

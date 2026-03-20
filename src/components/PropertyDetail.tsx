@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { Property } from "@/data/properties";
+import { properties as allProperties, addons } from "@/data/properties";
 import ReviewSection from "@/components/ReviewSection";
 
 const amenityIconMap: Record<string, React.ReactNode> = {
@@ -167,13 +168,65 @@ function getSafetyItems(category: string) {
   ];
 }
 
+// ═══════ Add-on UI helpers ═══════
+
+function AddonChip({ addon }: { addon: import("@/data/properties").Addon }) {
+  const [added, setAdded] = useState(false);
+  return (
+    <button
+      onClick={() => setAdded(!added)}
+      className={`shrink-0 flex items-center gap-2 rounded-xl px-3.5 py-2.5 text-left transition-all border ${
+        added
+          ? "border-primary bg-primary/[0.08] shadow-sm"
+          : "border-border hover:border-foreground/30"
+      }`}
+      style={{ minWidth: "150px" }}
+    >
+      <span className="text-lg">{addon.categoryEmoji}</span>
+      <div className="min-w-0">
+        <p className="text-xs font-semibold text-foreground truncate">{addon.name}</p>
+        <p className="text-[10px] text-muted-foreground truncate">{addon.description}</p>
+        <p className="text-[11px] font-bold text-primary mt-0.5">
+          {addon.price === 0 ? "Free" : `₹${addon.price}`}{addon.perPerson ? "/person" : ""}
+        </p>
+      </div>
+      {added && <span className="text-primary text-xs font-bold ml-auto shrink-0">✓</span>}
+    </button>
+  );
+}
+
+function RelatedPropertyRow({ relatedProperty, onTap }: { relatedProperty: Property; onTap: (p: Property) => void }) {
+  return (
+    <div
+      onClick={() => onTap(relatedProperty)}
+      className="flex items-center gap-3 glass rounded-xl px-3 py-2.5 cursor-pointer active:scale-[0.98] transition-transform"
+    >
+      <img
+        src={relatedProperty.images[0]}
+        alt={relatedProperty.name}
+        className="w-14 h-14 rounded-lg object-cover shrink-0"
+        loading="lazy"
+      />
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-semibold text-foreground truncate">{relatedProperty.name}</p>
+        <p className="text-[11px] text-muted-foreground truncate">{relatedProperty.description}</p>
+      </div>
+      <div className="text-right shrink-0">
+        <p className="text-sm font-bold text-gradient-warm">₹{relatedProperty.basePrice.toLocaleString()}</p>
+        <p className="text-[10px] text-muted-foreground">onwards</p>
+      </div>
+    </div>
+  );
+}
+
 interface PropertyDetailProps {
   property: Property;
   onBack: () => void;
   onBook: (property: Property, slotId: string, guests: number, date: Date) => void;
+  onPropertyTap?: (property: Property) => void;
 }
 
-export default function PropertyDetail({ property, onBack, onBook }: PropertyDetailProps) {
+export default function PropertyDetail({ property, onBack, onBook, onPropertyTap }: PropertyDetailProps) {
   const [imgIndex, setImgIndex] = useState(0);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [guests, setGuests] = useState(2);
@@ -473,6 +526,70 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
         </div>
 
         <div className="border-b border-border my-5" />
+
+        {/* ═══════ ADD-ON EXPERIENCES & SERVICES ═══════ */}
+        {property.primaryCategory === "stay" && (
+          <>
+            <h3 className="text-lg font-semibold text-foreground mb-2">🎯 Enhance Your Stay</h3>
+            <p className="text-sm text-muted-foreground mb-4">Add experiences & services to make it unforgettable</p>
+
+            {/* Quick add-ons from addon data */}
+            {Object.entries(addons).slice(0, 4).map(([category, items]) => (
+              <div key={category} className="mb-4">
+                <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5">
+                  {items[0]?.categoryEmoji} {category}
+                </h4>
+                <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
+                  {items.slice(0, 4).map((addon) => (
+                    <AddonChip key={addon.id} addon={addon} />
+                  ))}
+                </div>
+              </div>
+            ))}
+
+            {/* Related experiences */}
+            {(() => {
+              const relatedExperiences = allProperties.filter(
+                p => p.id !== property.id && p.primaryCategory === "experience"
+              ).slice(0, 4);
+              if (relatedExperiences.length === 0) return null;
+              return (
+                <div className="mb-4">
+                  <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5">
+                    🎉 Available Experiences
+                  </h4>
+                  <div className="space-y-2">
+                    {relatedExperiences.map((exp) => (
+                      <RelatedPropertyRow key={exp.id} relatedProperty={exp} onTap={onPropertyTap || (() => {})} />
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Related services */}
+            {(() => {
+              const relatedServices = allProperties.filter(
+                p => p.id !== property.id && p.primaryCategory === "service"
+              ).slice(0, 4);
+              if (relatedServices.length === 0) return null;
+              return (
+                <div className="mb-4">
+                  <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5">
+                    🛎️ Add Services
+                  </h4>
+                  <div className="space-y-2">
+                    {relatedServices.map((svc) => (
+                      <RelatedPropertyRow key={svc.id} relatedProperty={svc} onTap={onPropertyTap || (() => {})} />
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+
+            <div className="border-b border-border my-5" />
+          </>
+        )}
 
         {/* House Rules */}
         <h3 className="text-lg font-semibold text-foreground mb-3">📋 House Rules</h3>
