@@ -5,6 +5,7 @@ import { useReviews, type Review } from "@/hooks/use-reviews";
 import { useAuth } from "@/hooks/use-auth";
 import { formatDistanceToNow } from "date-fns";
 import type { PropertyReview } from "@/data/properties";
+import { getMockUserId } from "@/data/mock-users";
 import PublicProfileScreen from "./PublicProfileScreen";
 
 interface ReviewSectionProps {
@@ -184,8 +185,10 @@ function DBReviewCard({ review, index, onImageTap, onProfileTap }: { review: Rev
 }
 
 /* ── Legacy review card (static data) ── */
-function LegacyReviewCard({ review, index }: { review: PropertyReview; index: number }) {
+function LegacyReviewCard({ review, index, onProfileTap }: { review: PropertyReview; index: number; onProfileTap?: (userId: string) => void }) {
   const [liked, setLiked] = useState(false);
+  const mockUserId = getMockUserId(review.name);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -194,9 +197,11 @@ function LegacyReviewCard({ review, index }: { review: PropertyReview; index: nu
       className="rounded-2xl p-4 bg-secondary/40 border border-border"
     >
       <div className="flex items-center gap-2.5 mb-2.5">
-        <span className="text-2xl">{review.avatar}</span>
+        <button onClick={() => onProfileTap?.(mockUserId)} className="text-2xl shrink-0">{review.avatar}</button>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-foreground">{review.name}</p>
+          <button onClick={() => onProfileTap?.(mockUserId)} className="text-sm font-semibold text-foreground hover:underline">
+            {review.name}
+          </button>
           <p className="text-[11px] text-muted-foreground">{review.date}</p>
         </div>
         <div className="flex items-center gap-0.5 bg-secondary rounded-lg px-2 py-1">
@@ -428,7 +433,7 @@ export default function ReviewSection({ propertyId, reviews: staticReviews, rati
       {/* Legacy static review list */}
       <div className="space-y-3 mb-4">
         {displayedStaticReviews.map((review, i) => (
-          <LegacyReviewCard key={review.id} review={review} index={i + dbReviews.length} />
+          <LegacyReviewCard key={review.id} review={review} index={i + dbReviews.length} onProfileTap={setViewingProfile} />
         ))}
       </div>
 
