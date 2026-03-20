@@ -105,6 +105,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
   const handleSettingTap = useCallback((key: string, label: string) => {
     if (label === "Refer a friend") { setShowReferral(true); return; }
     if (label === "Loyalty points") { setShowLoyalty(true); return; }
+    if (label === "Verify Identity") { setShowIdentityUpload(true); return; }
     if (key) setActiveSetting(key);
   }, []);
 
