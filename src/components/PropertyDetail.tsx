@@ -561,21 +561,28 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
             </button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode={isStay ? "range" : "single"}
-              selected={isStay ? dateRange : dateRange?.from}
-              onSelect={(val: any) => {
-                if (isStay) {
-                  setDateRange(val as DateRange);
-                } else {
-                  setDateRange(val ? { from: val, to: val } : undefined);
-                }
-              }}
-              disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
-              numberOfMonths={1}
-              initialFocus
-              className={cn("p-3 pointer-events-auto")}
-            />
+            {isStay ? (
+              <Calendar
+                mode="range"
+                selected={dateRange}
+                onSelect={(val) => setDateRange(val)}
+                disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                numberOfMonths={1}
+                initialFocus
+                className={cn("p-3 pointer-events-auto")}
+              />
+            ) : (
+              <Calendar
+                mode="single"
+                selected={dateRange?.from}
+                onSelect={(val) => setDateRange(val ? { from: val, to: val } : undefined)}
+                disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                numberOfMonths={1}
+                initialFocus
+                className={cn("p-3 pointer-events-auto")}
+              />
+            )}
+          </PopoverContent>
           </PopoverContent>
         </Popover>
 
