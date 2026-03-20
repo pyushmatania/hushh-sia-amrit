@@ -809,6 +809,7 @@ export default function AdminProperties() {
 
                 <div className="h-8" />
               </div>
+              )}
             </motion.div>
           </motion.div>
         )}
