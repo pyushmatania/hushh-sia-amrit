@@ -352,15 +352,21 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
             </>
           )}
 
-          {/* ═══════ CURATIONS TAB ═══════ */}
+          {/* ═══════ CURATIONS TAB — Editorial Magazine Layout ═══════ */}
           {activeCategory === "curation" && (
             <>
-              {/* Spotlight Video Cards for Curations — uses top-rated properties */}
-              <SectionDivider title="✨ CURATED FOR YOU" />
-              <SpotlightCarousel properties={topRated.slice(0, 4)} onPropertyTap={onPropertyTap} category="curation" />
+              {/* Editorial header */}
+              <div className="px-5 pt-6 pb-2">
+                <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                  Curated for You ✨
+                </h1>
+                <p className="text-sm text-muted-foreground mt-1" style={{ fontFamily: "'Playfair Display', serif" }}>
+                  One-tap bundles, crafted by locals, ready to book
+                </p>
+              </div>
 
               {/* Filter pills */}
-              <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
+              <div className="px-4 pt-2 pb-3 flex gap-2 overflow-x-auto hide-scrollbar">
                 {curationFilters.map(tag => (
                   <button
                     key={tag}
@@ -376,47 +382,47 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 ))}
               </div>
 
-              <div className="px-5 pt-2 pb-2">
-                <p className="text-xs text-muted-foreground">Pre-built combos for instant booking. One tap, full experience!</p>
-              </div>
+              {/* Hero featured combo — first popular one */}
+              {filteredCombos.length > 0 && (
+                <CurationHeroCard combo={filteredCombos[0]} index={0} />
+              )}
 
-              {/* Popular Combos — only show when "All" or "Popular" */}
-              {(subFilter === "All" || subFilter === "🔥 Popular") && filteredCombos.filter(c => c.popular).length > 0 && (
+              {/* Quick picks row */}
+              {filteredCombos.length > 1 && (
                 <div className="mt-2">
                   <div className="flex items-center justify-between px-5 mb-3">
-                    <h2 className="text-base font-bold text-foreground">🔥 Most Popular</h2>
+                    <h2 className="text-base font-bold text-foreground">⚡ Quick Picks</h2>
+                    <span className="text-[10px] text-muted-foreground">{filteredCombos.length} combos</span>
                   </div>
-                  <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4">
-                    {filteredCombos.filter(c => c.popular).map((combo, i) => (
-                      <CuratedComboCard key={combo.id} combo={combo} index={i} />
+                  <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-1">
+                    {filteredCombos.slice(1).map((combo, i) => (
+                      <CurationMiniCard key={combo.id} combo={combo} index={i} />
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* Filtered Combos */}
-              <div className="mt-6">
-                <div className="flex items-center justify-between px-5 mb-3">
-                  <h2 className="text-base font-bold text-foreground">
-                    {subFilter === "All" ? "🎯 All Curated Combos" : subFilter}
-                  </h2>
-                  <span className="text-xs text-muted-foreground">{filteredCombos.length} combos</span>
+              {/* Full-width editorial cards for remaining */}
+              {filteredCombos.length > 3 && (
+                <div className="mt-6">
+                  <div className="px-5 mb-3">
+                    <h2 className="text-base font-bold text-foreground">🎯 More Combos</h2>
+                  </div>
+                  {filteredCombos.slice(3).map((combo, i) => (
+                    <CurationHeroCard key={combo.id} combo={combo} index={i} />
+                  ))}
                 </div>
-                {filteredCombos.length > 0 ? (
-                  <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4">
-                    {filteredCombos.map((combo, i) => (
-                      <CuratedComboCard key={combo.id} combo={combo} index={i} />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="px-5 py-8 text-center">
-                    <p className="text-2xl mb-2">🔍</p>
-                    <p className="text-sm text-muted-foreground">No combos in this category yet</p>
-                  </div>
-                )}
-              </div>
+              )}
 
-              {/* Budget Combos Highlight */}
+              {filteredCombos.length === 0 && (
+                <div className="px-5 py-12 text-center">
+                  <p className="text-3xl mb-2">🔍</p>
+                  <p className="text-foreground font-semibold">No combos match this filter</p>
+                  <button onClick={() => handleSubFilter("All")} className="text-xs text-primary mt-2 font-medium">Show all combos</button>
+                </div>
+              )}
+
+              {/* Budget highlight banner */}
               <div className="mx-5 mt-6 p-4 rounded-2xl border border-foreground/10" style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(6,95,70,0.15) 100%)" }}>
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-lg">💸</span>
