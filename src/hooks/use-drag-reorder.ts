@@ -242,6 +242,7 @@ export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onR
         const rowEl = handleEl.closest<HTMLElement>("[data-reorder-id]");
         if (rowEl) {
           createGhost(rowEl, e.clientX, e.clientY);
+          playDragStartSound();
         }
 
         dragIdRef.current = id;
