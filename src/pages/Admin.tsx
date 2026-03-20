@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useAdmin } from "@/hooks/use-admin";
 import AdminLayout, { type AdminPage } from "@/components/admin/AdminLayout";
 import CommandCenter from "@/components/admin/CommandCenter";
+import AdminCatalog from "@/components/admin/AdminCatalog";
 import AdminProperties from "@/components/admin/AdminProperties";
 import AdminBookings from "@/components/admin/AdminBookings";
 import AdminUsers from "@/components/admin/AdminUsers";
@@ -74,6 +75,7 @@ export default function Admin() {
 
   const renderPage = () => {
     switch (page) {
+      case "catalog": return <AdminCatalog />;
       case "dashboard": return <CommandCenter onNavigate={setPage} />;
       case "ai": return <AdminAI />;
       case "alerts": return <AdminAlerts onNavigate={(p) => setPage(p as AdminPage)} />;

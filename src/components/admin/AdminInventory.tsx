@@ -18,9 +18,16 @@ interface InventoryItem {
   created_at: string;
 }
 
-const categoryOptions = ["food", "drinks", "decoration", "entertainment", "activity", "comfort", "work", "staff"];
+const categoryOptions = ["food", "drinks", "decoration", "entertainment", "activity", "comfort", "work", "staff", "decor", "equipment"];
 
-export default function AdminInventory() {
+const foodDrinksCategories = ["food", "drinks"];
+const addonsCategories = ["decoration", "decor", "entertainment", "activity", "comfort", "work", "staff", "equipment"];
+
+interface AdminInventoryProps {
+  filterCategory?: "food-drinks" | "addons";
+}
+
+export default function AdminInventory({ filterCategory }: AdminInventoryProps = {}) {
   const { toast } = useToast();
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [search, setSearch] = useState("");
@@ -34,7 +41,20 @@ export default function AdminInventory() {
       .then(({ data }) => { setItems((data as InventoryItem[]) ?? []); setLoading(false); });
   }, []);
 
-  const filtered = items.filter(i =>
+  // Apply external filter from Catalog tabs
+  const scopedItems = filterCategory === "food-drinks"
+    ? items.filter(i => foodDrinksCategories.includes(i.category))
+    : filterCategory === "addons"
+    ? items.filter(i => addonsCategories.includes(i.category))
+    : items;
+
+  const availableCats = filterCategory === "food-drinks"
+    ? foodDrinksCategories
+    : filterCategory === "addons"
+    ? addonsCategories
+    : categoryOptions;
+
+  const filtered = scopedItems.filter(i =>
     (catFilter === "all" || i.category === catFilter) &&
     i.name.toLowerCase().includes(search.toLowerCase())
   );
@@ -45,7 +65,9 @@ export default function AdminInventory() {
   }, {});
 
   const openCreate = () => {
-    setEditing({ name: "", emoji: "🍽️", category: "food", unit_price: 0, stock: 100, low_stock_threshold: 10, available: true, property_id: null });
+    const defaultCat = filterCategory === "food-drinks" ? "food" : filterCategory === "addons" ? "decoration" : "food";
+    const defaultEmoji = filterCategory === "addons" ? "🎉" : "🍽️";
+    setEditing({ name: "", emoji: defaultEmoji, category: defaultCat, unit_price: 0, stock: 100, low_stock_threshold: 10, available: true, property_id: null });
     setIsCreating(true);
   };
 
@@ -90,16 +112,18 @@ export default function AdminInventory() {
     setItems(prev => prev.map(i => i.id === item.id ? { ...i, available: next } : i));
   };
 
-  const lowStock = items.filter(i => i.stock <= i.low_stock_threshold && i.available);
+  const lowStock = scopedItems.filter(i => i.stock <= i.low_stock_threshold && i.available);
+
+  const sectionTitle = filterCategory === "food-drinks" ? "Food & Drinks" : filterCategory === "addons" ? "Add-ons & Services" : "Inventory";
 
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <Package size={22} className="text-primary" /> Inventory
+            <Package size={22} className="text-primary" /> {sectionTitle}
           </h1>
-          <p className="text-sm text-muted-foreground">{items.length} items · {lowStock.length} low stock</p>
+          <p className="text-sm text-muted-foreground">{scopedItems.length} items · {lowStock.length} low stock</p>
         </div>
         <button onClick={openCreate}
           className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 active:scale-95 transition">
@@ -125,7 +149,7 @@ export default function AdminInventory() {
           <Input placeholder="Search items..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
         </div>
         <div className="flex gap-2 overflow-x-auto hide-scrollbar">
-          {["all", ...categoryOptions].map(c => (
+          {["all", ...availableCats].map(c => (
             <button key={c} onClick={() => setCatFilter(c)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize whitespace-nowrap transition ${
                 catFilter === c ? "bg-primary/15 text-primary" : "bg-secondary text-muted-foreground hover:text-foreground"
