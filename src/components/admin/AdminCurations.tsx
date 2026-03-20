@@ -57,7 +57,7 @@ export default function AdminCurations() {
     .filter(c => c.name.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
 
-  const { getDragHandleProps, getDropTargetProps, handleDragEnd, isDragging, isDragOver } = useDragReorder({
+  const { getDragHandleProps, getDragItemStyle, getDropTargetProps, handleDragEnd, isDragging, isDragOver } = useDragReorder({
     items: [...curations].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0)),
     getId: (c: any) => c.id,
     getA11yLabel: (c: any) => `Reorder ${c.name}`,
@@ -321,9 +321,8 @@ export default function AdminCurations() {
               key={c.id}
               {...getDropTargetProps(c)}
               onDragEnd={handleDragEnd}
-              className={`rounded-xl border bg-card p-4 hover:border-primary/30 transition-all ${
-                isDragging(c) ? "opacity-40 scale-[0.97]" : ""
-              } ${isDragOver(c) ? "border-primary shadow-sm shadow-primary/20" : "border-border"}`}
+              style={getDragItemStyle(c)}
+              className="rounded-xl border border-border bg-card p-4 hover:border-primary/30"
               onClick={() => startEdit(c)}
             >
               <div className="flex items-start gap-2">

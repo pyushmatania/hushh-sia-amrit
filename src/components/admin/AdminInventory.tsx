@@ -68,7 +68,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
   // Sort items within each group
   Object.values(grouped).forEach(arr => arr.sort((a, b) => a.sort_order - b.sort_order));
 
-  const { getDragHandleProps, getDropTargetProps, handleDragEnd, isDragging, isDragOver } = useDragReorder({
+  const { getDragHandleProps, getDragItemStyle, getDropTargetProps, handleDragEnd, isDragging, isDragOver } = useDragReorder({
     items: [...scopedItems].sort((a, b) => a.sort_order - b.sort_order),
     getId: (i) => i.id,
     getCategory: (i) => i.category,
@@ -197,11 +197,10 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
                   key={item.id}
                   {...getDropTargetProps(item)}
                   onDragEnd={handleDragEnd}
-                  className={`rounded-xl border bg-card p-3 flex items-center gap-2 transition-all ${
+                  style={getDragItemStyle(item)}
+                  className={`rounded-xl border bg-card p-3 flex items-center gap-2 ${
                     item.stock <= item.low_stock_threshold ? "border-amber-500/30" : "border-border"
-                  } ${!item.available ? "opacity-50" : ""} ${
-                    isDragging(item) ? "opacity-40 scale-[0.97]" : ""
-                  } ${isDragOver(item) ? "border-primary shadow-sm shadow-primary/20" : ""}`}
+                  } ${!item.available ? "opacity-50" : ""}`}
                 >
                   <span className="text-xl">{item.emoji}</span>
                   <div className="flex-1 min-w-0">

@@ -242,7 +242,7 @@ export default function AdminProperties() {
 
   const filters = ["all", "published", "draft", "paused"];
 
-  const { getDragHandleProps, getDropTargetProps, handleDragEnd, isDragging, isDragOver } = useDragReorder({
+  const { getDragHandleProps, getDragItemStyle, getDropTargetProps, handleDragEnd, isDragging, isDragOver } = useDragReorder({
     items: filtered,
     getId: (l) => l.id,
     getA11yLabel: (l) => `Reorder ${l.name}`,
@@ -369,9 +369,8 @@ export default function AdminProperties() {
               key={listing.id}
               {...getDropTargetProps(listing)}
               onDragEnd={handleDragEnd}
-              className={`rounded-xl border bg-card p-3 flex gap-2 cursor-pointer hover:border-primary/30 transition-all ${
-                isDragging(listing) ? "opacity-40 scale-[0.97]" : ""
-              } ${isDragOver(listing) ? "border-primary shadow-sm shadow-primary/20" : "border-border"}`}
+              style={getDragItemStyle(listing)}
+              className="rounded-xl border border-border bg-card p-3 flex gap-2 cursor-pointer hover:border-primary/30"
               onClick={() => openEdit(listing)}
             >
               <div className="w-16 h-16 rounded-lg bg-secondary shrink-0 overflow-hidden">

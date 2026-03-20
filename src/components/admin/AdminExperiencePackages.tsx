@@ -135,7 +135,7 @@ export default function AdminExperiencePackages() {
     setPackages(prev => prev.map(p => p.id === pkg.id ? { ...p, active: next } : p));
   };
 
-  const { getDragHandleProps, getDropTargetProps, handleDragEnd, isDragging, isDragOver } = useDragReorder({
+  const { getDragHandleProps, getDragItemStyle, getDropTargetProps, handleDragEnd, isDragging, isDragOver } = useDragReorder({
     items: [...packages].sort((a, b) => a.sort_order - b.sort_order),
     getId: (p) => p.id,
     getA11yLabel: (p) => `Reorder ${p.name}`,
@@ -192,9 +192,9 @@ export default function AdminExperiencePackages() {
               key={pkg.id}
               {...getDropTargetProps(pkg)}
               onDragEnd={handleDragEnd}
-              className={`rounded-xl border bg-card p-4 flex items-center gap-2 transition-all ${
-                !pkg.active ? "opacity-50" : ""
-              } ${isDragging(pkg) ? "opacity-40 scale-[0.97]" : ""} ${isDragOver(pkg) ? "border-primary shadow-sm shadow-primary/20" : "border-border"}`}
+              style={getDragItemStyle(pkg)}
+              className={`rounded-xl border border-border bg-card p-4 flex items-center gap-2 ${
+                !pkg.active ? "opacity-50" : ""}`}
             >
               <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${pkg.gradient} flex items-center justify-center text-lg`}>
                 {pkg.emoji}
