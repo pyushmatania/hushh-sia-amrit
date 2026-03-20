@@ -174,7 +174,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
               <SectionDivider title="BOOK YOUR EXPERIENCE" />
               <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4">
                 {packages.map((pkg, i) => (
-                  <PackageCard key={pkg.id} pkg={pkg} index={i} />
+                  <PackageCard key={pkg.id} pkg={pkg} index={i} properties={properties} onPropertyTap={onPropertyTap} />
                 ))}
               </div>
 
