@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Tag, CreditCard, Smartphone, Banknote, ChevronRight, Shield, Clock, Users, MapPin, CalendarIcon, X } from "lucide-react";
+import { ArrowLeft, Tag, CreditCard, Smartphone, Banknote, ChevronRight, Shield, Clock, Users, MapPin, CalendarIcon, X, Heart, Bookmark } from "lucide-react";
 import { useState } from "react";
 import { format } from "date-fns";
 import type { Property } from "@/data/properties";
@@ -15,6 +15,8 @@ interface CheckoutScreenProps {
   onBack: () => void;
   onConfirm: (total: number) => void;
   extras?: Property[];
+  isWishlisted?: boolean;
+  onToggleWishlist?: (propertyId: string) => void;
 }
 
 const paymentMethods = [
@@ -23,35 +25,53 @@ const paymentMethods = [
   { id: "cod", label: "Pay at Venue", icon: Banknote, sublabel: "Cash or card on arrival" },
 ];
 
-export default function CheckoutScreen({ property, slotId, guests, date, selections, total, onBack, onConfirm, extras: initialExtras }: CheckoutScreenProps) {
+export default function CheckoutScreen({ property, slotId, guests, date, selections: initialSelections, total: initialTotal, onBack, onConfirm, extras: initialExtras, isWishlisted, onToggleWishlist }: CheckoutScreenProps) {
   const slot = property.slots.find((s) => s.id === slotId)!;
   const [coupon, setCoupon] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState("upi");
   const [extras, setExtras] = useState<Property[]>(initialExtras || []);
+  const [liveSelections, setLiveSelections] = useState<Record<string, number>>(initialSelections);
+
+  const removeAddon = (id: string) => {
+    setLiveSelections(prev => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+  };
 
   const removeExtra = (id: string) => {
     setExtras(prev => prev.filter(e => e.id !== id));
   };
 
-  // Calculate extras total (cheapest available slot for each extra)
+  // Recalculate addon total from live selections
+  const addonTotal = Object.entries(liveSelections).reduce((sum, [id, qty]) => {
+    for (const group of Object.values(addons)) {
+      const item = group.find((a) => a.id === id);
+      if (item) return sum + item.price * qty * (item.perPerson ? guests : 1);
+    }
+    return sum;
+  }, 0);
+
   const extrasTotal = (extras || []).reduce((sum, ext) => {
     const cheapest = ext.slots.filter(s => s.available).sort((a, b) => a.price - b.price)[0];
     return sum + (cheapest?.price || ext.basePrice);
   }, 0);
 
-  const discount = couponApplied ? Math.round((total + extrasTotal) * 0.1) : 0;
+  const baseTotal = slot.price + addonTotal;
+  const discount = couponApplied ? Math.round((baseTotal + extrasTotal) * 0.1) : 0;
   const platformFee = 49;
-  const finalTotal = total + extrasTotal - discount + platformFee;
+  const finalTotal = baseTotal + extrasTotal - discount + platformFee;
 
-  // Build line items from selections
-  const lineItems: { name: string; qty: number; unitPrice: number; subtotal: number }[] = [];
-  Object.entries(selections).forEach(([id, qty]) => {
+  // Build line items from live selections
+  const lineItems: { id: string; name: string; qty: number; unitPrice: number; subtotal: number }[] = [];
+  Object.entries(liveSelections).forEach(([id, qty]) => {
     for (const group of Object.values(addons)) {
       const item = group.find((a) => a.id === id);
       if (item) {
         const unitPrice = item.price * (item.perPerson ? guests : 1);
-        lineItems.push({ name: item.name, qty, unitPrice: item.price, subtotal: unitPrice * qty });
+        lineItems.push({ id, name: item.name, qty, unitPrice: item.price, subtotal: unitPrice * qty });
       }
     }
   });
@@ -75,10 +95,23 @@ export default function CheckoutScreen({ property, slotId, guests, date, selecti
           <button onClick={onBack} className="w-9 h-9 rounded-full border border-border flex items-center justify-center">
             <ArrowLeft size={16} className="text-foreground" />
           </button>
-          <div>
+          <div className="flex-1">
             <h2 className="font-semibold text-base text-foreground">Confirm & Pay</h2>
             <p className="text-xs text-muted-foreground">Review your booking details</p>
           </div>
+          {/* Save / Wishlist button */}
+          {onToggleWishlist && (
+            <motion.button
+              onClick={() => onToggleWishlist(property.id)}
+              whileTap={{ scale: 0.85 }}
+              className="w-9 h-9 rounded-full border border-border flex items-center justify-center"
+            >
+              <Heart
+                size={16}
+                className={isWishlisted ? "text-red-500 fill-red-500" : "text-muted-foreground"}
+              />
+            </motion.button>
+          )}
         </div>
       </div>
 
@@ -98,6 +131,10 @@ export default function CheckoutScreen({ property, slotId, guests, date, selecti
                 <MapPin size={11} /> {property.location}
               </p>
             </div>
+            {/* Saved indicator */}
+            {isWishlisted && (
+              <span className="text-[9px] px-2 py-1 rounded-full bg-red-500/10 text-red-400 font-semibold">Saved ♥</span>
+            )}
           </div>
           <div className="flex gap-4 text-xs text-muted-foreground flex-wrap">
             <span className="flex items-center gap-1"><CalendarIcon size={12} /> {format(date, "EEE, d MMM")}</span>
@@ -121,15 +158,29 @@ export default function CheckoutScreen({ property, slotId, guests, date, selecti
             <span className="text-foreground font-medium">₹{slot.price.toLocaleString()}</span>
           </div>
 
-          {/* Add-on items */}
-          {lineItems.map((item) => (
-            <div key={item.name} className="flex justify-between text-sm">
-              <span className="text-muted-foreground">
-                {item.name} {item.qty > 1 ? `× ${item.qty}` : ""}
-              </span>
-              <span className="text-foreground font-medium">₹{item.subtotal.toLocaleString()}</span>
-            </div>
-          ))}
+          {/* Add-on items with remove button */}
+          <AnimatePresence>
+            {lineItems.map((item) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0, marginTop: 0, overflow: "hidden" }}
+                transition={{ duration: 0.2 }}
+                className="flex items-center justify-between text-sm gap-2"
+              >
+                <span className="text-muted-foreground flex-1 truncate">
+                  {item.name} {item.qty > 1 ? `× ${item.qty}` : ""}
+                </span>
+                <span className="text-foreground font-medium shrink-0">₹{item.subtotal.toLocaleString()}</span>
+                <button
+                  onClick={() => removeAddon(item.id)}
+                  className="w-5 h-5 rounded-full border border-border/60 flex items-center justify-center hover:bg-destructive/10 hover:border-destructive/30 transition-colors shrink-0"
+                >
+                  <X size={10} className="text-muted-foreground" />
+                </button>
+              </motion.div>
+            ))}
+          </AnimatePresence>
 
           {/* Extra experiences/services */}
           {extras.length > 0 && (
@@ -154,9 +205,9 @@ export default function CheckoutScreen({ property, slotId, guests, date, selecti
                       <span className="text-foreground font-medium">₹{price.toLocaleString()}</span>
                       <button
                         onClick={() => removeExtra(ext.id)}
-                        className="w-6 h-6 rounded-full border border-border flex items-center justify-center hover:bg-destructive/10 hover:border-destructive/30 transition-colors shrink-0"
+                        className="w-5 h-5 rounded-full border border-border/60 flex items-center justify-center hover:bg-destructive/10 hover:border-destructive/30 transition-colors shrink-0"
                       >
-                        <X size={12} className="text-muted-foreground" />
+                        <X size={10} className="text-muted-foreground" />
                       </button>
                     </motion.div>
                   );

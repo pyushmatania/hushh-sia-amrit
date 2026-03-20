@@ -220,6 +220,8 @@ export default function Index() {
             onBack={() => setScreen({ type: "builder", property: screen.property, slotId: screen.slotId, guests: screen.guests, date: screen.date, extras: screen.extras })}
             extras={screen.extras}
             onConfirm={handleCheckoutConfirm(screen.property, screen.slotId, screen.guests, screen.date)}
+            isWishlisted={wishlist.includes(screen.property.id)}
+            onToggleWishlist={toggleWishlist}
           />
         )}
         {screen.type === "confirmation" && (
