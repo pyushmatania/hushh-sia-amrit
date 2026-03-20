@@ -111,16 +111,20 @@ function DBReviewCard({ review, index, onImageTap, onProfileTap }: { review: Rev
       className="rounded-2xl p-4 bg-secondary/40 border border-border"
     >
       <div className="flex items-center gap-2.5 mb-2.5">
-        {review.user_avatar ? (
-          <img src={review.user_avatar} alt="" className="w-9 h-9 rounded-full object-cover" />
-        ) : (
-          <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-lg">
-            {review.user_name.charAt(0).toUpperCase()}
-          </div>
-        )}
+        <button onClick={() => onProfileTap?.(review.user_id)} className="shrink-0">
+          {review.user_avatar ? (
+            <img src={review.user_avatar} alt="" className="w-9 h-9 rounded-full object-cover" />
+          ) : (
+            <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-lg">
+              {review.user_name.charAt(0).toUpperCase()}
+            </div>
+          )}
+        </button>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
-            <p className="text-sm font-semibold text-foreground">{review.user_name}</p>
+            <button onClick={() => onProfileTap?.(review.user_id)} className="text-sm font-semibold text-foreground hover:underline">
+              {review.user_name}
+            </button>
             {review.verified && (
               <span className="flex items-center gap-0.5 text-[9px] font-bold text-emerald-600 bg-emerald-500/10 px-1.5 py-0.5 rounded-md">
                 <ShieldCheck size={10} /> Verified Stay
