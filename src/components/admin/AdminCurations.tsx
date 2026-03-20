@@ -4,6 +4,7 @@ import {
   Sparkles, Search, Plus, Save, X, Eye, Trash2,
   GripVertical, Loader2, ChevronDown
 } from "lucide-react";
+import { useDragReorder } from "@/hooks/use-drag-reorder";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
