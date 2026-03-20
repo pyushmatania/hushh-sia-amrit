@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import PublicProfileScreen from "./PublicProfileScreen";
 import {
   ChevronRight, Bell, Settings, HelpCircle, LogOut,
