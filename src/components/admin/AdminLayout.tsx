@@ -144,10 +144,13 @@ export default function AdminLayout({ activePage, onNavigate, children }: AdminL
           <button onClick={() => setMobileOpen(true)} className="p-1.5 rounded-lg hover:bg-secondary">
             <Menu size={20} className="text-foreground" />
           </button>
-          <div className="flex items-center gap-2">
+          <div className="flex-1 flex items-center gap-2">
             <Shield size={16} className="text-primary" />
             <span className="font-bold text-sm text-foreground">Hushh Admin</span>
           </div>
+          <kbd className="hidden md:inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-secondary text-[10px] text-muted-foreground font-mono border border-border">
+            <Search size={10} /> ⌘K
+          </kbd>
         </div>
 
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
