@@ -136,13 +136,13 @@ function VideoCard({
           border: accent ? "none" : "1px solid rgba(255,255,255,0.08)",
         }}
       >
-        {/* Fading accent border */}
-        {accent && <div style={getAccentBorderStyle(accent.color, accent.side)} />}
-        {/* Subtle glow overlay */}
+        {/* L-shaped fading border */}
+        {accent && <AccentBorder color={accent.color} radius="20px" />}
+        {/* Subtle corner glow */}
         {accent && (
           <div
             className="absolute inset-0 z-[1] pointer-events-none rounded-[20px]"
-            style={{ background: getGlowGradient(accent.color, accent.side) }}
+            style={{ background: `radial-gradient(ellipse at top left, ${accent.color}12 0%, transparent 50%)` }}
           />
         )}
 
@@ -161,16 +161,8 @@ function VideoCard({
           />
         )}
 
-        {/* Accent tag */}
-        {accent?.tag && (
-          <span
-            className="absolute top-4 left-4 text-[10px] font-bold tracking-wider px-3 py-1.5 rounded-full flex items-center gap-1 shadow-lg z-10"
-            style={{ background: accent.tag.bg, color: "white", letterSpacing: "0.08em" }}
-          >
-            {accent.tag.icon}
-            {accent.tag.label}
-          </span>
-        )}
+        {/* Asymmetrical accent tag */}
+        {accent?.tag && <AccentTag tag={accent.tag} />}
 
         <button
           onClick={(e) => { e.stopPropagation(); setMuted(!muted); }}
