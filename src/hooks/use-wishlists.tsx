@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./use-auth";
+import { useToast } from "./use-toast";
 
 const LOCAL_KEY = "hushh_wishlists";
 
@@ -16,6 +17,7 @@ function setLocalWishlist(ids: string[]) {
 
 export function useWishlists() {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -52,6 +54,11 @@ export function useWishlists() {
       const exists = wishlist.includes(propertyId);
       const next = exists ? wishlist.filter((id) => id !== propertyId) : [...wishlist, propertyId];
       setWishlist(next);
+
+      toast({
+        title: exists ? "💔 Removed from Wishlist" : "❤️ Saved to Wishlist",
+        description: exists ? "You can always add it back later" : "Find it in your Wishlists tab",
+      });
 
       if (user) {
         if (exists) {
