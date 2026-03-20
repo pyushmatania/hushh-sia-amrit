@@ -132,6 +132,26 @@ export default function AdminExperiencePackages() {
     setPackages(prev => prev.map(p => p.id === pkg.id ? { ...p, active: next } : p));
   };
 
+  // --- Drag & Drop ---
+  const [dragId, setDragId] = useState<string | null>(null);
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
+
+  const handleDrop = useCallback(async (targetId: string) => {
+    if (!dragId || dragId === targetId) { setDragId(null); setDragOverId(null); return; }
+    const sorted = [...packages].sort((a, b) => a.sort_order - b.sort_order);
+    const fromIdx = sorted.findIndex(p => p.id === dragId);
+    const toIdx = sorted.findIndex(p => p.id === targetId);
+    if (fromIdx === -1 || toIdx === -1) { setDragId(null); setDragOverId(null); return; }
+    const [moved] = sorted.splice(fromIdx, 1);
+    sorted.splice(toIdx, 0, moved);
+    const updates = sorted.map((p, i) => ({ id: p.id, sort_order: i }));
+    setPackages(prev => prev.map(p => { const u = updates.find(u => u.id === p.id); return u ? { ...p, sort_order: u.sort_order } : p; }));
+    setDragId(null); setDragOverId(null);
+    for (const u of updates) { await supabase.from("experience_packages").update({ sort_order: u.sort_order }).eq("id", u.id); }
+    toast({ title: "Order saved" });
+    window.dispatchEvent(new Event("hushh:listings-updated"));
+  }, [dragId, packages, toast]);
+
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
