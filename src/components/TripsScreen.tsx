@@ -109,6 +109,13 @@ function TiltCard({
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
+  // Scroll-based parallax for the image
+  const { scrollYProgress } = useScroll({
+    target: cardRef,
+    offset: ["start end", "end start"],
+  });
+  const imgY = useTransform(scrollYProgress, [0, 1], [-20, 20]);
+
   const rotateX = useSpring(useTransform(y, [-150, 150], [12, -12]), { stiffness: 300, damping: 30 });
   const rotateY = useSpring(useTransform(x, [-150, 150], [-12, 12]), { stiffness: 300, damping: 30 });
   const glareX = useTransform(x, [-150, 150], [0, 100]);
