@@ -33,28 +33,29 @@ const edgeBaseStyle: CSSProperties = {
 export function AccentFrame({ color, radius = "1rem", glowAlpha = 0.08 }: AccentFrameProps) {
   return (
     <>
+      {/* Left edge – fades downward */}
       <div
         style={{
           ...edgeBaseStyle,
           left: 0,
-          top: 0,
+          top: CORNER_SIZE,
           bottom: 0,
           width: `${EDGE_THICKNESS}px`,
-          borderTopLeftRadius: radius,
-          background: `linear-gradient(to bottom, ${color} 0%, ${color} 44%, transparent 88%)`,
+          background: `linear-gradient(to bottom, ${color} 0%, ${color} 40%, transparent 85%)`,
         }}
       />
+      {/* Top edge – fades rightward */}
       <div
         style={{
           ...edgeBaseStyle,
-          left: 0,
+          left: CORNER_SIZE,
           top: 0,
           right: 0,
           height: `${EDGE_THICKNESS}px`,
-          borderTopLeftRadius: radius,
-          background: `linear-gradient(to right, ${color} 0%, ${color} 34%, transparent 76%)`,
+          background: `linear-gradient(to right, ${color} 0%, ${color} 30%, transparent 70%)`,
         }}
       />
+      {/* Rounded corner piece – single rounded L */}
       <div
         style={{
           ...edgeBaseStyle,
@@ -65,9 +66,9 @@ export function AccentFrame({ color, radius = "1rem", glowAlpha = 0.08 }: Accent
           borderTopLeftRadius: radius,
           borderLeft: `${EDGE_THICKNESS}px solid ${color}`,
           borderTop: `${EDGE_THICKNESS}px solid ${color}`,
-          background: `radial-gradient(circle at top left, ${withAlpha(color, 0.35)} 0%, transparent 70%)`,
         }}
       />
+      {/* Subtle glow */}
       <div
         className="absolute inset-0 z-[1] pointer-events-none rounded-[inherit]"
         style={{
