@@ -5,6 +5,7 @@ import { useReviews, type Review } from "@/hooks/use-reviews";
 import { useAuth } from "@/hooks/use-auth";
 import { formatDistanceToNow } from "date-fns";
 import type { PropertyReview } from "@/data/properties";
+import { getMockUserId } from "@/data/mock-users";
 import PublicProfileScreen from "./PublicProfileScreen";
 
 interface ReviewSectionProps {
