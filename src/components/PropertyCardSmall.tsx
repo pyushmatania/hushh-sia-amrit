@@ -40,7 +40,7 @@ export default function PropertyCardSmall({ property, index, onTap, isWishlisted
         <motion.button
           onClick={(e) => {
             e.stopPropagation();
-            setLiked(!liked);
+            onToggleWishlist?.(property.id);
           }}
           className="absolute top-2.5 right-2.5"
           whileTap={{ scale: 1.3 }}

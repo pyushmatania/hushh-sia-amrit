@@ -292,6 +292,8 @@ export default function SpotlightCarousel({ properties, onPropertyTap, category 
             dateLabel={dateLabels[i]}
             accent={accentStyles[i % accentStyles.length]}
             onTap={() => onPropertyTap(p)}
+            isSaved={wishlist.includes(p.id)}
+            onToggleSave={onToggleWishlist}
           />
         ))}
       </div>
