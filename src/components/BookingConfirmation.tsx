@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
-import { Check, MapPin, Calendar, Users, QrCode, Clock } from "lucide-react";
+import { Check, MapPin, Calendar, Users, QrCode, Clock, ShoppingCart } from "lucide-react";
+import { useState } from "react";
 import { format } from "date-fns";
 import type { Property } from "@/data/properties";
+import LiveOrderingSheet from "./LiveOrderingSheet";
 
 interface BookingConfirmationProps {
   property: Property;
