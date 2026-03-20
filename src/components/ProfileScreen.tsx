@@ -50,11 +50,7 @@ const achievements = [
   { icon: "💑", title: "Romantico", description: "Booked a couple experience" },
 ];
 
-const recentActivity = [
-  { icon: "🏊", title: "The Firefly Villa", subtitle: "Evening slot · 2 guests", date: "Mar 10" },
-  { icon: "🌌", title: "Koraput Garden House", subtitle: "Night slot · 4 guests", date: "Feb 28" },
-  { icon: "🔥", title: "Ember Grounds", subtitle: "Full Day · 12 guests", date: "Feb 14" },
-];
+// recentActivity is now computed from bookings in the component
 
 interface ProfileScreenProps {
   onHostTap?: () => void;
