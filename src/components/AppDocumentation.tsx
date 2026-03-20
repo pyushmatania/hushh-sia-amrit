@@ -526,6 +526,50 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
           </div>
         </DocSection>
 
+        {/* Full Raw Document */}
+        <DocSection
+          title="Full Document (Copy/Paste)"
+          icon={<FileText size={15} className="text-primary" />}
+        >
+          <div className="space-y-3">
+            <p className="text-xs">Tap the button below to view the full raw document, then copy it.</p>
+            <button
+              onClick={() => setShowRawDoc(!showRawDoc)}
+              className="w-full py-2.5 rounded-xl text-xs font-semibold text-primary"
+              style={{
+                background: "hsl(var(--primary) / 0.1)",
+                border: "1px solid hsl(var(--primary) / 0.2)",
+              }}
+            >
+              {showRawDoc ? "Hide Raw Document" : "Show Raw Document"}
+            </button>
+            {showRawDoc && (
+              <div className="relative">
+                <button
+                  onClick={handleCopyDoc}
+                  className="absolute top-2 right-2 z-10 px-2.5 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1"
+                  style={{
+                    background: copied ? "hsl(var(--success))" : "hsl(var(--primary))",
+                    color: "hsl(var(--primary-foreground))",
+                  }}
+                >
+                  {copied ? <><Check size={10} /> Copied!</> : <><Copy size={10} /> Copy All</>}
+                </button>
+                <pre
+                  className="rounded-xl p-4 pt-10 text-[10px] leading-relaxed overflow-x-auto whitespace-pre-wrap break-words max-h-[60vh] overflow-y-auto"
+                  style={{
+                    background: "hsl(var(--background))",
+                    border: "1px solid hsl(var(--border))",
+                    color: "hsl(var(--muted-foreground))",
+                  }}
+                >
+                  {generateFullDoc()}
+                </pre>
+              </div>
+            )}
+          </div>
+        </DocSection>
+
         <div className="text-center py-6">
           <p className="text-[11px] text-muted-foreground">
             <Sparkles size={12} className="inline text-primary mr-1" />
