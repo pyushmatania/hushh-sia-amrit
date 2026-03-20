@@ -92,9 +92,10 @@ App Launch
 ### Secondary Flows
 ```
 Wishlists Tab → Grid of saved properties → Detail → Book
-Trips Tab → Upcoming/Completed/Cancelled → Detail → Cancel/Rebook
+Trips Tab → Active (checked-in) / Upcoming / Past / Cancelled → Detail → Cancel/Rebook/Order Food
 Messages Tab → Conversation list → Chat thread (real-time)
-Profile Tab → Edit profile, Loyalty, Referrals, Host Dashboard, Settings, Theme
+Profile Tab → Edit profile, Loyalty, Referrals, Past Trips, Host Dashboard, Settings, Theme
+Active Trip → Order Food (live ordering sheet) / Add Extras (per-item emoji icons)
 ```
 
 ---
