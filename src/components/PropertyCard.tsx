@@ -56,24 +56,22 @@ function getCardAccent(property: Property, index: number): CardAccent {
   return null;
 }
 
-/** Builds a fading border using box-shadows on one side */
-function getAccentShadow(accent: NonNullable<CardAccent>): string {
+/** Builds a border style on one side with fading edges using box-shadow on a wrapper (no overflow clip) */
+function getAccentBorderStyle(accent: NonNullable<CardAccent>): React.CSSProperties {
   const c = accent.color;
+  const base: React.CSSProperties = {
+    position: "absolute",
+    pointerEvents: "none",
+    zIndex: 2,
+    borderRadius: "1rem",
+  };
   if (accent.side === "left") {
-    return `inset 3px 0 0 0 ${c}, inset 2px -8px 12px -10px ${c}, inset 2px 8px 12px -10px ${c}`;
+    return { ...base, inset: 0, borderLeft: `2.5px solid ${c}`, maskImage: "linear-gradient(to bottom, transparent 5%, black 30%, black 70%, transparent 95%)", WebkitMaskImage: "linear-gradient(to bottom, transparent 5%, black 30%, black 70%, transparent 95%)" };
   }
   if (accent.side === "right") {
-    return `inset -3px 0 0 0 ${c}, inset -2px -8px 12px -10px ${c}, inset -2px 8px 12px -10px ${c}`;
+    return { ...base, inset: 0, borderRight: `2.5px solid ${c}`, maskImage: "linear-gradient(to bottom, transparent 5%, black 30%, black 70%, transparent 95%)", WebkitMaskImage: "linear-gradient(to bottom, transparent 5%, black 30%, black 70%, transparent 95%)" };
   }
-  // top
-  return `inset 0 3px 0 0 ${c}, inset -8px 2px 12px -10px ${c}, inset 8px 2px 12px -10px ${c}`;
-}
-
-function getAccentGlow(accent: NonNullable<CardAccent>): string {
-  const c = accent.color;
-  if (accent.side === "left") return `drop-shadow(-4px 0 10px ${c})`;
-  if (accent.side === "right") return `drop-shadow(4px 0 10px ${c})`;
-  return `drop-shadow(0 -4px 10px ${c})`;
+  return { ...base, inset: 0, borderTop: `2.5px solid ${c}`, maskImage: "linear-gradient(to right, transparent 5%, black 30%, black 70%, transparent 95%)", WebkitMaskImage: "linear-gradient(to right, transparent 5%, black 30%, black 70%, transparent 95%)" };
 }
 
 interface PropertyCardProps {
@@ -126,20 +124,20 @@ export default function PropertyCard({ property, index, onTap }: PropertyCardPro
         className="relative aspect-[4/3] rounded-2xl overflow-hidden"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        style={accent ? {
-          boxShadow: getAccentShadow(accent),
-        } : undefined}
       >
-        {/* Fading glow overlay on the accented side */}
+        {/* Fading accent border — rendered outside overflow clip via pointer-events-none overlay */}
+        {accent && <div style={getAccentBorderStyle(accent)} />}
+
+        {/* Subtle inner glow */}
         {accent && (
           <div
             className="absolute inset-0 z-[1] pointer-events-none rounded-2xl"
             style={{
               background: accent.side === "left"
-                ? `linear-gradient(to right, ${accent.color}22 0%, transparent 40%)`
+                ? `linear-gradient(to right, ${accent.color}12 0%, transparent 30%)`
                 : accent.side === "right"
-                ? `linear-gradient(to left, ${accent.color}22 0%, transparent 40%)`
-                : `linear-gradient(to bottom, ${accent.color}22 0%, transparent 40%)`,
+                ? `linear-gradient(to left, ${accent.color}12 0%, transparent 30%)`
+                : `linear-gradient(to bottom, ${accent.color}12 0%, transparent 30%)`,
             }}
           />
         )}
@@ -165,7 +163,6 @@ export default function PropertyCard({ property, index, onTap }: PropertyCardPro
               background: accent.tag.bg,
               color: "white",
               letterSpacing: "0.08em",
-              filter: getAccentGlow(accent),
             }}
           >
             {accent.tag.icon}

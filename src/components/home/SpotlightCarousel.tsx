@@ -42,16 +42,17 @@ const accentStyles: VideoAccent[] = [
   null,
 ];
 
-function getAccentShadow(color: string, side: string): string {
-  if (side === "left") return `inset 3px 0 0 0 ${color}, inset 2px -10px 14px -12px ${color}, inset 2px 10px 14px -12px ${color}`;
-  if (side === "right") return `inset -3px 0 0 0 ${color}, inset -2px -10px 14px -12px ${color}, inset -2px 10px 14px -12px ${color}`;
-  return `inset 0 3px 0 0 ${color}, inset -10px 2px 14px -12px ${color}, inset 10px 2px 14px -12px ${color}`;
+function getAccentBorderStyle(color: string, side: string): React.CSSProperties {
+  const base: React.CSSProperties = { position: "absolute", pointerEvents: "none", zIndex: 2, borderRadius: "20px" };
+  if (side === "left") return { ...base, inset: 0, borderLeft: `2.5px solid ${color}`, maskImage: "linear-gradient(to bottom, transparent 5%, black 30%, black 70%, transparent 95%)", WebkitMaskImage: "linear-gradient(to bottom, transparent 5%, black 30%, black 70%, transparent 95%)" };
+  if (side === "right") return { ...base, inset: 0, borderRight: `2.5px solid ${color}`, maskImage: "linear-gradient(to bottom, transparent 5%, black 30%, black 70%, transparent 95%)", WebkitMaskImage: "linear-gradient(to bottom, transparent 5%, black 30%, black 70%, transparent 95%)" };
+  return { ...base, inset: 0, borderTop: `2.5px solid ${color}`, maskImage: "linear-gradient(to right, transparent 5%, black 30%, black 70%, transparent 95%)", WebkitMaskImage: "linear-gradient(to right, transparent 5%, black 30%, black 70%, transparent 95%)" };
 }
 
 function getGlowGradient(color: string, side: string): string {
-  if (side === "left") return `linear-gradient(to right, ${color}25 0%, transparent 35%)`;
-  if (side === "right") return `linear-gradient(to left, ${color}25 0%, transparent 35%)`;
-  return `linear-gradient(to bottom, ${color}25 0%, transparent 35%)`;
+  if (side === "left") return `linear-gradient(to right, ${color}12 0%, transparent 25%)`;
+  if (side === "right") return `linear-gradient(to left, ${color}12 0%, transparent 25%)`;
+  return `linear-gradient(to bottom, ${color}12 0%, transparent 25%)`;
 }
 
 interface SpotlightCarouselProps {
@@ -109,10 +110,11 @@ function VideoCard({
         style={{
           height: "70vh", maxHeight: "580px",
           border: accent ? "none" : "1px solid rgba(255,255,255,0.08)",
-          boxShadow: accent ? getAccentShadow(accent.color, accent.side) : undefined,
         }}
       >
-        {/* Fading glow overlay */}
+        {/* Fading accent border */}
+        {accent && <div style={getAccentBorderStyle(accent.color, accent.side)} />}
+        {/* Subtle glow overlay */}
         {accent && (
           <div
             className="absolute inset-0 z-[1] pointer-events-none rounded-[20px]"
