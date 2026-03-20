@@ -4,8 +4,9 @@ import {
   LayoutDashboard, Building2, CalendarCheck, Users, BarChart3,
   Sparkles, Tag, Megaphone, Ticket, ShoppingCart, LogOut,
   ChevronLeft, ChevronRight, Shield, Menu, X, FileSpreadsheet,
-  Bot, Bell, ScrollText, Wallet, Zap, Trophy
+  Bot, Bell, ScrollText, Wallet, Zap, Trophy, Search
 } from "lucide-react";
+import CommandPalette from "./CommandPalette";
 import { useAuth } from "@/hooks/use-auth";
 import { useAdmin } from "@/hooks/use-admin";
 
