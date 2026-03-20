@@ -14,7 +14,7 @@ export type AdminPage =
   | "dashboard" | "properties" | "bookings" | "users"
   | "analytics" | "curations" | "tags" | "campaigns"
   | "coupons" | "orders" | "exports" | "ai" | "alerts" | "audit"
-  | "earnings" | "pricing" | "achievements";
+  | "earnings" | "pricing" | "achievements" | "loyalty";
 
 interface AdminLayoutProps {
   activePage: AdminPage;
@@ -39,6 +39,7 @@ const navItems: { id: AdminPage; label: string; icon: typeof LayoutDashboard; ad
   { id: "orders", label: "Live Orders", icon: ShoppingCart },
   { id: "exports", label: "Exports", icon: FileSpreadsheet },
   { id: "achievements", label: "Achievements", icon: Trophy },
+  { id: "loyalty", label: "Loyalty & Referrals", icon: Sparkles },
   { id: "audit", label: "Audit Trail", icon: ScrollText, adminOnly: true },
 ];
 
