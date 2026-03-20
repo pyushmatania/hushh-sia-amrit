@@ -384,7 +384,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
 
               {/* Hero featured combo — first popular one */}
               {filteredCombos.length > 0 && (
-                <CurationHeroCard combo={filteredCombos[0]} index={0} />
+                <CurationHeroCard combo={filteredCombos[0]} index={0} onTap={() => toast.info(`${filteredCombos[0].name} — coming soon!`)} />
               )}
 
               {/* Quick picks row */}
