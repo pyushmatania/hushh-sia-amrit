@@ -55,6 +55,11 @@ export function useWishlists() {
       const next = exists ? wishlist.filter((id) => id !== propertyId) : [...wishlist, propertyId];
       setWishlist(next);
 
+      toast({
+        title: exists ? "💔 Removed from Wishlist" : "❤️ Saved to Wishlist",
+        description: exists ? "You can always add it back later" : "Find it in your Wishlists tab",
+      });
+
       if (user) {
         if (exists) {
           await supabase.from("wishlists").delete().eq("user_id", user.id).eq("property_id", propertyId);
