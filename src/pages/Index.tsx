@@ -43,8 +43,8 @@ export interface Booking {
 type Screen =
   | { type: "home" }
   | { type: "detail"; property: Property }
-  | { type: "builder"; property: Property; slotId: string; guests: number; date: Date }
-  | { type: "checkout"; property: Property; slotId: string; guests: number; date: Date; selections: Record<string, number>; total: number }
+  | { type: "builder"; property: Property; slotId: string; guests: number; date: Date; extras?: Property[] }
+  | { type: "checkout"; property: Property; slotId: string; guests: number; date: Date; selections: Record<string, number>; total: number; extras?: Property[] }
   | { type: "confirmation"; property: Property; slotId: string; guests: number; date: Date; total: number }
   | { type: "bookingDetail"; booking: Booking }
   | { type: "hostDashboard" }
