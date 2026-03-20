@@ -532,28 +532,49 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
 
         <div className="border-b border-border my-5" />
 
-        {/* Date picker */}
-        <h3 className="text-lg font-semibold text-foreground mb-3">Select a date</h3>
-        <Popover>
-          <PopoverTrigger asChild>
-            <button className="w-full flex items-center gap-3 rounded-2xl border border-border px-4 py-3.5 text-left transition-all hover:border-foreground/40">
-              <CalendarIcon size={18} className="text-primary shrink-0" />
-              <span className="text-sm font-medium text-foreground">
-                {format(selectedDate, "EEEE, d MMMM yyyy")}
-              </span>
-            </button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={(d) => d && setSelectedDate(d)}
-              disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
-              initialFocus
-              className={cn("p-3 pointer-events-auto")}
-            />
-          </PopoverContent>
-        </Popover>
+        {/* Date picker — horizontal scrollable row */}
+        <h3 className="text-lg font-semibold text-foreground mb-1 flex items-center gap-2">
+          <CalendarIcon size={18} className="text-primary" /> Select a date
+          <span className="text-[10px] font-medium text-destructive ml-1">*required</span>
+        </h3>
+        <p className="text-[11px] text-muted-foreground mb-3">Swipe to see more dates</p>
+        <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1 -mx-5 px-5">
+          {dateOptions.map((d, i) => {
+            const isSelected = selectedDate && d.getTime() === selectedDate.getTime();
+            const isToday = i === 0;
+            const dayName = format(d, "EEE");
+            const dayNum = format(d, "d");
+            const monthName = format(d, "MMM");
+
+            return (
+              <button
+                key={i}
+                onClick={() => setSelectedDate(d)}
+                className={`shrink-0 flex flex-col items-center w-[56px] py-2.5 rounded-2xl border transition-all duration-200 ${
+                  isSelected
+                    ? "border-primary bg-primary/15 shadow-[0_0_16px_-4px_hsl(var(--primary)/0.3)]"
+                    : "border-border hover:border-foreground/20"
+                }`}
+              >
+                <span className={`text-[10px] font-medium ${isSelected ? "text-primary" : "text-muted-foreground"}`}>
+                  {isToday ? "Today" : dayName}
+                </span>
+                <span className={`text-lg font-bold mt-0.5 ${isSelected ? "text-primary" : "text-foreground"}`}>
+                  {dayNum}
+                </span>
+                <span className={`text-[9px] ${isSelected ? "text-primary/70" : "text-muted-foreground"}`}>
+                  {monthName}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {!selectedDate && (
+          <p className="text-[11px] text-destructive/80 mt-2 flex items-center gap-1">
+            <CalendarIcon size={11} /> Please select a date to continue
+          </p>
+        )}
 
         <div className="border-b border-border my-5" />
 
