@@ -255,7 +255,7 @@ export default function AdminProperties() {
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Building2 size={22} className="text-primary" /> Properties
           </h1>
-          <p className="text-sm text-muted-foreground">{stats.total} total · {stats.published} live · {stats.draft} drafts</p>
+          <p className="text-sm text-muted-foreground">{stats.total} total · {stats.published} live · Drag ⠿ to reorder</p>
         </div>
         <button onClick={openCreate}
           className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 active:scale-95 transition">
