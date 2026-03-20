@@ -32,6 +32,47 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
   const isCompleted = booking.status === "completed";
   const isCancelled = booking.status === "cancelled" || cancelled;
 
+  const addonTotal = useMemo(() => {
+    return Object.entries(addonSelections).reduce((sum, [id, qty]) => {
+      for (const group of Object.values(addons)) {
+        const item = group.find((a) => a.id === id);
+        if (item) return sum + item.price * qty * (item.perPerson ? booking.guests : 1);
+      }
+      return sum;
+    }, 0);
+  }, [addonSelections, booking.guests]);
+
+  const toggleAddon = (id: string, delta: number) => {
+    setAddonSelections((prev) => {
+      const next = { ...prev };
+      const val = (next[id] || 0) + delta;
+      if (val <= 0) delete next[id];
+      else next[id] = val;
+      return next;
+    });
+  };
+
+  const handleOrderAddons = () => {
+    const items: { name: string; qty: number; price: number }[] = [];
+    Object.entries(addonSelections).forEach(([id, qty]) => {
+      for (const group of Object.values(addons)) {
+        const item = group.find((a) => a.id === id);
+        if (item) {
+          items.push({ name: item.name, qty, price: item.price * qty * (item.perPerson ? booking.guests : 1) });
+        }
+      }
+    });
+    setOrderedAddons((prev) => [...prev, ...items]);
+    setAddonSelections({});
+    setShowAddonsSheet(false);
+    toast({
+      title: "🎉 Add-ons Ordered!",
+      description: `₹${addonTotal.toLocaleString()} extra added to your trip`,
+    });
+  };
+
+  const orderedTotal = orderedAddons.reduce((s, a) => s + a.price, 0);
+
   const handleConfirmCancel = () => {
     setCancelling(true);
     setTimeout(() => {
