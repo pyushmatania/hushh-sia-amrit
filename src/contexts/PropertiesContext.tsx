@@ -101,40 +101,43 @@ export function PropertiesProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
 
+  const load = async () => {
+    const { data } = await supabase
+      .from("host_listings")
+      .select("*")
+      .eq("status", "published")
+      .order("created_at", { ascending: true });
+
+    if (data && data.length > 0) {
+      const staticByName = new Map(staticProperties.map((p) => [p.name.toLowerCase().trim(), p]));
+      const merged = data.map((row) => {
+        const staticMatch = staticByName.get(row.name.toLowerCase().trim());
+        return mergeDbRow(row, staticMatch);
+      });
+      const dbNames = new Set(data.map((r) => r.name.toLowerCase().trim()));
+      const missing = staticProperties.filter((p) => !dbNames.has(p.name.toLowerCase().trim()));
+      setProperties([...merged, ...missing]);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    let cancelled = false;
-
-    const load = async () => {
-      const { data, error } = await supabase
-        .from("host_listings")
-        .select("*")
-        .eq("status", "published")
-        .order("created_at", { ascending: true });
-
-      if (cancelled) return;
-
-      if (data && data.length > 0) {
-        // Build a name→static lookup for merging
-        const staticByName = new Map(staticProperties.map((p) => [p.name.toLowerCase().trim(), p]));
-
-        const merged = data.map((row) => {
-          const staticMatch = staticByName.get(row.name.toLowerCase().trim());
-          return mergeDbRow(row, staticMatch);
-        });
-
-        // Add any static properties that don't exist in DB (safety fallback)
-        const dbNames = new Set(data.map((r) => r.name.toLowerCase().trim()));
-        const missing = staticProperties.filter((p) => !dbNames.has(p.name.toLowerCase().trim()));
-
-        setProperties([...merged, ...missing]);
-      }
-      // If DB is empty, keep static properties
-      setLoading(false);
-    };
-
     load();
-    return () => { cancelled = true; };
   }, [refreshKey]);
+
+  // Re-fetch when tab becomes visible (e.g. returning from /admin)
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === "visible") load();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    // Also re-fetch on popstate (back/forward navigation)
+    window.addEventListener("focus", () => load());
+    return () => {
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("focus", () => load());
+    };
+  }, []);
 
   const refresh = () => setRefreshKey((k) => k + 1);
 
