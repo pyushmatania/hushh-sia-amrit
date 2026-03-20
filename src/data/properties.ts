@@ -27,6 +27,9 @@ import listingCoupleCocoon from "@/assets/listing-couple-cocoon.jpg";
 import listingBlueLagoon from "@/assets/listing-blue-lagoon.jpg";
 import listingGreenLawn from "@/assets/listing-green-lawn.jpg";
 import listingHushhRides from "@/assets/listing-hushh-rides.jpg";
+import listingChefOnCall from "@/assets/listing-chef-on-call.jpg";
+import listingPartyDecor from "@/assets/listing-party-decor.jpg";
+import listingDjSound from "@/assets/listing-dj-sound.jpg";
 
 export interface TimeSlot {
   id: string;
@@ -1129,7 +1132,7 @@ export const properties: Property[] = [
     name: "Chef on Call",
     description: "Private chef · Multi-cuisine · At your venue",
     fullDescription: "Book a professional private chef who comes to your stay or event venue. Choose from multi-cuisine menus including Indian, Continental, BBQ, and local Koraput specialties. Includes ingredients, cooking, serving, and cleanup. Perfect for intimate dinners, birthday parties, or corporate events.",
-    images: [listingSunsetPavilion, property2, property3],
+    images: [listingChefOnCall, property2, property3],
     rating: 4.8,
     reviewCount: 67,
     location: "Jeypore, Odisha",
@@ -1170,7 +1173,7 @@ export const properties: Property[] = [
     name: "Party Decor Studio",
     description: "Themes · Balloons · Flowers · Custom setups",
     fullDescription: "Full-service decoration for any occasion — birthdays, anniversaries, proposals, pre-weddings, baby showers. Choose from 15+ themes or go custom. Includes setup, props, and teardown. Balloon arches, flower walls, neon signs, photo booths — we do it all!",
-    images: [listingBirthdayHall, property1, property2],
+    images: [listingPartyDecor, property1, property2],
     rating: 4.7,
     reviewCount: 112,
     location: "Jeypore, Odisha",
@@ -1253,7 +1256,7 @@ export const properties: Property[] = [
     name: "DJ & Sound System",
     description: "Professional DJ · Lights · Sound · Fog machine",
     fullDescription: "Full DJ setup with professional sound system, intelligent lighting, fog machine, and a curated playlist across Bollywood, EDM, retro, and regional music. Our DJ arrives at your venue, sets up, and runs the show. Perfect for house parties, birthdays, and celebrations.",
-    images: [listingEmberGrounds, property3, property2],
+    images: [listingDjSound, property3, property2],
     rating: 4.8,
     reviewCount: 156,
     location: "Jeypore, Odisha",
