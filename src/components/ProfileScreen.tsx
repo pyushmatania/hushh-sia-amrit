@@ -601,6 +601,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
           <ReferralScreen onBack={() => setShowReferral(false)} />
         )}
       </AnimatePresence>
+      <IdentityUploadSheet open={showIdentityUpload} onClose={() => setShowIdentityUpload(false)} />
       <AnimatePresence>
         {showPublicProfile && (
           <PublicProfileScreen userId={user?.id || "mock-guest"} onBack={() => setShowPublicProfile(false)} />
