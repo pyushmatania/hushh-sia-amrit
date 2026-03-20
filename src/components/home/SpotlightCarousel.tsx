@@ -42,17 +42,41 @@ const accentStyles: VideoAccent[] = [
   null,
 ];
 
-function getAccentBorderStyle(color: string, side: string): React.CSSProperties {
-  const base: React.CSSProperties = { position: "absolute", pointerEvents: "none", zIndex: 2, borderRadius: "20px" };
-  if (side === "left") return { ...base, inset: 0, borderLeft: `2.5px solid ${color}`, maskImage: "linear-gradient(to bottom, transparent 5%, black 30%, black 70%, transparent 95%)", WebkitMaskImage: "linear-gradient(to bottom, transparent 5%, black 30%, black 70%, transparent 95%)" };
-  if (side === "right") return { ...base, inset: 0, borderRight: `2.5px solid ${color}`, maskImage: "linear-gradient(to bottom, transparent 5%, black 30%, black 70%, transparent 95%)", WebkitMaskImage: "linear-gradient(to bottom, transparent 5%, black 30%, black 70%, transparent 95%)" };
-  return { ...base, inset: 0, borderTop: `2.5px solid ${color}`, maskImage: "linear-gradient(to right, transparent 5%, black 30%, black 70%, transparent 95%)", WebkitMaskImage: "linear-gradient(to right, transparent 5%, black 30%, black 70%, transparent 95%)" };
+function AccentBorder({ color, radius }: { color: string; radius: string }) {
+  return (
+    <>
+      <div style={{
+        position: "absolute", left: 0, top: 0, bottom: 0, width: "2.5px", zIndex: 3,
+        pointerEvents: "none", borderRadius: radius,
+        background: color,
+        maskImage: "linear-gradient(to bottom, black 0%, black 40%, transparent 85%)",
+        WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 40%, transparent 85%)",
+      }} />
+      <div style={{
+        position: "absolute", left: 0, top: 0, right: 0, height: "2.5px", zIndex: 3,
+        pointerEvents: "none", borderRadius: radius,
+        background: color,
+        maskImage: "linear-gradient(to right, black 0%, black 30%, transparent 70%)",
+        WebkitMaskImage: "linear-gradient(to right, black 0%, black 30%, transparent 70%)",
+      }} />
+    </>
+  );
 }
 
-function getGlowGradient(color: string, side: string): string {
-  if (side === "left") return `linear-gradient(to right, ${color}12 0%, transparent 25%)`;
-  if (side === "right") return `linear-gradient(to left, ${color}12 0%, transparent 25%)`;
-  return `linear-gradient(to bottom, ${color}12 0%, transparent 25%)`;
+function AccentTag({ tag }: { tag: { label: string; bg: string; icon: React.ReactNode } }) {
+  return (
+    <span
+      className="absolute top-4 left-4 text-[10px] font-bold tracking-wider pl-3 pr-4 py-1.5 flex items-center gap-1 shadow-lg z-10"
+      style={{
+        background: tag.bg, color: "white", letterSpacing: "0.08em",
+        clipPath: "polygon(0 0, 100% 0, 88% 100%, 0 100%)",
+        borderRadius: "4px 8px 8px 4px",
+      }}
+    >
+      {tag.icon}
+      {tag.label}
+    </span>
+  );
 }
 
 interface SpotlightCarouselProps {
@@ -112,13 +136,13 @@ function VideoCard({
           border: accent ? "none" : "1px solid rgba(255,255,255,0.08)",
         }}
       >
-        {/* Fading accent border */}
-        {accent && <div style={getAccentBorderStyle(accent.color, accent.side)} />}
-        {/* Subtle glow overlay */}
+        {/* L-shaped fading border */}
+        {accent && <AccentBorder color={accent.color} radius="20px" />}
+        {/* Subtle corner glow */}
         {accent && (
           <div
             className="absolute inset-0 z-[1] pointer-events-none rounded-[20px]"
-            style={{ background: getGlowGradient(accent.color, accent.side) }}
+            style={{ background: `radial-gradient(ellipse at top left, ${accent.color}12 0%, transparent 50%)` }}
           />
         )}
 
@@ -137,16 +161,8 @@ function VideoCard({
           />
         )}
 
-        {/* Accent tag */}
-        {accent?.tag && (
-          <span
-            className="absolute top-4 left-4 text-[10px] font-bold tracking-wider px-3 py-1.5 rounded-full flex items-center gap-1 shadow-lg z-10"
-            style={{ background: accent.tag.bg, color: "white", letterSpacing: "0.08em" }}
-          >
-            {accent.tag.icon}
-            {accent.tag.label}
-          </span>
-        )}
+        {/* Asymmetrical accent tag */}
+        {accent?.tag && <AccentTag tag={accent.tag} />}
 
         <button
           onClick={(e) => { e.stopPropagation(); setMuted(!muted); }}
