@@ -417,6 +417,16 @@ React 18 · TypeScript 5.8 · Vite 8 · Tailwind CSS 3.4 · shadcn/ui · CVA · 
 - Video assets generated for all curated packs
 - Addon type extended with `emoji` field for item-level iconography
 
+---
+
+## 📐 Conventions & Guidelines
+
+### Adding Features
+1. Implement the feature
+2. Add changelog entry to `HUSHH.md` under the appropriate version
+3. Add entry to `src/components/AppDocumentation.tsx` `changeLog` array
+4. Document new screens in Screen-by-Screen section
+
 ### Code Style
 - Semantic design tokens only — never raw colors
 - All colors in HSL
