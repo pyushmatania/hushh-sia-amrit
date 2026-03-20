@@ -10,65 +10,65 @@ interface UseDragReorderOptions<T> {
 export function useDragReorder<T>({ items, getId, getCategory, onReorder }: UseDragReorderOptions<T>) {
   const [dragId, setDragId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
+
+  // Use refs to avoid stale closures in drag event handlers
+  const dragIdRef = useRef<string | null>(null);
   const dragCatRef = useRef<string | null>(null);
+  const itemsRef = useRef(items);
+  itemsRef.current = items;
+
+  const getIdRef = useRef(getId);
+  getIdRef.current = getId;
+  const getCategoryRef = useRef(getCategory);
+  getCategoryRef.current = getCategory;
+  const onReorderRef = useRef(onReorder);
+  onReorderRef.current = onReorder;
 
   const getDragHandleProps = useCallback((item: T) => {
-    const id = getId(item);
-    const cat = getCategory?.(item) ?? "__all__";
+    const id = getIdRef.current(item);
+    const cat = getCategoryRef.current?.(item) ?? "__all__";
     return {
       draggable: true,
       onDragStart: (e: React.DragEvent) => {
         e.dataTransfer.effectAllowed = "move";
-        // Set drag data so the browser shows a drag ghost
         e.dataTransfer.setData("text/plain", id);
-        setDragId(id);
+        dragIdRef.current = id;
         dragCatRef.current = cat;
+        setDragId(id);
       },
     };
-  }, [getId, getCategory]);
+  }, []);
 
-  const getDropTargetProps = useCallback((item: T) => {
-    const id = getId(item);
-    const cat = getCategory?.(item) ?? "__all__";
-    return {
-      onDragOver: (e: React.DragEvent) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = "move";
-        if (id !== dragOverId) setDragOverId(id);
-      },
-      onDragLeave: () => {
-        setDragOverId(prev => prev === id ? null : prev);
-      },
-      onDrop: (e: React.DragEvent) => {
-        e.preventDefault();
-        handleDrop(id, cat);
-      },
-    };
-  }, [getId, getCategory, dragOverId]);
-
-  const handleDrop = useCallback(async (targetId: string, targetCat: string) => {
-    if (!dragId || dragId === targetId) {
+  const executeDrop = useCallback((targetId: string, targetCat: string) => {
+    const currentDragId = dragIdRef.current;
+    if (!currentDragId || currentDragId === targetId) {
+      dragIdRef.current = null;
       setDragId(null);
       setDragOverId(null);
       return;
     }
 
-    // Only allow reorder within same category
-    if (getCategory && targetCat !== dragCatRef.current) {
+    const gc = getCategoryRef.current;
+    if (gc && targetCat !== dragCatRef.current) {
+      dragIdRef.current = null;
       setDragId(null);
       setDragOverId(null);
       return;
     }
 
-    const relevantItems = getCategory
-      ? items.filter(i => (getCategory(i)) === targetCat)
-      : items;
+    const currentItems = itemsRef.current;
+    const gid = getIdRef.current;
 
-    const ids = relevantItems.map(getId);
-    const fromIdx = ids.indexOf(dragId);
+    const relevantItems = gc
+      ? currentItems.filter(i => gc(i) === targetCat)
+      : currentItems;
+
+    const ids = relevantItems.map(gid);
+    const fromIdx = ids.indexOf(currentDragId);
     const toIdx = ids.indexOf(targetId);
 
     if (fromIdx === -1 || toIdx === -1) {
+      dragIdRef.current = null;
       setDragId(null);
       setDragOverId(null);
       return;
@@ -80,19 +80,43 @@ export function useDragReorder<T>({ items, getId, getCategory, onReorder }: UseD
 
     const updates = reordered.map((id, idx) => ({ id, sort_order: idx }));
 
+    dragIdRef.current = null;
     setDragId(null);
     setDragOverId(null);
 
-    await onReorder(updates);
-  }, [dragId, items, getId, getCategory, onReorder]);
+    onReorderRef.current(updates);
+  }, []);
+
+  const getDropTargetProps = useCallback((item: T) => {
+    const id = getIdRef.current(item);
+    const cat = getCategoryRef.current?.(item) ?? "__all__";
+    return {
+      onDragOver: (e: React.DragEvent) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+        setDragOverId(id);
+      },
+      onDragLeave: () => {
+        setDragOverId(prev => prev === id ? null : prev);
+      },
+      onDrop: (e: React.DragEvent) => {
+        e.preventDefault();
+        executeDrop(id, cat);
+      },
+    };
+  }, [executeDrop]);
 
   const handleDragEnd = useCallback(() => {
+    dragIdRef.current = null;
     setDragId(null);
     setDragOverId(null);
   }, []);
 
-  const isDragging = (item: T) => getId(item) === dragId;
-  const isDragOver = (item: T) => getId(item) === dragOverId && getId(item) !== dragId;
+  const isDragging = (item: T) => getIdRef.current(item) === dragId;
+  const isDragOver = (item: T) => {
+    const id = getIdRef.current(item);
+    return id === dragOverId && id !== dragId;
+  };
 
   return {
     dragId,
