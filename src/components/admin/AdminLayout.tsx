@@ -14,7 +14,8 @@ export type AdminPage =
   | "dashboard" | "properties" | "bookings" | "users"
   | "analytics" | "curations" | "tags" | "campaigns"
   | "coupons" | "orders" | "exports" | "ai" | "alerts" | "audit"
-  | "earnings" | "pricing" | "achievements" | "loyalty";
+  | "earnings" | "pricing" | "achievements" | "loyalty"
+  | "calendar" | "requests";
 
 interface AdminLayoutProps {
   activePage: AdminPage;
@@ -27,6 +28,8 @@ const navItems: { id: AdminPage; label: string; icon: typeof LayoutDashboard; ad
   { id: "ai", label: "AI Assistant", icon: Bot },
   { id: "alerts", label: "Smart Alerts", icon: Bell },
   { id: "pricing", label: "Dynamic Pricing", icon: Zap },
+  { id: "calendar", label: "Calendar", icon: CalendarCheck },
+  { id: "requests", label: "Booking Requests", icon: CalendarCheck },
   { id: "properties", label: "Properties", icon: Building2 },
   { id: "bookings", label: "Bookings", icon: CalendarCheck },
   { id: "users", label: "Users (CRM)", icon: Users, adminOnly: true },

@@ -20,6 +20,8 @@ import HostEarnings from "@/components/admin/HostEarnings";
 import DynamicPricing from "@/components/admin/DynamicPricing";
 import AdminAchievements from "@/components/admin/AdminAchievements";
 import AdminLoyaltyReferrals from "@/components/admin/AdminLoyaltyReferrals";
+import HostCalendar from "@/components/admin/HostCalendar";
+import BookingRequests from "@/components/admin/BookingRequests";
 import AuthScreen from "@/components/AuthScreen";
 import { Shield, Loader2 } from "lucide-react";
 
@@ -73,6 +75,8 @@ export default function Admin() {
       case "exports": return <AdminExports />;
       case "achievements": return <AdminAchievements />;
       case "loyalty": return <AdminLoyaltyReferrals />;
+      case "calendar": return <HostCalendar />;
+      case "requests": return <BookingRequests />;
       case "audit": return <AdminAuditLog />;
       default: return <CommandCenter />;
     }
