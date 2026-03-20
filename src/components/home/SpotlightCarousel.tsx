@@ -110,10 +110,11 @@ function VideoCard({
         style={{
           height: "70vh", maxHeight: "580px",
           border: accent ? "none" : "1px solid rgba(255,255,255,0.08)",
-          boxShadow: accent ? getAccentShadow(accent.color, accent.side) : undefined,
         }}
       >
-        {/* Fading glow overlay */}
+        {/* Fading accent border */}
+        {accent && <div style={getAccentBorderStyle(accent.color, accent.side)} />}
+        {/* Subtle glow overlay */}
         {accent && (
           <div
             className="absolute inset-0 z-[1] pointer-events-none rounded-[20px]"
