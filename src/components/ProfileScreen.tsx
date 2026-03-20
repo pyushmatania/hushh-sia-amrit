@@ -16,6 +16,7 @@ import becomeHostImg from "@/assets/become-host.png";
 import EditProfileSheet from "./EditProfileSheet";
 import SettingsSheet from "./SettingsSheet";
 import LoyaltyScreen from "./LoyaltyScreen";
+import ReferralScreen from "./ReferralScreen";
 
 const themeOptions = [
   { id: "light" as const, label: "Light", icon: Sun },
