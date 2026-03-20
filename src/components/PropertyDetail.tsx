@@ -634,12 +634,7 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
           <Info size={18} className="text-primary" /> Good to Know
         </h3>
         <div className="glass rounded-2xl p-4 mb-8 space-y-3">
-          {[
-            { q: "Is there parking?", a: "Yes, free parking is available for up to 5 vehicles." },
-            { q: "Can I bring my own food?", a: "Outside food is allowed at most venues. Check house rules." },
-            { q: "Is the property wheelchair accessible?", a: "Please contact the host for accessibility details." },
-            { q: "Are pets allowed?", a: "Varies by property. Check the house rules section above." },
-          ].map((faq, i) => (
+          {getFaqs(property.primaryCategory).map((faq, i) => (
             <div key={i}>
               <p className="text-sm font-medium text-foreground">{faq.q}</p>
               <p className="text-xs text-muted-foreground mt-0.5">{faq.a}</p>
