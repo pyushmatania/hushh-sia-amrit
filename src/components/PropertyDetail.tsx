@@ -9,7 +9,9 @@ import {
   Snowflake, Camera, Theater, Waves, ChefHat, Guitar,
   Flower2, Gamepad2, Navigation, Phone, CalendarX2,
   Shield, Zap, Info, Coffee, Utensils, ParkingCircle,
-  CalendarIcon
+  CalendarIcon, Monitor, BatteryCharging, VolumeX,
+  Armchair, GlassWater, Bell, Truck, Radio, Disc3,
+  Wind, Tag
 } from "lucide-react";
 import { useState, useCallback } from "react";
 import { format } from "date-fns";
@@ -28,10 +30,10 @@ const amenityIconMap: Record<string, React.ReactNode> = {
   "Parking": <Car size={22} strokeWidth={1.5} />,
   "BBQ Area": <Beef size={22} strokeWidth={1.5} />,
   "Fairy Lights": <Sparkles size={22} strokeWidth={1.5} />,
-  "Outdoor Dining": <Beef size={22} strokeWidth={1.5} />,
+  "Outdoor Dining": <Utensils size={22} strokeWidth={1.5} />,
   "Stargazing Deck": <Star size={22} strokeWidth={1.5} />,
   "Garden": <Trees size={22} strokeWidth={1.5} />,
-  "Kitchen Access": <Beef size={22} strokeWidth={1.5} />,
+  "Kitchen Access": <ChefHat size={22} strokeWidth={1.5} />,
   "Hammocks": <Sofa size={22} strokeWidth={1.5} />,
   "Movie Screen": <Clapperboard size={22} strokeWidth={1.5} />,
   "Lounge Seating": <Sofa size={22} strokeWidth={1.5} />,
@@ -61,11 +63,11 @@ const amenityIconMap: Record<string, React.ReactNode> = {
   "Turf Ground": <Trophy size={22} strokeWidth={1.5} />,
   "Floodlights": <Sparkles size={22} strokeWidth={1.5} />,
   "Changing Room": <ShieldCheck size={22} strokeWidth={1.5} />,
-  "Refreshment Counter": <Wine size={22} strokeWidth={1.5} />,
+  "Refreshment Counter": <GlassWater size={22} strokeWidth={1.5} />,
   "Karaoke System": <Mic size={22} strokeWidth={1.5} />,
   "Neon Lighting": <Rainbow size={22} strokeWidth={1.5} />,
   "Snack Bar": <Popcorn size={22} strokeWidth={1.5} />,
-  "Sound Proofing": <Volume2 size={22} strokeWidth={1.5} />,
+  "Sound Proofing": <VolumeX size={22} strokeWidth={1.5} />,
   "AC Room": <Snowflake size={22} strokeWidth={1.5} />,
   "Photo Booth": <Camera size={22} strokeWidth={1.5} />,
   "Props & Costumes": <Theater size={22} strokeWidth={1.5} />,
@@ -75,7 +77,95 @@ const amenityIconMap: Record<string, React.ReactNode> = {
   "Floating Candles": <Flame size={22} strokeWidth={1.5} />,
   "Acoustic Music": <Guitar size={22} strokeWidth={1.5} />,
   "Flower Decor": <Flower2 size={22} strokeWidth={1.5} />,
+  // New amenities
+  "High-Speed WiFi": <Wifi size={22} strokeWidth={1.5} />,
+  "Work Desk": <Monitor size={22} strokeWidth={1.5} />,
+  "Coffee Station": <Coffee size={22} strokeWidth={1.5} />,
+  "Power Backup": <BatteryCharging size={22} strokeWidth={1.5} />,
+  "Quiet Zone": <VolumeX size={22} strokeWidth={1.5} />,
+  "Private Balcony": <Trees size={22} strokeWidth={1.5} />,
+  "Mini Bar": <Wine size={22} strokeWidth={1.5} />,
+  "Room Service": <Bell size={22} strokeWidth={1.5} />,
+  "Deck Lounge": <Armchair size={22} strokeWidth={1.5} />,
+  "LED Lights": <Sparkles size={22} strokeWidth={1.5} />,
+  "Open Lawn": <Trees size={22} strokeWidth={1.5} />,
+  "Catering Space": <Utensils size={22} strokeWidth={1.5} />,
+  "AC Vehicles": <Car size={22} strokeWidth={1.5} />,
+  "Professional Drivers": <Car size={22} strokeWidth={1.5} />,
+  "Real-time Tracking": <MapPin size={22} strokeWidth={1.5} />,
+  "24/7 Available": <Clock size={22} strokeWidth={1.5} />,
+  "Outstation": <Truck size={22} strokeWidth={1.5} />,
+  "DJ Console": <Disc3 size={22} strokeWidth={1.5} />,
+  "Fog Machine": <Wind size={22} strokeWidth={1.5} />,
+  "Mic": <Mic size={22} strokeWidth={1.5} />,
+  "Setup & Teardown": <ShieldCheck size={22} strokeWidth={1.5} />,
 };
+
+const categoryLabels: Record<string, { label: string; emoji: string; bg: string }> = {
+  stay: { label: "STAY", emoji: "🏡", bg: "bg-emerald-500/15 text-emerald-400 border-emerald-500/20" },
+  experience: { label: "EXPERIENCE", emoji: "🎉", bg: "bg-purple-500/15 text-purple-400 border-purple-500/20" },
+  service: { label: "SERVICE", emoji: "🛎️", bg: "bg-amber-500/15 text-amber-400 border-amber-500/20" },
+  curation: { label: "CURATION", emoji: "✨", bg: "bg-rose-500/15 text-rose-400 border-rose-500/20" },
+};
+
+function getNearbyPlaces(category: string) {
+  if (category === "service") return [
+    { icon: <MapPin size={16} />, name: "Service covers all of Jeypore", distance: "City-wide" },
+    { icon: <Phone size={16} />, name: "24/7 customer support", distance: "Always" },
+    { icon: <Car size={16} />, name: "Pickup from your location", distance: "On demand" },
+  ];
+  if (category === "experience") return [
+    { icon: <Coffee size={16} />, name: "Cafes & Restaurants", distance: "0.5 km" },
+    { icon: <Car size={16} />, name: "Parking Available", distance: "On-site" },
+    { icon: <Trees size={16} />, name: "Jagannath Sagar Lake", distance: "1.2 km" },
+    { icon: <Camera size={16} />, name: "Photo-worthy spots", distance: "Nearby" },
+  ];
+  return [
+    { icon: <Coffee size={16} />, name: "Cafes & Restaurants", distance: "0.5 km" },
+    { icon: <ParkingCircle size={16} />, name: "Public Parking", distance: "0.2 km" },
+    { icon: <Utensils size={16} />, name: "Local Street Food", distance: "0.8 km" },
+    { icon: <Trees size={16} />, name: "Jagannath Sagar Lake", distance: "1.2 km" },
+    { icon: <Camera size={16} />, name: "Koraput Museum", distance: "3.5 km" },
+  ];
+}
+
+function getFaqs(category: string) {
+  if (category === "service") return [
+    { q: "How do I book this service?", a: "Select a slot and the service team will arrive at your venue." },
+    { q: "Can I cancel or reschedule?", a: "Free cancellation up to 24 hours before. Reschedule anytime." },
+    { q: "Do you serve outside Jeypore?", a: "Yes, we cover Koraput district. Extra charges may apply." },
+    { q: "Is setup included?", a: "Yes, full setup and teardown is included in the price." },
+  ];
+  if (category === "experience") return [
+    { q: "Do I need to bring anything?", a: "Check the house rules above. Most things are provided." },
+    { q: "Is this suitable for kids?", a: "Varies by experience. Check capacity and rules section." },
+    { q: "Can I customize the experience?", a: "Yes! Contact the host via chat for custom requests." },
+    { q: "What if it rains?", a: "Indoor backup available for most experiences, or free reschedule." },
+  ];
+  return [
+    { q: "Is there parking?", a: "Yes, free parking is available for up to 5 vehicles." },
+    { q: "Can I bring my own food?", a: "Outside food is allowed at most venues. Check house rules." },
+    { q: "Is the property wheelchair accessible?", a: "Please contact the host for accessibility details." },
+    { q: "Are pets allowed?", a: "Varies by property. Check the house rules section above." },
+  ];
+}
+
+function getSafetyItems(category: string) {
+  if (category === "service") return [
+    { icon: <ShieldCheck size={16} />, text: "Verified professionals" },
+    { icon: <Phone size={16} />, text: "24/7 support line" },
+    { icon: <Shield size={16} />, text: "Insured equipment" },
+    { icon: <Activity size={16} />, text: "Background-checked staff" },
+  ];
+  return [
+    { icon: <ShieldCheck size={16} />, text: "Verified property" },
+    { icon: <Activity size={16} />, text: "First aid available" },
+    { icon: <Zap size={16} />, text: "Fire extinguisher" },
+    { icon: <Sparkles size={16} />, text: "Deep cleaned" },
+    { icon: <Camera size={16} />, text: "CCTV in common areas" },
+    { icon: <Phone size={16} />, text: "24/7 host support" },
+  ];
+}
 
 interface PropertyDetailProps {
   property: Property;
@@ -192,6 +282,25 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
 
       {/* Content */}
       <div className="px-5 pt-5">
+        {/* Category badge + discount label */}
+        <div className="flex items-center gap-2 mb-2 flex-wrap">
+          {categoryLabels[property.primaryCategory] && (
+            <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${categoryLabels[property.primaryCategory].bg}`}>
+              {categoryLabels[property.primaryCategory].emoji} {categoryLabels[property.primaryCategory].label}
+            </span>
+          )}
+          {property.propertyType && (
+            <span className="text-[10px] font-medium px-2.5 py-1 rounded-full bg-foreground/5 text-muted-foreground border border-foreground/10">
+              {property.propertyType}
+            </span>
+          )}
+          {property.discountLabel && (
+            <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+              <Tag size={10} /> {property.discountLabel}
+            </span>
+          )}
+        </div>
+
         <h1 className="text-2xl font-semibold text-foreground">{property.name}</h1>
         <div className="flex items-center gap-2 mt-1.5 text-sm text-muted-foreground flex-wrap">
           <span className="flex items-center gap-1 text-foreground font-medium">
@@ -207,7 +316,7 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
         {property.verified && (
           <div className="flex items-center gap-1.5 mt-2 text-sm text-muted-foreground">
             <BadgeCheck size={16} className="text-primary" />
-            <span>Verified property</span>
+            <span>Verified {property.primaryCategory === "service" ? "service" : "property"}</span>
           </div>
         )}
 
@@ -432,15 +541,11 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
         <div className="border-b border-border my-5" />
 
         {/* Nearby Attractions */}
-        <h3 className="text-lg font-semibold text-foreground mb-3">🗺️ What's Nearby</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-3">
+          {property.primaryCategory === "service" ? "📍 Service Area" : "🗺️ What's Nearby"}
+        </h3>
         <div className="space-y-2 mb-5">
-          {[
-            { icon: <Coffee size={16} />, name: "Cafes & Restaurants", distance: "0.5 km" },
-            { icon: <ParkingCircle size={16} />, name: "Public Parking", distance: "0.2 km" },
-            { icon: <Utensils size={16} />, name: "Local Street Food", distance: "0.8 km" },
-            { icon: <Trees size={16} />, name: "Jagannath Sagar Lake", distance: "1.2 km" },
-            { icon: <Camera size={16} />, name: "Koraput Museum", distance: "3.5 km" },
-          ].map((place, i) => (
+          {getNearbyPlaces(property.primaryCategory).map((place, i) => (
             <div key={i} className="flex items-center gap-3 glass rounded-xl px-4 py-3">
               <span className="text-primary">{place.icon}</span>
               <span className="text-sm text-foreground flex-1">{place.name}</span>
@@ -455,20 +560,24 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
         <h3 className="text-lg font-semibold text-foreground mb-3">💰 Pricing Details</h3>
         <div className="glass rounded-2xl p-4 mb-5 space-y-3">
           <div className="flex justify-between text-sm">
-            <span className="text-foreground/80">Base price (per slot)</span>
+            <span className="text-foreground/80">Base price {property.primaryCategory === "service" ? "(per booking)" : "(per slot)"}</span>
             <span className="text-foreground font-medium">₹{property.basePrice.toLocaleString()}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-foreground/80">Service fee</span>
+            <span className="text-foreground/80">{property.primaryCategory === "service" ? "Platform fee" : "Service fee"}</span>
             <span className="text-foreground font-medium">₹{Math.round(property.basePrice * 0.1).toLocaleString()}</span>
           </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-foreground/80">Cleaning fee</span>
-            <span className="text-foreground font-medium">₹199</span>
-          </div>
+          {property.primaryCategory !== "service" && (
+            <div className="flex justify-between text-sm">
+              <span className="text-foreground/80">Cleaning fee</span>
+              <span className="text-foreground font-medium">₹199</span>
+            </div>
+          )}
           <div className="border-t border-border pt-2 flex justify-between text-sm">
             <span className="text-foreground font-semibold">Estimated total</span>
-            <span className="text-gradient-warm font-bold">₹{(property.basePrice + Math.round(property.basePrice * 0.1) + 199).toLocaleString()}</span>
+            <span className="text-gradient-warm font-bold">
+              ₹{(property.basePrice + Math.round(property.basePrice * 0.1) + (property.primaryCategory !== "service" ? 199 : 0)).toLocaleString()}
+            </span>
           </div>
           <p className="text-[11px] text-muted-foreground">* Final price depends on selected slot & guest count</p>
         </div>
@@ -507,17 +616,10 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
 
         {/* Safety & Hygiene */}
         <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
-          <Shield size={18} className="text-primary" /> Safety & Hygiene
+          <Shield size={18} className="text-primary" /> {property.primaryCategory === "service" ? "Trust & Safety" : "Safety & Hygiene"}
         </h3>
         <div className="grid grid-cols-2 gap-2 mb-5">
-          {[
-            { icon: <ShieldCheck size={16} />, text: "Verified property" },
-            { icon: <Activity size={16} />, text: "First aid available" },
-            { icon: <Zap size={16} />, text: "Fire extinguisher" },
-            { icon: <Sparkles size={16} />, text: "Deep cleaned" },
-            { icon: <Camera size={16} />, text: "CCTV in common areas" },
-            { icon: <Phone size={16} />, text: "24/7 host support" },
-          ].map((item, i) => (
+          {getSafetyItems(property.primaryCategory).map((item, i) => (
             <div key={i} className="flex items-center gap-2 glass rounded-xl px-3 py-2.5">
               <span className="text-primary shrink-0">{item.icon}</span>
               <span className="text-xs text-foreground">{item.text}</span>
@@ -532,12 +634,7 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
           <Info size={18} className="text-primary" /> Good to Know
         </h3>
         <div className="glass rounded-2xl p-4 mb-8 space-y-3">
-          {[
-            { q: "Is there parking?", a: "Yes, free parking is available for up to 5 vehicles." },
-            { q: "Can I bring my own food?", a: "Outside food is allowed at most venues. Check house rules." },
-            { q: "Is the property wheelchair accessible?", a: "Please contact the host for accessibility details." },
-            { q: "Are pets allowed?", a: "Varies by property. Check the house rules section above." },
-          ].map((faq, i) => (
+          {getFaqs(property.primaryCategory).map((faq, i) => (
             <div key={i}>
               <p className="text-sm font-medium text-foreground">{faq.q}</p>
               <p className="text-xs text-muted-foreground mt-0.5">{faq.a}</p>
