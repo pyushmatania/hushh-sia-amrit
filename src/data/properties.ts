@@ -1173,7 +1173,7 @@ export const properties: Property[] = [
     name: "Party Decor Studio",
     description: "Themes · Balloons · Flowers · Custom setups",
     fullDescription: "Full-service decoration for any occasion — birthdays, anniversaries, proposals, pre-weddings, baby showers. Choose from 15+ themes or go custom. Includes setup, props, and teardown. Balloon arches, flower walls, neon signs, photo booths — we do it all!",
-    images: [listingBirthdayHall, property1, property2],
+    images: [listingPartyDecor, property1, property2],
     rating: 4.7,
     reviewCount: 112,
     location: "Jeypore, Odisha",
