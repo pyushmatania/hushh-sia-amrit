@@ -390,7 +390,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
         </motion.div>
 
         {/* QR Code - only for upcoming */}
-        {isUpcoming && !isCancelled && (
+        {(isUpcoming || isActive) && !isCancelled && (
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
