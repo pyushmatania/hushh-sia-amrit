@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.weekly-digest]
 verify_jwt = false
+
+[functions.property-history-ai]
+verify_jwt = false

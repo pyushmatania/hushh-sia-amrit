@@ -16,7 +16,7 @@ export type AdminPage =
   | "analytics" | "curations" | "tags" | "campaigns"
   | "coupons" | "orders" | "exports" | "ai" | "alerts" | "audit"
   | "earnings" | "pricing" | "achievements" | "loyalty"
-  | "calendar" | "requests";
+  | "calendar" | "requests" | "history";
 
 interface AdminLayoutProps {
   activePage: AdminPage;
@@ -35,6 +35,7 @@ const navItems: { id: AdminPage; label: string; icon: typeof LayoutDashboard; ad
   { id: "bookings", label: "Bookings", icon: CalendarCheck },
   { id: "orders", label: "Live Orders", icon: ShoppingCart },
   { id: "clients", label: "Client Directory", icon: UserCheck },
+  { id: "history", label: "Property History", icon: ScrollText },
   { id: "users", label: "Users (CRM)", icon: Users, adminOnly: true },
   { id: "analytics", label: "Analytics", icon: BarChart3 },
   { id: "earnings", label: "Earnings", icon: Wallet },
