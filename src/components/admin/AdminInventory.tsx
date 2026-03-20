@@ -35,7 +35,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
   const [catFilter, setCatFilter] = useState("all");
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Partial<InventoryItem> | null>(null);
-  const [isCreating, setIsCreating] = useState(false);
+  const [previewMode, setPreviewMode] = useState(false);
 
   // Drag state
   const [dragId, setDragId] = useState<string | null>(null);
