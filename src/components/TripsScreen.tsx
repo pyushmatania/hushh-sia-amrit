@@ -290,6 +290,24 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
   const [refreshKey, setRefreshKey] = useState(0);
   const [activeFilter, setActiveFilter] = useState<string>("all");
   const [orderingBooking, setOrderingBooking] = useState<Booking | null>(null);
+  const [idVerified, setIdVerified] = useState<boolean | null>(null);
+  const [idSheetOpen, setIdSheetOpen] = useState(false);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const checkVerification = async () => {
+      if (!user) { setIdVerified(false); return; }
+      const { data } = await supabase
+        .from("identity_verifications")
+        .select("status")
+        .eq("user_id", user.id)
+        .order("submitted_at", { ascending: false })
+        .limit(1);
+      setIdVerified(data && data.length > 0 && data[0].status === "approved");
+    };
+    checkVerification();
+  }, [user]);
+
   const handleRefresh = useCallback(async () => {
     await new Promise((r) => setTimeout(r, 800));
     setRefreshKey((k) => k + 1);
