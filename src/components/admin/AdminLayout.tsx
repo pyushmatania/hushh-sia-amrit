@@ -163,6 +163,7 @@ export default function AdminLayout({ activePage, onNavigate, children }: AdminL
           {children}
         </main>
       </div>
+      <FloatingChecklist />
     </div>
   );
 }
