@@ -393,7 +393,16 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
             <ArrowLeft size={18} className="text-foreground" />
           </motion.button>
           <div className="flex gap-2">
-            <motion.button className="w-9 h-9 rounded-full glass flex items-center justify-center" whileTap={{ scale: 0.85 }}>
+            <motion.button
+              className="w-9 h-9 rounded-full glass flex items-center justify-center"
+              whileTap={{ scale: 0.85 }}
+              onClick={async () => {
+                const shared = await shareProperty(property);
+                if (shared && !navigator.share) {
+                  // clipboard fallback used
+                }
+              }}
+            >
               <Share2 size={16} className="text-foreground" />
             </motion.button>
             <motion.button
