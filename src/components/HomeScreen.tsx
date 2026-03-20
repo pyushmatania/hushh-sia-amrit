@@ -207,7 +207,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 {stayFilters.map(type => (
                   <button
                     key={type}
-                    onClick={() => setSubFilter(type)}
+                    onClick={() => handleSubFilter(type)}
                     className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 ${
                       subFilter === type
                         ? "bg-primary text-primary-foreground font-semibold shadow-md"
@@ -223,7 +223,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 <div className="mt-4">
                   <div className="flex items-center justify-between px-5 mb-3">
                     <h2 className="text-lg font-bold text-foreground">🔥 Trending Stays</h2>
-                    <button onClick={() => setSubFilter("All")} className="text-xs text-primary font-medium flex items-center gap-1">View all <ArrowRight size={12} /></button>
+                    <button onClick={() => handleSubFilter("All")} className="text-xs text-primary font-medium flex items-center gap-1">View all <ArrowRight size={12} /></button>
                   </div>
                   <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
                     {trendingNow.map((p, i) => (
@@ -237,7 +237,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 <div className="mt-6">
                   <div className="flex items-center justify-between px-5 mb-3">
                     <h2 className="text-lg font-bold text-foreground">💸 Budget Friendly</h2>
-                    <button onClick={() => setSubFilter("All")} className="text-xs text-primary font-medium flex items-center gap-1">View all <ArrowRight size={12} /></button>
+                    <button onClick={() => handleSubFilter("All")} className="text-xs text-primary font-medium flex items-center gap-1">View all <ArrowRight size={12} /></button>
                   </div>
                   <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
                     {budgetPicks.map((p, i) => (
@@ -273,7 +273,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 {experienceFilters.map(tag => (
                   <button
                     key={tag}
-                    onClick={() => setSubFilter(tag)}
+                    onClick={() => handleSubFilter(tag)}
                     className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 ${
                       subFilter === tag
                         ? "bg-primary text-primary-foreground font-semibold shadow-md"
@@ -323,7 +323,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 {serviceFilters.map(tag => (
                   <button
                     key={tag}
-                    onClick={() => setSubFilter(tag)}
+                    onClick={() => handleSubFilter(tag)}
                     className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 ${
                       subFilter === tag
                         ? "bg-primary text-primary-foreground font-semibold shadow-md"
@@ -355,7 +355,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 {curationFilters.map(tag => (
                   <button
                     key={tag}
-                    onClick={() => setSubFilter(tag)}
+                    onClick={() => handleSubFilter(tag)}
                     className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 ${
                       subFilter === tag
                         ? "bg-primary text-primary-foreground font-semibold shadow-md"
