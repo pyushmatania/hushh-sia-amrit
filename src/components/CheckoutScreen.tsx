@@ -3,7 +3,7 @@ import { ArrowLeft, Tag, CreditCard, Smartphone, Banknote, ChevronRight, Shield,
 import { useState } from "react";
 import { format } from "date-fns";
 import type { Property } from "@/data/properties";
-import { addons } from "@/data/properties";
+import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { Calendar } from "@/components/ui/calendar";
 
 interface CheckoutScreenProps {
