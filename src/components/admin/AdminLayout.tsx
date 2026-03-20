@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Building2, CalendarCheck, Users, BarChart3,
   Sparkles, Tag, Megaphone, Ticket, ShoppingCart, LogOut,
   ChevronLeft, ChevronRight, Shield, Menu, X, FileSpreadsheet,
-  Bot, Bell, ScrollText
+  Bot, Bell, ScrollText, Wallet
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useAdmin } from "@/hooks/use-admin";
@@ -12,7 +12,8 @@ import { useAdmin } from "@/hooks/use-admin";
 export type AdminPage =
   | "dashboard" | "properties" | "bookings" | "users"
   | "analytics" | "curations" | "tags" | "campaigns"
-  | "coupons" | "orders" | "exports" | "ai" | "alerts" | "audit";
+  | "coupons" | "orders" | "exports" | "ai" | "alerts" | "audit"
+  | "earnings";
 
 interface AdminLayoutProps {
   activePage: AdminPage;
@@ -28,6 +29,7 @@ const navItems: { id: AdminPage; label: string; icon: typeof LayoutDashboard; ad
   { id: "bookings", label: "Bookings", icon: CalendarCheck },
   { id: "users", label: "Users (CRM)", icon: Users, adminOnly: true },
   { id: "analytics", label: "Analytics", icon: BarChart3 },
+  { id: "earnings", label: "Earnings", icon: Wallet },
   { id: "curations", label: "Curations", icon: Sparkles },
   { id: "campaigns", label: "Campaigns", icon: Megaphone },
   { id: "coupons", label: "Coupons", icon: Ticket },
@@ -49,7 +51,6 @@ export default function AdminLayout({ activePage, onNavigate, children }: AdminL
     <div className={`flex flex-col h-full bg-card/95 backdrop-blur-xl border-r border-border ${
       mobile ? "w-72" : collapsed ? "w-[72px]" : "w-64"
     } transition-all duration-300`}>
-      {/* Logo */}
       <div className="px-4 py-5 flex items-center gap-3 border-b border-border">
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shrink-0">
           <Shield size={18} className="text-primary-foreground" />
@@ -62,7 +63,6 @@ export default function AdminLayout({ activePage, onNavigate, children }: AdminL
         )}
       </div>
 
-      {/* Nav items */}
       <nav className="flex-1 py-3 px-2 space-y-1 overflow-y-auto">
         {filteredNav.map(item => {
           const active = activePage === item.id;
@@ -86,7 +86,6 @@ export default function AdminLayout({ activePage, onNavigate, children }: AdminL
         })}
       </nav>
 
-      {/* Footer */}
       <div className="p-3 border-t border-border space-y-2">
         {(!collapsed || mobile) && (
           <div className="px-3 py-2">
@@ -107,7 +106,6 @@ export default function AdminLayout({ activePage, onNavigate, children }: AdminL
 
   return (
     <div className="h-screen flex bg-background overflow-hidden">
-      {/* Desktop sidebar */}
       <div className="hidden md:flex relative">
         <Sidebar />
         <button
@@ -118,7 +116,6 @@ export default function AdminLayout({ activePage, onNavigate, children }: AdminL
         </button>
       </div>
 
-      {/* Mobile overlay */}
       <AnimatePresence>
         {mobileOpen && (
           <>
@@ -138,9 +135,7 @@ export default function AdminLayout({ activePage, onNavigate, children }: AdminL
         )}
       </AnimatePresence>
 
-      {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Mobile header */}
         <div className="md:hidden flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-lg">
           <button onClick={() => setMobileOpen(true)} className="p-1.5 rounded-lg hover:bg-secondary">
             <Menu size={20} className="text-foreground" />
