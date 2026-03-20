@@ -75,6 +75,7 @@ export default function Admin() {
 
   const renderPage = () => {
     switch (page) {
+      case "catalog": return <AdminCatalog />;
       case "dashboard": return <CommandCenter onNavigate={setPage} />;
       case "ai": return <AdminAI />;
       case "alerts": return <AdminAlerts onNavigate={(p) => setPage(p as AdminPage)} />;

@@ -145,7 +145,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
           <Input placeholder="Search items..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
         </div>
         <div className="flex gap-2 overflow-x-auto hide-scrollbar">
-          {["all", ...categoryOptions].map(c => (
+          {["all", ...availableCats].map(c => (
             <button key={c} onClick={() => setCatFilter(c)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize whitespace-nowrap transition ${
                 catFilter === c ? "bg-primary/15 text-primary" : "bg-secondary text-muted-foreground hover:text-foreground"
