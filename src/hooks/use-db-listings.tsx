@@ -74,20 +74,20 @@ export function useDbListings() {
     }
 
     if (!fetchPromise) {
-      fetchPromise = supabase
-        .from("host_listings")
-        .select("*")
-        .eq("status", "published")
-        .order("created_at", { ascending: true })
-        .then(({ data, error }) => {
-          if (error || !data || data.length === 0) {
-            cachedProperties = fallbackProperties;
-            return fallbackProperties;
-          }
-          const mapped = data.map(mapDbToProperty);
-          cachedProperties = mapped;
-          return mapped;
-        });
+      fetchPromise = (async () => {
+        const { data, error } = await supabase
+          .from("host_listings")
+          .select("*")
+          .eq("status", "published")
+          .order("created_at", { ascending: true });
+        if (error || !data || data.length === 0) {
+          cachedProperties = fallbackProperties;
+          return fallbackProperties;
+        }
+        const mapped = data.map(mapDbToProperty);
+        cachedProperties = mapped;
+        return mapped;
+      })();
     }
 
     fetchPromise.then((result) => {
