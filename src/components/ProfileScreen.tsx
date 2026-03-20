@@ -4,7 +4,7 @@ import {
   ChevronRight, Bell, Settings, HelpCircle, LogOut,
   Shield, Gift, Star, Sun, Moon, Monitor, BadgeCheck,
   CreditCard, Globe, Accessibility, FileText, Heart,
-  Award, Zap, Calendar, TrendingUp, Crown, Pencil, LogIn
+  Award, Zap, Calendar, TrendingUp, Crown, Pencil, LogIn, EyeOff
 } from "lucide-react";
 import { useState, useCallback, useRef } from "react";
 import { useTheme } from "@/hooks/use-theme";
