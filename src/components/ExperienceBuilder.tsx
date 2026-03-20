@@ -75,6 +75,7 @@ export default function ExperienceBuilder({ property, slotId, guests, date, onBa
   const categories = Object.keys(addons);
   const [activeCategory, setActiveCategory] = useState(categories[0]);
   const tabsRef = useRef<HTMLDivElement>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const toggle = (id: string, delta: number) => {
     setSelections((prev) => {
