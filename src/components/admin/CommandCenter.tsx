@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   IndianRupee, CalendarCheck, Eye, Users, TrendingUp,
-  ArrowUpRight, Flame, Clock, Sparkles
+  ArrowUpRight, Flame, Clock, Sparkles, Bot, Send, Loader2
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from "recharts";
@@ -10,6 +10,7 @@ import LiveActivityFeed from "./LiveActivityFeed";
 import LiveOrdersWidget from "./LiveOrdersWidget";
 import BookingHeatmap from "./BookingHeatmap";
 import WeeklyDigestPreview from "./WeeklyDigestPreview";
+import { Input } from "@/components/ui/input";
 import type { AdminPage } from "./AdminLayout";
 
 interface Stats {
@@ -45,6 +46,136 @@ const mockChartData = Array.from({ length: 14 }, (_, i) => ({
   revenue: Math.floor(Math.random() * 15000) + 5000,
 }));
 
+/* ─── AI Command Search ─── */
+function AdminAISearch() {
+  const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [answer, setAnswer] = useState<string | null>(null);
+
+  const handleSearch = async () => {
+    if (!query.trim()) return;
+    setLoading(true);
+    setAnswer(null);
+    try {
+      // Gather all operational data
+      const [bookingsRes, ordersRes, orderItemsRes, profilesRes, listingsRes, reviewsRes, inventoryRes] = await Promise.all([
+        supabase.from("bookings").select("*").order("created_at", { ascending: false }).limit(100),
+        supabase.from("orders").select("*").order("created_at", { ascending: false }).limit(100),
+        supabase.from("order_items").select("*").limit(500),
+        supabase.from("profiles").select("display_name, tier, loyalty_points, location, created_at, user_id").limit(100),
+        supabase.from("host_listings").select("id, name, category, base_price, capacity, status").limit(50),
+        supabase.from("reviews").select("property_id, rating, content, created_at").limit(100),
+        supabase.from("inventory").select("name, emoji, stock, category, unit_price, available").limit(100),
+      ]);
+
+      const listingMap = new Map<string, string>();
+      (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, l.name));
+
+      const oiMap = new Map<string, any[]>();
+      (orderItemsRes.data ?? []).forEach(item => {
+        const list = oiMap.get(item.order_id) || [];
+        list.push(item);
+        oiMap.set(item.order_id, list);
+      });
+
+      const context = {
+        properties: listingsRes.data ?? [],
+        bookings: (bookingsRes.data ?? []).map(b => ({
+          ...b, propertyName: listingMap.get(b.property_id),
+        })),
+        orders: (ordersRes.data ?? []).map(o => ({
+          ...o, propertyName: listingMap.get(o.property_id),
+          items: (oiMap.get(o.id) || []).map((i: any) => `${i.item_emoji}${i.item_name} x${i.quantity}`).join(", "),
+        })),
+        clients: profilesRes.data ?? [],
+        reviews: (reviewsRes.data ?? []).map(r => ({
+          ...r, propertyName: listingMap.get(r.property_id),
+        })),
+        inventory: inventoryRes.data ?? [],
+        summary: {
+          totalRevenue: (bookingsRes.data ?? []).reduce((s, b) => s + Number(b.total), 0),
+          totalBookings: (bookingsRes.data ?? []).length,
+          totalOrders: (ordersRes.data ?? []).length,
+          totalClients: (profilesRes.data ?? []).length,
+        },
+      };
+
+      const resp = await supabase.functions.invoke("property-history-ai", {
+        body: { query, context: JSON.stringify(context), mode: "general" },
+      });
+      if (resp.error) throw resp.error;
+      setAnswer(resp.data?.answer || "No answer found.");
+    } catch (e) {
+      console.error(e);
+      setAnswer("Sorry, couldn't process the query. Try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const examples = [
+    "What was our busiest day this month?",
+    "Which property generates the most revenue?",
+    "Top 5 most ordered food items",
+    "Compare weekday vs weekend bookings",
+    "Which clients are at risk of churning?",
+    "Predict tomorrow's demand",
+  ];
+
+  return (
+    <div className="rounded-2xl border border-border bg-card overflow-hidden">
+      <div className="p-4 border-b border-border">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+            <Bot size={14} className="text-primary" />
+          </div>
+          <h3 className="text-sm font-bold text-foreground">AI Command Search</h3>
+          <span className="text-[9px] text-muted-foreground bg-secondary px-2 py-0.5 rounded-full">Ask anything</span>
+        </div>
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <Sparkles size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/60" />
+            <Input
+              placeholder="Ask anything — revenue, guests, orders, trends, predictions..."
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && handleSearch()}
+              className="pl-9 h-9 rounded-xl text-xs"
+            />
+          </div>
+          <button onClick={handleSearch} disabled={loading || !query.trim()}
+            className="px-4 h-9 rounded-xl bg-primary text-primary-foreground text-xs font-medium flex items-center gap-1.5 hover:bg-primary/90 transition disabled:opacity-50 active:scale-95">
+            {loading ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+            Ask
+          </button>
+        </div>
+        <div className="flex flex-wrap gap-1.5 mt-2">
+          {examples.map((eq, i) => (
+            <button key={i} onClick={() => setQuery(eq)}
+              className="text-[9px] px-2 py-1 rounded-full bg-secondary text-muted-foreground hover:text-foreground hover:bg-primary/10 transition">
+              {eq}
+            </button>
+          ))}
+        </div>
+      </div>
+      <AnimatePresence>
+        {answer && (
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+            className="p-4 bg-primary/5 border-t border-primary/10">
+            <div className="flex items-start gap-2">
+              <Bot size={14} className="text-primary shrink-0 mt-0.5" />
+              <p className="text-xs text-foreground leading-relaxed whitespace-pre-wrap">{answer}</p>
+            </div>
+            <button onClick={() => setAnswer(null)} className="mt-2 text-[9px] text-muted-foreground hover:text-foreground transition">
+              Dismiss
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export default function CommandCenter({ onNavigate }: { onNavigate?: (page: AdminPage) => void }) {
   const [stats, setStats] = useState<Stats>({ revenue: 0, bookings: 0, activeListings: 0, totalUsers: 0 });
 
@@ -79,6 +210,10 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
         <h1 className="text-2xl font-bold text-foreground">Command Center</h1>
         <p className="text-sm text-muted-foreground mt-1">Real-time overview of your operations</p>
       </div>
+
+      {/* AI Command Search */}
+      <AdminAISearch />
+
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         {statCards.map((card, i) => (
