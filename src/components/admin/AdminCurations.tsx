@@ -384,7 +384,7 @@ export default function AdminCurations() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       )}
