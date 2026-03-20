@@ -220,11 +220,57 @@ function AccessibilitySettings() {
   );
 }
 
+function PrivacySettings() {
+  const { privacyMode, togglePrivacy } = usePrivacyMode();
+  const items = [
+    { key: "privacy_mode" as const, label: "Privacy Mode 🤫", desc: "Hide your name & booking IDs from screen", isPrivacy: true },
+    { key: "discreet_notif" as const, label: "Discreet notifications", desc: "Show minimal info in push notifications" },
+    { key: "private_entry" as const, label: "Private entry instructions", desc: "Get discreet arrival directions" },
+  ];
+  const [extras, setExtras] = useState({ discreet_notif: false, private_entry: false });
+
+  return (
+    <div className="space-y-1">
+      {items.map((item, i) => (
+        <motion.div
+          key={item.key}
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: i * 0.04 }}
+          className="flex items-center justify-between py-4 border-b border-border last:border-0"
+        >
+          <div className="flex-1 min-w-0 pr-4">
+            <p className="text-sm font-medium text-foreground">{item.label}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
+          </div>
+          <ToggleSwitch
+            enabled={item.isPrivacy ? privacyMode : extras[item.key as keyof typeof extras]}
+            onChange={() => item.isPrivacy ? togglePrivacy() : setExtras(s => ({ ...s, [item.key]: !s[item.key as keyof typeof extras] }))}
+          />
+        </motion.div>
+      ))}
+      {privacyMode && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          className="rounded-xl p-3 mt-2"
+          style={{ background: "hsl(var(--primary) / 0.06)", border: "1px solid hsl(var(--primary) / 0.15)" }}
+        >
+          <p className="text-[11px] text-muted-foreground">
+            🤫 <span className="text-foreground font-medium">Privacy Mode is ON.</span> Your name and booking details are masked on-screen. Perfect for shared devices.
+          </p>
+        </motion.div>
+      )}
+    </div>
+  );
+}
+
 const settingTitles: Record<string, string> = {
   notifications: "Notifications",
   security: "Login & Security",
   language: "Language & Region",
   accessibility: "Accessibility",
+  privacy: "Privacy",
 };
 
 const settingIcons: Record<string, typeof Bell> = {
@@ -232,6 +278,7 @@ const settingIcons: Record<string, typeof Bell> = {
   security: Shield,
   language: Globe,
   accessibility: Accessibility,
+  privacy: EyeOff,
 };
 
 export default function SettingsSheet({ open, onClose, settingType }: SettingsSheetProps) {
