@@ -198,7 +198,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
                   {...getDropTargetProps(item)}
                   onDragEnd={handleDragEnd}
                   style={getDragItemStyle(item)}
-                  className={`rounded-xl border bg-card p-3 flex items-center gap-2 ${
+                  className={`rounded-xl border bg-card p-3 flex items-center gap-2 select-none ${
                     item.stock <= item.low_stock_threshold ? "border-amber-500/30" : "border-border"
                   } ${!item.available ? "opacity-50" : ""}`}
                 >

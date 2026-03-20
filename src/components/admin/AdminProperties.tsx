@@ -370,7 +370,7 @@ export default function AdminProperties() {
               {...getDropTargetProps(listing)}
               onDragEnd={handleDragEnd}
               style={getDragItemStyle(listing)}
-              className="rounded-xl border border-border bg-card p-3 flex gap-2 cursor-pointer hover:border-primary/30"
+              className="rounded-xl border border-border bg-card p-3 flex gap-2 cursor-pointer hover:border-primary/30 select-none"
               onClick={() => openEdit(listing)}
             >
               <div className="w-16 h-16 rounded-lg bg-secondary shrink-0 overflow-hidden">

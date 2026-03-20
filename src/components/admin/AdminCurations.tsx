@@ -322,7 +322,7 @@ export default function AdminCurations() {
               {...getDropTargetProps(c)}
               onDragEnd={handleDragEnd}
               style={getDragItemStyle(c)}
-              className="rounded-xl border border-border bg-card p-4 hover:border-primary/30"
+              className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 select-none"
               onClick={() => startEdit(c)}
             >
               <div className="flex items-start gap-2">
