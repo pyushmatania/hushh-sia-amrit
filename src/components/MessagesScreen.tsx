@@ -807,6 +807,21 @@ export default function MessagesScreen() {
   const [readNotifications, setReadNotifications] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
+  const [pinnedIds, setPinnedIds] = useState<Set<string>>(new Set(["c1"]));
+  const [archivedIds, setArchivedIds] = useState<Set<string>>(new Set());
+
+  const handlePin = useCallback((id: string) => {
+    setPinnedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
+  const handleArchive = useCallback((id: string) => {
+    setArchivedIds(prev => new Set(prev).add(id));
+  }, []);
 
   const unreadNotifCount = notifications.filter((n) => !n.read && !readNotifications.has(n.id)).length;
   const unreadChatCount = user
@@ -822,16 +837,15 @@ export default function MessagesScreen() {
         lastMessage: c.last_message,
         time: formatDistanceToNow(new Date(c.last_message_time), { addSuffix: true }),
         unread: c.unread_count, online: false, verified: false, role: "Host" as string,
-        typing: false, pinned: false, conversation: c,
+        typing: false, pinned: pinnedIds.has(c.id), conversation: c,
       }))
-    : mockThreads.map((t) => ({ ...t, conversation: null as Conversation | null }));
+    : mockThreads.map((t) => ({ ...t, pinned: pinnedIds.has(t.id), conversation: null as Conversation | null }));
 
-  // Filter chats by search
+  const visibleChats = chatThreads.filter(t => !archivedIds.has(t.id));
   const filteredChats = searchQuery
-    ? chatThreads.filter(t => t.name.toLowerCase().includes(searchQuery.toLowerCase()) || t.lastMessage.toLowerCase().includes(searchQuery.toLowerCase()))
-    : chatThreads;
+    ? visibleChats.filter(t => t.name.toLowerCase().includes(searchQuery.toLowerCase()) || t.lastMessage.toLowerCase().includes(searchQuery.toLowerCase()))
+    : visibleChats;
 
-  // Split pinned and unpinned
   const pinnedChats = filteredChats.filter(t => t.pinned);
   const otherChats = filteredChats.filter(t => !t.pinned);
 
