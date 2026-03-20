@@ -49,7 +49,15 @@ export default function StaffOrders() {
 
     const channel = supabase
       .channel('staff-orders-realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => {
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, (payload) => {
+        const newOrder = payload.new as any;
+        if (newOrder.status === 'pending' && initialLoadDone.current) {
+          playWinJingle();
+          hapticHeavy();
+        }
+        loadOrders();
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders' }, () => {
         loadOrders();
       })
       .subscribe();
