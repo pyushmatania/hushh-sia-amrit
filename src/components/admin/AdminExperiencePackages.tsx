@@ -406,6 +406,9 @@ export default function AdminExperiencePackages() {
                 <label htmlFor="pkg-active" className="text-sm text-foreground">Active</label>
               </div>
 
+              </>
+              )}
+
               <button
                 onClick={save}
                 className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 active:scale-[0.98] transition"
