@@ -119,6 +119,7 @@ function TiltCard({
   onRebook: (id: string) => void;
   onOrderFood?: (b: Booking) => void;
 }) {
+  const { properties } = useDbListings();
   const cardRef = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
