@@ -12,6 +12,7 @@ import ResetPassword from "./pages/ResetPassword.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const Admin = lazy(() => import("./pages/Admin.tsx"));
+const Staff = lazy(() => import("./pages/Staff.tsx"));
 
 const queryClient = new QueryClient();
 
