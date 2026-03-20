@@ -99,7 +99,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
           {activeCategory === "home" && (
             <>
               <SectionDivider title="🔥 TONIGHT'S VIBE" />
-              <SpotlightCarousel properties={properties} onPropertyTap={onPropertyTap} />
+              <SpotlightCarousel properties={properties} onPropertyTap={onPropertyTap} category="home" />
 
               <SectionDivider title="BOOK YOUR EXPERIENCE" />
               <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4">
