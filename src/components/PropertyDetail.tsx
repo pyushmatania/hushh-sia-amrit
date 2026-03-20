@@ -15,8 +15,6 @@ import {
 } from "lucide-react";
 import { useState, useCallback } from "react";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
-import type { Property } from "@/data/properties";
 import type { Property } from "@/data/properties";
 import { properties as allProperties, addons } from "@/data/properties";
 import ReviewSection from "@/components/ReviewSection";
