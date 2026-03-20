@@ -313,24 +313,22 @@ export default function AdminCurations() {
         <div className="space-y-3">{[1,2,3].map(i => <div key={i} className="h-24 rounded-xl bg-secondary animate-pulse" />)}</div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {filtered.map((c, i) => (
-            <motion.div
+          {filtered.map((c) => (
+            <div
               key={c.id}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.04 }}
-              draggable
-              onDragStart={() => setDragId(c.id)}
-              onDragOver={(e) => { e.preventDefault(); setDragOverId(c.id); }}
-              onDrop={() => handleCurationDrop(c.id)}
-              onDragEnd={() => { setDragId(null); setDragOverId(null); }}
-              className={`rounded-xl border bg-card p-4 cursor-grab active:cursor-grabbing hover:border-primary/30 transition-all ${
-                dragId === c.id ? "opacity-40 scale-[0.97]" : ""
-              } ${dragOverId === c.id && dragId !== c.id ? "border-primary shadow-sm shadow-primary/20" : "border-border"}`}
+              {...getDropTargetProps(c)}
+              onDragEnd={handleDragEnd}
+              className={`rounded-xl border bg-card p-4 hover:border-primary/30 transition-all ${
+                isDragging(c) ? "opacity-40 scale-[0.97]" : ""
+              } ${isDragOver(c) ? "border-primary shadow-sm shadow-primary/20" : "border-border"}`}
               onClick={() => startEdit(c)}
             >
               <div className="flex items-start gap-2">
-                <div className="text-muted-foreground/40 hover:text-muted-foreground transition shrink-0 mt-1">
+                <div
+                  {...getDragHandleProps(c)}
+                  onClick={(e) => e.stopPropagation()}
+                  className="text-muted-foreground/40 hover:text-muted-foreground transition shrink-0 mt-1 cursor-grab active:cursor-grabbing"
+                >
                   <GripVertical size={16} />
                 </div>
                 <span className="text-2xl">{c.emoji}</span>
