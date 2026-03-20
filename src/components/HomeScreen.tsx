@@ -337,14 +337,19 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
             </>
           )}
 
-          {/* ═══════ SERVICES TAB ═══════ */}
+          {/* ═══════ SERVICES TAB — Minimal Icon Grid ═══════ */}
           {activeCategory === "service" && (
             <>
-              {/* Spotlight Video Cards for Services */}
-              <SectionDivider title="🛎️ PREMIUM SERVICES" />
-              <SpotlightCarousel properties={serviceProperties} onPropertyTap={onPropertyTap} category="service" />
+              <div className="px-5 pt-6 pb-1">
+                <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                  Services 🛎️
+                </h1>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Add to any booking, or book standalone
+                </p>
+              </div>
 
-              <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
+              <div className="px-4 pt-3 pb-3 flex gap-2 overflow-x-auto hide-scrollbar">
                 {serviceFilters.map(tag => (
                   <button
                     key={tag}
@@ -360,11 +365,15 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 ))}
               </div>
 
-              <div className="mt-4 px-5">
-                <p className="text-sm text-muted-foreground mb-4">
-                  Add these services to any Stay or Experience booking, or book them standalone.
-                </p>
-              </div>
+              <ServiceGrid services={filteredProperties} onServiceTap={onPropertyTap} />
+
+              {filteredProperties.length === 0 && (
+                <div className="px-5 py-12 text-center">
+                  <p className="text-3xl mb-2">🔍</p>
+                  <p className="text-foreground font-semibold">No services match this filter</p>
+                  <button onClick={() => handleSubFilter("All")} className="text-xs text-primary mt-2 font-medium">Show all services</button>
+                </div>
+              )}
             </>
           )}
 
