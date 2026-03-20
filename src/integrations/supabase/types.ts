@@ -56,6 +56,60 @@ export type Database = {
         }
         Relationships: []
       }
+      campaigns: {
+        Row: {
+          active: boolean
+          banner_color: string
+          created_at: string
+          created_by: string | null
+          description: string
+          discount_type: string
+          discount_value: number
+          end_date: string | null
+          id: string
+          start_date: string
+          target_audience: string[]
+          target_properties: string[]
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          banner_color?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          discount_type?: string
+          discount_value?: number
+          end_date?: string | null
+          id?: string
+          start_date?: string
+          target_audience?: string[]
+          target_properties?: string[]
+          title: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          banner_color?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          discount_type?: string
+          discount_value?: number
+          end_date?: string | null
+          id?: string
+          start_date?: string
+          target_audience?: string[]
+          target_properties?: string[]
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       conversations: {
         Row: {
           created_at: string
@@ -77,6 +131,51 @@ export type Database = {
           participant_1?: string
           participant_2?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      coupons: {
+        Row: {
+          active: boolean
+          code: string
+          created_at: string
+          description: string
+          discount_type: string
+          discount_value: number
+          expires_at: string | null
+          id: string
+          max_uses: number | null
+          min_order: number
+          user_specific_id: string | null
+          uses: number
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          created_at?: string
+          description?: string
+          discount_type?: string
+          discount_value?: number
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          min_order?: number
+          user_specific_id?: string | null
+          uses?: number
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          created_at?: string
+          description?: string
+          discount_type?: string
+          discount_value?: number
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          min_order?: number
+          user_specific_id?: string | null
+          uses?: number
         }
         Relationships: []
       }
@@ -408,6 +507,30 @@ export type Database = {
         }
         Relationships: []
       }
+      property_tags: {
+        Row: {
+          color: string
+          created_at: string
+          icon: string
+          id: string
+          name: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          icon?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          icon?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       referral_codes: {
         Row: {
           code: string
@@ -575,6 +698,38 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      tag_assignments: {
+        Row: {
+          created_at: string
+          id: string
+          tag_id: string
+          target_id: string
+          target_type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          tag_id: string
+          target_id: string
+          target_type?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          tag_id?: string
+          target_id?: string
+          target_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tag_assignments_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "property_tags"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_milestones: {
         Row: {
