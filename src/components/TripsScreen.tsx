@@ -275,134 +275,6 @@ function TiltCard({
   );
 }
 
-// Comprehensive demo trips for all statuses
-const demoTrips: Booking[] = [
-  // Active trips
-  {
-    id: "demo-active",
-    propertyId: "1",
-    date: "Mar 20, 2026",
-    slot: "Evening · 6 PM – 11 PM",
-    guests: 4,
-    total: 8500,
-    status: "active",
-    bookingId: "HUSHH-ACT001",
-  },
-  // Upcoming trips
-  {
-    id: "demo-up-1",
-    propertyId: "10",
-    date: "Mar 25, 2026",
-    slot: "Night · 7 PM – 11 PM",
-    guests: 2,
-    total: 4200,
-    status: "upcoming",
-    bookingId: "HUSHH-UP0025",
-  },
-  {
-    id: "demo-up-2",
-    propertyId: "9",
-    date: "Apr 2, 2026",
-    slot: "Full Day · 10 AM – 10 PM",
-    guests: 12,
-    total: 18500,
-    status: "upcoming",
-    bookingId: "HUSHH-UP0026",
-  },
-  {
-    id: "demo-up-3",
-    propertyId: "14",
-    date: "Apr 10, 2026",
-    slot: "Morning · 9 AM – 1 PM",
-    guests: 8,
-    total: 6400,
-    status: "upcoming",
-    bookingId: "HUSHH-UP0027",
-  },
-  // Completed (past) trips
-  {
-    id: "demo-comp-1",
-    propertyId: "2",
-    date: "Mar 10, 2026",
-    slot: "Full Day · 10 AM – 10 PM",
-    guests: 8,
-    total: 15200,
-    status: "completed",
-    bookingId: "HUSHH-CP0012",
-  },
-  {
-    id: "demo-comp-2",
-    propertyId: "5",
-    date: "Feb 28, 2026",
-    slot: "Evening · 5 PM – 10 PM",
-    guests: 6,
-    total: 9800,
-    status: "completed",
-    bookingId: "HUSHH-CP0011",
-  },
-  {
-    id: "demo-comp-3",
-    propertyId: "7",
-    date: "Feb 14, 2026",
-    slot: "Night · 8 PM – 12 AM",
-    guests: 2,
-    total: 3500,
-    status: "completed",
-    bookingId: "HUSHH-CP0010",
-  },
-  {
-    id: "demo-comp-4",
-    propertyId: "3",
-    date: "Jan 26, 2026",
-    slot: "Full Day · 10 AM – 10 PM",
-    guests: 15,
-    total: 22000,
-    status: "completed",
-    bookingId: "HUSHH-CP0009",
-  },
-  {
-    id: "demo-comp-5",
-    propertyId: "6",
-    date: "Jan 1, 2026",
-    slot: "Night · 9 PM – 2 AM",
-    guests: 10,
-    total: 14500,
-    status: "completed",
-    bookingId: "HUSHH-CP0008",
-  },
-  {
-    id: "demo-comp-6",
-    propertyId: "8",
-    date: "Dec 25, 2025",
-    slot: "Evening · 5 PM – 11 PM",
-    guests: 4,
-    total: 7200,
-    status: "completed",
-    bookingId: "HUSHH-CP0007",
-  },
-  // Cancelled trips
-  {
-    id: "demo-cancel-1",
-    propertyId: "4",
-    date: "Feb 20, 2026",
-    slot: "Night · 8 PM – 1 AM",
-    guests: 2,
-    total: 6000,
-    status: "cancelled",
-    bookingId: "HUSHH-CX0005",
-  },
-  {
-    id: "demo-cancel-2",
-    propertyId: "11",
-    date: "Jan 15, 2026",
-    slot: "Morning · 10 AM – 2 PM",
-    guests: 4,
-    total: 2800,
-    status: "cancelled",
-    bookingId: "HUSHH-CX0004",
-  },
-];
-
 const filterTabs = [
   { value: "all", label: "All", dotColor: "" },
   { value: "active", label: "Active", dotColor: "bg-success" },
@@ -420,14 +292,14 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
     setRefreshKey((k) => k + 1);
   }, []);
 
-  const allBookings = useMemo(() => bookings.length > 0 ? bookings : demoTrips, [bookings]);
-  const isDemo = bookings.length === 0;
+  // bookings already includes demo data for guests (from useBookings hook)
+  const isDemo = bookings.some((b) => b.id.startsWith("demo-"));
 
   // Sort: active first, then upcoming, then completed, then cancelled
   const sortedBookings = useMemo(() => {
     const order: Record<string, number> = { active: 0, upcoming: 1, completed: 2, cancelled: 3 };
-    return [...allBookings].sort((a, b) => (order[a.status] ?? 9) - (order[b.status] ?? 9));
-  }, [allBookings]);
+    return [...bookings].sort((a, b) => (order[a.status] ?? 9) - (order[b.status] ?? 9));
+  }, [bookings]);
 
   const filteredBookings = useMemo(
     () => activeFilter === "all" ? sortedBookings : sortedBookings.filter((b) => b.status === activeFilter),
@@ -435,10 +307,10 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
   );
 
   const counts = useMemo(() => {
-    const c: Record<string, number> = { all: allBookings.length };
-    allBookings.forEach((b) => { c[b.status] = (c[b.status] || 0) + 1; });
+    const c: Record<string, number> = { all: bookings.length };
+    bookings.forEach((b) => { c[b.status] = (c[b.status] || 0) + 1; });
     return c;
-  }, [allBookings]);
+  }, [bookings]);
 
   const handleOrderFood = useCallback((booking: Booking) => {
     setOrderingBooking(booking);
