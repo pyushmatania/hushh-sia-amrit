@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Building2, CalendarCheck, Users, BarChart3,
   Sparkles, Tag, Megaphone, Ticket, ShoppingCart, LogOut,
   ChevronLeft, ChevronRight, Shield, Menu, X, FileSpreadsheet,
-  Bot, Bell, ScrollText, Wallet
+  Bot, Bell, ScrollText, Wallet, Zap, Trophy
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useAdmin } from "@/hooks/use-admin";
@@ -13,7 +13,7 @@ export type AdminPage =
   | "dashboard" | "properties" | "bookings" | "users"
   | "analytics" | "curations" | "tags" | "campaigns"
   | "coupons" | "orders" | "exports" | "ai" | "alerts" | "audit"
-  | "earnings";
+  | "earnings" | "pricing" | "achievements";
 
 interface AdminLayoutProps {
   activePage: AdminPage;
@@ -25,6 +25,7 @@ const navItems: { id: AdminPage; label: string; icon: typeof LayoutDashboard; ad
   { id: "dashboard", label: "Command Center", icon: LayoutDashboard },
   { id: "ai", label: "AI Assistant", icon: Bot },
   { id: "alerts", label: "Smart Alerts", icon: Bell },
+  { id: "pricing", label: "Dynamic Pricing", icon: Zap },
   { id: "properties", label: "Properties", icon: Building2 },
   { id: "bookings", label: "Bookings", icon: CalendarCheck },
   { id: "users", label: "Users (CRM)", icon: Users, adminOnly: true },
@@ -36,6 +37,7 @@ const navItems: { id: AdminPage; label: string; icon: typeof LayoutDashboard; ad
   { id: "tags", label: "Tags", icon: Tag },
   { id: "orders", label: "Live Orders", icon: ShoppingCart },
   { id: "exports", label: "Exports", icon: FileSpreadsheet },
+  { id: "achievements", label: "Achievements", icon: Trophy },
   { id: "audit", label: "Audit Trail", icon: ScrollText, adminOnly: true },
 ];
 

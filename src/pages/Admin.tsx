@@ -17,6 +17,8 @@ import AdminAI from "@/components/admin/AdminAI";
 import AdminAlerts from "@/components/admin/AdminAlerts";
 import AdminAuditLog from "@/components/admin/AdminAuditLog";
 import HostEarnings from "@/components/admin/HostEarnings";
+import DynamicPricing from "@/components/admin/DynamicPricing";
+import AdminAchievements from "@/components/admin/AdminAchievements";
 import AuthScreen from "@/components/AuthScreen";
 import { Shield, Loader2 } from "lucide-react";
 
@@ -56,6 +58,7 @@ export default function Admin() {
       case "dashboard": return <CommandCenter />;
       case "ai": return <AdminAI />;
       case "alerts": return <AdminAlerts onNavigate={(p) => setPage(p as AdminPage)} />;
+      case "pricing": return <DynamicPricing />;
       case "properties": return <AdminProperties />;
       case "bookings": return <AdminBookings />;
       case "users": return <AdminUsers />;
@@ -67,6 +70,7 @@ export default function Admin() {
       case "tags": return <AdminTags />;
       case "orders": return <AdminOrders />;
       case "exports": return <AdminExports />;
+      case "achievements": return <AdminAchievements />;
       case "audit": return <AdminAuditLog />;
       default: return <CommandCenter />;
     }
