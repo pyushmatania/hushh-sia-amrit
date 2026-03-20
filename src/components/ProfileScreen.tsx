@@ -6,7 +6,7 @@ import {
   CreditCard, Globe, Accessibility, FileText, Heart,
   Award, Zap, Calendar, TrendingUp, Crown, Pencil, LogIn
 } from "lucide-react";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
 import AuthScreen from "./AuthScreen";
@@ -18,6 +18,7 @@ import EditProfileSheet from "./EditProfileSheet";
 import SettingsSheet from "./SettingsSheet";
 import LoyaltyScreen from "./LoyaltyScreen";
 import ReferralScreen from "./ReferralScreen";
+import AppDocumentation from "./AppDocumentation";
 
 const themeOptions = [
   { id: "light" as const, label: "Light", icon: Sun },
@@ -64,6 +65,9 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
   const [showLoyalty, setShowLoyalty] = useState(false);
   const [showReferral, setShowReferral] = useState(false);
   const [showPublicProfile, setShowPublicProfile] = useState(false);
+  const [showDocs, setShowDocs] = useState(false);
+  const versionTapCount = useRef(0);
+  const versionTapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [profile, setProfile] = useState({
     name: user?.user_metadata?.full_name || "Guest Explorer",
     location: "Jeypore, India",
@@ -507,8 +511,24 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
         )}
       </motion.div>
 
-      {/* Version */}
-      <p className="text-center text-[11px] text-muted-foreground pb-4">Hushh v1.0 · Made in Jeypore ❤️</p>
+      {/* Version — tap 5× to reveal docs */}
+      <p
+        className="text-center text-[11px] text-muted-foreground pb-4 cursor-pointer select-none"
+        onClick={() => {
+          versionTapCount.current += 1;
+          if (versionTapTimer.current) clearTimeout(versionTapTimer.current);
+          if (versionTapCount.current >= 5) {
+            versionTapCount.current = 0;
+            setShowDocs(true);
+          } else {
+            versionTapTimer.current = setTimeout(() => {
+              versionTapCount.current = 0;
+            }, 2000);
+          }
+        }}
+      >
+        Hushh v1.0 · Made in Jeypore ❤️
+      </p>
 
       {/* Sheets */}
       <EditProfileSheet
@@ -535,6 +555,11 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
       <AnimatePresence>
         {showPublicProfile && (
           <PublicProfileScreen userId={user?.id || "mock-guest"} onBack={() => setShowPublicProfile(false)} />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showDocs && (
+          <AppDocumentation open={showDocs} onClose={() => setShowDocs(false)} />
         )}
       </AnimatePresence>
     </div>
