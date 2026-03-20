@@ -1,4 +1,4 @@
-import { motion, useMotionValue, useTransform, useSpring, useAnimation, PanInfo } from "framer-motion";
+import { motion, useMotionValue, useTransform, useSpring, useAnimation, useScroll, PanInfo } from "framer-motion";
 import { MapPin, Calendar, Clock, ChevronRight, Ticket, QrCode, Users, X } from "lucide-react";
 import { useRef, useState, useCallback, useMemo } from "react";
 import { properties } from "@/data/properties";
@@ -109,6 +109,13 @@ function TiltCard({
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
+  // Scroll-based parallax for the image
+  const { scrollYProgress } = useScroll({
+    target: cardRef,
+    offset: ["start end", "end start"],
+  });
+  const imgY = useTransform(scrollYProgress, [0, 1], [-20, 20]);
+
   const rotateX = useSpring(useTransform(y, [-150, 150], [12, -12]), { stiffness: 300, damping: 30 });
   const rotateY = useSpring(useTransform(x, [-150, 150], [-12, 12]), { stiffness: 300, damping: 30 });
   const glareX = useTransform(x, [-150, 150], [0, 100]);
@@ -176,11 +183,12 @@ function TiltCard({
           }}
         >
           {/* Background image with overlay */}
-          <div className="relative h-[220px]">
-            <img
+          <div className="relative h-[220px] overflow-hidden">
+            <motion.img
               src={property.images[0]}
               alt={property.name}
-              className="w-full h-full object-cover"
+              className="w-full h-[260px] object-cover"
+              style={{ y: imgY }}
             />
             {/* Dark gradient overlay — deeper for contrast */}
             <div className="absolute inset-0 bg-gradient-to-t from-card via-card/80 to-transparent" />
