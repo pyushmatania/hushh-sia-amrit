@@ -541,15 +541,11 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
         <div className="border-b border-border my-5" />
 
         {/* Nearby Attractions */}
-        <h3 className="text-lg font-semibold text-foreground mb-3">🗺️ What's Nearby</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-3">
+          {property.primaryCategory === "service" ? "📍 Service Area" : "🗺️ What's Nearby"}
+        </h3>
         <div className="space-y-2 mb-5">
-          {[
-            { icon: <Coffee size={16} />, name: "Cafes & Restaurants", distance: "0.5 km" },
-            { icon: <ParkingCircle size={16} />, name: "Public Parking", distance: "0.2 km" },
-            { icon: <Utensils size={16} />, name: "Local Street Food", distance: "0.8 km" },
-            { icon: <Trees size={16} />, name: "Jagannath Sagar Lake", distance: "1.2 km" },
-            { icon: <Camera size={16} />, name: "Koraput Museum", distance: "3.5 km" },
-          ].map((place, i) => (
+          {getNearbyPlaces(property.primaryCategory).map((place, i) => (
             <div key={i} className="flex items-center gap-3 glass rounded-xl px-4 py-3">
               <span className="text-primary">{place.icon}</span>
               <span className="text-sm text-foreground flex-1">{place.name}</span>
