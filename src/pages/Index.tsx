@@ -162,7 +162,7 @@ export default function Index() {
     <div className="min-h-screen bg-background">
       <AnimatePresence mode="wait">
         {screen.type === "home" && activeTab === "home" && (
-          <HomeScreen key="home" onPropertyTap={handlePropertyTap} onSearchTap={() => setShowSearch(true)} onMapTap={() => setShowMap(true)} onNotificationTap={() => setShowNotifications(true)} />
+          <HomeScreen key="home" onPropertyTap={handlePropertyTap} onSearchTap={() => setShowSearch(true)} onMapTap={() => setShowMap(true)} onNotificationTap={() => setShowNotifications(true)} wishlist={wishlist} onToggleWishlist={toggleWishlist} />
         )}
         {screen.type === "home" && activeTab === "wishlists" && (
           <WishlistScreen
