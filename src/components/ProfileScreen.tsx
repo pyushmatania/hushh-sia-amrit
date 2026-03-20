@@ -511,8 +511,24 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
         )}
       </motion.div>
 
-      {/* Version */}
-      <p className="text-center text-[11px] text-muted-foreground pb-4">Hushh v1.0 · Made in Jeypore ❤️</p>
+      {/* Version — tap 5× to reveal docs */}
+      <p
+        className="text-center text-[11px] text-muted-foreground pb-4 cursor-pointer select-none"
+        onClick={() => {
+          versionTapCount.current += 1;
+          if (versionTapTimer.current) clearTimeout(versionTapTimer.current);
+          if (versionTapCount.current >= 5) {
+            versionTapCount.current = 0;
+            setShowDocs(true);
+          } else {
+            versionTapTimer.current = setTimeout(() => {
+              versionTapCount.current = 0;
+            }, 2000);
+          }
+        }}
+      >
+        Hushh v1.0 · Made in Jeypore ❤️
+      </p>
 
       {/* Sheets */}
       <EditProfileSheet
