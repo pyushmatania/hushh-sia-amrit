@@ -934,15 +934,18 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
             <div>
               <span className="font-semibold text-gradient-warm text-lg">₹{selectedSlotData.price.toLocaleString()}</span>
               <span className="text-muted-foreground text-sm"> / {selectedSlotData.label.toLowerCase()}</span>
-              <p className="text-xs text-muted-foreground">{guests} guests · {format(selectedDate, "d MMM")}</p>
+              <p className="text-xs text-muted-foreground">
+                {guests} guests · {format(selectedDate, "d MMM")}
+                {addedExtras.length > 0 && <span className="text-primary font-medium"> · +{addedExtras.length} extra{addedExtras.length > 1 ? "s" : ""}</span>}
+              </p>
             </div>
             <motion.button
-              onClick={() => onBook(property, selectedSlot!, guests, selectedDate)}
+              onClick={() => onBook(property, selectedSlot!, guests, selectedDate, addedExtras.length > 0 ? addedExtras : undefined)}
               className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold text-sm glow-primary"
               whileTap={{ scale: 0.93 }}
               transition={{ type: "spring", stiffness: 400 }}
             >
-              Reserve
+              Reserve{addedExtras.length > 0 ? ` (${addedExtras.length + 1})` : ""}
             </motion.button>
           </motion.div>
         )}
