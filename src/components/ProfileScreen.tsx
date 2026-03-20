@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
+import PublicProfileScreen from "./PublicProfileScreen";
 import {
   ChevronRight, Bell, Settings, HelpCircle, LogOut,
   Shield, Gift, Star, Sun, Moon, Monitor, BadgeCheck,
