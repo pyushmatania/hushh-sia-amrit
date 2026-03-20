@@ -71,13 +71,24 @@ interface ExperienceBuilderProps {
 
 export default function ExperienceBuilder({ property, slotId, guests, date, onBack, onContinue, extras }: ExperienceBuilderProps) {
   const [selections, setSelections] = useState<Record<string, number>>({});
+  const [hapticId, setHapticId] = useState<string | null>(null);
   const slot = property.slots.find((s) => s.id === slotId)!;
   const categories = Object.keys(addons);
   const [activeCategory, setActiveCategory] = useState(categories[0]);
   const tabsRef = useRef<HTMLDivElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const triggerHaptic = (id: string, isAdd: boolean) => {
+    // Vibration API for real haptic feedback on supported devices
+    if (navigator.vibrate) {
+      navigator.vibrate(isAdd ? [15, 30, 15] : [10]);
+    }
+    setHapticId(id);
+    setTimeout(() => setHapticId(null), 400);
+  };
+
   const toggle = (id: string, delta: number) => {
+    triggerHaptic(id, delta > 0);
     setSelections((prev) => {
       const next = { ...prev };
       const val = (next[id] || 0) + delta;
@@ -346,6 +357,8 @@ export default function ExperienceBuilder({ property, slotId, guests, date, onBa
               return (
                 <motion.div
                   key={item.id}
+                  animate={hapticId === item.id ? { scale: [1, 1.04, 0.97, 1], rotate: [0, 1, -1, 0] } : { scale: 1 }}
+                  transition={hapticId === item.id ? { duration: 0.35, ease: "easeOut" } : {}}
                   className={`rounded-2xl border overflow-hidden transition-all ${
                     qty > 0
                       ? "border-primary/40 bg-primary/[0.04] shadow-[0_0_20px_-6px_hsl(var(--primary)/0.15)]"
@@ -363,8 +376,9 @@ export default function ExperienceBuilder({ property, slotId, guests, date, onBa
                     )}
                     {qty > 0 && (
                       <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
+                        initial={{ scale: 0, rotate: -90 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ type: "spring", stiffness: 500, damping: 15 }}
                         className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary flex items-center justify-center"
                       >
                         <Check size={12} className="text-primary-foreground" />
