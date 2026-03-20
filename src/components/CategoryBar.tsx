@@ -1,5 +1,5 @@
 import { motion, useAnimation } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import iconHome from "@/assets/icon-home.png";
 import iconStays from "@/assets/icon-stays-new.png";
 import iconExperiences from "@/assets/icon-experiences-new.png";
@@ -102,6 +102,7 @@ const activeEffects: Record<string, React.CSSProperties> = {
 
 function AnimatedIcon({ cat, isActive }: { cat: Category; isActive: boolean }) {
   const controls = useAnimation();
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     if (isActive) {
@@ -119,23 +120,38 @@ function AnimatedIcon({ cat, isActive }: { cat: Category; isActive: boolean }) {
   }, [isActive, cat.animationType, controls]);
 
   return (
-    <motion.img
-      src={cat.icon}
-      alt={cat.label}
-      className="w-14 h-14 object-contain"
-      loading="eager"
-      decoding="async"
-      fetchPriority="high"
-      style={{
-        opacity: isActive ? 1 : 0.85,
-        ...(isActive ? activeEffects[cat.animationType] || {} : {}),
-        transition: "filter 0.3s ease",
-        contentVisibility: "auto",
-      }}
-      animate={controls}
-      whileTap={tapAnimations[cat.animationType]}
-      whileHover={{ scale: 1.08 }}
-    />
+    <div className="relative w-14 h-14">
+      {/* Skeleton shimmer */}
+      {!loaded && (
+        <div className="absolute inset-0 rounded-xl bg-secondary overflow-hidden">
+          <div
+            className="absolute inset-0"
+            style={{
+              background: "linear-gradient(90deg, transparent 0%, hsl(var(--foreground) / 0.06) 50%, transparent 100%)",
+              animation: "shimmer 1.5s infinite",
+            }}
+          />
+        </div>
+      )}
+      <motion.img
+        src={cat.icon}
+        alt={cat.label}
+        className="w-14 h-14 object-contain"
+        loading="eager"
+        decoding="async"
+        fetchPriority="high"
+        onLoad={() => setLoaded(true)}
+        style={{
+          opacity: loaded ? (isActive ? 1 : 0.85) : 0,
+          ...(isActive ? activeEffects[cat.animationType] || {} : {}),
+          transition: "filter 0.3s ease, opacity 0.2s ease",
+          contentVisibility: "auto",
+        }}
+        animate={controls}
+        whileTap={tapAnimations[cat.animationType]}
+        whileHover={{ scale: 1.08 }}
+      />
+    </div>
   );
 }
 
