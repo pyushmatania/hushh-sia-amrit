@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Building2, CalendarCheck, Users, BarChart3,
   Sparkles, Tag, Megaphone, Ticket, ShoppingCart, LogOut,
-  ChevronLeft, ChevronRight, Shield, Menu, X
+  ChevronLeft, ChevronRight, Shield, Menu, X, FileSpreadsheet
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useAdmin } from "@/hooks/use-admin";
@@ -11,7 +11,7 @@ import { useAdmin } from "@/hooks/use-admin";
 export type AdminPage =
   | "dashboard" | "properties" | "bookings" | "users"
   | "analytics" | "curations" | "tags" | "campaigns"
-  | "coupons" | "orders";
+  | "coupons" | "orders" | "exports";
 
 interface AdminLayoutProps {
   activePage: AdminPage;
@@ -26,7 +26,11 @@ const navItems: { id: AdminPage; label: string; icon: typeof LayoutDashboard; ad
   { id: "users", label: "Users (CRM)", icon: Users, adminOnly: true },
   { id: "analytics", label: "Analytics", icon: BarChart3 },
   { id: "curations", label: "Curations", icon: Sparkles },
+  { id: "campaigns", label: "Campaigns", icon: Megaphone },
+  { id: "coupons", label: "Coupons", icon: Ticket },
+  { id: "tags", label: "Tags", icon: Tag },
   { id: "orders", label: "Live Orders", icon: ShoppingCart },
+  { id: "exports", label: "Exports", icon: FileSpreadsheet },
 ];
 
 export default function AdminLayout({ activePage, onNavigate, children }: AdminLayoutProps) {

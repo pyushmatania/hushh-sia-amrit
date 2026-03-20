@@ -9,6 +9,10 @@ import AdminUsers from "@/components/admin/AdminUsers";
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
 import AdminCurations from "@/components/admin/AdminCurations";
 import AdminOrders from "@/components/admin/AdminOrders";
+import AdminCampaigns from "@/components/admin/AdminCampaigns";
+import AdminCoupons from "@/components/admin/AdminCoupons";
+import AdminTags from "@/components/admin/AdminTags";
+import AdminExports from "@/components/admin/AdminExports";
 import AuthScreen from "@/components/AuthScreen";
 import { Shield, Loader2 } from "lucide-react";
 
@@ -51,7 +55,11 @@ export default function Admin() {
       case "users": return <AdminUsers />;
       case "analytics": return <AdminAnalytics />;
       case "curations": return <AdminCurations />;
+      case "campaigns": return <AdminCampaigns />;
+      case "coupons": return <AdminCoupons />;
+      case "tags": return <AdminTags />;
       case "orders": return <AdminOrders />;
+      case "exports": return <AdminExports />;
       default: return <CommandCenter />;
     }
   };
