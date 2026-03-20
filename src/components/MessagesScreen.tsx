@@ -659,11 +659,17 @@ function MockChatView({ threadId, thread, onBack }: {
         )}
       </AnimatePresence>
 
+      {/* Image Preview */}
+      <AnimatePresence>
+        {pendingImage && <ImagePreviewBar file={pendingImage} onRemove={() => setPendingImage(null)} />}
+      </AnimatePresence>
+
       {/* Input */}
       <div className="px-3 py-3 border-t border-border bg-background/95 backdrop-blur-md pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+        <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImagePick} />
         <div className="flex items-end gap-2">
           <div className="flex gap-1">
-            <button className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground active:scale-90 transition-transform">
+            <button onClick={() => fileInputRef.current?.click()} className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground active:scale-90 transition-transform">
               <Image size={18} />
             </button>
           </div>
