@@ -3,7 +3,8 @@ import { Utensils, MapPin, Calendar, Clock, Users, ChevronRight, Zap } from "luc
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useBookings } from "@/hooks/use-bookings";
-import { properties, type Property } from "@/data/properties";
+import { type Property } from "@/data/properties";
+import { useDbListings } from "@/hooks/use-db-listings";
 import LiveOrderingSheet from "@/components/LiveOrderingSheet";
 
 interface ActiveTripCardProps {
@@ -12,13 +13,12 @@ interface ActiveTripCardProps {
 
 export default function ActiveTripCard({ onViewTrip }: ActiveTripCardProps) {
   const { bookings } = useBookings();
+  const { properties } = useDbListings();
   const [orderingOpen, setOrderingOpen] = useState(false);
 
   const activeBooking = bookings.find((b) => b.status === "active");
-  if (!activeBooking) return null;
-
-  const property = properties.find((p) => p.id === activeBooking.propertyId);
-  if (!property) return null;
+  const property = activeBooking ? properties.find((p) => p.id === activeBooking.propertyId) : undefined;
+  if (!activeBooking || !property) return null;
 
   return (
     <div className="px-4 pt-3 pb-1">

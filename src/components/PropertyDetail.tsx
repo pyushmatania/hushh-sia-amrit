@@ -23,7 +23,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { DateRange } from "react-day-picker";
 import type { Property } from "@/data/properties";
-import { properties as allProperties, addons } from "@/data/properties";
+import { addons } from "@/data/properties";
+import { useDbListings } from "@/hooks/use-db-listings";
 import ReviewSection from "@/components/ReviewSection";
 
 const amenityIconMap: Record<string, React.ReactNode> = {
@@ -313,6 +314,7 @@ interface PropertyDetailProps {
 }
 
 export default function PropertyDetail({ property, onBack, onBook, onPropertyTap, isWishlisted = false, onToggleWishlist }: PropertyDetailProps) {
+  const { properties: allProperties } = useDbListings();
   const [imgIndex, setImgIndex] = useState(0);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [guests, setGuests] = useState(2);

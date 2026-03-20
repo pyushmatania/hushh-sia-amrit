@@ -6,7 +6,8 @@ import CategoryBar from "./CategoryBar";
 import PropertyCard from "./PropertyCard";
 import PropertyCardSmall from "./PropertyCardSmall";
 import PackageCard from "./PackageCard";
-import { properties, packages, curatedCombos, type Property } from "@/data/properties";
+import { packages, curatedCombos, type Property } from "@/data/properties";
+import { useDbListings } from "@/hooks/use-db-listings";
 import CuratedPackCard, { tonightTags, type ExperiencePack } from "./home/CuratedPackCard";
 import CuratedPackListing from "./home/CuratedPackListing";
 import { useState, useMemo, useCallback, useRef } from "react";
@@ -40,6 +41,7 @@ interface HomeScreenProps {
 }
 
 export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNotificationTap, wishlist = [], onToggleWishlist }: HomeScreenProps) {
+  const { properties } = useDbListings();
   const { unreadCount: notifCount } = useNotifications();
   const { packs: experiencePacks } = useCurations();
   const [refreshKey, setRefreshKey] = useState(0);
@@ -136,11 +138,11 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
     }
 
     return list;
-  }, [activeCategory, subFilter]);
+  }, [activeCategory, subFilter, properties]);
 
-  const stayProperties = useMemo(() => properties.filter(p => p.primaryCategory === "stay"), []);
-  const experienceProperties = useMemo(() => properties.filter(p => p.primaryCategory === "experience"), []);
-  const serviceProperties = useMemo(() => properties.filter(p => p.primaryCategory === "service"), []);
+  const stayProperties = useMemo(() => properties.filter(p => p.primaryCategory === "stay"), [properties]);
+  const experienceProperties = useMemo(() => properties.filter(p => p.primaryCategory === "experience"), [properties]);
+  const serviceProperties = useMemo(() => properties.filter(p => p.primaryCategory === "service"), [properties]);
 
   const topRated = useMemo(() => [...filteredProperties].sort((a, b) => b.rating - a.rating).slice(0, 6), [filteredProperties]);
   const trendingNow = useMemo(() => filteredProperties.filter(p => p.slotsLeft > 0 && p.slotsLeft <= 3), [filteredProperties]);

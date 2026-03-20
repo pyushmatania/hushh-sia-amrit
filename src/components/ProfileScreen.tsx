@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { useState, useCallback, useRef, useMemo } from "react";
 import type { Booking } from "@/pages/Index";
-import { properties } from "@/data/properties";
+import { useDbListings } from "@/hooks/use-db-listings";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
 import AuthScreen from "./AuthScreen";
@@ -63,6 +63,7 @@ interface ProfileScreenProps {
 }
 
 export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingDetail, onRebook }: ProfileScreenProps) {
+  const { properties } = useDbListings();
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
