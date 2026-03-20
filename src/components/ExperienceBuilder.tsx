@@ -215,33 +215,65 @@ export default function ExperienceBuilder({ property, slotId, guests, date, onBa
         )}
       </AnimatePresence>
 
-      {/* Category tabs — horizontally scrollable */}
-      <div ref={tabsRef} className="shrink-0 flex gap-1.5 overflow-x-auto px-4 py-3 scrollbar-hide border-b border-border/30">
-        {categories.map((cat) => {
-          const conf = categoryConfig[cat];
-          const isActive = activeCategory === cat;
-          const catItemCount = addons[cat].filter(a => selections[a.id]).length;
-          return (
+      {/* Search bar */}
+      <div className="shrink-0 px-4 pt-3 pb-2">
+        <div className="relative">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search add-ons..."
+            className="w-full bg-secondary rounded-xl pl-9 pr-8 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none border border-transparent focus:border-primary/30 transition-colors"
+          />
+          {searchQuery && (
             <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-semibold transition-all border ${
-                isActive
-                  ? "border-primary bg-primary/10 text-primary"
-                  : "border-border bg-foreground/[0.02] text-muted-foreground hover:border-foreground/20"
-              }`}
+              onClick={() => setSearchQuery("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-foreground/10 flex items-center justify-center"
             >
-              <span>{conf?.emoji || "✦"}</span>
-              <span className="whitespace-nowrap">{cat}</span>
-              {catItemCount > 0 && (
-                <span className="w-4 h-4 rounded-full bg-primary text-primary-foreground text-[8px] flex items-center justify-center font-bold">
-                  {catItemCount}
-                </span>
-              )}
+              <X size={10} className="text-muted-foreground" />
             </button>
-          );
-        })}
+          )}
+        </div>
       </div>
+
+      {/* Category tabs — horizontally scrollable (hidden when searching) */}
+      {!isSearching && (
+        <div ref={tabsRef} className="shrink-0 flex gap-1.5 overflow-x-auto px-4 py-2 scrollbar-hide border-b border-border/30">
+          {categories.map((cat) => {
+            const conf = categoryConfig[cat];
+            const isActive = activeCategory === cat;
+            const catItemCount = addons[cat].filter(a => selections[a.id]).length;
+            return (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-semibold transition-all border ${
+                  isActive
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border bg-foreground/[0.02] text-muted-foreground hover:border-foreground/20"
+                }`}
+              >
+                <span>{conf?.emoji || "✦"}</span>
+                <span className="whitespace-nowrap">{cat}</span>
+                {catItemCount > 0 && (
+                  <span className="w-4 h-4 rounded-full bg-primary text-primary-foreground text-[8px] flex items-center justify-center font-bold">
+                    {catItemCount}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {isSearching && (
+        <div className="shrink-0 px-4 py-1.5 border-b border-border/30">
+          <p className="text-[11px] text-muted-foreground">
+            {activeItems.length} result{activeItems.length !== 1 ? "s" : ""} for "<span className="text-foreground font-medium">{searchQuery}</span>"
+          </p>
+        </div>
+      )}
 
       {/* Add-on cards — scrollable area */}
       <div className="flex-1 overflow-y-auto pb-36 px-4 pt-3">
