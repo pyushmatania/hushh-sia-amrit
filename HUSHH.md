@@ -1,6 +1,6 @@
 # 🏡 HUSHH — Private Experience Marketplace
 
-> **Made in Jeypore ❤️** | v1.0 | Internal Documentation & Blueprint
+> **Made in Jeypore ❤️** | v1.15 | Internal Documentation & Blueprint
 
 Hushh is a premium mobile-first marketplace for booking private experiences, stays, and curated lifestyle services in Jeypore, India. Think Airbnb meets a concierge — but hyper-local, with a focus on curated combos and on-demand add-ons.
 
@@ -92,9 +92,10 @@ App Launch
 ### Secondary Flows
 ```
 Wishlists Tab → Grid of saved properties → Detail → Book
-Trips Tab → Upcoming/Completed/Cancelled → Detail → Cancel/Rebook
+Trips Tab → Active (checked-in) / Upcoming / Past / Cancelled → Detail → Cancel/Rebook/Order Food
 Messages Tab → Conversation list → Chat thread (real-time)
-Profile Tab → Edit profile, Loyalty, Referrals, Host Dashboard, Settings, Theme
+Profile Tab → Edit profile, Loyalty, Referrals, Past Trips, Host Dashboard, Settings, Theme
+Active Trip → Order Food (live ordering sheet) / Add Extras (per-item emoji icons)
 ```
 
 ---
@@ -107,9 +108,11 @@ Profile Tab → Edit profile, Loyalty, Referrals, Host Dashboard, Settings, Them
 ### 2. Home / Explore (`HomeScreen.tsx`)
 - **Header**: Profile avatar, location pill, notification bell (unread badge)
 - **Rotating Search Bar**: Cycles through placeholder suggestions
+- **Active Trip Card**: Shows current checked-in booking with 1-tap food ordering and trip view
 - **Category Bar**: Horizontal tabs — Home, Stays, Experiences, Services, Curations, Work
   - Sub-filters per category, smooth scroll on switch (offset 280px on sub-filter)
-- **Content Sections**: Spotlight Carousel, Property Cards (video thumbnails + AccentFrame), Sports Cards, Curated Combos, Foodie Carousel, Couple Specials, Service Grid, Curation Grid/Hero, What's Hot, Events, Blockbuster Banner, Experience Cards
+- **Content Sections**: Spotlight Carousel, Property Cards (video thumbnails + AccentFrame), Sports Cards, Foodie Carousel, Couple Specials, Service Grid, Curated Pack Listings (vertical cards with autoplay video backgrounds), What's Hot, Events, Blockbuster Banner, Experience Cards
+- **Pull-to-refresh** + **Back-to-top button**
 - **Pull-to-refresh** + **Back-to-top button**
 
 ### 3. Property Detail (`PropertyDetail.tsx`)
@@ -134,10 +137,16 @@ Profile Tab → Edit profile, Loyalty, Referrals, Host Dashboard, Settings, Them
 - Grid of wishlisted properties, empty state illustration
 
 ### 10. Trips Screen (`TripsScreen.tsx`)
-- Tabs: Upcoming/Completed/Cancelled, booking cards, View/Cancel/Rebook actions
+- Tabs: Active (checked-in) / Upcoming / Past / Cancelled
+- Active trips show live ordering CTA and "Add Extras" with per-item emoji icons
+- Booking cards with status-colored badges, View/Cancel/Rebook actions
 
 ### 11. Booking Detail (`BookingDetailScreen.tsx`)
-- Full booking info, status badge, cancel/rebook buttons
+- Full booking info, status banner (Active/Upcoming/Completed/Cancelled)
+- Property card with live badge for active trips
+- **Order Food**: Swiggy-style live ordering sheet for checked-in guests
+- **Add Extras**: Bottom sheet with categorized add-ons, per-item emoji icons, quantity selectors, running total
+- Cancel dialog with confirmation, rebook flow
 
 ### 12. Messages Screen (`MessagesScreen.tsx`)
 - Conversation list, unread badges, chat thread, message input
@@ -170,12 +179,12 @@ Everything works without login using mock data:
 |---------|--------------|
 | Property browsing | Full catalog with video thumbnails |
 | Property detail | Gallery, slots, reviews (clickable mock reviewers) |
-| Wishlists | Local state, session-persistent |
-| Trips | Sample completed bookings |
+| Wishlists | 5 demo wishlisted properties, session-persistent |
+| Trips | 12 demo bookings across all statuses (active, upcoming, past, cancelled) |
 | Messages | Mock conversations |
 | Notifications | 4 sample notifications |
-| Loyalty | 320 points, Gold tier, mock transactions |
-| Profile | "Guest Explorer" with mock stats |
+| Loyalty | 320 points, Gold tier, mock transactions, spin wheel |
+| Profile | "Guest Explorer" with mock stats, past trips synced |
 | Search & Map | Full functionality |
 | Theme | Light / Dark / Auto |
 
@@ -384,6 +393,29 @@ React 18 · TypeScript 5.8 · Vite 8 · Tailwind CSS 3.4 · shadcn/ui · CVA · 
 - Milestone Rewards — 6 achievements with point rewards
   - Wired to `user_milestones` table with unique(user_id, milestone_id)
 - PrivacyModeProvider wraps entire app
+
+### v1.13 — Trip Experience & Active Booking
+- Active Trip Card on Home — replaces "Last Vibe" with live checked-in booking, 1-tap food ordering
+- Trip Detail overhaul — order food CTA, add extras sheet for active trips
+- Merged extras & food ordering into unified in-stay experience
+- 12 demo bookings across all statuses (active, upcoming, past, cancelled) for guest mode
+- Status normalization (`normalizeStatus`) for consistent filtering across screens
+- Past Trips synced between Profile tab and Trips tab
+- Wishlist sanitization — only valid property IDs stored/displayed
+- `useBookings` and `useWishlists` hooks provide comprehensive guest fallback data
+
+### v1.14 — Loyalty & Rewards Redesign
+- Gamified Loyalty Screen — tier hero card with progress bar, tabbed interface (Rewards, Spin, Quests, Earn, Refer, History)
+- Enhanced Spin Wheel — weighted prizes, confetti burst, neon glow ring, cinematic deceleration
+- Sound effects — Web Audio API synthesized tick sounds (dynamic pitch/tempo) and win jingle
+- Quests tab with milestone progress bars
+- `spin_history` and `user_milestones` wired to DB
+
+### v1.15 — Add-on Icons & Curated Listings
+- Per-item emoji icons on all add-on/extras options (🍛🥩☕🍕🍰🍺🎈💡🎧🎤🏊🔭📸 etc.)
+- Curated Pack Listings redesigned — vertical long cards with autoplay video backgrounds
+- Video assets generated for all curated packs
+- Addon type extended with `emoji` field for item-level iconography
 
 ---
 
