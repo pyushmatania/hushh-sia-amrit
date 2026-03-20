@@ -357,11 +357,23 @@ export default function AdminProperties() {
         </div>
       ) : (
         <div className="space-y-2">
-          {filtered.map((listing, i) => (
-            <motion.div key={listing.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.03 }}
-              className="rounded-xl border border-border bg-card p-3 flex gap-3 cursor-pointer hover:border-primary/30 transition"
-              onClick={() => openEdit(listing)}>
+          {filtered.map((listing) => (
+            <div
+              key={listing.id}
+              {...getDropTargetProps(listing)}
+              onDragEnd={handleDragEnd}
+              className={`rounded-xl border bg-card p-3 flex gap-2 cursor-pointer hover:border-primary/30 transition-all ${
+                isDragging(listing) ? "opacity-40 scale-[0.97]" : ""
+              } ${isDragOver(listing) ? "border-primary shadow-sm shadow-primary/20" : "border-border"}`}
+              onClick={() => openEdit(listing)}
+            >
+              <div
+                {...getDragHandleProps(listing)}
+                onClick={(e) => e.stopPropagation()}
+                className="text-muted-foreground/40 hover:text-muted-foreground transition shrink-0 cursor-grab active:cursor-grabbing self-center"
+              >
+                <GripVertical size={16} />
+              </div>
               <div className="w-16 h-16 rounded-lg bg-secondary shrink-0 overflow-hidden">
                 {listing.image_urls?.[0] ? (
                   <img src={listing.image_urls[0]} alt="" className="w-full h-full object-cover" />
