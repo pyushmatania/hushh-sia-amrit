@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import PublicProfileScreen from "./PublicProfileScreen";
 import {
   ChevronRight, Bell, Settings, HelpCircle, LogOut,
@@ -60,6 +61,7 @@ interface ProfileScreenProps {
 }
 
 export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingDetail, onRebook }: ProfileScreenProps) {
+  const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
   const [showAuth, setShowAuth] = useState(false);
@@ -478,6 +480,28 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
             );
           })}
         </div>
+      </motion.div>
+
+      {/* Admin Panel Button */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.34 }}
+        className="mx-5 mt-5"
+      >
+        <button
+          onClick={() => navigate("/admin")}
+          className="w-full flex items-center gap-3.5 py-3.5 px-4 rounded-2xl border border-primary/20 bg-primary/5 hover:bg-primary/10 transition active:scale-[0.98]"
+        >
+          <div className="w-9 h-9 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
+            <Shield size={18} className="text-primary" />
+          </div>
+          <div className="flex-1 text-left">
+            <p className="text-sm font-semibold text-foreground">Admin Panel</p>
+            <p className="text-[10px] text-muted-foreground">Command center & operations</p>
+          </div>
+          <ChevronRight size={16} className="text-primary" />
+        </button>
       </motion.div>
 
       {/* Settings Menu */}
