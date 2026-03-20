@@ -706,6 +706,15 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Live Food Ordering Sheet */}
+      <LiveOrderingSheet
+        open={showFoodOrder}
+        onClose={() => setShowFoodOrder(false)}
+        propertyName={property.name}
+        propertyId={booking.propertyId}
+        bookingId={booking.bookingId}
+      />
     </motion.div>
   );
 }
