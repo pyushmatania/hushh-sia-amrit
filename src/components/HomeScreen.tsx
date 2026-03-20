@@ -261,7 +261,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
 
               {/* ✨ Curated Packs — Bottom of Home */}
               <SectionDivider title="✨ CURATED PACKS" />
-              <div className="px-4 space-y-4 pb-2">
+              <div className="space-y-5 pb-2">
                 {filteredPacks.slice(0, 4).map((pack, i) => (
                   <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
                 ))}
