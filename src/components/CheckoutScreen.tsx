@@ -75,7 +75,7 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
     for (const group of Object.values(addons)) {
       const item = group.find((a) => a.id === id);
       if (item) {
-        const unitPrice = item.price * (item.perPerson ? guests : 1);
+        const unitPrice = item.price * (item.perPerson ? liveGuests : 1);
         lineItems.push({ id, name: item.name, qty, unitPrice: item.price, subtotal: unitPrice * qty });
       }
     }
