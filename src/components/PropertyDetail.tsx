@@ -231,6 +231,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [guests, setGuests] = useState(2);
   const [expanded, setExpanded] = useState(false);
+  const [enhanceOpen, setEnhanceOpen] = useState(false);
   const [liked, setLiked] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
 
@@ -527,65 +528,81 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
 
         <div className="border-b border-border my-5" />
 
-        {/* ═══════ ADD-ON EXPERIENCES & SERVICES ═══════ */}
+        {/* ═══════ ADD-ON EXPERIENCES & SERVICES (Collapsible) ═══════ */}
         {property.primaryCategory === "stay" && (
           <>
-            <h3 className="text-lg font-semibold text-foreground mb-2">🎯 Enhance Your Stay</h3>
-            <p className="text-sm text-muted-foreground mb-4">Add experiences & services to make it unforgettable</p>
-
-            {/* Quick add-ons from addon data */}
-            {Object.entries(addons).slice(0, 4).map(([category, items]) => (
-              <div key={category} className="mb-4">
-                <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5">
-                  {items[0]?.categoryEmoji} {category}
-                </h4>
-                <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
-                  {items.slice(0, 4).map((addon) => (
-                    <AddonChip key={addon.id} addon={addon} />
-                  ))}
+            <button
+              onClick={() => setEnhanceOpen(!enhanceOpen)}
+              className="w-full flex items-center justify-between py-3 group"
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-lg">🎯</span>
+                <div className="text-left">
+                  <h3 className="text-base font-semibold text-foreground">Enhance Your Stay</h3>
+                  <p className="text-[11px] text-muted-foreground">Add experiences, food & services</p>
                 </div>
               </div>
-            ))}
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/15 text-primary font-semibold">
+                  {allProperties.filter(p => p.primaryCategory === "experience").length + allProperties.filter(p => p.primaryCategory === "service").length}+ options
+                </span>
+                <motion.div animate={{ rotate: enhanceOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                  <ChevronDown size={18} className="text-muted-foreground" />
+                </motion.div>
+              </div>
+            </button>
 
-            {/* Related experiences */}
-            {(() => {
-              const relatedExperiences = allProperties.filter(
-                p => p.id !== property.id && p.primaryCategory === "experience"
-              ).slice(0, 4);
-              if (relatedExperiences.length === 0) return null;
-              return (
-                <div className="mb-4">
-                  <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5">
-                    🎉 Available Experiences
-                  </h4>
-                  <div className="space-y-2">
-                    {relatedExperiences.map((exp) => (
-                      <RelatedPropertyRow key={exp.id} relatedProperty={exp} onTap={onPropertyTap || (() => {})} />
-                    ))}
-                  </div>
-                </div>
-              );
-            })()}
+            <AnimatePresence>
+              {enhanceOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="overflow-hidden"
+                >
+                  {/* Related experiences */}
+                  {(() => {
+                    const relatedExperiences = allProperties.filter(
+                      p => p.id !== property.id && p.primaryCategory === "experience"
+                    ).slice(0, 4);
+                    if (relatedExperiences.length === 0) return null;
+                    return (
+                      <div className="mb-4 mt-2">
+                        <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5">
+                          🎉 Available Experiences
+                        </h4>
+                        <div className="space-y-2">
+                          {relatedExperiences.map((exp) => (
+                            <RelatedPropertyRow key={exp.id} relatedProperty={exp} onTap={onPropertyTap || (() => {})} />
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })()}
 
-            {/* Related services */}
-            {(() => {
-              const relatedServices = allProperties.filter(
-                p => p.id !== property.id && p.primaryCategory === "service"
-              ).slice(0, 4);
-              if (relatedServices.length === 0) return null;
-              return (
-                <div className="mb-4">
-                  <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5">
-                    🛎️ Add Services
-                  </h4>
-                  <div className="space-y-2">
-                    {relatedServices.map((svc) => (
-                      <RelatedPropertyRow key={svc.id} relatedProperty={svc} onTap={onPropertyTap || (() => {})} />
-                    ))}
-                  </div>
-                </div>
-              );
-            })()}
+                  {/* Related services */}
+                  {(() => {
+                    const relatedServices = allProperties.filter(
+                      p => p.id !== property.id && p.primaryCategory === "service"
+                    ).slice(0, 4);
+                    if (relatedServices.length === 0) return null;
+                    return (
+                      <div className="mb-4">
+                        <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5">
+                          🛎️ Add Services
+                        </h4>
+                        <div className="space-y-2">
+                          {relatedServices.map((svc) => (
+                            <RelatedPropertyRow key={svc.id} relatedProperty={svc} onTap={onPropertyTap || (() => {})} />
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <div className="border-b border-border my-5" />
           </>
