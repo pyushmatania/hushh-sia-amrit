@@ -11,6 +11,8 @@ interface UseDragReorderOptions<T> {
 export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onReorder }: UseDragReorderOptions<T>) {
   const [dragId, setDragId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
+  const [justDroppedId, setJustDroppedId] = useState<string | null>(null);
+  const dropTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const dragIdRef = useRef<string | null>(null);
   const dragCatRef = useRef<string | null>(null);
@@ -111,7 +113,14 @@ export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onR
     const reordered = [...ids];
     [reordered[fromIdx], reordered[toIdx]] = [reordered[toIdx], reordered[fromIdx]];
     const updates = reordered.map((id, idx) => ({ id, sort_order: idx }));
+    const droppedId = currentDragId;
     clearDragState();
+
+    // Trigger spring settle animation
+    setJustDroppedId(droppedId);
+    if (dropTimerRef.current) clearTimeout(dropTimerRef.current);
+    dropTimerRef.current = setTimeout(() => setJustDroppedId(null), 500);
+
     onReorderRef.current(updates);
   }, [clearDragState]);
 
@@ -270,8 +279,18 @@ export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onR
   /** Style object to apply on the draggable row for a 3D lift effect */
   const getDragItemStyle = useCallback((item: T): React.CSSProperties => {
     const id = getIdRef.current(item);
+
+    // Spring settle animation after drop
+    if (id === justDroppedId) {
+      return {
+        animation: "spring-settle 450ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
+        boxShadow: "0 0 0 2px hsl(var(--primary) / 0.25), 0 4px 16px -4px hsl(var(--primary) / 0.15)",
+        borderRadius: "12px",
+        transition: "box-shadow 400ms ease-out",
+      };
+    }
+
     if (id === dragId) {
-      // The original row becomes a collapsed placeholder
       return {
         opacity: 0.25,
         transform: "scale(0.96)",
@@ -292,7 +311,7 @@ export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onR
       opacity: 1,
       transition: "transform 250ms cubic-bezier(0.16,1,0.3,1), box-shadow 250ms ease-out, opacity 250ms ease-out, border 250ms ease-out",
     };
-  }, [dragId, dragOverId]);
+  }, [dragId, dragOverId, justDroppedId]);
 
   return {
     dragId,
