@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./use-auth";
+import { mockLoyaltyTransactions } from "@/data/mock-users";
 
 export interface LoyaltyTransaction {
   id: string;
@@ -29,7 +30,14 @@ export function useLoyalty(): LoyaltyData {
   const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(async () => {
-    if (!user) { setLoading(false); return; }
+    if (!user) {
+      // Guest mode — show mock loyalty data
+      setPoints(320);
+      setTier("Gold");
+      setTransactions(mockLoyaltyTransactions);
+      setLoading(false);
+      return;
+    }
 
     const [profileRes, txRes] = await Promise.all([
       supabase.from("profiles").select("loyalty_points, tier").eq("user_id", user.id).single(),
@@ -70,7 +78,16 @@ export function useLoyalty(): LoyaltyData {
   }, [user, refresh]);
 
   const redeemPoints = useCallback(async (pts: number, title: string, icon = "🎁"): Promise<boolean> => {
-    if (!user) return false;
+    if (!user) {
+      // Guest mode — simulate redeem
+      if (pts > points) return false;
+      setPoints(p => p - pts);
+      setTransactions(prev => [
+        { id: `mock-${Date.now()}`, type: "redeem", title, points: -pts, icon, created_at: new Date().toISOString() },
+        ...prev,
+      ]);
+      return true;
+    }
     const { data } = await supabase.rpc("redeem_loyalty_points", {
       _user_id: user.id,
       _points: pts,
@@ -79,7 +96,7 @@ export function useLoyalty(): LoyaltyData {
     });
     await refresh();
     return data === true;
-  }, [user, refresh]);
+  }, [user, refresh, points]);
 
   return { points, tier, transactions, loading, awardPoints, redeemPoints, refresh };
 }

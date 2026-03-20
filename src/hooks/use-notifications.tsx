@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./use-auth";
+import { mockNotifications } from "@/data/mock-users";
 
 export interface Notification {
   id: string;
@@ -21,7 +22,12 @@ export function useNotifications() {
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   const fetch = useCallback(async () => {
-    if (!user) { setNotifications([]); setLoading(false); return; }
+    if (!user) {
+      // Guest mode — show mock notifications
+      setNotifications(mockNotifications as Notification[]);
+      setLoading(false);
+      return;
+    }
     const { data } = await supabase
       .from("notifications")
       .select("*")
@@ -48,13 +54,16 @@ export function useNotifications() {
 
   const markAsRead = useCallback(async (id: string) => {
     setNotifications((prev) => prev.map((n) => n.id === id ? { ...n, read: true } : n));
-    await supabase.from("notifications").update({ read: true }).eq("id", id);
-  }, []);
+    if (user) {
+      await supabase.from("notifications").update({ read: true }).eq("id", id);
+    }
+  }, [user]);
 
   const markAllRead = useCallback(async () => {
-    if (!user) return;
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-    await supabase.from("notifications").update({ read: true }).eq("user_id", user.id).eq("read", false);
+    if (user) {
+      await supabase.from("notifications").update({ read: true }).eq("user_id", user.id).eq("read", false);
+    }
   }, [user]);
 
   return { notifications, unreadCount, loading, markAsRead, markAllRead, refresh: fetch };

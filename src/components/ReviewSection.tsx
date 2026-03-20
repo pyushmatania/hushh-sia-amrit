@@ -433,7 +433,7 @@ export default function ReviewSection({ propertyId, reviews: staticReviews, rati
       {/* Legacy static review list */}
       <div className="space-y-3 mb-4">
         {displayedStaticReviews.map((review, i) => (
-          <LegacyReviewCard key={review.id} review={review} index={i + dbReviews.length} />
+          <LegacyReviewCard key={review.id} review={review} index={i + dbReviews.length} onProfileTap={setViewingProfile} />
         ))}
       </div>
 
