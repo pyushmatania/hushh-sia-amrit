@@ -62,7 +62,7 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
         <div className={`absolute inset-0 bg-gradient-to-br ${pack.gradient} opacity-40`} />
 
         {/* Accent frame */}
-        <AccentFrame />
+        <AccentFrame color="hsl(var(--primary))" />
 
         {/* Top badges */}
         <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
