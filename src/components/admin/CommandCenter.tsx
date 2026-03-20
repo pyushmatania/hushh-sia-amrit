@@ -81,6 +81,10 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
         <p className="text-sm text-muted-foreground mt-1">Real-time overview of your operations</p>
       </div>
 
+      {/* AI Command Search */}
+      <AdminAISearch />
+
+
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         {statCards.map((card, i) => (
           <motion.div
