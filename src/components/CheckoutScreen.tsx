@@ -153,12 +153,17 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
             <span className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-secondary/80">
               <Clock size={12} /> {slot.label} · {slot.time}
             </span>
-            {/* Editable guests */}
+            {/* Editable guests — mandatory */}
             <button
               onClick={() => { setEditingGuests(!editingGuests); setEditingDate(false); }}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-secondary/80 border border-border/50 hover:border-primary/30 transition-colors"
+              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-secondary/80 border transition-colors ${
+                liveGuests < 1 ? "border-destructive/50 ring-1 ring-destructive/30" : "border-border/50 hover:border-primary/30"
+              }`}
             >
-              <Users size={12} /> {liveGuests} guests
+              <Users size={12} className={liveGuests < 1 ? "text-destructive" : ""} />
+              <span className={liveGuests < 1 ? "text-destructive font-medium" : ""}>
+                {liveGuests < 1 ? "Select guests *" : `${liveGuests} guests`}
+              </span>
               <Pencil size={9} className="text-primary ml-0.5" />
             </button>
           </div>
@@ -424,8 +429,15 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
         <div className="flex items-center justify-between">
           <span className="font-bold text-xl text-gradient-warm">₹{finalTotal.toLocaleString()}</span>
           <button
-            onClick={() => onConfirm(finalTotal)}
-            className="bg-primary text-primary-foreground px-8 py-3.5 rounded-xl font-semibold text-sm flex items-center gap-2 glow-primary"
+            onClick={() => {
+              if (liveGuests < 1) {
+                setEditingGuests(true);
+                return;
+              }
+              onConfirm(finalTotal);
+            }}
+            disabled={liveGuests < 1}
+            className="bg-primary text-primary-foreground px-8 py-3.5 rounded-xl font-semibold text-sm flex items-center gap-2 glow-primary disabled:opacity-50"
           >
             Pay Now <ChevronRight size={16} />
           </button>

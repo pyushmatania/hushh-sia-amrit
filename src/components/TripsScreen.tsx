@@ -1,11 +1,14 @@
 import { motion, useMotionValue, useTransform, useSpring, useAnimation, useScroll, PanInfo } from "framer-motion";
-import { MapPin, Calendar, Clock, ChevronRight, Ticket, QrCode, Users, X, Utensils, ShoppingCart } from "lucide-react";
-import { useRef, useState, useCallback, useMemo } from "react";
+import { MapPin, Calendar, Clock, ChevronRight, Ticket, QrCode, Users, X, Utensils, ShoppingCart, Shield, Upload } from "lucide-react";
+import { useRef, useState, useCallback, useMemo, useEffect } from "react";
 import { properties } from "@/data/properties";
 import PullToRefresh from "./PullToRefresh";
 import type { Booking } from "@/pages/Index";
 import OrderHistorySection from "./OrderHistorySection";
 import LiveOrderingSheet from "./LiveOrderingSheet";
+import IdentityUploadSheet from "./IdentityUploadSheet";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 
 interface TripsScreenProps {
   bookings: Booking[];
@@ -287,6 +290,24 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
   const [refreshKey, setRefreshKey] = useState(0);
   const [activeFilter, setActiveFilter] = useState<string>("all");
   const [orderingBooking, setOrderingBooking] = useState<Booking | null>(null);
+  const [idVerified, setIdVerified] = useState<boolean | null>(null);
+  const [idSheetOpen, setIdSheetOpen] = useState(false);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const checkVerification = async () => {
+      if (!user) { setIdVerified(false); return; }
+      const { data } = await supabase
+        .from("identity_verifications")
+        .select("status")
+        .eq("user_id", user.id)
+        .order("submitted_at", { ascending: false })
+        .limit(1);
+      setIdVerified(data && data.length > 0 && data[0].status === "approved");
+    };
+    checkVerification();
+  }, [user]);
+
   const handleRefresh = useCallback(async () => {
     await new Promise((r) => setTimeout(r, 800));
     setRefreshKey((k) => k + 1);
@@ -375,6 +396,33 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
           <p className="text-[11px] text-primary font-medium text-center">✨ These are sample trips — book a venue to see your real trips here!</p>
         </motion.div>
       )}
+
+      {/* ID Verification Banner */}
+      {idVerified === false && (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mx-5 mt-2 mb-1 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/15 flex items-center justify-center shrink-0">
+              <Shield size={20} className="text-amber-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-foreground">Identity not verified</p>
+              <p className="text-[10px] text-muted-foreground">Upload your ID for a smoother check-in experience</p>
+            </div>
+            <button
+              onClick={() => setIdSheetOpen(true)}
+              className="px-3 py-1.5 rounded-lg bg-amber-500/15 text-amber-400 text-[10px] font-bold shrink-0 active:scale-95 transition-transform flex items-center gap-1"
+            >
+              <Upload size={10} /> Verify
+            </button>
+          </div>
+        </motion.div>
+      )}
+
+      <IdentityUploadSheet open={idSheetOpen} onClose={() => setIdSheetOpen(false)} />
 
       {filteredBookings.length === 0 ? (
         <motion.div

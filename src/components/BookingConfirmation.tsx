@@ -1,9 +1,12 @@
 import { motion } from "framer-motion";
-import { Check, MapPin, Calendar, Users, QrCode, Clock, ShoppingCart } from "lucide-react";
-import { useState } from "react";
+import { Check, MapPin, Calendar, Users, QrCode, Clock, ShoppingCart, Shield, Upload } from "lucide-react";
+import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import type { Property } from "@/data/properties";
 import LiveOrderingSheet from "./LiveOrderingSheet";
+import IdentityUploadSheet from "./IdentityUploadSheet";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 
 interface BookingConfirmationProps {
   property: Property;
@@ -18,6 +21,23 @@ export default function BookingConfirmation({ property, slotId, guests, date, to
   const slot = property.slots.find((s) => s.id === slotId)!;
   const bookingId = `HUSHH-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
   const [orderingOpen, setOrderingOpen] = useState(false);
+  const [idSheetOpen, setIdSheetOpen] = useState(false);
+  const [idVerified, setIdVerified] = useState<boolean | null>(null);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const check = async () => {
+      if (!user) { setIdVerified(false); return; }
+      const { data } = await supabase
+        .from("identity_verifications")
+        .select("status")
+        .eq("user_id", user.id)
+        .order("submitted_at", { ascending: false })
+        .limit(1);
+      setIdVerified(data && data.length > 0 && data[0].status === "approved");
+    };
+    check();
+  }, [user]);
 
   return (
     <motion.div
@@ -98,6 +118,32 @@ export default function BookingConfirmation({ property, slotId, guests, date, to
           <p className="text-sm text-muted-foreground">{property.entryInstructions}</p>
         </motion.div>
 
+        {/* ID Verification Alert */}
+        {idVerified === false && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.1 }}
+            className="w-full mt-4 rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4"
+          >
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/15 flex items-center justify-center shrink-0 mt-0.5">
+                <Shield size={20} className="text-amber-400" />
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold text-sm text-foreground">Verify your identity</h4>
+                <p className="text-xs text-muted-foreground mt-0.5">Upload your ID for faster check-in. Required for all guests.</p>
+                <button
+                  onClick={() => setIdSheetOpen(true)}
+                  className="mt-2 px-4 py-2 rounded-lg bg-amber-500/15 text-amber-400 text-xs font-bold active:scale-95 transition-transform flex items-center gap-1.5"
+                >
+                  <Upload size={12} /> Upload ID Now
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {/* Actions */}
         <div className="w-full mt-6 space-y-3 pb-10">
           <motion.button
@@ -129,6 +175,7 @@ export default function BookingConfirmation({ property, slotId, guests, date, to
         propertyName={property.name}
         propertyId={property.id}
       />
+      <IdentityUploadSheet open={idSheetOpen} onClose={() => setIdSheetOpen(false)} />
     </motion.div>
   );
 }
