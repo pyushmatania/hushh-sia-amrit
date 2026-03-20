@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Building2, CalendarCheck, Users, BarChart3,
   Sparkles, Tag, Megaphone, Ticket, ShoppingCart, LogOut,
   ChevronLeft, ChevronRight, Shield, Menu, X, FileSpreadsheet,
-  Bot, Bell
+  Bot, Bell, ScrollText
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useAdmin } from "@/hooks/use-admin";
@@ -12,7 +12,7 @@ import { useAdmin } from "@/hooks/use-admin";
 export type AdminPage =
   | "dashboard" | "properties" | "bookings" | "users"
   | "analytics" | "curations" | "tags" | "campaigns"
-  | "coupons" | "orders" | "exports" | "ai" | "alerts";
+  | "coupons" | "orders" | "exports" | "ai" | "alerts" | "audit";
 
 interface AdminLayoutProps {
   activePage: AdminPage;
@@ -34,6 +34,7 @@ const navItems: { id: AdminPage; label: string; icon: typeof LayoutDashboard; ad
   { id: "tags", label: "Tags", icon: Tag },
   { id: "orders", label: "Live Orders", icon: ShoppingCart },
   { id: "exports", label: "Exports", icon: FileSpreadsheet },
+  { id: "audit", label: "Audit Trail", icon: ScrollText, adminOnly: true },
 ];
 
 export default function AdminLayout({ activePage, onNavigate, children }: AdminLayoutProps) {
