@@ -1,1 +1,10 @@
 project_id = "flwzxhlquhhvonbkrrxt"
+
+[functions.admin-ai]
+verify_jwt = false
+
+[functions.smart-alerts]
+verify_jwt = false
+
+[functions.auto-notifications]
+verify_jwt = false
