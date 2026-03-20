@@ -270,7 +270,7 @@ src/
 
 ## 🗄 Database Schema
 
-### Tables (12 total)
+### Tables (16 total)
 | Table | Key Columns | Purpose |
 |-------|------------|---------|
 | `profiles` | user_id, display_name, avatar_url, bio, location, loyalty_points, tier | User profiles |
@@ -285,6 +285,11 @@ src/
 | `referral_codes` | user_id, code, uses, reward_points | Referral codes |
 | `referral_uses` | code_id, referrer_user_id, referred_user_id, credited | Usage tracking |
 | `host_listings` | user_id, name, category, base_price, capacity, amenities, tags, image_urls, status | Host venues |
+| `curations` | name, tagline, emoji, slot, includes[], tags[], mood[], price, original_price, gradient, badge, property_id, active, sort_order | Curated experience packs |
+| `orders` | user_id, property_id, booking_id, total, status | In-stay food/drink orders |
+| `order_items` | order_id, item_name, item_emoji, quantity, unit_price | Individual order line items |
+| `spin_history` | user_id, points_won, prize_label, prize_emoji, spun_at | Daily spin wheel results |
+| `user_milestones` | user_id, milestone_id, achieved_at | Achievement tracking |
 
 ### Database Functions
 | Function | Purpose |
