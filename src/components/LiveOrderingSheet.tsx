@@ -28,14 +28,14 @@ const menuCategories = [
 // Map DB inventory rows to MenuItem shape
 function mapInventoryToMenu(rows: any[]): MenuItem[] {
   return rows
-    .filter((r: any) => r.available && ["food", "drinks"].includes(r.category))
+    .filter((r: any) => r.available)
     .map((r: any) => ({
       id: r.id,
       name: r.name,
       emoji: r.emoji || "🍽️",
       price: Number(r.unit_price),
       category: r.category,
-      prepTime: "10 min",
+      prepTime: r.category === "food" ? "10 min" : r.category === "drinks" ? "5 min" : "Instant",
       veg: true,
     }));
 }
@@ -82,9 +82,19 @@ export default function LiveOrderingSheet({ open, onClose, propertyName, propert
     });
   }, []);
 
+  const categoryGroups: Record<string, string[]> = {
+    food: ["food"],
+    drinks: ["drinks"],
+    entertainment: ["entertainment", "activity"],
+    comfort: ["comfort", "work", "decor", "decoration", "equipment", "staff"],
+  };
+
   const filteredItems = useMemo(() => {
     let items = dbMenuItems;
-    if (activeCat !== "all") items = items.filter(i => i.category === activeCat);
+    if (activeCat !== "all") {
+      const cats = categoryGroups[activeCat] || [activeCat];
+      items = items.filter(i => cats.includes(i.category));
+    }
     if (search.trim()) items = items.filter(i => i.name.toLowerCase().includes(search.toLowerCase()));
     return items;
   }, [activeCat, search, dbMenuItems]);
