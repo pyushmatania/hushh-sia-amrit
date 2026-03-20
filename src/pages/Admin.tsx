@@ -24,6 +24,7 @@ import AdminLoyaltyReferrals from "@/components/admin/AdminLoyaltyReferrals";
 import HostCalendar from "@/components/admin/HostCalendar";
 import BookingRequests from "@/components/admin/BookingRequests";
 import AdminPropertyHistory from "@/components/admin/AdminPropertyHistory";
+import AdminInventory from "@/components/admin/AdminInventory";
 import AuthScreen from "@/components/AuthScreen";
 import { Shield, Loader2 } from "lucide-react";
 
