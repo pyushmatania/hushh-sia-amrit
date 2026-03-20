@@ -1,28 +1,292 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Sparkles, Search } from "lucide-react";
+import {
+  Sparkles, Search, Plus, Save, X, Eye, Trash2,
+  GripVertical, Loader2, ChevronDown
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
+
+const MOOD_OPTIONS = ["Romantic", "Party", "Chill", "Adventure", "Work", "Celebration", "Family"];
+const INCLUDE_OPTIONS = [
+  "🏠 Private Stay", "🍕 Food & Drinks", "🎵 Music System", "🎬 Projector",
+  "🏊 Pool Access", "🔥 Bonfire", "🎮 Gaming", "🍺 Bar Setup",
+  "🎂 Cake & Decor", "🚗 Pickup & Drop", "👨‍🍳 Chef Service", "🧘 Wellness"
+];
+
+interface CurationDraft {
+  name: string;
+  emoji: string;
+  tagline: string;
+  price: number;
+  original_price: number | null;
+  slot: string;
+  includes: string[];
+  tags: string[];
+  mood: string[];
+  badge: string;
+  property_id: string;
+  active: boolean;
+}
+
+const emptyDraft: CurationDraft = {
+  name: "", emoji: "✨", tagline: "", price: 0, original_price: null,
+  slot: "", includes: [], tags: [], mood: [], badge: "", property_id: "", active: true,
+};
 
 export default function AdminCurations() {
   const [curations, setCurations] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState<CurationDraft | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [previewMode, setPreviewMode] = useState(false);
 
-  useEffect(() => {
+  const loadCurations = () => {
     supabase.from("curations").select("*").order("sort_order")
       .then(({ data }) => { setCurations(data ?? []); setLoading(false); });
-  }, []);
+  };
+
+  useEffect(() => { loadCurations(); }, []);
 
   const filtered = curations.filter(c => c.name.toLowerCase().includes(search.toLowerCase()));
 
+  const startCreate = () => {
+    setEditing({ ...emptyDraft });
+    setEditingId(null);
+    setPreviewMode(false);
+  };
+
+  const startEdit = (c: any) => {
+    setEditing({
+      name: c.name, emoji: c.emoji, tagline: c.tagline,
+      price: Number(c.price), original_price: c.original_price ? Number(c.original_price) : null,
+      slot: c.slot, includes: c.includes || [], tags: c.tags || [],
+      mood: c.mood || [], badge: c.badge || "", property_id: c.property_id,
+      active: c.active,
+    });
+    setEditingId(c.id);
+    setPreviewMode(false);
+  };
+
+  const toggleInclude = (inc: string) => {
+    if (!editing) return;
+    setEditing({
+      ...editing,
+      includes: editing.includes.includes(inc)
+        ? editing.includes.filter(i => i !== inc)
+        : [...editing.includes, inc],
+    });
+  };
+
+  const toggleMood = (m: string) => {
+    if (!editing) return;
+    setEditing({
+      ...editing,
+      mood: editing.mood.includes(m)
+        ? editing.mood.filter(i => i !== m)
+        : [...editing.mood, m],
+    });
+  };
+
+  const saveCuration = async () => {
+    if (!editing || !editing.name || !editing.property_id) return;
+    setSaving(true);
+
+    const payload = {
+      name: editing.name, emoji: editing.emoji, tagline: editing.tagline,
+      price: editing.price, original_price: editing.original_price,
+      slot: editing.slot, includes: editing.includes, tags: editing.tags,
+      mood: editing.mood, badge: editing.badge || null, property_id: editing.property_id,
+      active: editing.active,
+    };
+
+    if (editingId) {
+      await supabase.from("curations").update(payload).eq("id", editingId);
+    } else {
+      await supabase.from("curations").insert(payload);
+    }
+
+    setSaving(false);
+    setEditing(null);
+    setEditingId(null);
+    loadCurations();
+  };
+
+  // Builder UI
+  if (editing) {
+    return (
+      <div className="space-y-5">
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
+            <Sparkles size={20} className="text-primary" />
+            {editingId ? "Edit Curation" : "Create Curation"}
+          </h1>
+          <div className="flex gap-2">
+            <button onClick={() => setPreviewMode(!previewMode)}
+              className="px-3 py-1.5 rounded-lg text-xs font-medium bg-secondary text-foreground flex items-center gap-1">
+              <Eye size={12} /> {previewMode ? "Edit" : "Preview"}
+            </button>
+            <button onClick={() => { setEditing(null); setEditingId(null); }}
+              className="px-3 py-1.5 rounded-lg text-xs font-medium bg-secondary text-muted-foreground">
+              <X size={14} />
+            </button>
+          </div>
+        </div>
+
+        {previewMode ? (
+          /* Preview card */
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="max-w-sm mx-auto rounded-2xl border border-border bg-card overflow-hidden"
+          >
+            <div className="bg-gradient-to-br from-primary/20 to-accent/10 p-6 text-center">
+              <span className="text-4xl">{editing.emoji}</span>
+              <h3 className="text-lg font-bold text-foreground mt-2">{editing.name || "Untitled"}</h3>
+              <p className="text-sm text-muted-foreground">{editing.tagline || "Add a tagline"}</p>
+              {editing.badge && (
+                <span className="inline-block mt-2 text-[10px] font-bold bg-primary/15 text-primary px-2.5 py-0.5 rounded-full">
+                  {editing.badge}
+                </span>
+              )}
+            </div>
+            <div className="p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xl font-bold text-foreground">₹{editing.price.toLocaleString()}</span>
+                {editing.original_price && (
+                  <span className="text-sm text-muted-foreground line-through">₹{editing.original_price.toLocaleString()}</span>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">{editing.slot || "No slot set"}</p>
+              <div className="flex flex-wrap gap-1.5">
+                {editing.includes.map(inc => (
+                  <span key={inc} className="text-[11px] bg-secondary text-foreground px-2 py-1 rounded-lg">{inc}</span>
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {editing.mood.map(m => (
+                  <span key={m} className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full">{m}</span>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        ) : (
+          /* Editor form */
+          <div className="space-y-4">
+            <div className="grid grid-cols-[60px_1fr] gap-3">
+              <div>
+                <label className="text-[10px] text-muted-foreground mb-1 block">Emoji</label>
+                <Input value={editing.emoji} onChange={e => setEditing({ ...editing, emoji: e.target.value })} className="text-center text-xl" />
+              </div>
+              <div>
+                <label className="text-[10px] text-muted-foreground mb-1 block">Name</label>
+                <Input value={editing.name} onChange={e => setEditing({ ...editing, name: e.target.value })} placeholder="Experience name" />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-[10px] text-muted-foreground mb-1 block">Tagline</label>
+              <Input value={editing.tagline} onChange={e => setEditing({ ...editing, tagline: e.target.value })} placeholder="Short catchy tagline" />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-[10px] text-muted-foreground mb-1 block">Price (₹)</label>
+                <Input type="number" value={editing.price} onChange={e => setEditing({ ...editing, price: Number(e.target.value) })} />
+              </div>
+              <div>
+                <label className="text-[10px] text-muted-foreground mb-1 block">Original Price</label>
+                <Input type="number" value={editing.original_price || ""} onChange={e => setEditing({ ...editing, original_price: e.target.value ? Number(e.target.value) : null })} placeholder="Optional" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-[10px] text-muted-foreground mb-1 block">Time Slot</label>
+                <Input value={editing.slot} onChange={e => setEditing({ ...editing, slot: e.target.value })} placeholder="e.g. 7 PM – 11 PM" />
+              </div>
+              <div>
+                <label className="text-[10px] text-muted-foreground mb-1 block">Property ID</label>
+                <Input value={editing.property_id} onChange={e => setEditing({ ...editing, property_id: e.target.value })} placeholder="property-id" />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-[10px] text-muted-foreground mb-1 block">Badge (optional)</label>
+              <Input value={editing.badge} onChange={e => setEditing({ ...editing, badge: e.target.value })} placeholder="e.g. Most Popular, New" />
+            </div>
+
+            {/* Includes selector */}
+            <div>
+              <label className="text-[10px] text-muted-foreground mb-2 block">What's Included</label>
+              <div className="flex flex-wrap gap-2">
+                {INCLUDE_OPTIONS.map(inc => (
+                  <button
+                    key={inc}
+                    onClick={() => toggleInclude(inc)}
+                    className={`text-xs px-3 py-1.5 rounded-lg font-medium transition ${
+                      editing.includes.includes(inc)
+                        ? "bg-primary/15 text-primary ring-1 ring-primary/30"
+                        : "bg-secondary text-muted-foreground"
+                    }`}
+                  >{inc}</button>
+                ))}
+              </div>
+            </div>
+
+            {/* Mood selector */}
+            <div>
+              <label className="text-[10px] text-muted-foreground mb-2 block">Mood Tags</label>
+              <div className="flex flex-wrap gap-2">
+                {MOOD_OPTIONS.map(m => (
+                  <button
+                    key={m}
+                    onClick={() => toggleMood(m)}
+                    className={`text-xs px-3 py-1.5 rounded-lg font-medium transition ${
+                      editing.mood.includes(m)
+                        ? "bg-primary/15 text-primary ring-1 ring-primary/30"
+                        : "bg-secondary text-muted-foreground"
+                    }`}
+                  >{m}</button>
+                ))}
+              </div>
+            </div>
+
+            {/* Save */}
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              onClick={saveCuration}
+              disabled={saving || !editing.name || !editing.property_id}
+              className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+              {editingId ? "Update Curation" : "Create Curation"}
+            </motion.button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // List view
   return (
     <div className="space-y-5">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-          <Sparkles size={22} className="text-primary" /> Curations
-        </h1>
-        <p className="text-sm text-muted-foreground">{curations.length} curated experiences</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            <Sparkles size={22} className="text-primary" /> Curations
+          </h1>
+          <p className="text-sm text-muted-foreground">{curations.length} curated experiences</p>
+        </div>
+        <motion.button
+          whileTap={{ scale: 0.95 }}
+          onClick={startCreate}
+          className="px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold flex items-center gap-1.5"
+        >
+          <Plus size={16} /> Create
+        </motion.button>
       </div>
 
       <div className="relative">
@@ -39,8 +303,9 @@ export default function AdminCurations() {
               key={c.id}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className="rounded-xl border border-border bg-card p-4"
+              transition={{ delay: i * 0.04 }}
+              className="rounded-xl border border-border bg-card p-4 cursor-pointer hover:border-primary/30 transition"
+              onClick={() => startEdit(c)}
             >
               <div className="flex items-start gap-3">
                 <span className="text-2xl">{c.emoji}</span>
@@ -60,9 +325,12 @@ export default function AdminCurations() {
                     </span>
                   </div>
                   <div className="flex flex-wrap gap-1 mt-2">
-                    {(c.tags || []).slice(0, 4).map((tag: string) => (
-                      <span key={tag} className="text-[10px] bg-secondary text-muted-foreground px-1.5 py-0.5 rounded">{tag}</span>
+                    {(c.includes || []).slice(0, 4).map((inc: string) => (
+                      <span key={inc} className="text-[10px] bg-secondary text-muted-foreground px-1.5 py-0.5 rounded">{inc}</span>
                     ))}
+                    {(c.includes || []).length > 4 && (
+                      <span className="text-[10px] text-muted-foreground">+{c.includes.length - 4}</span>
+                    )}
                   </div>
                 </div>
               </div>
