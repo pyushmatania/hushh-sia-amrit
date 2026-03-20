@@ -1,105 +1,66 @@
 import { Heart, Star, BadgeCheck, Zap, Flame, Sparkles } from "lucide-react";
 import { useState, useCallback, useRef, useMemo } from "react";
 import type { Property } from "@/data/properties";
+import { AccentFrame, AccentTag } from "@/components/shared/AccentFrame";
 
-// Accent config — color + side + tag
+// Accent config — color + tag
 type CardAccent = {
-  color: string; // primary hsl color
-  side: "left" | "right" | "top"; // which side is bold
+  color: string;
   tag: { label: string; bg: string; icon?: React.ReactNode };
-} | null;
+};
 
 function getCardAccent(property: Property, index: number): CardAccent {
   if (property.slotsLeft <= 2 && property.slotsLeft > 0) {
     return {
       color: "hsl(0 85% 55%)",
-      side: "left",
       tag: {
         label: "SELLING FAST",
         bg: "linear-gradient(135deg, hsl(0 85% 55%), hsl(35 95% 55%))",
-        icon: <Flame size={11} className="text-white" />,
+        icon: <Flame size={11} className="text-primary-foreground" />,
       },
     };
   }
+
   if (property.rating >= 4.9) {
     return {
       color: "hsl(270 80% 65%)",
-      side: "left",
       tag: {
         label: "HUSHH PICK",
         bg: "linear-gradient(135deg, hsl(270 80% 65%), hsl(320 80% 60%))",
-        icon: <Sparkles size={11} className="text-white" />,
+        icon: <Sparkles size={11} className="text-primary-foreground" />,
       },
     };
   }
+
   if (property.category.includes("party") && index % 3 === 0) {
     return {
       color: "hsl(280 90% 60%)",
-      side: "right",
       tag: {
         label: "HUSHH LIVE",
         bg: "linear-gradient(135deg, hsl(280 90% 60%), hsl(200 90% 55%))",
-        icon: <Zap size={11} className="text-white" />,
+        icon: <Zap size={11} className="text-primary-foreground" />,
       },
     };
   }
+
   if (property.basePrice >= 1500 && index % 2 === 1) {
     return {
       color: "hsl(43 96% 56%)",
-      side: "top",
       tag: {
         label: "PREMIUM",
         bg: "linear-gradient(135deg, hsl(43 96% 50%), hsl(30 90% 45%))",
       },
     };
   }
-  return null;
-}
 
-/**
- * Two-element L-shaped border: solid at top-left corner, fading down left + across top.
- * Returns an array of style objects for left-edge and top-edge divs.
- */
-function AccentBorder({ color, radius }: { color: string; radius: string }) {
-  return (
-    <>
-      {/* Left edge: solid at top, fades toward bottom */}
-      <div style={{
-        position: "absolute", left: 0, top: 0, bottom: 0, width: "2.5px", zIndex: 3,
-        pointerEvents: "none", borderRadius: radius,
-        background: color,
-        maskImage: "linear-gradient(to bottom, black 0%, black 40%, transparent 85%)",
-        WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 40%, transparent 85%)",
-      }} />
-      {/* Top edge: solid at left, fades toward right */}
-      <div style={{
-        position: "absolute", left: 0, top: 0, right: 0, height: "2.5px", zIndex: 3,
-        pointerEvents: "none", borderRadius: radius,
-        background: color,
-        maskImage: "linear-gradient(to right, black 0%, black 30%, transparent 70%)",
-        WebkitMaskImage: "linear-gradient(to right, black 0%, black 30%, transparent 70%)",
-      }} />
-    </>
-  );
-}
-
-/** Asymmetrical tag with slanted right edge */
-function AccentTag({ tag, color }: { tag: NonNullable<NonNullable<CardAccent>["tag"]>; color: string }) {
-  return (
-    <span
-      className="absolute top-3 left-3 text-[10px] font-bold tracking-wider pl-3 pr-4 py-1.5 flex items-center gap-1 shadow-lg z-10"
-      style={{
-        background: tag.bg,
-        color: "white",
-        letterSpacing: "0.08em",
-        clipPath: "polygon(0 0, 100% 0, 88% 100%, 0 100%)",
-        borderRadius: "4px 8px 8px 4px",
-      }}
-    >
-      {tag.icon}
-      {tag.label}
-    </span>
-  );
+  return {
+    color: "hsl(var(--primary))",
+    tag: {
+      label: "CURATED",
+      bg: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))",
+      icon: <Sparkles size={11} className="text-primary-foreground" />,
+    },
+  };
 }
 
 interface PropertyCardProps {
@@ -153,18 +114,7 @@ export default function PropertyCard({ property, index, onTap }: PropertyCardPro
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* L-shaped fading accent border */}
-        {accent && <AccentBorder color={accent.color} radius="1rem" />}
-
-        {/* Subtle corner glow */}
-        {accent && (
-          <div
-            className="absolute inset-0 z-[1] pointer-events-none rounded-2xl"
-            style={{
-              background: `radial-gradient(ellipse at top left, ${accent.color}15 0%, transparent 50%)`,
-            }}
-          />
-        )}
+        <AccentFrame color={accent.color} radius="1rem" glowAlpha={0.08} />
 
         {!imgLoaded && (
           <div className="absolute inset-0 bg-secondary animate-pulse rounded-2xl">
@@ -179,19 +129,14 @@ export default function PropertyCard({ property, index, onTap }: PropertyCardPro
           loading="lazy"
         />
 
-        {/* Asymmetrical accent tag */}
-        {accent?.tag && <AccentTag tag={accent.tag} color={accent.color} />}
-
-        {/* Guest favourite (only if no accent tag) */}
-        {!accent?.tag && property.rating >= 4.8 && (
-          <span className="absolute top-3 left-3 text-[11px] font-semibold glass px-3 py-1.5 rounded-full text-foreground">
-            Guest favourite
-          </span>
-        )}
+        <AccentTag tag={accent.tag} className="absolute top-3 left-3 z-10" />
 
         {/* Heart */}
         <button
-          onClick={(e) => { e.stopPropagation(); setLiked(!liked); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            setLiked(!liked);
+          }}
           className="absolute top-3 right-3 active:scale-125 transition-transform"
         >
           <Heart
