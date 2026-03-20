@@ -419,12 +419,14 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.28 }}
-          className="rounded-2xl glass p-4 cursor-pointer"
+          onClick={() => setShowPastTrips(true)}
+          className="rounded-2xl glass p-4 cursor-pointer active:scale-[0.97] transition-transform"
         >
           <div className="h-28 flex items-center justify-center mb-2">
             <img src={pastTripsImg} alt="Past trips" className="h-full object-contain" />
           </div>
           <h4 className="font-semibold text-sm text-foreground">Past trips</h4>
+          <p className="text-[10px] text-muted-foreground mt-0.5">{pastTrips.length} trips</p>
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 16 }}
