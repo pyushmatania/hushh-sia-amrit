@@ -296,7 +296,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
         </motion.div>
 
         {/* ✨ Enhance Your Trip — add experiences & services */}
-        {(isUpcoming || isCompleted) && !isCancelled && (
+        {(isActive || isUpcoming || isCompleted) && !isCancelled && (
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
