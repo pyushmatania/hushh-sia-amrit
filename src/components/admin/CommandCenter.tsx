@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   IndianRupee, CalendarCheck, Eye, Users, TrendingUp,
-  ArrowUpRight, Flame, Clock, Sparkles
+  ArrowUpRight, Flame, Clock, Sparkles, Bot, Send, Loader2
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from "recharts";
@@ -10,6 +10,7 @@ import LiveActivityFeed from "./LiveActivityFeed";
 import LiveOrdersWidget from "./LiveOrdersWidget";
 import BookingHeatmap from "./BookingHeatmap";
 import WeeklyDigestPreview from "./WeeklyDigestPreview";
+import { Input } from "@/components/ui/input";
 import type { AdminPage } from "./AdminLayout";
 
 interface Stats {
