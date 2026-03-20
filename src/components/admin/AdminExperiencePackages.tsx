@@ -159,7 +159,7 @@ export default function AdminExperiencePackages() {
           <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
             <Gift size={18} className="text-primary" /> Experience Packages
           </h2>
-          <p className="text-sm text-muted-foreground">{packages.length} packages</p>
+          <p className="text-sm text-muted-foreground">{packages.length} packages · Drag to reorder</p>
         </div>
         <button
           onClick={openCreate}
