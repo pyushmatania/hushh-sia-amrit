@@ -234,7 +234,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
             <>
               {/* Spotlight Video Cards for Services */}
               <SectionDivider title="🛎️ PREMIUM SERVICES" />
-              <SpotlightCarousel properties={serviceProperties} onPropertyTap={onPropertyTap} />
+              <SpotlightCarousel properties={serviceProperties} onPropertyTap={onPropertyTap} category="service" />
 
               <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
                 {["👨‍🍳 Food", "🎈 Decoration", "🚗 Transport", "🎧 Entertainment", "📸 Photography", "🧹 Staff"].map(tag => (
