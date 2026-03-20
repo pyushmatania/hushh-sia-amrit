@@ -194,6 +194,10 @@ Everything works without login using mock data:
 | Reviews | `reviews` + `review_responses` | Ratings, photos, host responses |
 | Loyalty | `loyalty_transactions` | Earn 5 pts/₹100, tier progression |
 | Referrals | `referral_codes` + `referral_uses` | Unique codes, point rewards |
+| Curations | `curations` | 8 experience packs, public read, DB-seeded |
+| Orders | `orders` + `order_items` | In-stay live ordering (Swiggy-style), saved per user |
+| Spin Wheel | `spin_history` | Daily spin results, 1 spin/day enforced via DB query |
+| Milestones | `user_milestones` | Achievement tracking, unique per user+milestone |
 
 ---
 
@@ -263,14 +267,14 @@ src/
 | `useHostAnalytics` | Analytics data | — |
 | `useImageUpload` | Storage upload | — |
 | `useTheme` | Theme management | — |
-| `useMobile` | Mobile detection | — |
-| `useUnreadCount` | Unread badge | — |
+| `usePrivacyMode` | Privacy toggle + name masking | ✅ localStorage |
+| `useCurations` | Fetch curated packs from DB | ✅ Static fallback |
 
 ---
 
 ## 🗄 Database Schema
 
-### Tables (12 total)
+### Tables (16 total)
 | Table | Key Columns | Purpose |
 |-------|------------|---------|
 | `profiles` | user_id, display_name, avatar_url, bio, location, loyalty_points, tier | User profiles |
@@ -285,6 +289,11 @@ src/
 | `referral_codes` | user_id, code, uses, reward_points | Referral codes |
 | `referral_uses` | code_id, referrer_user_id, referred_user_id, credited | Usage tracking |
 | `host_listings` | user_id, name, category, base_price, capacity, amenities, tags, image_urls, status | Host venues |
+| `curations` | name, tagline, emoji, slot, includes[], tags[], mood[], price, original_price, gradient, badge, property_id, active, sort_order | Curated experience packs |
+| `orders` | user_id, property_id, booking_id, total, status | In-stay food/drink orders |
+| `order_items` | order_id, item_name, item_emoji, quantity, unit_price | Individual order line items |
+| `spin_history` | user_id, points_won, prize_label, prize_emoji, spun_at | Daily spin wheel results |
+| `user_milestones` | user_id, milestone_id, achieved_at | Achievement tracking |
 
 ### Database Functions
 | Function | Purpose |
@@ -353,6 +362,28 @@ React 18 · TypeScript 5.8 · Vite 8 · Tailwind CSS 3.4 · shadcn/ui · CVA · 
 - Profile hero/achievements/activity redesign
 - HUSHH.md + in-app documentation (easter egg: tap version 5×)
 - Change history convention established
+
+### v1.11 — Curations & Mood Discovery
+- Mood Selector — emoji-based vibe picker filters entire feed
+- 8 Curated Experience Packs with 1-tap booking (After Hours Chill, Just Us Night, Party Scene, BBQ Bonfire, Movie Night, Game Night, Work Escape, Team Work Day)
+- Tonight Tags — quick discovery filters
+- CuratedPackCard with gradient headers, savings badges, strikethrough pricing
+- Slot Intelligence — smart tags on time slots (Almost Full, Best Price, Trending)
+- Dynamic Pricing — strikethrough prices, savings badges, viewers-now microcopy
+- `curations` table created in DB with public read RLS, 8 seeded packs
+- `use-curations` hook fetches from DB with fallback to static data
+
+### v1.12 — Monetization & Gamification (DB-Wired)
+- Live Service Ordering — Swiggy-style bottom sheet, 20-item menu, category filters, cart
+  - Wired to `orders` + `order_items` tables with authenticated RLS
+  - Accessible from booking confirmation via "Order Food & Drinks" button
+- Privacy Mode — toggle masks names & booking IDs, persisted in localStorage
+- Experience Builder Smart Nudges — contextual "People also added" suggestions
+- Spin Wheel — daily spin-to-win with weighted prizes (5–100 pts)
+  - Wired to `spin_history` table, 1 spin/day enforced via DB check
+- Milestone Rewards — 6 achievements with point rewards
+  - Wired to `user_milestones` table with unique(user_id, milestone_id)
+- PrivacyModeProvider wraps entire app
 
 ---
 

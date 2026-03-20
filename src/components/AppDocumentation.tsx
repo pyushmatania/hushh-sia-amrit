@@ -200,16 +200,20 @@ export const changeLog = [
   },
   {
     version: "1.12",
-    phase: "Monetization & Gamification",
+    phase: "Monetization & Gamification (DB-Wired)",
     items: [
       "Live Service Ordering — Swiggy-style in-stay menu with 20 items, category filters, cart with quantity controls, veg/non-veg indicators, prep times",
+      "Orders wired to DB — orders + order_items tables with authenticated RLS, saved per user on place order",
       "Privacy Mode — toggle in Settings to mask names & booking IDs, discreet notifications option, stored in localStorage",
       "Experience Builder Smart Nudges — 'People also added' section with contextual suggestions (beer+BBQ, candle+dinner combos), savings badges",
       "Spin Wheel — daily spin-to-win on Loyalty screen with weighted prizes (5-100 pts), SVG wheel with framer-motion rotation",
+      "Spin history wired to DB — spin_history table, 1 spin/day enforced via DB query, prizes recorded server-side",
       "Milestone Rewards — 6 achievement milestones (First Booking, Explorer, Regular, Reviewer, Social Butterfly, VIP) with point rewards",
+      "Milestones wired to DB — user_milestones table with unique(user_id, milestone_id), achievements persisted across sessions",
       "Curations wired to live database — curations table with public read RLS, 8 seeded packs, frontend fetches from DB with fallback",
       "PrivacyModeProvider — context provider wrapping the app for global privacy state",
       "LiveOrderingSheet — accessible from booking confirmation page via 'Order Food & Drinks' button",
+      "New DB tables: orders, order_items, spin_history, user_milestones (total: 16 tables)",
     ],
   },
 ];
@@ -291,13 +295,13 @@ Profile → Loyalty, Referrals, Host Dashboard, Settings, Theme, Auth
 
 React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion 12 · React Query · React Router v6 · Lovable Cloud · Recharts · React Hook Form + Zod
 
-40+ components, 15 hooks, 12 database tables
+40+ components, 15 hooks, 16 database tables
 
 ---
 
 ## 🗄 Database Tables
 
-profiles, bookings, wishlists, conversations, messages, notifications, reviews, review_responses, loyalty_transactions, referral_codes, referral_uses, host_listings
+profiles, bookings, wishlists, conversations, messages, notifications, reviews, review_responses, loyalty_transactions, referral_codes, referral_uses, host_listings, curations, orders, order_items, spin_history, user_milestones
 
 ---
 
