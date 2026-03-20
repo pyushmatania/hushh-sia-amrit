@@ -4,6 +4,7 @@ import { Gift, Search, Plus, Trash2, Pencil, X, Eye, GripVertical } from "lucide
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { useDragReorder } from "@/hooks/use-drag-reorder";
 
 interface PackageRow {
   id: string;
