@@ -3,6 +3,8 @@ import { X, Plus, Minus, ShoppingCart, Search, Clock, Flame, Zap, ChevronRight }
 import { useState, useMemo, useCallback } from "react";
 import { hapticSelection, hapticSuccess } from "@/lib/haptics";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
 
 // ─── MOCK MENU DATA ───
 interface MenuItem {
@@ -52,14 +54,18 @@ interface LiveOrderingSheetProps {
   open: boolean;
   onClose: () => void;
   propertyName: string;
+  propertyId?: string;
+  bookingId?: string;
 }
 
-export default function LiveOrderingSheet({ open, onClose, propertyName }: LiveOrderingSheetProps) {
+export default function LiveOrderingSheet({ open, onClose, propertyName, propertyId, bookingId }: LiveOrderingSheetProps) {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [cart, setCart] = useState<Record<string, number>>({});
   const [activeCat, setActiveCat] = useState("all");
   const [search, setSearch] = useState("");
   const [showCart, setShowCart] = useState(false);
+  const [placing, setPlacing] = useState(false);
 
   const updateCart = useCallback((id: string, delta: number) => {
     hapticSelection();
@@ -89,11 +95,41 @@ export default function LiveOrderingSheet({ open, onClose, propertyName }: LiveO
   const cartTotal = cartItems.reduce((sum, i) => sum + i.price * i.qty, 0);
   const cartCount = Object.values(cart).reduce((a, b) => a + b, 0);
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
+    if (placing) return;
+    setPlacing(true);
     hapticSuccess();
+
+    if (user) {
+      // Save to DB
+      const { data: order } = await supabase
+        .from("orders")
+        .insert({
+          user_id: user.id,
+          property_id: propertyId || "unknown",
+          booking_id: bookingId || null,
+          total: cartTotal,
+          status: "pending",
+        })
+        .select()
+        .single();
+
+      if (order) {
+        const items = cartItems.map(ci => ({
+          order_id: order.id,
+          item_name: ci.name,
+          item_emoji: ci.emoji,
+          quantity: ci.qty,
+          unit_price: ci.price,
+        }));
+        await supabase.from("order_items").insert(items);
+      }
+    }
+
     toast({ title: "🎉 Order Placed!", description: `₹${cartTotal} · Preparing your items now` });
     setCart({});
     setShowCart(false);
+    setPlacing(false);
     onClose();
   };
 

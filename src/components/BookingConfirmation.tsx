@@ -127,6 +127,7 @@ export default function BookingConfirmation({ property, slotId, guests, date, to
         open={orderingOpen}
         onClose={() => setOrderingOpen(false)}
         propertyName={property.name}
+        propertyId={property.id}
       />
     </motion.div>
   );

@@ -3,11 +3,13 @@ import {
   ArrowLeft, Crown, Gift, Star, Zap, ChevronRight, Copy, Share2,
   Trophy, Ticket, Coffee, Sparkles, TrendingUp, Check, Users, Loader2, Target
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLoyalty } from "@/hooks/use-loyalty";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
-import SpinWheel, { milestones, type Prize } from "./SpinWheel";
+import SpinWheel, { milestones as defaultMilestones, type Prize, type Milestone } from "./SpinWheel";
 
 interface LoyaltyScreenProps {
   onBack: () => void;
@@ -51,14 +53,59 @@ function TabPill({ active, label, onClick }: { active: boolean; label: string; o
 export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
   const { points, tier, transactions, loading, redeemPoints } = useLoyalty();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [tab, setTab] = useState<"rewards" | "history" | "earn" | "referral" | "spin" | "milestones">("rewards");
   const [redeemed, setRedeemed] = useState<Set<string>>(new Set());
   const [copied, setCopied] = useState(false);
   const [redeeming, setRedeeming] = useState<string | null>(null);
+  const [milestones, setMilestones] = useState<Milestone[]>(defaultMilestones);
   const [spunToday, setSpunToday] = useState(() => {
     const last = localStorage.getItem("hushh_last_spin");
     return last === new Date().toDateString();
   });
+
+  // Load achieved milestones from DB
+  useEffect(() => {
+    if (!user) return;
+    const load = async () => {
+      // Check spin history for today
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const { data: spins } = await supabase
+        .from("spin_history")
+        .select("id")
+        .eq("user_id", user.id)
+        .gte("spun_at", today.toISOString())
+        .limit(1);
+      if (spins && spins.length > 0) setSpunToday(true);
+
+      // Load milestones
+      const { data: achieved } = await supabase
+        .from("user_milestones")
+        .select("milestone_id")
+        .eq("user_id", user.id);
+      if (achieved) {
+        const achievedIds = new Set(achieved.map(a => a.milestone_id));
+        setMilestones(defaultMilestones.map(m => ({ ...m, achieved: achievedIds.has(m.id) })));
+      }
+    };
+    load();
+  }, [user]);
+
+  const handleSpinWin = async (prize: Prize) => {
+    setSpunToday(true);
+    localStorage.setItem("hushh_last_spin", new Date().toDateString());
+    toast({ title: `🎉 You won ${prize.label}!`, description: `${prize.emoji} ${prize.points} bonus points added` });
+
+    if (user) {
+      await supabase.from("spin_history").insert({
+        user_id: user.id,
+        points_won: prize.points,
+        prize_label: prize.label,
+        prize_emoji: prize.emoji,
+      });
+    }
+  };
 
   const referralCode = "HUSHH200";
 
@@ -337,11 +384,7 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
               <p className="text-xs text-muted-foreground mb-5">Spin once a day to win bonus points!</p>
               <SpinWheel
                 disabled={spunToday}
-                onWin={(prize: Prize) => {
-                  setSpunToday(true);
-                  localStorage.setItem("hushh_last_spin", new Date().toDateString());
-                  toast({ title: `🎉 You won ${prize.label}!`, description: `${prize.emoji} ${prize.points} bonus points added` });
-                }}
+                onWin={handleSpinWin}
               />
             </div>
           </motion.div>
