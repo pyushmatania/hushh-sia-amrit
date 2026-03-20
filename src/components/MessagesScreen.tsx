@@ -597,7 +597,10 @@ function MockChatView({ threadId, thread, onBack }: {
                       }`}
                         style={isUser ? { boxShadow: "0 2px 8px hsl(var(--primary) / 0.25)" } : undefined}
                       >
-                        <p className="text-[13px] leading-relaxed">{msg.text}</p>
+                        {msg.imageUrl && (
+                          <ImageBubble url={msg.imageUrl} onClick={() => setViewingImage(msg.imageUrl!)} />
+                        )}
+                        {msg.text && <p className="text-[13px] leading-relaxed">{msg.text}</p>}
                         <div className={`flex items-center justify-end gap-1 mt-1 ${isUser ? "text-primary-foreground/50" : "text-muted-foreground"}`}>
                           <span className="text-[10px]">
                             {msg.time.includes(",") ? msg.time.split(",")[1]?.trim() : msg.time}
