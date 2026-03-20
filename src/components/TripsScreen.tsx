@@ -287,16 +287,35 @@ const demoTrips: Booking[] = [
   },
 ];
 
+const filterTabs = [
+  { value: "all", label: "All", dotColor: "" },
+  { value: "upcoming", label: "Upcoming", dotColor: "bg-primary" },
+  { value: "completed", label: "Completed", dotColor: "bg-success" },
+  { value: "cancelled", label: "Cancelled", dotColor: "bg-destructive" },
+] as const;
+
 export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel }: TripsScreenProps) {
   const [refreshKey, setRefreshKey] = useState(0);
+  const [activeFilter, setActiveFilter] = useState<string>("all");
   const handleRefresh = useCallback(async () => {
     await new Promise((r) => setTimeout(r, 800));
     setRefreshKey((k) => k + 1);
   }, []);
 
-  // Show demo trips when no real bookings exist
-  const displayBookings = useMemo(() => bookings.length > 0 ? bookings : demoTrips, [bookings]);
+  const allBookings = useMemo(() => bookings.length > 0 ? bookings : demoTrips, [bookings]);
   const isDemo = bookings.length === 0;
+
+  const filteredBookings = useMemo(
+    () => activeFilter === "all" ? allBookings : allBookings.filter((b) => b.status === activeFilter),
+    [allBookings, activeFilter]
+  );
+
+  // Count per status
+  const counts = useMemo(() => {
+    const c: Record<string, number> = { all: allBookings.length };
+    allBookings.forEach((b) => { c[b.status] = (c[b.status] || 0) + 1; });
+    return c;
+  }, [allBookings]);
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
@@ -319,28 +338,67 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
         </motion.p>
       </div>
 
+      {/* Filter tabs */}
+      <div className="px-5 pt-1 pb-2">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+          {filterTabs.map((tab) => {
+            const isActive = activeFilter === tab.value;
+            const count = counts[tab.value] || 0;
+            return (
+              <button
+                key={tab.value}
+                onClick={() => setActiveFilter(tab.value)}
+                className={`shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold transition-all border ${
+                  isActive
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border bg-secondary/50 text-muted-foreground hover:border-foreground/20"
+                }`}
+              >
+                {tab.dotColor && <span className={`w-1.5 h-1.5 rounded-full ${tab.dotColor}`} />}
+                {tab.label}
+                {count > 0 && (
+                  <span className={`text-[10px] ${isActive ? "text-primary" : "text-muted-foreground"}`}>
+                    {count}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {isDemo && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="mx-5 mt-2 mb-1 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20"
+          className="mx-5 mt-1 mb-1 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20"
         >
           <p className="text-[11px] text-primary font-medium text-center">✨ These are sample trips — book a venue to see your real trips here!</p>
         </motion.div>
       )}
 
-      <div className="px-5 pt-4 space-y-6">
-        {displayBookings.map((trip, i) => (
-          <SwipeableCard
-            key={trip.id}
-            booking={trip}
-            index={i}
-            onViewDetail={onViewDetail}
-            onRebook={onRebook}
-            onCancel={isDemo ? undefined : onCancel}
-          />
-        ))}
-      </div>
+      {filteredBookings.length === 0 ? (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col items-center pt-16 px-5"
+        >
+          <p className="text-sm text-muted-foreground">No {activeFilter} trips</p>
+        </motion.div>
+      ) : (
+        <div className="px-5 pt-4 space-y-6">
+          {filteredBookings.map((trip, i) => (
+            <SwipeableCard
+              key={trip.id}
+              booking={trip}
+              index={i}
+              onViewDetail={onViewDetail}
+              onRebook={onRebook}
+              onCancel={isDemo ? undefined : onCancel}
+            />
+          ))}
+        </div>
+      )}
     </div>
     </PullToRefresh>
   );
