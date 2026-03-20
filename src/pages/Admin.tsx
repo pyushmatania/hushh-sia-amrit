@@ -93,6 +93,7 @@ export default function Admin() {
       case "loyalty": return <AdminLoyaltyReferrals />;
       case "calendar": return <HostCalendar />;
       case "requests": return <BookingRequests />;
+      case "history": return <AdminPropertyHistory onNavigateToClient={(userId) => { setPage("clients"); }} />;
       case "audit": return <AdminAuditLog />;
       default: return <CommandCenter onNavigate={setPage} />;
     }
