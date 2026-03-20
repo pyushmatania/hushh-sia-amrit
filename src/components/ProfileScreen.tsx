@@ -34,6 +34,7 @@ const settingsMenu = [
   { icon: Settings, label: "Account settings", settingKey: "" },
   { icon: CreditCard, label: "Payments & payouts", settingKey: "" },
   { icon: Shield, label: "Login & security", settingKey: "security" },
+  { icon: Shield, label: "Verify Identity", sublabel: "Upload ID", badge: "NEW", settingKey: "identity" },
   { icon: Bell, label: "Notifications", settingKey: "notifications" },
   { icon: Globe, label: "Language & region", settingKey: "language" },
   { icon: Accessibility, label: "Accessibility", settingKey: "accessibility" },
