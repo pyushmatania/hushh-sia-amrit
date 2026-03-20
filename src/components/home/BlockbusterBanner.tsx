@@ -1,4 +1,5 @@
 import { Sparkles } from "lucide-react";
+import { toast } from "sonner";
 
 export default function BlockbusterBanner() {
   return (
@@ -14,7 +15,9 @@ export default function BlockbusterBanner() {
         </div>
         <h3 className="text-2xl font-extrabold text-foreground leading-tight">New Year's Eve 2026</h3>
         <p className="text-sm text-foreground/60 mt-1">Bookings open for the biggest night of the year 🥂</p>
-        <button className="mt-4 px-6 py-2.5 rounded-full text-sm font-bold bg-primary text-primary-foreground active:scale-95 transition-transform">
+        <button
+          onClick={() => toast.success("NYE 2026 — Spot reserved! We'll notify you when bookings open.")}
+          className="mt-4 px-6 py-2.5 rounded-full text-sm font-bold bg-primary text-primary-foreground active:scale-95 transition-transform">
           Reserve Now
         </button>
         <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-30"
