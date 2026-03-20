@@ -196,7 +196,7 @@ export const properties: Property[] = [
     responseRate: "99%",
     primaryCategory: "experience",
     propertyType: "Open Lawn",
-    category: ["stays", "party", "bonfire", "movie"],
+    category: ["experiences", "party", "bonfire", "movie"],
     highlights: ["20-foot outdoor cinema screen", "Professional DJ booth with lighting", "Massive bonfire circle fits 30 people", "Full bar counter with mixologist option"],
     rules: [
       { icon: "🕐", text: "Check-in at slot start time" },
