@@ -40,6 +40,17 @@ interface Listing {
   rules: any;
 }
 
+const parseNumberInput = (value: string): number | undefined => {
+  const trimmed = value.trim();
+  if (trimmed === "") return undefined;
+  const parsed = Number(trimmed);
+  return Number.isNaN(parsed) ? undefined : parsed;
+};
+
+const notifyListingsUpdated = () => {
+  window.dispatchEvent(new Event("hushh:listings-updated"));
+};
+
 const statusColors: Record<string, string> = {
   published: "bg-emerald-500/15 text-emerald-400 border-emerald-500/20",
   draft: "bg-muted text-muted-foreground border-border",
@@ -90,25 +101,44 @@ export default function AdminProperties() {
 
   const toggleStatus = async (id: string, current: string) => {
     const next = current === "published" ? "paused" : "published";
-    await supabase.from("host_listings").update({ status: next }).eq("id", id);
+    const { error } = await supabase.from("host_listings").update({ status: next }).eq("id", id);
+    if (error) {
+      toast({ title: "Status update failed", description: error.message, variant: "destructive" });
+      return;
+    }
+
     setListings(prev => prev.map(l => l.id === id ? { ...l, status: next } : l));
+    notifyListingsUpdated();
     toast({ title: `Property ${next}`, description: `Status changed to ${next}` });
   };
 
   const deleteListing = async (id: string) => {
     if (!confirm("Delete this property permanently?")) return;
-    await supabase.from("host_listings").delete().eq("id", id);
+    const { error } = await supabase.from("host_listings").delete().eq("id", id);
+    if (error) {
+      toast({ title: "Delete failed", description: error.message, variant: "destructive" });
+      return;
+    }
+
     setListings(prev => prev.filter(l => l.id !== id));
+    notifyListingsUpdated();
     toast({ title: "Property deleted" });
   };
 
   const duplicateListing = async (listing: Listing) => {
     const { id, created_at, ...rest } = listing;
-    const { data } = await supabase.from("host_listings")
+    const { data, error } = await supabase.from("host_listings")
       .insert({ ...rest, name: `${rest.name} (Copy)`, status: "draft" })
       .select().single();
+
+    if (error) {
+      toast({ title: "Duplicate failed", description: error.message, variant: "destructive" });
+      return;
+    }
+
     if (data) {
       setListings(prev => [data as Listing, ...prev]);
+      notifyListingsUpdated();
       toast({ title: "Property duplicated" });
     }
   };
@@ -136,8 +166,8 @@ export default function AdminProperties() {
       description: editingListing.description || "",
       full_description: editingListing.full_description || "",
       location: editingListing.location || "Jeypore, Odisha",
-      base_price: editingListing.base_price || 0,
-      capacity: editingListing.capacity || 10,
+      base_price: editingListing.base_price ?? 0,
+      capacity: editingListing.capacity ?? 10,
       status: editingListing.status || "draft",
       category: editingListing.category || "Stays",
       image_urls: editingListing.image_urls || [],
@@ -147,10 +177,10 @@ export default function AdminProperties() {
       property_type: editingListing.property_type || "",
       primary_category: editingListing.primary_category || "stay",
       host_name: editingListing.host_name || "",
-      rating: editingListing.rating || 0,
-      review_count: editingListing.review_count || 0,
-      lat: editingListing.lat || 0,
-      lng: editingListing.lng || 0,
+      rating: editingListing.rating ?? 0,
+      review_count: editingListing.review_count ?? 0,
+      lat: editingListing.lat ?? 0,
+      lng: editingListing.lng ?? 0,
       discount_label: editingListing.discount_label || "",
       entry_instructions: editingListing.entry_instructions || "",
       slots: editingListing.slots || [],
@@ -158,16 +188,34 @@ export default function AdminProperties() {
     };
 
     if (isCreating) {
-      const { data } = await supabase.from("host_listings")
+      const { data, error } = await supabase.from("host_listings")
         .insert({ ...payload, user_id: "00000000-0000-0000-0000-000000000001" })
         .select().single();
+
+      if (error) {
+        toast({ title: "Create failed", description: error.message, variant: "destructive" });
+        return;
+      }
+
       if (data) {
         setListings(prev => [data as Listing, ...prev]);
+        notifyListingsUpdated();
         toast({ title: "Property created!" });
       }
     } else {
-      await supabase.from("host_listings").update(payload).eq("id", editingListing.id!);
-      setListings(prev => prev.map(l => l.id === editingListing.id ? { ...l, ...payload } : l));
+      const { data, error } = await supabase.from("host_listings")
+        .update(payload)
+        .eq("id", editingListing.id!)
+        .select()
+        .single();
+
+      if (error) {
+        toast({ title: "Save failed", description: error.message, variant: "destructive" });
+        return;
+      }
+
+      setListings(prev => prev.map(l => l.id === editingListing.id ? (data as Listing) : l));
+      notifyListingsUpdated();
       toast({ title: "Property updated!" });
     }
     setEditingListing(null);
@@ -433,10 +481,10 @@ export default function AdminProperties() {
                   <div className="space-y-3">
                     <div className="grid grid-cols-2 gap-3">
                       <Field label="Base Price (₹)">
-                        <Input type="number" value={editingListing.base_price ?? ""} onChange={e => setEditingListing(p => ({ ...p!, base_price: Number(e.target.value) }))} />
+                        <Input type="number" value={editingListing.base_price ?? ""} onChange={e => setEditingListing(p => ({ ...p!, base_price: parseNumberInput(e.target.value) }))} />
                       </Field>
                       <Field label="Capacity">
-                        <Input type="number" value={editingListing.capacity || 0} onChange={e => setEditingListing(p => ({ ...p!, capacity: Number(e.target.value) }))} />
+                        <Input type="number" value={editingListing.capacity ?? ""} onChange={e => setEditingListing(p => ({ ...p!, capacity: parseNumberInput(e.target.value) }))} />
                       </Field>
                     </div>
                     <Field label="Discount Label">
@@ -444,10 +492,10 @@ export default function AdminProperties() {
                     </Field>
                     <div className="grid grid-cols-2 gap-3">
                       <Field label="Rating">
-                        <Input type="number" step="0.1" min="0" max="5" value={editingListing.rating || 0} onChange={e => setEditingListing(p => ({ ...p!, rating: Number(e.target.value) }))} />
+                        <Input type="number" step="0.1" min="0" max="5" value={editingListing.rating ?? ""} onChange={e => setEditingListing(p => ({ ...p!, rating: parseNumberInput(e.target.value) }))} />
                       </Field>
                       <Field label="Review Count">
-                        <Input type="number" value={editingListing.review_count || 0} onChange={e => setEditingListing(p => ({ ...p!, review_count: Number(e.target.value) }))} />
+                        <Input type="number" value={editingListing.review_count ?? ""} onChange={e => setEditingListing(p => ({ ...p!, review_count: parseNumberInput(e.target.value) }))} />
                       </Field>
                     </div>
                   </div>
@@ -461,10 +509,10 @@ export default function AdminProperties() {
                     </Field>
                     <div className="grid grid-cols-2 gap-3">
                       <Field label="Latitude">
-                        <Input type="number" step="0.001" value={editingListing.lat || 0} onChange={e => setEditingListing(p => ({ ...p!, lat: Number(e.target.value) }))} />
+                        <Input type="number" step="0.001" value={editingListing.lat ?? ""} onChange={e => setEditingListing(p => ({ ...p!, lat: parseNumberInput(e.target.value) }))} />
                       </Field>
                       <Field label="Longitude">
-                        <Input type="number" step="0.001" value={editingListing.lng || 0} onChange={e => setEditingListing(p => ({ ...p!, lng: Number(e.target.value) }))} />
+                        <Input type="number" step="0.001" value={editingListing.lng ?? ""} onChange={e => setEditingListing(p => ({ ...p!, lng: parseNumberInput(e.target.value) }))} />
                       </Field>
                     </div>
                     <Field label="Entry Instructions">
@@ -563,14 +611,14 @@ export default function AdminProperties() {
                           <Field label="Price (₹)">
                             <Input type="number" value={slot.price ?? ""} onChange={e => {
                               const slots = [...(editingListing.slots || [])];
-                              slots[i] = { ...slots[i], price: Number(e.target.value) };
+                              slots[i] = { ...slots[i], price: parseNumberInput(e.target.value) };
                               setEditingListing(p => ({ ...p!, slots }));
                             }} className="text-xs" />
                           </Field>
                           <Field label="Original Price (₹)">
-                            <Input type="number" value={slot.originalPrice || ""} onChange={e => {
+                            <Input type="number" value={slot.originalPrice ?? ""} onChange={e => {
                               const slots = [...(editingListing.slots || [])];
-                              slots[i] = { ...slots[i], originalPrice: e.target.value ? Number(e.target.value) : undefined };
+                              slots[i] = { ...slots[i], originalPrice: parseNumberInput(e.target.value) };
                               setEditingListing(p => ({ ...p!, slots }));
                             }} placeholder="Strikethrough" className="text-xs" />
                           </Field>
