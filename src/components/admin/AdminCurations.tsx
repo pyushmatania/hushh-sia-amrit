@@ -326,6 +326,7 @@ export default function AdminCurations() {
                           } else {
                             setCurations(prev => prev.filter(x => x.id !== c.id));
                             toast({ title: "Curation deleted" });
+                            window.dispatchEvent(new Event("hushh:listings-updated"));
                           }
                         });
                       }}
