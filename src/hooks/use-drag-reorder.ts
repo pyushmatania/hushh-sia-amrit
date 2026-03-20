@@ -28,14 +28,50 @@ export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onR
 
   const pointerIdRef = useRef<number | null>(null);
   const detachRef = useRef<(() => void) | null>(null);
+  const activeHandleRef = useRef<HTMLElement | null>(null);
+  const originalBodyUserSelectRef = useRef<string | null>(null);
+  const originalBodyCursorRef = useRef<string | null>(null);
+
+  const lockSelectionWhileDragging = useCallback(() => {
+    if (typeof document === "undefined") return;
+    const { body } = document;
+
+    if (originalBodyUserSelectRef.current === null) {
+      originalBodyUserSelectRef.current = body.style.userSelect;
+    }
+    if (originalBodyCursorRef.current === null) {
+      originalBodyCursorRef.current = body.style.cursor;
+    }
+
+    body.style.userSelect = "none";
+    body.style.cursor = "grabbing";
+  }, []);
+
+  const unlockSelectionAfterDrag = useCallback(() => {
+    if (typeof document === "undefined") return;
+    const { body } = document;
+
+    body.style.userSelect = originalBodyUserSelectRef.current ?? "";
+    body.style.cursor = originalBodyCursorRef.current ?? "";
+
+    originalBodyUserSelectRef.current = null;
+    originalBodyCursorRef.current = null;
+  }, []);
 
   const clearDragState = useCallback(() => {
+    const pointerId = pointerIdRef.current;
+    if (pointerId !== null && activeHandleRef.current?.hasPointerCapture(pointerId)) {
+      activeHandleRef.current.releasePointerCapture(pointerId);
+    }
+
+    activeHandleRef.current = null;
     dragIdRef.current = null;
     dragCatRef.current = null;
     pointerIdRef.current = null;
+    unlockSelectionAfterDrag();
     setDragId(null);
     setDragOverId(null);
-  }, []);
+  }, [unlockSelectionAfterDrag]);
 
   const getDropTargetFromPoint = useCallback((x: number, y: number) => {
     if (typeof document === "undefined") return null;
@@ -76,6 +112,15 @@ export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onR
       if (detachRef.current) return;
       const onMove = (e: PointerEvent) => {
         if (pointerIdRef.current !== e.pointerId) return;
+
+        const edgeThreshold = 88;
+        const scrollStep = 16;
+        if (e.clientY < edgeThreshold) {
+          window.scrollBy({ top: -scrollStep });
+        } else if (window.innerHeight - e.clientY < edgeThreshold) {
+          window.scrollBy({ top: scrollStep });
+        }
+
         const t = getDropTargetFromPoint(e.clientX, e.clientY);
         setDragOverId(t?.id ?? null);
       };
@@ -98,18 +143,11 @@ export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onR
     };
 
     return {
-      draggable: true,
+      draggable: false,
       role: "button" as const,
       tabIndex: 0,
       "aria-label": a11yLabel,
       "aria-roledescription": "Drag handle",
-      onDragStart: (e: React.DragEvent) => {
-        e.dataTransfer.effectAllowed = "move";
-        e.dataTransfer.setData("text/plain", id);
-        dragIdRef.current = id;
-        dragCatRef.current = cat;
-        setDragId(id);
-      },
       onKeyDown: (e: React.KeyboardEvent) => {
         if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
         e.preventDefault();
@@ -128,9 +166,15 @@ export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onR
         executeDrop(ids[toIdx], cat, id);
       },
       onPointerDown: (e: React.PointerEvent) => {
-        if (e.pointerType === "mouse") return;
+        if (e.button !== 0) return;
         e.preventDefault();
         e.stopPropagation();
+
+        const handleEl = e.currentTarget as HTMLElement;
+        activeHandleRef.current = handleEl;
+        handleEl.setPointerCapture(e.pointerId);
+        lockSelectionWhileDragging();
+
         dragIdRef.current = id;
         dragCatRef.current = cat;
         pointerIdRef.current = e.pointerId;
@@ -139,7 +183,7 @@ export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onR
         attachPointerListeners();
       },
     };
-  }, [clearDragState, executeDrop, getDropTargetFromPoint]);
+  }, [clearDragState, executeDrop, getDropTargetFromPoint, lockSelectionWhileDragging]);
 
   const getDropTargetProps = useCallback((item: T) => {
     const id = getIdRef.current(item);
