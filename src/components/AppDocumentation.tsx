@@ -218,6 +218,22 @@ export const changeLog = [
       "Repeat Booking Engine — 'Your Last Vibe 🔁' card on home screen, reads from bookings table (DB-wired), 1-tap rebook CTA, guest fallback via localStorage",
     ],
   },
+  {
+    version: "1.13",
+    phase: "Trip Management & Active Stay",
+    items: [
+      "Active Trip status — new 'active' booking status for checked-in users, live pulse indicator on trip cards",
+      "ActiveTripCard on home — replaces Last Vibe card, shows ongoing trip with 'Order Food' CTA and 'View Trip' button",
+      "Food ordering merged with extras — LiveOrderingSheet only accessible from active/checked-in trips (not all trips)",
+      "Trips redesign — 5 filter tabs (All, Active, Upcoming, Past, Cancelled), sorted with active first",
+      "Comprehensive demo trips — 8 mock bookings covering all statuses (1 active, 2 upcoming, 3 completed, 2 cancelled)",
+      "Order Food button on active trip cards — opens LiveOrderingSheet directly from trip card footer",
+      "Curated pack listings redesigned — tall vertical cards with autoplay video backgrounds, AccentFrame borders, AccentTag badges",
+      "8 generated videos for curated packs — bonfire, romantic, party, BBQ, movie, gaming, work, team",
+      "Mood selector removed from home — cleaner feed layout",
+      "All trip data wired to DB via useBookings hook with localStorage guest fallback",
+    ],
+  },
 ];
 
 // Generate the full HUSHH.md content from the changeLog + app info
