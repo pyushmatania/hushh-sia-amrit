@@ -6,7 +6,7 @@ import {
   CreditCard, Globe, Accessibility, FileText, Heart,
   Award, Zap, Calendar, TrendingUp, Crown, Pencil, LogIn
 } from "lucide-react";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
 import AuthScreen from "./AuthScreen";
