@@ -204,49 +204,42 @@ interface CategoryBarProps {
 
 export default function CategoryBar({ active, onChange }: CategoryBarProps) {
   return (
-    <div className="relative overflow-hidden rounded-2xl mx-4"
-      style={{
-        background: "linear-gradient(135deg, rgba(120,80,220,0.15) 0%, rgba(60,40,140,0.08) 50%, rgba(180,100,255,0.12) 100%)",
-        border: "1px solid rgba(255,255,255,0.08)",
-        boxShadow: "0 4px 24px -4px rgba(120,80,220,0.2)",
-      }}>
-      <div className="flex justify-around px-1">
-        {categories.map((cat) => {
-          const isActive = active === cat.id;
-          return (
-            <button
-              key={cat.id}
-              onClick={() => onChange(cat.id)}
-              className="relative flex flex-col items-center gap-1.5 px-3 pt-3 pb-3 shrink-0 group min-w-[76px]"
-            >
-              <div className="relative h-16 flex items-center justify-center">
-                <AnimatedIcon cat={cat} isActive={isActive} />
-                {cat.badge && (
-                  <motion.span
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute -top-1 -right-4 text-[7px] font-bold bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full leading-none tracking-wide glow-sm"
-                  >
-                    {cat.badge}
-                  </motion.span>
-                )}
-              </div>
-              <span className={`text-[11px] font-medium whitespace-nowrap transition-colors duration-200 ${
-                isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground/70"
-              }`}>
-                {cat.label}
-              </span>
-              {isActive && (
-                <motion.div
-                  layoutId="catUnderline"
-                  className="absolute bottom-0 left-2 right-2 h-[2px] bg-primary rounded-full glow-sm"
-                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                />
+    <div className="flex justify-around px-1">
+      {categories.map((cat) => {
+        const isActive = active === cat.id;
+        return (
+          <button
+            key={cat.id}
+            onClick={() => onChange(cat.id)}
+            className="relative flex flex-col items-center gap-1.5 px-3 pt-3 pb-3 shrink-0 group min-w-[76px]"
+          >
+            <div className="relative h-16 flex items-center justify-center">
+              <AnimatedIcon cat={cat} isActive={isActive} />
+              {cat.badge && (
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute -top-1 -right-4 text-[7px] font-bold bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full leading-none tracking-wide glow-sm"
+                >
+                  {cat.badge}
+                </motion.span>
               )}
-            </button>
-          );
-        })}
-      </div>
+            </div>
+            <span className={`text-[11px] font-medium whitespace-nowrap transition-colors duration-200 ${
+              isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground/70"
+            }`}>
+              {cat.label}
+            </span>
+            {isActive && (
+              <motion.div
+                layoutId="catUnderline"
+                className="absolute bottom-0 left-2 right-2 h-[2px] bg-primary rounded-full glow-sm"
+                transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              />
+            )}
+          </button>
+        );
+      })}
     </div>
   );
 }
