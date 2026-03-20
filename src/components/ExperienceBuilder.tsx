@@ -118,6 +118,12 @@ export default function ExperienceBuilder({ property, slotId, guests, date, onBa
     return sum + (cheapest?.price || ext.basePrice);
   }, 0);
 
+  // Popular/recommended add-ons
+  const popularIds = new Set(["f1", "f2", "d1", "d2", "m4", "a5", "e1", "e3"]);
+  const popularItems = useMemo(() =>
+    Object.values(addons).flat().filter(item => popularIds.has(item.id)),
+  []);
+
   // Filter items based on search query — when searching, show across all categories
   const isSearching = searchQuery.trim().length > 0;
   const activeItems = isSearching
