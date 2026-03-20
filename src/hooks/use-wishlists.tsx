@@ -2,13 +2,13 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./use-auth";
 import { useToast } from "./use-toast";
-import { usePropertiesData } from "@/contexts/PropertiesContext";
+import { properties as staticProperties } from "@/data/properties";
 
 const LOCAL_KEY = "hushh_wishlists";
 const DEMO_WISHLIST_IDS = ["1", "3", "5", "7", "10"];
 
-function sanitizeWishlist(ids: string[]): string[] {
-  const validIds = new Set(properties.map((p) => p.id));
+function sanitizeWishlist(ids: string[], propList?: { id: string }[]): string[] {
+  const validIds = new Set((propList || staticProperties).map((p) => p.id));
   return Array.from(new Set(ids.filter((id) => validIds.has(id))));
 }
 

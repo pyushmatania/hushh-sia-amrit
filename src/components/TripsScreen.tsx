@@ -288,6 +288,7 @@ const filterTabs = [
 ] as const;
 
 export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel }: TripsScreenProps) {
+  const { properties } = usePropertiesData();
   const [refreshKey, setRefreshKey] = useState(0);
   const [activeFilter, setActiveFilter] = useState<string>("all");
   const [orderingBooking, setOrderingBooking] = useState<Booking | null>(null);
