@@ -329,6 +329,59 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
             ))}
           </motion.div>
         )}
+
+        {tab === "spin" && (
+          <motion.div key="spin" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="px-5 py-4">
+            <div className="glass rounded-3xl p-6 flex flex-col items-center">
+              <h3 className="text-lg font-bold text-foreground mb-1">Daily Spin</h3>
+              <p className="text-xs text-muted-foreground mb-5">Spin once a day to win bonus points!</p>
+              <SpinWheel
+                disabled={spunToday}
+                onWin={(prize: Prize) => {
+                  setSpunToday(true);
+                  localStorage.setItem("hushh_last_spin", new Date().toDateString());
+                  toast({ title: `🎉 You won ${prize.label}!`, description: `${prize.emoji} ${prize.points} bonus points added` });
+                }}
+              />
+            </div>
+          </motion.div>
+        )}
+
+        {tab === "milestones" && (
+          <motion.div key="milestones" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="px-5 space-y-3">
+            <p className="text-xs text-muted-foreground mb-1">Complete milestones to earn bonus rewards</p>
+            {milestones.map((ms, i) => (
+              <motion.div
+                key={ms.id}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }}
+                className={`glass rounded-2xl p-4 flex items-center gap-3 ${ms.achieved ? "border border-success/20" : ""}`}
+              >
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl ${
+                  ms.achieved ? "bg-success/10" : "bg-foreground/[0.04]"
+                }`}>
+                  {ms.emoji}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-sm font-semibold text-foreground">{ms.title}</h4>
+                    {ms.achieved && (
+                      <span className="text-[9px] font-bold bg-success/10 text-success px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
+                        <Check size={8} /> Done
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-0.5">{ms.requirement}</p>
+                </div>
+                <div className="text-right shrink-0">
+                  <p className="text-sm font-bold text-primary">+{ms.rewardPts}</p>
+                  <p className="text-[9px] text-muted-foreground">pts</p>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
       </AnimatePresence>
     </motion.div>
   );
