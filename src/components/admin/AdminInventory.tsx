@@ -188,6 +188,8 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
                       className={`px-2 py-1 rounded-lg text-[10px] font-medium transition ${
                         item.available ? "bg-emerald-500/15 text-emerald-400" : "bg-muted text-muted-foreground"
                       }`}>{item.available ? "Available" : "Unavailable"}</button>
+                    <button onClick={() => window.location.href = "/"}
+                      className="p-1.5 rounded-lg hover:bg-secondary transition" title="Preview in app"><Eye size={13} className="text-muted-foreground" /></button>
                     <button onClick={() => { setEditing({ ...item }); setIsCreating(false); }}
                       className="p-1.5 rounded-lg hover:bg-secondary transition"><Pencil size={13} className="text-muted-foreground" /></button>
                     <button onClick={() => deleteItem(item.id)}
