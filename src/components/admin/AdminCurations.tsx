@@ -53,11 +53,14 @@ export default function AdminCurations() {
 
   useEffect(() => { loadCurations(); }, []);
 
-  const filtered = curations.filter(c => c.name.toLowerCase().includes(search.toLowerCase()));
+  const filtered = [...curations]
+    .filter(c => c.name.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
 
   const { getDragHandleProps, getDropTargetProps, handleDragEnd, isDragging, isDragOver } = useDragReorder({
     items: [...curations].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0)),
     getId: (c: any) => c.id,
+    getA11yLabel: (c: any) => `Reorder ${c.name}`,
     onReorder: async (updates) => {
       setCurations(prev => prev.map(c => { const u = updates.find(u => u.id === c.id); return u ? { ...c, sort_order: u.sort_order } : c; }));
       for (const u of updates) { await supabase.from("curations").update({ sort_order: u.sort_order }).eq("id", u.id); }
@@ -324,13 +327,6 @@ export default function AdminCurations() {
               onClick={() => startEdit(c)}
             >
               <div className="flex items-start gap-2">
-                <div
-                  {...getDragHandleProps(c)}
-                  onClick={(e) => e.stopPropagation()}
-                  className="text-muted-foreground/40 hover:text-muted-foreground transition shrink-0 mt-1 cursor-grab active:cursor-grabbing"
-                >
-                  <GripVertical size={16} />
-                </div>
                 <span className="text-2xl">{c.emoji}</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
@@ -383,6 +379,14 @@ export default function AdminCurations() {
                     )}
                   </div>
                 </div>
+                <button
+                  type="button"
+                  {...getDragHandleProps(c)}
+                  onClick={(e) => e.stopPropagation()}
+                  className="h-10 w-10 rounded-lg flex items-center justify-center text-muted-foreground/50 hover:text-foreground hover:bg-secondary transition shrink-0 cursor-grab active:cursor-grabbing touch-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <GripVertical size={20} />
+                </button>
               </div>
             </div>
           ))}

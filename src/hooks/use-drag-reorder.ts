@@ -4,10 +4,11 @@ interface UseDragReorderOptions<T> {
   items: T[];
   getId: (item: T) => string;
   getCategory?: (item: T) => string;
+  getA11yLabel?: (item: T) => string;
   onReorder: (reorderedItems: { id: string; sort_order: number }[]) => Promise<void>;
 }
 
-export function useDragReorder<T>({ items, getId, getCategory, onReorder }: UseDragReorderOptions<T>) {
+export function useDragReorder<T>({ items, getId, getCategory, getA11yLabel, onReorder }: UseDragReorderOptions<T>) {
   const [dragId, setDragId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
 
@@ -21,6 +22,8 @@ export function useDragReorder<T>({ items, getId, getCategory, onReorder }: UseD
   getIdRef.current = getId;
   const getCategoryRef = useRef(getCategory);
   getCategoryRef.current = getCategory;
+  const getA11yLabelRef = useRef(getA11yLabel);
+  getA11yLabelRef.current = getA11yLabel;
   const onReorderRef = useRef(onReorder);
   onReorderRef.current = onReorder;
 
@@ -50,8 +53,8 @@ export function useDragReorder<T>({ items, getId, getCategory, onReorder }: UseD
     };
   }, []);
 
-  const executeDrop = useCallback((targetId: string, targetCat: string) => {
-    const currentDragId = dragIdRef.current;
+  const executeDrop = useCallback((targetId: string, targetCat: string, sourceIdOverride?: string) => {
+    const currentDragId = sourceIdOverride ?? dragIdRef.current;
     if (!currentDragId || currentDragId === targetId) {
       clearDragState();
       return;
@@ -80,8 +83,7 @@ export function useDragReorder<T>({ items, getId, getCategory, onReorder }: UseD
     }
 
     const reordered = [...ids];
-    const [moved] = reordered.splice(fromIdx, 1);
-    reordered.splice(toIdx, 0, moved);
+    [reordered[fromIdx], reordered[toIdx]] = [reordered[toIdx], reordered[fromIdx]];
 
     const updates = reordered.map((id, idx) => ({ id, sort_order: idx }));
 
@@ -93,6 +95,7 @@ export function useDragReorder<T>({ items, getId, getCategory, onReorder }: UseD
   const getDragHandleProps = useCallback((item: T) => {
     const id = getIdRef.current(item);
     const cat = getCategoryRef.current?.(item) ?? "__all__";
+    const a11yLabel = getA11yLabelRef.current?.(item) ?? "Drag to reorder";
 
     const attachPointerListeners = () => {
       if (detachPointerListenersRef.current) return;
@@ -131,12 +134,43 @@ export function useDragReorder<T>({ items, getId, getCategory, onReorder }: UseD
 
     return {
       draggable: true,
+      role: "button" as const,
+      tabIndex: 0,
+      "aria-label": a11yLabel,
+      "aria-roledescription": "Drag handle",
       onDragStart: (e: React.DragEvent) => {
         e.dataTransfer.effectAllowed = "move";
         e.dataTransfer.setData("text/plain", id);
         dragIdRef.current = id;
         dragCatRef.current = cat;
         setDragId(id);
+      },
+      onKeyDown: (e: React.KeyboardEvent) => {
+        if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const gc = getCategoryRef.current;
+        const currentItems = itemsRef.current;
+        const gid = getIdRef.current;
+
+        const relevantItems = gc
+          ? currentItems.filter(i => gc(i) === cat)
+          : currentItems;
+
+        const ids = relevantItems.map(gid);
+        const fromIdx = ids.indexOf(id);
+        const toIdx = e.key === "ArrowUp" ? fromIdx - 1 : fromIdx + 1;
+
+        if (fromIdx === -1 || toIdx < 0 || toIdx >= ids.length) return;
+
+        const targetId = ids[toIdx];
+        dragIdRef.current = id;
+        dragCatRef.current = cat;
+        setDragId(id);
+        setDragOverId(targetId);
+        executeDrop(targetId, cat, id);
       },
       onPointerDown: (e: React.PointerEvent) => {
         if (e.pointerType === "mouse") return;

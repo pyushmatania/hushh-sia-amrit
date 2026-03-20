@@ -94,13 +94,15 @@ export default function AdminProperties() {
       .then(({ data }) => { setListings((data as Listing[]) ?? []); setLoading(false); });
   }, []);
 
-  const filtered = listings.filter(l =>
-    (filter === "all" || l.status === filter) &&
-    (categoryFilter === "all" || l.primary_category === categoryFilter) &&
-    (l.name.toLowerCase().includes(search.toLowerCase()) ||
-     l.location.toLowerCase().includes(search.toLowerCase()) ||
-     (l.property_type || "").toLowerCase().includes(search.toLowerCase()))
-  );
+  const filtered = listings
+    .filter(l =>
+      (filter === "all" || l.status === filter) &&
+      (categoryFilter === "all" || l.primary_category === categoryFilter) &&
+      (l.name.toLowerCase().includes(search.toLowerCase()) ||
+       l.location.toLowerCase().includes(search.toLowerCase()) ||
+       (l.property_type || "").toLowerCase().includes(search.toLowerCase()))
+    )
+    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
   const toggleStatus = async (id: string, current: string) => {
     const next = current === "published" ? "paused" : "published";
@@ -243,6 +245,7 @@ export default function AdminProperties() {
   const { getDragHandleProps, getDropTargetProps, handleDragEnd, isDragging, isDragOver } = useDragReorder({
     items: filtered,
     getId: (l) => l.id,
+    getA11yLabel: (l) => `Reorder ${l.name}`,
     onReorder: async (updates) => {
       setListings(prev => prev.map(l => { const u = updates.find(u => u.id === l.id); return u ? { ...l, sort_order: u.sort_order } : l; }));
       for (const u of updates) { await supabase.from("host_listings").update({ sort_order: u.sort_order }).eq("id", u.id); }
@@ -371,13 +374,6 @@ export default function AdminProperties() {
               } ${isDragOver(listing) ? "border-primary shadow-sm shadow-primary/20" : "border-border"}`}
               onClick={() => openEdit(listing)}
             >
-              <div
-                {...getDragHandleProps(listing)}
-                onClick={(e) => e.stopPropagation()}
-                className="text-muted-foreground/40 hover:text-muted-foreground transition shrink-0 cursor-grab active:cursor-grabbing self-center"
-              >
-                <GripVertical size={16} />
-              </div>
               <div className="w-16 h-16 rounded-lg bg-secondary shrink-0 overflow-hidden">
                 {listing.image_urls?.[0] ? (
                   <img src={listing.image_urls[0]} alt="" className="w-full h-full object-cover" />
@@ -425,6 +421,14 @@ export default function AdminProperties() {
                   </div>
                 </div>
               </div>
+              <button
+                type="button"
+                {...getDragHandleProps(listing)}
+                onClick={(e) => e.stopPropagation()}
+                className="h-10 w-10 rounded-lg flex items-center justify-center text-muted-foreground/50 hover:text-foreground hover:bg-secondary transition shrink-0 cursor-grab active:cursor-grabbing self-center touch-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                <GripVertical size={20} />
+              </button>
             </div>
           ))}
         </div>

@@ -69,9 +69,10 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
   Object.values(grouped).forEach(arr => arr.sort((a, b) => a.sort_order - b.sort_order));
 
   const { getDragHandleProps, getDropTargetProps, handleDragEnd, isDragging, isDragOver } = useDragReorder({
-    items: scopedItems.sort((a, b) => a.sort_order - b.sort_order),
+    items: [...scopedItems].sort((a, b) => a.sort_order - b.sort_order),
     getId: (i) => i.id,
     getCategory: (i) => i.category,
+    getA11yLabel: (i) => `Reorder ${i.name}`,
     onReorder: async (updates) => {
       setItems(prev => prev.map(i => {
         const u = updates.find(u => u.id === i.id);
@@ -202,13 +203,6 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
                     isDragging(item) ? "opacity-40 scale-[0.97]" : ""
                   } ${isDragOver(item) ? "border-primary shadow-sm shadow-primary/20" : ""}`}
                 >
-                  {/* Drag handle — only this part is draggable */}
-                  <div
-                    {...getDragHandleProps(item)}
-                    className="text-muted-foreground/40 hover:text-muted-foreground transition shrink-0 cursor-grab active:cursor-grabbing touch-none"
-                  >
-                    <GripVertical size={16} />
-                  </div>
                   <span className="text-xl">{item.emoji}</span>
                   <div className="flex-1 min-w-0">
                     <h4 className="text-sm font-medium text-foreground">{item.name}</h4>
@@ -224,6 +218,13 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
                     <button onClick={() => deleteItem(item.id)}
                       className="p-1.5 rounded-lg hover:bg-destructive/10 transition"><Trash2 size={13} className="text-destructive" /></button>
                   </div>
+                  <button
+                    type="button"
+                    {...getDragHandleProps(item)}
+                    className="ml-1 h-10 w-10 rounded-lg flex items-center justify-center text-muted-foreground/50 hover:text-foreground hover:bg-secondary transition shrink-0 cursor-grab active:cursor-grabbing touch-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  >
+                    <GripVertical size={20} />
+                  </button>
                 </div>
               ))}
             </div>
