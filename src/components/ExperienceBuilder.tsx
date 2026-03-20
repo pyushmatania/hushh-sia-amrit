@@ -70,6 +70,7 @@ interface ExperienceBuilderProps {
 }
 
 export default function ExperienceBuilder({ property, slotId, guests, date, onBack, onContinue, extras }: ExperienceBuilderProps) {
+  const { addons } = usePropertiesData();
   const [selections, setSelections] = useState<Record<string, number>>({});
   const [hapticId, setHapticId] = useState<string | null>(null);
   const slot = property.slots.find((s) => s.id === slotId)!;

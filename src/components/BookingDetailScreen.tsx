@@ -20,7 +20,7 @@ interface BookingDetailScreenProps {
 }
 
 export default function BookingDetailScreen({ booking, onBack, onCancel, onRebook }: BookingDetailScreenProps) {
-  const { properties } = usePropertiesData();
+  const { properties, addons } = usePropertiesData();
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [showAddonsSheet, setShowAddonsSheet] = useState(false);
   const [showFoodOrder, setShowFoodOrder] = useState(false);
