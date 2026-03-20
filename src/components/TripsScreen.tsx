@@ -338,7 +338,9 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
             onViewDetail={onViewDetail}
             onRebook={onRebook}
             onCancel={isDemo ? undefined : onCancel}
-            />
+          />
+        ))}
+      </div>
     </div>
     </PullToRefresh>
   );
