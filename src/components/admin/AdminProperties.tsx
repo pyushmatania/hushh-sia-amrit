@@ -433,7 +433,7 @@ export default function AdminProperties() {
                   <div className="space-y-3">
                     <div className="grid grid-cols-2 gap-3">
                       <Field label="Base Price (₹)">
-                        <Input type="number" value={editingListing.base_price || 0} onChange={e => setEditingListing(p => ({ ...p!, base_price: Number(e.target.value) }))} />
+                        <Input type="number" value={editingListing.base_price ?? ""} onChange={e => setEditingListing(p => ({ ...p!, base_price: Number(e.target.value) }))} />
                       </Field>
                       <Field label="Capacity">
                         <Input type="number" value={editingListing.capacity || 0} onChange={e => setEditingListing(p => ({ ...p!, capacity: Number(e.target.value) }))} />
