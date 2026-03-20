@@ -2,7 +2,8 @@ import { motion } from "framer-motion";
 import { RotateCcw, MapPin, Calendar, Clock, Users, ChevronRight } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useBookings } from "@/hooks/use-bookings";
-import { properties, type Property } from "@/data/properties";
+import { type Property } from "@/data/properties";
+import { useDbListings } from "@/hooks/use-db-listings";
 
 interface LastVibeCardProps {
   onRebook: (property: Property) => void;

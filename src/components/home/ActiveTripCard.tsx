@@ -3,7 +3,8 @@ import { Utensils, MapPin, Calendar, Clock, Users, ChevronRight, Zap } from "luc
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useBookings } from "@/hooks/use-bookings";
-import { properties, type Property } from "@/data/properties";
+import { type Property } from "@/data/properties";
+import { useDbListings } from "@/hooks/use-db-listings";
 import LiveOrderingSheet from "@/components/LiveOrderingSheet";
 
 interface ActiveTripCardProps {

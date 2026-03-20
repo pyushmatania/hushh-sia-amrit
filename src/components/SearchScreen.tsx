@@ -5,7 +5,8 @@ import {
 } from "lucide-react";
 import { useState, useMemo, useCallback } from "react";
 import { format } from "date-fns";
-import { properties, type Property } from "@/data/properties";
+import { type Property } from "@/data/properties";
+import { useDbListings } from "@/hooks/use-db-listings";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";

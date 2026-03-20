@@ -1,7 +1,7 @@
 import { motion, useMotionValue, useTransform, useSpring, useAnimation, useScroll, PanInfo } from "framer-motion";
 import { MapPin, Calendar, Clock, ChevronRight, Ticket, QrCode, Users, X, Utensils, ShoppingCart, Shield, Upload } from "lucide-react";
 import { useRef, useState, useCallback, useMemo, useEffect } from "react";
-import { properties } from "@/data/properties";
+import { useDbListings } from "@/hooks/use-db-listings";
 import PullToRefresh from "./PullToRefresh";
 import type { Booking } from "@/pages/Index";
 import OrderHistorySection from "./OrderHistorySection";

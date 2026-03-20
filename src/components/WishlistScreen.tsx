@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Heart, Star, MapPin, BadgeCheck } from "lucide-react";
-import { properties, type Property } from "@/data/properties";
+import { type Property } from "@/data/properties";
+import { useDbListings } from "@/hooks/use-db-listings";
 import { pageSlideUp, cardPress } from "@/lib/animations";
 
 interface WishlistScreenProps {

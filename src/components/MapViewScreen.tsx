@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Star, MapPin, Navigation, ChevronUp, ChevronDown, Minus, Plus } from "lucide-react";
 import { useState, useMemo, useRef } from "react";
-import { properties, type Property } from "@/data/properties";
+import { type Property } from "@/data/properties";
+import { useDbListings } from "@/hooks/use-db-listings";
 
 interface MapViewScreenProps {
   onPropertyTap: (property: Property) => void;
