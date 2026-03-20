@@ -140,124 +140,134 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
         <CategoryBar active={activeCategory} onChange={setActiveCategory} />
       </div>
 
-      {/* ═══════ SECTION 1: TONIGHT'S VIBE (Spotlight Video Cards) ═══════ */}
-      <SectionDivider title="🔥 TONIGHT'S VIBE" />
-      <SpotlightCarousel properties={properties} onPropertyTap={onPropertyTap} />
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeCategory}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+        >
+          {/* ═══════ SECTION 1: TONIGHT'S VIBE (Spotlight Video Cards) ═══════ */}
+          <SectionDivider title="🔥 TONIGHT'S VIBE" />
+          <SpotlightCarousel properties={properties} onPropertyTap={onPropertyTap} />
 
-      {/* ═══════ SECTION 2: BOOK YOUR EXPERIENCE (Quick Packages) ═══════ */}
-      <SectionDivider title="BOOK YOUR EXPERIENCE" />
-      <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4">
-        {packages.map((pkg, i) => (
-          <PackageCard key={pkg.id} pkg={pkg} index={i} />
-        ))}
-      </div>
-
-      {/* ═══════ SECTION 3: PLAY YOUR GAME (Sports Cards) ═══════ */}
-      <SectionDivider title="PLAY YOUR GAME" />
-      <SportsCards properties={properties} onPropertyTap={onPropertyTap} />
-
-      {/* ═══════ SECTION 4: FOODIE FRONT ROW ═══════ */}
-      <SectionDivider title="FOODIE FRONT ROW" />
-      <FoodieCarousel properties={properties} onPropertyTap={onPropertyTap} />
-
-      {/* ═══════ SECTION 5: COUPLE SPECIALS ═══════ */}
-      <SectionDivider title="COUPLE SPECIALS 💑" />
-      <CoupleSpecials properties={properties} onPropertyTap={onPropertyTap} />
-
-      {/* ═══════ SECTION 6: UPCOMING EVENTS ═══════ */}
-      <SectionDivider title="UPCOMING EVENTS" />
-      <UpcomingEvents />
-
-      {/* ═══════ SECTION 7: WHAT'S HOT ON HUSHH ═══════ */}
-      <SectionDivider title="WHAT'S HOT ON HUSHH" />
-      <WhatsHotGrid properties={properties} onPropertyTap={onPropertyTap} />
-
-      {/* ═══════ SECTION 8: BLOCKBUSTER RELEASE ═══════ */}
-      <SectionDivider title="BLOCKBUSTER RELEASE" />
-      <BlockbusterBanner />
-
-      {/* ═══════ EXISTING SECTIONS (Trending, Top Rated, Category) ═══════ */}
-      {activeCategory === "stays" && trendingNow.length > 0 && (
-        <div className="mt-6">
-          <div className="flex items-center justify-between px-5 mb-3">
-            <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
-              🔥 Trending now
-            </h2>
-            <button className="text-xs text-primary font-medium flex items-center gap-1">
-              View all <ArrowRight size={12} />
-            </button>
-          </div>
-          <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
-            {trendingNow.map((p, i) => (
-              <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} />
+          {/* ═══════ SECTION 2: BOOK YOUR EXPERIENCE (Quick Packages) ═══════ */}
+          <SectionDivider title="BOOK YOUR EXPERIENCE" />
+          <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4">
+            {packages.map((pkg, i) => (
+              <PackageCard key={pkg.id} pkg={pkg} index={i} />
             ))}
           </div>
-        </div>
-      )}
 
-      {activeCategory === "stays" && (
-        <div className="mt-6">
-          <div className="flex items-center justify-between px-5 mb-3">
-            <h2 className="text-lg font-bold text-foreground">⭐ Top Rated</h2>
-            <button className="text-xs text-primary font-medium flex items-center gap-1">
-              View all <ArrowRight size={12} />
-            </button>
-          </div>
-          <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
-            {topRated.map((p, i) => (
-              <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} />
-            ))}
-          </div>
-        </div>
-      )}
+          {/* ═══════ SECTION 3: PLAY YOUR GAME (Sports Cards) ═══════ */}
+          <SectionDivider title="PLAY YOUR GAME" />
+          <SportsCards properties={properties} onPropertyTap={onPropertyTap} />
 
-      {activeCategory !== "stays" && curatedSections.map((section, si) => (
-        section.items.length > 0 && (
-          <div key={si} className="mt-6">
-            <div className="flex items-center justify-between px-5 mb-3">
-              <div>
+          {/* ═══════ SECTION 4: FOODIE FRONT ROW ═══════ */}
+          <SectionDivider title="FOODIE FRONT ROW" />
+          <FoodieCarousel properties={properties} onPropertyTap={onPropertyTap} />
+
+          {/* ═══════ SECTION 5: COUPLE SPECIALS ═══════ */}
+          <SectionDivider title="COUPLE SPECIALS 💑" />
+          <CoupleSpecials properties={properties} onPropertyTap={onPropertyTap} />
+
+          {/* ═══════ SECTION 6: UPCOMING EVENTS ═══════ */}
+          <SectionDivider title="UPCOMING EVENTS" />
+          <UpcomingEvents />
+
+          {/* ═══════ SECTION 7: WHAT'S HOT ON HUSHH ═══════ */}
+          <SectionDivider title="WHAT'S HOT ON HUSHH" />
+          <WhatsHotGrid properties={properties} onPropertyTap={onPropertyTap} />
+
+          {/* ═══════ SECTION 8: BLOCKBUSTER RELEASE ═══════ */}
+          <SectionDivider title="BLOCKBUSTER RELEASE" />
+          <BlockbusterBanner />
+
+          {/* ═══════ EXISTING SECTIONS (Trending, Top Rated, Category) ═══════ */}
+          {activeCategory === "stays" && trendingNow.length > 0 && (
+            <div className="mt-6">
+              <div className="flex items-center justify-between px-5 mb-3">
                 <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
-                  <span>{section.emoji}</span> {section.title}
+                  🔥 Trending now
                 </h2>
-                {section.subtitle && (
-                  <p className="text-xs text-muted-foreground mt-0.5">{section.subtitle}</p>
-                )}
+                <button className="text-xs text-primary font-medium flex items-center gap-1">
+                  View all <ArrowRight size={12} />
+                </button>
               </div>
-              <button className="text-xs text-primary font-medium flex items-center gap-1">
-                View all <ArrowRight size={12} />
-              </button>
+              <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
+                {trendingNow.map((p, i) => (
+                  <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} />
+                ))}
+              </div>
             </div>
-            <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
-              {section.items.map((p, i) => (
-                <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} />
-              ))}
-            </div>
-          </div>
-        )
-      ))}
+          )}
 
-      {/* Filtered cards */}
-      <div className="mt-7">
-        <div className="flex items-center justify-between px-5 mb-3">
-          <h2 className="text-lg font-bold text-foreground">
-            {activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)}
-          </h2>
-          <span className="text-xs text-muted-foreground">{filteredProperties.length} found</span>
-        </div>
-        {filteredProperties.length > 0 ? (
-          <div className="space-y-5">
-            {filteredProperties.map((p, i) => (
-              <PropertyCard key={p.id} property={p} index={i} onTap={onPropertyTap} />
-            ))}
+          {activeCategory === "stays" && (
+            <div className="mt-6">
+              <div className="flex items-center justify-between px-5 mb-3">
+                <h2 className="text-lg font-bold text-foreground">⭐ Top Rated</h2>
+                <button className="text-xs text-primary font-medium flex items-center gap-1">
+                  View all <ArrowRight size={12} />
+                </button>
+              </div>
+              <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
+                {topRated.map((p, i) => (
+                  <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeCategory !== "stays" && curatedSections.map((section, si) => (
+            section.items.length > 0 && (
+              <div key={si} className="mt-6">
+                <div className="flex items-center justify-between px-5 mb-3">
+                  <div>
+                    <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+                      <span>{section.emoji}</span> {section.title}
+                    </h2>
+                    {section.subtitle && (
+                      <p className="text-xs text-muted-foreground mt-0.5">{section.subtitle}</p>
+                    )}
+                  </div>
+                  <button className="text-xs text-primary font-medium flex items-center gap-1">
+                    View all <ArrowRight size={12} />
+                  </button>
+                </div>
+                <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
+                  {section.items.map((p, i) => (
+                    <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} />
+                  ))}
+                </div>
+              </div>
+            )
+          ))}
+
+          {/* Filtered cards */}
+          <div className="mt-7">
+            <div className="flex items-center justify-between px-5 mb-3">
+              <h2 className="text-lg font-bold text-foreground">
+                {activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)}
+              </h2>
+              <span className="text-xs text-muted-foreground">{filteredProperties.length} found</span>
+            </div>
+            {filteredProperties.length > 0 ? (
+              <div className="space-y-5">
+                {filteredProperties.map((p, i) => (
+                  <PropertyCard key={p.id} property={p} index={i} onTap={onPropertyTap} />
+                ))}
+              </div>
+            ) : (
+              <div className="px-5 py-12 text-center">
+                <p className="text-4xl mb-3">🔍</p>
+                <p className="text-foreground font-semibold">No venues in this category yet</p>
+                <p className="text-sm text-muted-foreground mt-1">Try another category or check back soon!</p>
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="px-5 py-12 text-center">
-            <p className="text-4xl mb-3">🔍</p>
-            <p className="text-foreground font-semibold">No venues in this category yet</p>
-            <p className="text-sm text-muted-foreground mt-1">Try another category or check back soon!</p>
-          </div>
-        )}
-      </div>
+        </motion.div>
+      </AnimatePresence>
 
       {/* Banner */}
       <motion.div
