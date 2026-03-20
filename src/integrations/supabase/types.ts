@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          entity_id: string | null
+          entity_type: string
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           booking_id: string
@@ -290,6 +320,48 @@ export type Database = {
           tags?: string[]
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      inventory: {
+        Row: {
+          available: boolean
+          category: string
+          created_at: string
+          emoji: string
+          id: string
+          low_stock_threshold: number
+          name: string
+          property_id: string | null
+          stock: number
+          unit_price: number
+          updated_at: string
+        }
+        Insert: {
+          available?: boolean
+          category?: string
+          created_at?: string
+          emoji?: string
+          id?: string
+          low_stock_threshold?: number
+          name: string
+          property_id?: string | null
+          stock?: number
+          unit_price?: number
+          updated_at?: string
+        }
+        Update: {
+          available?: boolean
+          category?: string
+          created_at?: string
+          emoji?: string
+          id?: string
+          low_stock_threshold?: number
+          name?: string
+          property_id?: string | null
+          stock?: number
+          unit_price?: number
+          updated_at?: string
         }
         Relationships: []
       }
@@ -696,6 +768,51 @@ export type Database = {
           prize_label?: string
           spun_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      staff_tasks: {
+        Row: {
+          assigned_to: string | null
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          description: string
+          due_date: string | null
+          id: string
+          priority: string
+          property_id: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          due_date?: string | null
+          id?: string
+          priority?: string
+          property_id?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          due_date?: string | null
+          id?: string
+          priority?: string
+          property_id?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
