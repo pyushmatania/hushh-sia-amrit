@@ -384,11 +384,7 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
               <p className="text-xs text-muted-foreground mb-5">Spin once a day to win bonus points!</p>
               <SpinWheel
                 disabled={spunToday}
-                onWin={(prize: Prize) => {
-                  setSpunToday(true);
-                  localStorage.setItem("hushh_last_spin", new Date().toDateString());
-                  toast({ title: `🎉 You won ${prize.label}!`, description: `${prize.emoji} ${prize.points} bonus points added` });
-                }}
+                onWin={handleSpinWin}
               />
             </div>
           </motion.div>
