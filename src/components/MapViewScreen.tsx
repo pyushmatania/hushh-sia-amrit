@@ -28,6 +28,7 @@ function latLngToPosition(lat: number, lng: number, zoom: number, centerLat: num
 }
 
 export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenProps) {
+  const { properties } = useDbListings();
   const [zoom, setZoom] = useState(INITIAL_ZOOM);
   const [selectedPin, setSelectedPin] = useState<Property | null>(null);
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
