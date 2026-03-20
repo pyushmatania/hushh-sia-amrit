@@ -246,7 +246,7 @@ function VideoCard({
   );
 }
 
-export default function SpotlightCarousel({ properties, onPropertyTap, category = "home" }: SpotlightCarouselProps) {
+export default function SpotlightCarousel({ properties, onPropertyTap, category = "home", wishlist = [], onToggleWishlist }: SpotlightCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const topProperties = properties.slice(0, 6);
