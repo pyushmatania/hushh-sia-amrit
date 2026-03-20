@@ -282,6 +282,25 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
 
       {/* Content */}
       <div className="px-5 pt-5">
+        {/* Category badge + discount label */}
+        <div className="flex items-center gap-2 mb-2 flex-wrap">
+          {categoryLabels[property.primaryCategory] && (
+            <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${categoryLabels[property.primaryCategory].bg}`}>
+              {categoryLabels[property.primaryCategory].emoji} {categoryLabels[property.primaryCategory].label}
+            </span>
+          )}
+          {property.propertyType && (
+            <span className="text-[10px] font-medium px-2.5 py-1 rounded-full bg-foreground/5 text-muted-foreground border border-foreground/10">
+              {property.propertyType}
+            </span>
+          )}
+          {property.discountLabel && (
+            <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+              <Tag size={10} /> {property.discountLabel}
+            </span>
+          )}
+        </div>
+
         <h1 className="text-2xl font-semibold text-foreground">{property.name}</h1>
         <div className="flex items-center gap-2 mt-1.5 text-sm text-muted-foreground flex-wrap">
           <span className="flex items-center gap-1 text-foreground font-medium">
@@ -297,7 +316,7 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
         {property.verified && (
           <div className="flex items-center gap-1.5 mt-2 text-sm text-muted-foreground">
             <BadgeCheck size={16} className="text-primary" />
-            <span>Verified property</span>
+            <span>Verified {property.primaryCategory === "service" ? "service" : "property"}</span>
           </div>
         )}
 
