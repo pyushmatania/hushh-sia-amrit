@@ -954,7 +954,7 @@ export default function MessagesScreen() {
                 )}
                 <div className="space-y-2">
                   {otherChats.map((t, i) => (
-                    <ThreadCard key={t.id} thread={t} index={i + pinnedChats.length} onClick={() => {
+                    <ThreadCard key={t.id} thread={t} index={i + pinnedChats.length} onPin={handlePin} onArchive={handleArchive} onClick={() => {
                       if (t.conversation) setActiveConvo(t.conversation);
                       else setActiveMockThread(mockThreads.find(mt => mt.id === t.id) || null);
                     }} />
