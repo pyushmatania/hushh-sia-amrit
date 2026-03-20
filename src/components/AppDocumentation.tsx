@@ -187,7 +187,130 @@ export const changeLog = [
   },
 ];
 
+// Generate the full HUSHH.md content from the changeLog + app info
+function generateFullDoc(): string {
+  const header = `# 🏡 HUSHH — Private Experience Marketplace
+
+> **Made in Jeypore ❤️** | v1.0 | Internal Documentation & Blueprint
+
+Hushh is a premium mobile-first marketplace for booking private experiences, stays, and curated lifestyle services in Jeypore, India.
+
+---
+
+## 🏛 Core Concept — Four Pillars
+
+| Pillar | What it means | Examples |
+|--------|--------------|----------|
+| **Stays** | Private spaces by time slot | Farmhouses, Work Pods, Rooftops, Villas |
+| **Experiences** | What happens at the space | Candlelight Dinner, House Party, Bonfire Night |
+| **Services** | On-demand add-ons | Chef-on-Call, Decor Setup, DJ & Lights, Rides |
+| **Curations** | Pre-built combos | "Date Night Deluxe", "Birthday Bash Package" |
+
+Strategic focus: **"Work-from-resort"** for weekday monetization.
+
+---
+
+## 🎯 Target Audience
+
+- Young couples — date nights, anniversaries, weekend getaways
+- Friend groups — house parties, game nights, celebrations
+- Remote workers — weekday work sessions, Work Pods, Quiet Rooms
+- Families — birthday parties, family gatherings
+- Corporate — team retreats, offsites
+- Hosts — property owners monetizing spaces
+
+---
+
+## 🗺 User Flow
+
+Splash → Home (Explore) → Category Bar → Property Card → Detail → Book → Experience Builder → Checkout → Confirmation
+
+Bottom Nav: Explore | Wishlists | Trips | Messages | Profile
+
+Profile → Loyalty, Referrals, Host Dashboard, Settings, Theme, Auth
+
+---
+
+## ✨ Features
+
+### Guest Mode (no login)
+- Full property browsing with video thumbnails & accent frames
+- Mock wishlists, trips, messages, notifications, loyalty (320 pts / Gold)
+- Mock public profiles for all reviewers
+- Search, map view, theme switching, pull-to-refresh, haptic feedback
+
+### Authenticated
+- Email/password auth with email verification & password reset
+- Real wishlists, bookings, messages, notifications, loyalty (database-backed)
+- Booking flow: Slot → Builder → Checkout → Confirm (earn 5 pts/₹100)
+- Referral system, real-time messaging, notification center
+
+### Host Features
+- Dashboard with listing management, create/edit/delete/toggle
+- Host analytics with charts
+
+---
+
+## 🎨 Design System
+
+**Fonts**: Space Grotesk (primary), Playfair Display (editorial), Plus Jakarta Sans, DM Sans
+**Colors**: Deep navy base (260 20% 6%), vibrant purple primary (270 80% 65%)
+**Effects**: Glassmorphism, ambient glows, AccentFrame (L-shaped corners), AccentTag (clip-path)
+**Animation**: Framer Motion springs, staggered reveals, haptic feedback
+
+---
+
+## 🏗 Architecture
+
+React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion 12 · React Query · React Router v6 · Lovable Cloud · Recharts · React Hook Form + Zod
+
+40+ components, 15 hooks, 12 database tables
+
+---
+
+## 🗄 Database Tables
+
+profiles, bookings, wishlists, conversations, messages, notifications, reviews, review_responses, loyalty_transactions, referral_codes, referral_uses, host_listings
+
+---
+
+## 📋 Change History
+`;
+
+  const changes = changeLog
+    .map(
+      (phase) =>
+        `### v${phase.version} — ${phase.phase}\n${phase.items.map((item) => `- ${item}`).join("\n")}`
+    )
+    .join("\n\n");
+
+  const footer = `\n\n---\n\n## 🥚 Easter Eggs\n\nTap version text 5× on Profile tab → Full in-app documentation\n\n---\n\n📄 **License**: Private — All rights reserved.\n`;
+
+  return header + changes + footer;
+}
+
 export default function AppDocumentation({ open, onClose }: AppDocumentationProps) {
+  const [copied, setCopied] = useState(false);
+  const [showRawDoc, setShowRawDoc] = useState(false);
+
+  const handleCopyDoc = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(generateFullDoc());
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Fallback: select all in a textarea
+      const ta = document.createElement("textarea");
+      ta.value = generateFullDoc();
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  }, []);
+
   if (!open) return null;
 
   return (
