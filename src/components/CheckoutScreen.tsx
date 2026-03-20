@@ -1,9 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Tag, CreditCard, Smartphone, Banknote, ChevronRight, Shield, Clock, Users, MapPin, CalendarIcon, X, Heart, Bookmark } from "lucide-react";
+import { ArrowLeft, Tag, CreditCard, Smartphone, Banknote, ChevronRight, Shield, Clock, Users, MapPin, CalendarIcon, X, Heart, Bookmark, Pencil, Minus, Plus, Check as CheckIcon } from "lucide-react";
 import { useState } from "react";
 import { format } from "date-fns";
 import type { Property } from "@/data/properties";
 import { addons } from "@/data/properties";
+import { Calendar } from "@/components/ui/calendar";
 
 interface CheckoutScreenProps {
   property: Property;
