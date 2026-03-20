@@ -25,7 +25,8 @@ export function useAdmin() {
   const isOps = roles.includes("ops_manager");
   const isHost = roles.includes("host");
   const isStaff = roles.includes("staff");
-  const hasAdminAccess = isAdmin || isOps;
+  // TODO: Temporarily open for all authenticated users. Revert to: const hasAdminAccess = isAdmin || isOps;
+  const hasAdminAccess = !!user;
 
   return { roles, loading, isAdmin, isOps, isHost, isStaff, hasAdminAccess };
 }
