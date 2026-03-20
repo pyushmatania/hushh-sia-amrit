@@ -474,8 +474,11 @@ function MockChatView({ threadId, thread, onBack }: {
   const [messages, setMessages] = useState(mockMessages[threadId] || []);
   const [input, setInput] = useState("");
   const [showQuickReplies, setShowQuickReplies] = useState(true);
+  const [pendingImage, setPendingImage] = useState<File | null>(null);
+  const [viewingImage, setViewingImage] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
