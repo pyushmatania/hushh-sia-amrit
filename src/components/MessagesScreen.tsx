@@ -486,20 +486,31 @@ function MockChatView({ threadId, thread, onBack }: {
 
   const handleSend = (text?: string) => {
     const msg = text || input.trim();
-    if (!msg) return;
+    if (!msg && !pendingImage) return;
+
+    const imageUrl = pendingImage ? URL.createObjectURL(pendingImage) : undefined;
     setMessages((prev) => [...prev, {
-      id: `u-${Date.now()}`, text: msg, sender: "user", time: "Just now", status: "sent" as const,
+      id: `u-${Date.now()}`, text: msg || "", sender: "user", time: "Just now", status: "sent" as const,
+      imageUrl,
     }]);
     setInput("");
+    setPendingImage(null);
     setShowQuickReplies(false);
 
-    // Simulate typing then reply
     setTimeout(() => {
       setMessages((prev) => [...prev, {
-        id: `r-${Date.now()}`, text: "Thanks for your message! I'll get back to you shortly. 😊",
+        id: `r-${Date.now()}`, text: imageUrl ? "Nice photo! 📸" : "Thanks for your message! I'll get back to you shortly. 😊",
         sender: "other", time: "Just now",
       }]);
     }, 2000);
+  };
+
+  const handleImagePick = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith("image/")) {
+      setPendingImage(file);
+    }
+    e.target.value = "";
   };
 
   // Group messages by date
