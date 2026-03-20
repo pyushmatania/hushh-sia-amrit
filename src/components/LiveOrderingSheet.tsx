@@ -83,11 +83,11 @@ export default function LiveOrderingSheet({ open, onClose, propertyName, propert
   }, []);
 
   const filteredItems = useMemo(() => {
-    let items = menuItems;
+    let items = dbMenuItems;
     if (activeCat !== "all") items = items.filter(i => i.category === activeCat);
     if (search.trim()) items = items.filter(i => i.name.toLowerCase().includes(search.toLowerCase()));
     return items;
-  }, [activeCat, search]);
+  }, [activeCat, search, dbMenuItems]);
 
   const cartItems = useMemo(() => {
     return Object.entries(cart).map(([id, qty]) => {
