@@ -140,9 +140,9 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
     return list;
   }, [activeCategory, subFilter]);
 
-  const stayProperties = useMemo(() => properties.filter(p => p.primaryCategory === "stay"), []);
-  const experienceProperties = useMemo(() => properties.filter(p => p.primaryCategory === "experience"), []);
-  const serviceProperties = useMemo(() => properties.filter(p => p.primaryCategory === "service"), []);
+  const stayProperties = useMemo(() => properties.filter(p => p.primaryCategory === "stay"), [properties]);
+  const experienceProperties = useMemo(() => properties.filter(p => p.primaryCategory === "experience"), [properties]);
+  const serviceProperties = useMemo(() => properties.filter(p => p.primaryCategory === "service"), [properties]);
 
   const topRated = useMemo(() => [...filteredProperties].sort((a, b) => b.rating - a.rating).slice(0, 6), [filteredProperties]);
   const trendingNow = useMemo(() => filteredProperties.filter(p => p.slotsLeft > 0 && p.slotsLeft <= 3), [filteredProperties]);
