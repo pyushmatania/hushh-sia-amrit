@@ -222,6 +222,7 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
               </motion.div>
             )}
           </AnimatePresence>
+        </motion.div>
 
         {/* Price Breakdown */}
         <motion.div
