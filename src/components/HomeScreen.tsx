@@ -191,7 +191,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
             <>
               {/* Spotlight Video Cards for Experiences */}
               <SectionDivider title="🎉 TOP EXPERIENCES" />
-              <SpotlightCarousel properties={experienceProperties} onPropertyTap={onPropertyTap} />
+              <SpotlightCarousel properties={experienceProperties} onPropertyTap={onPropertyTap} category="experience" />
 
               {/* Sub-categories */}
               <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
