@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
+import { playDragStartSound, playDropSound } from "@/lib/drag-sounds";
 
 interface UseDragReorderOptions<T> {
   items: T[];
