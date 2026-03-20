@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Bell, MapPin, ArrowRight } from "lucide-react";
+import { hapticSelection } from "@/lib/haptics";
 import PullToRefresh from "./PullToRefresh";
 import CategoryBar from "./CategoryBar";
 import PropertyCard from "./PropertyCard";
