@@ -70,11 +70,3 @@ export default function Admin() {
     </AdminLayout>
   );
 }
-  };
-
-  return (
-    <AdminLayout activePage={page} onNavigate={setPage}>
-      {renderPage()}
-    </AdminLayout>
-  );
-}
