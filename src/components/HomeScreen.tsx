@@ -138,7 +138,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
     }
 
     return list;
-  }, [activeCategory, subFilter]);
+  }, [activeCategory, subFilter, properties]);
 
   const stayProperties = useMemo(() => properties.filter(p => p.primaryCategory === "stay"), [properties]);
   const experienceProperties = useMemo(() => properties.filter(p => p.primaryCategory === "experience"), [properties]);
