@@ -421,6 +421,11 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
           <ReferralScreen onBack={() => setShowReferral(false)} />
         )}
       </AnimatePresence>
+      <AnimatePresence>
+        {showPublicProfile && user && (
+          <PublicProfileScreen userId={user.id} onBack={() => setShowPublicProfile(false)} />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
