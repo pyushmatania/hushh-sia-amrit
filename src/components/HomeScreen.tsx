@@ -428,7 +428,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
           )}
 
           {/* ═══════ ALL LISTINGS for current tab (skip experience & curation — they have their own layouts) ═══════ */}
-          {activeCategory !== "experience" && activeCategory !== "curation" && (
+          {activeCategory !== "experience" && activeCategory !== "curation" && activeCategory !== "service" && (
             <div className="mt-7">
               <div className="flex items-center justify-between px-5 mb-3">
                 <h2 className="text-lg font-bold text-foreground">
