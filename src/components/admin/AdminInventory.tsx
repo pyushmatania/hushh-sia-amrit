@@ -65,7 +65,9 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
   }, {});
 
   const openCreate = () => {
-    setEditing({ name: "", emoji: "🍽️", category: "food", unit_price: 0, stock: 100, low_stock_threshold: 10, available: true, property_id: null });
+    const defaultCat = filterCategory === "food-drinks" ? "food" : filterCategory === "addons" ? "decoration" : "food";
+    const defaultEmoji = filterCategory === "addons" ? "🎉" : "🍽️";
+    setEditing({ name: "", emoji: defaultEmoji, category: defaultCat, unit_price: 0, stock: 100, low_stock_threshold: 10, available: true, property_id: null });
     setIsCreating(true);
   };
 
