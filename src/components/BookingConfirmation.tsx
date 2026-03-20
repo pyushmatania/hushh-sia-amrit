@@ -1,9 +1,12 @@
 import { motion } from "framer-motion";
-import { Check, MapPin, Calendar, Users, QrCode, Clock, ShoppingCart } from "lucide-react";
-import { useState } from "react";
+import { Check, MapPin, Calendar, Users, QrCode, Clock, ShoppingCart, Shield, Upload } from "lucide-react";
+import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import type { Property } from "@/data/properties";
 import LiveOrderingSheet from "./LiveOrderingSheet";
+import IdentityUploadSheet from "./IdentityUploadSheet";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 
 interface BookingConfirmationProps {
   property: Property;

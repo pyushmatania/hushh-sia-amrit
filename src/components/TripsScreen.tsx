@@ -397,7 +397,33 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
         </motion.div>
       )}
 
-      {filteredBookings.length === 0 ? (
+      {/* ID Verification Banner */}
+      {idVerified === false && (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mx-5 mt-2 mb-1 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/15 flex items-center justify-center shrink-0">
+              <Shield size={20} className="text-amber-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-foreground">Identity not verified</p>
+              <p className="text-[10px] text-muted-foreground">Upload your ID for a smoother check-in experience</p>
+            </div>
+            <button
+              onClick={() => setIdSheetOpen(true)}
+              className="px-3 py-1.5 rounded-lg bg-amber-500/15 text-amber-400 text-[10px] font-bold shrink-0 active:scale-95 transition-transform flex items-center gap-1"
+            >
+              <Upload size={10} /> Verify
+            </button>
+          </div>
+        </motion.div>
+      )}
+
+      <IdentityUploadSheet open={idSheetOpen} onClose={() => setIdSheetOpen(false)} />
+
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
