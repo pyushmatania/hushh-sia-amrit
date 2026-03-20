@@ -41,7 +41,7 @@ export default function AdminBookings() {
     setBookings(prev => prev.map(b => b.id === id ? { ...b, status } : b));
   };
 
-  const statuses = ["all", "pending", "upcoming", "active", "completed", "cancelled"];
+  const statuses = ["all", "pending", "upcoming", "confirmed", "active", "completed", "cancelled"];
 
   return (
     <div className="space-y-5">
