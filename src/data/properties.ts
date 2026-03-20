@@ -1211,7 +1211,7 @@ export const properties: Property[] = [
     name: "Hushh Rides",
     description: "Pickup · Drop · Outstation · Airport transfers",
     fullDescription: "Hassle-free transport for all your Hushh experiences. Airport pickups, venue transfers, outstation trips, and late-night drops. Clean, air-conditioned vehicles with professional drivers. Track your ride in real-time.",
-    images: [property1, property2, property3],
+    images: [listingHushhRides, property2, property3],
     rating: 4.5,
     reviewCount: 89,
     location: "Jeypore, Odisha",
