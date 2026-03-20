@@ -17,6 +17,7 @@ function setLocalWishlist(ids: string[]) {
 
 export function useWishlists() {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
