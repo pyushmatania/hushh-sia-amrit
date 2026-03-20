@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Building2, CalendarCheck, Users, BarChart3,
   Sparkles, Tag, Megaphone, Ticket, ShoppingCart, LogOut,
   ChevronLeft, ChevronRight, Shield, Menu, X, FileSpreadsheet,
-  Bot, Bell, ScrollText, Wallet, Zap, Trophy, Search, UserCheck
+  Bot, Bell, ScrollText, Wallet, Zap, Trophy, Search, UserCheck, Package
 } from "lucide-react";
 import CommandPalette from "./CommandPalette";
 import FloatingChecklist from "./FloatingChecklist";
@@ -16,7 +16,7 @@ export type AdminPage =
   | "analytics" | "curations" | "tags" | "campaigns"
   | "coupons" | "orders" | "exports" | "ai" | "alerts" | "audit"
   | "earnings" | "pricing" | "achievements" | "loyalty"
-  | "calendar" | "requests" | "history";
+  | "calendar" | "requests" | "history" | "inventory";
 
 interface AdminLayoutProps {
   activePage: AdminPage;
@@ -34,6 +34,7 @@ const navItems: { id: AdminPage; label: string; icon: typeof LayoutDashboard; ad
   { id: "properties", label: "Properties", icon: Building2 },
   { id: "bookings", label: "Bookings", icon: CalendarCheck },
   { id: "orders", label: "Live Orders", icon: ShoppingCart },
+  { id: "inventory", label: "Inventory", icon: Package },
   { id: "clients", label: "Client Directory", icon: UserCheck },
   { id: "history", label: "Property History", icon: ScrollText },
   { id: "users", label: "Users (CRM)", icon: Users, adminOnly: true },

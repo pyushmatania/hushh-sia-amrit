@@ -24,6 +24,7 @@ import AdminLoyaltyReferrals from "@/components/admin/AdminLoyaltyReferrals";
 import HostCalendar from "@/components/admin/HostCalendar";
 import BookingRequests from "@/components/admin/BookingRequests";
 import AdminPropertyHistory from "@/components/admin/AdminPropertyHistory";
+import AdminInventory from "@/components/admin/AdminInventory";
 import AuthScreen from "@/components/AuthScreen";
 import { Shield, Loader2 } from "lucide-react";
 
@@ -94,6 +95,7 @@ export default function Admin() {
       case "calendar": return <HostCalendar />;
       case "requests": return <BookingRequests />;
       case "history": return <AdminPropertyHistory onNavigateToClient={(userId) => { setPage("clients"); }} />;
+      case "inventory": return <AdminInventory />;
       case "audit": return <AdminAuditLog />;
       default: return <CommandCenter onNavigate={setPage} />;
     }
