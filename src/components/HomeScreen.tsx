@@ -1,5 +1,4 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { toast } from "sonner";
 import { Bell, MapPin, ArrowRight } from "lucide-react";
 import PullToRefresh from "./PullToRefresh";
 import CategoryBar from "./CategoryBar";
