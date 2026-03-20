@@ -72,7 +72,9 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
     setProfile(updated);
   }, []);
 
-  const handleSettingTap = useCallback((key: string) => {
+  const handleSettingTap = useCallback((key: string, label: string) => {
+    if (label === "Refer a friend") { setShowReferral(true); return; }
+    if (label === "Loyalty points") { setShowLoyalty(true); return; }
     if (key) setActiveSetting(key);
   }, []);
 
