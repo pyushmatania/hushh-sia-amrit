@@ -472,6 +472,14 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 </div>
               )}
 
+              {/* Curated Packs in Curations tab */}
+              <SectionDivider title="✨ EXPERIENCE PACKS" />
+              <div className="px-4 space-y-4 pb-2">
+                {experiencePacks.map((pack, i) => (
+                  <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
+                ))}
+              </div>
+
               {/* Budget highlight */}
               <div className="mx-4 mt-6 p-4 rounded-2xl border border-foreground/10" style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(6,95,70,0.15) 100%)" }}>
                 <div className="flex items-center gap-2 mb-1">
