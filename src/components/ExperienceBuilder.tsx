@@ -71,13 +71,24 @@ interface ExperienceBuilderProps {
 
 export default function ExperienceBuilder({ property, slotId, guests, date, onBack, onContinue, extras }: ExperienceBuilderProps) {
   const [selections, setSelections] = useState<Record<string, number>>({});
+  const [hapticId, setHapticId] = useState<string | null>(null);
   const slot = property.slots.find((s) => s.id === slotId)!;
   const categories = Object.keys(addons);
   const [activeCategory, setActiveCategory] = useState(categories[0]);
   const tabsRef = useRef<HTMLDivElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const triggerHaptic = (id: string, isAdd: boolean) => {
+    // Vibration API for real haptic feedback on supported devices
+    if (navigator.vibrate) {
+      navigator.vibrate(isAdd ? [15, 30, 15] : [10]);
+    }
+    setHapticId(id);
+    setTimeout(() => setHapticId(null), 400);
+  };
+
   const toggle = (id: string, delta: number) => {
+    triggerHaptic(id, delta > 0);
     setSelections((prev) => {
       const next = { ...prev };
       const val = (next[id] || 0) + delta;
