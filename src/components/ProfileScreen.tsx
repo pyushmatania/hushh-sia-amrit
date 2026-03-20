@@ -18,6 +18,7 @@ import EditProfileSheet from "./EditProfileSheet";
 import SettingsSheet from "./SettingsSheet";
 import LoyaltyScreen from "./LoyaltyScreen";
 import ReferralScreen from "./ReferralScreen";
+import AppDocumentation from "./AppDocumentation";
 
 const themeOptions = [
   { id: "light" as const, label: "Light", icon: Sun },
