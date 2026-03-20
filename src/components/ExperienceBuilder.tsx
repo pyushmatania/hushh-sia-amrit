@@ -243,6 +243,52 @@ export default function ExperienceBuilder({ property, slotId, guests, date, onBa
         </div>
       </div>
 
+      {/* Popular picks — horizontal scroll */}
+      {!isSearching && (
+        <div className="shrink-0 px-4 pt-2 pb-3 border-b border-border/30">
+          <div className="flex items-center gap-1.5 mb-2">
+            <Flame size={13} className="text-primary" />
+            <span className="text-[11px] font-bold text-foreground uppercase tracking-wider">Popular picks</span>
+          </div>
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
+            {popularItems.map((item) => {
+              const qty = selections[item.id] || 0;
+              const imgUrl = addonImages[item.name];
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => toggle(item.id, qty > 0 ? 0 : 1)}
+                  className={`shrink-0 w-[120px] rounded-xl border overflow-hidden transition-all ${
+                    qty > 0
+                      ? "border-primary/40 bg-primary/[0.04]"
+                      : "border-border hover:border-foreground/20"
+                  }`}
+                >
+                  <div className="relative aspect-[3/2] overflow-hidden bg-secondary">
+                    {imgUrl ? (
+                      <img src={imgUrl} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-2xl bg-foreground/[0.03]">{item.categoryEmoji}</div>
+                    )}
+                    {qty > 0 && (
+                      <div className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                        <Check size={10} className="text-primary-foreground" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="px-2 py-2">
+                    <p className="text-[10px] font-semibold text-foreground truncate">{item.name}</p>
+                    <p className="text-[10px] font-bold text-primary mt-0.5">
+                      {item.price === 0 ? "Free" : `₹${item.price.toLocaleString()}`}
+                    </p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Category tabs — horizontally scrollable (hidden when searching) */}
       {!isSearching && (
         <div ref={tabsRef} className="shrink-0 flex gap-1.5 overflow-x-auto px-4 py-2 scrollbar-hide border-b border-border/30">
