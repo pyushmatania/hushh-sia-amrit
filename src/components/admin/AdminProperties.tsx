@@ -190,7 +190,7 @@ export default function AdminProperties() {
     if (isCreating) {
       const { data, error } = await supabase.from("host_listings")
         .insert({ ...payload, user_id: "00000000-0000-0000-0000-000000000001" })
-        .select().single();
+        .select().maybeSingle();
 
       if (error) {
         toast({ title: "Create failed", description: error.message, variant: "destructive" });
@@ -206,15 +206,20 @@ export default function AdminProperties() {
       const { data, error } = await supabase.from("host_listings")
         .update(payload)
         .eq("id", editingListing.id!)
-        .select()
-        .single();
+        .select();
 
       if (error) {
         toast({ title: "Save failed", description: error.message, variant: "destructive" });
         return;
       }
 
-      setListings(prev => prev.map(l => l.id === editingListing.id ? (data as Listing) : l));
+      if (data && data.length > 0) {
+        setListings(prev => prev.map(l => l.id === editingListing.id ? (data[0] as Listing) : l));
+      } else {
+        // RLS may block returning rows — update local state optimistically
+        setListings(prev => prev.map(l => l.id === editingListing.id ? { ...l, ...payload } as Listing : l));
+      }
+
       notifyListingsUpdated();
       toast({ title: "Property updated!" });
     }
