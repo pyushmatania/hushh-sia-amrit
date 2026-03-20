@@ -23,6 +23,8 @@ import BackToTopButton from "./home/BackToTopButton";
 import CuratedComboCard from "./home/CuratedComboCard";
 import ExperienceCard from "./home/ExperienceCard";
 import { CurationHeroCard, CurationMiniCard } from "./home/CurationHeroCard";
+import ServiceGrid from "./home/ServiceGrid";
+import CurationGrid from "./home/CurationGrid";
 
 interface HomeScreenProps {
   onPropertyTap: (property: Property) => void;
@@ -335,14 +337,19 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
             </>
           )}
 
-          {/* ═══════ SERVICES TAB ═══════ */}
+          {/* ═══════ SERVICES TAB — Minimal Icon Grid ═══════ */}
           {activeCategory === "service" && (
             <>
-              {/* Spotlight Video Cards for Services */}
-              <SectionDivider title="🛎️ PREMIUM SERVICES" />
-              <SpotlightCarousel properties={serviceProperties} onPropertyTap={onPropertyTap} category="service" />
+              <div className="px-5 pt-6 pb-1">
+                <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                  Services 🛎️
+                </h1>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Add to any booking, or book standalone
+                </p>
+              </div>
 
-              <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
+              <div className="px-4 pt-3 pb-3 flex gap-2 overflow-x-auto hide-scrollbar">
                 {serviceFilters.map(tag => (
                   <button
                     key={tag}
@@ -358,24 +365,27 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 ))}
               </div>
 
-              <div className="mt-4 px-5">
-                <p className="text-sm text-muted-foreground mb-4">
-                  Add these services to any Stay or Experience booking, or book them standalone.
-                </p>
-              </div>
+              <ServiceGrid services={filteredProperties} onServiceTap={onPropertyTap} />
+
+              {filteredProperties.length === 0 && (
+                <div className="px-5 py-12 text-center">
+                  <p className="text-3xl mb-2">🔍</p>
+                  <p className="text-foreground font-semibold">No services match this filter</p>
+                  <button onClick={() => handleSubFilter("All")} className="text-xs text-primary mt-2 font-medium">Show all services</button>
+                </div>
+              )}
             </>
           )}
 
-          {/* ═══════ CURATIONS TAB — Editorial Magazine Layout ═══════ */}
+          {/* ═══════ CURATIONS TAB — Minimal Emoji-Forward Grid ═══════ */}
           {activeCategory === "curation" && (
             <>
-              {/* Editorial header */}
               <div className="px-5 pt-6 pb-2">
                 <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                   Curated for You ✨
                 </h1>
                 <p className="text-sm text-muted-foreground mt-1" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  One-tap bundles, crafted by locals, ready to book
+                  One-tap bundles, crafted by locals
                 </p>
               </div>
 
@@ -396,37 +406,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 ))}
               </div>
 
-              {/* Hero featured combo — first popular one */}
-              {filteredCombos.length > 0 && (
-                <CurationHeroCard combo={filteredCombos[0]} index={0} onTap={(c) => onPropertyTap(comboToProperty(c))} />
-              )}
-
-              {/* Quick picks row */}
-              {filteredCombos.length > 1 && (
-                <div className="mt-2">
-                  <div className="flex items-center justify-between px-5 mb-3">
-                    <h2 className="text-base font-bold text-foreground">⚡ Quick Picks</h2>
-                    <span className="text-[10px] text-muted-foreground">{filteredCombos.length} combos</span>
-                  </div>
-                  <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-1">
-                    {filteredCombos.slice(1).map((combo, i) => (
-                      <CurationMiniCard key={combo.id} combo={combo} index={i} onTap={(c) => onPropertyTap(comboToProperty(c))} />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Full-width editorial cards for remaining */}
-              {filteredCombos.length > 3 && (
-                <div className="mt-6">
-                  <div className="px-5 mb-3">
-                    <h2 className="text-base font-bold text-foreground">🎯 More Combos</h2>
-                  </div>
-                  {filteredCombos.slice(3).map((combo, i) => (
-                    <CurationHeroCard key={combo.id} combo={combo} index={i} onTap={(c) => onPropertyTap(comboToProperty(c))} />
-                  ))}
-                </div>
-              )}
+              <CurationGrid combos={filteredCombos} onComboTap={(c) => onPropertyTap(comboToProperty(c))} />
 
               {filteredCombos.length === 0 && (
                 <div className="px-5 py-12 text-center">
@@ -436,19 +416,19 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 </div>
               )}
 
-              {/* Budget highlight banner */}
-              <div className="mx-5 mt-6 p-4 rounded-2xl border border-foreground/10" style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(6,95,70,0.15) 100%)" }}>
-                <div className="flex items-center gap-2 mb-2">
+              {/* Budget highlight */}
+              <div className="mx-4 mt-6 p-4 rounded-2xl border border-foreground/10" style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(6,95,70,0.15) 100%)" }}>
+                <div className="flex items-center gap-2 mb-1">
                   <span className="text-lg">💸</span>
                   <h3 className="text-sm font-bold text-foreground">Budget Combos from ₹299</h3>
                 </div>
-                <p className="text-xs text-muted-foreground">Work & Chill Pass, Day Escape, Game Night — perfect for weekdays!</p>
+                <p className="text-xs text-muted-foreground">Work & Chill, Day Escape, Game Night — perfect for weekdays!</p>
               </div>
             </>
           )}
 
           {/* ═══════ ALL LISTINGS for current tab (skip experience & curation — they have their own layouts) ═══════ */}
-          {activeCategory !== "experience" && activeCategory !== "curation" && (
+          {activeCategory !== "experience" && activeCategory !== "curation" && activeCategory !== "service" && (
             <div className="mt-7">
               <div className="flex items-center justify-between px-5 mb-3">
                 <h2 className="text-lg font-bold text-foreground">
