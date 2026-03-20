@@ -6,7 +6,7 @@ import PropertyCard from "./PropertyCard";
 import PropertyCardSmall from "./PropertyCardSmall";
 import PackageCard from "./PackageCard";
 import { properties, packages, curatedCombos, type Property } from "@/data/properties";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useRef } from "react";
 import { useNotifications } from "@/hooks/use-notifications";
 import profileAvatar from "@/assets/profile-avatar.png";
 
@@ -38,11 +38,25 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
   }, []);
   const [activeCategory, setActiveCategory] = useState("home");
   const [subFilter, setSubFilter] = useState("All");
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  const scrollToTop = useCallback(() => {
+    contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   // Reset sub-filter when switching categories
   const handleCategoryChange = useCallback((id: string) => {
     setActiveCategory(id);
     setSubFilter("All");
+    scrollToTop();
+  }, [scrollToTop]);
+
+  const handleSubFilter = useCallback((filter: string) => {
+    setSubFilter(filter);
+    // Scroll just below the category bar area
+    setTimeout(() => {
+      contentRef.current?.scrollTo({ top: 280, behavior: "smooth" });
+    }, 50);
   }, []);
 
   // Sub-filter definitions mapped to propertyType or tag keywords
@@ -107,7 +121,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
-    <div key={refreshKey} className="pb-24 min-h-screen" style={{ background: "linear-gradient(180deg, #0C0B1D 0%, #111028 100%)" }}>
+    <div ref={contentRef} key={refreshKey} className="pb-24 min-h-screen overflow-y-auto" style={{ background: "linear-gradient(180deg, #0C0B1D 0%, #111028 100%)" }}>
 
       {/* Header */}
       <div className="px-5 pt-5 pb-2 flex items-center justify-between">
@@ -193,7 +207,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 {stayFilters.map(type => (
                   <button
                     key={type}
-                    onClick={() => setSubFilter(type)}
+                    onClick={() => handleSubFilter(type)}
                     className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 ${
                       subFilter === type
                         ? "bg-primary text-primary-foreground font-semibold shadow-md"
@@ -209,7 +223,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 <div className="mt-4">
                   <div className="flex items-center justify-between px-5 mb-3">
                     <h2 className="text-lg font-bold text-foreground">🔥 Trending Stays</h2>
-                    <button onClick={() => setSubFilter("All")} className="text-xs text-primary font-medium flex items-center gap-1">View all <ArrowRight size={12} /></button>
+                    <button onClick={() => handleSubFilter("All")} className="text-xs text-primary font-medium flex items-center gap-1">View all <ArrowRight size={12} /></button>
                   </div>
                   <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
                     {trendingNow.map((p, i) => (
@@ -223,7 +237,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 <div className="mt-6">
                   <div className="flex items-center justify-between px-5 mb-3">
                     <h2 className="text-lg font-bold text-foreground">💸 Budget Friendly</h2>
-                    <button onClick={() => setSubFilter("All")} className="text-xs text-primary font-medium flex items-center gap-1">View all <ArrowRight size={12} /></button>
+                    <button onClick={() => handleSubFilter("All")} className="text-xs text-primary font-medium flex items-center gap-1">View all <ArrowRight size={12} /></button>
                   </div>
                   <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
                     {budgetPicks.map((p, i) => (
@@ -259,7 +273,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 {experienceFilters.map(tag => (
                   <button
                     key={tag}
-                    onClick={() => setSubFilter(tag)}
+                    onClick={() => handleSubFilter(tag)}
                     className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 ${
                       subFilter === tag
                         ? "bg-primary text-primary-foreground font-semibold shadow-md"
@@ -309,7 +323,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 {serviceFilters.map(tag => (
                   <button
                     key={tag}
-                    onClick={() => setSubFilter(tag)}
+                    onClick={() => handleSubFilter(tag)}
                     className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 ${
                       subFilter === tag
                         ? "bg-primary text-primary-foreground font-semibold shadow-md"
@@ -341,7 +355,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 {curationFilters.map(tag => (
                   <button
                     key={tag}
-                    onClick={() => setSubFilter(tag)}
+                    onClick={() => handleSubFilter(tag)}
                     className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 ${
                       subFilter === tag
                         ? "bg-primary text-primary-foreground font-semibold shadow-md"
