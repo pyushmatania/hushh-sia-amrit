@@ -44,6 +44,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
 
   if (!property) return null;
 
+  const isActive = booking.status === "active";
   const isUpcoming = booking.status === "upcoming";
   const isCompleted = booking.status === "completed";
   const isCancelled = booking.status === "cancelled" || cancelled;
