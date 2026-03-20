@@ -92,6 +92,13 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
   const [videoReady, setVideoReady] = useState(false);
   const [shouldLoad, setShouldLoad] = useState(false);
 
+  // Eagerly load first 2 cards, lazy load rest
+  useEffect(() => {
+    if (index < 2) {
+      setShouldLoad(true);
+    }
+  }, [index]);
+
   useEffect(() => {
     const card = cardRef.current;
     if (!card) return;
@@ -99,14 +106,14 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
       ([entry]) => {
         if (entry.isIntersecting) {
           setShouldLoad(true);
-          if (videoRef.current && entry.intersectionRatio > 0.5) {
+          if (videoRef.current && entry.intersectionRatio > 0.3) {
             videoRef.current.play().catch(() => {});
           }
         } else {
           videoRef.current?.pause();
         }
       },
-      { threshold: [0, 0.5], rootMargin: "200px" }
+      { threshold: [0, 0.3], rootMargin: "400px" }
     );
     observer.observe(card);
     return () => observer.disconnect();

@@ -123,10 +123,14 @@ function AnimatedIcon({ cat, isActive }: { cat: Category; isActive: boolean }) {
       src={cat.icon}
       alt={cat.label}
       className="w-14 h-14 object-contain"
+      loading="eager"
+      decoding="async"
+      fetchPriority="high"
       style={{
         opacity: isActive ? 1 : 0.85,
         ...(isActive ? activeEffects[cat.animationType] || {} : {}),
         transition: "filter 0.3s ease",
+        contentVisibility: "auto",
       }}
       animate={controls}
       whileTap={tapAnimations[cat.animationType]}
