@@ -87,6 +87,7 @@ export default function AdminProperties() {
   const [isCreating, setIsCreating] = useState(false);
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
   const [expandedSection, setExpandedSection] = useState<string>("basic");
+  const [previewMode, setPreviewMode] = useState(false);
 
   useEffect(() => {
     supabase.from("host_listings").select("*").order("sort_order").order("created_at", { ascending: false })
@@ -149,12 +150,14 @@ export default function AdminProperties() {
     setEditingListing({ ...defaultListing });
     setIsCreating(true);
     setExpandedSection("basic");
+    setPreviewMode(false);
   };
 
   const openEdit = (listing: Listing) => {
     setEditingListing({ ...listing });
     setIsCreating(false);
     setExpandedSection("basic");
+    setPreviewMode(false);
   };
 
   const saveListing = async () => {
@@ -444,28 +447,85 @@ export default function AdminProperties() {
                   <p className="text-xs text-muted-foreground">{isCreating ? "Fill in the details" : editingListing.name}</p>
                 </div>
                 <div className="flex gap-2">
-                  {!isCreating && editingListing.id && (
-                    <button
-                      onClick={() => {
-                        setEditingListing(null);
-                        // Navigate to property detail in the app
-                        window.location.href = `/?property=${editingListing.id}`;
-                      }}
-                      className="px-3 py-2 rounded-xl bg-secondary text-foreground text-sm font-medium hover:bg-secondary/80 active:scale-95 transition flex items-center gap-1.5"
-                    >
-                      <Eye size={14} /> Preview
-                    </button>
-                  )}
+                  <button
+                    onClick={() => setPreviewMode(!previewMode)}
+                    className={`px-3 py-2 rounded-xl text-sm font-medium active:scale-95 transition flex items-center gap-1.5 ${
+                      previewMode ? "bg-primary/15 text-primary" : "bg-secondary text-foreground hover:bg-secondary/80"
+                    }`}
+                  >
+                    <Eye size={14} /> {previewMode ? "Edit" : "Preview"}
+                  </button>
                   <button onClick={saveListing}
                     className="px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 active:scale-95 transition">
                     {isCreating ? "Create" : "Save"}
                   </button>
-                  <button onClick={() => setEditingListing(null)} className="p-2 rounded-xl hover:bg-secondary transition">
+                  <button onClick={() => { setEditingListing(null); setPreviewMode(false); }} className="p-2 rounded-xl hover:bg-secondary transition">
                     <X size={18} className="text-muted-foreground" />
                   </button>
                 </div>
               </div>
 
+              {previewMode ? (
+                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="p-4 space-y-4">
+                  {/* Property Preview Card */}
+                  <div className="rounded-2xl border border-border bg-background overflow-hidden">
+                    <div className="aspect-[16/10] bg-secondary relative overflow-hidden">
+                      {(editingListing.image_urls || []).length > 0 ? (
+                        <img src={editingListing.image_urls![0]} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Building2 size={40} className="text-muted-foreground/30" />
+                          <p className="absolute bottom-3 text-xs text-muted-foreground">No images added yet</p>
+                        </div>
+                      )}
+                      {editingListing.discount_label && (
+                        <span className="absolute top-3 left-3 bg-destructive text-destructive-foreground text-[10px] font-bold px-2.5 py-1 rounded-full">
+                          {editingListing.discount_label}
+                        </span>
+                      )}
+                      <span className={`absolute top-3 right-3 text-[10px] font-bold px-2.5 py-1 rounded-full border ${statusColors[editingListing.status || "draft"] || statusColors.draft}`}>
+                        {editingListing.status || "draft"}
+                      </span>
+                    </div>
+                    <div className="p-4 space-y-3">
+                      <div>
+                        <h3 className="text-lg font-bold text-foreground">{editingListing.name || "Property Name"}</h3>
+                        <p className="text-sm text-muted-foreground flex items-center gap-1 mt-0.5">
+                          <MapPin size={12} /> {editingListing.location || "Location"}
+                        </p>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{editingListing.description || "No description"}</p>
+                      <div className="flex items-center gap-3 text-sm">
+                        <span className="font-bold text-foreground tabular-nums">₹{(editingListing.base_price || 0).toLocaleString()}</span>
+                        <span className="text-muted-foreground flex items-center gap-1"><Users size={12} /> {editingListing.capacity || 0} guests</span>
+                        {(editingListing.rating || 0) > 0 && (
+                          <span className="text-muted-foreground flex items-center gap-1"><Star size={12} className="text-amber-400" /> {editingListing.rating}</span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span className="px-2 py-0.5 rounded-full bg-secondary capitalize">{editingListing.property_type || "Type"}</span>
+                        <span className="px-2 py-0.5 rounded-full bg-secondary capitalize">{editingListing.category || "Category"}</span>
+                        {editingListing.host_name && <span>by {editingListing.host_name}</span>}
+                      </div>
+                      {(editingListing.amenities || []).length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 pt-1">
+                          {editingListing.amenities!.slice(0, 6).map(a => (
+                            <span key={a} className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full">{a}</span>
+                          ))}
+                          {editingListing.amenities!.length > 6 && <span className="text-[10px] text-muted-foreground">+{editingListing.amenities!.length - 6}</span>}
+                        </div>
+                      )}
+                      {(editingListing.tags || []).length > 0 && (
+                        <div className="flex flex-wrap gap-1.5">
+                          {editingListing.tags!.map(t => (
+                            <span key={t} className="text-[10px] bg-secondary text-muted-foreground px-2 py-0.5 rounded">{t}</span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              ) : (
               <div className="p-4 space-y-4">
                 {/* Basic Info */}
                 <EditSection title="Basic Info" icon={<Building2 size={16} />} id="basic" expanded={expandedSection} onToggle={setExpandedSection}>
@@ -751,6 +811,7 @@ export default function AdminProperties() {
 
                 <div className="h-8" />
               </div>
+              )}
             </motion.div>
           </motion.div>
         )}
