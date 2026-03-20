@@ -424,6 +424,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
 
       <IdentityUploadSheet open={idSheetOpen} onClose={() => setIdSheetOpen(false)} />
 
+      {filteredBookings.length === 0 ? (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
