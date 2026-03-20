@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { ShoppingCart, Clock, CheckCircle2, ChefHat, Loader2, Bell } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { playWinJingle } from "@/lib/spin-sounds";
+import { hapticHeavy } from "@/lib/haptics";
 
 interface Order {
   id: string; user_id: string; property_id: string; booking_id: string | null;
