@@ -394,15 +394,28 @@ React 18 · TypeScript 5.8 · Vite 8 · Tailwind CSS 3.4 · shadcn/ui · CVA · 
   - Wired to `user_milestones` table with unique(user_id, milestone_id)
 - PrivacyModeProvider wraps entire app
 
----
+### v1.13 — Trip Experience & Active Booking
+- Active Trip Card on Home — replaces "Last Vibe" with live checked-in booking, 1-tap food ordering
+- Trip Detail overhaul — order food CTA, add extras sheet for active trips
+- Merged extras & food ordering into unified in-stay experience
+- 12 demo bookings across all statuses (active, upcoming, past, cancelled) for guest mode
+- Status normalization (`normalizeStatus`) for consistent filtering across screens
+- Past Trips synced between Profile tab and Trips tab
+- Wishlist sanitization — only valid property IDs stored/displayed
+- `useBookings` and `useWishlists` hooks provide comprehensive guest fallback data
 
-## 📐 Conventions & Guidelines
+### v1.14 — Loyalty & Rewards Redesign
+- Gamified Loyalty Screen — tier hero card with progress bar, tabbed interface (Rewards, Spin, Quests, Earn, Refer, History)
+- Enhanced Spin Wheel — weighted prizes, confetti burst, neon glow ring, cinematic deceleration
+- Sound effects — Web Audio API synthesized tick sounds (dynamic pitch/tempo) and win jingle
+- Quests tab with milestone progress bars
+- `spin_history` and `user_milestones` wired to DB
 
-### Adding Features
-1. Implement the feature
-2. Add changelog entry to `HUSHH.md` under the appropriate version
-3. Add entry to `src/components/AppDocumentation.tsx` `changeLog` array
-4. Document new screens in Screen-by-Screen section
+### v1.15 — Add-on Icons & Curated Listings
+- Per-item emoji icons on all add-on/extras options (🍛🥩☕🍕🍰🍺🎈💡🎧🎤🏊🔭📸 etc.)
+- Curated Pack Listings redesigned — vertical long cards with autoplay video backgrounds
+- Video assets generated for all curated packs
+- Addon type extended with `emoji` field for item-level iconography
 
 ### Code Style
 - Semantic design tokens only — never raw colors
