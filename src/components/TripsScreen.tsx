@@ -1,10 +1,11 @@
 import { motion, useMotionValue, useTransform, useSpring, useAnimation, useScroll, PanInfo } from "framer-motion";
-import { MapPin, Calendar, Clock, ChevronRight, Ticket, QrCode, Users, X } from "lucide-react";
+import { MapPin, Calendar, Clock, ChevronRight, Ticket, QrCode, Users, X, Utensils, ShoppingCart } from "lucide-react";
 import { useRef, useState, useCallback, useMemo } from "react";
 import { properties } from "@/data/properties";
 import PullToRefresh from "./PullToRefresh";
 import type { Booking } from "@/pages/Index";
 import OrderHistorySection from "./OrderHistorySection";
+import LiveOrderingSheet from "./LiveOrderingSheet";
 
 interface TripsScreenProps {
   bookings: Booking[];
@@ -14,6 +15,12 @@ interface TripsScreenProps {
 }
 
 const statusConfig: Record<string, { gradient: string; glow: string; label: string; dotColor: string }> = {
+  active: {
+    gradient: "from-success/80 to-success/40",
+    glow: "shadow-[0_8px_32px_-8px_hsla(160,60%,42%,0.5)]",
+    label: "Checked In",
+    dotColor: "bg-success",
+  },
   upcoming: {
     gradient: "from-primary/80 to-primary/40",
     glow: "shadow-[0_8px_32px_-8px_hsla(270,80%,65%,0.5)]",
@@ -21,10 +28,10 @@ const statusConfig: Record<string, { gradient: string; glow: string; label: stri
     dotColor: "bg-primary",
   },
   completed: {
-    gradient: "from-success/80 to-success/40",
-    glow: "shadow-[0_8px_32px_-8px_hsla(160,60%,42%,0.4)]",
+    gradient: "from-muted-foreground/60 to-muted-foreground/30",
+    glow: "",
     label: "Completed",
-    dotColor: "bg-success",
+    dotColor: "bg-muted-foreground",
   },
   cancelled: {
     gradient: "from-destructive/60 to-destructive/30",
@@ -40,12 +47,14 @@ function SwipeableCard({
   onViewDetail,
   onRebook,
   onCancel,
+  onOrderFood,
 }: {
   booking: Booking;
   index: number;
   onViewDetail: (b: Booking) => void;
   onRebook: (id: string) => void;
   onCancel?: (id: string) => void;
+  onOrderFood?: (b: Booking) => void;
 }) {
   const controls = useAnimation();
   const swipeX = useMotionValue(0);
@@ -68,7 +77,6 @@ function SwipeableCard({
 
   return (
     <div className="relative overflow-hidden rounded-3xl">
-      {/* Cancel background */}
       {canSwipe && (
         <motion.div
           className="absolute inset-0 bg-destructive/90 rounded-3xl flex items-center justify-end pr-8"
@@ -89,7 +97,7 @@ function SwipeableCard({
         dragElastic={0.1}
         onDragEnd={handleDragEnd}
       >
-        <TiltCard booking={booking} index={index} onViewDetail={onViewDetail} onRebook={onRebook} />
+        <TiltCard booking={booking} index={index} onViewDetail={onViewDetail} onRebook={onRebook} onOrderFood={onOrderFood} />
       </motion.div>
     </div>
   );
@@ -100,17 +108,18 @@ function TiltCard({
   index,
   onViewDetail,
   onRebook,
+  onOrderFood,
 }: {
   booking: Booking;
   index: number;
   onViewDetail: (b: Booking) => void;
   onRebook: (id: string) => void;
+  onOrderFood?: (b: Booking) => void;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  // Scroll-based parallax for the image
   const { scrollYProgress } = useScroll({
     target: cardRef,
     offset: ["start end", "end start"],
@@ -119,28 +128,21 @@ function TiltCard({
 
   const rotateX = useSpring(useTransform(y, [-150, 150], [12, -12]), { stiffness: 300, damping: 30 });
   const rotateY = useSpring(useTransform(x, [-150, 150], [-12, 12]), { stiffness: 300, damping: 30 });
-  const glareX = useTransform(x, [-150, 150], [0, 100]);
-  const glareY = useTransform(y, [-150, 150], [0, 100]);
   const glareOpacity = useTransform(x, [-150, 0, 150], [0.15, 0, 0.15]);
 
   const property = properties.find((p) => p.id === booking.propertyId);
   if (!property) return null;
 
-  const status = statusConfig[booking.status];
+  const status = statusConfig[booking.status] || statusConfig.upcoming;
 
   const handlePointerMove = (e: React.PointerEvent) => {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    x.set(e.clientX - centerX);
-    y.set(e.clientY - centerY);
+    x.set(e.clientX - (rect.left + rect.width / 2));
+    y.set(e.clientY - (rect.top + rect.height / 2));
   };
 
-  const handlePointerLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
+  const handlePointerLeave = () => { x.set(0); y.set(0); };
 
   return (
     <motion.div
@@ -156,75 +158,41 @@ function TiltCard({
         onPointerMove={handlePointerMove}
         onPointerLeave={handlePointerLeave}
         onClick={() => onViewDetail(booking)}
-        className={`relative rounded-3xl overflow-hidden cursor-pointer transition-shadow duration-300`}
-        // Deep layered shadow for thickness
+        className="relative rounded-3xl overflow-hidden cursor-pointer transition-shadow duration-300"
         whileHover={{ y: -4 }}
       >
         {/* Multi-layer depth shadow */}
-        <div
-          className="absolute -inset-[1px] rounded-3xl pointer-events-none"
-          style={{
-            boxShadow: `
-              0 2px 4px hsla(0,0%,0%,0.3),
-              0 8px 16px hsla(0,0%,0%,0.25),
-              0 16px 32px hsla(0,0%,0%,0.2),
-              0 24px 48px -8px hsla(270,60%,50%,0.15),
-              inset 0 1px 0 hsla(0,0%,100%,0.08)
-            `,
-          }}
-        />
+        <div className="absolute -inset-[1px] rounded-3xl pointer-events-none" style={{
+          boxShadow: `0 2px 4px hsla(0,0%,0%,0.3), 0 8px 16px hsla(0,0%,0%,0.25), 0 16px 32px hsla(0,0%,0%,0.2), 0 24px 48px -8px hsla(270,60%,50%,0.15), inset 0 1px 0 hsla(0,0%,100%,0.08)`,
+        }} />
 
-        {/* Card body with subtle inner glow */}
-        <div className="relative bg-card rounded-3xl overflow-hidden border border-border/40"
-          style={{
-            boxShadow: `
-              inset 0 1px 0 hsla(0,0%,100%,0.06),
-              inset 0 -1px 0 hsla(0,0%,0%,0.2)
-            `,
-          }}
-        >
-          {/* Background image with overlay */}
+        <div className="relative bg-card rounded-3xl overflow-hidden border border-border/40" style={{
+          boxShadow: `inset 0 1px 0 hsla(0,0%,100%,0.06), inset 0 -1px 0 hsla(0,0%,0%,0.2)`,
+        }}>
+          {/* Background image */}
           <div className="relative h-[220px] overflow-hidden">
-            <motion.img
-              src={property.images[0]}
-              alt={property.name}
-              className="w-full h-[260px] object-cover"
-              style={{ y: imgY }}
-            />
-            {/* Dark gradient overlay — deeper for contrast */}
+            <motion.img src={property.images[0]} alt={property.name} className="w-full h-[260px] object-cover" style={{ y: imgY }} />
             <div className="absolute inset-0 bg-gradient-to-t from-card via-card/80 to-transparent" />
-
-            {/* Top edge highlight for raised look */}
             <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-            {/* Holographic glare effect */}
-            <motion.div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background: `radial-gradient(ellipse at 30% 20%, hsla(270, 80%, 75%, 0.2) 0%, transparent 50%),
-                             radial-gradient(ellipse at 70% 80%, hsla(200, 80%, 70%, 0.1) 0%, transparent 50%)`,
-                opacity: glareOpacity,
-              }}
-            />
+            <motion.div className="absolute inset-0 pointer-events-none" style={{
+              background: `radial-gradient(ellipse at 30% 20%, hsla(270, 80%, 75%, 0.2) 0%, transparent 50%)`,
+              opacity: glareOpacity,
+            }} />
 
             {/* Status pill */}
             <div className="absolute top-4 right-4" style={{ transform: "translateZ(30px)" }}>
-              <div className={`flex items-center gap-1.5 bg-gradient-to-r ${status.gradient} backdrop-blur-md px-3 py-1.5 rounded-full`}
-                style={{ boxShadow: "0 4px 12px hsla(0,0%,0%,0.3)" }}
-              >
-                <span className={`w-1.5 h-1.5 rounded-full ${status.dotColor} animate-pulse`} />
+              <div className={`flex items-center gap-1.5 bg-gradient-to-r ${status.gradient} backdrop-blur-md px-3 py-1.5 rounded-full`} style={{ boxShadow: "0 4px 12px hsla(0,0%,0%,0.3)" }}>
+                <span className={`w-1.5 h-1.5 rounded-full ${status.dotColor} ${booking.status === "active" ? "animate-pulse" : ""}`} />
                 <span className="text-[11px] font-semibold text-primary-foreground">{status.label}</span>
               </div>
             </div>
 
-            {/* Floating QR mini badge for upcoming */}
-            {booking.status === "upcoming" && (
+            {/* QR badge for upcoming/active */}
+            {(booking.status === "upcoming" || booking.status === "active") && (
               <motion.div
                 className="absolute top-4 left-4 w-10 h-10 glass rounded-xl flex items-center justify-center"
-                style={{
-                  transform: "translateZ(25px)",
-                  boxShadow: "0 4px 16px hsla(0,0%,0%,0.3)",
-                }}
+                style={{ transform: "translateZ(25px)", boxShadow: "0 4px 16px hsla(0,0%,0%,0.3)" }}
                 animate={{ rotate: [0, 2, -2, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               >
@@ -233,25 +201,13 @@ function TiltCard({
             )}
           </div>
 
-          {/* Card content — floating above */}
-          <div
-            className="relative px-5 pb-5 -mt-8"
-            style={{ transform: "translateZ(20px)" }}
-          >
-            {/* Glass info card with depth */}
-            <div className="rounded-2xl p-4 space-y-3 border border-border/40"
-              style={{
-                background: "linear-gradient(135deg, hsla(0,0%,100%,0.06) 0%, hsla(0,0%,100%,0.02) 100%)",
-                backdropFilter: "blur(20px) saturate(1.4)",
-                boxShadow: `
-                  0 4px 16px hsla(0,0%,0%,0.3),
-                  0 1px 3px hsla(0,0%,0%,0.2),
-                  inset 0 1px 0 hsla(0,0%,100%,0.08),
-                  inset 0 -1px 0 hsla(0,0%,0%,0.15)
-                `,
-              }}
-            >
-              {/* Title row */}
+          {/* Card content */}
+          <div className="relative px-5 pb-5 -mt-8" style={{ transform: "translateZ(20px)" }}>
+            <div className="rounded-2xl p-4 space-y-3 border border-border/40" style={{
+              background: "linear-gradient(135deg, hsla(0,0%,100%,0.06) 0%, hsla(0,0%,100%,0.02) 100%)",
+              backdropFilter: "blur(20px) saturate(1.4)",
+              boxShadow: `0 4px 16px hsla(0,0%,0%,0.3), inset 0 1px 0 hsla(0,0%,100%,0.08)`,
+            }}>
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <h3 className="font-bold text-base text-foreground truncate">{property.name}</h3>
@@ -264,21 +220,14 @@ function TiltCard({
                 </span>
               </div>
 
-              {/* Info chips */}
               <div className="flex flex-wrap gap-2">
-                <span className="flex items-center gap-1.5 bg-secondary/80 rounded-lg px-2.5 py-1.5 text-xs text-foreground"
-                  style={{ boxShadow: "inset 0 1px 0 hsla(0,0%,100%,0.04), 0 1px 2px hsla(0,0%,0%,0.15)" }}
-                >
+                <span className="flex items-center gap-1.5 bg-secondary/80 rounded-lg px-2.5 py-1.5 text-xs text-foreground" style={{ boxShadow: "inset 0 1px 0 hsla(0,0%,100%,0.04), 0 1px 2px hsla(0,0%,0%,0.15)" }}>
                   <Calendar size={12} className="text-primary" /> {booking.date}
                 </span>
-                <span className="flex items-center gap-1.5 bg-secondary/80 rounded-lg px-2.5 py-1.5 text-xs text-foreground"
-                  style={{ boxShadow: "inset 0 1px 0 hsla(0,0%,100%,0.04), 0 1px 2px hsla(0,0%,0%,0.15)" }}
-                >
+                <span className="flex items-center gap-1.5 bg-secondary/80 rounded-lg px-2.5 py-1.5 text-xs text-foreground" style={{ boxShadow: "inset 0 1px 0 hsla(0,0%,100%,0.04), 0 1px 2px hsla(0,0%,0%,0.15)" }}>
                   <Clock size={12} className="text-primary" /> {booking.slot}
                 </span>
-                <span className="flex items-center gap-1.5 bg-secondary/80 rounded-lg px-2.5 py-1.5 text-xs text-foreground"
-                  style={{ boxShadow: "inset 0 1px 0 hsla(0,0%,100%,0.04), 0 1px 2px hsla(0,0%,0%,0.15)" }}
-                >
+                <span className="flex items-center gap-1.5 bg-secondary/80 rounded-lg px-2.5 py-1.5 text-xs text-foreground" style={{ boxShadow: "inset 0 1px 0 hsla(0,0%,100%,0.04), 0 1px 2px hsla(0,0%,0%,0.15)" }}>
                   <Users size={12} className="text-primary" /> {booking.guests}
                 </span>
               </div>
@@ -286,6 +235,15 @@ function TiltCard({
               {/* Footer */}
               <div className="flex items-center justify-between pt-2 border-t border-border/50">
                 <span className="text-[10px] text-muted-foreground font-mono tracking-wide">{booking.bookingId}</span>
+                {booking.status === "active" && onOrderFood && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onOrderFood(booking); }}
+                    className="flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-lg active:scale-95 transition-transform"
+                    style={{ background: "hsl(160 84% 39%)", color: "white" }}
+                  >
+                    <Utensils size={12} /> Order Food
+                  </button>
+                )}
                 {booking.status === "upcoming" && (
                   <span className="flex items-center gap-1 text-xs font-semibold text-primary">
                     View <ChevronRight size={14} />
@@ -306,71 +264,113 @@ function TiltCard({
             </div>
           </div>
 
-          {/* Bottom edge shadow for thickness illusion */}
-          <div className="absolute bottom-0 left-2 right-2 h-[6px] rounded-b-3xl pointer-events-none"
-            style={{ background: "linear-gradient(to bottom, transparent, hsla(0,0%,0%,0.25))" }}
-          />
+          <div className="absolute bottom-0 left-2 right-2 h-[6px] rounded-b-3xl pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent, hsla(0,0%,0%,0.25))" }} />
         </div>
 
-        {/* Outer rim highlight */}
         <div className="absolute inset-0 rounded-3xl pointer-events-none border border-white/[0.06]" />
-        
-        {/* Side edge shadows for 3D thickness */}
-        <div className="absolute top-2 bottom-2 -left-[1px] w-[2px] pointer-events-none rounded-l-3xl"
-          style={{ background: "linear-gradient(to right, hsla(0,0%,0%,0.3), transparent)" }}
-        />
-        <div className="absolute top-2 bottom-2 -right-[1px] w-[2px] pointer-events-none rounded-r-3xl"
-          style={{ background: "linear-gradient(to left, hsla(0,0%,0%,0.3), transparent)" }}
-        />
+        <div className="absolute top-2 bottom-2 -left-[1px] w-[2px] pointer-events-none rounded-l-3xl" style={{ background: "linear-gradient(to right, hsla(0,0%,0%,0.3), transparent)" }} />
+        <div className="absolute top-2 bottom-2 -right-[1px] w-[2px] pointer-events-none rounded-r-3xl" style={{ background: "linear-gradient(to left, hsla(0,0%,0%,0.3), transparent)" }} />
       </motion.div>
     </motion.div>
   );
 }
 
-// Demo trips shown when no real bookings exist
+// Comprehensive demo trips for all statuses
 const demoTrips: Booking[] = [
   {
-    id: "demo-1",
+    id: "demo-active",
     propertyId: "1",
-    date: "Mar 25, 2026",
+    date: "Mar 20, 2026",
     slot: "Evening · 6 PM – 11 PM",
     guests: 4,
     total: 8500,
-    status: "upcoming",
-    bookingId: "HUSHH-DEMO01",
+    status: "active",
+    bookingId: "HUSHH-ACT001",
   },
   {
-    id: "demo-2",
+    id: "demo-up-1",
+    propertyId: "10",
+    date: "Mar 25, 2026",
+    slot: "Night · 7 PM – 11 PM",
+    guests: 2,
+    total: 4200,
+    status: "upcoming",
+    bookingId: "HUSHH-UP0025",
+  },
+  {
+    id: "demo-up-2",
+    propertyId: "9",
+    date: "Apr 2, 2026",
+    slot: "Full Day · 10 AM – 10 PM",
+    guests: 12,
+    total: 18500,
+    status: "upcoming",
+    bookingId: "HUSHH-UP0026",
+  },
+  {
+    id: "demo-comp-1",
     propertyId: "2",
     date: "Mar 10, 2026",
     slot: "Full Day · 10 AM – 10 PM",
     guests: 8,
     total: 15200,
     status: "completed",
-    bookingId: "HUSHH-DEMO02",
+    bookingId: "HUSHH-CP0012",
   },
   {
-    id: "demo-3",
-    propertyId: "3",
+    id: "demo-comp-2",
+    propertyId: "5",
+    date: "Feb 28, 2026",
+    slot: "Evening · 5 PM – 10 PM",
+    guests: 6,
+    total: 9800,
+    status: "completed",
+    bookingId: "HUSHH-CP0011",
+  },
+  {
+    id: "demo-comp-3",
+    propertyId: "7",
     date: "Feb 14, 2026",
+    slot: "Night · 8 PM – 12 AM",
+    guests: 2,
+    total: 3500,
+    status: "completed",
+    bookingId: "HUSHH-CP0010",
+  },
+  {
+    id: "demo-cancel-1",
+    propertyId: "3",
+    date: "Feb 20, 2026",
     slot: "Night · 8 PM – 1 AM",
     guests: 2,
     total: 6000,
     status: "cancelled",
-    bookingId: "HUSHH-DEMO03",
+    bookingId: "HUSHH-CX0005",
+  },
+  {
+    id: "demo-cancel-2",
+    propertyId: "4",
+    date: "Jan 15, 2026",
+    slot: "Morning · 10 AM – 2 PM",
+    guests: 4,
+    total: 2800,
+    status: "cancelled",
+    bookingId: "HUSHH-CX0004",
   },
 ];
 
 const filterTabs = [
   { value: "all", label: "All", dotColor: "" },
+  { value: "active", label: "Active", dotColor: "bg-success" },
   { value: "upcoming", label: "Upcoming", dotColor: "bg-primary" },
-  { value: "completed", label: "Completed", dotColor: "bg-success" },
+  { value: "completed", label: "Past", dotColor: "bg-muted-foreground" },
   { value: "cancelled", label: "Cancelled", dotColor: "bg-destructive" },
 ] as const;
 
 export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel }: TripsScreenProps) {
   const [refreshKey, setRefreshKey] = useState(0);
   const [activeFilter, setActiveFilter] = useState<string>("all");
+  const [orderingBooking, setOrderingBooking] = useState<Booking | null>(null);
   const handleRefresh = useCallback(async () => {
     await new Promise((r) => setTimeout(r, 800));
     setRefreshKey((k) => k + 1);
@@ -379,17 +379,26 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
   const allBookings = useMemo(() => bookings.length > 0 ? bookings : demoTrips, [bookings]);
   const isDemo = bookings.length === 0;
 
+  // Sort: active first, then upcoming, then completed, then cancelled
+  const sortedBookings = useMemo(() => {
+    const order: Record<string, number> = { active: 0, upcoming: 1, completed: 2, cancelled: 3 };
+    return [...allBookings].sort((a, b) => (order[a.status] ?? 9) - (order[b.status] ?? 9));
+  }, [allBookings]);
+
   const filteredBookings = useMemo(
-    () => activeFilter === "all" ? allBookings : allBookings.filter((b) => b.status === activeFilter),
-    [allBookings, activeFilter]
+    () => activeFilter === "all" ? sortedBookings : sortedBookings.filter((b) => b.status === activeFilter),
+    [sortedBookings, activeFilter]
   );
 
-  // Count per status
   const counts = useMemo(() => {
     const c: Record<string, number> = { all: allBookings.length };
     allBookings.forEach((b) => { c[b.status] = (c[b.status] || 0) + 1; });
     return c;
   }, [allBookings]);
+
+  const handleOrderFood = useCallback((booking: Booking) => {
+    setOrderingBooking(booking);
+  }, []);
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
@@ -408,7 +417,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
           transition={{ delay: 0.1 }}
           className="text-sm text-muted-foreground mt-1"
         >
-          {onCancel ? "Swipe left on upcoming trips to cancel" : "Manage your upcoming and past bookings"}
+          {onCancel ? "Swipe left on upcoming trips to cancel" : "Manage your bookings"}
         </motion.p>
       </div>
 
@@ -469,13 +478,28 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
               onViewDetail={onViewDetail}
               onRebook={onRebook}
               onCancel={isDemo ? undefined : onCancel}
+              onOrderFood={trip.status === "active" ? handleOrderFood : undefined}
             />
           ))}
         </div>
       )}
 
-      {/* Order History */}
+      {/* Order History — only for past orders */}
       <OrderHistorySection />
+
+      {/* Live ordering sheet for active trip */}
+      {orderingBooking && (() => {
+        const orderProp = properties.find(p => p.id === orderingBooking.propertyId);
+        return (
+          <LiveOrderingSheet
+            open={!!orderingBooking}
+            onClose={() => setOrderingBooking(null)}
+            propertyName={orderProp?.name || ""}
+            propertyId={orderingBooking.propertyId}
+            bookingId={orderingBooking.bookingId}
+          />
+        );
+      })()}
     </div>
     </PullToRefresh>
   );

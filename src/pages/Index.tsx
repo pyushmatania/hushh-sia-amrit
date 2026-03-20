@@ -38,7 +38,7 @@ export interface Booking {
   slot: string;
   guests: number;
   total: number;
-  status: "upcoming" | "completed" | "cancelled";
+  status: "active" | "upcoming" | "completed" | "cancelled";
   bookingId: string;
 }
 

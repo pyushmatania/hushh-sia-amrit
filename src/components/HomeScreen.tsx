@@ -29,7 +29,7 @@ import ExperienceCard from "./home/ExperienceCard";
 import { CurationHeroCard, CurationMiniCard } from "./home/CurationHeroCard";
 import ServiceGrid from "./home/ServiceGrid";
 import CurationGrid from "./home/CurationGrid";
-import LastVibeCard from "./home/LastVibeCard";
+import ActiveTripCard from "./home/ActiveTripCard";
 interface HomeScreenProps {
   onPropertyTap: (property: Property) => void;
   onSearchTap?: () => void;
@@ -228,8 +228,8 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
           {/* ═══════ HOME TAB — Full Discovery Feed ═══════ */}
           {activeCategory === "home" && (
             <>
-              {/* Last Vibe — Repeat Booking */}
-              <LastVibeCard onRebook={onPropertyTap} />
+              {/* Active Trip — shows ongoing booking with food ordering */}
+              <ActiveTripCard onViewTrip={onPropertyTap} />
 
               <SectionDivider title="🔥 TONIGHT'S VIBE" />
               <SpotlightCarousel properties={activeMood ? moodFilteredProperties : properties} onPropertyTap={onPropertyTap} category="home" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
