@@ -18,8 +18,12 @@ interface BookingDetailScreenProps {
 
 export default function BookingDetailScreen({ booking, onBack, onCancel, onRebook }: BookingDetailScreenProps) {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [showAddonsSheet, setShowAddonsSheet] = useState(false);
+  const [addonSelections, setAddonSelections] = useState<Record<string, number>>({});
+  const [orderedAddons, setOrderedAddons] = useState<{ name: string; qty: number; price: number }[]>([]);
   const [cancelling, setCancelling] = useState(false);
   const [cancelled, setCancelled] = useState(false);
+  const { toast } = useToast();
 
   const property = properties.find((p) => p.id === booking.propertyId);
   if (!property) return null;
