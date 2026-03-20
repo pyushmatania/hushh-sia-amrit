@@ -171,10 +171,18 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
 
               {/* Property Type Tags */}
               <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
-                {["All", "Private Villa", "Pool Villa", "Farmhouse", "Rooftop Space", "Work Pod", "Couple Room", "Open Lawn"].map(type => (
-                  <span key={type} className="text-[11px] px-3 py-1.5 rounded-full bg-foreground/5 text-foreground/80 border border-foreground/10 whitespace-nowrap shrink-0">
+                {stayFilters.map(type => (
+                  <button
+                    key={type}
+                    onClick={() => setSubFilter(type)}
+                    className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 ${
+                      subFilter === type
+                        ? "bg-primary text-primary-foreground font-semibold shadow-md"
+                        : "bg-foreground/5 text-foreground/80 border border-foreground/10"
+                    }`}
+                  >
                     {type}
-                  </span>
+                  </button>
                 ))}
               </div>
 
