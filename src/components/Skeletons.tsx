@@ -117,4 +117,27 @@ export function HomeSkeleton() {
   );
 }
 
+export function ReviewSkeleton({ index = 0 }: { index?: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.08 }}
+    >
+      <div className="rounded-2xl border border-border bg-secondary/40 p-4">
+        <div className="flex items-center gap-2.5 mb-3">
+          <SkeletonPulse className="w-9 h-9 rounded-full" />
+          <div className="flex-1 space-y-1.5">
+            <SkeletonPulse className="h-3.5 w-24 rounded-lg" />
+            <SkeletonPulse className="h-2.5 w-16 rounded-lg" />
+          </div>
+          <SkeletonPulse className="h-6 w-12 rounded-lg" />
+        </div>
+        <SkeletonPulse className="h-3 w-full rounded-lg mb-1.5" />
+        <SkeletonPulse className="h-3 w-3/4 rounded-lg" />
+      </div>
+    </motion.div>
+  );
+}
+
 export { SkeletonPulse };
