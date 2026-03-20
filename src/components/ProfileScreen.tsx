@@ -61,6 +61,7 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [activeSetting, setActiveSetting] = useState("");
   const [showLoyalty, setShowLoyalty] = useState(false);
+  const [showReferral, setShowReferral] = useState(false);
   const [profile, setProfile] = useState({
     name: user?.user_metadata?.full_name || "Guest Explorer",
     location: "Jeypore, India",
