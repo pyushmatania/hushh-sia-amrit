@@ -26,7 +26,11 @@ const paymentMethods = [
   { id: "cod", label: "Pay at Venue", icon: Banknote, sublabel: "Cash or card on arrival" },
 ];
 
-export default function CheckoutScreen({ property, slotId, guests, date, selections: initialSelections, total: initialTotal, onBack, onConfirm, extras: initialExtras, isWishlisted, onToggleWishlist }: CheckoutScreenProps) {
+export default function CheckoutScreen({ property, slotId, guests: initialGuests, date: initialDate, selections: initialSelections, total: initialTotal, onBack, onConfirm, extras: initialExtras, isWishlisted, onToggleWishlist }: CheckoutScreenProps) {
+  const [liveDate, setLiveDate] = useState<Date>(initialDate);
+  const [liveGuests, setLiveGuests] = useState(initialGuests);
+  const [editingDate, setEditingDate] = useState(false);
+  const [editingGuests, setEditingGuests] = useState(false);
   const slot = property.slots.find((s) => s.id === slotId)!;
   const [coupon, setCoupon] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
