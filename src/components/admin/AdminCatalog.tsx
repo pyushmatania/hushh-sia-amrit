@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Building2, Sparkles, UtensilsCrossed, Wrench, Package } from "lucide-react";
+import { Building2, Sparkles, UtensilsCrossed, Wrench, Package, Gift } from "lucide-react";
 import AdminProperties from "./AdminProperties";
 import AdminCurations from "./AdminCurations";
 import AdminInventory from "./AdminInventory";
+import AdminExperiencePackages from "./AdminExperiencePackages";
 
 const tabs = [
-  { id: "properties", label: "Properties", icon: Building2, description: "Villas, spaces & venues" },
-  { id: "curations", label: "Curated Packs", icon: Sparkles, description: "Bundled experiences" },
-  { id: "food", label: "Food & Drinks", icon: UtensilsCrossed, description: "Menu & beverages" },
-  { id: "addons", label: "Add-ons & Services", icon: Wrench, description: "Extras & equipment" },
+  { id: "properties", label: "Properties", icon: Building2 },
+  { id: "packages", label: "Packages", icon: Gift },
+  { id: "curations", label: "Curated Packs", icon: Sparkles },
+  { id: "food", label: "Food & Drinks", icon: UtensilsCrossed },
+  { id: "addons", label: "Add-ons", icon: Wrench },
 ] as const;
 
 type TabId = typeof tabs[number]["id"];
@@ -19,7 +21,6 @@ export default function AdminCatalog() {
 
   return (
     <div className="space-y-5">
-      {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-foreground flex items-center gap-2.5">
           <div className="w-9 h-9 rounded-xl bg-primary/15 flex items-center justify-center">
@@ -32,16 +33,15 @@ export default function AdminCatalog() {
         </p>
       </div>
 
-      {/* Tabs */}
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as TabId)}>
-        <TabsList className="w-full h-auto flex bg-card border border-border rounded-xl p-1 gap-1">
+        <TabsList className="w-full h-auto flex bg-card border border-border rounded-xl p-1 gap-1 overflow-x-auto">
           {tabs.map((tab) => (
             <TabsTrigger
               key={tab.id}
               value={tab.id}
-              className="flex-1 flex items-center gap-2 py-2.5 px-3 rounded-lg text-xs font-medium transition-all data-[state=active]:bg-primary/15 data-[state=active]:text-primary data-[state=active]:shadow-none"
+              className="flex-1 flex items-center gap-1.5 py-2.5 px-2 rounded-lg text-[11px] font-medium transition-all data-[state=active]:bg-primary/15 data-[state=active]:text-primary data-[state=active]:shadow-none whitespace-nowrap"
             >
-              <tab.icon size={15} />
+              <tab.icon size={14} />
               <span className="hidden sm:inline">{tab.label}</span>
               <span className="sm:hidden">{tab.label.split(" ")[0]}</span>
             </TabsTrigger>
@@ -50,6 +50,10 @@ export default function AdminCatalog() {
 
         <TabsContent value="properties" className="mt-5">
           <AdminProperties />
+        </TabsContent>
+
+        <TabsContent value="packages" className="mt-5">
+          <AdminExperiencePackages />
         </TabsContent>
 
         <TabsContent value="curations" className="mt-5">
