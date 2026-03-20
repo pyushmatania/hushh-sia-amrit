@@ -275,6 +275,91 @@ export default function ExperienceBuilder({ property, slotId, guests, date, onBa
       {/* Scrollable content area */}
       <div className="flex-1 overflow-y-auto overscroll-contain pb-24" style={{ WebkitOverflowScrolling: "touch" }}>
 
+        {/* Smart Nudges — people also added */}
+        {!isSearching && selectedCount > 0 && (
+          <div className="px-5 pb-4">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-emerald-400/20 to-green-500/20 flex items-center justify-center">
+                <Sparkles size={11} className="text-emerald-400" />
+              </div>
+              <span className="text-xs font-bold text-foreground tracking-wide">People also added</span>
+              <div className="flex-1 h-[1px] bg-gradient-to-r from-border/50 to-transparent ml-2" />
+            </div>
+            <div className="space-y-2">
+              {(() => {
+                // Smart suggestions based on what's selected
+                const selectedIds = new Set(Object.keys(selections));
+                const nudges: { item: typeof activeItems[0]; reason: string; savings?: number }[] = [];
+                
+                // Beer + BBQ combo
+                if (selectedIds.has("f2") && !selectedIds.has("f6")) {
+                  const beer = Object.values(addons).flat().find(a => a.id === "f6");
+                  if (beer) nudges.push({ item: beer, reason: "🍺 Add beer for ₹299 — perfect with BBQ!", savings: 100 });
+                }
+                // Romantic setup + candle dinner
+                if (selectedIds.has("d1") && !selectedIds.has("e3")) {
+                  const candle = Object.values(addons).flat().find(a => a.id === "e3");
+                  if (candle) nudges.push({ item: candle, reason: "🕯️ Add Candlelight Dinner — complete the vibe", savings: 200 });
+                }
+                // Speaker + DJ combo
+                if (selectedIds.has("m1") && !selectedIds.has("m2")) {
+                  const dj = Object.values(addons).flat().find(a => a.id === "m2");
+                  if (dj) nudges.push({ item: dj, reason: "🎧 Add DJ — upgrade the party!", savings: 300 });
+                }
+                // Bonfire + marshmallow
+                if (selectedIds.has("a5") && !selectedIds.has("f1")) {
+                  const maggi = Object.values(addons).flat().find(a => a.id === "f1");
+                  if (maggi) nudges.push({ item: maggi, reason: "🍜 Add Maggi Station — bonfire essential!" });
+                }
+                // Fallback nudges
+                if (nudges.length === 0) {
+                  const unselected = Object.values(addons).flat().filter(a => !selectedIds.has(a.id) && popularIds.has(a.id)).slice(0, 2);
+                  unselected.forEach(item => nudges.push({ item, reason: `${item.categoryEmoji} Popular with your picks` }));
+                }
+                
+                return nudges.slice(0, 2).map(({ item, reason, savings }) => (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="flex items-center gap-3 rounded-2xl p-3"
+                    style={{
+                      background: "linear-gradient(135deg, hsl(var(--primary) / 0.06) 0%, hsl(var(--success) / 0.04) 100%)",
+                      border: "1px solid hsl(var(--primary) / 0.15)",
+                    }}
+                  >
+                    <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0">
+                      {addonImages[item.name] ? (
+                        <img src={addonImages[item.name]} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-lg bg-secondary">{item.categoryEmoji}</div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[11px] text-foreground font-medium leading-tight">{reason}</p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[11px] font-bold text-foreground">₹{item.price}</span>
+                        {savings && (
+                          <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-full">
+                            Save ₹{savings}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <motion.button
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => toggle(item.id, 1)}
+                      className="px-3 py-1.5 rounded-xl bg-primary text-primary-foreground text-[10px] font-bold shrink-0"
+                    >
+                      + Add
+                    </motion.button>
+                  </motion.div>
+                ));
+              })()}
+            </div>
+          </div>
+        )}
+
         {/* Popular picks — editorial style */}
         {!isSearching && (
           <div className="px-5 pb-4">
