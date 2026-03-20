@@ -561,7 +561,7 @@ export default function AdminProperties() {
                         </div>
                         <div className="grid grid-cols-2 gap-2">
                           <Field label="Price (₹)">
-                            <Input type="number" value={slot.price || 0} onChange={e => {
+                            <Input type="number" value={slot.price ?? ""} onChange={e => {
                               const slots = [...(editingListing.slots || [])];
                               slots[i] = { ...slots[i], price: Number(e.target.value) };
                               setEditingListing(p => ({ ...p!, slots }));
