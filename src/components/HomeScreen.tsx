@@ -21,6 +21,8 @@ import WhatsHotGrid from "./home/WhatsHotGrid";
 import BlockbusterBanner from "./home/BlockbusterBanner";
 import BackToTopButton from "./home/BackToTopButton";
 import CuratedComboCard from "./home/CuratedComboCard";
+import ExperienceCard from "./home/ExperienceCard";
+import { CurationHeroCard, CurationMiniCard } from "./home/CurationHeroCard";
 
 interface HomeScreenProps {
   onPropertyTap: (property: Property) => void;
@@ -264,7 +266,6 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
           {/* ═══════ EXPERIENCES TAB ═══════ */}
           {activeCategory === "experience" && (
             <>
-              {/* Spotlight Video Cards for Experiences */}
               <SectionDivider title="🎉 TOP EXPERIENCES" />
               <SpotlightCarousel properties={experienceProperties} onPropertyTap={onPropertyTap} category="experience" />
 
@@ -285,29 +286,37 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 ))}
               </div>
 
+              {/* Slots filling up — horizontal scroll with stacked cards */}
               {trendingNow.length > 0 && (
                 <div className="mt-4">
                   <div className="flex items-center justify-between px-5 mb-3">
                     <h2 className="text-lg font-bold text-foreground">⚡ Slots Filling Up</h2>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 font-semibold animate-pulse">LIVE</span>
                   </div>
-                  <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
-                    {trendingNow.map((p, i) => (
-                      <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} />
+                  <div className="grid grid-cols-2 gap-3 px-5">
+                    {trendingNow.slice(0, 4).map((p, i) => (
+                      <ExperienceCard key={p.id} property={p} index={i} onTap={onPropertyTap} variant="stacked" />
                     ))}
                   </div>
                 </div>
               )}
 
+              {/* All experiences — wide list cards */}
               <div className="mt-6">
                 <div className="flex items-center justify-between px-5 mb-3">
-                  <h2 className="text-lg font-bold text-foreground">🔥 Most Popular</h2>
-                  <span className="text-xs text-muted-foreground">{experienceProperties.length} experiences</span>
+                  <h2 className="text-lg font-bold text-foreground">🔥 All Experiences</h2>
+                  <span className="text-xs text-muted-foreground">{filteredProperties.length} found</span>
                 </div>
-                <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
-                  {topRated.map((p, i) => (
-                    <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} />
-                  ))}
-                </div>
+                {filteredProperties.map((p, i) => (
+                  <ExperienceCard key={p.id} property={p} index={i} onTap={onPropertyTap} variant="wide" />
+                ))}
+                {filteredProperties.length === 0 && (
+                  <div className="px-5 py-12 text-center">
+                    <p className="text-3xl mb-2">🔍</p>
+                    <p className="text-foreground font-semibold">No experiences match this filter</p>
+                    <button onClick={() => handleSubFilter("All")} className="text-xs text-primary mt-2 font-medium">Show all experiences</button>
+                  </div>
+                )}
               </div>
             </>
           )}
@@ -343,15 +352,21 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
             </>
           )}
 
-          {/* ═══════ CURATIONS TAB ═══════ */}
+          {/* ═══════ CURATIONS TAB — Editorial Magazine Layout ═══════ */}
           {activeCategory === "curation" && (
             <>
-              {/* Spotlight Video Cards for Curations — uses top-rated properties */}
-              <SectionDivider title="✨ CURATED FOR YOU" />
-              <SpotlightCarousel properties={topRated.slice(0, 4)} onPropertyTap={onPropertyTap} category="curation" />
+              {/* Editorial header */}
+              <div className="px-5 pt-6 pb-2">
+                <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                  Curated for You ✨
+                </h1>
+                <p className="text-sm text-muted-foreground mt-1" style={{ fontFamily: "'Playfair Display', serif" }}>
+                  One-tap bundles, crafted by locals, ready to book
+                </p>
+              </div>
 
               {/* Filter pills */}
-              <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
+              <div className="px-4 pt-2 pb-3 flex gap-2 overflow-x-auto hide-scrollbar">
                 {curationFilters.map(tag => (
                   <button
                     key={tag}
@@ -367,47 +382,47 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 ))}
               </div>
 
-              <div className="px-5 pt-2 pb-2">
-                <p className="text-xs text-muted-foreground">Pre-built combos for instant booking. One tap, full experience!</p>
-              </div>
+              {/* Hero featured combo — first popular one */}
+              {filteredCombos.length > 0 && (
+                <CurationHeroCard combo={filteredCombos[0]} index={0} />
+              )}
 
-              {/* Popular Combos — only show when "All" or "Popular" */}
-              {(subFilter === "All" || subFilter === "🔥 Popular") && filteredCombos.filter(c => c.popular).length > 0 && (
+              {/* Quick picks row */}
+              {filteredCombos.length > 1 && (
                 <div className="mt-2">
                   <div className="flex items-center justify-between px-5 mb-3">
-                    <h2 className="text-base font-bold text-foreground">🔥 Most Popular</h2>
+                    <h2 className="text-base font-bold text-foreground">⚡ Quick Picks</h2>
+                    <span className="text-[10px] text-muted-foreground">{filteredCombos.length} combos</span>
                   </div>
-                  <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4">
-                    {filteredCombos.filter(c => c.popular).map((combo, i) => (
-                      <CuratedComboCard key={combo.id} combo={combo} index={i} />
+                  <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-1">
+                    {filteredCombos.slice(1).map((combo, i) => (
+                      <CurationMiniCard key={combo.id} combo={combo} index={i} />
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* Filtered Combos */}
-              <div className="mt-6">
-                <div className="flex items-center justify-between px-5 mb-3">
-                  <h2 className="text-base font-bold text-foreground">
-                    {subFilter === "All" ? "🎯 All Curated Combos" : subFilter}
-                  </h2>
-                  <span className="text-xs text-muted-foreground">{filteredCombos.length} combos</span>
+              {/* Full-width editorial cards for remaining */}
+              {filteredCombos.length > 3 && (
+                <div className="mt-6">
+                  <div className="px-5 mb-3">
+                    <h2 className="text-base font-bold text-foreground">🎯 More Combos</h2>
+                  </div>
+                  {filteredCombos.slice(3).map((combo, i) => (
+                    <CurationHeroCard key={combo.id} combo={combo} index={i} />
+                  ))}
                 </div>
-                {filteredCombos.length > 0 ? (
-                  <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4">
-                    {filteredCombos.map((combo, i) => (
-                      <CuratedComboCard key={combo.id} combo={combo} index={i} />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="px-5 py-8 text-center">
-                    <p className="text-2xl mb-2">🔍</p>
-                    <p className="text-sm text-muted-foreground">No combos in this category yet</p>
-                  </div>
-                )}
-              </div>
+              )}
 
-              {/* Budget Combos Highlight */}
+              {filteredCombos.length === 0 && (
+                <div className="px-5 py-12 text-center">
+                  <p className="text-3xl mb-2">🔍</p>
+                  <p className="text-foreground font-semibold">No combos match this filter</p>
+                  <button onClick={() => handleSubFilter("All")} className="text-xs text-primary mt-2 font-medium">Show all combos</button>
+                </div>
+              )}
+
+              {/* Budget highlight banner */}
               <div className="mx-5 mt-6 p-4 rounded-2xl border border-foreground/10" style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(6,95,70,0.15) 100%)" }}>
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-lg">💸</span>
@@ -418,32 +433,30 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
             </>
           )}
 
-          {/* ═══════ ALL LISTINGS for current tab ═══════ */}
-          <div className="mt-7">
-            <div className="flex items-center justify-between px-5 mb-3">
-              <h2 className="text-lg font-bold text-foreground">
-                {activeCategory === "home" ? "All Listings" :
-                 activeCategory === "curation" ? "" :
-                 `All ${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)}s`}
-              </h2>
-              {activeCategory !== "curation" && (
+          {/* ═══════ ALL LISTINGS for current tab (skip experience & curation — they have their own layouts) ═══════ */}
+          {activeCategory !== "experience" && activeCategory !== "curation" && (
+            <div className="mt-7">
+              <div className="flex items-center justify-between px-5 mb-3">
+                <h2 className="text-lg font-bold text-foreground">
+                  {activeCategory === "home" ? "All Listings" : `All ${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)}s`}
+                </h2>
                 <span className="text-xs text-muted-foreground">{filteredProperties.length} found</span>
+              </div>
+              {filteredProperties.length > 0 ? (
+                <div className="space-y-5">
+                  {filteredProperties.map((p, i) => (
+                    <PropertyCard key={p.id} property={p} index={i} onTap={onPropertyTap} />
+                  ))}
+                </div>
+              ) : (
+                <div className="px-5 py-12 text-center">
+                  <p className="text-4xl mb-3">🔍</p>
+                  <p className="text-foreground font-semibold">No listings in this category yet</p>
+                  <p className="text-sm text-muted-foreground mt-1">Check back soon!</p>
+                </div>
               )}
             </div>
-            {activeCategory !== "curation" && filteredProperties.length > 0 ? (
-              <div className="space-y-5">
-                {filteredProperties.map((p, i) => (
-                  <PropertyCard key={p.id} property={p} index={i} onTap={onPropertyTap} />
-                ))}
-              </div>
-            ) : activeCategory !== "curation" ? (
-              <div className="px-5 py-12 text-center">
-                <p className="text-4xl mb-3">🔍</p>
-                <p className="text-foreground font-semibold">No listings in this category yet</p>
-                <p className="text-sm text-muted-foreground mt-1">Check back soon!</p>
-              </div>
-            ) : null}
-          </div>
+          )}
         </motion.div>
       </AnimatePresence>
 
