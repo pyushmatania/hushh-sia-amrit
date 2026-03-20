@@ -318,7 +318,15 @@ export default function AdminProperties() {
                 </div>
                 <div className="flex items-center justify-between mt-1.5">
                   <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
-                    <span className="font-medium text-foreground tabular-nums">₹{listing.base_price?.toLocaleString()}</span>
+                    {(() => {
+                      const slots = Array.isArray(listing.slots) ? listing.slots : [];
+                      if (slots.length > 0) {
+                        const prices = slots.map((s: any) => Number(s.price || 0)).filter((p: number) => p > 0);
+                        const min = Math.min(...prices);
+                        return <span className="font-medium text-foreground tabular-nums">₹{min.toLocaleString()}+ <span className="text-muted-foreground">({slots.length} slots)</span></span>;
+                      }
+                      return <span className="font-medium text-foreground tabular-nums">₹{listing.base_price?.toLocaleString()}</span>;
+                    })()}
                     <span className="flex items-center gap-0.5"><Users size={10} />{listing.capacity}</span>
                     {listing.rating > 0 && <span className="flex items-center gap-0.5"><Star size={10} className="text-amber-400" />{listing.rating}</span>}
                   </div>
