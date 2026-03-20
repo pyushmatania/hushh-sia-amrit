@@ -1322,6 +1322,136 @@ export const categories = [
   { id: "karaoke", label: "Karaoke", emoji: "🎤" },
 ];
 
+// ═══════ CURATED COMBOS (HIGH CONVERSION) ═══════
+export interface CuratedCombo {
+  id: string;
+  name: string;
+  tagline: string;
+  emoji: string;
+  time: string;
+  priceRange: [number, number];
+  includes: string[];
+  image: string;
+  gradient: string;
+  tags: string[];
+  popular?: boolean;
+}
+
+export const curatedCombos: CuratedCombo[] = [
+  {
+    id: "c1",
+    name: "After Hours Chill",
+    tagline: "Bonfire + Maggi + Beer + Old songs 🎶",
+    emoji: "🌙",
+    time: "7 PM – 11 PM",
+    priceRange: [999, 1999],
+    includes: ["Bonfire 🔥", "Maggi 🍜", "Beer 🍺", "Old songs playlist 🎶", "Blankets"],
+    image: listingEmberGrounds,
+    gradient: "from-orange-600/80 to-amber-900/60",
+    tags: ["🔥 Hot", "🌙 Night Special"],
+    popular: true,
+  },
+  {
+    id: "c2",
+    name: "Just Us Night",
+    tagline: "Candle setup + Soft music + Dinner 💑",
+    emoji: "💑",
+    time: "6 PM – 10 PM",
+    priceRange: [1499, 2999],
+    includes: ["Candle setup 🕯️", "Soft music 🎵", "3-course dinner 🍽️", "Rose petals", "Champagne 🥂"],
+    image: listingCoupleCocoon,
+    gradient: "from-rose-600/80 to-pink-900/60",
+    tags: ["💑 Couple Friendly", "✨ Premium"],
+    popular: true,
+  },
+  {
+    id: "c3",
+    name: "Party Scene Pack",
+    tagline: "Speaker + Lights + Snacks + Drinks 🎉",
+    emoji: "🎉",
+    time: "7 PM – 12 AM",
+    priceRange: [1999, 3999],
+    includes: ["Speaker system 🔊", "LED lights 💡", "Snacks 🍿", "Drinks 🍹", "Fog machine"],
+    image: listingEmberGrounds,
+    gradient: "from-purple-600/80 to-violet-900/60",
+    tags: ["🎉 Party Ready", "🔥 Trending"],
+  },
+  {
+    id: "c4",
+    name: "Birthday Blast",
+    tagline: "Cake + Decor + Music + Surprise! 🎂",
+    emoji: "🎂",
+    time: "Flexible",
+    priceRange: [2499, 5999],
+    includes: ["Cake 🎂", "Balloon decor 🎈", "Music 🎵", "Photo booth 📸", "Surprise entry"],
+    image: listingBirthdayHall,
+    gradient: "from-yellow-500/80 to-orange-700/60",
+    tags: ["🎂 Birthday", "🎈 Celebration"],
+    popular: true,
+  },
+  {
+    id: "c5",
+    name: "BBQ & Bonfire Night",
+    tagline: "BBQ + Bonfire + Drinks + Stars 🔥",
+    emoji: "🔥",
+    time: "6 PM – 10 PM",
+    priceRange: [1499, 2999],
+    includes: ["BBQ platter 🍗", "Bonfire 🔥", "Drinks 🍺", "Stargazing 🌌", "Marshmallows"],
+    image: listingFireflyVilla,
+    gradient: "from-red-600/80 to-orange-900/60",
+    tags: ["🔥 Hot", "🍗 Foodie"],
+  },
+  {
+    id: "c6",
+    name: "Work & Chill Pass",
+    tagline: "WiFi + Coffee + Quiet space ☕",
+    emoji: "💻",
+    time: "10 AM – 4 PM",
+    priceRange: [299, 599],
+    includes: ["High-speed WiFi ⚡", "Unlimited coffee ☕", "Quiet workspace 🔇", "Snacks 🍪", "Power backup"],
+    image: listingWorkPod,
+    gradient: "from-emerald-600/80 to-teal-900/60",
+    tags: ["💻 Work Friendly", "💸 Budget Friendly"],
+    popular: true,
+  },
+  {
+    id: "c7",
+    name: "Day Escape",
+    tagline: "Pool + Snacks + Chill vibes 🌿",
+    emoji: "🌿",
+    time: "12 PM – 4 PM",
+    priceRange: [799, 1499],
+    includes: ["Pool access 🏊", "Snacks 🍿", "Loungers 🛋️", "Music 🎵", "Towels"],
+    image: listingBlueLagoon,
+    gradient: "from-cyan-500/80 to-blue-800/60",
+    tags: ["🏊 Pool", "🌿 Chill"],
+  },
+  {
+    id: "c8",
+    name: "Movie Night",
+    tagline: "Projector + Popcorn + Drinks 🎬",
+    emoji: "🎬",
+    time: "8 PM – 11 PM",
+    priceRange: [999, 1999],
+    includes: ["25ft screen 🎬", "Popcorn 🍿", "Bean bags 🛋️", "Drinks 🍹", "Blankets"],
+    image: listingMovieAmphitheater,
+    gradient: "from-indigo-600/80 to-slate-900/60",
+    tags: ["🎬 Movie Night", "🌟 Popular"],
+  },
+  {
+    id: "c9",
+    name: "Game Night",
+    tagline: "PS5 + Snacks + Drinks + Fun! 🎮",
+    emoji: "🎮",
+    time: "7 PM – 11 PM",
+    priceRange: [799, 1499],
+    includes: ["PS5 console 🎮", "Board games 🎲", "Snacks 🍕", "Drinks 🥤", "Score tracking"],
+    image: listingKaraokeCube,
+    gradient: "from-green-600/80 to-emerald-900/60",
+    tags: ["🎮 Gaming", "🎉 Fun"],
+  },
+];
+
 export interface Addon {
   id: string;
   category: string;
@@ -1333,37 +1463,60 @@ export interface Addon {
 }
 
 export const addons: Record<string, Addon[]> = {
-  "Food": [
-    { id: "f1", category: "Food", categoryEmoji: "🍽️", name: "Tribal Thali", description: "Authentic Koraput cuisine", price: 349, perPerson: true },
-    { id: "f2", category: "Food", categoryEmoji: "🍽️", name: "BBQ Platter", description: "Chicken + Paneer + Corn", price: 499, perPerson: true },
-    { id: "f3", category: "Food", categoryEmoji: "🍽️", name: "Chai & Maggi Station", description: "Unlimited refills", price: 99, perPerson: true },
-    { id: "f4", category: "Food", categoryEmoji: "🍽️", name: "Pizza Station", description: "Freshly baked wood-fire", price: 399, perPerson: true },
-    { id: "f5", category: "Food", categoryEmoji: "🍽️", name: "Dessert Bar", description: "Gulab jamun, ice cream & more", price: 249, perPerson: true },
+  "Food & Drinks": [
+    { id: "f1", category: "Food & Drinks", categoryEmoji: "🍽️", name: "Tribal Thali", description: "Authentic Koraput cuisine", price: 349, perPerson: true },
+    { id: "f2", category: "Food & Drinks", categoryEmoji: "🍽️", name: "BBQ Platter", description: "Chicken + Paneer + Corn", price: 499, perPerson: true },
+    { id: "f3", category: "Food & Drinks", categoryEmoji: "🍽️", name: "Chai & Maggi Station", description: "Unlimited refills", price: 99, perPerson: true },
+    { id: "f4", category: "Food & Drinks", categoryEmoji: "🍽️", name: "Pizza Station", description: "Freshly baked wood-fire", price: 399, perPerson: true },
+    { id: "f5", category: "Food & Drinks", categoryEmoji: "🍽️", name: "Dessert Bar", description: "Gulab jamun, ice cream & more", price: 249, perPerson: true },
+    { id: "f6", category: "Food & Drinks", categoryEmoji: "🍺", name: "Beer Bucket (6)", description: "Assorted beer selection", price: 699 },
+    { id: "f7", category: "Food & Drinks", categoryEmoji: "🥤", name: "Soft Drinks + Ice", description: "Coke, Sprite, mixers + ice", price: 199 },
+    { id: "f8", category: "Food & Drinks", categoryEmoji: "🎂", name: "Custom Cake", description: "1 kg themed cake", price: 799 },
   ],
   "Decoration": [
     { id: "d1", category: "Decoration", categoryEmoji: "🎨", name: "Romantic Setup", description: "Candles, petals, fairy lights", price: 999 },
     { id: "d2", category: "Decoration", categoryEmoji: "🎨", name: "Birthday Setup", description: "Balloons, banner, cake table", price: 1499 },
     { id: "d3", category: "Decoration", categoryEmoji: "🎨", name: "Neon Sign", description: "Customizable message", price: 499 },
     { id: "d4", category: "Decoration", categoryEmoji: "🎨", name: "Fog Machine", description: "Dramatic entrance effect", price: 699 },
+    { id: "d5", category: "Decoration", categoryEmoji: "🌸", name: "Flower Wall", description: "Instagram-worthy backdrop", price: 1999 },
   ],
-  "Music": [
-    { id: "m1", category: "Music", categoryEmoji: "🎵", name: "Bluetooth Speaker", description: "Included with booking", price: 0 },
-    { id: "m2", category: "Music", categoryEmoji: "🎵", name: "DJ (2 hours)", description: "Professional DJ setup", price: 2999 },
-    { id: "m3", category: "Music", categoryEmoji: "🎵", name: "Karaoke Setup", description: "Mic + screen + 500 songs", price: 799 },
-    { id: "m4", category: "Music", categoryEmoji: "🎵", name: "Live Acoustic", description: "Guitar + vocalist 1 hour", price: 1999 },
+  "Music & Entertainment": [
+    { id: "m1", category: "Music & Entertainment", categoryEmoji: "🎵", name: "Bluetooth Speaker", description: "Included with booking", price: 0 },
+    { id: "m2", category: "Music & Entertainment", categoryEmoji: "🎵", name: "DJ (2 hours)", description: "Professional DJ setup", price: 2999 },
+    { id: "m3", category: "Music & Entertainment", categoryEmoji: "🎵", name: "Karaoke Setup", description: "Mic + screen + 500 songs", price: 799 },
+    { id: "m4", category: "Music & Entertainment", categoryEmoji: "🎵", name: "Live Acoustic", description: "Guitar + vocalist 1 hour", price: 1999 },
+    { id: "m5", category: "Music & Entertainment", categoryEmoji: "🎮", name: "PS5 Console", description: "2 controllers + 10 games", price: 499 },
+    { id: "m6", category: "Music & Entertainment", categoryEmoji: "🎬", name: "Projector + Screen", description: "25ft outdoor cinema", price: 599 },
   ],
   "Activities": [
     { id: "a1", category: "Activities", categoryEmoji: "🏊", name: "Pool Access", description: "Heated private pool", price: 299, perPerson: true },
     { id: "a2", category: "Activities", categoryEmoji: "🏊", name: "Pickleball Court", description: "1 hour session", price: 399 },
-    { id: "a3", category: "Activities", categoryEmoji: "🏊", name: "Private Movie", description: "Projector + Screen", price: 599 },
-    { id: "a4", category: "Activities", categoryEmoji: "🏊", name: "Telescope Session", description: "Guided stargazing 1 hour", price: 499 },
-    { id: "a5", category: "Activities", categoryEmoji: "🏊", name: "Tribal Dance Class", description: "30 min with local artists", price: 799 },
+    { id: "a3", category: "Activities", categoryEmoji: "🏊", name: "Telescope Session", description: "Guided stargazing 1 hour", price: 499 },
+    { id: "a4", category: "Activities", categoryEmoji: "🏊", name: "Tribal Dance Class", description: "30 min with local artists", price: 799 },
+    { id: "a5", category: "Activities", categoryEmoji: "🔥", name: "Bonfire Setup", description: "Firewood + marshmallows", price: 499 },
   ],
-  "Extras": [
-    { id: "e1", category: "Extras", categoryEmoji: "📸", name: "Photographer", description: "30 min shoot", price: 1499 },
-    { id: "e2", category: "Extras", categoryEmoji: "📸", name: "Surprise Reveal", description: "Custom setup", price: 799 },
-    { id: "e3", category: "Extras", categoryEmoji: "📸", name: "Candlelight Dinner", description: "Private table setup", price: 1999 },
-    { id: "e4", category: "Extras", categoryEmoji: "📸", name: "Fireworks Mini", description: "5 min sparkler show", price: 999 },
-    { id: "e5", category: "Extras", categoryEmoji: "📸", name: "Video Reel", description: "60-sec edited reel", price: 1999 },
+  "Work Add-ons": [
+    { id: "w1", category: "Work Add-ons", categoryEmoji: "💻", name: "WiFi Boost", description: "Dedicated 100 Mbps line", price: 199 },
+    { id: "w2", category: "Work Add-ons", categoryEmoji: "💻", name: "Work Desk Setup", description: "Monitor + keyboard + mouse", price: 299 },
+    { id: "w3", category: "Work Add-ons", categoryEmoji: "☕", name: "Unlimited Coffee", description: "Filter + espresso all day", price: 149 },
+    { id: "w4", category: "Work Add-ons", categoryEmoji: "🔇", name: "Quiet Room Access", description: "Soundproofed private room", price: 399 },
+  ],
+  "Comfort Add-ons": [
+    { id: "co1", category: "Comfort Add-ons", categoryEmoji: "🛏️", name: "Extra Mattress", description: "Premium foam mattress", price: 299 },
+    { id: "co2", category: "Comfort Add-ons", categoryEmoji: "❄️", name: "AC Upgrade", description: "Premium split AC", price: 399 },
+    { id: "co3", category: "Comfort Add-ons", categoryEmoji: "🪑", name: "Premium Seating", description: "Bean bags + lounge chairs", price: 499 },
+    { id: "co4", category: "Comfort Add-ons", categoryEmoji: "⏰", name: "Extra Hour", description: "Extend your slot by 1 hour", price: 399 },
+    { id: "co5", category: "Comfort Add-ons", categoryEmoji: "🌅", name: "Early Check-in", description: "Start 1 hour early", price: 299 },
+    { id: "co6", category: "Comfort Add-ons", categoryEmoji: "🌙", name: "Late Checkout", description: "Stay 1 hour extra", price: 299 },
+  ],
+  "Staff & Extras": [
+    { id: "e1", category: "Staff & Extras", categoryEmoji: "📸", name: "Photographer", description: "30 min shoot", price: 1499 },
+    { id: "e2", category: "Staff & Extras", categoryEmoji: "🎁", name: "Surprise Reveal", description: "Custom setup", price: 799 },
+    { id: "e3", category: "Staff & Extras", categoryEmoji: "🕯️", name: "Candlelight Dinner", description: "Private table setup", price: 1999 },
+    { id: "e4", category: "Staff & Extras", categoryEmoji: "✨", name: "Fireworks Mini", description: "5 min sparkler show", price: 999 },
+    { id: "e5", category: "Staff & Extras", categoryEmoji: "📹", name: "Video Reel", description: "60-sec edited reel", price: 1999 },
+    { id: "e6", category: "Staff & Extras", categoryEmoji: "👨‍🍳", name: "Private Chef", description: "3-course meal + service", price: 2999 },
+    { id: "e7", category: "Staff & Extras", categoryEmoji: "🧹", name: "Cleanup Crew", description: "Post-event deep clean", price: 499 },
+    { id: "e8", category: "Staff & Extras", categoryEmoji: "🚗", name: "Pickup & Drop", description: "AC car from station/airport", price: 499 },
   ],
 };
