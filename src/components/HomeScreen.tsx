@@ -41,6 +41,7 @@ interface HomeScreenProps {
 
 export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNotificationTap, wishlist = [], onToggleWishlist }: HomeScreenProps) {
   const { unreadCount: notifCount } = useNotifications();
+  const { packs: experiencePacks } = useCurations();
   const [refreshKey, setRefreshKey] = useState(0);
   const handleRefresh = useCallback(async () => {
     await new Promise((r) => setTimeout(r, 800));
