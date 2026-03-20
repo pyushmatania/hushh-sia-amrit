@@ -179,12 +179,12 @@ Everything works without login using mock data:
 |---------|--------------|
 | Property browsing | Full catalog with video thumbnails |
 | Property detail | Gallery, slots, reviews (clickable mock reviewers) |
-| Wishlists | Local state, session-persistent |
-| Trips | Sample completed bookings |
+| Wishlists | 5 demo wishlisted properties, session-persistent |
+| Trips | 12 demo bookings across all statuses (active, upcoming, past, cancelled) |
 | Messages | Mock conversations |
 | Notifications | 4 sample notifications |
-| Loyalty | 320 points, Gold tier, mock transactions |
-| Profile | "Guest Explorer" with mock stats |
+| Loyalty | 320 points, Gold tier, mock transactions, spin wheel |
+| Profile | "Guest Explorer" with mock stats, past trips synced |
 | Search & Map | Full functionality |
 | Theme | Light / Dark / Auto |
 
