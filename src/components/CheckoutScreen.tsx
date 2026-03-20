@@ -14,6 +14,7 @@ interface CheckoutScreenProps {
   total: number;
   onBack: () => void;
   onConfirm: (total: number) => void;
+  extras?: Property[];
 }
 
 const paymentMethods = [
