@@ -338,9 +338,9 @@ export default function AdminCurations() {
                     {c.badge && <span className="text-[10px] bg-primary/15 text-primary px-2 py-0.5 rounded-full">{c.badge}</span>}
                     <div className="ml-auto flex gap-1">
                       <button
-                        onClick={(e) => { e.stopPropagation(); window.location.href = "/?tab=curation"; }}
+                        onClick={(e) => { e.stopPropagation(); startEdit(c); setPreviewMode(true); }}
                         className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-primary transition"
-                        title="Preview in app"
+                        title="Preview"
                       >
                         <Eye size={14} />
                       </button>
