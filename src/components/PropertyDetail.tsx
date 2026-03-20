@@ -341,15 +341,10 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
 
   const selectedSlotData = property.slots.find((s) => s.id === selectedSlot);
 
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-
-  // Generate next 14 days for the date row
-  const dateOptions = Array.from({ length: 14 }, (_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() + i);
-    d.setHours(0, 0, 0, 0);
-    return d;
-  });
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
+  const selectedDate = dateRange?.from || null;
+  const nightCount = dateRange?.from && dateRange?.to ? differenceInDays(dateRange.to, dateRange.from) : 0;
+  const isStay = property.primaryCategory === "stay";
 
   return (
     <motion.div
