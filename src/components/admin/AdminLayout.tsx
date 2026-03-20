@@ -34,6 +34,7 @@ const navItems: { id: AdminPage; label: string; icon: typeof LayoutDashboard; ad
   { id: "properties", label: "Properties", icon: Building2 },
   { id: "bookings", label: "Bookings", icon: CalendarCheck },
   { id: "orders", label: "Live Orders", icon: ShoppingCart },
+  { id: "inventory", label: "Inventory", icon: Package },
   { id: "clients", label: "Client Directory", icon: UserCheck },
   { id: "history", label: "Property History", icon: ScrollText },
   { id: "users", label: "Users (CRM)", icon: Users, adminOnly: true },

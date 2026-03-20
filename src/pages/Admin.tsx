@@ -95,6 +95,7 @@ export default function Admin() {
       case "calendar": return <HostCalendar />;
       case "requests": return <BookingRequests />;
       case "history": return <AdminPropertyHistory onNavigateToClient={(userId) => { setPage("clients"); }} />;
+      case "inventory": return <AdminInventory />;
       case "audit": return <AdminAuditLog />;
       default: return <CommandCenter onNavigate={setPage} />;
     }
