@@ -14,7 +14,11 @@ import {
   Wind, Tag
 } from "lucide-react";
 import { useState, useCallback } from "react";
-import { format } from "date-fns";
+import { format, differenceInDays } from "date-fns";
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type { DateRange } from "react-day-picker";
 import type { Property } from "@/data/properties";
 import { properties as allProperties, addons } from "@/data/properties";
 import ReviewSection from "@/components/ReviewSection";
@@ -337,15 +341,10 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
 
   const selectedSlotData = property.slots.find((s) => s.id === selectedSlot);
 
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-
-  // Generate next 14 days for the date row
-  const dateOptions = Array.from({ length: 14 }, (_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() + i);
-    d.setHours(0, 0, 0, 0);
-    return d;
-  });
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
+  const selectedDate = dateRange?.from || null;
+  const nightCount = dateRange?.from && dateRange?.to ? differenceInDays(dateRange.to, dateRange.from) : 0;
+  const isStay = property.primaryCategory === "stay";
 
   return (
     <motion.div
@@ -529,48 +528,77 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
 
         <div className="border-b border-border my-5" />
 
-        {/* Date picker — horizontal scrollable row */}
+        {/* Date picker — Calendar with range support for stays */}
         <h3 className="text-lg font-semibold text-foreground mb-1 flex items-center gap-2">
-          <CalendarIcon size={18} className="text-primary" /> Select a date
+          <CalendarIcon size={18} className="text-primary" /> {isStay ? "Select dates" : "Select a date"}
           <span className="text-[10px] font-medium text-destructive ml-1">*required</span>
         </h3>
-        <p className="text-[11px] text-muted-foreground mb-3">Swipe to see more dates</p>
-        <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1 -mx-5 px-5">
-          {dateOptions.map((d, i) => {
-            const isSelected = selectedDate && d.getTime() === selectedDate.getTime();
-            const isToday = i === 0;
-            const dayName = format(d, "EEE");
-            const dayNum = format(d, "d");
-            const monthName = format(d, "MMM");
+        <p className="text-[11px] text-muted-foreground mb-3">
+          {isStay ? "Tap check-in then check-out date" : "Tap a date to continue"}
+        </p>
 
-            return (
-              <button
-                key={i}
-                onClick={() => setSelectedDate(d)}
-                className={`shrink-0 flex flex-col items-center w-[56px] py-2.5 rounded-2xl border transition-all duration-200 ${
-                  isSelected
-                    ? "border-primary bg-primary/15 shadow-[0_0_16px_-4px_hsl(var(--primary)/0.3)]"
-                    : "border-border hover:border-foreground/20"
-                }`}
-              >
-                <span className={`text-[10px] font-medium ${isSelected ? "text-primary" : "text-muted-foreground"}`}>
-                  {isToday ? "Today" : dayName}
-                </span>
-                <span className={`text-lg font-bold mt-0.5 ${isSelected ? "text-primary" : "text-foreground"}`}>
-                  {dayNum}
-                </span>
-                <span className={`text-[9px] ${isSelected ? "text-primary/70" : "text-muted-foreground"}`}>
-                  {monthName}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+        <Popover>
+          <PopoverTrigger asChild>
+            <button className={cn(
+              "w-full flex items-center gap-3 rounded-2xl border px-4 py-3.5 text-left transition-all",
+              dateRange?.from ? "border-primary/40 bg-primary/[0.04]" : "border-border hover:border-foreground/30"
+            )}>
+              <CalendarIcon size={18} className="text-primary shrink-0" />
+              <span className="text-sm font-medium text-foreground flex-1">
+                {dateRange?.from ? (
+                  dateRange.to && isStay ? (
+                    <>
+                      {format(dateRange.from, "d MMM")} → {format(dateRange.to, "d MMM")}
+                      <span className="text-xs text-muted-foreground ml-2">({nightCount} night{nightCount !== 1 ? "s" : ""})</span>
+                    </>
+                  ) : (
+                    format(dateRange.from, "EEEE, d MMMM yyyy")
+                  )
+                ) : (
+                  <span className="text-muted-foreground">{isStay ? "Check-in → Check-out" : "Pick a date"}</span>
+                )}
+              </span>
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            {isStay ? (
+              <Calendar
+                mode="range"
+                selected={dateRange}
+                onSelect={(val) => setDateRange(val)}
+                disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                numberOfMonths={1}
+                initialFocus
+                className={cn("p-3 pointer-events-auto")}
+              />
+            ) : (
+              <Calendar
+                mode="single"
+                selected={dateRange?.from}
+                onSelect={(val) => setDateRange(val ? { from: val, to: val } : undefined)}
+                disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                numberOfMonths={1}
+                initialFocus
+                className={cn("p-3 pointer-events-auto")}
+              />
+            )}
+          </PopoverContent>
+        </Popover>
 
         {!selectedDate && (
           <p className="text-[11px] text-destructive/80 mt-2 flex items-center gap-1">
-            <CalendarIcon size={11} /> Please select a date to continue
+            <CalendarIcon size={11} /> Please select {isStay ? "dates" : "a date"} to continue
           </p>
+        )}
+
+        {isStay && nightCount > 0 && selectedSlotData && (
+          <div className="mt-2 px-3 py-2 rounded-xl bg-primary/[0.06] border border-primary/20">
+            <p className="text-[11px] text-foreground">
+              <span className="font-semibold">{nightCount} night{nightCount !== 1 ? "s" : ""}</span>
+              <span className="text-muted-foreground"> × ₹{selectedSlotData.price.toLocaleString()} = </span>
+              <span className="font-bold text-primary">₹{(selectedSlotData.price * nightCount).toLocaleString()}</span>
+            </p>
+          </div>
         )}
 
         <div className="border-b border-border my-5" />
