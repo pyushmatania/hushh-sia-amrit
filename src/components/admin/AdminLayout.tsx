@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Building2, CalendarCheck, Users, BarChart3,
   Sparkles, Tag, Megaphone, Ticket, ShoppingCart, LogOut,
-  ChevronLeft, ChevronRight, Shield, Menu, X, FileSpreadsheet
+  ChevronLeft, ChevronRight, Shield, Menu, X, FileSpreadsheet,
+  Bot, Bell
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useAdmin } from "@/hooks/use-admin";
@@ -11,7 +12,7 @@ import { useAdmin } from "@/hooks/use-admin";
 export type AdminPage =
   | "dashboard" | "properties" | "bookings" | "users"
   | "analytics" | "curations" | "tags" | "campaigns"
-  | "coupons" | "orders" | "exports";
+  | "coupons" | "orders" | "exports" | "ai" | "alerts";
 
 interface AdminLayoutProps {
   activePage: AdminPage;
@@ -21,6 +22,8 @@ interface AdminLayoutProps {
 
 const navItems: { id: AdminPage; label: string; icon: typeof LayoutDashboard; adminOnly?: boolean }[] = [
   { id: "dashboard", label: "Command Center", icon: LayoutDashboard },
+  { id: "ai", label: "AI Assistant", icon: Bot },
+  { id: "alerts", label: "Smart Alerts", icon: Bell },
   { id: "properties", label: "Properties", icon: Building2 },
   { id: "bookings", label: "Bookings", icon: CalendarCheck },
   { id: "users", label: "Users (CRM)", icon: Users, adminOnly: true },
