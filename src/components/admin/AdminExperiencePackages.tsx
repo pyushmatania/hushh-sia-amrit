@@ -37,6 +37,7 @@ export default function AdminExperiencePackages() {
   const [editing, setEditing] = useState<Partial<PackageRow> | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [includeInput, setIncludeInput] = useState("");
+  const [previewMode, setPreviewMode] = useState(false);
 
   const loadPackages = async () => {
     const { data } = await supabase
