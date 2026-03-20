@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { ShoppingCart, Clock, CheckCircle2, ChefHat, Loader2, Bell } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { playWinJingle } from "@/lib/spin-sounds";
+import { hapticHeavy } from "@/lib/haptics";
 
 interface Order {
   id: string; user_id: string; property_id: string; booking_id: string | null;
@@ -21,6 +23,7 @@ export default function StaffOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("active");
+  const initialLoadDone = useRef(false);
 
   const loadOrders = async () => {
     const { data: ordersData } = await supabase.from("orders").select("*")
@@ -39,6 +42,7 @@ export default function StaffOrders() {
 
     setOrders(ordersData.map(o => ({ ...o, items: itemMap.get(o.id) || [] })));
     setLoading(false);
+    initialLoadDone.current = true;
   };
 
   useEffect(() => {
@@ -46,7 +50,15 @@ export default function StaffOrders() {
 
     const channel = supabase
       .channel('staff-orders-realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => {
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, (payload) => {
+        const newOrder = payload.new as any;
+        if (newOrder.status === 'pending' && initialLoadDone.current) {
+          playWinJingle();
+          hapticHeavy();
+        }
+        loadOrders();
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders' }, () => {
         loadOrders();
       })
       .subscribe();
