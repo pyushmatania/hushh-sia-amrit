@@ -3,6 +3,8 @@ import { X, Plus, Minus, ShoppingCart, Search, Clock, Flame, Zap, ChevronRight }
 import { useState, useMemo, useCallback } from "react";
 import { hapticSelection, hapticSuccess } from "@/lib/haptics";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
 
 // ─── MOCK MENU DATA ───
 interface MenuItem {
