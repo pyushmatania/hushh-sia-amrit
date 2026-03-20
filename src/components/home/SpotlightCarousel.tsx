@@ -131,15 +131,12 @@ function VideoCard({
       }}
       onClick={onTap}
     >
-      <div
-        className="relative overflow-hidden rounded-[20px]"
-        style={{
-          height: "70vh",
-          maxHeight: "580px",
-          border: "1px solid hsl(var(--border) / 0.24)",
-        }}
-      >
+      <div className="relative" style={{ height: "70vh", maxHeight: "580px" }}>
         <AccentFrame color={accent.color} radius="20px" glowAlpha={0.08} />
+        <div
+          className="relative w-full h-full overflow-hidden rounded-[20px]"
+          style={{ border: "1px solid hsl(var(--border) / 0.24)" }}
+        >
 
         <img
           src={property.images[0]}
