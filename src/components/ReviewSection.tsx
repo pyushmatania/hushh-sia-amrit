@@ -100,7 +100,7 @@ function ImageViewer({ url, onClose }: { url: string; onClose: () => void }) {
 }
 
 /* ── Single review card (DB-backed) ── */
-function DBReviewCard({ review, index, onImageTap }: { review: Review; index: number; onImageTap: (url: string) => void }) {
+function DBReviewCard({ review, index, onImageTap, onProfileTap }: { review: Review; index: number; onImageTap: (url: string) => void; onProfileTap?: (userId: string) => void }) {
   const [liked, setLiked] = useState(false);
 
   return (
