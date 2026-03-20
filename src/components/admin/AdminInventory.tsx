@@ -18,9 +18,16 @@ interface InventoryItem {
   created_at: string;
 }
 
-const categoryOptions = ["food", "drinks", "decoration", "entertainment", "activity", "comfort", "work", "staff"];
+const categoryOptions = ["food", "drinks", "decoration", "entertainment", "activity", "comfort", "work", "staff", "decor", "equipment"];
 
-export default function AdminInventory() {
+const foodDrinksCategories = ["food", "drinks"];
+const addonsCategories = ["decoration", "decor", "entertainment", "activity", "comfort", "work", "staff", "equipment"];
+
+interface AdminInventoryProps {
+  filterCategory?: "food-drinks" | "addons";
+}
+
+export default function AdminInventory({ filterCategory }: AdminInventoryProps = {}) {
   const { toast } = useToast();
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [search, setSearch] = useState("");
