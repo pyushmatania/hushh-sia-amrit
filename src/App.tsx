@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider } from "@/hooks/use-auth";
+import { PrivacyModeProvider } from "@/hooks/use-privacy-mode";
 import Index from "./pages/Index.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
 import NotFound from "./pages/NotFound.tsx";
@@ -15,6 +16,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
       <AuthProvider>
+        <PrivacyModeProvider>
         <TooltipProvider>
           <Toaster />
           <Sonner />
@@ -27,6 +29,7 @@ const App = () => (
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
+        </PrivacyModeProvider>
       </AuthProvider>
     </ThemeProvider>
   </QueryClientProvider>
