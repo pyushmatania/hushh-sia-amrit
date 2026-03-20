@@ -110,16 +110,18 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
     setItems(prev => prev.map(i => i.id === item.id ? { ...i, available: next } : i));
   };
 
-  const lowStock = items.filter(i => i.stock <= i.low_stock_threshold && i.available);
+  const lowStock = scopedItems.filter(i => i.stock <= i.low_stock_threshold && i.available);
+
+  const sectionTitle = filterCategory === "food-drinks" ? "Food & Drinks" : filterCategory === "addons" ? "Add-ons & Services" : "Inventory";
 
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <Package size={22} className="text-primary" /> Inventory
+            <Package size={22} className="text-primary" /> {sectionTitle}
           </h1>
-          <p className="text-sm text-muted-foreground">{items.length} items · {lowStock.length} low stock</p>
+          <p className="text-sm text-muted-foreground">{scopedItems.length} items · {lowStock.length} low stock</p>
         </div>
         <button onClick={openCreate}
           className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 active:scale-95 transition">
