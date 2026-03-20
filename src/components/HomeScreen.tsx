@@ -261,7 +261,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                   </div>
                   <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
                     {budgetPicks.map((p, i) => (
-                      <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} />
+                      <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
                     ))}
                   </div>
                 </div>
