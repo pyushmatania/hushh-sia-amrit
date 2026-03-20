@@ -56,14 +56,12 @@ function mergeDbRow(row: any, staticMatch: Property | undefined): Property {
     ? row.rules.map((r: any) => ({ icon: r.icon || "📋", text: r.text || "" }))
     : [];
 
-  // Use static images if DB has none, otherwise use DB image URLs
   const images =
     row.image_urls && row.image_urls.length > 0
       ? row.image_urls
       : staticMatch?.images || [];
 
   return {
-    // Use static ID if we have a match (so bookings/wishlists keep working)
     id: staticMatch?.id || row.id,
     name: row.name,
     description: row.description || staticMatch?.description || "",
@@ -110,45 +108,72 @@ function readListingLinks(): Record<string, string> {
 function writeListingLinks(links: Record<string, string>) {
   try {
     localStorage.setItem(LISTING_LINKS_STORAGE_KEY, JSON.stringify(links));
-  } catch {
-    // ignore storage issues
+  } catch {}
+}
+
+// Map DB inventory categories to consumer-facing addon group names
+const categoryToAddonGroup: Record<string, { group: string; emoji: string }> = {
+  food: { group: "Food & Drinks", emoji: "🍽️" },
+  drinks: { group: "Food & Drinks", emoji: "🍽️" },
+  decoration: { group: "Decoration", emoji: "🎨" },
+  decor: { group: "Decoration", emoji: "🎨" },
+  entertainment: { group: "Music & Entertainment", emoji: "🎵" },
+  activity: { group: "Activities", emoji: "🏊" },
+  work: { group: "Work Add-ons", emoji: "💻" },
+  comfort: { group: "Comfort Add-ons", emoji: "🛏️" },
+  staff: { group: "Staff & Extras", emoji: "📸" },
+  equipment: { group: "Staff & Extras", emoji: "📸" },
+};
+
+function inventoryToAddons(rows: any[]): Record<string, Addon[]> {
+  const grouped: Record<string, Addon[]> = {};
+  for (const row of rows) {
+    if (!row.available) continue;
+    const mapping = categoryToAddonGroup[row.category] || { group: "Extras", emoji: "✨" };
+    const addon: Addon = {
+      id: row.id,
+      category: mapping.group,
+      categoryEmoji: mapping.emoji,
+      emoji: row.emoji || "✨",
+      name: row.name,
+      description: `${row.category} · ₹${row.unit_price}`,
+      price: Number(row.unit_price),
+      perPerson: row.category === "food",
+    };
+    if (!grouped[mapping.group]) grouped[mapping.group] = [];
+    grouped[mapping.group].push(addon);
   }
+  return grouped;
 }
 
 export function PropertiesProvider({ children }: { children: ReactNode }) {
   const [properties, setProperties] = useState<Property[]>(staticProperties);
+  const [addons, setAddons] = useState<Record<string, Addon[]>>(staticAddons);
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const load = useCallback(async () => {
-    const { data, error } = await supabase
-      .from("host_listings")
-      .select("*")
-      .eq("status", "published")
-      .order("created_at", { ascending: true });
+    // Fetch listings and inventory in parallel
+    const [listingsRes, inventoryRes] = await Promise.all([
+      supabase.from("host_listings").select("*").eq("status", "published").order("created_at", { ascending: true }),
+      supabase.from("inventory").select("*").order("category").order("name"),
+    ]);
 
-    if (error) {
-      setProperties(staticProperties);
-      setLoading(false);
-      return;
-    }
-
-    if (data && data.length > 0) {
+    // Process listings
+    if (!listingsRes.error && listingsRes.data && listingsRes.data.length > 0) {
       const staticByName = new Map(staticProperties.map((p) => [p.name.toLowerCase().trim(), p]));
       const staticById = new Map(staticProperties.map((p) => [p.id, p]));
       const links = readListingLinks();
       const nextLinks = { ...links };
       const matchedStaticIds = new Set<string>();
 
-      const merged = data.map((row) => {
+      const merged = listingsRes.data.map((row) => {
         const linkedStatic = links[row.id] ? staticById.get(links[row.id]) : undefined;
         const staticMatch = linkedStatic || staticByName.get((row.name || "").toLowerCase().trim());
-
         if (staticMatch) {
           matchedStaticIds.add(staticMatch.id);
           if (!links[row.id]) nextLinks[row.id] = staticMatch.id;
         }
-
         return mergeDbRow(row, staticMatch);
       });
 
@@ -161,6 +186,20 @@ export function PropertiesProvider({ children }: { children: ReactNode }) {
     } else {
       setProperties(staticProperties);
     }
+
+    // Process inventory → addons
+    if (!inventoryRes.error && inventoryRes.data && inventoryRes.data.length > 0) {
+      const dbAddons = inventoryToAddons(inventoryRes.data);
+      // Merge: use DB data for groups that exist in DB, fall back to static for others
+      const merged = { ...staticAddons };
+      for (const [group, items] of Object.entries(dbAddons)) {
+        merged[group] = items;
+      }
+      setAddons(merged);
+    } else {
+      setAddons(staticAddons);
+    }
+
     setLoading(false);
   }, []);
 
@@ -168,7 +207,6 @@ export function PropertiesProvider({ children }: { children: ReactNode }) {
     load();
   }, [load, refreshKey]);
 
-  // Re-fetch when tab becomes visible (e.g. returning from /admin)
   useEffect(() => {
     const onVisible = () => {
       if (document.visibilityState === "visible") load();
@@ -195,7 +233,7 @@ export function PropertiesProvider({ children }: { children: ReactNode }) {
         properties,
         packages: staticPackages,
         curatedCombos: staticCombos,
-        addons: staticAddons,
+        addons,
         loading,
         refresh,
       }}

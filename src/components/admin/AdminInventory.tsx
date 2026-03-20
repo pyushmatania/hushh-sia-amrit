@@ -97,6 +97,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
       toast({ title: "Item updated!" });
     }
     setEditing(null);
+    window.dispatchEvent(new Event("hushh:listings-updated"));
   };
 
   const deleteItem = async (id: string) => {
@@ -104,6 +105,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
     await supabase.from("inventory").delete().eq("id", id);
     setItems(prev => prev.filter(i => i.id !== id));
     toast({ title: "Item deleted" });
+    window.dispatchEvent(new Event("hushh:listings-updated"));
   };
 
   const toggleAvailability = async (item: InventoryItem) => {

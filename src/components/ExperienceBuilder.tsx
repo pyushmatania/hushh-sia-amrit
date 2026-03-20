@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Plus, Minus, Check, ChefHat, Palette, Music, Wifi, Armchair, Camera, Flame, Sparkles, X, ChevronRight, Search, Star, Zap } from "lucide-react";
 import { useState, useMemo, useRef } from "react";
 import type { Property } from "@/data/properties";
-import { addons } from "@/data/properties";
+import { usePropertiesData } from "@/contexts/PropertiesContext";
 
 const categoryConfig: Record<string, { icon: typeof ChefHat; emoji: string; accent: string }> = {
   "Food & Drinks": { icon: ChefHat, emoji: "🍽️", accent: "from-amber-500/20 to-orange-500/10" },
@@ -70,6 +70,7 @@ interface ExperienceBuilderProps {
 }
 
 export default function ExperienceBuilder({ property, slotId, guests, date, onBack, onContinue, extras }: ExperienceBuilderProps) {
+  const { addons } = usePropertiesData();
   const [selections, setSelections] = useState<Record<string, number>>({});
   const [hapticId, setHapticId] = useState<string | null>(null);
   const slot = property.slots.find((s) => s.id === slotId)!;

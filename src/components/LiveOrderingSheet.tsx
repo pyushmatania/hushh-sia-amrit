@@ -1,12 +1,11 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Plus, Minus, ShoppingCart, Search, Clock, Flame, Zap, ChevronRight } from "lucide-react";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { hapticSelection, hapticSuccess } from "@/lib/haptics";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 
-// ─── MOCK MENU DATA ───
 interface MenuItem {
   id: string;
   name: string;
@@ -20,35 +19,26 @@ interface MenuItem {
 
 const menuCategories = [
   { id: "all", label: "All", emoji: "🔥" },
-  { id: "snacks", label: "Snacks", emoji: "🍿" },
+  { id: "food", label: "Food", emoji: "🍛" },
   { id: "drinks", label: "Drinks", emoji: "🍹" },
-  { id: "meals", label: "Meals", emoji: "🍛" },
-  { id: "desserts", label: "Desserts", emoji: "🍰" },
-  { id: "extras", label: "Extras", emoji: "✨" },
+  { id: "entertainment", label: "Fun", emoji: "🎮" },
+  { id: "comfort", label: "Comfort", emoji: "🛋️" },
 ];
 
-const menuItems: MenuItem[] = [
-  { id: "m1", name: "Maggi Station", emoji: "🍜", price: 99, category: "snacks", tag: "bestseller", prepTime: "8 min", veg: true },
-  { id: "m2", name: "Paneer Tikka", emoji: "🧀", price: 249, category: "snacks", tag: "bestseller", prepTime: "15 min", veg: true },
-  { id: "m3", name: "Chicken Wings", emoji: "🍗", price: 299, category: "snacks", prepTime: "18 min", veg: false },
-  { id: "m4", name: "French Fries", emoji: "🍟", price: 149, category: "snacks", tag: "quick", prepTime: "10 min", veg: true },
-  { id: "m5", name: "Spring Rolls", emoji: "🥟", price: 179, category: "snacks", prepTime: "12 min", veg: true },
-  { id: "m6", name: "Beer Bucket (6)", emoji: "🍺", price: 899, category: "drinks", tag: "bestseller", prepTime: "2 min", veg: true },
-  { id: "m7", name: "Mojito", emoji: "🍹", price: 199, category: "drinks", prepTime: "5 min", veg: true },
-  { id: "m8", name: "Chai (Kulhad)", emoji: "☕", price: 49, category: "drinks", tag: "quick", prepTime: "5 min", veg: true },
-  { id: "m9", name: "Cold Coffee", emoji: "🧋", price: 149, category: "drinks", prepTime: "5 min", veg: true },
-  { id: "m10", name: "Lemon Soda", emoji: "🍋", price: 79, category: "drinks", tag: "quick", prepTime: "3 min", veg: true },
-  { id: "m11", name: "Tribal Thali", emoji: "🍽️", price: 399, category: "meals", tag: "bestseller", prepTime: "25 min", veg: false },
-  { id: "m12", name: "Veg Biryani", emoji: "🍚", price: 299, category: "meals", prepTime: "20 min", veg: true },
-  { id: "m13", name: "Butter Chicken", emoji: "🍛", price: 349, category: "meals", prepTime: "25 min", veg: false },
-  { id: "m14", name: "Pizza Margherita", emoji: "🍕", price: 299, category: "meals", prepTime: "18 min", veg: true },
-  { id: "m15", name: "Gulab Jamun", emoji: "🍩", price: 99, category: "desserts", prepTime: "5 min", veg: true },
-  { id: "m16", name: "Brownie Sundae", emoji: "🍫", price: 199, category: "desserts", tag: "new", prepTime: "8 min", veg: true },
-  { id: "m17", name: "Kulfi", emoji: "🍨", price: 79, category: "desserts", prepTime: "2 min", veg: true },
-  { id: "m18", name: "Marshmallow Kit", emoji: "🔥", price: 149, category: "extras", prepTime: "instant", veg: true },
-  { id: "m19", name: "Hookah (1hr)", emoji: "💨", price: 499, category: "extras", prepTime: "5 min", veg: true },
-  { id: "m20", name: "Board Game Set", emoji: "🎲", price: 0, category: "extras", tag: "new", prepTime: "instant", veg: true },
-];
+// Map DB inventory rows to MenuItem shape
+function mapInventoryToMenu(rows: any[]): MenuItem[] {
+  return rows
+    .filter((r: any) => r.available && ["food", "drinks"].includes(r.category))
+    .map((r: any) => ({
+      id: r.id,
+      name: r.name,
+      emoji: r.emoji || "🍽️",
+      price: Number(r.unit_price),
+      category: r.category,
+      prepTime: "10 min",
+      veg: true,
+    }));
+}
 
 interface LiveOrderingSheetProps {
   open: boolean;
@@ -66,6 +56,20 @@ export default function LiveOrderingSheet({ open, onClose, propertyName, propert
   const [search, setSearch] = useState("");
   const [showCart, setShowCart] = useState(false);
   const [placing, setPlacing] = useState(false);
+  const [dbMenuItems, setDbMenuItems] = useState<MenuItem[]>([]);
+  const [menuLoaded, setMenuLoaded] = useState(false);
+
+  // Fetch menu from inventory DB
+  useEffect(() => {
+    if (!open) return;
+    supabase.from("inventory").select("*").eq("available", true).order("name")
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          setDbMenuItems(mapInventoryToMenu(data));
+        }
+        setMenuLoaded(true);
+      });
+  }, [open]);
 
   const updateCart = useCallback((id: string, delta: number) => {
     hapticSelection();
@@ -79,18 +83,18 @@ export default function LiveOrderingSheet({ open, onClose, propertyName, propert
   }, []);
 
   const filteredItems = useMemo(() => {
-    let items = menuItems;
+    let items = dbMenuItems;
     if (activeCat !== "all") items = items.filter(i => i.category === activeCat);
     if (search.trim()) items = items.filter(i => i.name.toLowerCase().includes(search.toLowerCase()));
     return items;
-  }, [activeCat, search]);
+  }, [activeCat, search, dbMenuItems]);
 
   const cartItems = useMemo(() => {
     return Object.entries(cart).map(([id, qty]) => {
-      const item = menuItems.find(i => i.id === id)!;
+      const item = dbMenuItems.find(i => i.id === id)!;
       return { ...item, qty };
     });
-  }, [cart]);
+  }, [cart, dbMenuItems]);
 
   const cartTotal = cartItems.reduce((sum, i) => sum + i.price * i.qty, 0);
   const cartCount = Object.values(cart).reduce((a, b) => a + b, 0);

@@ -3,7 +3,7 @@ import { ArrowLeft, Tag, CreditCard, Smartphone, Banknote, ChevronRight, Shield,
 import { useState } from "react";
 import { format } from "date-fns";
 import type { Property } from "@/data/properties";
-import { addons } from "@/data/properties";
+import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { Calendar } from "@/components/ui/calendar";
 
 interface CheckoutScreenProps {
@@ -27,6 +27,7 @@ const paymentMethods = [
 ];
 
 export default function CheckoutScreen({ property, slotId, guests: initialGuests, date: initialDate, selections: initialSelections, total: initialTotal, onBack, onConfirm, extras: initialExtras, isWishlisted, onToggleWishlist }: CheckoutScreenProps) {
+  const { addons } = usePropertiesData();
   const [liveDate, setLiveDate] = useState<Date>(initialDate);
   const [liveGuests, setLiveGuests] = useState(initialGuests);
   const [editingDate, setEditingDate] = useState(false);
