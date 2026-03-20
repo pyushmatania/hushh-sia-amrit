@@ -616,17 +616,10 @@ export default function PropertyDetail({ property, onBack, onBook }: PropertyDet
 
         {/* Safety & Hygiene */}
         <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
-          <Shield size={18} className="text-primary" /> Safety & Hygiene
+          <Shield size={18} className="text-primary" /> {property.primaryCategory === "service" ? "Trust & Safety" : "Safety & Hygiene"}
         </h3>
         <div className="grid grid-cols-2 gap-2 mb-5">
-          {[
-            { icon: <ShieldCheck size={16} />, text: "Verified property" },
-            { icon: <Activity size={16} />, text: "First aid available" },
-            { icon: <Zap size={16} />, text: "Fire extinguisher" },
-            { icon: <Sparkles size={16} />, text: "Deep cleaned" },
-            { icon: <Camera size={16} />, text: "CCTV in common areas" },
-            { icon: <Phone size={16} />, text: "24/7 host support" },
-          ].map((item, i) => (
+          {getSafetyItems(property.primaryCategory).map((item, i) => (
             <div key={i} className="flex items-center gap-2 glass rounded-xl px-3 py-2.5">
               <span className="text-primary shrink-0">{item.icon}</span>
               <span className="text-xs text-foreground">{item.text}</span>
