@@ -54,7 +54,7 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
   const addonTotal = Object.entries(liveSelections).reduce((sum, [id, qty]) => {
     for (const group of Object.values(addons)) {
       const item = group.find((a) => a.id === id);
-      if (item) return sum + item.price * qty * (item.perPerson ? guests : 1);
+      if (item) return sum + item.price * qty * (item.perPerson ? liveGuests : 1);
     }
     return sum;
   }, 0);
