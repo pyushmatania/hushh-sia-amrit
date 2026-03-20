@@ -276,7 +276,16 @@ export default function AdminProperties() {
               <div className="p-3">
                 <h3 className="font-semibold text-xs text-foreground truncate">{listing.name}</h3>
                 <p className="text-[10px] text-muted-foreground truncate">{listing.location}</p>
-                <p className="text-xs font-medium text-foreground mt-1 tabular-nums">₹{listing.base_price?.toLocaleString()}<span className="text-muted-foreground font-normal">/2hr</span></p>
+                {(() => {
+                  const slots = Array.isArray(listing.slots) ? listing.slots : [];
+                  if (slots.length > 0) {
+                    const prices = slots.map((s: any) => Number(s.price || 0)).filter((p: number) => p > 0);
+                    const min = Math.min(...prices);
+                    const max = Math.max(...prices);
+                    return <p className="text-xs font-medium text-foreground mt-1 tabular-nums">₹{min.toLocaleString()}{max !== min && <span className="text-muted-foreground"> – ₹{max.toLocaleString()}</span>}<span className="text-muted-foreground font-normal">/slot</span></p>;
+                  }
+                  return <p className="text-xs font-medium text-foreground mt-1 tabular-nums">₹{listing.base_price?.toLocaleString()}<span className="text-muted-foreground font-normal">/base</span></p>;
+                })()}
               </div>
             </motion.div>
           ))}
