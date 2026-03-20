@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from "recharts";
 import LiveActivityFeed from "./LiveActivityFeed";
 import BookingHeatmap from "./BookingHeatmap";
+import WeeklyDigestPreview from "./WeeklyDigestPreview";
 
 interface Stats {
   revenue: number;
@@ -119,6 +120,8 @@ export default function CommandCenter() {
         <BookingHeatmap />
         <LiveActivityFeed />
       </div>
+
+      <WeeklyDigestPreview />
 
       <motion.div
         initial={{ opacity: 0, y: 16 }}
