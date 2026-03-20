@@ -39,6 +39,7 @@ const navItems: { id: AdminPage; label: string; icon: typeof LayoutDashboard; ad
   { id: "orders", label: "Live Orders", icon: ShoppingCart },
   { id: "exports", label: "Exports", icon: FileSpreadsheet },
   { id: "achievements", label: "Achievements", icon: Trophy },
+  { id: "loyalty", label: "Loyalty & Referrals", icon: Sparkles },
   { id: "audit", label: "Audit Trail", icon: ScrollText, adminOnly: true },
 ];
 

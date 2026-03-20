@@ -72,6 +72,7 @@ export default function Admin() {
       case "orders": return <AdminOrders />;
       case "exports": return <AdminExports />;
       case "achievements": return <AdminAchievements />;
+      case "loyalty": return <AdminLoyaltyReferrals />;
       case "audit": return <AdminAuditLog />;
       default: return <CommandCenter />;
     }
