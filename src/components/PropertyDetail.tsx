@@ -583,7 +583,6 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
               />
             )}
           </PopoverContent>
-          </PopoverContent>
         </Popover>
 
         {!selectedDate && (
