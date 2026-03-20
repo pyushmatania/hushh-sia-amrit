@@ -193,7 +193,7 @@ export default function AdminExperiencePackages() {
               {...getDropTargetProps(pkg)}
               onDragEnd={handleDragEnd}
               style={getDragItemStyle(pkg)}
-              className={`rounded-xl border border-border bg-card p-4 flex items-center gap-2 ${
+              className={`rounded-xl border border-border bg-card p-4 flex items-center gap-2 select-none ${
                 !pkg.active ? "opacity-50" : ""}`}
             >
               <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${pkg.gradient} flex items-center justify-center text-lg`}>
