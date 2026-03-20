@@ -1132,7 +1132,7 @@ export const properties: Property[] = [
     name: "Chef on Call",
     description: "Private chef · Multi-cuisine · At your venue",
     fullDescription: "Book a professional private chef who comes to your stay or event venue. Choose from multi-cuisine menus including Indian, Continental, BBQ, and local Koraput specialties. Includes ingredients, cooking, serving, and cleanup. Perfect for intimate dinners, birthday parties, or corporate events.",
-    images: [listingSunsetPavilion, property2, property3],
+    images: [listingChefOnCall, property2, property3],
     rating: 4.8,
     reviewCount: 67,
     location: "Jeypore, Odisha",
