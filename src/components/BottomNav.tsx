@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Search, Heart, MapPin, MessageCircle, User } from "lucide-react";
+import { hapticSelection } from "@/lib/haptics";
 
 const tabs = [
   { id: "home", icon: Search, label: "Explore" },
@@ -24,7 +25,7 @@ export default function BottomNav({ active, onChange, messageBadge = 0 }: Bottom
           return (
             <motion.button
               key={tab.id}
-              onClick={() => onChange(tab.id)}
+              onClick={() => { hapticSelection(); onChange(tab.id); }}
               className="flex flex-col items-center gap-0.5 min-w-[60px] py-0.5 relative"
               whileTap={{ scale: 0.85 }}
               transition={{ type: "spring", stiffness: 400, damping: 20 }}

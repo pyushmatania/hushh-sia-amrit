@@ -5,6 +5,7 @@ import { useReviews, type Review } from "@/hooks/use-reviews";
 import { useAuth } from "@/hooks/use-auth";
 import { formatDistanceToNow } from "date-fns";
 import type { PropertyReview } from "@/data/properties";
+import PublicProfileScreen from "./PublicProfileScreen";
 
 interface ReviewSectionProps {
   propertyId: string;
@@ -100,7 +101,7 @@ function ImageViewer({ url, onClose }: { url: string; onClose: () => void }) {
 }
 
 /* ── Single review card (DB-backed) ── */
-function DBReviewCard({ review, index, onImageTap }: { review: Review; index: number; onImageTap: (url: string) => void }) {
+function DBReviewCard({ review, index, onImageTap, onProfileTap }: { review: Review; index: number; onImageTap: (url: string) => void; onProfileTap?: (userId: string) => void }) {
   const [liked, setLiked] = useState(false);
 
   return (
@@ -111,16 +112,20 @@ function DBReviewCard({ review, index, onImageTap }: { review: Review; index: nu
       className="rounded-2xl p-4 bg-secondary/40 border border-border"
     >
       <div className="flex items-center gap-2.5 mb-2.5">
-        {review.user_avatar ? (
-          <img src={review.user_avatar} alt="" className="w-9 h-9 rounded-full object-cover" />
-        ) : (
-          <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-lg">
-            {review.user_name.charAt(0).toUpperCase()}
-          </div>
-        )}
+        <button onClick={() => onProfileTap?.(review.user_id)} className="shrink-0">
+          {review.user_avatar ? (
+            <img src={review.user_avatar} alt="" className="w-9 h-9 rounded-full object-cover" />
+          ) : (
+            <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-lg">
+              {review.user_name.charAt(0).toUpperCase()}
+            </div>
+          )}
+        </button>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
-            <p className="text-sm font-semibold text-foreground">{review.user_name}</p>
+            <button onClick={() => onProfileTap?.(review.user_id)} className="text-sm font-semibold text-foreground hover:underline">
+              {review.user_name}
+            </button>
             {review.verified && (
               <span className="flex items-center gap-0.5 text-[9px] font-bold text-emerald-600 bg-emerald-500/10 px-1.5 py-0.5 rounded-md">
                 <ShieldCheck size={10} /> Verified Stay
@@ -227,6 +232,7 @@ export default function ReviewSection({ propertyId, reviews: staticReviews, rati
   const [photos, setPhotos] = useState<File[]>([]);
   const [photoPreviewUrls, setPhotoPreviewUrls] = useState<string[]>([]);
   const [viewingImage, setViewingImage] = useState<string | null>(null);
+  const [viewingProfile, setViewingProfile] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Merge DB + static reviews for display
@@ -414,7 +420,7 @@ export default function ReviewSection({ propertyId, reviews: staticReviews, rati
       {dbReviews.length > 0 && (
         <div className="space-y-3 mb-3">
           {displayedDbReviews.map((review, i) => (
-            <DBReviewCard key={review.id} review={review} index={i} onImageTap={setViewingImage} />
+            <DBReviewCard key={review.id} review={review} index={i} onImageTap={setViewingImage} onProfileTap={setViewingProfile} />
           ))}
         </div>
       )}
@@ -438,6 +444,13 @@ export default function ReviewSection({ propertyId, reviews: staticReviews, rati
       {/* Fullscreen image viewer */}
       <AnimatePresence>
         {viewingImage && <ImageViewer url={viewingImage} onClose={() => setViewingImage(null)} />}
+      </AnimatePresence>
+
+      {/* Public profile viewer */}
+      <AnimatePresence>
+        {viewingProfile && (
+          <PublicProfileScreen userId={viewingProfile} onBack={() => setViewingProfile(null)} />
+        )}
       </AnimatePresence>
     </div>
   );

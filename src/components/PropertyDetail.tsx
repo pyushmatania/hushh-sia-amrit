@@ -16,6 +16,7 @@ import {
 import { useState, useCallback } from "react";
 import { shareProperty } from "@/lib/share";
 import { useToast } from "@/hooks/use-toast";
+import { hapticMedium, hapticSuccess } from "@/lib/haptics";
 import { format, differenceInDays } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
@@ -406,7 +407,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
               <Share2 size={16} className="text-foreground" />
             </motion.button>
             <motion.button
-              onClick={() => onToggleWishlist?.(property.id)}
+              onClick={() => { hapticMedium(); onToggleWishlist?.(property.id); }}
               className="w-9 h-9 rounded-full glass flex items-center justify-center"
               whileTap={{ scale: 1.2 }}
             >
