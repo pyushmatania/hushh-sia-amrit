@@ -421,7 +421,7 @@ export default function AdminProperties() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       )}
