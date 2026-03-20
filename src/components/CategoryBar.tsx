@@ -219,7 +219,7 @@ export default function CategoryBar({ active, onChange }: CategoryBarProps) {
               onClick={() => onChange(cat.id)}
               className="relative flex flex-col items-center gap-1.5 px-3 pt-3 pb-3 shrink-0 group min-w-[76px]"
             >
-              <div className="relative h-12 flex items-center justify-center">
+              <div className="relative h-16 flex items-center justify-center">
                 <AnimatedIcon cat={cat} isActive={isActive} />
                 {cat.badge && (
                   <motion.span
