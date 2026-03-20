@@ -101,7 +101,7 @@ const mockThreads = [
   },
 ];
 
-const mockMessages: Record<string, Array<{ id: string; text: string; sender: "user" | "other"; time: string; reactions?: string[]; status?: "sent" | "delivered" | "read" }>> = {
+const mockMessages: Record<string, Array<{ id: string; text: string; sender: "user" | "other"; time: string; reactions?: string[]; status?: "sent" | "delivered" | "read"; imageUrl?: string }>> = {
   c1: [
     { id: "m1", text: "Hi, I need help with my Ember Grounds refund", sender: "user", time: "Yesterday 10:30 AM", status: "read" },
     { id: "m2", text: "Sure! Let me check your booking details. One moment please… 🔍", sender: "other", time: "Yesterday 10:31 AM" },
