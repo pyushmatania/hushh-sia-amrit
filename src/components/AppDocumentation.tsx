@@ -194,6 +194,8 @@ export const changeLog = [
       "Tonight Tags — quick discovery filters (Tonight at Hushh, Just Us Picks, Party Ready, Work Escape, Under ₹999)",
       "CuratedPackCard component — hero cards with gradient headers, savings badges, strikethrough pricing, 1-tap book CTA",
       "Mood-filtered property feed — selecting a mood filters all listings across the home tab",
+      "Slot Intelligence — smart tags (Almost Full, Best Price, Trending, Couple Pick, Work Best) on time slots",
+      "Dynamic Pricing — strikethrough original prices, savings badges, viewers-now microcopy ('5 people viewing')",
     ],
   },
 ];
