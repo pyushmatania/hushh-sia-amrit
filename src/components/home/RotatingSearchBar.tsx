@@ -27,11 +27,11 @@ export default function RotatingSearchBar({ onSearchTap, onMapTap }: RotatingSea
   }, []);
 
   return (
-    <div className="px-4 pb-3 flex gap-2">
+    <div className="flex gap-2 px-4">
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex-1 flex items-center gap-3 rounded-full px-5 py-3.5 cursor-pointer"
+        className="flex-1 flex items-center gap-3 rounded-full px-5 py-3 cursor-pointer"
         style={{
           background: "rgba(255,255,255,0.06)",
           border: "1px solid rgba(255,255,255,0.1)",
@@ -59,7 +59,7 @@ export default function RotatingSearchBar({ onSearchTap, onMapTap }: RotatingSea
         animate={{ opacity: 1, scale: 1 }}
         whileTap={{ scale: 0.9 }}
         onClick={onMapTap}
-        className="w-[52px] h-[52px] rounded-2xl flex items-center justify-center shrink-0"
+        className="w-[48px] h-[48px] rounded-2xl flex items-center justify-center shrink-0"
         style={{
           background: "rgba(255,255,255,0.06)",
           border: "1px solid rgba(255,255,255,0.1)",
