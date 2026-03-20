@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./use-auth";
+import { useToast } from "./use-toast";
 
 const LOCAL_KEY = "hushh_wishlists";
 
