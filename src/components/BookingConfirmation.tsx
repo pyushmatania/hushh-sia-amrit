@@ -101,8 +101,18 @@ export default function BookingConfirmation({ property, slotId, guests, date, to
         {/* Actions */}
         <div className="w-full mt-6 space-y-3 pb-10">
           <motion.button
+            onClick={() => setOrderingOpen(true)}
+            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold text-sm flex items-center justify-center gap-2"
+            whileTap={{ scale: 0.96 }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1 }}
+          >
+            <ShoppingCart size={16} /> Order Food & Drinks
+          </motion.button>
+          <motion.button
             onClick={onDone}
-            className="w-full py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm animate-pulse-glow"
+            className="w-full py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm"
             whileTap={{ scale: 0.96 }}
           >
             Go to My Trips
@@ -112,6 +122,12 @@ export default function BookingConfirmation({ property, slotId, guests, date, to
           </button>
         </div>
       </div>
+
+      <LiveOrderingSheet
+        open={orderingOpen}
+        onClose={() => setOrderingOpen(false)}
+        propertyName={property.name}
+      />
     </motion.div>
   );
 }
