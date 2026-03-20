@@ -143,6 +143,42 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
   const trendingNow = useMemo(() => filteredProperties.filter(p => p.slotsLeft > 0 && p.slotsLeft <= 3), [filteredProperties]);
   const budgetPicks = useMemo(() => [...filteredProperties].sort((a, b) => a.basePrice - b.basePrice).slice(0, 4), [filteredProperties]);
 
+  // Filter experience packs by mood and tonight tags
+  const filteredPacks = useMemo(() => {
+    let packs = experiencePacks;
+    if (activeMood) {
+      packs = packs.filter(p => p.mood.includes(activeMood));
+    }
+    const tagFilter = tonightTags.find(t => t.id === activePackFilter);
+    if (tagFilter) {
+      packs = packs.filter(tagFilter.filter);
+    }
+    return packs;
+  }, [activeMood, activePackFilter]);
+
+  // Handle mood change — also affects main property filtering
+  const handleMoodChange = useCallback((mood: Mood) => {
+    setActiveMood(mood);
+    hapticSelection();
+  }, []);
+
+  const handlePackTap = useCallback((pack: ExperiencePack) => {
+    const property = properties.find(p => p.id === pack.propertyId);
+    if (property) onPropertyTap(property);
+  }, [onPropertyTap]);
+
+  // Filter properties by mood
+  const moodFilteredProperties = useMemo(() => {
+    if (!activeMood) return filteredProperties;
+    const moodMap: Record<string, (p: Property) => boolean> = {
+      romantic: (p) => p.category.includes("couples") || p.tags.some(t => t.toLowerCase().includes("couple")),
+      party: (p) => p.category.includes("party") || p.tags.some(t => t.toLowerCase().includes("party")),
+      chill: (p) => p.category.includes("bonfire") || p.category.includes("pool") || p.tags.some(t => t.toLowerCase().includes("chill")),
+      work: (p) => p.propertyType === "Work Pod" || p.category.includes("work") || p.tags.some(t => t.toLowerCase().includes("work")),
+    };
+    return filteredProperties.filter(moodMap[activeMood] || (() => true));
+  }, [filteredProperties, activeMood]);
+
   return (
     <PullToRefresh onRefresh={handleRefresh}>
     <div ref={contentRef} key={refreshKey} className="pb-24 min-h-screen overflow-y-auto" style={{ background: "linear-gradient(180deg, #0C0B1D 0%, #111028 100%)" }}>
