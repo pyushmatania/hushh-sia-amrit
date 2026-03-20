@@ -352,6 +352,9 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
                 <label htmlFor="avail" className="text-sm text-foreground">Available for ordering</label>
               </div>
 
+              </>
+              )}
+
               <button onClick={save}
                 className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 active:scale-[0.98] transition">
                 {isCreating ? "Add Item" : "Save Changes"}
