@@ -198,6 +198,20 @@ export const changeLog = [
       "Dynamic Pricing — strikethrough original prices, savings badges, viewers-now microcopy ('5 people viewing')",
     ],
   },
+  {
+    version: "1.12",
+    phase: "Monetization & Gamification",
+    items: [
+      "Live Service Ordering — Swiggy-style in-stay menu with 20 items, category filters, cart with quantity controls, veg/non-veg indicators, prep times",
+      "Privacy Mode — toggle in Settings to mask names & booking IDs, discreet notifications option, stored in localStorage",
+      "Experience Builder Smart Nudges — 'People also added' section with contextual suggestions (beer+BBQ, candle+dinner combos), savings badges",
+      "Spin Wheel — daily spin-to-win on Loyalty screen with weighted prizes (5-100 pts), SVG wheel with framer-motion rotation",
+      "Milestone Rewards — 6 achievement milestones (First Booking, Explorer, Regular, Reviewer, Social Butterfly, VIP) with point rewards",
+      "Curations wired to live database — curations table with public read RLS, 8 seeded packs, frontend fetches from DB with fallback",
+      "PrivacyModeProvider — context provider wrapping the app for global privacy state",
+      "LiveOrderingSheet — accessible from booking confirmation page via 'Order Food & Drinks' button",
+    ],
+  },
 ];
 
 // Generate the full HUSHH.md content from the changeLog + app info
