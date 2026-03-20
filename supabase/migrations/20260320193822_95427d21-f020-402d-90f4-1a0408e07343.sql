@@ -1,0 +1,1 @@
+ALTER TABLE public.host_listings ADD COLUMN IF NOT EXISTS sort_order integer NOT NULL DEFAULT 0;

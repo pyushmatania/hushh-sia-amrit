@@ -333,6 +333,7 @@ export type Database = {
           review_count: number | null
           rules: Json | null
           slots: Json | null
+          sort_order: number
           status: string
           tags: string[]
           updated_at: string
@@ -362,6 +363,7 @@ export type Database = {
           review_count?: number | null
           rules?: Json | null
           slots?: Json | null
+          sort_order?: number
           status?: string
           tags?: string[]
           updated_at?: string
@@ -391,6 +393,7 @@ export type Database = {
           review_count?: number | null
           rules?: Json | null
           slots?: Json | null
+          sort_order?: number
           status?: string
           tags?: string[]
           updated_at?: string
