@@ -114,6 +114,7 @@ export default function AdminCurations() {
     setEditing(null);
     setEditingId(null);
     loadCurations();
+    window.dispatchEvent(new Event("hushh:listings-updated"));
   };
 
   // Builder UI
@@ -325,6 +326,7 @@ export default function AdminCurations() {
                           } else {
                             setCurations(prev => prev.filter(x => x.id !== c.id));
                             toast({ title: "Curation deleted" });
+                            window.dispatchEvent(new Event("hushh:listings-updated"));
                           }
                         });
                       }}
