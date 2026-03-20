@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Building2, CalendarCheck, Users, BarChart3,
   Sparkles, Tag, Megaphone, Ticket, ShoppingCart, LogOut,
-  ChevronLeft, ChevronRight, Shield, Menu, X
+  ChevronLeft, ChevronRight, Shield, Menu, X, FileSpreadsheet
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useAdmin } from "@/hooks/use-admin";
