@@ -16,6 +16,7 @@ import becomeHostImg from "@/assets/become-host.png";
 import EditProfileSheet from "./EditProfileSheet";
 import SettingsSheet from "./SettingsSheet";
 import LoyaltyScreen from "./LoyaltyScreen";
+import ReferralScreen from "./ReferralScreen";
 
 const themeOptions = [
   { id: "light" as const, label: "Light", icon: Sun },
@@ -60,6 +61,7 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [activeSetting, setActiveSetting] = useState("");
   const [showLoyalty, setShowLoyalty] = useState(false);
+  const [showReferral, setShowReferral] = useState(false);
   const [profile, setProfile] = useState({
     name: user?.user_metadata?.full_name || "Guest Explorer",
     location: "Jeypore, India",
@@ -70,7 +72,9 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
     setProfile(updated);
   }, []);
 
-  const handleSettingTap = useCallback((key: string) => {
+  const handleSettingTap = useCallback((key: string, label: string) => {
+    if (label === "Refer a friend") { setShowReferral(true); return; }
+    if (label === "Loyalty points") { setShowLoyalty(true); return; }
     if (key) setActiveSetting(key);
   }, []);
 
@@ -337,7 +341,7 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
         {settingsMenu.map((item, i) => (
           <button
             key={item.label}
-            onClick={() => handleSettingTap(item.settingKey)}
+            onClick={() => handleSettingTap(item.settingKey, item.label)}
             className={`w-full flex items-center gap-3.5 py-4 text-left ${
               i < settingsMenu.length - 1 ? "border-b border-border" : ""
             }`}
@@ -397,6 +401,11 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
       <AnimatePresence>
         {showLoyalty && (
           <LoyaltyScreen onBack={() => setShowLoyalty(false)} />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showReferral && (
+          <ReferralScreen onBack={() => setShowReferral(false)} />
         )}
       </AnimatePresence>
     </div>

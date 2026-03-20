@@ -14,6 +14,8 @@ import {
   Wind, Tag, Check
 } from "lucide-react";
 import { useState, useCallback } from "react";
+import { shareProperty } from "@/lib/share";
+import { useToast } from "@/hooks/use-toast";
 import { format, differenceInDays } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
@@ -391,7 +393,16 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
             <ArrowLeft size={18} className="text-foreground" />
           </motion.button>
           <div className="flex gap-2">
-            <motion.button className="w-9 h-9 rounded-full glass flex items-center justify-center" whileTap={{ scale: 0.85 }}>
+            <motion.button
+              className="w-9 h-9 rounded-full glass flex items-center justify-center"
+              whileTap={{ scale: 0.85 }}
+              onClick={async () => {
+                const shared = await shareProperty(property);
+                if (shared && !navigator.share) {
+                  // clipboard fallback used
+                }
+              }}
+            >
               <Share2 size={16} className="text-foreground" />
             </motion.button>
             <motion.button
@@ -791,6 +802,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
           <Star size={18} className="fill-primary text-primary" /> Reviews
         </h3>
         <ReviewSection
+          propertyId={property.id}
           reviews={property.reviews}
           rating={property.rating}
           reviewCount={property.reviewCount}

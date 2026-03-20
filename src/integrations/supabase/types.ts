@@ -277,6 +277,147 @@ export type Database = {
         }
         Relationships: []
       }
+      referral_codes: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          reward_points: number
+          user_id: string
+          uses: number
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          reward_points?: number
+          user_id: string
+          uses?: number
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          reward_points?: number
+          user_id?: string
+          uses?: number
+        }
+        Relationships: []
+      }
+      referral_uses: {
+        Row: {
+          code_id: string
+          created_at: string
+          credited: boolean
+          id: string
+          referred_user_id: string
+          referrer_user_id: string
+        }
+        Insert: {
+          code_id: string
+          created_at?: string
+          credited?: boolean
+          id?: string
+          referred_user_id: string
+          referrer_user_id: string
+        }
+        Update: {
+          code_id?: string
+          created_at?: string
+          credited?: boolean
+          id?: string
+          referred_user_id?: string
+          referrer_user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_uses_code_id_fkey"
+            columns: ["code_id"]
+            isOneToOne: false
+            referencedRelation: "referral_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      review_responses: {
+        Row: {
+          content: string
+          created_at: string
+          host_id: string
+          id: string
+          review_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          host_id: string
+          id?: string
+          review_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          host_id?: string
+          id?: string
+          review_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_responses_review_id_fkey"
+            columns: ["review_id"]
+            isOneToOne: false
+            referencedRelation: "reviews"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reviews: {
+        Row: {
+          booking_id: string | null
+          content: string
+          created_at: string
+          id: string
+          photo_urls: string[]
+          property_id: string
+          rating: number
+          updated_at: string
+          user_id: string
+          verified: boolean
+        }
+        Insert: {
+          booking_id?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          photo_urls?: string[]
+          property_id: string
+          rating: number
+          updated_at?: string
+          user_id: string
+          verified?: boolean
+        }
+        Update: {
+          booking_id?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          photo_urls?: string[]
+          property_id?: string
+          rating?: number
+          updated_at?: string
+          user_id?: string
+          verified?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       wishlists: {
         Row: {
           created_at: string
