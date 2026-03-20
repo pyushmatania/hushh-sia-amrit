@@ -179,20 +179,8 @@ export default function PropertyCard({ property, index, onTap }: PropertyCardPro
           loading="lazy"
         />
 
-        {/* Accent tag */}
-        {accent?.tag && (
-          <span
-            className="absolute top-3 left-3 text-[10px] font-bold tracking-wider px-3 py-1.5 rounded-full flex items-center gap-1 shadow-lg z-10"
-            style={{
-              background: accent.tag.bg,
-              color: "white",
-              letterSpacing: "0.08em",
-            }}
-          >
-            {accent.tag.icon}
-            {accent.tag.label}
-          </span>
-        )}
+        {/* Asymmetrical accent tag */}
+        {accent?.tag && <AccentTag tag={accent.tag} color={accent.color} />}
 
         {/* Guest favourite (only if no accent tag) */}
         {!accent?.tag && property.rating >= 4.8 && (
