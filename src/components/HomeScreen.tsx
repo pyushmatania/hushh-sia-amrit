@@ -41,6 +41,7 @@ interface HomeScreenProps {
 }
 
 export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNotificationTap, wishlist = [], onToggleWishlist }: HomeScreenProps) {
+  const { properties } = useDbListings();
   const { unreadCount: notifCount } = useNotifications();
   const { packs: experiencePacks } = useCurations();
   const [refreshKey, setRefreshKey] = useState(0);
