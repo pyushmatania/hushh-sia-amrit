@@ -62,6 +62,7 @@ export default function AdminExperiencePackages() {
     });
     setIsCreating(true);
     setIncludeInput("");
+    setPreviewMode(false);
   };
 
   const addInclude = () => {
