@@ -812,6 +812,9 @@ export default function AdminClients() {
         ))}
       </div>
 
+      {/* AI Search */}
+      <ClientAISearch clients={filtered} listingMap={listingMap} />
+
       {/* Segment chips */}
       <div className="flex flex-wrap gap-1.5">
         <button onClick={() => setSegmentFilter(null)}
