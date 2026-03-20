@@ -41,10 +41,10 @@ export default function AdminTags() {
 
   const create = async () => {
     if (!form.name) return;
-    const { data } = await supabase.from("property_tags").insert({
+    const { data, error } = await supabase.from("property_tags").insert({
       name: form.name, icon: form.icon, color: form.color
-    } as any).select().single();
-    if (data) setTags(prev => [{ ...(data as any), assignmentCount: 0 }, ...prev]);
+    } as any).select().maybeSingle();
+    if (!error && data) setTags(prev => [{ ...(data as any), assignmentCount: 0 }, ...prev]);
     setShowCreate(false);
     setForm({ name: "", icon: "🏷️", color: presetColors[0] });
   };

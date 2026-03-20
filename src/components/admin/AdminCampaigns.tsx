@@ -43,21 +43,21 @@ export default function AdminCampaigns() {
 
   const create = async () => {
     if (!form.title || !user) return;
-    const { data } = await supabase.from("campaigns").insert({
+    const { data, error } = await supabase.from("campaigns").insert({
       title: form.title, description: form.description, type: form.type,
       discount_type: form.discount_type, discount_value: form.discount_value,
       target_audience: form.target_audience,
       start_date: form.start_date || new Date().toISOString(),
       end_date: form.end_date || null,
       created_by: user.id,
-    } as any).select().single();
-    if (data) setCampaigns(prev => [data as any, ...prev]);
+    } as any).select().maybeSingle();
+    if (!error && data) setCampaigns(prev => [data as any, ...prev]);
     setShowCreate(false);
     setForm({ title: "", description: "", type: "flash_deal", discount_type: "percentage", discount_value: 10, target_audience: [], start_date: "", end_date: "" });
   };
 
   const toggle = async (id: string, active: boolean) => {
-    await supabase.from("campaigns").update({ active: !active } as any).eq("id", id);
+    await supabase.from("campaigns").update({ active: !active }).eq("id", id);
     setCampaigns(prev => prev.map(c => c.id === id ? { ...c, active: !active } : c));
   };
 
