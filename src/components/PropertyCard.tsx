@@ -184,8 +184,12 @@ export default function PropertyCard({ property, index, onTap, isWishlisted = fa
           </div>
         </div>
         <p className="text-sm mt-0.5">
-          <span className="font-semibold text-gradient-warm">₹{property.basePrice.toLocaleString()}</span>
-          <span className="text-muted-foreground"> / 2 hours</span>
+          <span className="font-semibold text-gradient-warm">₹{(() => {
+            const availableSlots = property.slots?.filter(s => s.available);
+            if (availableSlots?.length) return Math.min(...availableSlots.map(s => s.price)).toLocaleString();
+            return property.basePrice.toLocaleString();
+          })()}</span>
+          <span className="text-muted-foreground"> {property.slots?.length ? "onwards" : "/ 2 hours"}</span>
         </p>
       </div>
     </div>
