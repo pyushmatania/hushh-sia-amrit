@@ -37,6 +37,7 @@ export default function AdminExperiencePackages() {
   const [editing, setEditing] = useState<Partial<PackageRow> | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [includeInput, setIncludeInput] = useState("");
+  const [previewMode, setPreviewMode] = useState(false);
 
   const loadPackages = async () => {
     const { data } = await supabase
@@ -61,6 +62,7 @@ export default function AdminExperiencePackages() {
     });
     setIsCreating(true);
     setIncludeInput("");
+    setPreviewMode(false);
   };
 
   const addInclude = () => {
@@ -235,14 +237,7 @@ export default function AdminExperiencePackages() {
                   {pkg.active ? "Active" : "Inactive"}
                 </button>
                 <button
-                  onClick={() => window.location.href = "/"}
-                  className="p-1.5 rounded-lg hover:bg-secondary transition"
-                  title="Preview in app"
-                >
-                  <Eye size={13} className="text-muted-foreground" />
-                </button>
-                <button
-                  onClick={() => { setEditing({ ...pkg }); setIsCreating(false); setIncludeInput(""); }}
+                  onClick={() => { setEditing({ ...pkg }); setIsCreating(false); setIncludeInput(""); setPreviewMode(false); }}
                   className="p-1.5 rounded-lg hover:bg-secondary transition"
                 >
                   <Pencil size={13} className="text-muted-foreground" />
@@ -280,10 +275,39 @@ export default function AdminExperiencePackages() {
                 <h2 className="text-lg font-bold text-foreground">
                   {isCreating ? "Add Package" : "Edit Package"}
                 </h2>
-                <button onClick={() => setEditing(null)} className="p-1 rounded-lg hover:bg-secondary">
-                  <X size={18} className="text-muted-foreground" />
-                </button>
+                <div className="flex items-center gap-1">
+                  <button onClick={() => setPreviewMode(!previewMode)}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1 transition ${previewMode ? "bg-primary/15 text-primary" : "bg-secondary text-muted-foreground"}`}>
+                    <Eye size={12} /> {previewMode ? "Edit" : "Preview"}
+                  </button>
+                  <button onClick={() => setEditing(null)} className="p-1 rounded-lg hover:bg-secondary">
+                    <X size={18} className="text-muted-foreground" />
+                  </button>
+                </div>
               </div>
+
+              {previewMode ? (
+                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+                  className="rounded-xl border border-border bg-background overflow-hidden">
+                  <div className={`bg-gradient-to-br ${editing.gradient || "from-primary/80 to-primary/40"} p-6 text-center`}>
+                    <span className="text-4xl">{editing.emoji || "✨"}</span>
+                    <h3 className="text-lg font-bold text-white mt-2">{editing.name || "Package Name"}</h3>
+                    <p className="text-2xl font-bold text-white mt-1 tabular-nums">₹{(editing.price || 0).toLocaleString()}</p>
+                  </div>
+                  <div className="p-4 space-y-2">
+                    {(editing.includes || []).length > 0 ? (
+                      <div className="flex flex-wrap gap-1.5">
+                        {(editing.includes || []).map((inc, j) => (
+                          <span key={j} className="text-xs px-2 py-1 rounded-lg bg-secondary text-foreground">{inc}</span>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">No inclusions added yet</p>
+                    )}
+                  </div>
+                </motion.div>
+              ) : (
+                <>
 
               <div className="grid grid-cols-[60px_1fr] gap-3">
                 <div>
@@ -382,6 +406,9 @@ export default function AdminExperiencePackages() {
                 />
                 <label htmlFor="pkg-active" className="text-sm text-foreground">Active</label>
               </div>
+
+              </>
+              )}
 
               <button
                 onClick={save}

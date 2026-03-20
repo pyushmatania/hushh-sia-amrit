@@ -35,7 +35,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
   const [catFilter, setCatFilter] = useState("all");
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Partial<InventoryItem> | null>(null);
-  const [isCreating, setIsCreating] = useState(false);
+  const [previewMode, setPreviewMode] = useState(false);
 
   // Drag state
   const [dragId, setDragId] = useState<string | null>(null);
@@ -74,7 +74,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
     const defaultEmoji = filterCategory === "addons" ? "🎉" : "🍽️";
     setEditing({ name: "", emoji: defaultEmoji, category: defaultCat, unit_price: 0, stock: 100, low_stock_threshold: 10, available: true, property_id: null, sort_order: 0 });
     setIsCreating(true);
-  };
+    setPreviewMode(false);
 
   const save = async () => {
     if (!editing?.name) { toast({ title: "Name required", variant: "destructive" }); return; }
@@ -259,9 +259,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
                         className={`px-2 py-1 rounded-lg text-[10px] font-medium transition ${
                           item.available ? "bg-emerald-500/15 text-emerald-400" : "bg-muted text-muted-foreground"
                         }`}>{item.available ? "Available" : "Unavailable"}</button>
-                      <button onClick={() => window.location.href = "/"}
-                        className="p-1.5 rounded-lg hover:bg-secondary transition" title="Preview in app"><Eye size={13} className="text-muted-foreground" /></button>
-                      <button onClick={() => { setEditing({ ...item }); setIsCreating(false); }}
+                      <button onClick={() => { setEditing({ ...item }); setIsCreating(false); setPreviewMode(false); }}
                         className="p-1.5 rounded-lg hover:bg-secondary transition"><Pencil size={13} className="text-muted-foreground" /></button>
                       <button onClick={() => deleteItem(item.id)}
                         className="p-1.5 rounded-lg hover:bg-destructive/10 transition"><Trash2 size={13} className="text-destructive" /></button>
@@ -284,8 +282,33 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
               onClick={e => e.stopPropagation()}>
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-bold text-foreground">{isCreating ? "Add Item" : "Edit Item"}</h2>
-                <button onClick={() => setEditing(null)} className="p-1 rounded-lg hover:bg-secondary"><X size={18} className="text-muted-foreground" /></button>
+                <div className="flex items-center gap-1">
+                  <button onClick={() => setPreviewMode(!previewMode)}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1 transition ${previewMode ? "bg-primary/15 text-primary" : "bg-secondary text-muted-foreground"}`}>
+                    <Eye size={12} /> {previewMode ? "Edit" : "Preview"}
+                  </button>
+                  <button onClick={() => setEditing(null)} className="p-1 rounded-lg hover:bg-secondary"><X size={18} className="text-muted-foreground" /></button>
+                </div>
               </div>
+
+              {previewMode ? (
+                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+                  className="rounded-xl border border-border bg-background p-4 flex items-center gap-3">
+                  <span className="text-3xl">{editing.emoji || "🍽️"}</span>
+                  <div className="flex-1">
+                    <h4 className="text-base font-semibold text-foreground">{editing.name || "Item Name"}</h4>
+                    <p className="text-sm text-muted-foreground capitalize">{editing.category || "food"}</p>
+                    <p className="text-lg font-bold text-foreground mt-1 tabular-nums">₹{editing.unit_price || 0}</p>
+                  </div>
+                  <div className="text-right">
+                    <span className={`px-2 py-1 rounded-lg text-[10px] font-medium ${editing.available ? "bg-emerald-500/15 text-emerald-400" : "bg-muted text-muted-foreground"}`}>
+                      {editing.available ? "Available" : "Unavailable"}
+                    </span>
+                    <p className="text-[11px] text-muted-foreground mt-1 tabular-nums">Stock: {editing.stock || 0}</p>
+                  </div>
+                </motion.div>
+              ) : (
+                <>
 
               <div className="grid grid-cols-[60px_1fr] gap-3">
                 <div>
@@ -328,6 +351,9 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
                   className="rounded border-input" id="avail" />
                 <label htmlFor="avail" className="text-sm text-foreground">Available for ordering</label>
               </div>
+
+              </>
+              )}
 
               <button onClick={save}
                 className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 active:scale-[0.98] transition">
