@@ -150,12 +150,14 @@ export default function AdminProperties() {
     setEditingListing({ ...defaultListing });
     setIsCreating(true);
     setExpandedSection("basic");
+    setPreviewMode(false);
   };
 
   const openEdit = (listing: Listing) => {
     setEditingListing({ ...listing });
     setIsCreating(false);
     setExpandedSection("basic");
+    setPreviewMode(false);
   };
 
   const saveListing = async () => {
