@@ -14,7 +14,7 @@ export type AdminPage =
   | "dashboard" | "properties" | "bookings" | "users"
   | "analytics" | "curations" | "tags" | "campaigns"
   | "coupons" | "orders" | "exports" | "ai" | "alerts" | "audit"
-  | "earnings" | "pricing" | "achievements";
+  | "earnings" | "pricing" | "achievements" | "loyalty";
 
 interface AdminLayoutProps {
   activePage: AdminPage;
