@@ -258,6 +258,14 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
 
               <SectionDivider title="BLOCKBUSTER RELEASE" />
               <BlockbusterBanner properties={properties} onPropertyTap={onPropertyTap} />
+
+              {/* ✨ Curated Packs — Bottom of Home */}
+              <SectionDivider title="✨ CURATED PACKS" />
+              <div className="px-4 space-y-4 pb-2">
+                {filteredPacks.slice(0, 4).map((pack, i) => (
+                  <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
+                ))}
+              </div>
             </>
           )}
 
