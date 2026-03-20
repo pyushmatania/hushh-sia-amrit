@@ -29,7 +29,7 @@ import ExperienceCard from "./home/ExperienceCard";
 import { CurationHeroCard, CurationMiniCard } from "./home/CurationHeroCard";
 import ServiceGrid from "./home/ServiceGrid";
 import CurationGrid from "./home/CurationGrid";
-
+import LastVibeCard from "./home/LastVibeCard";
 interface HomeScreenProps {
   onPropertyTap: (property: Property) => void;
   onSearchTap?: () => void;
