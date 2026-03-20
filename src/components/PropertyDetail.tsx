@@ -14,6 +14,8 @@ import {
   Wind, Tag, Check
 } from "lucide-react";
 import { useState, useCallback } from "react";
+import { shareProperty } from "@/lib/share";
+import { useToast } from "@/hooks/use-toast";
 import { format, differenceInDays } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
