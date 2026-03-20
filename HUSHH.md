@@ -1,6 +1,6 @@
 # 🏡 HUSHH — Private Experience Marketplace
 
-> **Made in Jeypore ❤️** | v1.15 | Internal Documentation & Blueprint
+> **Made in Jeypore ❤️** | v1.18 | Internal Documentation & Blueprint
 
 Hushh is a premium mobile-first marketplace for booking private experiences, stays, and curated lifestyle services in Jeypore, India. Think Airbnb meets a concierge — but hyper-local, with a focus on curated combos and on-demand add-ons.
 
@@ -17,16 +17,17 @@ Hushh is a premium mobile-first marketplace for booking private experiences, sta
 5. [Features — Guest Mode](#-features--guest-mode)
 6. [Features — Authenticated](#-features--authenticated)
 7. [Features — Host](#-features--host)
-8. [Design System](#-design-system)
-9. [Architecture](#-architecture)
-10. [Component Reference](#-component-reference)
-11. [Hooks Reference](#-hooks-reference)
-12. [Database Schema](#-database-schema)
-13. [Security & RLS](#-security--rls)
-14. [Tech Stack](#-tech-stack)
-15. [Change History](#-change-history)
-16. [Conventions & Guidelines](#-conventions--guidelines)
-17. [Easter Eggs](#-easter-eggs)
+8. [Admin Panel](#-admin-panel)
+9. [Design System](#-design-system)
+10. [Architecture](#-architecture)
+11. [Component Reference](#-component-reference)
+12. [Hooks Reference](#-hooks-reference)
+13. [Database Schema](#-database-schema)
+14. [Security & RLS](#-security--rls)
+15. [Tech Stack](#-tech-stack)
+16. [Change History](#-change-history)
+17. [Conventions & Guidelines](#-conventions--guidelines)
+18. [Easter Eggs](#-easter-eggs)
 
 ---
 
@@ -56,6 +57,7 @@ Hushh is a premium mobile-first marketplace for booking private experiences, sta
 | **Families** | Birthday parties, family gatherings | Birthday halls, catering, decor services |
 | **Corporate** | Team retreats, offsites, brainstorming | Package deals, analytics, bulk booking |
 | **Hosts** | Property owners monetizing spaces | Dashboard, analytics, listing management |
+| **Admins** | Operations managers, super admins | Full CRM, property CRUD, analytics, AI assistant |
 
 ---
 
@@ -98,6 +100,35 @@ Profile Tab → Edit profile, Loyalty, Referrals, Past Trips, Host Dashboard, Se
 Active Trip → Order Food (live ordering sheet) / Add Extras (per-item emoji icons)
 ```
 
+### Admin Flow
+```
+/admin → Auth Screen (or Skip for dev)
+  └─▸ Admin Layout (sidebar + command palette ⌘K)
+       ├─▸ Command Center — KPI dashboard, live activity feed, pending items
+       ├─▸ Properties — Full CRUD (name, pricing, images, tags, slots, rules, amenities)
+       ├─▸ Inventory — Food/drink/activity item management with stock tracking
+       ├─▸ Bookings — All bookings with status management
+       ├─▸ Client Directory — CRM 2.0 with engagement scoring, journey timeline
+       ├─▸ Property History — Calendar-based stay tracking, AI-powered search
+       ├─▸ Live Orders — Real-time food/service order management
+       ├─▸ Curations — Curated pack CRUD
+       ├─▸ Campaigns — Marketing campaign studio
+       ├─▸ Coupons — Discount code engine
+       ├─▸ Analytics — Charts, trends, breakdowns
+       ├─▸ Earnings — Revenue tracking
+       ├─▸ AI Assistant — Natural language queries across all data
+       ├─▸ Smart Alerts — Automated notification system
+       ├─▸ Dynamic Pricing — Demand-based price adjustments
+       ├─▸ Tags — Property tag management
+       ├─▸ Users (CRM) — User management (admin-only)
+       ├─▸ Calendar — Host calendar view
+       ├─▸ Booking Requests — Pending approval queue
+       ├─▸ Achievements — Milestone management
+       ├─▸ Loyalty & Referrals — Points & referral analytics
+       ├─▸ Exports — CSV/data export tools
+       └─▸ Audit Trail — Full activity log (admin-only)
+```
+
 ---
 
 ## 📱 Screen-by-Screen Documentation
@@ -112,7 +143,6 @@ Active Trip → Order Food (live ordering sheet) / Add Extras (per-item emoji ic
 - **Category Bar**: Horizontal tabs — Home, Stays, Experiences, Services, Curations, Work
   - Sub-filters per category, smooth scroll on switch (offset 280px on sub-filter)
 - **Content Sections**: Spotlight Carousel, Property Cards (video thumbnails + AccentFrame), Sports Cards, Foodie Carousel, Couple Specials, Service Grid, Curated Pack Listings (vertical cards with autoplay video backgrounds), What's Hot, Events, Blockbuster Banner, Experience Cards
-- **Pull-to-refresh** + **Back-to-top button**
 - **Pull-to-refresh** + **Back-to-top button**
 
 ### 3. Property Detail (`PropertyDetail.tsx`)
@@ -138,6 +168,7 @@ Active Trip → Order Food (live ordering sheet) / Add Extras (per-item emoji ic
 
 ### 10. Trips Screen (`TripsScreen.tsx`)
 - Tabs: Active (checked-in) / Upcoming / Past / Cancelled
+- Identity verification prompt for unverified users
 - Active trips show live ordering CTA and "Add Extras" with per-item emoji icons
 - Booking cards with status-colored badges, View/Cancel/Rebook actions
 
@@ -171,6 +202,114 @@ Active Trip → Order Food (live ordering sheet) / Add Extras (per-item emoji ic
 
 ---
 
+## 🛡️ Admin Panel
+
+The admin panel (`/admin`) is a full-featured operations dashboard for managing all aspects of the Hushh platform. It is accessible to users with `super_admin` or `ops_manager` roles (currently open to all authenticated users during development).
+
+### Access & Authentication
+- Route: `/admin`
+- Auth required (with "Skip for now" bypass during dev)
+- Role-based access via `useAdmin()` hook — checks `user_roles` table
+- `super_admin` sees everything; `ops_manager` sees most; some pages are admin-only (Users CRM, Audit Trail)
+
+### Layout (`AdminLayout.tsx`)
+- **Collapsible Sidebar**: 22 navigation items with icons, role-filtered visibility
+- **Mobile Drawer**: Slide-out sidebar on mobile with backdrop overlay
+- **Command Palette** (`⌘K`): Fuzzy search across all admin pages with keyboard navigation
+- **Floating Checklist**: Persistent onboarding/task checklist widget
+
+### Admin Pages (22 total)
+
+| Page | Component | Description |
+|------|-----------|-------------|
+| **Command Center** | `CommandCenter.tsx` | KPI dashboard with live stats, activity feed, pending items widget, quick navigation |
+| **AI Assistant** | `AdminAI.tsx` | Natural language queries — "Who stayed in Room 2 last Sunday?", "How many bonfires booked this month?" |
+| **Smart Alerts** | `AdminAlerts.tsx` | Automated monitoring — low stock, overdue tasks, booking anomalies |
+| **Dynamic Pricing** | `DynamicPricing.tsx` | Demand-based pricing rules, peak/off-peak multipliers |
+| **Calendar** | `HostCalendar.tsx` | Monthly calendar view with booking overlays per property |
+| **Booking Requests** | `BookingRequests.tsx` | Pending booking approval/rejection queue |
+| **Properties** | `AdminProperties.tsx` | **Full CRUD** — name, pricing, images, tags, amenities, slots (JSONB), rules (JSONB), lat/lng, capacity, status (published/draft/paused), duplicate, delete |
+| **Bookings** | `AdminBookings.tsx` | All bookings across all users, status management, filters |
+| **Live Orders** | `AdminOrders.tsx` | Real-time food/service order tracking, Zomato-style status flow |
+| **Inventory** | `AdminInventory.tsx` | Food/drink/activity item management — stock levels, low-stock alerts, pricing, availability toggle, category grouping |
+| **Client Directory** | `AdminClients.tsx` | CRM 2.0 — profile cards with engagement score (0-100), journey timeline, stay/order/review history, AI-powered search |
+| **Property History** | `AdminPropertyHistory.tsx` | Calendar-based stay tracking, chronological timeline, AI search ("last month who was in villa?") |
+| **Users (CRM)** | `AdminUsers.tsx` | Full user management (admin-only), role assignment |
+| **Analytics** | `AdminAnalytics.tsx` | Charts, trends, revenue breakdowns, booking patterns |
+| **Earnings** | `HostEarnings.tsx` | Revenue tracking, payout summaries |
+| **Curations** | `AdminCurations.tsx` | Curated pack CRUD — name, tagline, pricing, includes, mood tags, gradient, badge |
+| **Campaigns** | `AdminCampaigns.tsx` | Marketing campaign studio — flash deals, seasonal offers, target audience/properties |
+| **Coupons** | `AdminCoupons.tsx` | Discount code engine — percentage/flat, min order, max uses, expiry, user-specific |
+| **Tags** | `AdminTags.tsx` | Property tag management — name, icon, color |
+| **Exports** | `AdminExports.tsx` | CSV/data export tools |
+| **Achievements** | `AdminAchievements.tsx` | Milestone management, user achievement tracking |
+| **Loyalty & Referrals** | `AdminLoyaltyReferrals.tsx` | Points analytics, referral code performance |
+| **Audit Trail** | `AdminAuditLog.tsx` | Full activity log — who did what when (admin-only) |
+
+### Admin-Specific Features
+
+#### Command Palette (`CommandPalette.tsx`)
+- Triggered via `⌘K` / `Ctrl+K`
+- Fuzzy search across 17 command entries
+- Keyboard navigation (↑↓ arrows, Enter to select, Esc to close)
+- Each command has icon, label, and keyword aliases
+
+#### AI-Powered Search
+- Available in **Command Center**, **Client Directory**, and **Property History**
+- Natural language queries processed via edge function (`admin-ai`)
+- Example queries: "Who ordered maggie last week?", "How many bonfire bookings in March?", "Show me VIP clients"
+
+#### Live Activity Feed
+- Real-time feed in Command Center showing recent bookings, orders, reviews
+- Auto-refresh with polling
+
+#### Client Engagement Scoring
+- Automated 0-100 score based on: booking frequency, order count, review count, loyalty points
+- Segments: VIP (80+), Frequent (50+), Returning (20+), New (<20)
+
+#### Property CRUD (Database-Driven)
+- All 28+ properties migrated from hardcoded `properties.ts` to `host_listings` table
+- Admin can edit: name, description, full_description, location, lat/lng, base_price, capacity, category, property_type, primary_category, tags, amenities, highlights, image_urls, slots (JSONB), rules (JSONB), entry_instructions, host_name, discount_label, status
+- Actions: publish/pause/draft, duplicate, delete
+- Changes reflect across the entire app (consumer HomeScreen reads from DB)
+
+#### Inventory Management
+- Categories: Food, Drinks, Activities, Equipment, Supplies
+- Per-item: name, emoji, unit_price, stock, low_stock_threshold, available toggle
+- Low-stock alerts integrated with Smart Alerts
+
+#### Edge Functions (Admin Backend)
+| Function | Purpose |
+|----------|---------|
+| `admin-ai` | Processes natural language admin queries |
+| `auto-notifications` | Automated notification triggers |
+| `property-history-ai` | AI search over property stay history |
+| `smart-alerts` | Automated alert generation |
+| `weekly-digest` | Weekly summary email generation |
+
+### Admin Hooks
+
+| Hook | Purpose |
+|------|---------|
+| `useAdmin` | Role checking — `isAdmin`, `isOps`, `isHost`, `isStaff`, `hasAdminAccess` |
+
+### Admin Database Tables
+
+| Table | Admin Usage |
+|-------|-------------|
+| `user_roles` | Role-based access control (super_admin, ops_manager, host, staff) |
+| `audit_logs` | Activity tracking — entity_type, action, details (JSONB) |
+| `staff_tasks` | Task assignment and tracking |
+| `host_listings` | Full property CRUD |
+| `inventory` | Stock management |
+| `campaigns` | Marketing campaigns |
+| `coupons` | Discount codes |
+| `property_tags` | Tag definitions |
+| `tag_assignments` | Tag-to-property mappings |
+| `identity_verifications` | ID document review queue |
+
+---
+
 ## ✨ Features — Guest Mode
 
 Everything works without login using mock data:
@@ -196,8 +335,9 @@ Everything works without login using mock data:
 |---------|---------------|---------|
 | Auth | `auth.users` | Email/password, email verification, password reset |
 | Profile | `profiles` | Display name, avatar, bio, location, loyalty pts, tier |
+| Identity Verification | `identity_verifications` | Aadhaar/PAN upload, admin review queue |
 | Wishlists | `wishlists` | Real-time sync across devices |
-| Bookings | `bookings` | Full CRUD, status management |
+| Bookings | `bookings` | Full CRUD, status management, mandatory guest count |
 | Messages | `conversations` + `messages` | Real-time chat, unread counts |
 | Notifications | `notifications` | Read/unread, types, action URLs |
 | Reviews | `reviews` + `review_responses` | Ratings, photos, host responses |
@@ -244,18 +384,41 @@ Everything works without login using mock data:
 
 ```
 src/
-├── App.tsx                    # Router (/, /reset-password, 404)
-├── pages/Index.tsx            # SPA shell — screen state machine + bottom nav
-├── components/                # 40+ components (see Screen-by-Screen above)
+├── App.tsx                    # Router (/, /admin, /staff, /reset-password, 404)
+├── pages/
+│   ├── Index.tsx              # SPA shell — screen state machine + bottom nav
+│   ├── Admin.tsx              # Admin panel entry — auth gate + page router
+│   ├── Staff.tsx              # Staff dashboard
+│   └── ResetPassword.tsx      # Password reset flow
+├── components/
+│   ├── admin/                 # 25+ admin components
+│   │   ├── AdminLayout.tsx    # Sidebar + mobile drawer + command palette
+│   │   ├── CommandCenter.tsx  # KPI dashboard
+│   │   ├── CommandPalette.tsx # ⌘K fuzzy search
+│   │   ├── AdminProperties.tsx # Full property CRUD
+│   │   ├── AdminInventory.tsx # Stock management
+│   │   ├── AdminClients.tsx   # CRM 2.0
+│   │   ├── AdminPropertyHistory.tsx # Calendar + timeline
+│   │   ├── AdminAI.tsx        # AI assistant
+│   │   └── ... (20+ more)
 │   ├── home/                  # 15 feed sub-components
+│   ├── staff/                 # Staff dashboard components
 │   ├── shared/AccentFrame.tsx # Reusable corner accent
 │   └── ui/                    # 40+ shadcn/ui primitives
 ├── data/
-│   ├── properties.ts          # 1525 lines — all mock property/package/combo data
+│   ├── properties.ts          # Mock property/package/combo data (migrating to DB)
 │   └── mock-users.ts          # Mock profiles, notifications, loyalty
-├── hooks/                     # 15 custom hooks (auth, data, UI)
+├── hooks/                     # 16 custom hooks (auth, data, UI, admin)
 ├── lib/                       # Utilities (animations, haptics, share, cn)
 └── integrations/              # Supabase client + Lovable
+supabase/
+├── functions/                 # 5 edge functions
+│   ├── admin-ai/              # AI query processing
+│   ├── auto-notifications/    # Automated alerts
+│   ├── property-history-ai/   # Property history AI search
+│   ├── smart-alerts/          # Smart alert generation
+│   └── weekly-digest/         # Weekly summary emails
+└── config.toml                # Supabase project config
 ```
 
 ---
@@ -265,6 +428,7 @@ src/
 | Hook | Purpose | Guest Fallback |
 |------|---------|---------------|
 | `useAuth` | Auth context | — |
+| `useAdmin` | Role-based admin access | — |
 | `useBookings` | Booking CRUD | — |
 | `useWishlists` | Wishlist management | — |
 | `useMessages` | Chat conversations | — |
@@ -278,12 +442,13 @@ src/
 | `useTheme` | Theme management | — |
 | `usePrivacyMode` | Privacy toggle + name masking | ✅ localStorage |
 | `useCurations` | Fetch curated packs from DB | ✅ Static fallback |
+| `useUnreadCount` | Unread message count | — |
 
 ---
 
 ## 🗄 Database Schema
 
-### Tables (16 total)
+### Tables (26 total)
 | Table | Key Columns | Purpose |
 |-------|------------|---------|
 | `profiles` | user_id, display_name, avatar_url, bio, location, loyalty_points, tier | User profiles |
@@ -291,18 +456,27 @@ src/
 | `wishlists` | user_id, property_id | Saved properties |
 | `conversations` | participant_1, participant_2 | Chat threads |
 | `messages` | conversation_id, sender_id, content, read | Chat messages |
-| `notifications` | user_id, title, body, type, icon, read | Alerts |
+| `notifications` | user_id, title, body, type, icon, read, action_url | Alerts |
 | `reviews` | user_id, property_id, rating, content, photo_urls, verified | Property reviews |
 | `review_responses` | review_id, host_id, content | Host replies |
 | `loyalty_transactions` | user_id, title, points, type, icon | Point ledger |
 | `referral_codes` | user_id, code, uses, reward_points | Referral codes |
 | `referral_uses` | code_id, referrer_user_id, referred_user_id, credited | Usage tracking |
-| `host_listings` | user_id, name, category, base_price, capacity, amenities, tags, image_urls, status | Host venues |
+| `host_listings` | user_id, name, category, base_price, capacity, amenities, tags, image_urls, status, property_type, primary_category, lat, lng, highlights, slots (JSONB), rules (JSONB), host_name, rating, review_count, discount_label, entry_instructions | Property listings (fully database-driven) |
 | `curations` | name, tagline, emoji, slot, includes[], tags[], mood[], price, original_price, gradient, badge, property_id, active, sort_order | Curated experience packs |
-| `orders` | user_id, property_id, booking_id, total, status | In-stay food/drink orders |
+| `orders` | user_id, property_id, booking_id, total, status, assigned_to, assigned_name | In-stay food/drink orders |
 | `order_items` | order_id, item_name, item_emoji, quantity, unit_price | Individual order line items |
 | `spin_history` | user_id, points_won, prize_label, prize_emoji, spun_at | Daily spin wheel results |
 | `user_milestones` | user_id, milestone_id, achieved_at | Achievement tracking |
+| `user_roles` | user_id, role (app_role enum) | RBAC — super_admin, ops_manager, host, staff |
+| `audit_logs` | user_id, entity_type, entity_id, action, details (JSONB) | Activity audit trail |
+| `campaigns` | title, type, discount_type, discount_value, target_properties[], target_audience[], active | Marketing campaigns |
+| `coupons` | code, discount_type, discount_value, min_order, max_uses, uses, expires_at, user_specific_id | Discount codes |
+| `property_tags` | name, icon, color | Tag definitions |
+| `tag_assignments` | tag_id, target_id, target_type | Tag-to-entity mappings |
+| `identity_verifications` | user_id, document_type, document_url, status, notes, reviewed_by | ID verification queue |
+| `inventory` | name, emoji, category, unit_price, stock, low_stock_threshold, available, property_id | Stock management |
+| `staff_tasks` | title, description, priority, status, assigned_to, property_id, due_date | Staff task tracking |
 
 ### Database Functions
 | Function | Purpose |
@@ -310,6 +484,12 @@ src/
 | `award_loyalty_points(user_id, points, title, icon?)` | Add points + transaction |
 | `redeem_loyalty_points(user_id, points, title, icon?)` | Deduct points if sufficient |
 | `create_notification(user_id, title, body, type, icon?)` | Insert notification |
+| `has_role(user_id, role)` | Check if user has a specific role (security definer) |
+
+### Enums
+| Enum | Values |
+|------|--------|
+| `app_role` | `super_admin`, `ops_manager`, `host`, `staff` |
 
 ---
 
@@ -320,6 +500,10 @@ All tables have Row-Level Security enabled:
 - Conversations: participant match required
 - Reviews: anyone can read, only author can write
 - Host listings: owner can CRUD, anyone can read active listings
+- **Admin access**: `has_role()` security definer function prevents recursive RLS
+- **User roles**: Stored in dedicated `user_roles` table (never on profiles)
+- Admin-only tables (audit_logs, user_roles management): require `super_admin` role
+- Development overrides: Some tables have `public` SELECT policies for dev convenience (marked with "dev" suffix)
 
 ---
 
@@ -374,48 +558,54 @@ React 18 · TypeScript 5.8 · Vite 8 · Tailwind CSS 3.4 · shadcn/ui · CVA · 
 
 ### v1.11 — Curations & Mood Discovery
 - Mood Selector — emoji-based vibe picker filters entire feed
-- 8 Curated Experience Packs with 1-tap booking (After Hours Chill, Just Us Night, Party Scene, BBQ Bonfire, Movie Night, Game Night, Work Escape, Team Work Day)
-- Tonight Tags — quick discovery filters
+- 8 Curated Experience Packs with 1-tap booking
 - CuratedPackCard with gradient headers, savings badges, strikethrough pricing
-- Slot Intelligence — smart tags on time slots (Almost Full, Best Price, Trending)
-- Dynamic Pricing — strikethrough prices, savings badges, viewers-now microcopy
-- `curations` table created in DB with public read RLS, 8 seeded packs
-- `use-curations` hook fetches from DB with fallback to static data
+- Slot Intelligence — smart tags on time slots
+- Dynamic Pricing — strikethrough prices, savings badges
 
 ### v1.12 — Monetization & Gamification (DB-Wired)
-- Live Service Ordering — Swiggy-style bottom sheet, 20-item menu, category filters, cart
-  - Wired to `orders` + `order_items` tables with authenticated RLS
-  - Accessible from booking confirmation via "Order Food & Drinks" button
-- Privacy Mode — toggle masks names & booking IDs, persisted in localStorage
-- Experience Builder Smart Nudges — contextual "People also added" suggestions
-- Spin Wheel — daily spin-to-win with weighted prizes (5–100 pts)
-  - Wired to `spin_history` table, 1 spin/day enforced via DB check
+- Live Service Ordering — Swiggy-style bottom sheet
+- Privacy Mode, Experience Builder Smart Nudges
+- Spin Wheel — daily spin-to-win with weighted prizes
 - Milestone Rewards — 6 achievements with point rewards
-  - Wired to `user_milestones` table with unique(user_id, milestone_id)
-- PrivacyModeProvider wraps entire app
 
 ### v1.13 — Trip Experience & Active Booking
-- Active Trip Card on Home — replaces "Last Vibe" with live checked-in booking, 1-tap food ordering
-- Trip Detail overhaul — order food CTA, add extras sheet for active trips
-- Merged extras & food ordering into unified in-stay experience
-- 12 demo bookings across all statuses (active, upcoming, past, cancelled) for guest mode
-- Status normalization (`normalizeStatus`) for consistent filtering across screens
-- Past Trips synced between Profile tab and Trips tab
-- Wishlist sanitization — only valid property IDs stored/displayed
-- `useBookings` and `useWishlists` hooks provide comprehensive guest fallback data
+- Active Trip Card on Home, Trip Detail overhaul
+- 12 demo bookings, status normalization, wishlist sanitization
 
 ### v1.14 — Loyalty & Rewards Redesign
-- Gamified Loyalty Screen — tier hero card with progress bar, tabbed interface (Rewards, Spin, Quests, Earn, Refer, History)
-- Enhanced Spin Wheel — weighted prizes, confetti burst, neon glow ring, cinematic deceleration
-- Sound effects — Web Audio API synthesized tick sounds (dynamic pitch/tempo) and win jingle
-- Quests tab with milestone progress bars
-- `spin_history` and `user_milestones` wired to DB
+- Gamified Loyalty Screen with tabbed interface
+- Enhanced Spin Wheel with sound effects
 
 ### v1.15 — Add-on Icons & Curated Listings
-- Per-item emoji icons on all add-on/extras options (🍛🥩☕🍕🍰🍺🎈💡🎧🎤🏊🔭📸 etc.)
-- Curated Pack Listings redesigned — vertical long cards with autoplay video backgrounds
-- Video assets generated for all curated packs
-- Addon type extended with `emoji` field for item-level iconography
+- Per-item emoji icons, curated pack video backgrounds
+
+### v1.16 — Admin Panel Foundation
+- Admin layout with collapsible sidebar (22 nav items)
+- Command Palette (⌘K) with fuzzy search
+- Command Center dashboard with KPI cards, live activity feed
+- Role-based access control via `user_roles` table and `has_role()` function
+- Admin pages: Properties, Bookings, Users, Analytics, Curations, Campaigns, Coupons, Tags, Orders, Exports, AI Assistant, Smart Alerts, Audit Trail, Earnings, Dynamic Pricing, Achievements, Loyalty & Referrals
+- Floating Checklist widget
+- Edge functions: admin-ai, auto-notifications, smart-alerts, weekly-digest, property-history-ai
+
+### v1.17 — Admin CRM & Property History
+- **Client Directory (CRM 2.0)** — engagement scoring (0-100), journey timeline, stay/order/review aggregation from 9+ tables
+- **Property History** — calendar-based stay tracking, chronological timeline, AI-powered natural language search
+- AI search integrated into Command Center, Client Directory, and Property History
+- Live Orders widget (Zomato-style), Live Pending tracker
+- Booking Heatmap visualization
+- Weekly Digest preview
+- Auto-Actions panel for automated workflows
+- Identity verification review queue in admin
+
+### v1.18 — Database-Driven CRUD & Inventory
+- **Properties fully database-driven** — all 28+ properties migrated from `properties.ts` to `host_listings` table
+- **Full Property CRUD** — admin can edit name, pricing, images, tags, amenities, slots, rules, status, duplicate, delete
+- **Inventory Management** — food/drink/activity stock tracking with low-stock alerts, category grouping, availability toggles
+- `host_listings` schema expanded with 12 new columns (property_type, primary_category, lat/lng, highlights, slots JSONB, rules JSONB, host_name, rating, review_count)
+- Coupons and campaigns seeded in database
+- Identity verification enforcement on booking flow
 
 ---
 
@@ -436,6 +626,12 @@ React 18 · TypeScript 5.8 · Vite 8 · Tailwind CSS 3.4 · shadcn/ui · CVA · 
 
 ### File Naming
 - Components: `PascalCase.tsx` | Hooks: `use-kebab.tsx` | Data: `kebab.ts` | Lib: `kebab.ts`
+
+### Admin Development
+- All admin components in `src/components/admin/`
+- Admin page type must be added to `AdminPage` union in `AdminLayout.tsx`
+- New pages must be added to: `AdminLayout` nav items, `CommandPalette` commands, `Admin.tsx` switch/case
+- Always use `useAdmin()` hook for role checks — never client-side storage
 
 ---
 
