@@ -1163,7 +1163,6 @@ export const properties: Property[] = [
       { id: "s3", label: "Full Day", time: "12 PM - 10 PM", price: 2499, available: true },
     ],
     entryInstructions: "Chef will arrive at your venue. Share location on WhatsApp.",
-    fullDescription: "Book a professional private chef who comes to your stay or event venue. Choose from multi-cuisine menus including Indian, Continental, BBQ, and local Koraput specialties.",
   },
   {
     id: "26",
