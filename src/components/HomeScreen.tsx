@@ -31,9 +31,11 @@ interface HomeScreenProps {
   onSearchTap?: () => void;
   onMapTap?: () => void;
   onNotificationTap?: () => void;
+  wishlist?: string[];
+  onToggleWishlist?: (id: string) => void;
 }
 
-export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNotificationTap }: HomeScreenProps) {
+export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNotificationTap, wishlist = [], onToggleWishlist }: HomeScreenProps) {
   const { unreadCount: notifCount } = useNotifications();
   const [refreshKey, setRefreshKey] = useState(0);
   const handleRefresh = useCallback(async () => {
