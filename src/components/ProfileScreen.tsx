@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
+import PublicProfileScreen from "./PublicProfileScreen";
 import {
   ChevronRight, Bell, Settings, HelpCircle, LogOut,
   Shield, Gift, Star, Sun, Moon, Monitor, BadgeCheck,
@@ -62,6 +63,7 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
   const [activeSetting, setActiveSetting] = useState("");
   const [showLoyalty, setShowLoyalty] = useState(false);
   const [showReferral, setShowReferral] = useState(false);
+  const [showPublicProfile, setShowPublicProfile] = useState(false);
   const [profile, setProfile] = useState({
     name: user?.user_metadata?.full_name || "Guest Explorer",
     location: "Jeypore, India",
@@ -121,14 +123,25 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
         transition={{ delay: 0.1 }}
         className="mx-5 mt-5 rounded-3xl glass p-6 relative"
       >
-        {/* Edit button */}
-        <motion.button
-          whileTap={{ scale: 0.9 }}
-          onClick={() => setShowEditProfile(true)}
-          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center"
-        >
-          <Pencil size={14} className="text-primary" />
-        </motion.button>
+        {/* Edit & View Public Profile buttons */}
+        <div className="absolute top-4 right-4 flex gap-2">
+          {user && (
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setShowPublicProfile(true)}
+              className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center"
+            >
+              <Globe size={14} className="text-primary" />
+            </motion.button>
+          )}
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setShowEditProfile(true)}
+            className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center"
+          >
+            <Pencil size={14} className="text-primary" />
+          </motion.button>
+        </div>
 
         <div className="flex items-start gap-5">
           <div className="flex flex-col items-center">
@@ -406,6 +419,11 @@ export default function ProfileScreen({ onHostTap }: ProfileScreenProps) {
       <AnimatePresence>
         {showReferral && (
           <ReferralScreen onBack={() => setShowReferral(false)} />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showPublicProfile && user && (
+          <PublicProfileScreen userId={user.id} onBack={() => setShowPublicProfile(false)} />
         )}
       </AnimatePresence>
     </div>
