@@ -328,7 +328,7 @@ export default function ExperienceBuilder({ property, slotId, guests, date, onBa
       )}
 
       {/* Add-on cards — scrollable area */}
-      <div className="flex-1 overflow-y-auto pb-36 px-4 pt-3">
+      <div className="flex-1 overflow-y-auto overscroll-contain pb-24 px-4 pt-3" style={{ WebkitOverflowScrolling: "touch" }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={isSearching ? `search-${searchQuery}` : activeCategory}
@@ -439,36 +439,22 @@ export default function ExperienceBuilder({ property, slotId, guests, date, onBa
         </AnimatePresence>
       </div>
 
-      {/* Footer */}
+      {/* Compact Footer */}
       <div className="fixed bottom-0 left-0 right-0 z-40">
-        <div className="glass border-t border-border px-5 py-3.5">
-          <div className="flex items-center justify-between mb-1.5">
-            <div className="flex items-center gap-3 text-xs text-muted-foreground">
-              <span>Base: ₹{slot.price.toLocaleString()}</span>
-              {addonTotal > 0 && (
-                <span className="text-primary font-medium">+ ₹{addonTotal.toLocaleString()}</span>
-              )}
-              {extrasTotal > 0 && (
-                <span className="text-accent font-medium">+ ₹{extrasTotal.toLocaleString()} extras</span>
-              )}
-            </div>
+        <div className="glass border-t border-border px-4 py-2.5 flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <span className="font-bold text-lg text-foreground">₹{(total + extrasTotal).toLocaleString()}</span>
             {selectedCount > 0 && (
-              <span className="text-[10px] text-muted-foreground">{selectedCount} item{selectedCount !== 1 ? "s" : ""}</span>
+              <span className="text-[10px] text-muted-foreground ml-1.5">{selectedCount} add-on{selectedCount !== 1 ? "s" : ""}</span>
             )}
           </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <span className="font-bold text-xl text-foreground">₹{(total + extrasTotal).toLocaleString()}</span>
-              <span className="text-[10px] text-muted-foreground ml-1">total</span>
-            </div>
-            <motion.button
-              onClick={() => onContinue(selections, total)}
-              className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold text-sm glow-primary flex items-center gap-1.5"
-              whileTap={{ scale: 0.93 }}
-            >
-              Continue <ChevronRight size={14} />
-            </motion.button>
-          </div>
+          <motion.button
+            onClick={() => onContinue(selections, total)}
+            className="bg-primary text-primary-foreground px-5 py-2.5 rounded-xl font-semibold text-sm glow-primary flex items-center gap-1.5 shrink-0"
+            whileTap={{ scale: 0.93 }}
+          >
+            Continue <ChevronRight size={14} />
+          </motion.button>
         </div>
       </div>
     </motion.div>

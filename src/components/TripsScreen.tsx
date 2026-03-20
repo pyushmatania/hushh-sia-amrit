@@ -1,6 +1,6 @@
 import { motion, useMotionValue, useTransform, useSpring, useAnimation, PanInfo } from "framer-motion";
 import { MapPin, Calendar, Clock, ChevronRight, Ticket, QrCode, Users, X } from "lucide-react";
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useMemo } from "react";
 import { properties } from "@/data/properties";
 import PullToRefresh from "./PullToRefresh";
 import type { Booking } from "@/pages/Index";
@@ -253,12 +253,50 @@ function TiltCard({
   );
 }
 
+// Demo trips shown when no real bookings exist
+const demoTrips: Booking[] = [
+  {
+    id: "demo-1",
+    propertyId: "1",
+    date: "Mar 25, 2026",
+    slot: "Evening · 6 PM – 11 PM",
+    guests: 4,
+    total: 8500,
+    status: "upcoming",
+    bookingId: "HUSHH-DEMO01",
+  },
+  {
+    id: "demo-2",
+    propertyId: "2",
+    date: "Mar 10, 2026",
+    slot: "Full Day · 10 AM – 10 PM",
+    guests: 8,
+    total: 15200,
+    status: "completed",
+    bookingId: "HUSHH-DEMO02",
+  },
+  {
+    id: "demo-3",
+    propertyId: "3",
+    date: "Feb 14, 2026",
+    slot: "Night · 8 PM – 1 AM",
+    guests: 2,
+    total: 6000,
+    status: "cancelled",
+    bookingId: "HUSHH-DEMO03",
+  },
+];
+
 export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel }: TripsScreenProps) {
   const [refreshKey, setRefreshKey] = useState(0);
   const handleRefresh = useCallback(async () => {
     await new Promise((r) => setTimeout(r, 800));
     setRefreshKey((k) => k + 1);
   }, []);
+
+  // Show demo trips when no real bookings exist
+  const displayBookings = useMemo(() => bookings.length > 0 ? bookings : demoTrips, [bookings]);
+  const isDemo = bookings.length === 0;
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
@@ -281,39 +319,28 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
         </motion.p>
       </div>
 
-      {bookings.length === 0 ? (
+      {isDemo && (
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center justify-center px-5 pt-20"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="mx-5 mt-2 mb-1 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20"
         >
-          <motion.div
-            className="w-24 h-24 rounded-full bg-secondary/50 flex items-center justify-center mb-5"
-            animate={{ rotateY: [0, 180, 360] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            style={{ perspective: 600, transformStyle: "preserve-3d" }}
-          >
-            <Ticket size={36} className="text-muted-foreground" />
-          </motion.div>
-          <h3 className="text-lg font-semibold text-foreground mb-1">No trips yet</h3>
-          <p className="text-sm text-muted-foreground text-center max-w-[260px]">
-            When you book a venue or experience, it will show up here.
-          </p>
+          <p className="text-[11px] text-primary font-medium text-center">✨ These are sample trips — book a venue to see your real trips here!</p>
         </motion.div>
-      ) : (
-        <div className="px-5 pt-4 space-y-6">
-          {bookings.map((trip, i) => (
-            <SwipeableCard
-              key={trip.id}
-              booking={trip}
-              index={i}
-              onViewDetail={onViewDetail}
-              onRebook={onRebook}
-              onCancel={onCancel}
-            />
-          ))}
-        </div>
       )}
+
+      <div className="px-5 pt-4 space-y-6">
+        {displayBookings.map((trip, i) => (
+          <SwipeableCard
+            key={trip.id}
+            booking={trip}
+            index={i}
+            onViewDetail={onViewDetail}
+            onRebook={onRebook}
+            onCancel={isDemo ? undefined : onCancel}
+          />
+        ))}
+      </div>
     </div>
     </PullToRefresh>
   );
