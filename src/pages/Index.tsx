@@ -311,6 +311,9 @@ export default function Index() {
       {showBottomNav && (
         <BottomNav active={activeTab} onChange={setActiveTab} messageBadge={unreadCount} />
       )}
+
+      <NotificationToastProvider />
+      <NotificationPermissionBanner />
     </div>
   );
 }
