@@ -14,7 +14,11 @@ import {
   Wind, Tag
 } from "lucide-react";
 import { useState, useCallback } from "react";
-import { format } from "date-fns";
+import { format, differenceInDays } from "date-fns";
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type { DateRange } from "react-day-picker";
 import type { Property } from "@/data/properties";
 import { properties as allProperties, addons } from "@/data/properties";
 import ReviewSection from "@/components/ReviewSection";
