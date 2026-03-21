@@ -363,15 +363,17 @@ export default function AdminCurations() {
                 onClick={() => startEdit(c)}
               >
                 <div className="flex items-start gap-2">
-                  <button
-                    type="button"
-                    onClick={e => { e.stopPropagation(); toggleSelect(c.id); }}
-                    className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 mt-1 transition-all ${
-                      selectedIds.includes(c.id) ? "bg-primary border-primary text-primary-foreground" : "border-muted-foreground/30 hover:border-primary/50"
-                    }`}
-                  >
-                    {selectedIds.includes(c.id) && <span className="text-[10px] font-bold">✓</span>}
-                  </button>
+                  {bulkMode && (
+                    <button
+                      type="button"
+                      onClick={e => { e.stopPropagation(); toggleSelect(c.id); }}
+                      className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 mt-1 transition-all ${
+                        selectedIds.includes(c.id) ? "bg-primary border-primary text-primary-foreground" : "border-muted-foreground/30 hover:border-primary/50"
+                      }`}
+                    >
+                      {selectedIds.includes(c.id) && <span className="text-[10px] font-bold">✓</span>}
+                    </button>
+                  )}
                   <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary/15 to-accent/10 flex items-center justify-center text-2xl shadow-sm shrink-0">
                     {c.emoji}
                   </div>

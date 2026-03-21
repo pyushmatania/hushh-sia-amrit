@@ -239,15 +239,17 @@ export default function AdminExperiencePackages() {
                 className={`rounded-xl border bg-card p-4 flex items-center gap-2 select-none ${
                   !pkg.active ? "opacity-50" : ""} ${selectedIds.includes(pkg.id) ? "border-primary/50 bg-primary/5" : "border-border"}`}
               >
-                <button
-                  type="button"
-                  onClick={e => { e.stopPropagation(); toggleSelect(pkg.id); }}
-                  className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${
-                    selectedIds.includes(pkg.id) ? "bg-primary border-primary text-primary-foreground" : "border-muted-foreground/30 hover:border-primary/50"
-                  }`}
-                >
-                  {selectedIds.includes(pkg.id) && <span className="text-[10px] font-bold">✓</span>}
-                </button>
+                {bulkMode && (
+                  <button
+                    type="button"
+                    onClick={e => { e.stopPropagation(); toggleSelect(pkg.id); }}
+                    className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${
+                      selectedIds.includes(pkg.id) ? "bg-primary border-primary text-primary-foreground" : "border-muted-foreground/30 hover:border-primary/50"
+                    }`}
+                  >
+                    {selectedIds.includes(pkg.id) && <span className="text-[10px] font-bold">✓</span>}
+                  </button>
+                )}
                 <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${pkg.gradient} flex items-center justify-center text-2xl shadow-sm shrink-0`}>
                   {pkg.emoji}
                 </div>
