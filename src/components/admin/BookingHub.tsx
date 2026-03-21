@@ -467,7 +467,7 @@ export default function BookingHub({
               ) : (
                 <div className="space-y-3">
                   {pendingBookings.map((b, i) => (
-                    <RequestCard key={b.id} booking={b} index={i} updating={updating} onAccept={(id) => updateStatus(id, "confirmed")} onReject={(id) => updateStatus(id, "cancelled")} onNavigate={onNavigate} timeAgo={timeAgo} />
+                    <RequestCard key={b.id} booking={b} index={i} updating={updating} onAccept={(id) => updateStatus(id, "confirmed")} onReject={(id) => updateStatus(id, "cancelled")} onNavigate={onNavigate} timeAgo={timeAgo} conflicts={getConflicts(b)} />
                   ))}
                 </div>
               )}
