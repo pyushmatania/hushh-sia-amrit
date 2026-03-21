@@ -575,3 +575,4 @@ function FlameMouth({ size, type, state }: { size: number; type: string; state: 
     />
   );
 }
+
