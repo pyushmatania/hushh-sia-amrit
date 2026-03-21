@@ -285,32 +285,50 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
         transition={{ type: "spring", damping: 30, stiffness: 300 }}
         className="w-full max-w-md h-full bg-card border-l border-border overflow-y-auto"
         onClick={e => e.stopPropagation()}
+        ref={el => { if (el) el.scrollTop = 0; }}
       >
-        {/* Header */}
-        <div className="sticky top-0 z-20 bg-card/95 backdrop-blur-sm border-b border-border p-4">
-          <div className="flex items-center gap-3">
-            <button onClick={onClose} className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center hover:bg-primary/10 transition active:scale-95">
-              <ArrowLeft size={14} className="text-foreground" />
-            </button>
-            <div className="flex-1 min-w-0">
-              <h2 className="text-sm font-bold text-foreground truncate">{property.name}</h2>
-              <p className="text-[10px] text-muted-foreground flex items-center gap-1"><MapPin size={8} />{property.location} · {property.category}</p>
-            </div>
+        {/* Enhanced Header */}
+        <div className="sticky top-0 z-20 bg-card/95 backdrop-blur-sm border-b border-border">
+          <div className="relative">
+            <div className="h-20 bg-gradient-to-br from-primary/15 to-accent/10" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,hsl(var(--primary)/0.1),transparent_60%)]" />
+            <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-card/95 to-transparent" />
           </div>
-
-          {/* Quick stats */}
-          <div className="grid grid-cols-4 gap-2 mt-3">
-            {[
-              { label: "Revenue", value: `₹${property.totalRevenue.toLocaleString("en-IN")}`, color: "text-foreground" },
-              { label: "Bookings", value: property.bookings.length.toString(), color: "text-primary" },
-              { label: "Guests", value: property.uniqueGuests.toString(), color: "text-emerald-400" },
-              { label: "Rating", value: property.avgRating > 0 ? property.avgRating.toFixed(1) : "—", color: "text-amber-400" },
-            ].map(s => (
-              <div key={s.label} className="rounded-xl bg-secondary/40 border border-border/50 p-2 text-center">
-                <p className={`text-sm font-bold tabular-nums ${s.color}`}>{s.value}</p>
-                <p className="text-[8px] text-muted-foreground">{s.label}</p>
+          <div className="px-4 pb-3 -mt-8">
+            <div className="flex items-end gap-3">
+              <button onClick={onClose} className="w-9 h-9 rounded-full bg-card/90 backdrop-blur-sm border border-border flex items-center justify-center hover:bg-card transition active:scale-95 shrink-0 mb-1">
+                <ArrowLeft size={16} className="text-foreground" />
+              </button>
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-card flex items-center justify-center text-2xl shrink-0 shadow-lg" style={{ boxShadow: "0 8px 24px hsl(var(--primary) / 0.15)" }}>
+                {property.category === "Stays" ? "🏡" : property.category === "Experiences" ? "✨" : property.category === "Food" ? "🍽️" : "🏢"}
               </div>
-            ))}
+              <div className="flex-1 min-w-0">
+                <h2 className="text-base font-bold text-foreground truncate">{property.name}</h2>
+                <p className="text-[10px] text-muted-foreground flex items-center gap-1"><MapPin size={8} />{property.location} · {property.category}</p>
+                {property.avgRating > 0 && (
+                  <div className="flex items-center gap-1 mt-0.5">
+                    <Star size={10} fill="currentColor" className="text-amber-400" />
+                    <span className="text-[10px] font-bold text-foreground">{property.avgRating.toFixed(1)}</span>
+                    <span className="text-[9px] text-muted-foreground">({property.reviewCount} reviews)</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Quick stats */}
+            <div className="grid grid-cols-4 gap-2 mt-3">
+              {[
+                { label: "Revenue", value: `₹${property.totalRevenue.toLocaleString("en-IN")}`, color: "text-foreground" },
+                { label: "Bookings", value: property.bookings.length.toString(), color: "text-primary" },
+                { label: "Guests", value: property.uniqueGuests.toString(), color: "text-emerald-400" },
+                { label: "Orders", value: property.orders.length.toString(), color: "text-amber-400" },
+              ].map(s => (
+                <div key={s.label} className="rounded-xl bg-secondary/40 border border-border/50 p-2 text-center">
+                  <p className={`text-sm font-bold tabular-nums ${s.color}`}>{s.value}</p>
+                  <p className="text-[8px] text-muted-foreground">{s.label}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
