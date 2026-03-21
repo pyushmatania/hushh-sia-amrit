@@ -246,32 +246,67 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
           </AnimatePresence>
         </motion.div>
 
-        {/* Booking Conflict Warning */}
+        {/* Booking Conflict Warning — Capacity-Aware */}
         <AnimatePresence>
-          {conflict?.hasConflict && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4"
-            >
-              <div className="flex items-start gap-3">
-                <div className="w-9 h-9 rounded-xl bg-amber-500/15 flex items-center justify-center shrink-0 mt-0.5">
-                  <AlertTriangle size={18} className="text-amber-400" />
+          {conflict?.hasConflict && (() => {
+            const existingGuests = conflict.existingBookings.reduce((s, b) => s + b.guests, 0);
+            const totalGuests = existingGuests + liveGuests;
+            const isStay = property.primaryCategory === "stay";
+            const maxCapacity = property.capacity || (isStay ? 6 : 15);
+            const roomCapacity = 2;
+            const extraMattress = 1;
+            const rooms = isStay ? Math.max(1, Math.floor(maxCapacity / roomCapacity)) : 0;
+            const maxWithMattress = isStay ? rooms * (roomCapacity + extraMattress) : maxCapacity;
+            const isOverCapacity = totalGuests > maxWithMattress;
+            const roomsNeeded = isStay ? Math.ceil(totalGuests / (roomCapacity + extraMattress)) : 0;
+            const needsMattress = isStay && totalGuests > roomsNeeded * roomCapacity;
+
+            return (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className={`rounded-2xl border p-4 ${isOverCapacity ? "border-destructive/30 bg-destructive/5" : "border-amber-500/30 bg-amber-500/5"}`}
+              >
+                <div className="flex items-start gap-3">
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${isOverCapacity ? "bg-destructive/15" : "bg-amber-500/15"}`}>
+                    <AlertTriangle size={18} className={isOverCapacity ? "text-destructive" : "text-amber-400"} />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-sm text-foreground">
+                      {isOverCapacity ? "🚨 Over Capacity" : isStay ? "🛏️ Room Allocation" : "👥 Slot has bookings"}
+                    </h4>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {conflict.existingBookings.length} existing booking{conflict.existingBookings.length > 1 ? "s" : ""} · {existingGuests} guests already confirmed + your {liveGuests} = {totalGuests} total
+                    </p>
+                    {isStay ? (
+                      <div className="mt-2 space-y-1">
+                        <p className="text-[11px] font-medium text-foreground">
+                          {rooms} rooms available ({roomCapacity} per room + {extraMattress} extra mattress)
+                        </p>
+                        {isOverCapacity ? (
+                          <p className="text-[10px] text-destructive font-semibold">
+                            Needs {roomsNeeded} rooms but only {rooms} available. Consider splitting across dates.
+                          </p>
+                        ) : (
+                          <p className="text-[10px] text-amber-500 font-medium">
+                            Suggest {roomsNeeded} room{roomsNeeded > 1 ? "s" : ""}
+                            {needsMattress ? " with extra mattress for odd guest" : ""}
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <p className={`text-[10px] font-medium mt-1.5 ${isOverCapacity ? "text-destructive" : "text-amber-400"}`}>
+                        {isOverCapacity
+                          ? `Max ${maxWithMattress} guests allowed. Consider a different slot.`
+                          : `${totalGuests}/${maxWithMattress} capacity used. You can still book.`}
+                      </p>
+                    )}
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <h4 className="font-semibold text-sm text-foreground">Slot already booked</h4>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    This property has {conflict.existingBookings.length} existing booking{conflict.existingBookings.length > 1 ? "s" : ""} for this date & slot.
-                    {conflict.existingBookings.reduce((s, b) => s + b.guests, 0)} guests already confirmed.
-                  </p>
-                  <p className="text-[10px] text-amber-400 font-medium mt-1.5">
-                    Consider choosing a different date or time slot to avoid conflicts.
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          )}
+              </motion.div>
+            );
+          })()}
         </AnimatePresence>
 
         {/* Price Breakdown */}
