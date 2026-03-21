@@ -139,6 +139,30 @@ export default function AdminProperties() {
     setDeleteTarget(id);
   };
 
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
+
+  const bulkDelete = async (ids: string[]) => {
+    for (const id of ids) {
+      await supabase.from("host_listings").delete().eq("id", id);
+    }
+    setListings(prev => prev.filter(l => !ids.includes(l.id)));
+    setSelectedIds([]);
+    notifyListingsUpdated();
+    toast({ title: `${ids.length} properties deleted` });
+  };
+
+  const bulkStatusChange = async (ids: string[], status: string) => {
+    for (const id of ids) {
+      await supabase.from("host_listings").update({ status }).eq("id", id);
+    }
+    setListings(prev => prev.map(l => ids.includes(l.id) ? { ...l, status } : l));
+    setSelectedIds([]);
+    notifyListingsUpdated();
+    toast({ title: `${ids.length} properties set to ${status}` });
+  };
+
   const duplicateListing = async (listing: Listing) => {
     const { id, created_at, ...rest } = listing;
     const { data, error } = await supabase.from("host_listings")
