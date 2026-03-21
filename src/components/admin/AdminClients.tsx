@@ -105,6 +105,20 @@ function PropertyThumb({ name, imageUrls, size = 40 }: { name: string; imageUrls
 }
 
 /* ─── Character Avatar DP ─── */
+import avatarChar1 from "@/assets/avatar-char-1.png";
+import avatarChar2 from "@/assets/avatar-char-2.png";
+import avatarChar3 from "@/assets/avatar-char-3.png";
+import avatarChar4 from "@/assets/avatar-char-4.png";
+import avatarChar5 from "@/assets/avatar-char-5.png";
+import avatarChar6 from "@/assets/avatar-char-6.png";
+import avatarChar7 from "@/assets/avatar-char-7.png";
+import avatarChar8 from "@/assets/avatar-char-8.png";
+
+const characterAvatars = [
+  avatarChar1, avatarChar2, avatarChar3, avatarChar4,
+  avatarChar5, avatarChar6, avatarChar7, avatarChar8,
+];
+
 const profileGradients = [
   "from-red-500 to-orange-400",
   "from-violet-600 to-fuchsia-400",
@@ -132,9 +146,8 @@ function hashString(str: string): number {
 function ProfileAvatar({ client, size = 48 }: { client: ClientProfile; size?: number }) {
   const tier = tierGradients[client.tier] || tierGradients.Silver;
   const imgSize = size - 6;
-  const initials = (client.display_name || "?")
-    .split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
   const hash = hashString(client.user_id);
+  const charAvatar = characterAvatars[hash % characterAvatars.length];
   const gradient = profileGradients[hash % profileGradients.length];
 
   return (
@@ -155,16 +168,12 @@ function ProfileAvatar({ client, size = 48 }: { client: ClientProfile; size?: nu
             className={`bg-gradient-to-br ${gradient} flex items-center justify-center relative overflow-hidden`}
             style={{ width: imgSize, height: imgSize, borderRadius: size * 0.26 }}
           >
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-0 right-0 w-3/4 h-3/4 rounded-full bg-white/20 -translate-y-1/3 translate-x-1/3" />
-              <div className="absolute bottom-0 left-0 w-1/2 h-1/2 rounded-full bg-black/10 translate-y-1/4 -translate-x-1/4" />
-            </div>
-            <span
-              className="text-white font-black relative z-10 drop-shadow-md tracking-tight select-none"
-              style={{ fontSize: size * (initials.length > 1 ? 0.34 : 0.42), lineHeight: 1 }}
-            >
-              {initials}
-            </span>
+            <img
+              src={charAvatar}
+              alt={client.display_name || ""}
+              className="w-full h-full object-cover object-top"
+              style={{ borderRadius: size * 0.26 }}
+            />
           </div>
         )}
       </div>
