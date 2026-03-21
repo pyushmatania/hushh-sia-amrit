@@ -11,6 +11,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import SwipeableRow from "./SwipeableRow";
+import DeleteConfirmDialog from "./DeleteConfirmDialog";
 
 interface Listing {
   id: string;
