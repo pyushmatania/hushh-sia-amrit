@@ -467,7 +467,8 @@ export default function AdminCurations() {
                 onEdit={() => startEdit(c)}
                 onDelete={() => setDeleteTarget({ id: c.id, name: c.name })}>
                 <motion.div
-                  variants={fadeUp}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
                   {...getDropTargetProps(c)}
                   onDragEnd={handleDragEnd}
                   style={getDragItemStyle(c)}
