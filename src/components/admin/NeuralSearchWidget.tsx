@@ -297,28 +297,29 @@ export default function NeuralSearchWidget({
     >
       <FloatingParticles />
 
-      <div className={`${compact ? "p-3" : "p-4"} relative z-10`}>
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-3">
-          <motion.div whileHover={{ rotate: [0, -10, 10, 0] }} transition={{ duration: 0.5 }}>
-            <HushhBot size={40} state={botState} />
+      <div className={`${compact ? "p-3" : "p-5"} relative z-10`}>
+        {/* Centered Avatar + Title */}
+        <div className="flex flex-col items-center mb-4">
+          <motion.div
+            whileHover={{ scale: 1.1, rotate: [0, -5, 5, 0] }}
+            transition={{ duration: 0.5 }}
+          >
+            <HushhBot size={compact ? 56 : 72} state={botState} />
           </motion.div>
-          <div className="flex-1">
-            <h3 className="text-sm font-bold text-foreground flex items-center gap-2 font-display">
-              {title}
-              <motion.span
-                animate={{ opacity: [0.7, 1, 0.7] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="flex items-center gap-1 text-[8px] font-medium px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-              >
-                <Activity size={7} /> Live
-              </motion.span>
-            </h3>
-            {subtitle && <p className="text-[9px] text-muted-foreground mt-0.5">{subtitle}</p>}
-          </div>
+          <h3 className="text-sm font-bold text-foreground flex items-center gap-2 font-display mt-1">
+            {title}
+            <motion.span
+              animate={{ opacity: [0.7, 1, 0.7] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="flex items-center gap-1 text-[8px] font-medium px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+            >
+              <Activity size={7} /> Live
+            </motion.span>
+          </h3>
+          {subtitle && <p className="text-[9px] text-muted-foreground mt-0.5 text-center">{subtitle}</p>}
         </div>
 
-        {/* Input */}
+        {/* Input below avatar */}
         <div className="flex gap-2">
           <div className="relative flex-1">
             <motion.div
@@ -385,10 +386,7 @@ export default function NeuralSearchWidget({
                 <Loader2 size={14} />
               </motion.div>
             ) : (
-              <motion.div
-                animate={{ x: [0, 2, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              >
+              <motion.div animate={{ x: [0, 2, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
                 <Send size={14} />
               </motion.div>
             )}
@@ -396,7 +394,7 @@ export default function NeuralSearchWidget({
         </div>
 
         {/* Example chips */}
-        <div className="flex flex-wrap gap-1.5 mt-3">
+        <div className="flex flex-wrap gap-1.5 mt-3 justify-center">
           {examples.map((eq, i) => (
             <motion.button
               key={i}
