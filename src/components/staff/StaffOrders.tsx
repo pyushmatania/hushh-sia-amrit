@@ -129,6 +129,22 @@ export default function StaffOrders() {
         ))}
       </div>
 
+      <div className="relative">
+        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+        <input
+          type="text"
+          placeholder="Search by guest name…"
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          className="w-full pl-9 pr-8 py-2 rounded-xl bg-secondary text-sm text-foreground placeholder:text-muted-foreground border border-border focus:outline-none focus:ring-1 focus:ring-primary/30"
+        />
+        {searchQuery && (
+          <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+            <X size={14} />
+          </button>
+        )}
+      </div>
+
       {loading ? (
         <div className="flex justify-center py-12"><Loader2 className="animate-spin text-primary" size={24} /></div>
       ) : filtered.length === 0 ? (
