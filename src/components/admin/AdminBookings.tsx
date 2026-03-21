@@ -20,7 +20,7 @@ const statusConfig: Record<string, { color: string; icon: typeof Clock }> = {
   pending: { color: "bg-amber-500/15 text-amber-400", icon: Clock },
 };
 
-export default function AdminBookings() {
+export default function AdminBookings({ onNavigate }: { onNavigate?: (page: string, ctx?: { bookingId?: string; propertyId?: string }) => void }) {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
