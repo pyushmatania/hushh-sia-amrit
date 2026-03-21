@@ -124,7 +124,7 @@ export default function Admin() {
   const renderPage = () => {
     switch (page) {
       case "catalog": return <AdminCatalog />;
-      case "dashboard": return <CommandCenter onNavigate={setPage} />;
+      case "dashboard": return <CommandCenter onNavigate={setPage} userRole={roles[0] || null} />;
       case "ai": return <AdminAI />;
       case "alerts": return <BusinessIntelligence onNavigate={(p) => setPage(p as AdminPage)} />;
       case "pricing": return <BusinessIntelligence onNavigate={(p) => setPage(p as AdminPage)} />;
