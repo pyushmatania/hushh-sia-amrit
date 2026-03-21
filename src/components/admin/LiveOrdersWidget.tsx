@@ -8,7 +8,7 @@ interface LiveOrder {
   id: string; user_id: string; property_id: string; total: number;
   status: string; created_at: string; assigned_name: string | null;
   items: { item_name: string; item_emoji: string; quantity: number }[];
-  guestName: string; propertyName: string;
+  guestName: string; propertyName: string; propertyImageUrls: string[];
 }
 
 const statusSteps = ["pending", "preparing", "delivered"];
