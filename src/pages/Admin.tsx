@@ -5,7 +5,7 @@ import AdminLayout, { type AdminPage } from "@/components/admin/AdminLayout";
 import CommandCenter from "@/components/admin/CommandCenter";
 import AdminCatalog from "@/components/admin/AdminCatalog";
 import AdminProperties from "@/components/admin/AdminProperties";
-import AdminBookings from "@/components/admin/AdminBookings";
+import BookingHub from "@/components/admin/BookingHub";
 import AdminUsers from "@/components/admin/AdminUsers";
 import AdminClients from "@/components/admin/AdminClients";
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
@@ -23,7 +23,7 @@ import DynamicPricing from "@/components/admin/DynamicPricing";
 import AdminAchievements from "@/components/admin/AdminAchievements";
 import AdminLoyaltyReferrals from "@/components/admin/AdminLoyaltyReferrals";
 import HostCalendar from "@/components/admin/HostCalendar";
-import BookingRequests from "@/components/admin/BookingRequests";
+// BookingRequests merged into BookingHub
 import AdminPropertyHistory from "@/components/admin/AdminPropertyHistory";
 import AdminInventory from "@/components/admin/AdminInventory";
 import AdminStaffManagement from "@/components/admin/AdminStaffManagement";
@@ -42,7 +42,7 @@ export default function Admin() {
 
   const pageLabels: Record<AdminPage, string> = {
     dashboard: "Dashboard", catalog: "Catalog", properties: "Properties",
-    bookings: "Bookings", users: "Users CRM", clients: "Clients",
+    bookings: "Booking Hub", users: "Users CRM", clients: "Clients",
     analytics: "Analytics", curations: "Curations", tags: "Tags",
     campaigns: "Campaigns", coupons: "Coupons", orders: "Live Orders",
     exports: "Exports", ai: "AI Assistant", alerts: "Smart Alerts",
@@ -124,7 +124,7 @@ export default function Admin() {
       case "alerts": return <AdminAlerts onNavigate={(p) => setPage(p as AdminPage)} />;
       case "pricing": return <DynamicPricing />;
       case "properties": return <AdminProperties />;
-      case "bookings": return <AdminBookings onNavigate={(p, ctx) => navigateTo(p as AdminPage, ctx)} />;
+      case "bookings": return <BookingHub onNavigate={(p, ctx) => navigateTo(p as AdminPage, ctx)} />;
       case "users": return <AdminUsers />;
       case "clients": return <AdminClients initialUserId={clientContext?.userId} onContextConsumed={() => setClientContext(null)} onBack={pageHistory.length > 0 ? goBack : undefined} />;
       case "analytics": return <AdminAnalytics />;
@@ -138,7 +138,7 @@ export default function Admin() {
       case "achievements": return <AdminAchievements />;
       case "loyalty": return <AdminLoyaltyReferrals />;
       case "calendar": return <HostCalendar onNavigate={(p, ctx) => navigateTo(p as AdminPage, ctx)} />;
-      case "requests": return <BookingRequests />;
+      case "requests": return <BookingHub onNavigate={(p, ctx) => navigateTo(p as AdminPage, ctx)} />;
       case "history": return <AdminPropertyHistory
         onNavigateToClient={(userId) => navigateTo("clients" as AdminPage, { userId })}
         initialPropertyId={historyContext?.propertyId}
