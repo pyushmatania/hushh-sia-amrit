@@ -592,7 +592,7 @@ export default function AdminAI() {
                     value={input}
                     onChange={e => setInput(e.target.value)}
                     onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage(input)}
-                    placeholder="Ask anything or give a command..."
+                    placeholder={rotatingPlaceholder || "Ask anything or give a command..."}
                     className="w-full bg-background/50 border border-border rounded-xl pl-4 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition font-display"
                     disabled={loading}
                   />
