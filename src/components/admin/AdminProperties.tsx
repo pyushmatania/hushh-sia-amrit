@@ -426,8 +426,18 @@ export default function AdminProperties() {
                 {...getDropTargetProps(listing)}
                 onDragEnd={handleDragEnd}
                 style={getDragItemStyle(listing)}
-                className="rounded-xl border border-border bg-card p-3 flex gap-2 cursor-pointer hover:border-primary/30 select-none"
+                className={`rounded-xl border bg-card p-3 flex gap-2 cursor-pointer hover:border-primary/30 select-none ${selectedIds.includes(listing.id) ? "border-primary/50 bg-primary/5" : "border-border"}`}
                 onClick={() => openEdit(listing)}
+              >
+                <button
+                  type="button"
+                  onClick={e => { e.stopPropagation(); toggleSelect(listing.id); }}
+                  className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 self-center transition-all ${
+                    selectedIds.includes(listing.id) ? "bg-primary border-primary text-primary-foreground" : "border-muted-foreground/30 hover:border-primary/50"
+                  }`}
+                >
+                  {selectedIds.includes(listing.id) && <span className="text-[10px] font-bold">✓</span>}
+                </button>
               >
                 <div className="w-16 h-16 rounded-lg bg-secondary shrink-0 overflow-hidden">
                   {listing.image_urls?.[0] ? (
