@@ -273,6 +273,39 @@ export default function BookingHub({
                   <Input placeholder="Search bookings, properties, or clients..." value={search} onChange={e => setSearch(e.target.value)}
                     className="pl-9 rounded-xl" />
                 </div>
+
+                {/* Date Range Picker */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className={cn("h-8 px-3 text-[11px] rounded-xl gap-1.5 font-medium", !dateFrom && "text-muted-foreground")}>
+                        <CalendarIcon size={12} />
+                        {dateFrom ? format(dateFrom, "dd MMM yyyy") : "From date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 z-50" align="start">
+                      <Calendar mode="single" selected={dateFrom} onSelect={setDateFrom} initialFocus className={cn("p-3 pointer-events-auto")} />
+                    </PopoverContent>
+                  </Popover>
+                  <span className="text-[10px] text-muted-foreground">→</span>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className={cn("h-8 px-3 text-[11px] rounded-xl gap-1.5 font-medium", !dateTo && "text-muted-foreground")}>
+                        <CalendarIcon size={12} />
+                        {dateTo ? format(dateTo, "dd MMM yyyy") : "To date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 z-50" align="start">
+                      <Calendar mode="single" selected={dateTo} onSelect={setDateTo} initialFocus className={cn("p-3 pointer-events-auto")} />
+                    </PopoverContent>
+                  </Popover>
+                  {(dateFrom || dateTo) && (
+                    <Button variant="ghost" size="sm" className="h-8 px-2 text-[10px] text-muted-foreground hover:text-destructive" onClick={() => { setDateFrom(undefined); setDateTo(undefined); }}>
+                      <X size={12} /> Clear
+                    </Button>
+                  )}
+                </div>
+
                 <div className="flex gap-1.5 flex-wrap">
                   {statuses.map(s => {
                     const count = s === "all" ? bookings.length : bookings.filter(b => b.status === s).length;
