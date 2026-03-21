@@ -575,7 +575,7 @@ function ClientAISearch({ clients, listingMap }: { clients: ClientProfile[]; lis
 }
 
 /* ─── Main Component ─── */
-export default function AdminClients({ initialUserId, onContextConsumed }: { initialUserId?: string; onContextConsumed?: () => void } = {}) {
+export default function AdminClients({ initialUserId, onContextConsumed, onBack }: { initialUserId?: string; onContextConsumed?: () => void; onBack?: () => void } = {}) {
   const [clients, setClients] = useState<ClientProfile[]>([]);
   const [search, setSearch] = useState("");
   const [segmentFilter, setSegmentFilter] = useState<string | null>(null);
