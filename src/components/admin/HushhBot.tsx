@@ -220,33 +220,41 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
           {/* ── FACE ── */}
           <div className="absolute flex flex-col items-center" style={{ top: s * 0.1, left: 0, right: 0 }}>
             {/* Eyebrows for expressions */}
-            {(expr.eyeStyle === "curious" || expr.eyeStyle === "sad") && (
+            {(expr.eyeStyle === "curious" || expr.eyeStyle === "sad" || expr.eyeStyle === "scared") && (
               <div className="flex justify-center" style={{ gap: s * 0.1, marginBottom: s * 0.01 }}>
                 <motion.div
                   style={{
                     width: s * 0.06, height: 2,
                     background: "rgba(80,40,10,0.5)", borderRadius: 2,
-                    transform: expr.eyeStyle === "sad" ? "rotate(15deg)" : "rotate(-8deg)",
                   }}
-                  animate={expr.eyeStyle === "curious" ? { rotate: [-8, -12, -8] } : {}}
-                  transition={{ duration: 2, repeat: Infinity }}
+                  animate={
+                    expr.eyeStyle === "scared" ? { rotate: [20, 25, 20], y: [-2, -4, -2] } :
+                    expr.eyeStyle === "curious" ? { rotate: [-8, -12, -8] } :
+                    {}
+                  }
+                  initial={{ rotate: expr.eyeStyle === "sad" ? 15 : expr.eyeStyle === "scared" ? 20 : -8 }}
+                  transition={{ duration: expr.eyeStyle === "scared" ? 0.4 : 2, repeat: Infinity }}
                 />
                 <motion.div
                   style={{
                     width: s * 0.06, height: 2,
                     background: "rgba(80,40,10,0.5)", borderRadius: 2,
-                    transform: expr.eyeStyle === "sad" ? "rotate(-15deg)" : "rotate(8deg)",
                   }}
-                  animate={expr.eyeStyle === "curious" ? { rotate: [8, 12, 8] } : {}}
-                  transition={{ duration: 2, repeat: Infinity }}
+                  animate={
+                    expr.eyeStyle === "scared" ? { rotate: [-20, -25, -20], y: [-2, -4, -2] } :
+                    expr.eyeStyle === "curious" ? { rotate: [8, 12, 8] } :
+                    {}
+                  }
+                  initial={{ rotate: expr.eyeStyle === "sad" ? -15 : expr.eyeStyle === "scared" ? -20 : 8 }}
+                  transition={{ duration: expr.eyeStyle === "scared" ? 0.4 : 2, repeat: Infinity }}
                 />
               </div>
             )}
 
             {/* Eyes */}
             <div className="flex items-center justify-center" style={{ gap: s * 0.1 }}>
-              <FlameEye size={s * 0.065} state={state} side="left" />
-              <FlameEye size={s * 0.065} state={state} side="right" />
+              <FlameEye size={s * 0.065} state={state} side="left" hovered={hovered} />
+              <FlameEye size={s * 0.065} state={state} side="right" hovered={hovered} />
             </div>
 
             {/* Cheek blush */}
