@@ -226,6 +226,12 @@ export default function AdminBookings({ onNavigate }: { onNavigate?: (page: stri
                             <span className="text-[11px] text-zinc-400">{b.slot}</span>
                             <span className="text-zinc-300 dark:text-zinc-600">·</span>
                             <span className="text-[11px] text-zinc-400 flex items-center gap-0.5"><Users size={10} /> {b.guests}</span>
+                            {b.rooms_count && b.rooms_count > 0 && (
+                              <>
+                                <span className="text-zinc-300 dark:text-zinc-600">·</span>
+                                <span className="text-[11px] text-blue-500 font-medium">🛏️ {b.rooms_count}R{b.extra_mattresses && b.extra_mattresses > 0 ? ` +${b.extra_mattresses}M` : ""}</span>
+                              </>
+                            )}
                           </div>
                         </div>
                     </div>

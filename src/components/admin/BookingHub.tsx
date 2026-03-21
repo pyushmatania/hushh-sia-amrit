@@ -975,6 +975,11 @@ function RequestCard({ booking: b, index, updating, onAccept, onReject, onNaviga
             <div>
               <p className="text-[9px] text-muted-foreground">Guests</p>
               <p className="text-[11px] font-semibold text-foreground">{b.guests} people</p>
+              {b.rooms_count && b.rooms_count > 0 && (
+                <p className="text-[9px] text-primary font-medium mt-0.5">
+                  🛏️ {b.rooms_count} {b.rooms_count === 1 ? "room" : "rooms"}{b.extra_mattresses && b.extra_mattresses > 0 ? ` · +${b.extra_mattresses} mattress` : ""}
+                </p>
+              )}
             </div>
           </div>
           <div className="rounded-xl bg-emerald-50 dark:bg-emerald-500/10 p-2.5 flex items-center gap-2">
