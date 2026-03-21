@@ -254,12 +254,76 @@ export default function AdminStaffManagement() {
     toast.success(`Generated ${records.length} salary slips`); loadData();
   };
 
+  // Leave management
+  const leaveStats = useMemo(() => {
+    const pending = leaves.filter(l => l.status === "pending").length;
+    const approved = leaves.filter(l => l.status === "approved").length;
+    const rejected = leaves.filter(l => l.status === "rejected").length;
+    const thisMonth = leaves.filter(l => l.start_date?.startsWith(format(new Date(), "yyyy-MM"))).length;
+    return { pending, approved, rejected, thisMonth };
+  }, [leaves]);
+
+  const handleLeaveSubmit = async () => {
+    if (!newLeave.staff_id || !newLeave.start_date || !newLeave.end_date) {
+      toast.error("Please fill all required fields"); return;
+    }
+    const start = new Date(newLeave.start_date);
+    const end = new Date(newLeave.end_date);
+    if (end < start) { toast.error("End date must be after start date"); return; }
+    const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    const { error } = await supabase.from("staff_leaves").insert({
+      staff_id: newLeave.staff_id, leave_type: newLeave.leave_type,
+      start_date: newLeave.start_date, end_date: newLeave.end_date,
+      days, reason: newLeave.reason,
+    } as any);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Leave request created");
+    setShowLeaveForm(false);
+    setNewLeave({ staff_id: "", leave_type: "casual", start_date: "", end_date: "", reason: "" });
+    loadData();
+  };
+
+  const handleLeaveAction = async (leaveId: string, action: "approved" | "rejected", note?: string) => {
+    const payload: any = {
+      status: action,
+      approved_at: new Date().toISOString(),
+      ...(note && { rejection_note: note }),
+    };
+    const { error } = await supabase.from("staff_leaves").update(payload).eq("id", leaveId);
+    if (error) { toast.error(error.message); return; }
+    // If approved, update staff status
+    if (action === "approved") {
+      const leave = leaves.find(l => l.id === leaveId);
+      if (leave) {
+        const today = format(new Date(), "yyyy-MM-dd");
+        if (leave.start_date <= today && leave.end_date >= today) {
+          await supabase.from("staff_members").update({ status: "on_leave" } as any).eq("id", leave.staff_id);
+        }
+      }
+    }
+    toast.success(`Leave ${action}`); loadData();
+  };
+
   const departments = useMemo(() => [...new Set(staff.map(s => s.department))], [staff]);
+
+  const LEAVE_COLORS: Record<string, string> = {
+    casual: "bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400",
+    sick: "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400",
+    earned: "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-400",
+    emergency: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400",
+  };
+
+  const LEAVE_STATUS_COLORS: Record<string, string> = {
+    pending: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400",
+    approved: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400",
+    rejected: "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400",
+  };
 
   const tabs: { id: Tab; label: string; icon: typeof Users }[] = [
     { id: "roster", label: "Roster", icon: Users },
     { id: "attendance", label: "Attend.", icon: Calendar },
     { id: "salary", label: "Salary", icon: Wallet },
+    { id: "leaves", label: "Leaves", icon: CalendarOff },
     { id: "performance", label: "Perf.", icon: BarChart3 },
     { id: "details", label: "Details", icon: FileText },
   ];
