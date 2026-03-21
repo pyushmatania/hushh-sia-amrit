@@ -2,6 +2,7 @@ import { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import { VolumeX, Volume2, Bookmark, Flame, Zap, Sparkles } from "lucide-react";
 import { type Property } from "@/data/properties";
 import { AccentFrame, AccentTag } from "@/components/shared/AccentFrame";
+import OptimizedImage from "@/components/shared/OptimizedImage";
 
 // Home / generic
 import videoBonfire from "@/assets/video-bonfire-night.mp4.asset.json";
