@@ -292,6 +292,36 @@ export default function BookingHub({
           {tab === "overview" && <OverviewTab key="overview" stats={stats} revenueTrend={revenueTrend} statusDistribution={statusDistribution} topProperties={topProperties} topClients={topClients} onNavigate={onNavigate} />}
           {tab === "all" && (
             <motion.div key="all" {...fadeUp} className="space-y-4">
+              {/* Bulk Mode Toggle & Actions */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <Button variant={bulkMode ? "default" : "outline"} size="sm" className="h-8 text-[11px] rounded-xl gap-1.5"
+                  onClick={() => { setBulkMode(!bulkMode); setSelectedIds([]); }}>
+                  <CheckCircle2 size={12} /> {bulkMode ? "Cancel Bulk" : "Bulk Select"}
+                </Button>
+                {bulkMode && selectedIds.length > 0 && (
+                  <>
+                    <Button variant="outline" size="sm" className="h-8 text-[11px] rounded-xl" onClick={selectAll}>
+                      {selectedIds.length === filtered.length ? "Deselect All" : "Select All"}
+                    </Button>
+                    <span className="text-[11px] text-muted-foreground font-medium">{selectedIds.length} selected</span>
+                    <div className="flex gap-1 ml-auto">
+                      <Button size="sm" variant="outline" className="h-7 text-[10px] rounded-lg border-emerald-200 text-emerald-600 hover:bg-emerald-50 dark:border-emerald-500/30 dark:text-emerald-400"
+                        disabled={bulkUpdating} onClick={() => bulkUpdateStatus("confirmed")}>
+                        <Check size={10} /> Confirm
+                      </Button>
+                      <Button size="sm" variant="outline" className="h-7 text-[10px] rounded-lg border-rose-200 text-rose-600 hover:bg-rose-50 dark:border-rose-500/30 dark:text-rose-400"
+                        disabled={bulkUpdating} onClick={() => bulkUpdateStatus("cancelled")}>
+                        <X size={10} /> Cancel
+                      </Button>
+                      <Button size="sm" variant="outline" className="h-7 text-[10px] rounded-lg"
+                        disabled={bulkUpdating} onClick={() => bulkUpdateStatus("completed")}>
+                        <CheckCircle2 size={10} /> Complete
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </div>
+
               {/* Search & Filters */}
               <div className="flex flex-col gap-3">
                 <div className="relative">
@@ -370,7 +400,16 @@ export default function BookingHub({
               ) : (
                 <div className="space-y-2">
                   {filtered.map((b, i) => (
-                    <BookingCard key={b.id} booking={b} index={i} onNavigate={onNavigate} onStatusChange={updateStatus} />
+                    <div key={b.id} className="flex items-start gap-2">
+                      {bulkMode && (
+                        <button onClick={() => toggleSelect(b.id)} className={`mt-4 w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${selectedIds.includes(b.id) ? "bg-primary border-primary" : "border-border hover:border-primary/50"}`}>
+                          {selectedIds.includes(b.id) && <Check size={12} className="text-primary-foreground" />}
+                        </button>
+                      )}
+                      <div className="flex-1">
+                        <BookingCard booking={b} index={i} onNavigate={onNavigate} onStatusChange={updateStatus} />
+                      </div>
+                    </div>
                   ))}
                 </div>
               )}
