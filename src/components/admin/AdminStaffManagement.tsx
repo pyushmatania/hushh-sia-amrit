@@ -65,6 +65,13 @@ const DEPT_COLORS: Record<string, string> = {
   security: "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400",
 };
 
+const LEAVE_QUOTAS: Record<string, { label: string; max: number; color: string }> = {
+  casual: { label: "Casual", max: 12, color: "bg-blue-500" },
+  sick: { label: "Sick", max: 10, color: "bg-red-500" },
+  earned: { label: "Earned", max: 15, color: "bg-violet-500" },
+};
+const TOTAL_QUOTA = Object.values(LEAVE_QUOTAS).reduce((s, q) => s + q.max, 0);
+
 const STATUS_COLORS: Record<string, string> = {
   present: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400",
   absent: "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400",
