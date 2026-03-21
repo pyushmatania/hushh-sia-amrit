@@ -137,9 +137,35 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
       </motion.div>
 
       {lowStock.length > 0 && (
-        <motion.div variants={fadeUp} className="rounded-2xl border border-amber-200/60 dark:border-amber-500/20 bg-gradient-to-r from-amber-50 to-yellow-50/50 dark:from-amber-500/5 dark:to-yellow-500/5 p-4 flex items-start gap-3">
-          <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center shrink-0 shadow-sm"><AlertTriangle size={16} className="text-amber-600" /></div>
-          <div><p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">Low Stock Alert</p><p className="text-xs text-zinc-500 mt-0.5">{lowStock.map(i => `${i.emoji} ${i.name} (${i.stock})`).join(", ")}</p></div>
+        <motion.div variants={fadeUp} className="rounded-2xl border border-amber-200/60 dark:border-amber-500/20 bg-gradient-to-r from-amber-50 to-yellow-50/50 dark:from-amber-500/5 dark:to-yellow-500/5 p-4">
+          <div className="flex items-start gap-3">
+            <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center shrink-0 shadow-sm"><AlertTriangle size={16} className="text-amber-600" /></div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-foreground">Low Stock Alert</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{lowStock.map(i => `${i.emoji} ${i.name} (${i.stock})`).join(", ")}</p>
+            </div>
+          </div>
+          <button
+            onClick={async () => {
+              let created = 0;
+              for (const item of lowStock) {
+                const { error } = await supabase.from("staff_tasks").insert({
+                  title: `Restock: ${item.emoji} ${item.name}`,
+                  description: `Stock is at ${item.stock} (threshold: ${item.low_stock_threshold}). Please reorder immediately.`,
+                  priority: item.stock === 0 ? "urgent" : "high",
+                  status: "pending",
+                  property_id: item.property_id || null,
+                });
+                if (!error) created++;
+              }
+              if (created > 0) {
+                toast({ title: `Created ${created} restock tasks for staff` });
+              }
+            }}
+            className="mt-3 w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 text-xs font-semibold hover:bg-amber-200 dark:hover:bg-amber-500/25 transition-colors"
+          >
+            <Sparkles size={14} /> Auto-Create Restock Tasks for Staff
+          </button>
         </motion.div>
       )}
 
