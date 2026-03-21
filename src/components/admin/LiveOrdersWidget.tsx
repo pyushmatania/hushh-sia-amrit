@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getListingThumbnail } from "@/lib/listing-thumbnails";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import OrderNotes from "@/components/shared/OrderNotes";
 
 interface LiveOrder {
   id: string; user_id: string; property_id: string; total: number;
