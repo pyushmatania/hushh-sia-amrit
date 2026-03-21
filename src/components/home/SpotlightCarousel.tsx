@@ -297,6 +297,7 @@ export default function SpotlightCarousel({ properties, onPropertyTap, category 
             onTap={() => onPropertyTap(p)}
             isSaved={wishlist.includes(p.id)}
             onToggleSave={onToggleWishlist}
+            isFirst={i === 0}
           />
         ))}
       </div>
