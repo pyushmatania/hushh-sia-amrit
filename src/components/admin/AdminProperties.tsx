@@ -4,7 +4,7 @@ import {
   Building2, Search, Plus, Trash2, Pause, Play, Pencil,
   X, Upload, Image, MapPin, DollarSign, Users, Tag, Star,
   Clock, ChevronDown, ChevronRight, Eye, Copy, MoreHorizontal,
-  Sparkles, Filter, LayoutGrid, LayoutList, Hash, GripVertical
+  Sparkles, Filter, LayoutGrid, LayoutList, Hash, GripVertical, CheckSquare
 } from "lucide-react";
 import { useDragReorder } from "@/hooks/use-drag-reorder";
 import { supabase } from "@/integrations/supabase/client";
@@ -93,6 +93,7 @@ export default function AdminProperties() {
   const [previewMode, setPreviewMode] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [bulkMode, setBulkMode] = useState(false);
 
   useEffect(() => {
     supabase.from("host_listings").select("*").order("sort_order").order("created_at", { ascending: false })
@@ -300,12 +301,22 @@ export default function AdminProperties() {
           </h1>
           <p className="text-xs text-muted-foreground mt-0.5 ml-[46px]">{stats.total} total · {stats.published} live · Swipe rows or drag ⠿ to reorder</p>
         </div>
-        <motion.button
-          whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-          onClick={openCreate}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white text-sm font-semibold shadow-md shadow-indigo-200/50 dark:shadow-indigo-900/30 hover:shadow-lg transition-shadow">
-          <Plus size={15} /> Add Property
-        </motion.button>
+        <div className="flex items-center gap-2">
+          <motion.button
+            whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+            onClick={() => { setBulkMode(!bulkMode); if (bulkMode) setSelectedIds([]); }}
+            className={`flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+              bulkMode ? "bg-primary/10 text-primary border border-primary/30" : "bg-card border border-border text-muted-foreground hover:text-foreground"
+            }`}>
+            <CheckSquare size={15} /> {bulkMode ? "Cancel" : "Bulk"}
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+            onClick={openCreate}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white text-sm font-semibold shadow-md shadow-indigo-200/50 dark:shadow-indigo-900/30 hover:shadow-lg transition-shadow">
+            <Plus size={15} /> Add Property
+          </motion.button>
+        </div>
       </div>
 
       {/* Mini Stats */}
@@ -429,15 +440,17 @@ export default function AdminProperties() {
                 className={`rounded-xl border bg-card p-3 flex gap-2 cursor-pointer hover:border-primary/30 select-none ${selectedIds.includes(listing.id) ? "border-primary/50 bg-primary/5" : "border-border"}`}
                 onClick={() => openEdit(listing)}
               >
-                <button
-                  type="button"
-                  onClick={e => { e.stopPropagation(); toggleSelect(listing.id); }}
-                  className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 self-center transition-all ${
-                    selectedIds.includes(listing.id) ? "bg-primary border-primary text-primary-foreground" : "border-muted-foreground/30 hover:border-primary/50"
-                  }`}
-                >
-                  {selectedIds.includes(listing.id) && <span className="text-[10px] font-bold">✓</span>}
-                </button>
+                {bulkMode && (
+                  <button
+                    type="button"
+                    onClick={e => { e.stopPropagation(); toggleSelect(listing.id); }}
+                    className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 self-center transition-all ${
+                      selectedIds.includes(listing.id) ? "bg-primary border-primary text-primary-foreground" : "border-muted-foreground/30 hover:border-primary/50"
+                    }`}
+                  >
+                    {selectedIds.includes(listing.id) && <span className="text-[10px] font-bold">✓</span>}
+                  </button>
+                )}
                 <div className="w-[72px] h-[72px] rounded-xl bg-secondary shrink-0 overflow-hidden shadow-sm">
                   {listing.image_urls?.[0] ? (
                     <img src={listing.image_urls[0]} alt="" className="w-full h-full object-cover" loading="lazy" />

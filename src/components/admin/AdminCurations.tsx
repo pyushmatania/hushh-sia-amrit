@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Sparkles, Search, Plus, Save, X, Eye, Trash2,
-  GripVertical, Loader2, ChevronDown
+  GripVertical, Loader2, ChevronDown, CheckSquare
 } from "lucide-react";
 import { useDragReorder } from "@/hooks/use-drag-reorder";
 import { supabase } from "@/integrations/supabase/client";
@@ -50,6 +50,7 @@ export default function AdminCurations() {
   const [previewMode, setPreviewMode] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [bulkMode, setBulkMode] = useState(false);
 
   const toggleSelect = (id: string) => {
     setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
@@ -320,13 +321,23 @@ export default function AdminCurations() {
           </h1>
           <p className="text-xs text-muted-foreground mt-0.5 ml-[46px]">{curations.length} curated experiences · Swipe or drag to reorder</p>
         </div>
-        <motion.button
-          whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-          onClick={startCreate}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-semibold shadow-md shadow-amber-200/50 dark:shadow-amber-900/30 hover:shadow-lg transition-shadow"
-        >
-          <Plus size={15} /> Create
-        </motion.button>
+        <div className="flex items-center gap-2">
+          <motion.button
+            whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+            onClick={() => { setBulkMode(!bulkMode); if (bulkMode) setSelectedIds([]); }}
+            className={`flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+              bulkMode ? "bg-primary/10 text-primary border border-primary/30" : "bg-card border border-border text-muted-foreground hover:text-foreground"
+            }`}>
+            <CheckSquare size={15} /> {bulkMode ? "Cancel" : "Bulk"}
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+            onClick={startCreate}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-semibold shadow-md shadow-amber-200/50 dark:shadow-amber-900/30 hover:shadow-lg transition-shadow"
+          >
+            <Plus size={15} /> Create
+          </motion.button>
+        </div>
       </div>
 
       <div className="relative">
@@ -353,15 +364,17 @@ export default function AdminCurations() {
                 onClick={() => startEdit(c)}
               >
                 <div className="flex items-start gap-2">
-                  <button
-                    type="button"
-                    onClick={e => { e.stopPropagation(); toggleSelect(c.id); }}
-                    className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 mt-1 transition-all ${
-                      selectedIds.includes(c.id) ? "bg-primary border-primary text-primary-foreground" : "border-muted-foreground/30 hover:border-primary/50"
-                    }`}
-                  >
-                    {selectedIds.includes(c.id) && <span className="text-[10px] font-bold">✓</span>}
-                  </button>
+                  {bulkMode && (
+                    <button
+                      type="button"
+                      onClick={e => { e.stopPropagation(); toggleSelect(c.id); }}
+                      className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 mt-1 transition-all ${
+                        selectedIds.includes(c.id) ? "bg-primary border-primary text-primary-foreground" : "border-muted-foreground/30 hover:border-primary/50"
+                      }`}
+                    >
+                      {selectedIds.includes(c.id) && <span className="text-[10px] font-bold">✓</span>}
+                    </button>
+                  )}
                   <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary/15 to-accent/10 flex items-center justify-center text-2xl shadow-sm shrink-0">
                     {c.emoji}
                   </div>

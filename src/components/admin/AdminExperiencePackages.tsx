@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Gift, Search, Plus, Trash2, Pencil, X, Eye, GripVertical } from "lucide-react";
+import { Gift, Search, Plus, Trash2, Pencil, X, Eye, GripVertical, CheckSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -44,6 +44,7 @@ export default function AdminExperiencePackages() {
   const [previewMode, setPreviewMode] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [bulkMode, setBulkMode] = useState(false);
 
   const toggleSelect = (id: string) => {
     setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
@@ -183,13 +184,23 @@ export default function AdminExperiencePackages() {
           </h2>
           <p className="text-xs text-muted-foreground mt-0.5 ml-[46px]">{packages.length} packages · Swipe or drag to reorder</p>
         </div>
-        <motion.button
-          whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-          onClick={openCreate}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 text-white text-sm font-semibold shadow-md shadow-pink-200/50 dark:shadow-pink-900/30 hover:shadow-lg transition-shadow"
-        >
-          <Plus size={15} /> Add Package
-        </motion.button>
+        <div className="flex items-center gap-2">
+          <motion.button
+            whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+            onClick={() => { setBulkMode(!bulkMode); if (bulkMode) setSelectedIds([]); }}
+            className={`flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+              bulkMode ? "bg-primary/10 text-primary border border-primary/30" : "bg-card border border-border text-muted-foreground hover:text-foreground"
+            }`}>
+            <CheckSquare size={15} /> {bulkMode ? "Cancel" : "Bulk"}
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+            onClick={openCreate}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 text-white text-sm font-semibold shadow-md shadow-pink-200/50 dark:shadow-pink-900/30 hover:shadow-lg transition-shadow"
+          >
+            <Plus size={15} /> Add Package
+          </motion.button>
+        </div>
       </div>
 
       <div className="relative">
@@ -229,15 +240,17 @@ export default function AdminExperiencePackages() {
                 className={`rounded-xl border bg-card p-4 flex items-center gap-2 select-none ${
                   !pkg.active ? "opacity-50" : ""} ${selectedIds.includes(pkg.id) ? "border-primary/50 bg-primary/5" : "border-border"}`}
               >
-                <button
-                  type="button"
-                  onClick={e => { e.stopPropagation(); toggleSelect(pkg.id); }}
-                  className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${
-                    selectedIds.includes(pkg.id) ? "bg-primary border-primary text-primary-foreground" : "border-muted-foreground/30 hover:border-primary/50"
-                  }`}
-                >
-                  {selectedIds.includes(pkg.id) && <span className="text-[10px] font-bold">✓</span>}
-                </button>
+                {bulkMode && (
+                  <button
+                    type="button"
+                    onClick={e => { e.stopPropagation(); toggleSelect(pkg.id); }}
+                    className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${
+                      selectedIds.includes(pkg.id) ? "bg-primary border-primary text-primary-foreground" : "border-muted-foreground/30 hover:border-primary/50"
+                    }`}
+                  >
+                    {selectedIds.includes(pkg.id) && <span className="text-[10px] font-bold">✓</span>}
+                  </button>
+                )}
                 <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${pkg.gradient} flex items-center justify-center text-2xl shadow-sm shrink-0`}>
                   {pkg.emoji}
                 </div>

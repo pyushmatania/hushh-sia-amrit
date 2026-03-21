@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Package, Search, Plus, Trash2, Pencil, X, AlertTriangle, Eye, GripVertical, Sparkles } from "lucide-react";
+import { Package, Search, Plus, Trash2, Pencil, X, AlertTriangle, Eye, GripVertical, Sparkles, CheckSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -33,6 +33,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
   const [previewMode, setPreviewMode] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [bulkMode, setBulkMode] = useState(false);
 
   const toggleSelect = (id: string) => {
     setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
@@ -120,10 +121,19 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
           </h1>
           <p className="text-sm text-zinc-400 mt-1">{scopedItems.length} items · {lowStock.length} low stock · Drag ⠿ to reorder</p>
         </div>
-        <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={openCreate}
-          className="flex items-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-violet-500 text-white rounded-xl text-sm font-semibold shadow-md shadow-indigo-200/50 dark:shadow-indigo-900/30">
-          <Plus size={16} /> Add Item
-        </motion.button>
+        <div className="flex items-center gap-2">
+          <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+            onClick={() => { setBulkMode(!bulkMode); if (bulkMode) setSelectedIds([]); }}
+            className={`flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+              bulkMode ? "bg-primary/10 text-primary border border-primary/30" : "bg-card border border-border text-muted-foreground hover:text-foreground"
+            }`}>
+            <CheckSquare size={15} /> {bulkMode ? "Cancel" : "Bulk"}
+          </motion.button>
+          <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={openCreate}
+            className="flex items-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-violet-500 text-white rounded-xl text-sm font-semibold shadow-md shadow-indigo-200/50 dark:shadow-indigo-900/30">
+            <Plus size={16} /> Add Item
+          </motion.button>
+        </div>
       </motion.div>
 
       {lowStock.length > 0 && (
@@ -177,15 +187,17 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
                     className={`rounded-2xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm border p-3.5 flex items-center gap-3 select-none transition-all hover:shadow-md group ${
                       item.stock <= item.low_stock_threshold ? "border-amber-200/60 dark:border-amber-500/20" : selectedIds.includes(item.id) ? "border-primary/50 bg-primary/5" : "border-zinc-100/80 dark:border-zinc-800/80"
                     } ${!item.available ? "opacity-50" : ""}`}>
-                    <button
-                      type="button"
-                      onClick={e => { e.stopPropagation(); toggleSelect(item.id); }}
-                      className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${
-                        selectedIds.includes(item.id) ? "bg-primary border-primary text-primary-foreground" : "border-muted-foreground/30 hover:border-primary/50"
-                      }`}
-                    >
-                      {selectedIds.includes(item.id) && <span className="text-[10px] font-bold">✓</span>}
-                    </button>
+                    {bulkMode && (
+                      <button
+                        type="button"
+                        onClick={e => { e.stopPropagation(); toggleSelect(item.id); }}
+                        className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${
+                          selectedIds.includes(item.id) ? "bg-primary border-primary text-primary-foreground" : "border-muted-foreground/30 hover:border-primary/50"
+                        }`}
+                      >
+                        {selectedIds.includes(item.id) && <span className="text-[10px] font-bold">✓</span>}
+                      </button>
+                    )}
                     <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-100 to-teal-50 dark:from-emerald-500/15 dark:to-teal-500/10 flex items-center justify-center text-xl shadow-sm shrink-0">
                       {item.emoji}
                     </div>
