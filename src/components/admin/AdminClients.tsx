@@ -596,6 +596,10 @@ export default function AdminClients({ initialUserId, onContextConsumed, onBack 
     }
   }, [initialUserId, loading, clients, onContextConsumed]);
 
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
   useEffect(() => {
     const load = async () => {
       const [profilesRes, bookingsRes, ordersRes, orderItemsRes, reviewsRes, wishlistsRes, referralsRes, verificationsRes, listingsRes] = await Promise.all([
