@@ -7,7 +7,8 @@ import {
   Package, Star, Shield, Utensils,
   Calendar, Gift, AlertTriangle, CheckCircle2,
   MessageSquare, CreditCard, Ticket,
-  Sun, Moon, Sunrise, Sunset, PieChart
+  Sun, Moon, Sunrise, Sunset, PieChart,
+  Wallet, UserCog, ClipboardList, FileText
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, BarChart, Bar, CartesianGrid, PieChart as RPieChart, Pie, Cell } from "recharts";
