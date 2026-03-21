@@ -7,36 +7,21 @@ interface HushhBotProps {
   state?: "idle" | "thinking" | "speaking" | "listening" | "success" | "error";
 }
 
-const glowByState: Record<string, string> = {
-  idle: "0 0 40px 12px rgba(255,167,38,0.5), 0 0 80px 24px rgba(255,111,0,0.2), 0 0 120px 40px rgba(255,87,34,0.08)",
-  thinking: "0 0 40px 12px rgba(66,165,245,0.5), 0 0 80px 24px rgba(21,101,192,0.2), 0 0 120px 40px rgba(13,71,161,0.08)",
-  speaking: "0 0 40px 12px rgba(255,167,38,0.6), 0 0 80px 24px rgba(230,81,0,0.25), 0 0 120px 40px rgba(255,111,0,0.1)",
-  listening: "0 0 40px 12px rgba(236,64,122,0.5), 0 0 80px 24px rgba(173,20,87,0.2), 0 0 120px 40px rgba(136,14,79,0.08)",
-  success: "0 0 40px 12px rgba(102,187,106,0.5), 0 0 80px 24px rgba(27,94,32,0.2), 0 0 120px 40px rgba(27,94,32,0.08)",
-  error: "0 0 40px 12px rgba(239,83,80,0.5), 0 0 80px 24px rgba(183,28,28,0.2), 0 0 120px 40px rgba(183,28,28,0.08)",
-};
-
-const filterByState: Record<string, string> = {
-  idle: "drop-shadow(0 0 10px rgba(255,167,38,0.7)) drop-shadow(0 4px 8px rgba(0,0,0,0.3))",
-  thinking: "drop-shadow(0 0 12px rgba(66,165,245,0.7)) hue-rotate(-30deg) drop-shadow(0 4px 8px rgba(0,0,0,0.3))",
-  speaking: "drop-shadow(0 0 12px rgba(255,140,0,0.8)) brightness(1.15) drop-shadow(0 4px 8px rgba(0,0,0,0.3))",
-  listening: "drop-shadow(0 0 12px rgba(236,64,122,0.7)) hue-rotate(20deg) drop-shadow(0 4px 8px rgba(0,0,0,0.3))",
-  success: "drop-shadow(0 0 12px rgba(102,187,106,0.7)) hue-rotate(-60deg) drop-shadow(0 4px 8px rgba(0,0,0,0.3))",
-  error: "drop-shadow(0 0 12px rgba(239,83,80,0.7)) hue-rotate(10deg) saturate(1.3) drop-shadow(0 4px 8px rgba(0,0,0,0.3))",
-};
-
 type Expression = "curious" | "happy" | "sleepy" | "excited" | "worried" | "angry" | "thinking";
 
 const expressionConfigs: Record<Expression, {
-  scaleX: number; scaleY: number; rotate: number; y: number; brightness: number; hueShift: number;
+  scaleX: number; scaleY: number; rotate: number; y: number;
+  brightness: number; hueShift: number; saturate: number;
+  eyeScaleY: number; mouthWidth: number; mouthHeight: number; mouthY: number;
+  browAngle: number; browY: number; blush: number;
 }> = {
-  curious:   { scaleX: 1,    scaleY: 1,    rotate: -6,  y: 0,   brightness: 1,    hueShift: 0   },
-  happy:     { scaleX: 1.04, scaleY: 0.96, rotate: 3,   y: -3,  brightness: 1.12, hueShift: 0   },
-  sleepy:    { scaleX: 0.98, scaleY: 0.94, rotate: 4,   y: 3,   brightness: 0.88, hueShift: -8  },
-  excited:   { scaleX: 1.06, scaleY: 1.08, rotate: -4,  y: -6,  brightness: 1.18, hueShift: 5   },
-  worried:   { scaleX: 0.96, scaleY: 1.02, rotate: 5,   y: 2,   brightness: 0.92, hueShift: -5  },
-  angry:     { scaleX: 1.08, scaleY: 0.94, rotate: -3,  y: -2,  brightness: 1.1,  hueShift: 15  },
-  thinking:  { scaleX: 1,    scaleY: 1.02, rotate: -8,  y: -1,  brightness: 0.95, hueShift: -15 },
+  curious:   { scaleX: 1.02, scaleY: 1.04, rotate: -8,  y: 0,   brightness: 1.05, hueShift: 0,   saturate: 1.1,  eyeScaleY: 1.1,  mouthWidth: 6,  mouthHeight: 3, mouthY: 0,  browAngle: -8,  browY: -2, blush: 0   },
+  happy:     { scaleX: 1.06, scaleY: 0.94, rotate: 3,   y: -5,  brightness: 1.2,  hueShift: 5,   saturate: 1.2,  eyeScaleY: 0.5,  mouthWidth: 10, mouthHeight: 6, mouthY: 1,  browAngle: 0,   browY: -3, blush: 0.6 },
+  sleepy:    { scaleX: 0.98, scaleY: 0.92, rotate: 6,   y: 4,   brightness: 0.82, hueShift: -10, saturate: 0.85, eyeScaleY: 0.2,  mouthWidth: 5,  mouthHeight: 2, mouthY: 2,  browAngle: 5,   browY: 2,  blush: 0   },
+  excited:   { scaleX: 1.1,  scaleY: 1.12, rotate: -5,  y: -10, brightness: 1.3,  hueShift: 8,   saturate: 1.3,  eyeScaleY: 1.3,  mouthWidth: 12, mouthHeight: 8, mouthY: 0,  browAngle: -12, browY: -4, blush: 0.4 },
+  worried:   { scaleX: 0.95, scaleY: 1.04, rotate: 5,   y: 3,   brightness: 0.9,  hueShift: -8,  saturate: 0.9,  eyeScaleY: 1.15, mouthWidth: 7,  mouthHeight: 2, mouthY: 3,  browAngle: 12,  browY: 0,  blush: 0   },
+  angry:     { scaleX: 1.12, scaleY: 0.9,  rotate: -2,  y: -3,  brightness: 1.15, hueShift: 20,  saturate: 1.4,  eyeScaleY: 0.7,  mouthWidth: 8,  mouthHeight: 3, mouthY: 2,  browAngle: -15, browY: 3,  blush: 0   },
+  thinking:  { scaleX: 1,    scaleY: 1.02, rotate: -10, y: -2,  brightness: 0.95, hueShift: -20, saturate: 1,    eyeScaleY: 0.9,  mouthWidth: 4,  mouthHeight: 4, mouthY: 1,  browAngle: -5,  browY: -1, blush: 0   },
 };
 
 const expressionOrder: Expression[] = ["curious", "happy", "excited", "thinking", "worried", "sleepy", "angry"];
@@ -49,7 +34,6 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
   const onEnter = useCallback(() => setHovered(true), []);
   const onLeave = useCallback(() => setHovered(false), []);
 
-  // Cycle expressions
   useEffect(() => {
     const iv = setInterval(() => {
       setCycleIdx(prev => {
@@ -61,22 +45,22 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
     return () => clearInterval(iv);
   }, []);
 
-  // On hover, force excited then return
   useEffect(() => {
-    if (hovered) {
-      setExpression("excited");
-    } else {
-      setExpression(expressionOrder[cycleIdx]);
-    }
+    if (hovered) setExpression("excited");
+    else setExpression(expressionOrder[cycleIdx]);
   }, [hovered, cycleIdx]);
 
   const expr = expressionConfigs[expression];
-  const embers = Array.from({ length: 8 }, (_, i) => i);
-  const sparks = Array.from({ length: 4 }, (_, i) => i);
+  const embers = Array.from({ length: 10 }, (_, i) => i);
+
+  // Face positions relative to size
+  const faceScale = size / 80;
+  const eyeSize = 4.5 * faceScale;
+  const pupilSize = 2.5 * faceScale;
 
   return (
     <div
-      style={{ width: size, height: size, cursor: "pointer" }}
+      style={{ width: size * 1.3, height: size * 1.3, cursor: "pointer" }}
       className="relative flex items-center justify-center select-none"
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
@@ -84,29 +68,6 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
       onTouchEnd={onLeave}
       onContextMenu={e => e.preventDefault()}
     >
-      {/* Outer glow pulse */}
-      <motion.div
-        className="absolute rounded-full"
-        style={{ width: size * 1.1, height: size * 1.1 }}
-        animate={{
-          boxShadow: glowByState[state] || glowByState.idle,
-          scale: [1, 1.12, 1],
-        }}
-        transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-      />
-
-      {/* Inner radial glow */}
-      <motion.div
-        className="absolute rounded-full"
-        style={{
-          width: size * 0.7,
-          height: size * 0.7,
-          background: "radial-gradient(circle, rgba(255,167,38,0.15) 0%, transparent 70%)",
-        }}
-        animate={{ scale: [0.9, 1.15, 0.9], opacity: [0.4, 0.8, 0.4] }}
-        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-      />
-
       {/* Ember particles */}
       {embers.map((i) => (
         <motion.div
@@ -115,78 +76,64 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
           style={{
             width: 2 + (i % 4),
             height: 2 + (i % 4),
-            background: `rgba(255, ${130 + i * 15}, ${i * 10}, ${0.6 + (i % 3) * 0.15})`,
+            background: `rgba(255, ${130 + i * 12}, ${i * 8}, ${0.7 + (i % 3) * 0.1})`,
           }}
           animate={{
-            y: [0, -(size * 0.4 + i * 10), -(size * 0.9)],
-            x: [0, (i % 2 ? 1 : -1) * (10 + i * 4), (i % 2 ? -1 : 1) * 6],
-            opacity: [0, 0.9, 0],
-            scale: [0.4, 1.2, 0.2],
+            y: [size * 0.1, -(size * 0.3 + i * 8), -(size * 0.7)],
+            x: [(i % 2 ? 1 : -1) * 3, (i % 2 ? 1 : -1) * (12 + i * 3), (i % 2 ? -1 : 1) * 5],
+            opacity: [0, 0.85, 0],
+            scale: [0.3, 1.1, 0.1],
           }}
           transition={{
-            duration: 1.5 + i * 0.25,
+            duration: 1.4 + i * 0.2,
             repeat: Infinity,
-            delay: i * 0.3,
+            delay: i * 0.25,
             ease: "easeOut",
           }}
         />
       ))}
 
-      {/* Sparkle bursts */}
-      {sparks.map((i) => (
-        <motion.div
-          key={`spark-${i}`}
-          className="absolute"
-          style={{
-            width: 2,
-            height: 2,
-            borderRadius: "50%",
-            background: "#fff",
-            boxShadow: "0 0 4px 1px rgba(255,200,50,0.8)",
-          }}
-          animate={{
-            y: [0, -(size * 0.3), -(size * 0.6)],
-            x: [(i % 2 ? -1 : 1) * 5, (i % 2 ? 1 : -1) * (15 + i * 5), (i % 2 ? -1 : 1) * 8],
-            opacity: [0, 1, 0],
-            scale: [0, 1.5, 0],
-          }}
-          transition={{
-            duration: 1.2,
-            repeat: Infinity,
-            delay: 0.8 + i * 0.6,
-            ease: "easeOut",
-          }}
-        />
-      ))}
+      {/* Warm ambient glow (no circle border) */}
+      <motion.div
+        className="absolute"
+        style={{
+          width: size * 1.2,
+          height: size * 1.2,
+          background: "radial-gradient(circle, rgba(255,140,0,0.12) 0%, rgba(255,87,34,0.04) 50%, transparent 75%)",
+        }}
+        animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.9, 0.5] }}
+        transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+      />
 
       {/* 3D shadow disc */}
       <motion.div
-        className="absolute rounded-full"
+        className="absolute"
         style={{
-          width: size * 0.5,
-          height: size * 0.12,
-          bottom: -size * 0.02,
-          background: "radial-gradient(ellipse, rgba(0,0,0,0.25) 0%, transparent 70%)",
-          filter: "blur(3px)",
+          width: size * 0.45,
+          height: size * 0.1,
+          bottom: size * 0.05,
+          borderRadius: "50%",
+          background: "radial-gradient(ellipse, rgba(0,0,0,0.2) 0%, transparent 70%)",
+          filter: "blur(4px)",
         }}
         animate={{
-          scaleX: hovered ? [1.1, 0.85, 1.1] : [1, 1.08, 1],
-          opacity: hovered ? 0.15 : [0.2, 0.35, 0.2],
+          scaleX: hovered ? [1.1, 0.8, 1.1] : [1, 1.1, 1],
+          opacity: hovered ? 0.1 : [0.15, 0.3, 0.15],
         }}
         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* Main mascot image with 3D transforms */}
+      {/* Main mascot - bigger, more pop */}
       <motion.img
         src={hushhMascot}
-        alt="Hushh AI Fire Mascot"
+        alt="Hushh AI"
         draggable={false}
         onDragStart={e => e.preventDefault()}
         style={{
-          width: size * 0.95,
-          height: size * 0.95,
+          width: size * 1.25,
+          height: size * 1.25,
           objectFit: "contain",
-          filter: `${filterByState[state] || filterByState.idle} brightness(${expr.brightness}) hue-rotate(${expr.hueShift}deg)`,
+          filter: `drop-shadow(0 0 14px rgba(255,140,0,0.6)) drop-shadow(0 6px 12px rgba(0,0,0,0.35)) brightness(${expr.brightness}) hue-rotate(${expr.hueShift}deg) saturate(${expr.saturate})`,
           WebkitUserSelect: "none",
           userSelect: "none",
           pointerEvents: "none",
@@ -194,46 +141,194 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
         animate={
           hovered
             ? {
-                scale: 1.2,
-                rotate: [0, -10, 10, -5, 0],
-                y: -8,
-                scaleX: 1.08,
-                scaleY: 1.12,
-                rotateY: [0, 15, -15, 0],
+                scale: 1.25,
+                rotate: [0, -12, 12, -6, 0],
+                y: -12,
+                scaleX: expr.scaleX,
+                scaleY: expr.scaleY,
               }
             : {
-                scale: [1, 1.04, 1],
+                scale: [1, 1.06, 1],
                 rotate: expr.rotate,
-                y: [expr.y, expr.y - 3, expr.y],
+                y: [expr.y, expr.y - 4, expr.y],
                 scaleX: expr.scaleX,
                 scaleY: expr.scaleY,
               }
         }
         transition={
           hovered
-            ? { duration: 0.6, type: "spring", stiffness: 250, damping: 12 }
+            ? { duration: 0.5, type: "spring", stiffness: 280, damping: 14 }
             : { duration: 2.8, repeat: Infinity, ease: "easeInOut" }
         }
         className="relative z-10"
       />
 
-      {/* Expression label */}
-      <AnimatePresence mode="wait">
-        <motion.span
-          key={expression}
-          initial={{ opacity: 0, y: 6, scale: 0.7 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -4, scale: 0.7 }}
-          transition={{ duration: 0.25 }}
-          className="absolute -bottom-1 text-[7px] font-bold tracking-wider uppercase z-20"
-          style={{
-            color: "rgba(255,167,38,0.6)",
-            textShadow: "0 0 8px rgba(255,140,0,0.4)",
-          }}
+      {/* Overlay face — eyes */}
+      <div className="absolute z-20 flex flex-col items-center" style={{ pointerEvents: "none", top: "38%", gap: 2 * faceScale }}>
+        <motion.div className="flex items-center" style={{ gap: 8 * faceScale }}
+          animate={{ y: hovered ? -2 : [0, -1, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
         >
-          {expression}
-        </motion.span>
-      </AnimatePresence>
+          {/* Left eye */}
+          <motion.div style={{ width: eyeSize * 2, height: eyeSize * 2, position: "relative" }}>
+            <motion.div
+              style={{
+                width: eyeSize * 2,
+                background: "white",
+                borderRadius: "50%",
+                position: "absolute",
+                boxShadow: "inset 0 1px 3px rgba(0,0,0,0.15), 0 0 6px rgba(255,255,255,0.3)",
+              }}
+              animate={{ height: eyeSize * 2 * expr.eyeScaleY }}
+              transition={{ duration: 0.3 }}
+            />
+            <motion.div
+              style={{
+                width: pupilSize,
+                height: pupilSize,
+                background: "#1a1a2e",
+                borderRadius: "50%",
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                boxShadow: "0 0 2px rgba(0,0,0,0.5)",
+              }}
+              animate={{
+                scale: hovered ? 1.4 : [1, 1.1, 1],
+                x: expression === "thinking" ? -1.5 : 0,
+              }}
+              transition={{ duration: 0.3 }}
+            >
+              {/* Glint */}
+              <div style={{
+                width: pupilSize * 0.35,
+                height: pupilSize * 0.35,
+                background: "white",
+                borderRadius: "50%",
+                position: "absolute",
+                top: "20%",
+                right: "15%",
+              }} />
+            </motion.div>
+            {/* Left brow */}
+            <motion.div
+              style={{
+                width: eyeSize * 1.6,
+                height: 1.5 * faceScale,
+                background: "rgba(80,30,0,0.6)",
+                borderRadius: 99,
+                position: "absolute",
+                left: "50%",
+                transformOrigin: "center",
+              }}
+              animate={{
+                rotate: expr.browAngle,
+                top: -3 * faceScale + expr.browY * faceScale,
+                x: "-50%",
+              }}
+              transition={{ duration: 0.3 }}
+            />
+          </motion.div>
+
+          {/* Right eye */}
+          <motion.div style={{ width: eyeSize * 2, height: eyeSize * 2, position: "relative" }}>
+            <motion.div
+              style={{
+                width: eyeSize * 2,
+                background: "white",
+                borderRadius: "50%",
+                position: "absolute",
+                boxShadow: "inset 0 1px 3px rgba(0,0,0,0.15), 0 0 6px rgba(255,255,255,0.3)",
+              }}
+              animate={{ height: eyeSize * 2 * expr.eyeScaleY }}
+              transition={{ duration: 0.3 }}
+            />
+            <motion.div
+              style={{
+                width: pupilSize,
+                height: pupilSize,
+                background: "#1a1a2e",
+                borderRadius: "50%",
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                boxShadow: "0 0 2px rgba(0,0,0,0.5)",
+              }}
+              animate={{
+                scale: hovered ? 1.4 : [1, 1.1, 1],
+                x: expression === "thinking" ? 1.5 : 0,
+              }}
+              transition={{ duration: 0.3 }}
+            >
+              <div style={{
+                width: pupilSize * 0.35,
+                height: pupilSize * 0.35,
+                background: "white",
+                borderRadius: "50%",
+                position: "absolute",
+                top: "20%",
+                right: "15%",
+              }} />
+            </motion.div>
+            {/* Right brow */}
+            <motion.div
+              style={{
+                width: eyeSize * 1.6,
+                height: 1.5 * faceScale,
+                background: "rgba(80,30,0,0.6)",
+                borderRadius: 99,
+                position: "absolute",
+                left: "50%",
+                transformOrigin: "center",
+              }}
+              animate={{
+                rotate: -expr.browAngle,
+                top: -3 * faceScale + expr.browY * faceScale,
+                x: "-50%",
+              }}
+              transition={{ duration: 0.3 }}
+            />
+          </motion.div>
+        </motion.div>
+
+        {/* Blush cheeks */}
+        <AnimatePresence>
+          {expr.blush > 0 && (
+            <motion.div
+              className="absolute flex"
+              style={{ gap: 16 * faceScale, top: 6 * faceScale }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: expr.blush * 0.5 }}
+              exit={{ opacity: 0 }}
+            >
+              <div style={{ width: 5 * faceScale, height: 3 * faceScale, borderRadius: "50%", background: "rgba(255,100,80,0.4)" }} />
+              <div style={{ width: 5 * faceScale, height: 3 * faceScale, borderRadius: "50%", background: "rgba(255,100,80,0.4)" }} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Mouth */}
+        <motion.div
+          style={{
+            borderRadius: "0 0 50% 50%",
+            background: expression === "angry" ? "rgba(200,50,30,0.7)" : "rgba(60,20,0,0.6)",
+            marginTop: 1 * faceScale,
+          }}
+          animate={{
+            width: expr.mouthWidth * faceScale,
+            height: expr.mouthHeight * faceScale,
+            y: expr.mouthY * faceScale,
+            borderRadius: expression === "happy" || expression === "excited"
+              ? "0 0 50% 50%"
+              : expression === "worried"
+                ? "50% 50% 0 0"
+                : "50%",
+          }}
+          transition={{ duration: 0.3 }}
+        />
+      </div>
     </div>
   );
 }
