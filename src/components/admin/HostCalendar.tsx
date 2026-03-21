@@ -613,7 +613,7 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
                                             {/* User row — clickable → user profile */}
                                             <motion.div
                                               whileTap={{ scale: 0.98 }}
-                                              onClick={(e) => { e.stopPropagation(); onNavigate?.("users", { userId: b.user_id }); }}
+                                              onClick={(e) => { e.stopPropagation(); onNavigate?.("clients", { userId: b.user_id }); }}
                                               className="p-3.5 cursor-pointer group/user"
                                             >
                                               <div className="flex items-center gap-3">
