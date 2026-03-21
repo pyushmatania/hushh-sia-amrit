@@ -266,58 +266,67 @@ export default function AdminProperties() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <Building2 size={22} className="text-primary" /> Properties
+          <h1 className="text-xl font-bold text-foreground flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-100 to-violet-100 dark:from-indigo-500/15 dark:to-violet-500/15 flex items-center justify-center">
+              <Building2 size={17} className="text-indigo-600 dark:text-indigo-400" />
+            </div>
+            Properties
           </h1>
-          <p className="text-sm text-muted-foreground">{stats.total} total · {stats.published} live · Drag ⠿ to reorder</p>
+          <p className="text-xs text-muted-foreground mt-0.5 ml-[46px]">{stats.total} total · {stats.published} live · Swipe rows or drag ⠿ to reorder</p>
         </div>
-        <button onClick={openCreate}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 active:scale-95 transition">
-          <Plus size={16} /> Add Property
-        </button>
+        <motion.button
+          whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+          onClick={openCreate}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white text-sm font-semibold shadow-md shadow-indigo-200/50 dark:shadow-indigo-900/30 hover:shadow-lg transition-shadow">
+          <Plus size={15} /> Add Property
+        </motion.button>
       </div>
 
-      {/* Stats Row */}
-      <div className="grid grid-cols-4 gap-3">
+      {/* Mini Stats */}
+      <div className="grid grid-cols-4 gap-2">
         {[
-          { label: "Total", value: stats.total, color: "text-foreground" },
-          { label: "Live", value: stats.published, color: "text-emerald-400" },
-          { label: "Draft", value: stats.draft, color: "text-muted-foreground" },
-          { label: "Paused", value: stats.paused, color: "text-amber-400" },
+          { label: "Total", value: stats.total, color: "text-foreground", bg: "bg-card" },
+          { label: "Live", value: stats.published, color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-50 dark:bg-emerald-500/10" },
+          { label: "Draft", value: stats.draft, color: "text-muted-foreground", bg: "bg-card" },
+          { label: "Paused", value: stats.paused, color: "text-amber-600 dark:text-amber-400", bg: "bg-amber-50 dark:bg-amber-500/10" },
         ].map(s => (
-          <div key={s.label} className="rounded-xl border border-border bg-card p-3 text-center">
-            <p className={`text-xl font-bold tabular-nums ${s.color}`}>{s.value}</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{s.label}</p>
-          </div>
+          <motion.div key={s.label} whileHover={{ y: -2 }} className={`rounded-xl border border-border ${s.bg} p-2.5 text-center transition-shadow hover:shadow-sm`}>
+            <p className={`text-lg font-bold tabular-nums ${s.color}`}>{s.value}</p>
+            <p className="text-[9px] text-muted-foreground uppercase tracking-wider font-semibold">{s.label}</p>
+          </motion.div>
         ))}
       </div>
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input placeholder="Search properties, types..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
+          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Input placeholder="Search properties, types..." value={search} onChange={e => setSearch(e.target.value)}
+            className="pl-9 rounded-xl bg-card border-border focus:border-primary/30" />
         </div>
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-1.5 items-center">
           {filters.map(f => (
             <button key={f} onClick={() => setFilter(f)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition ${
-                filter === f ? "bg-primary/15 text-primary" : "bg-secondary text-muted-foreground hover:text-foreground"
+              className={`px-3 py-1.5 rounded-xl text-[11px] font-semibold capitalize transition-all ${
+                filter === f ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-500/20 shadow-sm" : "bg-card text-muted-foreground hover:text-foreground border border-border"
               }`}>{f}</button>
           ))}
-          <div className="w-px h-6 bg-border mx-1" />
-          <button onClick={() => setViewMode(v => v === "list" ? "grid" : "list")} className="p-1.5 rounded-lg hover:bg-secondary transition">
-            {viewMode === "list" ? <LayoutGrid size={16} className="text-muted-foreground" /> : <LayoutList size={16} className="text-muted-foreground" />}
+          <div className="w-px h-5 bg-border mx-0.5" />
+          <button onClick={() => setViewMode(v => v === "list" ? "grid" : "list")}
+            className="p-2 rounded-xl bg-card border border-border hover:border-primary/30 transition">
+            {viewMode === "list" ? <LayoutGrid size={14} className="text-muted-foreground" /> : <LayoutList size={14} className="text-muted-foreground" />}
           </button>
         </div>
       </div>
 
-      {/* Category filter */}
-      <div className="flex gap-2 overflow-x-auto hide-scrollbar">
+      {/* Category pills */}
+      <div className="flex gap-1.5 overflow-x-auto hide-scrollbar">
         {["all", ...primaryCategoryOptions].map(c => (
           <button key={c} onClick={() => setCategoryFilter(c)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize whitespace-nowrap transition ${
-              categoryFilter === c ? "bg-primary/15 text-primary" : "bg-secondary text-muted-foreground hover:text-foreground"
+            className={`px-3 py-1.5 rounded-xl text-[11px] font-semibold capitalize whitespace-nowrap transition-all ${
+              categoryFilter === c
+                ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-500/20 shadow-sm"
+                : "bg-card text-muted-foreground hover:text-foreground border border-border"
             }`}>{c === "all" ? "All Types" : c}</button>
         ))}
       </div>
@@ -338,33 +347,42 @@ export default function AdminProperties() {
           {filtered.map((listing, i) => (
             <motion.div key={listing.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03 }}
-              className="rounded-xl border border-border bg-card overflow-hidden cursor-pointer hover:border-primary/30 transition"
+              whileHover={{ y: -3, transition: { duration: 0.15 } }}
+              className="rounded-2xl border border-border bg-card overflow-hidden cursor-pointer hover:shadow-lg hover:border-primary/20 transition-all group"
               onClick={() => openEdit(listing)}>
               <div className="aspect-[4/3] bg-secondary relative overflow-hidden">
                 {listing.image_urls?.[0] ? (
-                  <img src={listing.image_urls[0]} alt="" className="w-full h-full object-cover" />
+                  <img src={listing.image_urls[0]} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center">
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-500/5 dark:to-violet-500/5">
                     <Building2 size={28} className="text-muted-foreground/30" />
                   </div>
                 )}
-                <span className={`absolute top-2 right-2 text-[9px] font-bold px-2 py-0.5 rounded-full capitalize border ${statusColors[listing.status] || statusColors.draft}`}>
+                <span className={`absolute top-2 right-2 text-[9px] font-bold px-2 py-0.5 rounded-full capitalize border backdrop-blur-sm ${statusColors[listing.status] || statusColors.draft}`}>
                   {listing.status}
                 </span>
+                {listing.rating > 0 && (
+                  <div className="absolute bottom-2 left-2 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/50 backdrop-blur-sm">
+                    <Star size={9} className="text-amber-400 fill-amber-400" />
+                    <span className="text-[10px] font-semibold text-white">{listing.rating}</span>
+                  </div>
+                )}
               </div>
               <div className="p-3">
                 <h3 className="font-semibold text-xs text-foreground truncate">{listing.name}</h3>
-                <p className="text-[10px] text-muted-foreground truncate">{listing.location}</p>
-                {(() => {
-                  const slots = Array.isArray(listing.slots) ? listing.slots : [];
-                  if (slots.length > 0) {
-                    const prices = slots.map((s: any) => Number(s.price || 0)).filter((p: number) => p > 0);
-                    const min = Math.min(...prices);
-                    const max = Math.max(...prices);
-                    return <p className="text-xs font-medium text-foreground mt-1 tabular-nums">₹{min.toLocaleString()}{max !== min && <span className="text-muted-foreground"> – ₹{max.toLocaleString()}</span>}<span className="text-muted-foreground font-normal">/slot</span></p>;
-                  }
-                  return <p className="text-xs font-medium text-foreground mt-1 tabular-nums">₹{listing.base_price?.toLocaleString()}<span className="text-muted-foreground font-normal">/base</span></p>;
-                })()}
+                <p className="text-[10px] text-muted-foreground truncate flex items-center gap-1"><MapPin size={8} />{listing.location}</p>
+                <div className="flex items-center justify-between mt-1.5">
+                  {(() => {
+                    const slots = Array.isArray(listing.slots) ? listing.slots : [];
+                    if (slots.length > 0) {
+                      const prices = slots.map((s: any) => Number(s.price || 0)).filter((p: number) => p > 0);
+                      const min = Math.min(...prices);
+                      return <p className="text-xs font-bold text-foreground tabular-nums">₹{min.toLocaleString()}<span className="text-muted-foreground font-normal text-[10px]">/slot</span></p>;
+                    }
+                    return <p className="text-xs font-bold text-foreground tabular-nums">₹{listing.base_price?.toLocaleString()}</p>;
+                  })()}
+                  <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground"><Users size={9} />{listing.capacity}</span>
+                </div>
               </div>
             </motion.div>
           ))}

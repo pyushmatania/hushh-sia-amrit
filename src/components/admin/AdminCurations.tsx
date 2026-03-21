@@ -296,23 +296,26 @@ export default function AdminCurations() {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <Sparkles size={22} className="text-primary" /> Curations
+          <h1 className="text-xl font-bold text-foreground flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-500/15 dark:to-orange-500/15 flex items-center justify-center">
+              <Sparkles size={17} className="text-amber-600 dark:text-amber-400" />
+            </div>
+            Curations
           </h1>
-          <p className="text-sm text-muted-foreground">{curations.length} curated experiences · Drag to reorder</p>
+          <p className="text-xs text-muted-foreground mt-0.5 ml-[46px]">{curations.length} curated experiences · Swipe or drag to reorder</p>
         </div>
         <motion.button
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
           onClick={startCreate}
-          className="px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold flex items-center gap-1.5"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-semibold shadow-md shadow-amber-200/50 dark:shadow-amber-900/30 hover:shadow-lg transition-shadow"
         >
-          <Plus size={16} /> Create
+          <Plus size={15} /> Create
         </motion.button>
       </div>
 
       <div className="relative">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-        <Input placeholder="Search curations..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
+        <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+        <Input placeholder="Search curations..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9 rounded-xl" />
       </div>
 
       {loading ? (

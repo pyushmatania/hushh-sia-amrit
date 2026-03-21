@@ -159,26 +159,30 @@ export default function AdminExperiencePackages() {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
-            <Gift size={18} className="text-primary" /> Experience Packages
+          <h2 className="text-xl font-bold text-foreground flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-pink-100 to-rose-100 dark:from-pink-500/15 dark:to-rose-500/15 flex items-center justify-center">
+              <Gift size={17} className="text-pink-600 dark:text-pink-400" />
+            </div>
+            Experience Packages
           </h2>
-          <p className="text-sm text-muted-foreground">{packages.length} packages · Drag to reorder</p>
+          <p className="text-xs text-muted-foreground mt-0.5 ml-[46px]">{packages.length} packages · Swipe or drag to reorder</p>
         </div>
-        <button
+        <motion.button
+          whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
           onClick={openCreate}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 active:scale-95 transition"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 text-white text-sm font-semibold shadow-md shadow-pink-200/50 dark:shadow-pink-900/30 hover:shadow-lg transition-shadow"
         >
-          <Plus size={16} /> Add Package
-        </button>
+          <Plus size={15} /> Add Package
+        </motion.button>
       </div>
 
       <div className="relative">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+        <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
         <Input
           placeholder="Search packages..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="pl-9"
+          className="pl-9 rounded-xl"
         />
       </div>
 
