@@ -93,6 +93,7 @@ export default function AdminProperties() {
   const [previewMode, setPreviewMode] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [bulkMode, setBulkMode] = useState(false);
 
   useEffect(() => {
     supabase.from("host_listings").select("*").order("sort_order").order("created_at", { ascending: false })
