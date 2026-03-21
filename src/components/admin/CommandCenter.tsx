@@ -783,14 +783,15 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
       </div>
 
       {/* Mini stats row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+      <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
         {[
-          { label: "Today", value: stats.todayBookings, icon: Calendar, alert: false },
-          { label: "Pending", value: stats.pendingOrders, icon: ShoppingCart, alert: stats.pendingOrders > 0 },
-          { label: "Rating", value: stats.avgRating, icon: Star, alert: false },
-          { label: "Low Stock", value: stats.lowStock, icon: AlertTriangle, alert: stats.lowStock > 0 },
+          { label: "Today", value: stats.todayBookings, icon: Calendar, alert: false, page: "calendar" as AdminPage },
+          { label: "Pending", value: stats.pendingOrders, icon: ShoppingCart, alert: stats.pendingOrders > 0, page: "orders" as AdminPage },
+          { label: "Conflicts", value: stats.conflicts, icon: AlertTriangle, alert: stats.conflicts > 0, page: "bookings" as AdminPage },
+          { label: "Rating", value: stats.avgRating, icon: Star, alert: false, page: "analytics" as AdminPage },
+          { label: "Low Stock", value: stats.lowStock, icon: AlertTriangle, alert: stats.lowStock > 0, page: "inventory" as AdminPage },
         ].map((card) => (
-          <div key={card.label} className="flex items-center gap-2.5 rounded-xl bg-card border border-border/60 p-2.5">
+          <motion.div key={card.label} whileTap={{ scale: 0.97 }} onClick={() => onNavigate?.(card.page)} className="flex items-center gap-2.5 rounded-xl bg-card border border-border/60 p-2.5 cursor-pointer hover:border-primary/20 transition-colors">
             <div className="w-7 h-7 rounded-lg bg-muted flex items-center justify-center shrink-0">
               <card.icon size={13} className="text-foreground/60" />
             </div>
@@ -801,7 +802,7 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
               </p>
               <p className="text-[9px] text-muted-foreground mt-0.5">{card.label}</p>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
 
