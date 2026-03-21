@@ -4,7 +4,7 @@ import {
   CalendarCheck, Search, CheckCircle2, Clock, Ban, ChevronRight, Users, IndianRupee,
   Inbox, Check, X, Loader2, TrendingUp, TrendingDown, BarChart3, PieChart,
   ArrowUpRight, ArrowDownRight, MapPin, Star, Filter, Eye, Building2, Activity,
-  CalendarIcon
+  CalendarIcon, AlertTriangle
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
