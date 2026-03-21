@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 interface Booking {
   id: string; booking_id: string; user_id: string; property_id: string;
   date: string; slot: string; guests: number; total: number;
-  status: string; created_at: string;
+  status: string; created_at: string; propertyName?: string;
 }
 
 const statusConfig: Record<string, { color: string; bg: string; icon: typeof Clock; border: string }> = {
