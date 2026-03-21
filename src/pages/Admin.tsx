@@ -87,7 +87,7 @@ export default function Admin() {
       case "properties": return <AdminProperties />;
       case "bookings": return <AdminBookings onNavigate={(p, ctx) => { if (ctx?.propertyId) setHistoryContext(ctx); setPage(p as AdminPage); }} />;
       case "users": return <AdminUsers />;
-      case "clients": return <AdminClients />;
+      case "clients": return <AdminClients initialUserId={clientContext?.userId} onContextConsumed={() => setClientContext(null)} />;
       case "analytics": return <AdminAnalytics />;
       case "earnings": return <HostEarnings />;
       case "curations": return <AdminCurations />;
