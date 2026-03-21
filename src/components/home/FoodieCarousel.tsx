@@ -47,14 +47,14 @@ const FoodieVideoCard = memo(function FoodieVideoCard({
     if (!card) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
+        if (entry.isIntersecting) {
           setShouldLoad(true);
           videoRef.current?.play().catch(() => {});
-        } else if (!entry.isIntersecting) {
+        } else {
           videoRef.current?.pause();
         }
       },
-      { threshold: [0, 0.3], rootMargin: "100px" }
+      { threshold: [0, 0.1], rootMargin: "400px" }
     );
     observer.observe(card);
     return () => observer.disconnect();
