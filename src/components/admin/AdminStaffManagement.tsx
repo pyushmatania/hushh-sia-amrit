@@ -7,7 +7,8 @@ import {
   Trash2, X, Check, Calendar, IndianRupee, Phone, Mail,
   AlertTriangle, TrendingUp, Coffee, Eye, Shield, Heart,
   Award, BarChart3, FileText, Download, Star, Timer,
-  Building2, MapPin, CreditCard, CircleDot, ArrowUpDown
+  Building2, MapPin, CreditCard, CircleDot, ArrowUpDown,
+  CalendarOff, CheckCircle2, XCircle, CalendarPlus
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
