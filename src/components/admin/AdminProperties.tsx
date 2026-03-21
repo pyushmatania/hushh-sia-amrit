@@ -1029,17 +1029,19 @@ function EditSection({ title, icon, id, expanded, onToggle, children }: {
 }) {
   const isOpen = expanded === id;
   return (
-    <div className="rounded-xl border border-border bg-card/50 overflow-hidden">
-      <button onClick={() => onToggle(isOpen ? "" : id)} className="w-full flex items-center gap-2 p-3 text-sm font-medium text-foreground hover:bg-secondary/50 transition">
-        <span className="text-primary">{icon}</span>
+    <div className={`rounded-2xl border overflow-hidden transition-all ${isOpen ? "border-primary/20 bg-card shadow-sm" : "border-border bg-card/50"}`}>
+      <button onClick={() => onToggle(isOpen ? "" : id)} className="w-full flex items-center gap-2.5 p-3.5 text-sm font-semibold text-foreground hover:bg-secondary/30 transition">
+        <div className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${isOpen ? "bg-primary/15 text-primary" : "bg-secondary text-muted-foreground"}`}>
+          {icon}
+        </div>
         {title}
-        <ChevronRight size={14} className={`ml-auto text-muted-foreground transition-transform ${isOpen ? "rotate-90" : ""}`} />
+        <ChevronDown size={14} className={`ml-auto text-muted-foreground transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
       </button>
       <AnimatePresence>
         {isOpen && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }} className="overflow-hidden">
-            <div className="p-3 pt-0">{children}</div>
+            transition={{ duration: 0.25, ease: "easeInOut" }} className="overflow-hidden">
+            <div className="px-3.5 pb-3.5 pt-1">{children}</div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -1050,7 +1052,7 @@ function EditSection({ title, icon, id, expanded, onToggle, children }: {
 function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div>
-      <label className="text-xs font-medium text-muted-foreground mb-1 block">
+      <label className="text-[11px] font-semibold text-primary/80 mb-1.5 block uppercase tracking-wider">
         {label}{required && <span className="text-destructive ml-0.5">*</span>}
       </label>
       {children}
