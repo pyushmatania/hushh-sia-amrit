@@ -397,16 +397,9 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
       id: "financial-summary",
       label: "Finance",
       render: () => {
-        const monthlyExpenses = [
-          { month: "Jan", expenses: 45000, revenue: 62000 },
-          { month: "Feb", expenses: 52000, revenue: 71000 },
-          { month: "Mar", expenses: 48000, revenue: 85000 },
-          { month: "Apr", expenses: 55000, revenue: 78000 },
-          { month: "May", expenses: 41000, revenue: 69000 },
-          { month: "Jun", expenses: 58000, revenue: 92000 },
-        ];
-        const totalRev = monthlyExpenses.reduce((s, m) => s + m.revenue, 0);
-        const totalExp = monthlyExpenses.reduce((s, m) => s + m.expenses, 0);
+        const fData = financialData.length > 0 ? financialData : [{ month: "—", expenses: 0, revenue: 0 }];
+        const totalRev = fData.reduce((s, m) => s + m.revenue, 0);
+        const totalExp = fData.reduce((s, m) => s + m.expenses, 0);
         const netProfit = totalRev - totalExp;
         const margin = totalRev > 0 ? ((netProfit / totalRev) * 100).toFixed(1) : "0";
         return (
