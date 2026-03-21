@@ -117,6 +117,7 @@ function VideoCard({
   accent,
   isSaved,
   onToggleSave,
+  isFirst,
 }: {
   property: Property;
   videoSrc: string;
@@ -127,13 +128,14 @@ function VideoCard({
   accent: VideoAccent;
   isSaved?: boolean;
   onToggleSave?: (id: string) => void;
+  isFirst?: boolean;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const [muted, setMuted] = useState(true);
   const saved = isSaved ?? false;
   const [videoReady, setVideoReady] = useState(false);
-  const [shouldLoad, setShouldLoad] = useState(false);
+  const [shouldLoad, setShouldLoad] = useState(isFirst ?? false);
 
   useEffect(() => {
     const card = cardRef.current;
