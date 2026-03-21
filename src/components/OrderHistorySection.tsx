@@ -180,6 +180,9 @@ export default function OrderHistorySection() {
                         <span className="text-muted-foreground">Total</span>
                         <span className="font-bold text-foreground">₹{order.total}</span>
                       </div>
+                      <div className="border-t border-foreground/[0.06] pt-3 mt-2">
+                        <OrderNotes orderId={order.id} authorName={user?.email?.split("@")[0] || "Guest"} authorRole="guest" />
+                      </div>
                     </motion.div>
                   )}
                 </motion.div>
