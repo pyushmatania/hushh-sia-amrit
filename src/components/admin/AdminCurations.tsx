@@ -455,6 +455,8 @@ export default function AdminCurations() {
             const propInfo = propertyMap.get(c.property_id);
             const thumb = propInfo ? getListingThumbnail(propInfo.name, propInfo.imageUrls, { preferMapped: true }) : null;
             const bookings = bookingCounts.get(c.property_id) || 0;
+            const rev = revenueMap.get(c.property_id);
+            const curationRevenue = rev ? rev.bookingRev + rev.orderRev : 0;
             const discount = c.original_price && c.original_price > c.price
               ? Math.round(((c.original_price - c.price) / c.original_price) * 100)
               : 0;
