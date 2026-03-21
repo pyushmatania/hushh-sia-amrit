@@ -122,7 +122,7 @@ async function handleCommandCenterSearch(query: string): Promise<string> {
 }
 
 const stagger = { animate: { transition: { staggerChildren: 0.05, delayChildren: 0.1 } } };
-const fadeUp = { initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] } } };
+const fadeUp = { initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] } } };
 
 function getSlotIcon(slot: string) {
   const s = slot.toLowerCase();
