@@ -700,9 +700,10 @@ function InsightsTab({ bookings, slotPopularity, topProperties, topClients, onNa
   );
 }
 
-function BookingCard({ booking: b, index, onNavigate, onStatusChange }: { booking: Booking; index: number; onNavigate?: any; onStatusChange: (id: string, status: string) => void }) {
+function BookingCard({ booking: b, index, onNavigate, onStatusChange, conflicts = [] }: { booking: Booking; index: number; onNavigate?: any; onStatusChange: (id: string, status: string) => void; conflicts?: Booking[] }) {
   const sc = statusConfig[b.status] || statusConfig.pending;
   const StatusIcon = sc.icon;
+  const hasConflict = conflicts.length > 0;
 
   return (
     <motion.div
@@ -711,7 +712,7 @@ function BookingCard({ booking: b, index, onNavigate, onStatusChange }: { bookin
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ delay: index * 0.02 }}
-      className={`rounded-2xl bg-card border border-border/60 overflow-hidden hover:shadow-lg ${sc.glow} transition-all duration-200 group`}
+      className={`rounded-2xl bg-card border ${hasConflict ? "border-destructive/40 ring-1 ring-destructive/20" : "border-border/60"} overflow-hidden hover:shadow-lg ${sc.glow} transition-all duration-200 group`}
     >
       {/* Property Image + Info Header */}
       <div className="relative cursor-pointer" onClick={() => onNavigate?.("history", { propertyId: b.property_id })}>
