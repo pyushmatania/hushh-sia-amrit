@@ -35,11 +35,15 @@ export default function LiveOrdersWidget({ onViewAll }: { onViewAll: () => void 
     const listingMap = new Map<string, { name: string; imageUrls: string[] }>();
     (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, { name: l.name, imageUrls: l.image_urls || [] }));
 
-    setOrders(ordersData.map(o => ({
-      ...o, assigned_name: (o as any).assigned_name || null,
-      items: itemMap.get(o.id) || [], guestName: profileMap.get(o.user_id) || "Guest",
-      propertyName: listingMap.get(o.property_id) || `Property`,
-    })));
+    setOrders(ordersData.map(o => {
+      const listing = listingMap.get(o.property_id);
+      return {
+        ...o, assigned_name: (o as any).assigned_name || null,
+        items: itemMap.get(o.id) || [], guestName: profileMap.get(o.user_id) || "Guest",
+        propertyName: listing?.name || "Property",
+        propertyImageUrls: listing?.imageUrls || [],
+      };
+    }));
     setLoading(false);
   };
 
