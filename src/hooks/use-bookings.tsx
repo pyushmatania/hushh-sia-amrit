@@ -253,6 +253,8 @@ export function useBookings() {
               total: Number(b.total),
               status: b.status as Booking["status"],
               bookingId: b.booking_id,
+              roomsCount: (b as any).rooms_count ?? null,
+              extraMattresses: (b as any).extra_mattresses ?? 0,
             })
           );
           setBookings(sortBookings(mapped));
