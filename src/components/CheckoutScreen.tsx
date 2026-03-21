@@ -1,10 +1,11 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Tag, CreditCard, Smartphone, Banknote, ChevronRight, Shield, Clock, Users, MapPin, CalendarIcon, X, Heart, Bookmark, Pencil, Minus, Plus, Check as CheckIcon } from "lucide-react";
-import { useState } from "react";
+import { ArrowLeft, Tag, CreditCard, Smartphone, Banknote, ChevronRight, Shield, Clock, Users, MapPin, CalendarIcon, X, Heart, Bookmark, Pencil, Minus, Plus, Check as CheckIcon, AlertTriangle } from "lucide-react";
+import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import type { Property } from "@/data/properties";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { Calendar } from "@/components/ui/calendar";
+import { checkBookingConflict, type ConflictResult } from "@/hooks/use-bookings";
 
 interface CheckoutScreenProps {
   property: Property;
@@ -38,6 +39,21 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
   const [selectedPayment, setSelectedPayment] = useState("upi");
   const [extras, setExtras] = useState<Property[]>(initialExtras || []);
   const [liveSelections, setLiveSelections] = useState<Record<string, number>>(initialSelections);
+  const [conflict, setConflict] = useState<ConflictResult | null>(null);
+  const [checkingConflict, setCheckingConflict] = useState(false);
+
+  // Check for booking conflicts when date or slot changes
+  useEffect(() => {
+    const check = async () => {
+      setCheckingConflict(true);
+      const dateStr = liveDate.toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" });
+      const slotStr = `${slot.label} · ${slot.time}`;
+      const result = await checkBookingConflict(property.id, dateStr, slotStr);
+      setConflict(result);
+      setCheckingConflict(false);
+    };
+    check();
+  }, [liveDate, property.id, slot]);
 
   const removeAddon = (id: string) => {
     setLiveSelections(prev => {
@@ -229,6 +245,34 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
             )}
           </AnimatePresence>
         </motion.div>
+
+        {/* Booking Conflict Warning */}
+        <AnimatePresence>
+          {conflict?.hasConflict && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4"
+            >
+              <div className="flex items-start gap-3">
+                <div className="w-9 h-9 rounded-xl bg-amber-500/15 flex items-center justify-center shrink-0 mt-0.5">
+                  <AlertTriangle size={18} className="text-amber-400" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-semibold text-sm text-foreground">Slot already booked</h4>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    This property has {conflict.existingBookings.length} existing booking{conflict.existingBookings.length > 1 ? "s" : ""} for this date & slot.
+                    {conflict.existingBookings.reduce((s, b) => s + b.guests, 0)} guests already confirmed.
+                  </p>
+                  <p className="text-[10px] text-amber-400 font-medium mt-1.5">
+                    Consider choosing a different date or time slot to avoid conflicts.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Price Breakdown */}
         <motion.div

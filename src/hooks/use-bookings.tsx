@@ -5,6 +5,30 @@ import type { Booking } from "@/pages/Index";
 
 const LOCAL_KEY = "hushh_bookings";
 
+export interface ConflictResult {
+  hasConflict: boolean;
+  existingBookings: { booking_id: string; guests: number; status: string }[];
+}
+
+export async function checkBookingConflict(
+  propertyId: string,
+  date: string,
+  slot: string
+): Promise<ConflictResult> {
+  const { data } = await supabase
+    .from("bookings")
+    .select("booking_id, guests, status")
+    .eq("property_id", propertyId)
+    .eq("date", date)
+    .eq("slot", slot)
+    .not("status", "in", "(cancelled,completed)");
+
+  return {
+    hasConflict: (data?.length ?? 0) > 0,
+    existingBookings: data ?? [],
+  };
+}
+
 const STATUS_ORDER: Record<Booking["status"], number> = {
   active: 0,
   upcoming: 1,

@@ -1,7 +1,8 @@
-import { motion, useMotionValue, useTransform, useSpring, useAnimation, useScroll, PanInfo } from "framer-motion";
-import { MapPin, Calendar, Clock, ChevronRight, Ticket, QrCode, Users, X, Utensils, ShoppingCart, Shield, Upload } from "lucide-react";
+import { motion, AnimatePresence, useMotionValue, useTransform, useSpring, useAnimation, useScroll, PanInfo } from "framer-motion";
+import { MapPin, Calendar as CalendarIcon, Clock, ChevronRight, Ticket, QrCode, Users, X, Utensils, ShoppingCart, Shield, Upload, ChevronDown, ChevronUp } from "lucide-react";
 import { useRef, useState, useCallback, useMemo, useEffect } from "react";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
+import { Calendar } from "@/components/ui/calendar";
 import PullToRefresh from "./PullToRefresh";
 import type { Booking } from "@/pages/Index";
 import OrderHistorySection from "./OrderHistorySection";
@@ -226,7 +227,7 @@ function TiltCard({
 
               <div className="flex flex-wrap gap-2">
                 <span className="flex items-center gap-1.5 bg-secondary/80 rounded-lg px-2.5 py-1.5 text-xs text-foreground" style={{ boxShadow: "inset 0 1px 0 hsla(0,0%,100%,0.04), 0 1px 2px hsla(0,0%,0%,0.15)" }}>
-                  <Calendar size={12} className="text-primary" /> {booking.date}
+                  <CalendarIcon size={12} className="text-primary" /> {booking.date}
                 </span>
                 <span className="flex items-center gap-1.5 bg-secondary/80 rounded-lg px-2.5 py-1.5 text-xs text-foreground" style={{ boxShadow: "inset 0 1px 0 hsla(0,0%,100%,0.04), 0 1px 2px hsla(0,0%,0%,0.15)" }}>
                   <Clock size={12} className="text-primary" /> {booking.slot}
@@ -294,6 +295,8 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
   const [orderingBooking, setOrderingBooking] = useState<Booking | null>(null);
   const [idVerified, setIdVerified] = useState<boolean | null>(null);
   const [idSheetOpen, setIdSheetOpen] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [selectedCalDate, setSelectedCalDate] = useState<Date | undefined>(undefined);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -339,26 +342,129 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
     setOrderingBooking(booking);
   }, []);
 
+  // Build set of booked dates for the calendar
+  const bookedDatesMap = useMemo(() => {
+    const map = new Map<string, Booking[]>();
+    bookings.forEach(b => {
+      if (b.status === "cancelled") return;
+      const parsed = new Date(b.date);
+      if (!isNaN(parsed.getTime())) {
+        const key = `${parsed.getFullYear()}-${parsed.getMonth()}-${parsed.getDate()}`;
+        map.set(key, [...(map.get(key) || []), b]);
+      }
+    });
+    return map;
+  }, [bookings]);
+
+  const bookedDates = useMemo(() =>
+    Array.from(bookedDatesMap.keys()).map(key => {
+      const [y, m, d] = key.split("-").map(Number);
+      return new Date(y, m, d);
+    }),
+    [bookedDatesMap]
+  );
+
+  const selectedDateBookings = useMemo(() => {
+    if (!selectedCalDate) return [];
+    const key = `${selectedCalDate.getFullYear()}-${selectedCalDate.getMonth()}-${selectedCalDate.getDate()}`;
+    return bookedDatesMap.get(key) || [];
+  }, [selectedCalDate, bookedDatesMap]);
+
   return (
     <PullToRefresh onRefresh={handleRefresh}>
     <div key={refreshKey} className="pb-24 bg-mesh min-h-screen">
       <div className="px-5 pt-6 pb-2">
-        <motion.h1
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-2xl font-bold text-foreground"
-        >
-          Your Trips
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.1 }}
-          className="text-sm text-muted-foreground mt-1"
-        >
-          {onCancel ? "Swipe left on upcoming trips to cancel" : "Manage your bookings"}
-        </motion.p>
+        <div className="flex items-center justify-between">
+          <div>
+            <motion.h1
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-2xl font-bold text-foreground"
+            >
+              Your Trips
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.1 }}
+              className="text-sm text-muted-foreground mt-1"
+            >
+              {onCancel ? "Swipe left on upcoming trips to cancel" : "Manage your bookings"}
+            </motion.p>
+          </div>
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => { setCalendarOpen(!calendarOpen); setSelectedCalDate(undefined); }}
+            className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${
+              calendarOpen ? "bg-primary/10 border-primary/30 text-primary" : "bg-secondary border-border text-muted-foreground"
+            }`}
+          >
+            <CalendarIcon size={18} />
+          </motion.button>
+        </div>
       </div>
+
+      {/* Booking Calendar */}
+      <AnimatePresence>
+        {calendarOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden px-5"
+          >
+            <div className="rounded-2xl border border-border bg-card p-3 mb-3">
+              <Calendar
+                mode="single"
+                selected={selectedCalDate}
+                onSelect={setSelectedCalDate}
+                modifiers={{ booked: bookedDates }}
+                modifiersClassNames={{ booked: "bg-primary/20 text-primary font-bold rounded-lg" }}
+                className="rounded-xl pointer-events-auto"
+              />
+              {selectedCalDate && selectedDateBookings.length > 0 && (
+                <div className="mt-3 space-y-2 border-t border-border pt-3">
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                    {selectedDateBookings.length} booking{selectedDateBookings.length > 1 ? "s" : ""} on this date
+                  </p>
+                  {selectedDateBookings.map(b => {
+                    const prop = properties.find(p => p.id === b.propertyId);
+                    return (
+                      <motion.div
+                        key={b.id}
+                        initial={{ opacity: 0, x: -8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        onClick={() => onViewDetail(b)}
+                        className="flex items-center gap-3 p-2.5 rounded-xl bg-secondary/50 border border-border/50 cursor-pointer active:scale-[0.98] transition-transform"
+                      >
+                        {prop && (
+                          <img src={prop.images[0]} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-semibold text-foreground truncate">{prop?.name || "Property"}</p>
+                          <p className="text-[10px] text-muted-foreground">{b.slot} · {b.guests} guests</p>
+                        </div>
+                        <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
+                          b.status === "active" ? "bg-success/15 text-success" :
+                          b.status === "upcoming" ? "bg-primary/15 text-primary" :
+                          "bg-secondary text-muted-foreground"
+                        }`}>
+                          {b.status}
+                        </span>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              )}
+              {selectedCalDate && selectedDateBookings.length === 0 && (
+                <p className="text-center text-xs text-muted-foreground mt-3 pt-3 border-t border-border">
+                  No bookings on this date
+                </p>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Filter tabs */}
       <div className="px-5 pt-1 pb-2">
