@@ -1,6 +1,80 @@
-import { useState, useRef } from "react";
-import { motion, useMotionValue, useTransform, AnimatePresence, PanInfo } from "framer-motion";
+import { useState, useRef, useCallback } from "react";
+import { motion, useMotionValue, useTransform, PanInfo } from "framer-motion";
 import { Pencil, Trash2 } from "lucide-react";
+import { hapticLight, hapticMedium, hapticHeavy } from "@/lib/haptics";
+
+// Tiny synthesized swipe sounds via AudioContext
+function playSwipeReveal() {
+  try {
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(600, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(900, ctx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.12);
+    setTimeout(() => ctx.close(), 200);
+  } catch {}
+}
+
+function playSwipeClose() {
+  try {
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(800, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.06, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.1);
+    setTimeout(() => ctx.close(), 200);
+  } catch {}
+}
+
+function playDeleteTap() {
+  try {
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = "triangle";
+    osc.frequency.setValueAtTime(300, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.15);
+    setTimeout(() => ctx.close(), 250);
+  } catch {}
+}
+
+function playEditTap() {
+  try {
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(700, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1000, ctx.currentTime + 0.06);
+    gain.gain.setValueAtTime(0.07, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.1);
+    setTimeout(() => ctx.close(), 200);
+  } catch {}
+}
 
 interface SwipeableRowProps {
   children: React.ReactNode;
@@ -13,22 +87,42 @@ export default function SwipeableRow({ children, onEdit, onDelete, className = "
   const x = useMotionValue(0);
   const [swiped, setSwiped] = useState<"none" | "left">("none");
   const containerRef = useRef<HTMLDivElement>(null);
+  const hasTriggeredHaptic = useRef(false);
 
   const ACTION_WIDTH = 140;
 
   const editOpacity = useTransform(x, [-ACTION_WIDTH, -60, 0], [1, 0.6, 0]);
-  const deleteOpacity = useTransform(x, [-ACTION_WIDTH, -60, 0], [1, 0.6, 0]);
-  const actionsX = useTransform(x, [-ACTION_WIDTH, 0], [0, ACTION_WIDTH]);
 
-  const handleDragEnd = (_: any, info: PanInfo) => {
+  const handleDrag = useCallback((_: any, info: PanInfo) => {
+    if (info.offset.x < -50 && !hasTriggeredHaptic.current) {
+      hasTriggeredHaptic.current = true;
+      hapticMedium();
+    }
+    if (info.offset.x > -30) {
+      hasTriggeredHaptic.current = false;
+    }
+  }, []);
+
+  const handleDragEnd = useCallback((_: any, info: PanInfo) => {
+    hasTriggeredHaptic.current = false;
     if (info.offset.x < -50) {
       setSwiped("left");
+      playSwipeReveal();
+      hapticLight();
     } else {
+      if (swiped === "left") {
+        playSwipeClose();
+        hapticLight();
+      }
       setSwiped("none");
     }
-  };
+  }, [swiped]);
 
-  const close = () => setSwiped("none");
+  const close = useCallback(() => {
+    setSwiped("none");
+    playSwipeClose();
+    hapticLight();
+  }, []);
 
   return (
     <div ref={containerRef} className={`relative overflow-hidden rounded-xl ${className}`}>
@@ -39,7 +133,7 @@ export default function SwipeableRow({ children, onEdit, onDelete, className = "
       >
         {onEdit && (
           <button
-            onClick={(e) => { e.stopPropagation(); onEdit(); close(); }}
+            onClick={(e) => { e.stopPropagation(); playEditTap(); hapticLight(); onEdit(); close(); }}
             className="w-[70px] flex flex-col items-center justify-center gap-1 bg-primary/15 text-primary hover:bg-primary/25 transition-colors"
           >
             <Pencil size={16} />
@@ -48,7 +142,7 @@ export default function SwipeableRow({ children, onEdit, onDelete, className = "
         )}
         {onDelete && (
           <button
-            onClick={(e) => { e.stopPropagation(); onDelete(); close(); }}
+            onClick={(e) => { e.stopPropagation(); playDeleteTap(); hapticHeavy(); onDelete(); close(); }}
             className="w-[70px] flex flex-col items-center justify-center gap-1 bg-destructive/15 text-destructive hover:bg-destructive/25 transition-colors"
           >
             <Trash2 size={16} />
@@ -62,6 +156,7 @@ export default function SwipeableRow({ children, onEdit, onDelete, className = "
         drag="x"
         dragConstraints={{ left: -ACTION_WIDTH, right: 0 }}
         dragElastic={0.1}
+        onDrag={handleDrag}
         onDragEnd={handleDragEnd}
         animate={{ x: swiped === "left" ? -ACTION_WIDTH : 0 }}
         transition={{ type: "spring", damping: 25, stiffness: 300 }}
