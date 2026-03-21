@@ -333,7 +333,7 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
         </div>
 
         {/* Tabs */}
-        <div className="sticky top-[120px] z-10 bg-card/95 backdrop-blur-sm border-b border-border">
+        <div className="sticky top-0 z-10 bg-card/95 backdrop-blur-sm border-b border-border">
           <div className="flex">
             {tabs.map(tab => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
