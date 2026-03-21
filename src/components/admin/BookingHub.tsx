@@ -266,23 +266,31 @@ export default function BookingHub({
   }, [conflictMap, bookings]);
 
   const updateStatus = async (id: string, status: string) => {
-    // Warn on confirming a conflicting booking
     if (status === "confirmed" || status === "active") {
       const booking = bookings.find(b => b.id === id);
       if (booking) {
-        const activeStatuses = ["confirmed", "active", "upcoming", "pending"];
-        const overlapping = bookings.filter(b =>
-          b.id !== id &&
-          b.property_id === booking.property_id &&
-          b.date === booking.date &&
-          b.slot === booking.slot &&
-          activeStatuses.includes(b.status)
-        );
-        if (overlapping.length > 0) {
-          const proceed = window.confirm(
-            `⚠️ Conflict detected!\n\nThis property already has ${overlapping.length} booking(s) for ${booking.date} at ${booking.slot}.\n\nGuests: ${overlapping.reduce((s, b) => s + b.guests, 0) + booking.guests} total\n\nProceed anyway?`
-          );
-          if (!proceed) return;
+        const cap = getSlotCapacity(booking);
+        if (cap.otherBookings > 0 || cap.isOverCapacity) {
+          let msg = `⚠️ Capacity Alert!\n\n`;
+          if (cap.type === "stay") {
+            msg += `Stay Property: ${cap.rooms} room(s), ${cap.perRoom} per room + ${cap.extraMattress} mattress\n`;
+            msg += `Max capacity: ${cap.maxGuests} guests\n`;
+            msg += `Total guests for this slot: ${cap.totalGuests}\n`;
+            if (cap.isOverCapacity) {
+              msg += `\n🚨 OVER CAPACITY by ${cap.totalGuests - cap.maxGuests} guest(s)!\n`;
+              msg += `Rooms needed: ${cap.roomsNeeded} (only ${cap.rooms} available)\n`;
+            } else {
+              msg += `\nRooms needed: ${cap.roomsNeeded}`;
+              if (cap.needsMattress) msg += ` (extra mattress required)`;
+              msg += `\n`;
+            }
+          } else {
+            msg += `Experience/Event: Max ${cap.maxGuests} guests\n`;
+            msg += `Total guests for this slot: ${cap.totalGuests}\n`;
+            if (cap.isOverCapacity) msg += `\n🚨 OVER CAPACITY by ${cap.totalGuests - cap.maxGuests} guest(s)!\n`;
+          }
+          msg += `\n${cap.otherBookings} other booking(s) on same slot.\n\nProceed anyway?`;
+          if (!window.confirm(msg)) return;
         }
       }
     }
