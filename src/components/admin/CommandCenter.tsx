@@ -218,6 +218,36 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
     });
   }, []);
 
+  // Phase 1: Real-time dashboard sync
+  useEffect(() => {
+    const channels = [
+      supabase.channel("dashboard-bookings-rt").on("postgres_changes", { event: "*", schema: "public", table: "bookings" }, () => {
+        // Re-fetch stats on booking changes
+        supabase.from("bookings").select("total, status, property_id, date, slot, guests").then(({ data }) => {
+          if (!data) return;
+          const today = new Date().toISOString().split("T")[0];
+          setStats(prev => ({
+            ...prev,
+            revenue: data.reduce((s, b) => s + Number(b.total), 0),
+            bookings: data.length,
+            todayBookings: data.filter(b => b.date === today).length,
+          }));
+        });
+      }).subscribe(),
+      supabase.channel("dashboard-orders-rt").on("postgres_changes", { event: "*", schema: "public", table: "orders" }, () => {
+        supabase.from("orders").select("id, status").then(({ data }) => {
+          if (data) setStats(prev => ({ ...prev, pendingOrders: data.filter(o => o.status === "pending").length }));
+        });
+      }).subscribe(),
+      supabase.channel("dashboard-inventory-rt").on("postgres_changes", { event: "*", schema: "public", table: "inventory" }, () => {
+        supabase.from("inventory").select("id, stock, low_stock_threshold, available").then(({ data }) => {
+          if (data) setStats(prev => ({ ...prev, lowStock: data.filter(i => i.stock <= i.low_stock_threshold && i.available).length }));
+        });
+      }).subscribe(),
+    ];
+    return () => { channels.forEach(ch => supabase.removeChannel(ch)); };
+  }, []);
+
   const revTrendPct = prevMonthStats.revenue;
   const bkTrendPct = prevMonthStats.bookings;
 
