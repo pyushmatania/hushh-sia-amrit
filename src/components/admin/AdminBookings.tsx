@@ -47,7 +47,7 @@ export default function AdminBookings({ onNavigate }: { onNavigate?: (page: stri
 
   const filtered = bookings.filter(b =>
     (statusFilter === "all" || b.status === statusFilter) &&
-    (b.booking_id?.toLowerCase().includes(search.toLowerCase()) || b.property_id?.toLowerCase().includes(search.toLowerCase()))
+    (b.booking_id?.toLowerCase().includes(search.toLowerCase()) || b.property_id?.toLowerCase().includes(search.toLowerCase()) || b.propertyName?.toLowerCase().includes(search.toLowerCase()))
   );
 
   const updateStatus = async (id: string, status: string) => {
