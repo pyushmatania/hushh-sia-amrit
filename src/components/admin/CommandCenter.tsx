@@ -526,7 +526,7 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
           </div>
           <div className="h-[160px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={weeklyData} barCategoryGap="25%">
+              <BarChart data={weeklyPerfData} barCategoryGap="25%">
                 <defs>
                   <linearGradient id="barFill" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="hsl(250, 80%, 60%)" />
