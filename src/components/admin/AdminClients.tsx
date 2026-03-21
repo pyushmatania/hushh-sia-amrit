@@ -1,16 +1,19 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Users, Search, Download, SlidersHorizontal, IndianRupee, CalendarCheck,
   Shield, CheckCircle2, Clock, X, MapPin, Star, Heart, ShoppingCart,
   Share2, Zap, Award, ChevronRight, ArrowLeft, FileText, User,
   ChefHat, Receipt, Phone, Mail, CreditCard, Home, Globe, Hash,
-  Sparkles, TrendingUp, Eye, Bot, Send, Loader2, UtensilsCrossed, Gift
+  Sparkles, TrendingUp, Eye, Bot, Send, Loader2, UtensilsCrossed, Gift,
+  StickyNote, Pin, PinOff, Trash2, MoreVertical, MessageSquare
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import NeuralSearchWidget from "./NeuralSearchWidget";
 import { getListingThumbnail } from "@/lib/listing-thumbnails";
+import { useAuth } from "@/hooks/use-auth";
 
 /* ─── Types ─── */
 interface BookingRecord {
