@@ -421,8 +421,8 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
 }
 
 /* ─── Eye Component ─── */
-function FlameEye({ size, state, side, hovered = false }: { size: number; state: string; side: "left" | "right"; hovered?: boolean }) {
-  const isHappy = state === "success";
+function FlameEye({ size, state, side, hovered = false, eyeStyle = "" }: { size: number; state: string; side: "left" | "right"; hovered?: boolean; eyeStyle?: string }) {
+  const isHappy = state === "success" || eyeStyle === "happy";
   const pupilR = size * 0.45;
 
   if (isHappy) {
