@@ -481,7 +481,24 @@ function FlameEye({ size, state, side, hovered = false }: { size: number; state:
 function FlameMouth({ size, type, state }: { size: number; type: string; state: string }) {
   const s = size;
 
-  if (type === "talk" || state === "speaking") {
+  // Scared gasp - round "O" mouth
+  if (type === "gasp") {
+    return (
+      <motion.div
+        className="rounded-full"
+        style={{
+          width: s * 0.07, height: s * 0.07,
+          marginTop: s * 0.02,
+          background: "#1a0e05",
+          opacity: 0.55,
+        }}
+        animate={{ scale: [1, 1.2, 0.9, 1], y: [0, -1, 1, 0] }}
+        transition={{ duration: 0.5, repeat: Infinity }}
+      />
+    );
+  }
+
+
     return (
       <motion.div
         className="rounded-full"
