@@ -5,7 +5,7 @@ import AdminLayout, { type AdminPage } from "@/components/admin/AdminLayout";
 import CommandCenter from "@/components/admin/CommandCenter";
 import AdminCatalog from "@/components/admin/AdminCatalog";
 import AdminProperties from "@/components/admin/AdminProperties";
-import AdminBookings from "@/components/admin/AdminBookings";
+import BookingHub from "@/components/admin/BookingHub";
 import AdminUsers from "@/components/admin/AdminUsers";
 import AdminClients from "@/components/admin/AdminClients";
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
