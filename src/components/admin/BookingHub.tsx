@@ -171,13 +171,31 @@ export default function BookingHub({
     })),
   [bookings, propertyMap]);
 
-  const filtered = useMemo(() => bookings.filter(b =>
-    (statusFilter === "all" || b.status === statusFilter) &&
-    (propertyFilter === "all" || b.property_id === propertyFilter) &&
-    (b.booking_id?.toLowerCase().includes(search.toLowerCase()) ||
-     b.propertyName?.toLowerCase().includes(search.toLowerCase()) ||
-     b.userName?.toLowerCase().includes(search.toLowerCase()))
-  ), [bookings, statusFilter, propertyFilter, search]);
+  const filtered = useMemo(() => bookings.filter(b => {
+    if (statusFilter !== "all" && b.status !== statusFilter) return false;
+    if (propertyFilter !== "all" && b.property_id !== propertyFilter) return false;
+    if (dateFrom) {
+      const bDate = new Date(b.created_at);
+      bDate.setHours(0, 0, 0, 0);
+      const from = new Date(dateFrom);
+      from.setHours(0, 0, 0, 0);
+      if (bDate < from) return false;
+    }
+    if (dateTo) {
+      const bDate = new Date(b.created_at);
+      bDate.setHours(23, 59, 59, 999);
+      const to = new Date(dateTo);
+      to.setHours(23, 59, 59, 999);
+      if (bDate > to) return false;
+    }
+    if (search) {
+      const q = search.toLowerCase();
+      return (b.booking_id?.toLowerCase().includes(q) ||
+        b.propertyName?.toLowerCase().includes(q) ||
+        b.userName?.toLowerCase().includes(q));
+    }
+    return true;
+  }), [bookings, statusFilter, propertyFilter, search, dateFrom, dateTo]);
 
   const pendingBookings = useMemo(() => bookings.filter(b => b.status === "upcoming" || b.status === "pending"), [bookings]);
 
