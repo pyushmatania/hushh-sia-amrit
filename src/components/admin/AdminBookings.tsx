@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CalendarCheck, Search, CheckCircle2, Clock, Ban, ChevronRight, Filter, Download, Users, IndianRupee } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -29,24 +29,30 @@ export default function AdminBookings({ onNavigate }: { onNavigate?: (page: stri
   const [loading, setLoading] = useState(true);
   const [propertyNames, setPropertyNames] = useState<Map<string, string>>(new Map());
 
-  useEffect(() => {
-    const load = async () => {
-      const [bookingsRes, listingsRes] = await Promise.all([
-        supabase.from("bookings").select("*").order("created_at", { ascending: false }),
-        supabase.from("host_listings").select("id, name"),
-      ]);
-      const listingMap = new Map<string, string>();
-      (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, l.name));
-      setPropertyNames(listingMap);
-      const data = (bookingsRes.data ?? []).map(b => ({
-        ...b,
-        propertyName: listingMap.get(b.property_id) || `Property ${b.property_id.slice(0, 6)}`,
-      }));
-      setBookings(data);
-      setLoading(false);
-    };
-    load();
+  const load = useCallback(async () => {
+    const [bookingsRes, listingsRes] = await Promise.all([
+      supabase.from("bookings").select("*").order("created_at", { ascending: false }),
+      supabase.from("host_listings").select("id, name"),
+    ]);
+    const listingMap = new Map<string, string>();
+    (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, l.name));
+    setPropertyNames(listingMap);
+    const data = (bookingsRes.data ?? []).map(b => ({
+      ...b,
+      propertyName: listingMap.get(b.property_id) || `Property ${b.property_id.slice(0, 6)}`,
+    }));
+    setBookings(data);
+    setLoading(false);
   }, []);
+
+  useEffect(() => {
+    load();
+    const channel = supabase
+      .channel("admin-bookings-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "bookings" }, () => load())
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [load]);
 
   // Unique properties from bookings
   const uniqueProperties = Array.from(new Set(bookings.map(b => b.property_id))).map(id => ({
