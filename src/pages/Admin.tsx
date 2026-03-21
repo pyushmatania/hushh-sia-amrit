@@ -37,7 +37,7 @@ import { Shield, Loader2 } from "lucide-react";
 
 export default function Admin() {
   const { user, loading: authLoading } = useAuth();
-  const { hasAdminAccess, loading: roleLoading } = useAdmin();
+  const { hasAdminAccess, loading: roleLoading, roles } = useAdmin();
   const [page, setPage] = useState<AdminPage>("dashboard");
   const [pageHistory, setPageHistory] = useState<AdminPage[]>([]);
   const [skipAuth, setSkipAuth] = useState(false);
