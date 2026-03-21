@@ -219,10 +219,10 @@ function VideoCard({
           {muted ? <VolumeX size={18} className="text-white" /> : <Volume2 size={18} className="text-white" />}
         </button>
 
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="absolute inset-0 flex items-end pointer-events-none" style={{ paddingBottom: "38%" }}>
           <p
-            className="text-3xl font-bold italic text-white/70"
-            style={{ fontFamily: "'Playfair Display', serif", textShadow: "0 2px 20px rgba(0,0,0,0.5)" }}
+            className="text-[26px] font-black italic text-white/90 leading-[1.15] px-5"
+            style={{ fontFamily: "'Playfair Display', serif", textShadow: "0 2px 8px rgba(0,0,0,0.8), 0 4px 24px rgba(0,0,0,0.5)" }}
           >
             {overlayText}
           </p>
@@ -230,13 +230,13 @@ function VideoCard({
 
         <div
           className="absolute bottom-0 left-0 right-0 p-5"
-          style={{ background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%)" }}
+          style={{ background: "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.7) 45%, rgba(0,0,0,0.25) 70%, transparent 100%)" }}
         >
           <div className="flex items-end justify-between">
             <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-semibold text-primary mb-1">{dateLabel}</p>
-              <h3 className="text-[20px] font-bold text-white leading-tight line-clamp-2">{property.name}</h3>
-              <p className="text-[13px] text-white/60 mt-1">{property.location}</p>
+              <p className="text-[13px] font-bold text-primary mb-1">{dateLabel}</p>
+              <h3 className="text-[22px] font-extrabold text-white leading-tight line-clamp-2" style={{ textShadow: "0 1px 6px rgba(0,0,0,0.5)" }}>{property.name}</h3>
+              <p className="text-[13px] text-white/75 font-medium mt-1">{property.location}</p>
             </div>
             <button
               onClick={(e) => {
