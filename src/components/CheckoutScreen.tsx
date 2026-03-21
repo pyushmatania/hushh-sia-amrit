@@ -517,6 +517,16 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
             </>
           )}
 
+          {/* Extra mattress charge */}
+          {mattressTotal > 0 && (
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground flex items-center gap-1.5">
+                <BedDouble size={12} /> Extra mattress × {extraMattressCount}
+              </span>
+              <span className="text-foreground font-medium">₹{mattressTotal.toLocaleString()}</span>
+            </div>
+          )}
+
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Platform fee</span>
             <span className="text-foreground font-medium">₹{platformFee}</span>
