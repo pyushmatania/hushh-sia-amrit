@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Tag, CreditCard, Smartphone, Banknote, ChevronRight, Shield, Clock, Users, MapPin, CalendarIcon, X, Heart, Bookmark, Pencil, Minus, Plus, Check as CheckIcon, AlertTriangle } from "lucide-react";
-import { useState, useEffect } from "react";
+import { ArrowLeft, Tag, CreditCard, Smartphone, Banknote, ChevronRight, Shield, Clock, Users, MapPin, CalendarIcon, X, Heart, Bookmark, Pencil, Minus, Plus, Check as CheckIcon, AlertTriangle, BedDouble, Layers } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
 import { format } from "date-fns";
 import type { Property } from "@/data/properties";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
@@ -41,6 +41,43 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
   const [liveSelections, setLiveSelections] = useState<Record<string, number>>(initialSelections);
   const [conflict, setConflict] = useState<ConflictResult | null>(null);
   const [checkingConflict, setCheckingConflict] = useState(false);
+  const [extraMattressCount, setExtraMattressCount] = useState(0);
+
+  const ROOM_CAPACITY = 2;
+  const EXTRA_MATTRESS_PRICE = 500; // ₹500 per extra mattress
+  const isStay = property.primaryCategory === "stay";
+
+  // Room allocation logic for stays
+  const roomInfo = useMemo(() => {
+    if (!isStay) return null;
+    const totalRooms = Math.max(1, Math.floor((property.capacity || 6) / ROOM_CAPACITY));
+    const roomsNeeded = Math.ceil(liveGuests / ROOM_CAPACITY);
+    const fitsExactly = liveGuests % ROOM_CAPACITY === 0;
+    const oddGuest = !fitsExactly ? 1 : 0; // 1 person needs mattress if odd
+    const suggestedMattresses = oddGuest;
+    const canFitWithMattress = liveGuests <= roomsNeeded * (ROOM_CAPACITY + 1);
+    const roomsWithoutMattress = Math.ceil(liveGuests / ROOM_CAPACITY);
+    const roomsWithMattress = Math.ceil(liveGuests / (ROOM_CAPACITY + 1));
+    const isOverCapacity = roomsWithMattress > totalRooms;
+
+    return {
+      totalRooms,
+      roomsNeeded: extraMattressCount > 0 ? roomsWithMattress : roomsWithoutMattress,
+      fitsExactly,
+      oddGuest,
+      suggestedMattresses,
+      canFitWithMattress,
+      isOverCapacity,
+      maxMattresses: Math.min(roomsWithMattress, totalRooms), // max 1 per room
+    };
+  }, [isStay, liveGuests, property.capacity, extraMattressCount]);
+
+  // Auto-suggest mattress when guest count is odd for stays
+  useEffect(() => {
+    if (roomInfo && roomInfo.oddGuest > 0 && extraMattressCount === 0) {
+      // Don't auto-set, just suggest via UI
+    }
+  }, [roomInfo]);
 
   // Check for booking conflicts when date or slot changes
   useEffect(() => {
@@ -81,10 +118,11 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
     return sum + (cheapest?.price || ext.basePrice);
   }, 0);
 
+  const mattressTotal = isStay ? extraMattressCount * EXTRA_MATTRESS_PRICE : 0;
   const baseTotal = slot.price + addonTotal;
-  const discount = couponApplied ? Math.round((baseTotal + extrasTotal) * 0.1) : 0;
+  const discount = couponApplied ? Math.round((baseTotal + extrasTotal + mattressTotal) * 0.1) : 0;
   const platformFee = 49;
-  const finalTotal = baseTotal + extrasTotal - discount + platformFee;
+  const finalTotal = baseTotal + extrasTotal + mattressTotal - discount + platformFee;
 
   // Build line items from live selections
   const lineItems: { id: string; name: string; qty: number; unitPrice: number; subtotal: number }[] = [];
@@ -246,7 +284,104 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
           </AnimatePresence>
         </motion.div>
 
-        {/* Booking Conflict Warning — Capacity-Aware */}
+        {/* Room Allocation Card — Stay properties only */}
+        {isStay && roomInfo && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.12 }}
+            className={`rounded-2xl border p-4 ${roomInfo.isOverCapacity ? "border-destructive/40 bg-destructive/5" : "border-border"}`}
+          >
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
+                <BedDouble size={16} className="text-primary" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-sm text-foreground">Room Allocation</h4>
+                <p className="text-[10px] text-muted-foreground">{roomInfo.totalRooms} rooms · {ROOM_CAPACITY} guests per room</p>
+              </div>
+            </div>
+
+            {/* Room visual */}
+            <div className="flex flex-wrap gap-2 mb-3">
+              {Array.from({ length: roomInfo.totalRooms }).map((_, i) => {
+                const isUsed = i < roomInfo.roomsNeeded;
+                const hasMattress = isUsed && extraMattressCount > 0 && i < extraMattressCount;
+                return (
+                  <div
+                    key={i}
+                    className={`flex-1 min-w-[70px] rounded-xl p-2.5 border text-center transition-all ${
+                      isUsed
+                        ? hasMattress
+                          ? "bg-primary/10 border-primary/30"
+                          : "bg-primary/5 border-primary/20"
+                        : "bg-secondary/50 border-border/50"
+                    }`}
+                  >
+                    <p className="text-lg">🛏️</p>
+                    <p className="text-[10px] font-semibold text-foreground">Room {i + 1}</p>
+                    <p className="text-[9px] text-muted-foreground">
+                      {isUsed ? `${ROOM_CAPACITY} guests` : "Empty"}
+                    </p>
+                    {hasMattress && (
+                      <span className="inline-block mt-1 text-[8px] px-1.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 font-semibold">
+                        +1 mattress
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Summary & suggestion */}
+            <div className="rounded-xl bg-secondary/50 p-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">{liveGuests} guests → {roomInfo.roomsNeeded} room{roomInfo.roomsNeeded > 1 ? "s" : ""}</span>
+                {roomInfo.isOverCapacity && (
+                  <span className="text-[10px] font-semibold text-destructive">⚠️ Over capacity</span>
+                )}
+              </div>
+
+              {/* Odd guest mattress suggestion */}
+              {roomInfo.oddGuest > 0 && !roomInfo.isOverCapacity && (
+                <div className="flex items-center justify-between gap-2 pt-2 border-t border-border/40">
+                  <div className="flex-1">
+                    <p className="text-[11px] font-medium text-foreground">
+                      {liveGuests % ROOM_CAPACITY === 1 ? "1 guest" : `${liveGuests % ROOM_CAPACITY} guests`} need{liveGuests % ROOM_CAPACITY === 1 ? "s" : ""} extra mattress
+                    </p>
+                    <p className="text-[10px] text-muted-foreground">₹{EXTRA_MATTRESS_PRICE}/mattress · Max 1 per room</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setExtraMattressCount(Math.max(0, extraMattressCount - 1))}
+                      disabled={extraMattressCount <= 0}
+                      className="w-7 h-7 rounded-full border border-border flex items-center justify-center disabled:opacity-30"
+                    >
+                      <Minus size={12} />
+                    </button>
+                    <span className="text-sm font-bold text-foreground w-4 text-center">{extraMattressCount}</span>
+                    <button
+                      onClick={() => setExtraMattressCount(Math.min(roomInfo.maxMattresses, extraMattressCount + 1))}
+                      disabled={extraMattressCount >= roomInfo.maxMattresses}
+                      className="w-7 h-7 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center disabled:opacity-30"
+                    >
+                      <Plus size={12} />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Over capacity — suggest fewer guests or more rooms */}
+              {roomInfo.isOverCapacity && (
+                <p className="text-[10px] text-destructive font-medium pt-1">
+                  Only {roomInfo.totalRooms} rooms available ({roomInfo.totalRooms * (ROOM_CAPACITY + 1)} max with mattresses).
+                  Please reduce guests to {roomInfo.totalRooms * (ROOM_CAPACITY + 1)} or fewer.
+                </p>
+              )}
+            </div>
+          </motion.div>
+        )}
+
         <AnimatePresence>
           {conflict?.hasConflict && (() => {
             const existingGuests = conflict.existingBookings.reduce((s, b) => s + b.guests, 0);
@@ -380,6 +515,16 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
                 })}
               </AnimatePresence>
             </>
+          )}
+
+          {/* Extra mattress charge */}
+          {mattressTotal > 0 && (
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground flex items-center gap-1.5">
+                <BedDouble size={12} /> Extra mattress × {extraMattressCount}
+              </span>
+              <span className="text-foreground font-medium">₹{mattressTotal.toLocaleString()}</span>
+            </div>
           )}
 
           <div className="flex justify-between text-sm">
