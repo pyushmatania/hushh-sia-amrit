@@ -959,12 +959,8 @@ export default function AdminClients({ initialUserId, onContextConsumed, onBack 
             const seg = segmentConfig[c.segment] || segmentConfig.regular;
             const tier = tierGradients[c.tier] || tierGradients.Silver;
             const lifetimeValue = c.totalSpend + c.orderSpend;
-
-            // Get top property for this client
-            const propVisits = new Map<string, number>();
-            c.bookings.forEach(b => propVisits.set(b.property_id, (propVisits.get(b.property_id) || 0) + 1));
-            const topPropId = [...propVisits.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
-            const topPropInfo = topPropId ? listingInfoMap.get(topPropId) : null;
+            const joinedLabel = timeAgo(c.created_at);
+            const isVerified = c.verifications.some(v => v.status === "approved");
 
             return (
               <motion.button
@@ -973,70 +969,71 @@ export default function AdminClients({ initialUserId, onContextConsumed, onBack 
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.02, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                 onClick={() => setSelectedClient(c)}
-                className="w-full rounded-2xl border border-border bg-card text-left hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 active:scale-[0.97] group overflow-hidden"
-                style={{ perspective: "800px" }}
+                className="w-full rounded-2xl border border-border bg-card text-left hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 active:scale-[0.97] group"
               >
-                {/* Top property thumbnail strip */}
-                {topPropInfo && (
-                  <div className="relative h-16 overflow-hidden">
-                    <img
-                      src={getListingThumbnail(topPropInfo.name, topPropInfo.image_urls, { preferMapped: true }) || ""}
-                      alt="" className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-card" />
-                    <div className="absolute top-1.5 right-1.5 flex items-center gap-1">
-                      <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full border backdrop-blur-sm ${tier.badge} ${tier.text}`}>
-                        {tier.icon}
+                <div className="p-4">
+                  {/* Top row: avatar + name + tier/segment badges */}
+                  <div className="flex items-start gap-3">
+                    <ProfileAvatar client={c} size={56} />
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <p className="text-sm font-bold text-foreground truncate">{c.display_name || "Unnamed"}</p>
+                        {isVerified && <CheckCircle2 size={12} className="text-emerald-400 shrink-0" />}
+                      </div>
+                      <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                        {c.location && (
+                          <span className="text-[10px] text-muted-foreground flex items-center gap-0.5"><MapPin size={9} /> {c.location}</span>
+                        )}
+                        <span className="text-[10px] text-muted-foreground">Joined {joinedLabel}</span>
+                      </div>
+                      {c.bio && (
+                        <p className="text-[10px] text-muted-foreground/70 italic mt-1 line-clamp-1">{c.bio}</p>
+                      )}
+                    </div>
+
+                    <div className="flex flex-col items-end gap-1 shrink-0">
+                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${tier.badge} ${tier.text}`}>
+                        {tier.icon} {c.tier}
                       </span>
-                      <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full backdrop-blur-sm ${seg.bg} ${seg.color}`}>
+                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${seg.bg} ${seg.color}`}>
                         {seg.label}
                       </span>
                     </div>
-                    <div className="absolute bottom-1 left-2 text-[8px] text-white/80 font-medium backdrop-blur-sm bg-black/30 px-1.5 py-0.5 rounded">
-                      🏠 {topPropInfo.name}
-                    </div>
                   </div>
-                )}
 
-                <div className="p-3.5">
-                  <div className="flex items-center gap-3">
-                    <ProfileAvatar client={c} size={48} />
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <p className="text-sm font-semibold text-foreground truncate">{c.display_name || "Unnamed"}</p>
-                        {!topPropInfo && (
-                          <>
-                            <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full border ${tier.badge} ${tier.text}`}>{tier.icon}</span>
-                            <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full ${seg.bg} ${seg.color}`}>{seg.label}</span>
-                          </>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        {c.location && (
-                          <span className="text-[9px] text-muted-foreground flex items-center gap-0.5"><MapPin size={8} /> {c.location}</span>
-                        )}
-                        <span className="text-[9px] text-muted-foreground">Joined {timeAgo(c.created_at)}</span>
-                      </div>
-                      <div className="mt-1.5 max-w-[160px]">
-                        <EngagementBar score={c.engagementScore} />
-                      </div>
-                    </div>
-
-                    <div className="text-right shrink-0 space-y-1">
-                      <p className="text-sm font-bold text-foreground tabular-nums">₹{lifetimeValue.toLocaleString("en-IN")}</p>
-                      <div className="flex items-center gap-1 justify-end text-[9px] text-muted-foreground">
-                        <span className="flex items-center gap-0.5"><CalendarCheck size={8} />{c.bookings.length}</span>
-                        <span>·</span>
-                        <span className="flex items-center gap-0.5"><ShoppingCart size={8} />{c.orders.length}</span>
-                        <span>·</span>
-                        <span className="flex items-center gap-0.5"><Star size={8} />{c.reviews.length}</span>
-                      </div>
-                      <p className="text-[8px] text-muted-foreground">{c.loyalty_points} pts</p>
-                    </div>
-
-                    <ChevronRight size={14} className="text-muted-foreground shrink-0 group-hover:text-primary transition-colors" />
+                  {/* Engagement bar */}
+                  <div className="mt-3">
+                    <EngagementBar score={c.engagementScore} />
                   </div>
+
+                  {/* Stats row */}
+                  <div className="grid grid-cols-4 gap-2 mt-3 pt-3 border-t border-border/50">
+                    {[
+                      { label: "Revenue", value: `₹${lifetimeValue.toLocaleString("en-IN")}`, icon: IndianRupee, color: "text-emerald-400" },
+                      { label: "Bookings", value: c.bookings.length, icon: CalendarCheck, color: "text-primary" },
+                      { label: "Orders", value: c.orders.length, icon: ShoppingCart, color: "text-amber-400" },
+                      { label: "Points", value: c.loyalty_points, icon: Award, color: "text-purple-400" },
+                    ].map(s => (
+                      <div key={s.label} className="text-center">
+                        <s.icon size={12} className={`${s.color} mx-auto mb-0.5`} />
+                        <p className="text-xs font-bold text-foreground tabular-nums">{s.value}</p>
+                        <p className="text-[8px] text-muted-foreground">{s.label}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Chevron strip */}
+                <div className="flex items-center justify-between px-4 py-2 border-t border-border/40 bg-secondary/20">
+                  <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground">
+                    <Star size={9} className="text-yellow-400" /> {c.reviews.length} reviews
+                    <span className="mx-1">·</span>
+                    <Heart size={9} className="text-rose-400" /> {c.wishlistCount} saved
+                    <span className="mx-1">·</span>
+                    <Share2 size={9} className="text-blue-400" /> {c.referralCount} referrals
+                  </div>
+                  <ChevronRight size={14} className="text-muted-foreground group-hover:text-primary transition" />
                 </div>
               </motion.button>
             );
