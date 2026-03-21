@@ -1,9 +1,9 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   CalendarDays, ChevronLeft, ChevronRight, Loader2, Lock, Unlock,
   Users, IndianRupee, TrendingUp, Clock, BarChart3, Flame,
-  ArrowUpRight, ArrowDownRight, Star, Zap, MapPin, Home, Eye
+  ArrowUpRight, ArrowDownRight, Star, Zap, MapPin, Home, Eye, User
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { properties } from "@/data/properties";
@@ -16,6 +16,13 @@ interface BookingEntry {
   booking_id: string;
   property_id: string;
   user_id?: string;
+  created_at?: string;
+}
+
+interface UserProfile {
+  display_name: string | null;
+  avatar_url: string | null;
+  tier: string;
 }
 
 interface PropertyInfo {
@@ -112,6 +119,7 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
   const [loading, setLoading] = useState(true);
   const [blockedSlots, setBlockedSlots] = useState<Set<string>>(new Set());
   const [filterPropertyId, setFilterPropertyId] = useState<string>("all");
+  const [userProfiles, setUserProfiles] = useState<Map<string, UserProfile>>(new Map());
   const propertyMap = usePropertyMap();
 
   useEffect(() => {
@@ -122,17 +130,31 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
 
       const { data } = await supabase
         .from("bookings")
-        .select("date, slot, status, guests, total, booking_id, property_id, user_id")
+        .select("date, slot, status, guests, total, booking_id, property_id, user_id, created_at")
         .gte("date", startDate)
         .lte("date", endDate);
 
       const map = new Map<string, BookingEntry[]>();
+      const userIds = new Set<string>();
       (data ?? []).forEach(b => {
         const existing = map.get(b.date) ?? [];
         existing.push(b);
         map.set(b.date, existing);
+        if (b.user_id) userIds.add(b.user_id);
       });
       setBookingMap(map);
+
+      // Fetch user profiles
+      if (userIds.size > 0) {
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("user_id, display_name, avatar_url, tier")
+          .in("user_id", Array.from(userIds));
+        const profileMap = new Map<string, UserProfile>();
+        (profiles ?? []).forEach(p => profileMap.set(p.user_id, { display_name: p.display_name, avatar_url: p.avatar_url, tier: p.tier }));
+        setUserProfiles(profileMap);
+      }
+
       setLoading(false);
     };
     load();
@@ -562,6 +584,9 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
                             {slotBookings.map((b, j) => {
                               const cfg = statusConfig[b.status] || statusConfig.upcoming;
                               const pInfo = getPropertyInfo(b.property_id);
+                              const userProfile = b.user_id ? userProfiles.get(b.user_id) : null;
+                              const userName = userProfile?.display_name || (b.user_id ? `User ${b.user_id.slice(0, 6)}` : "Guest");
+                              const bookedAt = b.created_at ? new Date(b.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "";
                               return (
                                 <motion.div
                                   key={j}
@@ -574,17 +599,31 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
                                 >
                                   <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                                      <div className={`w-2 h-2 rounded-full shrink-0 ${cfg.dot}`} />
+                                      {userProfile?.avatar_url ? (
+                                        <img src={userProfile.avatar_url} alt={userName} className="w-8 h-8 rounded-full object-cover border-2 border-border/50 shrink-0" />
+                                      ) : (
+                                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 border-2 border-border/50">
+                                          <User size={13} className="text-primary" />
+                                        </div>
+                                      )}
                                       <div className="min-w-0 flex-1">
-                                        <p className="text-[12px] font-bold text-foreground truncate">{pInfo.name}</p>
+                                        <div className="flex items-center gap-1.5">
+                                          <p className="text-[12px] font-bold text-foreground truncate">{userName}</p>
+                                          {userProfile?.tier && userProfile.tier !== "Silver" && (
+                                            <span className="text-[8px] px-1.5 py-0.5 rounded-md bg-amber-500/10 text-amber-500 font-bold">{userProfile.tier}</span>
+                                          )}
+                                        </div>
+                                        <p className="text-[10px] text-foreground/80 font-medium truncate">{pInfo.name}</p>
                                         <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                                           <span className="text-[9px] text-muted-foreground font-mono">#{b.booking_id.length > 10 ? b.booking_id.slice(0, 10) : b.booking_id}</span>
                                           <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
                                             <Users size={8} /> {b.guests} guests
                                           </span>
-                                          <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
-                                            <MapPin size={7} /> {pInfo.location.split(',')[0]}
-                                          </span>
+                                          {bookedAt && (
+                                            <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
+                                              <Clock size={7} /> {bookedAt}
+                                            </span>
+                                          )}
                                         </div>
                                       </div>
                                     </div>
