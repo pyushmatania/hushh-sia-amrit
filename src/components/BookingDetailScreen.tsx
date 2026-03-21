@@ -362,6 +362,41 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
           </motion.div>
         )}
 
+        {/* Quick Client Actions */}
+        {!isCancelled && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.14 }}
+            className="rounded-2xl border border-border p-4 space-y-3"
+          >
+            <h4 className="font-semibold text-sm text-foreground">Quick Actions</h4>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                onClick={() => setShowReceipt(true)}
+                className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-secondary/80 border border-border/50 active:scale-95 transition-transform"
+              >
+                <Receipt size={18} className="text-primary" />
+                <span className="text-[10px] font-semibold text-foreground">Receipt</span>
+              </button>
+              <button
+                onClick={() => setShowSplit(true)}
+                className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-secondary/80 border border-border/50 active:scale-95 transition-transform"
+              >
+                <Split size={18} className="text-primary" />
+                <span className="text-[10px] font-semibold text-foreground">Split Bill</span>
+              </button>
+              <button
+                onClick={() => setShowPhotos(true)}
+                className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-secondary/80 border border-border/50 active:scale-95 transition-transform"
+              >
+                <Camera size={18} className="text-primary" />
+                <span className="text-[10px] font-semibold text-foreground">Photos</span>
+              </button>
+            </div>
+          </motion.div>
+        )}
+
         {/* Payment summary */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
