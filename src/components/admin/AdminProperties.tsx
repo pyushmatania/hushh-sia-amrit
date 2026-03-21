@@ -372,70 +372,75 @@ export default function AdminProperties() {
       ) : (
         <div className="space-y-2">
           {filtered.map((listing) => (
-            <div
+            <SwipeableRow
               key={listing.id}
-              {...getDropTargetProps(listing)}
-              onDragEnd={handleDragEnd}
-              style={getDragItemStyle(listing)}
-              className="rounded-xl border border-border bg-card p-3 flex gap-2 cursor-pointer hover:border-primary/30 select-none"
-              onClick={() => openEdit(listing)}
+              onEdit={() => openEdit(listing)}
+              onDelete={() => deleteListing(listing.id)}
             >
-              <div className="w-16 h-16 rounded-lg bg-secondary shrink-0 overflow-hidden">
-                {listing.image_urls?.[0] ? (
-                  <img src={listing.image_urls[0]} alt="" className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Building2 size={20} className="text-muted-foreground/30" />
-                  </div>
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <h3 className="font-semibold text-sm text-foreground truncate">{listing.name}</h3>
-                    <p className="text-[11px] text-muted-foreground">{listing.location} · {listing.property_type || listing.category}</p>
-                  </div>
-                  <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full capitalize shrink-0 border ${statusColors[listing.status] || statusColors.draft}`}>
-                    {listing.status}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between mt-1.5">
-                  <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
-                    {(() => {
-                      const slots = Array.isArray(listing.slots) ? listing.slots : [];
-                      if (slots.length > 0) {
-                        const prices = slots.map((s: any) => Number(s.price || 0)).filter((p: number) => p > 0);
-                        const min = Math.min(...prices);
-                        return <span className="font-medium text-foreground tabular-nums">₹{min.toLocaleString()}+ <span className="text-muted-foreground">({slots.length} slots)</span></span>;
-                      }
-                      return <span className="font-medium text-foreground tabular-nums">₹{listing.base_price?.toLocaleString()}</span>;
-                    })()}
-                    <span className="flex items-center gap-0.5"><Users size={10} />{listing.capacity}</span>
-                    {listing.rating > 0 && <span className="flex items-center gap-0.5"><Star size={10} className="text-amber-400" />{listing.rating}</span>}
-                  </div>
-                  <div className="flex gap-1" onClick={e => e.stopPropagation()}>
-                    <button onClick={() => toggleStatus(listing.id, listing.status)}
-                      className="p-1.5 rounded-lg hover:bg-secondary transition" title={listing.status === "published" ? "Pause" : "Publish"}>
-                      {listing.status === "published" ? <Pause size={13} className="text-amber-400" /> : <Play size={13} className="text-emerald-400" />}
-                    </button>
-                    <button onClick={() => duplicateListing(listing)} className="p-1.5 rounded-lg hover:bg-secondary transition" title="Duplicate">
-                      <Copy size={13} className="text-muted-foreground" />
-                    </button>
-                    <button onClick={() => deleteListing(listing.id)} className="p-1.5 rounded-lg hover:bg-destructive/10 transition">
-                      <Trash2 size={13} className="text-destructive" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <button
-                type="button"
-                {...getDragHandleProps(listing)}
-                onClick={(e) => e.stopPropagation()}
-                className="h-10 w-10 rounded-lg flex items-center justify-center text-muted-foreground/50 hover:text-foreground hover:bg-secondary transition shrink-0 cursor-grab active:cursor-grabbing self-center touch-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              <div
+                {...getDropTargetProps(listing)}
+                onDragEnd={handleDragEnd}
+                style={getDragItemStyle(listing)}
+                className="rounded-xl border border-border bg-card p-3 flex gap-2 cursor-pointer hover:border-primary/30 select-none"
+                onClick={() => openEdit(listing)}
               >
-                <GripVertical size={20} />
-              </button>
-            </div>
+                <div className="w-16 h-16 rounded-lg bg-secondary shrink-0 overflow-hidden">
+                  {listing.image_urls?.[0] ? (
+                    <img src={listing.image_urls[0]} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Building2 size={20} className="text-muted-foreground/30" />
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <h3 className="font-semibold text-sm text-foreground truncate">{listing.name}</h3>
+                      <p className="text-[11px] text-muted-foreground">{listing.location} · {listing.property_type || listing.category}</p>
+                    </div>
+                    <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full capitalize shrink-0 border ${statusColors[listing.status] || statusColors.draft}`}>
+                      {listing.status}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between mt-1.5">
+                    <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
+                      {(() => {
+                        const slots = Array.isArray(listing.slots) ? listing.slots : [];
+                        if (slots.length > 0) {
+                          const prices = slots.map((s: any) => Number(s.price || 0)).filter((p: number) => p > 0);
+                          const min = Math.min(...prices);
+                          return <span className="font-medium text-foreground tabular-nums">₹{min.toLocaleString()}+ <span className="text-muted-foreground">({slots.length} slots)</span></span>;
+                        }
+                        return <span className="font-medium text-foreground tabular-nums">₹{listing.base_price?.toLocaleString()}</span>;
+                      })()}
+                      <span className="flex items-center gap-0.5"><Users size={10} />{listing.capacity}</span>
+                      {listing.rating > 0 && <span className="flex items-center gap-0.5"><Star size={10} className="text-amber-400" />{listing.rating}</span>}
+                    </div>
+                    <div className="flex gap-1" onClick={e => e.stopPropagation()}>
+                      <button onClick={() => toggleStatus(listing.id, listing.status)}
+                        className="p-1.5 rounded-lg hover:bg-secondary transition" title={listing.status === "published" ? "Pause" : "Publish"}>
+                        {listing.status === "published" ? <Pause size={13} className="text-amber-400" /> : <Play size={13} className="text-emerald-400" />}
+                      </button>
+                      <button onClick={() => duplicateListing(listing)} className="p-1.5 rounded-lg hover:bg-secondary transition" title="Duplicate">
+                        <Copy size={13} className="text-muted-foreground" />
+                      </button>
+                      <button onClick={() => deleteListing(listing.id)} className="p-1.5 rounded-lg hover:bg-destructive/10 transition">
+                        <Trash2 size={13} className="text-destructive" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  {...getDragHandleProps(listing)}
+                  onClick={(e) => e.stopPropagation()}
+                  className="h-10 w-10 rounded-lg flex items-center justify-center text-muted-foreground/50 hover:text-foreground hover:bg-secondary transition shrink-0 cursor-grab active:cursor-grabbing self-center touch-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <GripVertical size={20} />
+                </button>
+              </div>
+            </SwipeableRow>
           ))}
         </div>
       )}
