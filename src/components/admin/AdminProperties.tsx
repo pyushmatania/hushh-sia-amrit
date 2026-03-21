@@ -438,12 +438,12 @@ export default function AdminProperties() {
                 >
                   {selectedIds.includes(listing.id) && <span className="text-[10px] font-bold">✓</span>}
                 </button>
-                <div className="w-16 h-16 rounded-lg bg-secondary shrink-0 overflow-hidden">
+                <div className="w-[72px] h-[72px] rounded-xl bg-secondary shrink-0 overflow-hidden shadow-sm">
                   {listing.image_urls?.[0] ? (
-                    <img src={listing.image_urls[0]} alt="" className="w-full h-full object-cover" />
+                    <img src={listing.image_urls[0]} alt="" className="w-full h-full object-cover" loading="lazy" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Building2 size={20} className="text-muted-foreground/30" />
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-violet-100 dark:from-indigo-500/15 dark:to-violet-500/10">
+                      <Building2 size={24} className="text-indigo-400/60" />
                     </div>
                   )}
                 </div>

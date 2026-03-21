@@ -238,7 +238,7 @@ export default function AdminExperiencePackages() {
                 >
                   {selectedIds.includes(pkg.id) && <span className="text-[10px] font-bold">✓</span>}
                 </button>
-                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${pkg.gradient} flex items-center justify-center text-lg`}>
+                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${pkg.gradient} flex items-center justify-center text-2xl shadow-sm shrink-0`}>
                   {pkg.emoji}
                 </div>
                 <div className="flex-1 min-w-0">

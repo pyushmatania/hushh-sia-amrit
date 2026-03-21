@@ -186,7 +186,9 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
                     >
                       {selectedIds.includes(item.id) && <span className="text-[10px] font-bold">✓</span>}
                     </button>
-                    <span className="text-2xl">{item.emoji}</span>
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-100 to-teal-50 dark:from-emerald-500/15 dark:to-teal-500/10 flex items-center justify-center text-xl shadow-sm shrink-0">
+                      {item.emoji}
+                    </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">{item.name}</h4>
                       <p className="text-[11px] text-zinc-400 tabular-nums">₹{item.unit_price} · Stock: {item.stock}</p>
