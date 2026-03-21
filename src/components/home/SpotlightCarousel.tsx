@@ -117,6 +117,7 @@ function VideoCard({
   accent,
   isSaved,
   onToggleSave,
+  isFirst,
 }: {
   property: Property;
   videoSrc: string;
@@ -127,13 +128,14 @@ function VideoCard({
   accent: VideoAccent;
   isSaved?: boolean;
   onToggleSave?: (id: string) => void;
+  isFirst?: boolean;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const [muted, setMuted] = useState(true);
   const saved = isSaved ?? false;
   const [videoReady, setVideoReady] = useState(false);
-  const [shouldLoad, setShouldLoad] = useState(false);
+  const [shouldLoad, setShouldLoad] = useState(isFirst ?? false);
 
   useEffect(() => {
     const card = cardRef.current;
@@ -187,9 +189,10 @@ function VideoCard({
             ref={videoRef}
             src={videoSrc}
             muted={muted}
+            autoPlay={isFirst}
             loop
             playsInline
-            preload="none"
+            preload={isFirst ? "auto" : "none"}
             onCanPlay={() => setVideoReady(true)}
             className="absolute inset-0 w-full h-full object-cover"
             style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.5s" }}
@@ -294,6 +297,7 @@ export default function SpotlightCarousel({ properties, onPropertyTap, category 
             onTap={() => onPropertyTap(p)}
             isSaved={wishlist.includes(p.id)}
             onToggleSave={onToggleWishlist}
+            isFirst={i === 0}
           />
         ))}
       </div>
