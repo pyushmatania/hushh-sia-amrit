@@ -10,8 +10,8 @@ interface Order {
   id: string; user_id: string; property_id: string; booking_id: string | null;
   total: number; status: string; created_at: string;
   items?: { item_name: string; item_emoji: string; quantity: number; unit_price: number }[];
+  propertyName?: string; propertyImageUrls?: string[];
 }
-
 const statusFlow = ["pending", "preparing", "delivered", "completed"];
 const statusConfig: Record<string, { color: string; bg: string; label: string }> = {
   pending: { color: "text-amber-400", bg: "bg-amber-500/15", label: "🔔 New" },
