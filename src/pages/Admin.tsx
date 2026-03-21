@@ -105,7 +105,7 @@ export default function Admin() {
       }} />;
       case "requests": return <BookingRequests />;
       case "history": return <AdminPropertyHistory
-        onNavigateToClient={(userId) => { setPage("clients"); }}
+        onNavigateToClient={(userId) => { setClientContext({ userId }); setPage("clients"); }}
         initialPropertyId={historyContext?.propertyId}
         initialBookingId={historyContext?.bookingId}
         onContextConsumed={() => setHistoryContext(null)}
