@@ -141,12 +141,27 @@ export default function StaffOrders() {
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${sc.bg} ${sc.color}`}>{sc.label}</span>
-                    <span className="text-[10px] text-muted-foreground font-mono">#{order.id.slice(0, 6)}</span>
+                    {(() => {
+                      const thumb = getListingThumbnail(order.propertyName || "", order.propertyImageUrls, { preferMapped: true });
+                      return thumb ? (
+                        <img src={thumb} alt={order.propertyName} className="w-8 h-8 rounded-xl object-cover ring-1 ring-border/30" />
+                      ) : (
+                        <div className="w-8 h-8 rounded-xl bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">
+                          {order.propertyName?.[0] || "?"}
+                        </div>
+                      );
+                    })()}
+                    <div>
+                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${sc.bg} ${sc.color}`}>{sc.label}</span>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">{order.propertyName}</p>
+                    </div>
                   </div>
-                  <span className="text-[10px] text-muted-foreground">
-                    {new Date(order.created_at).toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit" })}
-                  </span>
+                  <div className="text-right">
+                    <span className="text-[10px] text-muted-foreground font-mono">#{order.id.slice(0, 6)}</span>
+                    <p className="text-[10px] text-muted-foreground">
+                      {new Date(order.created_at).toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit" })}
+                    </p>
+                  </div>
                 </div>
 
                 <div className="space-y-1.5 mb-3">
