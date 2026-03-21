@@ -842,6 +842,18 @@ function RequestCard({ booking: b, index, updating, onAccept, onReject, onNaviga
         </div>
       </div>
 
+      {hasConflict && (
+        <div className="px-4 py-2.5 bg-destructive/10 border-b border-destructive/20 flex items-start gap-2">
+          <AlertTriangle size={14} className="text-destructive shrink-0 mt-0.5" />
+          <div>
+            <p className="text-[11px] font-semibold text-destructive">Scheduling Conflict</p>
+            <p className="text-[10px] text-destructive/80 mt-0.5">
+              {conflicts.length} other booking{conflicts.length > 1 ? "s" : ""} for this property on {b.date} at {b.slot} — total {conflicts.reduce((s: number, c: Booking) => s + c.guests, 0) + b.guests} guests
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="p-4">
         {/* Booking ID & Time */}
         <div className="flex items-center justify-between mb-3">
