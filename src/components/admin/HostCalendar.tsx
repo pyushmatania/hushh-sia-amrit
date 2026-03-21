@@ -243,6 +243,35 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
         </motion.div>
       </div>
 
+      {/* Property Filter */}
+      {bookedPropertyIds.length > 0 && (
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+          <button
+            onClick={() => setFilterPropertyId("all")}
+            className={`shrink-0 px-3 py-1.5 rounded-xl text-[11px] font-bold border transition ${
+              filterPropertyId === "all"
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-secondary/60 text-muted-foreground border-border/60 hover:bg-secondary"
+            }`}
+          >
+            All Properties
+          </button>
+          {bookedPropertyIds.map(pid => (
+            <button
+              key={pid}
+              onClick={() => setFilterPropertyId(pid === filterPropertyId ? "all" : pid)}
+              className={`shrink-0 px-3 py-1.5 rounded-xl text-[11px] font-bold border transition truncate max-w-[140px] ${
+                filterPropertyId === pid
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "bg-secondary/60 text-muted-foreground border-border/60 hover:bg-secondary"
+              }`}
+            >
+              {getPropertyName(pid)}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Monthly Stats */}
       <div className="grid grid-cols-2 gap-2.5">
         <StatCard
