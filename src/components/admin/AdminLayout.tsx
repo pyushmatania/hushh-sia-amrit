@@ -77,9 +77,12 @@ const navSections: { title: string; items: { id: AdminPage; label: string; icon:
   {
     title: "More",
     items: [
+      { id: "notifications", label: "Notifications", icon: Bell, color: "bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400", activeGlow: "shadow-rose-200/60" },
+      { id: "reports", label: "Reports", icon: FileSpreadsheet, color: "bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400", activeGlow: "shadow-violet-200/60" },
       { id: "achievements", label: "Achievements", icon: Trophy, color: "bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400", activeGlow: "shadow-amber-200/60" },
       { id: "loyalty", label: "Loyalty", icon: Sparkles, color: "bg-pink-100 text-pink-600 dark:bg-pink-500/20 dark:text-pink-400", activeGlow: "shadow-pink-200/60" },
       { id: "exports", label: "Exports", icon: FileSpreadsheet, color: "bg-gray-100 text-gray-600 dark:bg-gray-500/20 dark:text-gray-400", activeGlow: "shadow-gray-200/60" },
+      { id: "settings", label: "Settings", icon: Search, color: "bg-zinc-100 text-zinc-600 dark:bg-zinc-500/20 dark:text-zinc-400", activeGlow: "shadow-zinc-200/60" },
       { id: "audit", label: "Audit Trail", icon: ScrollText, color: "bg-neutral-100 text-neutral-600 dark:bg-neutral-500/20 dark:text-neutral-400", activeGlow: "shadow-neutral-200/60", adminOnly: true },
     ]
   },
