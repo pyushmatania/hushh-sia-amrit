@@ -365,15 +365,17 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
               <span className="text-xs font-semibold text-foreground">Revenue Trend</span>
               <span className="text-[9px] text-muted-foreground">14 days</span>
             </div>
-            <div className="flex items-center gap-1 text-emerald-600">
-              <ArrowUpRight size={11} />
-              <span className="text-[10px] font-bold">+12.5%</span>
-            </div>
+            {revTrendPct !== 0 && (
+              <div className={`flex items-center gap-1 ${revTrendPct >= 0 ? 'text-emerald-600' : 'text-rose-500'}`}>
+                {revTrendPct >= 0 ? <ArrowUpRight size={11} /> : <ArrowDownRight size={11} />}
+                <span className="text-[10px] font-bold">{revTrendPct > 0 ? '+' : ''}{revTrendPct}%</span>
+              </div>
+            )}
           </div>
-          <p className="text-xl font-bold text-foreground tabular-nums mb-3">₹{mockChartData.reduce((s, d) => s + d.revenue, 0).toLocaleString("en-IN")}</p>
+          <p className="text-xl font-bold text-foreground tabular-nums mb-3">₹{revenueChartData.reduce((s, d) => s + d.revenue, 0).toLocaleString("en-IN")}</p>
           <div className="h-[180px]">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={mockChartData}>
+              <AreaChart data={revenueChartData}>
                 <defs>
                   <linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="hsl(250, 80%, 60%)" stopOpacity={0.15} />
