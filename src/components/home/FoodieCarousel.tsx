@@ -86,9 +86,10 @@ const FoodieVideoCard = memo(function FoodieVideoCard({
               ref={videoRef}
               src={videoSrc}
               muted={muted}
+              autoPlay
               loop
               playsInline
-              preload="none"
+              preload="auto"
               onCanPlayThrough={() => setVideoReady(true)}
               className="absolute inset-0 w-full h-full object-cover"
               style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.5s" }}
