@@ -189,7 +189,7 @@ function VideoCard({
             muted={muted}
             loop
             playsInline
-            preload="metadata"
+            preload="none"
             onCanPlay={() => setVideoReady(true)}
             className="absolute inset-0 w-full h-full object-cover"
             style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.5s" }}
