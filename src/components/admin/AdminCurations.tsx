@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Sparkles, Search, Plus, Save, X, Eye, Trash2,
-  GripVertical, Loader2, ChevronDown
+  GripVertical, Loader2, ChevronDown, CheckSquare
 } from "lucide-react";
 import { useDragReorder } from "@/hooks/use-drag-reorder";
 import { supabase } from "@/integrations/supabase/client";
