@@ -420,6 +420,15 @@ export default function AdminCurations() {
         </div>
       )}
 
+      <BatchOperationsBar
+        selectedIds={selectedIds}
+        totalCount={filtered.length}
+        onSelectAll={() => setSelectedIds(filtered.map(c => c.id))}
+        onDeselectAll={() => setSelectedIds([])}
+        onBulkDelete={bulkDelete}
+        entityName="curations"
+      />
+
       <DeleteConfirmDialog
         open={!!deleteTarget}
         title={`Delete "${deleteTarget?.name}"?`}
