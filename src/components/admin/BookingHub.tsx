@@ -215,6 +215,26 @@ export default function BookingHub({
     setUpdating(null);
   };
 
+  // Phase 2: Bulk actions
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
+  const selectAll = () => {
+    if (selectedIds.length === filtered.length) setSelectedIds([]);
+    else setSelectedIds(filtered.map(b => b.id));
+  };
+  const bulkUpdateStatus = async (status: string) => {
+    setBulkUpdating(true);
+    for (const id of selectedIds) {
+      await supabase.from("bookings").update({ status }).eq("id", id);
+    }
+    setBookings(prev => prev.map(b => selectedIds.includes(b.id) ? { ...b, status } : b));
+    toast.success(`${selectedIds.length} bookings updated to ${status}`);
+    setSelectedIds([]);
+    setBulkUpdating(false);
+    setBulkMode(false);
+  };
+
   const timeAgo = (ts: string) => {
     const diff = Date.now() - new Date(ts).getTime();
     const mins = Math.floor(diff / 60000);
