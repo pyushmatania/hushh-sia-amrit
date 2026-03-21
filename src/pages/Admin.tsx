@@ -138,7 +138,7 @@ export default function Admin() {
       case "achievements": return <AdminAchievements />;
       case "loyalty": return <AdminLoyaltyReferrals />;
       case "calendar": return <HostCalendar onNavigate={(p, ctx) => navigateTo(p as AdminPage, ctx)} />;
-      case "requests": return <BookingRequests />;
+      case "requests": return <BookingHub onNavigate={(p, ctx) => navigateTo(p as AdminPage, ctx)} />;
       case "history": return <AdminPropertyHistory
         onNavigateToClient={(userId) => navigateTo("clients" as AdminPage, { userId })}
         initialPropertyId={historyContext?.propertyId}
