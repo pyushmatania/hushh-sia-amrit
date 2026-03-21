@@ -57,10 +57,12 @@ function mergeDbRow(row: any, staticMatch: Property | undefined): Property {
     ? row.rules.map((r: any) => ({ icon: r.icon || "📋", text: r.text || "" }))
     : [];
 
-  const images =
-    row.image_urls && row.image_urls.length > 0
-      ? row.image_urls
-      : staticMatch?.images || [];
+  const dbImages = Array.isArray(row.image_urls) ? row.image_urls.filter(Boolean) : [];
+  const staticImages = staticMatch?.images?.filter(Boolean) || [];
+  const mappedThumb = getListingThumbnail(row.name || "", dbImages, { preferMapped: true });
+  const guaranteedFallback = staticProperties[0]?.images?.[0] || "";
+  const primaryImage = mappedThumb || staticImages[0] || dbImages[0] || guaranteedFallback;
+  const images = Array.from(new Set([primaryImage, ...dbImages, ...staticImages].filter(Boolean)));
 
   return {
     id: staticMatch?.id || row.id,
