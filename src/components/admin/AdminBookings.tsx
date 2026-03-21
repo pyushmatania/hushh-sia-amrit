@@ -164,19 +164,21 @@ export default function AdminBookings({ onNavigate }: { onNavigate?: (page: stri
                       >
                         <StatusIcon size={18} className={sc.color} />
                       </motion.div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200 font-mono">{b.booking_id?.slice(0, 12)}</p>
-                          <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full capitalize ${sc.bg} ${sc.color}`}>{b.status}</span>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">{b.propertyName}</p>
+                            <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full capitalize ${sc.bg} ${sc.color}`}>{b.status}</span>
+                          </div>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-[11px] text-zinc-500 font-medium font-mono">#{b.booking_id?.slice(0, 10)}</span>
+                            <span className="text-zinc-300 dark:text-zinc-600">·</span>
+                            <span className="text-[11px] text-zinc-400">{b.date}</span>
+                            <span className="text-zinc-300 dark:text-zinc-600">·</span>
+                            <span className="text-[11px] text-zinc-400">{b.slot}</span>
+                            <span className="text-zinc-300 dark:text-zinc-600">·</span>
+                            <span className="text-[11px] text-zinc-400 flex items-center gap-0.5"><Users size={10} /> {b.guests}</span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-[11px] text-zinc-500 font-medium">{b.date}</span>
-                          <span className="text-zinc-300 dark:text-zinc-600">·</span>
-                          <span className="text-[11px] text-zinc-400">{b.slot}</span>
-                          <span className="text-zinc-300 dark:text-zinc-600">·</span>
-                          <span className="text-[11px] text-zinc-400 flex items-center gap-0.5"><Users size={10} /> {b.guests}</span>
-                        </div>
-                      </div>
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="text-right hidden sm:block">

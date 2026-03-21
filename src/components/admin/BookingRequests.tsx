@@ -136,8 +136,8 @@ export default function BookingRequests() {
               >
                 <div className="flex items-start justify-between mb-3">
                   <div>
-                    <p className="text-sm font-bold text-foreground">#{b.booking_id.slice(0, 10)}</p>
-                    <p className="text-[10px] text-muted-foreground">{timeAgo(b.created_at)}</p>
+                    <p className="text-sm font-bold text-foreground">{b.propertyName}</p>
+                    <p className="text-[10px] text-muted-foreground">#{b.booking_id.slice(0, 10)} · {timeAgo(b.created_at)}</p>
                   </div>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium capitalize ${
                     b.status === "confirmed" ? "bg-emerald-500/15 text-emerald-500" :
