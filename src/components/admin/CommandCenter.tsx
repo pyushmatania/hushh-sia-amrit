@@ -142,7 +142,17 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
       const ratings = reviews.map(r => r.rating);
       const avgRating = ratings.length > 0 ? +(ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1) : 0;
       const lowStock = inventory.filter(i => (i as any).stock <= (i as any).low_stock_threshold && (i as any).available).length;
-      setStats({ revenue: bookings.reduce((s, b) => s + Number(b.total), 0), bookings: bookings.length, activeListings: listings.filter(l => l.status === "published").length, totalUsers: users.length, pendingOrders, todayBookings: todayBk.length, avgRating, lowStock });
+      // Count booking conflicts (same property+date+slot, non-cancelled/completed)
+      const activeBookings = bookings.filter(b => !["cancelled", "completed"].includes(b.status));
+      const conflictSet = new Set<string>();
+      for (let i = 0; i < activeBookings.length; i++) {
+        for (let j = i + 1; j < activeBookings.length; j++) {
+          if (activeBookings[i].property_id === activeBookings[j].property_id && activeBookings[i].date === activeBookings[j].date && activeBookings[i].slot === activeBookings[j].slot) {
+            conflictSet.add(activeBookings[i].property_id + activeBookings[i].date + activeBookings[i].slot);
+          }
+        }
+      }
+      setStats({ revenue: bookings.reduce((s, b) => s + Number(b.total), 0), bookings: bookings.length, activeListings: listings.filter(l => l.status === "published").length, totalUsers: users.length, pendingOrders, todayBookings: todayBk.length, avgRating, lowStock, conflicts: conflictSet.size });
       const propMap: Record<string, { name: string; bookings: number; revenue: number }> = {};
       bookings.forEach(b => { const key = b.property_id; if (!propMap[key]) propMap[key] = { name: listingMap.get(key) || "Unknown", bookings: 0, revenue: 0 }; propMap[key].bookings += 1; propMap[key].revenue += Number(b.total); });
       setTopProperties(Object.values(propMap).sort((a, b) => b.revenue - a.revenue).slice(0, 5));
