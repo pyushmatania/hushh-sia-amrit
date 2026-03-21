@@ -785,7 +785,7 @@ export default function FinanceHub() {
                 if (e.vendor) acc[e.vendor] = (acc[e.vendor] || 0) + Number(e.amount);
                 return acc;
               }, {} as Record<string, number>);
-              return Object.entries(vendorTotals).sort(([,a],[,b]) => b - a).slice(0, 5).map(([vendor, amount]) => (
+              return Object.entries(vendorTotals).sort(([,a],[,b]) => Number(b) - Number(a)).slice(0, 5).map(([vendor, amount]) => (
                 <div key={vendor} className="flex items-center justify-between py-1.5 border-b border-border/30 last:border-0">
                   <p className="text-[11px] text-foreground">{vendor}</p>
                   <p className="text-[11px] font-bold text-foreground">₹{Number(amount).toLocaleString()}</p>

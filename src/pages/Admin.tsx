@@ -18,7 +18,7 @@ import AdminExports from "@/components/admin/AdminExports";
 import AdminAI from "@/components/admin/AdminAI";
 import AdminAlerts from "@/components/admin/AdminAlerts";
 import AdminAuditLog from "@/components/admin/AdminAuditLog";
-import HostEarnings from "@/components/admin/HostEarnings";
+import FinanceHub from "@/components/admin/FinanceHub";
 import DynamicPricing from "@/components/admin/DynamicPricing";
 import AdminAchievements from "@/components/admin/AdminAchievements";
 import AdminLoyaltyReferrals from "@/components/admin/AdminLoyaltyReferrals";
