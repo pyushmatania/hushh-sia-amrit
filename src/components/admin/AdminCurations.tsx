@@ -325,6 +325,7 @@ export default function AdminCurations() {
           {filtered.map((c) => (
             <SwipeableRow
               key={c.id}
+              showHint={c === filtered[0]}
               onEdit={() => startEdit(c)}
               onDelete={() => setDeleteTarget({ id: c.id, name: c.name })}
             >

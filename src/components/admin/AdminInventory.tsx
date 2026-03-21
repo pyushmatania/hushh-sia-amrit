@@ -151,6 +151,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
               {catItems.map((item) => (
                 <SwipeableRow
                   key={item.id}
+                  showHint={item === catItems[0]}
                   onEdit={() => { setEditing({ ...item }); setIsCreating(false); setPreviewMode(false); }}
                   onDelete={() => deleteItem(item.id)}
                 >

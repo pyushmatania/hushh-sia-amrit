@@ -202,6 +202,7 @@ export default function AdminExperiencePackages() {
           {filtered.map((pkg) => (
             <SwipeableRow
               key={pkg.id}
+              showHint={pkg === filtered[0]}
               onEdit={() => { setEditing({ ...pkg }); setIsCreating(false); setIncludeInput(""); setPreviewMode(false); }}
               onDelete={() => deletePackage(pkg.id)}
             >
