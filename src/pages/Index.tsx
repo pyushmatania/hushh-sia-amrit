@@ -40,6 +40,8 @@ export interface Booking {
   total: number;
   status: "active" | "upcoming" | "completed" | "cancelled";
   bookingId: string;
+  roomsCount?: number | null;
+  extraMattresses?: number | null;
 }
 
 type Screen =
