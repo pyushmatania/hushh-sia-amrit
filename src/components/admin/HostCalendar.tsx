@@ -335,7 +335,7 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
               {Array.from({ length: daysInMonth }).map((_, i) => {
                 const day = i + 1;
                 const dateStr = formatDate(year, month, day);
-                const dayBookings = bookingMap.get(dateStr) ?? [];
+                const dayBookings = filteredBookingMap.get(dateStr) ?? [];
                 const isToday = dateStr === today;
                 const isSelected = dateStr === selectedDate;
                 const hasBookings = dayBookings.length > 0;
