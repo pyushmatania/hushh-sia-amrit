@@ -473,9 +473,9 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
                   )}
                 </div>
 
-                {/* Properties → Slots → Bookings (merged hierarchy) */}
+                {/* Properties → Slots → Bookings (3D cards) */}
                 {selectedStats.count > 0 && (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {Array.from(new Set(selectedBookings.map(b => b.property_id))).map((pid, idx) => {
                       const info = getPropertyInfo(pid);
                       const propBookings = selectedBookings.filter(b => b.property_id === pid);
@@ -491,57 +491,91 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
                       return (
                         <motion.div
                           key={pid}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: idx * 0.08 }}
-                          className="rounded-2xl border border-border/60 bg-card/80 overflow-hidden"
+                          initial={{ opacity: 0, y: 16, rotateX: -4 }}
+                          animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                          transition={{ delay: idx * 0.1, type: "spring", damping: 18 }}
+                          style={{ perspective: "800px", transformStyle: "preserve-3d" }}
+                          className="rounded-3xl overflow-hidden"
                         >
-                          {/* Property Header */}
-                          <div className="p-3.5 border-b border-border/40 bg-gradient-to-r from-card to-secondary/20">
-                            <div className="flex items-center gap-3">
-                              {info.image ? (
-                                <img src={info.image} alt={info.name} className="w-12 h-12 rounded-xl object-cover border border-border/50" loading="lazy" />
-                              ) : (
-                                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                                  <Home size={18} className="text-primary" />
+                          {/* Property Header — clickable → property history */}
+                          <motion.div
+                            whileTap={{ scale: 0.98 }}
+                            onClick={(e) => { e.stopPropagation(); onNavigate?.("history", { propertyId: pid }); }}
+                            className="relative cursor-pointer group"
+                            style={{
+                              background: "linear-gradient(145deg, hsl(var(--card)) 0%, hsl(var(--secondary) / 0.4) 100%)",
+                              boxShadow: "0 8px 32px -4px hsl(var(--primary) / 0.12), 0 2px 8px -2px hsl(var(--border) / 0.3), inset 0 1px 0 hsl(var(--border) / 0.15)",
+                            }}
+                          >
+                            {/* Ambient glow */}
+                            <div className="absolute inset-0 rounded-t-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                              style={{ background: "radial-gradient(ellipse at 30% 20%, hsl(var(--primary) / 0.08) 0%, transparent 60%)" }} />
+                            
+                            <div className="relative p-4 flex items-center gap-3.5">
+                              <div className="relative">
+                                {info.image ? (
+                                  <img src={info.image} alt={info.name}
+                                    className="w-14 h-14 rounded-2xl object-cover border-2 border-border/40 group-hover:border-primary/40 transition-colors"
+                                    style={{ boxShadow: "0 4px 12px -2px hsl(var(--foreground) / 0.15)" }}
+                                    loading="lazy" />
+                                ) : (
+                                  <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center border-2 border-primary/20"
+                                    style={{ boxShadow: "0 4px 12px -2px hsl(var(--primary) / 0.2)" }}>
+                                    <Home size={20} className="text-primary" />
+                                  </div>
+                                )}
+                                <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-primary flex items-center justify-center"
+                                  style={{ boxShadow: "0 2px 6px hsl(var(--primary) / 0.4)" }}>
+                                  <span className="text-[8px] font-black text-primary-foreground">{propBookings.length}</span>
                                 </div>
-                              )}
+                              </div>
                               <div className="flex-1 min-w-0">
-                                <p className="text-sm font-bold text-foreground truncate">{info.name}</p>
+                                <p className="text-[15px] font-black text-foreground truncate group-hover:text-primary transition-colors">{info.name}</p>
                                 <div className="flex items-center gap-2 mt-0.5">
-                                  <span className="text-[9px] text-muted-foreground flex items-center gap-0.5"><MapPin size={8} /> {info.location}</span>
-                                  <span className="text-[9px] text-primary/70 font-medium">{info.category}</span>
+                                  <span className="text-[10px] text-muted-foreground flex items-center gap-0.5"><MapPin size={9} /> {info.location}</span>
+                                  <span className="text-[10px] text-primary font-semibold">{info.category}</span>
                                 </div>
+                                <p className="text-[9px] text-muted-foreground mt-1">{propGuests} guests · {slotGroups.length} slot{slotGroups.length > 1 ? 's' : ''} booked</p>
                               </div>
                               <div className="text-right shrink-0">
-                                <span className="text-base font-black text-foreground">₹{propRevenue.toLocaleString()}</span>
-                                <p className="text-[9px] text-muted-foreground">{propBookings.length} booking{propBookings.length > 1 ? 's' : ''} · {propGuests} guests</p>
+                                <span className="text-lg font-black text-foreground">₹{propRevenue.toLocaleString()}</span>
+                                <div className="flex items-center gap-1 justify-end mt-0.5">
+                                  <Eye size={10} className="text-primary/60" />
+                                  <span className="text-[9px] text-primary/60 font-medium">View history</span>
+                                </div>
                               </div>
                             </div>
-                          </div>
+                          </motion.div>
 
-                          {/* Slots under this property */}
-                          <div className="divide-y divide-border/30">
+                          {/* Slots + Bookings */}
+                          <div className="divide-y divide-border/20"
+                            style={{
+                              background: "linear-gradient(180deg, hsl(var(--card) / 0.6) 0%, hsl(var(--secondary) / 0.15) 100%)",
+                              boxShadow: "0 12px 40px -8px hsl(var(--foreground) / 0.08), inset 0 -1px 0 hsl(var(--border) / 0.1)",
+                            }}
+                          >
                             {slotGroups.map((sg) => {
                               const slotRevenue = sg.bookings.reduce((s, b) => s + Number(b.total), 0);
                               const slotGuests = sg.bookings.reduce((s, b) => s + b.guests, 0);
 
                               return (
-                                <div key={sg.slot} className={`p-3 ${sg.isBlocked && sg.bookings.length === 0 ? 'bg-destructive/5' : ''}`}>
-                                  <div className="flex items-center justify-between mb-2">
+                                <div key={sg.slot} className={`px-4 py-3 ${sg.isBlocked && sg.bookings.length === 0 ? 'bg-destructive/5' : ''}`}>
+                                  {/* Slot header */}
+                                  <div className="flex items-center justify-between mb-2.5">
                                     <div className="flex items-center gap-2">
-                                      <div className={`w-2 h-2 rounded-full ${sg.bookings.length > 0 ? 'bg-emerald-500 shadow-sm shadow-emerald-500/50' : sg.isBlocked ? 'bg-destructive' : 'bg-muted-foreground/20'}`} />
-                                      <span className="text-[11px] font-bold text-foreground">{sg.slot}</span>
+                                      <div className={`w-2.5 h-2.5 rounded-full ${sg.bookings.length > 0 ? 'bg-emerald-500' : sg.isBlocked ? 'bg-destructive' : 'bg-muted-foreground/20'}`}
+                                        style={sg.bookings.length > 0 ? { boxShadow: "0 0 8px hsl(142 71% 45% / 0.5)" } : undefined} />
+                                      <span className="text-xs font-bold text-foreground">{sg.slot}</span>
                                       {sg.bookings.length > 0 && (
                                         <span className="text-[9px] text-muted-foreground">· {sg.bookings.length} booking{sg.bookings.length > 1 ? 's' : ''}</span>
                                       )}
                                     </div>
                                     <div className="flex items-center gap-2">
                                       {slotRevenue > 0 && (
-                                        <span className="text-[10px] font-bold text-primary">₹{slotRevenue.toLocaleString()}</span>
+                                        <span className="text-[11px] font-bold text-primary">₹{slotRevenue.toLocaleString()}</span>
                                       )}
                                       <button
-                                        onClick={() => toggleBlock(selectedDate!, sg.slot)}
+                                        onClick={(e) => { e.stopPropagation(); toggleBlock(selectedDate!, sg.slot); }}
                                         className={`flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-semibold transition ${
                                           sg.isBlocked ? "bg-destructive/10 text-destructive" : "bg-secondary/80 text-muted-foreground"
                                         }`}
@@ -551,58 +585,109 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
                                     </div>
                                   </div>
 
+                                  {/* Booking 3D cards */}
                                   {sg.bookings.length === 0 ? (
-                                    <p className="text-[9px] text-muted-foreground pl-4 italic">{sg.isBlocked ? "Slot blocked" : "Available"}</p>
+                                    <p className="text-[9px] text-muted-foreground pl-5 italic">{sg.isBlocked ? "Slot blocked" : "Available"}</p>
                                   ) : (
-                                    <div className="space-y-1.5 pl-4">
+                                    <div className="space-y-2.5 pl-1">
                                       {sg.bookings.map((b, j) => {
                                         const cfg = statusConfig[b.status] || statusConfig.upcoming;
                                         const userProfile = b.user_id ? userProfiles.get(b.user_id) : null;
                                         const userName = userProfile?.display_name || (b.user_id ? `User ${b.user_id.slice(0, 6)}` : "Guest");
-                                        const bookedAt = b.created_at ? new Date(b.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "";
+                                        const bookedAt = b.created_at ? new Date(b.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "";
+                                        // Parse slot time range for display
+                                        const slotTime = sg.slot;
 
                                         return (
                                           <motion.div
                                             key={j}
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            transition={{ delay: j * 0.04 }}
-                                            whileTap={{ scale: 0.97 }}
-                                            onClick={() => onNavigate?.("clients", { userId: b.user_id })}
-                                            className={`rounded-xl border px-3 py-2.5 cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all ${cfg.bg}`}
+                                            initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            transition={{ delay: j * 0.06, type: "spring", damping: 20 }}
+                                            className="rounded-2xl overflow-hidden"
+                                            style={{
+                                              boxShadow: "0 6px 24px -4px hsl(var(--foreground) / 0.1), 0 2px 6px -2px hsl(var(--border) / 0.25), inset 0 1px 0 hsl(var(--border) / 0.1)",
+                                              background: "linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--secondary) / 0.3) 100%)",
+                                            }}
                                           >
-                                            <div className="flex items-center justify-between">
-                                              <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                                                {userProfile?.avatar_url ? (
-                                                  <img src={userProfile.avatar_url} alt={userName} className="w-9 h-9 rounded-full object-cover border-2 border-border/50 shrink-0" />
-                                                ) : (
-                                                  <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0 border-2 border-border/50">
-                                                    <User size={14} className="text-primary" />
-                                                  </div>
-                                                )}
+                                            {/* User row — clickable → user profile */}
+                                            <motion.div
+                                              whileTap={{ scale: 0.98 }}
+                                              onClick={(e) => { e.stopPropagation(); onNavigate?.("users", { userId: b.user_id }); }}
+                                              className="p-3.5 cursor-pointer group/user"
+                                            >
+                                              <div className="flex items-center gap-3">
+                                                <div className="relative">
+                                                  {userProfile?.avatar_url ? (
+                                                    <img src={userProfile.avatar_url} alt={userName}
+                                                      className="w-11 h-11 rounded-full object-cover border-2 border-border/50 group-hover/user:border-primary/50 transition-colors shrink-0"
+                                                      style={{ boxShadow: "0 3px 10px -2px hsl(var(--foreground) / 0.15)" }} />
+                                                  ) : (
+                                                    <div className="w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center shrink-0 border-2 border-border/50 group-hover/user:border-primary/50 transition-colors"
+                                                      style={{ boxShadow: "0 3px 10px -2px hsl(var(--primary) / 0.2)" }}>
+                                                      <User size={16} className="text-primary" />
+                                                    </div>
+                                                  )}
+                                                  {/* Status indicator */}
+                                                  <div className={`absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full border-2 border-card ${cfg.dot}`} />
+                                                </div>
                                                 <div className="min-w-0 flex-1">
                                                   <div className="flex items-center gap-1.5">
-                                                    <p className="text-[12px] font-bold text-foreground truncate">{userName}</p>
+                                                    <p className="text-[13px] font-bold text-foreground truncate group-hover/user:text-primary transition-colors">{userName}</p>
                                                     {userProfile?.tier && userProfile.tier !== "Silver" && (
-                                                      <span className="text-[8px] px-1.5 py-0.5 rounded-md bg-amber-500/10 text-amber-500 font-bold">{userProfile.tier}</span>
+                                                      <span className={`text-[8px] px-1.5 py-0.5 rounded-md font-bold ${
+                                                        userProfile.tier === "Diamond" ? "bg-sky-500/15 text-sky-400" :
+                                                        userProfile.tier === "Platinum" ? "bg-violet-500/15 text-violet-400" :
+                                                        "bg-amber-500/15 text-amber-400"
+                                                      }`}>{userProfile.tier}</span>
                                                     )}
                                                   </div>
-                                                  <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                                                    <span className="text-[9px] text-muted-foreground font-mono">#{b.booking_id.length > 10 ? b.booking_id.slice(0, 10) : b.booking_id}</span>
-                                                    <span className="text-[9px] text-muted-foreground flex items-center gap-0.5"><Users size={8} /> {b.guests} guests</span>
-                                                    {bookedAt && (
-                                                      <span className="text-[9px] text-muted-foreground flex items-center gap-0.5"><Clock size={7} /> {bookedAt}</span>
-                                                    )}
+                                                  <span className="text-[9px] text-primary/50 font-medium">View profile →</span>
+                                                </div>
+                                                <div className="text-right shrink-0">
+                                                  <span className="text-[15px] font-black text-foreground">₹{Number(b.total).toLocaleString()}</span>
+                                                  <div><span className={`text-[10px] font-bold ${cfg.color}`}>{cfg.label}</span></div>
+                                                </div>
+                                              </div>
+                                            </motion.div>
+
+                                            {/* Details strip */}
+                                            <div className="px-3.5 pb-3 pt-0">
+                                              <div className="rounded-xl bg-secondary/30 border border-border/20 p-2.5 grid grid-cols-2 gap-x-4 gap-y-1.5">
+                                                <div className="flex items-center gap-1.5">
+                                                  <CalendarDays size={10} className="text-muted-foreground/60 shrink-0" />
+                                                  <div>
+                                                    <p className="text-[8px] text-muted-foreground/60 font-medium uppercase">Date</p>
+                                                    <p className="text-[10px] text-foreground font-semibold">{selectedDate ? new Date(selectedDate + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : ""}</p>
+                                                  </div>
+                                                </div>
+                                                <div className="flex items-center gap-1.5">
+                                                  <Clock size={10} className="text-muted-foreground/60 shrink-0" />
+                                                  <div>
+                                                    <p className="text-[8px] text-muted-foreground/60 font-medium uppercase">Slot</p>
+                                                    <p className="text-[10px] text-foreground font-semibold">{slotTime}</p>
+                                                  </div>
+                                                </div>
+                                                <div className="flex items-center gap-1.5">
+                                                  <Users size={10} className="text-muted-foreground/60 shrink-0" />
+                                                  <div>
+                                                    <p className="text-[8px] text-muted-foreground/60 font-medium uppercase">Guests</p>
+                                                    <p className="text-[10px] text-foreground font-semibold">{b.guests} people</p>
+                                                  </div>
+                                                </div>
+                                                <div className="flex items-center gap-1.5">
+                                                  <Star size={10} className="text-muted-foreground/60 shrink-0" />
+                                                  <div>
+                                                    <p className="text-[8px] text-muted-foreground/60 font-medium uppercase">Booking ID</p>
+                                                    <p className="text-[10px] text-foreground font-semibold font-mono">#{b.booking_id.length > 12 ? b.booking_id.slice(0, 12) : b.booking_id}</p>
                                                   </div>
                                                 </div>
                                               </div>
-                                              <div className="flex items-center gap-2 shrink-0">
-                                                <div className="text-right">
-                                                  <span className="text-[12px] font-black text-foreground">₹{Number(b.total).toLocaleString()}</span>
-                                                  <div><span className={`text-[9px] font-semibold ${cfg.color}`}>{cfg.label}</span></div>
-                                                </div>
-                                                <Eye size={12} className="text-muted-foreground" />
-                                              </div>
+                                              {bookedAt && (
+                                                <p className="text-[8px] text-muted-foreground mt-1.5 pl-1 flex items-center gap-1">
+                                                  <Clock size={7} /> Booked on {bookedAt}
+                                                </p>
+                                              )}
                                             </div>
                                           </motion.div>
                                         );
@@ -610,8 +695,9 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
                                     </div>
                                   )}
 
+                                  {/* Slot utilization */}
                                   {sg.bookings.length > 0 && (
-                                    <div className="mt-2 pl-4">
+                                    <div className="mt-2 pl-1">
                                       <div className="flex items-center justify-between text-[8px] text-muted-foreground mb-0.5">
                                         <span>{slotGuests} guests</span>
                                         <span>₹{Math.round(slotRevenue / Math.max(sg.bookings.length, 1))}/avg</span>
@@ -630,11 +716,12 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
                               );
                             })}
 
+                            {/* Available slots */}
                             {SLOTS.filter(slot => !slotGroups.some(sg => sg.slot === slot)).length > 0 && (
-                              <div className="px-3 py-2 flex items-center gap-2 flex-wrap">
+                              <div className="px-4 py-2.5 flex items-center gap-2 flex-wrap">
                                 <span className="text-[9px] text-muted-foreground font-medium">Available:</span>
                                 {SLOTS.filter(slot => !slotGroups.some(sg => sg.slot === slot)).map(slot => (
-                                  <span key={slot} className="text-[9px] text-emerald-500/70 bg-emerald-500/5 px-2 py-0.5 rounded-md font-medium">{slot}</span>
+                                  <span key={slot} className="text-[9px] text-emerald-400 bg-emerald-500/8 px-2 py-0.5 rounded-lg font-semibold border border-emerald-500/15">{slot}</span>
                                 ))}
                               </div>
                             )}
