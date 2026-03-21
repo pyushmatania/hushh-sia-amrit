@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Heart, Star } from "lucide-react";
 import { useState } from "react";
 import type { Property } from "@/data/properties";
+import OptimizedImage from "@/components/shared/OptimizedImage";
 
 interface PropertyCardSmallProps {
   property: Property;
