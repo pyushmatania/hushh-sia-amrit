@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Send, Loader2, Zap, Maximize2, Minimize2, Sparkles,
@@ -8,6 +8,55 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { playAIThinkingSound, playAISuccessSound, playAIActionSound, playAIErrorSound } from "@/lib/ai-sounds";
 import HushhBot from "./HushhBot";
+
+const ROTATING_PLACEHOLDERS = [
+  "Show me today's revenue breakdown...",
+  "Which properties have the most bookings?",
+  "Create a 15% off coupon for weekends...",
+  "How many orders are pending right now?",
+  "List low stock inventory items...",
+  "Who are the top 5 spending customers?",
+  "Compare this week vs last week revenue...",
+  "Show me all upcoming bookings for tomorrow...",
+  "What's the average booking value this month?",
+  "Find all 5-star reviews from last week...",
+];
+
+function useRotatingPlaceholder(userInput: string) {
+  const [index, setIndex] = useState(0);
+  const [displayed, setDisplayed] = useState("");
+  const [typing, setTyping] = useState(true);
+
+  useEffect(() => {
+    if (userInput) return; // stop when user is typing
+    const text = ROTATING_PLACEHOLDERS[index];
+    let charIdx = 0;
+    setDisplayed("");
+    setTyping(true);
+
+    const typeTimer = setInterval(() => {
+      charIdx++;
+      setDisplayed(text.slice(0, charIdx));
+      if (charIdx >= text.length) {
+        clearInterval(typeTimer);
+        setTyping(false);
+      }
+    }, 35);
+
+    return () => clearInterval(typeTimer);
+  }, [index, userInput]);
+
+  useEffect(() => {
+    if (userInput) return;
+    if (typing) return;
+    const pause = setTimeout(() => {
+      setIndex(prev => (prev + 1) % ROTATING_PLACEHOLDERS.length);
+    }, 2000);
+    return () => clearTimeout(pause);
+  }, [typing, userInput]);
+
+  return userInput ? "" : displayed;
+}
 
 interface Message {
   role: "user" | "assistant";
