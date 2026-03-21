@@ -587,7 +587,15 @@ export default function AdminClients({ initialUserId, onContextConsumed }: { ini
   const [listingMap, setListingMap] = useState<Map<string, string>>(new Map());
   const [viewMode, setViewMode] = useState<"cards" | "compact">("cards");
 
+  // Auto-select client when navigated from calendar with userId
   useEffect(() => {
+    if (initialUserId && !loading && clients.length > 0) {
+      const target = clients.find(c => c.user_id === initialUserId);
+      if (target) setSelectedClient(target);
+      onContextConsumed?.();
+    }
+  }, [initialUserId, loading, clients, onContextConsumed]);
+
     const load = async () => {
       const [profilesRes, bookingsRes, ordersRes, orderItemsRes, reviewsRes, wishlistsRes, referralsRes, verificationsRes, listingsRes] = await Promise.all([
         supabase.from("profiles").select("*").order("created_at", { ascending: false }),
