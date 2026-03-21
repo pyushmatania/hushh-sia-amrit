@@ -205,7 +205,49 @@ export default function BookingHub({
 
   const pendingBookings = useMemo(() => bookings.filter(b => b.status === "upcoming" || b.status === "pending"), [bookings]);
 
+  // Conflict detection: find bookings that share same property+date+slot with active statuses
+  const conflictMap = useMemo(() => {
+    const map = new Map<string, string[]>(); // bookingId -> conflicting booking IDs
+    const activeBookings = bookings.filter(b => !["cancelled", "completed"].includes(b.status));
+    for (let i = 0; i < activeBookings.length; i++) {
+      for (let j = i + 1; j < activeBookings.length; j++) {
+        const a = activeBookings[i], b2 = activeBookings[j];
+        if (a.property_id === b2.property_id && a.date === b2.date && a.slot === b2.slot) {
+          map.set(a.id, [...(map.get(a.id) || []), b2.id]);
+          map.set(b2.id, [...(map.get(b2.id) || []), a.id]);
+        }
+      }
+    }
+    return map;
+  }, [bookings]);
+
+  const getConflicts = useCallback((booking: Booking) => {
+    const ids = conflictMap.get(booking.id);
+    if (!ids || ids.length === 0) return [];
+    return bookings.filter(b => ids.includes(b.id));
+  }, [conflictMap, bookings]);
+
   const updateStatus = async (id: string, status: string) => {
+    // Warn on confirming a conflicting booking
+    if (status === "confirmed" || status === "active") {
+      const booking = bookings.find(b => b.id === id);
+      if (booking) {
+        const activeStatuses = ["confirmed", "active", "upcoming", "pending"];
+        const overlapping = bookings.filter(b =>
+          b.id !== id &&
+          b.property_id === booking.property_id &&
+          b.date === booking.date &&
+          b.slot === booking.slot &&
+          activeStatuses.includes(b.status)
+        );
+        if (overlapping.length > 0) {
+          const proceed = window.confirm(
+            `⚠️ Conflict detected!\n\nThis property already has ${overlapping.length} booking(s) for ${booking.date} at ${booking.slot}.\n\nGuests: ${overlapping.reduce((s, b) => s + b.guests, 0) + booking.guests} total\n\nProceed anyway?`
+          );
+          if (!proceed) return;
+        }
+      }
+    }
     setUpdating(id);
     const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
     if (error) toast.error("Failed to update"); else {
