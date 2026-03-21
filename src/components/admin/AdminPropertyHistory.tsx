@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
+import NeuralSearchWidget from "./NeuralSearchWidget";
 
 /* ─── Types ─── */
 interface PropertyBooking {
@@ -150,105 +151,45 @@ function BookingCalendar({ bookings, onDayClick }: { bookings: PropertyBooking[]
 
 /* ─── AI Search Bar ─── */
 function AISearchBar({ onResult, properties }: { onResult: (answer: string) => void; properties: PropertySummary[] }) {
-  const [query, setQuery] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [answer, setAnswer] = useState<string | null>(null);
+  const handleSearch = async (query: string): Promise<string> => {
+    const context = properties.map(p => ({
+      name: p.name, id: p.id, category: p.category,
+      bookings: p.bookings.map(b => ({
+        date: b.date, slot: b.slot, guests: b.guests, total: b.total,
+        status: b.status, guest: b.userName,
+      })),
+      orders: p.orders.map(o => ({
+        date: o.created_at.split("T")[0], total: o.total, status: o.status,
+        items: o.items.map(i => `${i.item_emoji}${i.item_name} x${i.quantity}`).join(", "),
+        guest: o.userName, chef: o.assigned_name,
+      })),
+      totalRevenue: p.totalRevenue, avgRating: p.avgRating,
+      topItems: p.topItems.slice(0, 5),
+    }));
 
-  const handleSearch = async () => {
-    if (!query.trim()) return;
-    setLoading(true);
-    setAnswer(null);
-    try {
-      const context = properties.map(p => ({
-        name: p.name, id: p.id, category: p.category,
-        bookings: p.bookings.map(b => ({
-          date: b.date, slot: b.slot, guests: b.guests, total: b.total,
-          status: b.status, guest: b.userName,
-        })),
-        orders: p.orders.map(o => ({
-          date: o.created_at.split("T")[0], total: o.total, status: o.status,
-          items: o.items.map(i => `${i.item_emoji}${i.item_name} x${i.quantity}`).join(", "),
-          guest: o.userName, chef: o.assigned_name,
-        })),
-        totalRevenue: p.totalRevenue, avgRating: p.avgRating,
-        topItems: p.topItems.slice(0, 5),
-      }));
-
-      const resp = await supabase.functions.invoke("property-history-ai", {
-        body: { query, context: JSON.stringify(context) },
-      });
-
-      if (resp.error) throw resp.error;
-      const text = resp.data?.answer || "No answer found.";
-      setAnswer(text);
-      onResult(text);
-    } catch (e) {
-      console.error(e);
-      setAnswer("Sorry, couldn't process the query. Try again.");
-    } finally {
-      setLoading(false);
-    }
+    const resp = await supabase.functions.invoke("property-history-ai", {
+      body: { query, context: JSON.stringify(context) },
+    });
+    if (resp.error) throw resp.error;
+    const text = resp.data?.answer || "No answer found.";
+    onResult(text);
+    return text;
   };
 
-  const exampleQueries = [
-    "Who stayed in the villa last weekend?",
-    "How many times was Maggi ordered this month?",
-    "Which property had most guests last week?",
-    "Top 5 food items ordered in January",
-    "Show bonfire add-on trends",
-  ];
-
   return (
-    <div className="rounded-2xl border border-border bg-card overflow-hidden">
-      <div className="p-4 border-b border-border">
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
-            <Bot size={14} className="text-primary" />
-          </div>
-          <h3 className="text-sm font-bold text-foreground">AI Search</h3>
-          <span className="text-[9px] text-muted-foreground bg-secondary px-2 py-0.5 rounded-full">Natural Language</span>
-        </div>
-        <div className="flex gap-2">
-          <div className="relative flex-1">
-            <Sparkles size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/60" />
-            <Input
-              placeholder="Ask anything about property history..."
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && handleSearch()}
-              className="pl-9 h-9 rounded-xl text-xs"
-            />
-          </div>
-          <button onClick={handleSearch} disabled={loading || !query.trim()}
-            className="px-4 h-9 rounded-xl bg-primary text-primary-foreground text-xs font-medium flex items-center gap-1.5 hover:bg-primary/90 transition disabled:opacity-50 active:scale-95">
-            {loading ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
-            Ask
-          </button>
-        </div>
-        <div className="flex flex-wrap gap-1.5 mt-2">
-          {exampleQueries.map((eq, i) => (
-            <button key={i} onClick={() => { setQuery(eq); }}
-              className="text-[9px] px-2 py-1 rounded-full bg-secondary text-muted-foreground hover:text-foreground hover:bg-primary/10 transition">
-              {eq}
-            </button>
-          ))}
-        </div>
-      </div>
-      <AnimatePresence>
-        {answer && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-            className="p-4 bg-primary/5 border-t border-primary/10">
-            <div className="flex items-start gap-2">
-              <Bot size={14} className="text-primary shrink-0 mt-0.5" />
-              <p className="text-xs text-foreground leading-relaxed whitespace-pre-wrap">{answer}</p>
-            </div>
-            <button onClick={() => setAnswer(null)} className="mt-2 text-[9px] text-muted-foreground hover:text-foreground transition">
-              Dismiss
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+    <NeuralSearchWidget
+      title="Property Intelligence"
+      subtitle="Search across all property history & analytics"
+      placeholder="Who stayed in the villa last weekend?"
+      examples={[
+        "Who stayed in the villa last weekend?",
+        "How many times was Maggi ordered this month?",
+        "Which property had most guests last week?",
+        "Top 5 food items ordered in January",
+        "Show bonfire add-on trends",
+      ]}
+      onSearch={handleSearch}
+    />
   );
 }
 
