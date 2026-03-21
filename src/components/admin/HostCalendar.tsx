@@ -60,7 +60,7 @@ function StatCard({ icon: Icon, label, value, trend, trendUp }: {
   );
 }
 
-export default function HostCalendar() {
+export default function HostCalendar({ onNavigate }: { onNavigate?: (page: string, context?: any) => void }) {
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth());
   const [bookingMap, setBookingMap] = useState<Map<string, BookingEntry[]>>(new Map());
