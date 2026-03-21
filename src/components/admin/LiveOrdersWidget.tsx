@@ -25,7 +25,7 @@ export default function LiveOrdersWidget({ onViewAll }: { onViewAll: () => void 
     const [itemsRes, profilesRes, listingsRes] = await Promise.all([
       supabase.from("order_items").select("*").in("order_id", ordersData.map(o => o.id)),
       supabase.from("profiles").select("user_id, display_name"),
-      supabase.from("host_listings").select("id, name"),
+      supabase.from("host_listings").select("id, name, image_urls"),
     ]);
 
     const itemMap = new Map<string, any[]>();
