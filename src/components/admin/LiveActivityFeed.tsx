@@ -1,28 +1,18 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Activity, CalendarCheck, ShoppingCart, XCircle, UserPlus,
-  Star, Loader2
-} from "lucide-react";
+import { Activity, CalendarCheck, ShoppingCart, XCircle, Star, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface FeedEvent {
-  id: string;
-  type: "booking" | "order" | "cancel" | "user" | "review";
-  title: string;
-  detail: string;
-  time: string;
-  icon: typeof Activity;
-  color: string;
-  bg: string;
+  id: string; type: string; title: string; detail: string; time: string;
+  icon: typeof Activity; color: string;
 }
 
-const eventConfig = {
-  booking: { icon: CalendarCheck, color: "text-emerald-600", bg: "bg-emerald-50 dark:bg-emerald-500/10" },
-  order: { icon: ShoppingCart, color: "text-blue-600", bg: "bg-blue-50 dark:bg-blue-500/10" },
-  cancel: { icon: XCircle, color: "text-rose-600", bg: "bg-rose-50 dark:bg-rose-500/10" },
-  user: { icon: UserPlus, color: "text-amber-600", bg: "bg-amber-50 dark:bg-amber-500/10" },
-  review: { icon: Star, color: "text-violet-600", bg: "bg-violet-50 dark:bg-violet-500/10" },
+const cfg: Record<string, { icon: typeof Activity; color: string }> = {
+  booking: { icon: CalendarCheck, color: "text-emerald-600" },
+  order: { icon: ShoppingCart, color: "text-blue-600" },
+  cancel: { icon: XCircle, color: "text-rose-600" },
+  review: { icon: Star, color: "text-amber-600" },
 };
 
 export default function LiveActivityFeed() {
@@ -31,32 +21,18 @@ export default function LiveActivityFeed() {
 
   const loadRecent = async () => {
     const [bookingsRes, ordersRes] = await Promise.all([
-      supabase.from("bookings").select("id, booking_id, total, status, date, slot, created_at")
-        .order("created_at", { ascending: false }).limit(15),
-      supabase.from("orders").select("id, total, status, created_at")
-        .order("created_at", { ascending: false }).limit(10),
+      supabase.from("bookings").select("id, booking_id, total, status, date, slot, created_at").order("created_at", { ascending: false }).limit(15),
+      supabase.from("orders").select("id, total, status, created_at").order("created_at", { ascending: false }).limit(10),
     ]);
-
     const feed: FeedEvent[] = [];
-
     (bookingsRes.data ?? []).forEach(b => {
       const type = b.status === "cancelled" ? "cancel" : "booking";
-      const cfg = eventConfig[type];
-      feed.push({
-        id: `b-${b.id}`, type, title: type === "cancel" ? "Booking cancelled" : "New booking",
-        detail: `#${b.booking_id?.slice(0, 8)} · ${b.date} ${b.slot} · ₹${Number(b.total).toLocaleString()}`,
-        time: b.created_at, icon: cfg.icon, color: cfg.color, bg: cfg.bg,
-      });
+      const c = cfg[type];
+      feed.push({ id: `b-${b.id}`, type, title: type === "cancel" ? "Cancelled" : "New booking", detail: `#${b.booking_id?.slice(0, 8)} · ₹${Number(b.total).toLocaleString()}`, time: b.created_at, icon: c.icon, color: c.color });
     });
-
     (ordersRes.data ?? []).forEach(o => {
-      feed.push({
-        id: `o-${o.id}`, type: "order", title: `Order ${o.status}`,
-        detail: `₹${Number(o.total).toLocaleString()}`,
-        time: o.created_at, icon: eventConfig.order.icon, color: eventConfig.order.color, bg: eventConfig.order.bg,
-      });
+      feed.push({ id: `o-${o.id}`, type: "order", title: `Order ${o.status}`, detail: `₹${Number(o.total).toLocaleString()}`, time: o.created_at, icon: cfg.order.icon, color: cfg.order.color });
     });
-
     feed.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
     setEvents(feed.slice(0, 20));
     setLoading(false);
@@ -80,52 +56,42 @@ export default function LiveActivityFeed() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
-      className="relative rounded-[20px] bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl border border-white/40 dark:border-zinc-700/40 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_-8px_rgba(0,0,0,0.3)] overflow-hidden p-5"
-    >
-      <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-3xl opacity-15 bg-indigo-400 pointer-events-none" />
-      <h3 className="relative text-[13px] font-bold text-foreground mb-5 flex items-center gap-2.5">
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-400 to-blue-500 flex items-center justify-center shadow-lg shadow-indigo-500/10">
-          <Activity size={15} className="text-white" />
-        </div>
-        Live Activity
-        <span className="relative flex h-2 w-2 ml-1">
+    <div className="rounded-2xl bg-card border border-border/60 p-4">
+      <div className="flex items-center gap-2 mb-4">
+        <Activity size={14} className="text-primary" />
+        <span className="text-xs font-semibold text-foreground">Live Activity</span>
+        <span className="relative flex h-1.5 w-1.5 ml-0.5">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
         </span>
-      </h3>
-
+      </div>
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-indigo-400" size={20} /></div>
+        <div className="flex justify-center py-6"><Loader2 className="animate-spin text-muted-foreground" size={18} /></div>
       ) : events.length === 0 ? (
-        <p className="text-sm text-zinc-400 text-center py-6">No activity yet</p>
+        <p className="text-[11px] text-muted-foreground text-center py-6">No activity yet</p>
       ) : (
-        <div className="space-y-1 max-h-[360px] overflow-y-auto pr-1">
+        <div className="space-y-0.5 max-h-[320px] overflow-y-auto">
           <AnimatePresence initial={false}>
             {events.map((event, i) => {
               const Icon = event.icon;
               return (
-                <motion.div
-                  key={event.id}
-                  initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, height: 0 }}
-                  transition={{ delay: i * 0.02 }}
-                  className="flex items-center gap-3 py-2.5 border-b border-zinc-50 dark:border-zinc-800 last:border-0"
+                <motion.div key={event.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.02 }}
+                  className="flex items-center gap-2.5 py-2 border-b border-border/40 last:border-0"
                 >
-                  <div className={`w-8 h-8 rounded-xl ${event.bg} flex items-center justify-center shrink-0`}>
-                    <Icon size={14} className={event.color} />
+                  <div className="w-7 h-7 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                    <Icon size={12} className={event.color} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-200">{event.title}</p>
-                    <p className="text-[10px] text-zinc-400 truncate">{event.detail}</p>
+                    <p className="text-[11px] font-medium text-foreground">{event.title}</p>
+                    <p className="text-[9px] text-muted-foreground truncate">{event.detail}</p>
                   </div>
-                  <span className="text-[10px] text-zinc-400 whitespace-nowrap shrink-0">{timeAgo(event.time)}</span>
+                  <span className="text-[9px] text-muted-foreground whitespace-nowrap shrink-0">{timeAgo(event.time)}</span>
                 </motion.div>
               );
             })}
           </AnimatePresence>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 }

@@ -12,7 +12,6 @@ interface DigestMetrics {
   cancellationRate: string; newUsers: number; totalOrders: number;
   avgRating: string; reviewCount: number;
 }
-
 interface DigestData { period: string; metrics: DigestMetrics; highlights: string[]; }
 
 const fmt = (v: number) => {
@@ -41,98 +40,79 @@ export default function WeeklyDigestPreview() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}
-      className="relative rounded-[20px] bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl border border-white/40 dark:border-zinc-700/40 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_-8px_rgba(0,0,0,0.3)] overflow-hidden p-5"
-    >
-      <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-3xl opacity-15 bg-violet-400 pointer-events-none" />
-      <div className="relative flex items-center justify-between mb-5">
-        <h3 className="text-[13px] font-bold text-foreground flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center shadow-lg shadow-violet-500/10">
-            <FileBarChart size={15} className="text-white" />
-          </div>
-          Weekly Digest
-        </h3>
-        <button
-          onClick={fetchDigest} disabled={loading}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 text-[11px] font-medium hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition disabled:opacity-50"
+    <div className="rounded-2xl bg-card border border-border/60 p-4">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <FileBarChart size={14} className="text-primary" />
+          <span className="text-xs font-semibold text-foreground">Weekly Digest</span>
+        </div>
+        <button onClick={fetchDigest} disabled={loading}
+          className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-primary/10 text-primary text-[10px] font-medium hover:bg-primary/15 transition disabled:opacity-50"
         >
-          {loading ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />}
+          {loading ? <Loader2 size={10} className="animate-spin" /> : <RefreshCw size={10} />}
           {data ? "Refresh" : "Generate"}
         </button>
       </div>
 
       {!data && !loading && (
         <div className="text-center py-6">
-          <div className="w-12 h-12 rounded-2xl bg-violet-50 dark:bg-violet-500/10 flex items-center justify-center mx-auto mb-2">
-            <FileBarChart size={24} className="text-violet-400" />
-          </div>
-          <p className="text-xs text-zinc-400">Click Generate to preview this week's digest</p>
+          <FileBarChart size={20} className="mx-auto text-muted-foreground/40 mb-2" />
+          <p className="text-[10px] text-muted-foreground">Click Generate to preview this week's digest</p>
         </div>
       )}
 
       {loading && !data && (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-indigo-400" size={20} /></div>
+        <div className="flex justify-center py-6"><Loader2 className="animate-spin text-muted-foreground" size={18} /></div>
       )}
 
       {data && (
-        <div className="space-y-4">
-          <p className="text-[10px] text-zinc-400 font-medium">{data.period}</p>
-
-          <div className="grid grid-cols-3 gap-2">
+        <div className="space-y-3">
+          <p className="text-[9px] text-muted-foreground font-medium">{data.period}</p>
+          <div className="grid grid-cols-3 gap-1.5">
             {[
-              { label: "Revenue", value: fmt(data.metrics.totalRevenue), icon: IndianRupee, color: "text-green-600", bg: "bg-green-50 dark:bg-green-500/10" },
-              { label: "Bookings", value: String(data.metrics.totalBookings), icon: CalendarCheck, color: "text-blue-600", bg: "bg-blue-50 dark:bg-blue-500/10" },
-              { label: "New Users", value: String(data.metrics.newUsers), icon: Users, color: "text-violet-600", bg: "bg-violet-50 dark:bg-violet-500/10" },
-              { label: "Orders", value: String(data.metrics.totalOrders), icon: ShoppingCart, color: "text-orange-600", bg: "bg-orange-50 dark:bg-orange-500/10" },
-              { label: "Avg Rating", value: data.metrics.avgRating, icon: Star, color: "text-amber-600", bg: "bg-amber-50 dark:bg-amber-500/10" },
-              { label: "Cancel Rate", value: data.metrics.cancellationRate, icon: TrendingDown, color: "text-rose-600", bg: "bg-rose-50 dark:bg-rose-500/10" },
-            ].map((m, i) => (
-              <motion.div
-                key={m.label}
-                initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.05 * i }}
-                className="rounded-xl border border-zinc-100 dark:border-zinc-800 p-2.5 text-center bg-zinc-50/50 dark:bg-zinc-800/50"
-              >
-                <div className={`w-7 h-7 rounded-lg ${m.bg} flex items-center justify-center mx-auto mb-1.5`}>
-                  <m.icon size={14} className={m.color} />
-                </div>
-                <p className="text-sm font-bold text-zinc-800 dark:text-zinc-100 tabular-nums">{m.value}</p>
-                <p className="text-[9px] text-zinc-400">{m.label}</p>
-              </motion.div>
+              { label: "Revenue", value: fmt(data.metrics.totalRevenue), icon: IndianRupee, color: "text-emerald-600" },
+              { label: "Bookings", value: String(data.metrics.totalBookings), icon: CalendarCheck, color: "text-blue-600" },
+              { label: "New Users", value: String(data.metrics.newUsers), icon: Users, color: "text-violet-600" },
+              { label: "Orders", value: String(data.metrics.totalOrders), icon: ShoppingCart, color: "text-orange-600" },
+              { label: "Rating", value: data.metrics.avgRating, icon: Star, color: "text-amber-600" },
+              { label: "Cancels", value: data.metrics.cancellationRate, icon: TrendingDown, color: "text-rose-600" },
+            ].map((m) => (
+              <div key={m.label} className="rounded-lg bg-muted/50 p-2 text-center">
+                <m.icon size={12} className={`${m.color} mx-auto mb-1`} />
+                <p className="text-xs font-bold text-foreground tabular-nums">{m.value}</p>
+                <p className="text-[8px] text-muted-foreground">{m.label}</p>
+              </div>
             ))}
           </div>
 
           {data.highlights.length > 0 && (
-            <div className="space-y-1.5">
-              <h4 className="text-[11px] font-bold text-zinc-700 dark:text-zinc-200 flex items-center gap-1">
-                <Sparkles size={12} className="text-violet-500" /> Highlights
+            <div className="space-y-1">
+              <h4 className="text-[10px] font-bold text-foreground flex items-center gap-1">
+                <Sparkles size={10} className="text-primary" /> Highlights
               </h4>
               {data.highlights.map((h, i) => (
-                <motion.p key={i} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 + i * 0.05 }}
-                  className="text-xs text-zinc-500 dark:text-zinc-400 pl-2 border-l-2 border-indigo-200 dark:border-indigo-500/30 py-0.5"
-                >{h}</motion.p>
+                <p key={i} className="text-[10px] text-muted-foreground pl-2 border-l-2 border-primary/20 py-0.5">{h}</p>
               ))}
             </div>
           )}
 
-          <div className="rounded-xl bg-zinc-50 dark:bg-zinc-800/50 p-3 space-y-1.5">
-            <p className="text-[10px] font-bold text-zinc-700 dark:text-zinc-200">Revenue Breakdown</p>
-            <div className="flex justify-between text-[11px]">
-              <span className="text-zinc-400">Booking revenue</span>
-              <span className="text-zinc-700 dark:text-zinc-200 font-medium tabular-nums">{fmt(data.metrics.bookingRevenue)}</span>
+          <div className="rounded-lg bg-muted/50 p-2.5 space-y-1">
+            <p className="text-[9px] font-bold text-foreground">Revenue Breakdown</p>
+            <div className="flex justify-between text-[10px]">
+              <span className="text-muted-foreground">Bookings</span>
+              <span className="text-foreground font-medium tabular-nums">{fmt(data.metrics.bookingRevenue)}</span>
             </div>
-            <div className="flex justify-between text-[11px]">
-              <span className="text-zinc-400">Order revenue</span>
-              <span className="text-zinc-700 dark:text-zinc-200 font-medium tabular-nums">{fmt(data.metrics.orderRevenue)}</span>
+            <div className="flex justify-between text-[10px]">
+              <span className="text-muted-foreground">Orders</span>
+              <span className="text-foreground font-medium tabular-nums">{fmt(data.metrics.orderRevenue)}</span>
             </div>
-            <div className="flex justify-between text-[11px] pt-1.5 border-t border-zinc-200 dark:border-zinc-700">
-              <span className="text-zinc-700 dark:text-zinc-200 font-bold">Total</span>
-              <span className="text-indigo-600 font-bold tabular-nums">{fmt(data.metrics.totalRevenue)}</span>
+            <div className="flex justify-between text-[10px] pt-1 border-t border-border/60">
+              <span className="text-foreground font-bold">Total</span>
+              <span className="text-primary font-bold tabular-nums">{fmt(data.metrics.totalRevenue)}</span>
             </div>
           </div>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 }

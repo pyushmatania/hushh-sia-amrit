@@ -7,14 +7,14 @@ const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const SLOTS = ["12–4 PM", "4–7 PM", "7–11 PM"];
 
 function getIntensity(count: number, max: number): string {
-  if (max === 0) return "bg-zinc-100 dark:bg-zinc-800";
+  if (max === 0) return "bg-muted";
   const ratio = count / max;
-  if (ratio >= 0.8) return "bg-indigo-400";
-  if (ratio >= 0.6) return "bg-indigo-300";
-  if (ratio >= 0.4) return "bg-indigo-200 dark:bg-indigo-400/50";
-  if (ratio >= 0.2) return "bg-indigo-100 dark:bg-indigo-400/25";
-  if (count > 0) return "bg-indigo-50 dark:bg-indigo-400/10";
-  return "bg-zinc-100 dark:bg-zinc-800";
+  if (ratio >= 0.8) return "bg-primary";
+  if (ratio >= 0.6) return "bg-primary/70";
+  if (ratio >= 0.4) return "bg-primary/50";
+  if (ratio >= 0.2) return "bg-primary/30";
+  if (count > 0) return "bg-primary/15";
+  return "bg-muted";
 }
 
 function slotBucket(slot: string): number {
@@ -54,48 +54,36 @@ export default function BookingHeatmap() {
   }, []);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-      className="relative rounded-[20px] bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl border border-white/40 dark:border-zinc-700/40 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_-8px_rgba(0,0,0,0.3)] overflow-hidden p-5"
-    >
-      <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-3xl opacity-15 bg-rose-400 pointer-events-none" />
-      <h3 className="relative text-[13px] font-bold text-foreground mb-5 flex items-center gap-2.5">
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center shadow-lg shadow-rose-500/10">
-          <Flame size={15} className="text-white" />
-        </div>
-        Booking Heatmap
-      </h3>
-
+    <div className="rounded-2xl bg-card border border-border/60 p-4">
+      <div className="flex items-center gap-2 mb-4">
+        <Flame size={14} className="text-primary" />
+        <span className="text-xs font-semibold text-foreground">Booking Heatmap</span>
+      </div>
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-indigo-400" size={20} /></div>
+        <div className="flex justify-center py-6"><Loader2 className="animate-spin text-muted-foreground" size={18} /></div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr>
-                <th className="text-[10px] text-zinc-400 font-medium text-left pr-2 pb-2" />
-                {SLOTS.map(s => (
-                  <th key={s} className="text-[10px] text-zinc-400 font-medium text-center pb-2 px-1">{s}</th>
-                ))}
+                <th className="text-[9px] text-muted-foreground font-medium text-left pr-2 pb-2" />
+                {SLOTS.map(s => <th key={s} className="text-[9px] text-muted-foreground font-medium text-center pb-2 px-1">{s}</th>)}
               </tr>
             </thead>
             <tbody>
               {DAYS.map((day, di) => (
                 <tr key={day}>
-                  <td className="text-[11px] text-zinc-500 font-medium pr-2 py-1">{day}</td>
+                  <td className="text-[10px] text-muted-foreground font-medium pr-2 py-0.5">{day}</td>
                   {SLOTS.map((_, si) => {
                     const count = grid[di][si];
                     return (
-                      <td key={si} className="px-1 py-1">
+                      <td key={si} className="px-0.5 py-0.5">
                         <motion.div
-                          initial={{ scale: 0 }} animate={{ scale: 1 }}
-                          transition={{ delay: 0.03 * (di + si) }}
-                          className={`w-full aspect-square rounded-xl ${getIntensity(count, maxVal)} flex items-center justify-center min-w-[36px]`}
-                          title={`${day} ${SLOTS[si]}: ${count} booking(s)`}
+                          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.02 * (di + si) }}
+                          className={`w-full aspect-square rounded-lg ${getIntensity(count, maxVal)} flex items-center justify-center min-w-[32px]`}
+                          title={`${day} ${SLOTS[si]}: ${count}`}
                         >
-                          <span className="text-[10px] font-bold text-zinc-600 dark:text-zinc-200 tabular-nums">
-                            {count || ""}
-                          </span>
+                          <span className="text-[9px] font-bold text-foreground/70 tabular-nums">{count || ""}</span>
                         </motion.div>
                       </td>
                     );
@@ -104,15 +92,15 @@ export default function BookingHeatmap() {
               ))}
             </tbody>
           </table>
-          <div className="flex items-center gap-2 mt-3 justify-end">
-            <span className="text-[9px] text-zinc-400">Low</span>
-            {["bg-indigo-50", "bg-indigo-100", "bg-indigo-200", "bg-indigo-300", "bg-indigo-400"].map(c => (
-              <div key={c} className={`w-4 h-4 rounded-md ${c}`} />
+          <div className="flex items-center gap-1.5 mt-3 justify-end">
+            <span className="text-[8px] text-muted-foreground">Low</span>
+            {["bg-primary/15", "bg-primary/30", "bg-primary/50", "bg-primary/70", "bg-primary"].map(c => (
+              <div key={c} className={`w-3 h-3 rounded ${c}`} />
             ))}
-            <span className="text-[9px] text-zinc-400">High</span>
+            <span className="text-[8px] text-muted-foreground">High</span>
           </div>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 }
