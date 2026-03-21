@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Heart, Star } from "lucide-react";
 import { useState } from "react";
 import type { Property } from "@/data/properties";
+import OptimizedImage from "@/components/shared/OptimizedImage";
 
 interface PropertyCardSmallProps {
   property: Property;
@@ -26,15 +27,17 @@ export default function PropertyCardSmall({ property, index, onTap, isWishlisted
       <div className="relative aspect-square rounded-2xl overflow-hidden">
         {!imgLoaded && (
           <div className="absolute inset-0 bg-secondary animate-pulse rounded-2xl">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-muted/50 to-transparent animate-[shimmer_1.5s_infinite]" />
+            <div className="absolute inset-0 shimmer-bg" />
           </div>
         )}
-        <img
+        <OptimizedImage
           src={property.images[0]}
           alt={property.name}
-          className="w-full h-full object-cover"
-          onLoad={() => setImgLoaded(true)}
-          loading="lazy"
+          fill
+          className="object-cover"
+          sizes="260px"
+          onImageLoad={() => setImgLoaded(true)}
+          showSkeleton={false}
         />
 
         <motion.button

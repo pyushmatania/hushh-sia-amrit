@@ -2,6 +2,7 @@ import { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import { VolumeX, Volume2, Bookmark, Flame, Zap, Sparkles } from "lucide-react";
 import { type Property } from "@/data/properties";
 import { AccentFrame, AccentTag } from "@/components/shared/AccentFrame";
+import OptimizedImage from "@/components/shared/OptimizedImage";
 
 // Home / generic
 import videoBonfire from "@/assets/video-bonfire-night.mp4.asset.json";
@@ -177,12 +178,15 @@ function VideoCard({
           style={{ border: "1px solid hsl(var(--border) / 0.24)" }}
         >
 
-        <img
+        <OptimizedImage
           src={property.images[0]}
           alt={property.name}
-          className="absolute inset-0 w-full h-full object-cover"
+          fill
+          className="object-cover"
+          sizes="(max-width: 640px) 85vw, 380px"
+          priority={isFirst}
           style={{ opacity: videoReady ? 0 : 1, transition: "opacity 0.5s" }}
-          loading="lazy"
+          showSkeleton={!isFirst}
         />
         {shouldLoad && (
           <video
