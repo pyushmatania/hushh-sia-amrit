@@ -498,7 +498,7 @@ function FlameMouth({ size, type, state }: { size: number; type: string; state: 
     );
   }
 
-
+  if (type === "talk" || state === "speaking") {
     return (
       <motion.div
         className="rounded-full"
@@ -575,3 +575,4 @@ function FlameMouth({ size, type, state }: { size: number; type: string; state: 
     />
   );
 }
+
