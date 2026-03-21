@@ -392,6 +392,7 @@ export default function AdminProperties() {
           {filtered.map((listing) => (
             <SwipeableRow
               key={listing.id}
+              showHint={listing === filtered[0]}
               onEdit={() => openEdit(listing)}
               onDelete={() => deleteListing(listing.id)}
             >

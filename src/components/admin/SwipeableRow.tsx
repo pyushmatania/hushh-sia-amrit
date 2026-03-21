@@ -1,6 +1,6 @@
-import { useState, useRef, useCallback } from "react";
-import { motion, useMotionValue, useTransform, PanInfo } from "framer-motion";
-import { Pencil, Trash2 } from "lucide-react";
+import { useState, useRef, useCallback, useEffect } from "react";
+import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo } from "framer-motion";
+import { Pencil, Trash2, ChevronLeft } from "lucide-react";
 import { hapticLight, hapticMedium, hapticHeavy } from "@/lib/haptics";
 
 // Tiny synthesized swipe sounds via AudioContext
@@ -83,15 +83,31 @@ interface SwipeableRowProps {
   className?: string;
 }
 
-export default function SwipeableRow({ children, onEdit, onDelete, className = "" }: SwipeableRowProps) {
+const HINT_KEY = "swipeable-row-hint-shown";
+
+export default function SwipeableRow({ children, onEdit, onDelete, className = "", showHint = false }: SwipeableRowProps & { showHint?: boolean }) {
   const x = useMotionValue(0);
   const [swiped, setSwiped] = useState<"none" | "left">("none");
+  const [hinting, setHinting] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const hasTriggeredHaptic = useRef(false);
 
   const ACTION_WIDTH = 140;
 
   const editOpacity = useTransform(x, [-ACTION_WIDTH, -60, 0], [1, 0.6, 0]);
+
+  // Show hint animation once
+  useEffect(() => {
+    if (!showHint) return;
+    const seen = sessionStorage.getItem(HINT_KEY);
+    if (seen) return;
+    const timeout = setTimeout(() => {
+      setHinting(true);
+      sessionStorage.setItem(HINT_KEY, "1");
+      setTimeout(() => setHinting(false), 2400);
+    }, 1200);
+    return () => clearTimeout(timeout);
+  }, [showHint]);
 
   const handleDrag = useCallback((_: any, info: PanInfo) => {
     if (info.offset.x < -50 && !hasTriggeredHaptic.current) {
@@ -129,7 +145,7 @@ export default function SwipeableRow({ children, onEdit, onDelete, className = "
       {/* Action buttons behind */}
       <motion.div
         className="absolute right-0 top-0 bottom-0 flex items-stretch z-0"
-        style={{ opacity: swiped === "left" ? 1 : editOpacity }}
+        style={{ opacity: swiped === "left" || hinting ? 1 : editOpacity }}
       >
         {onEdit && (
           <button
@@ -151,6 +167,28 @@ export default function SwipeableRow({ children, onEdit, onDelete, className = "
         )}
       </motion.div>
 
+      {/* Swipe hint overlay */}
+      <AnimatePresence>
+        {hinting && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-20 pointer-events-none flex items-center justify-end pr-4"
+          >
+            <motion.div
+              initial={{ x: 0, opacity: 0 }}
+              animate={{ x: [0, -20, 0], opacity: [0, 1, 0] }}
+              transition={{ duration: 1.6, times: [0, 0.4, 1], ease: "easeInOut" }}
+              className="flex items-center gap-1.5 text-muted-foreground text-[11px] font-medium bg-card/90 backdrop-blur-sm px-3 py-1.5 rounded-full border border-border shadow-sm"
+            >
+              <ChevronLeft size={14} className="animate-pulse" />
+              Swipe to edit
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Main content */}
       <motion.div
         drag="x"
@@ -158,9 +196,9 @@ export default function SwipeableRow({ children, onEdit, onDelete, className = "
         dragElastic={0.1}
         onDrag={handleDrag}
         onDragEnd={handleDragEnd}
-        animate={{ x: swiped === "left" ? -ACTION_WIDTH : 0 }}
+        animate={{ x: hinting ? -60 : swiped === "left" ? -ACTION_WIDTH : 0 }}
         transition={{ type: "spring", damping: 25, stiffness: 300 }}
-        style={{ x }}
+        style={{ x: hinting ? undefined : x }}
         className="relative z-10 bg-card touch-pan-y"
         onClick={() => { if (swiped === "left") { close(); } }}
       >
