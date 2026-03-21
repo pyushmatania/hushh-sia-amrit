@@ -108,6 +108,7 @@ export default function Admin() {
         onContextConsumed={() => setHistoryContext(null)}
       />;
       case "inventory": return <AdminInventory />;
+      case "staff-mgmt": return <AdminStaffManagement />;
       case "audit": return <AdminAuditLog />;
       default: return <CommandCenter onNavigate={setPage} />;
     }
