@@ -44,6 +44,69 @@ export type Database = {
         }
         Relationships: []
       }
+      booking_photos: {
+        Row: {
+          booking_id: string
+          caption: string
+          created_at: string
+          id: string
+          photo_url: string
+          user_id: string
+        }
+        Insert: {
+          booking_id: string
+          caption?: string
+          created_at?: string
+          id?: string
+          photo_url: string
+          user_id: string
+        }
+        Update: {
+          booking_id?: string
+          caption?: string
+          created_at?: string
+          id?: string
+          photo_url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      booking_splits: {
+        Row: {
+          amount: number
+          booking_id: string
+          created_at: string
+          created_by: string
+          friend_email: string
+          friend_name: string
+          id: string
+          paid_at: string | null
+          status: string
+        }
+        Insert: {
+          amount?: number
+          booking_id: string
+          created_at?: string
+          created_by: string
+          friend_email?: string
+          friend_name?: string
+          id?: string
+          paid_at?: string | null
+          status?: string
+        }
+        Update: {
+          amount?: number
+          booking_id?: string
+          created_at?: string
+          created_by?: string
+          friend_email?: string
+          friend_name?: string
+          id?: string
+          paid_at?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           booking_id: string

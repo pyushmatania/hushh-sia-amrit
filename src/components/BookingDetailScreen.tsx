@@ -3,7 +3,8 @@ import {
   ArrowLeft, MapPin, Calendar, Clock, Users, QrCode,
   Phone, MessageCircle, X, AlertTriangle, Check, ChevronRight,
   Navigation, Share2, Plus, Minus, Sparkles, ShoppingBag,
-  Utensils, Star, Shield, Wifi, Music, Flame, Home, Info
+  Utensils, Star, Shield, Wifi, Music, Flame, Home, Info,
+  Camera, Receipt, Split
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import type { Addon } from "@/data/properties";
@@ -11,6 +12,9 @@ import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { useToast } from "@/hooks/use-toast";
 import type { Booking } from "@/pages/Index";
 import LiveOrderingSheet from "./LiveOrderingSheet";
+import BookingPhotosSheet from "./BookingPhotosSheet";
+import ReceiptSheet from "./ReceiptSheet";
+import SplitPaymentSheet from "./SplitPaymentSheet";
 
 interface BookingDetailScreenProps {
   booking: Booking;
@@ -24,6 +28,9 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [showAddonsSheet, setShowAddonsSheet] = useState(false);
   const [showFoodOrder, setShowFoodOrder] = useState(false);
+  const [showPhotos, setShowPhotos] = useState(false);
+  const [showReceipt, setShowReceipt] = useState(false);
+  const [showSplit, setShowSplit] = useState(false);
   const [addonSelections, setAddonSelections] = useState<Record<string, number>>({});
   const [orderedAddons, setOrderedAddons] = useState<{ name: string; qty: number; price: number }[]>([]);
   const [cancelling, setCancelling] = useState(false);
@@ -355,6 +362,41 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
           </motion.div>
         )}
 
+        {/* Quick Client Actions */}
+        {!isCancelled && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.14 }}
+            className="rounded-2xl border border-border p-4 space-y-3"
+          >
+            <h4 className="font-semibold text-sm text-foreground">Quick Actions</h4>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                onClick={() => setShowReceipt(true)}
+                className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-secondary/80 border border-border/50 active:scale-95 transition-transform"
+              >
+                <Receipt size={18} className="text-primary" />
+                <span className="text-[10px] font-semibold text-foreground">Receipt</span>
+              </button>
+              <button
+                onClick={() => setShowSplit(true)}
+                className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-secondary/80 border border-border/50 active:scale-95 transition-transform"
+              >
+                <Split size={18} className="text-primary" />
+                <span className="text-[10px] font-semibold text-foreground">Split Bill</span>
+              </button>
+              <button
+                onClick={() => setShowPhotos(true)}
+                className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-secondary/80 border border-border/50 active:scale-95 transition-transform"
+              >
+                <Camera size={18} className="text-primary" />
+                <span className="text-[10px] font-semibold text-foreground">Photos</span>
+              </button>
+            </div>
+          </motion.div>
+        )}
+
         {/* Payment summary */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -496,7 +538,21 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
             </motion.button>
           </div>
         ) : isCompleted ? (
-          <div className="flex gap-3">
+          <div className="flex gap-2">
+            <motion.button
+              onClick={() => setShowPhotos(true)}
+              className="w-12 flex items-center justify-center rounded-xl border border-border"
+              whileTap={{ scale: 0.95 }}
+            >
+              <Camera size={16} className="text-muted-foreground" />
+            </motion.button>
+            <motion.button
+              onClick={() => setShowReceipt(true)}
+              className="w-12 flex items-center justify-center rounded-xl border border-border"
+              whileTap={{ scale: 0.95 }}
+            >
+              <Receipt size={16} className="text-muted-foreground" />
+            </motion.button>
             <motion.button
               onClick={() => onRebook(booking.propertyId)}
               className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm glow-primary flex items-center justify-center gap-2"
@@ -722,6 +778,42 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
         propertyId={booking.propertyId}
         bookingId={booking.bookingId}
       />
+
+      {/* Booking Photos Gallery */}
+      <AnimatePresence>
+        {showPhotos && (
+          <BookingPhotosSheet
+            open={showPhotos}
+            onClose={() => setShowPhotos(false)}
+            bookingId={booking.bookingId}
+            propertyName={property.name}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Digital Receipt */}
+      <AnimatePresence>
+        {showReceipt && (
+          <ReceiptSheet
+            open={showReceipt}
+            onClose={() => setShowReceipt(false)}
+            booking={booking}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Split Payment */}
+      <AnimatePresence>
+        {showSplit && (
+          <SplitPaymentSheet
+            open={showSplit}
+            onClose={() => setShowSplit(false)}
+            bookingId={booking.bookingId}
+            totalAmount={booking.total}
+            propertyName={property.name}
+          />
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
