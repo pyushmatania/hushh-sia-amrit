@@ -422,6 +422,9 @@ export default function StaffOrders() {
                       </div>
                     </div>
 
+                    {/* Order Notes */}
+                    <OrderNotes orderId={selectedOrder.id} authorName="Kitchen Staff" authorRole="staff" />
+
                     {/* Status action */}
                     {selectedOrder.status !== "completed" && (
                       <motion.button

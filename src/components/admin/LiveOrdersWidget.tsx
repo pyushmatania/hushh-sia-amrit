@@ -288,6 +288,9 @@ export default function LiveOrdersWidget({ onViewAll }: { onViewAll: () => void 
                       <span className="text-sm font-bold text-foreground">Total</span>
                       <span className="text-lg font-bold text-primary tabular-nums">₹{Number(selectedOrder.total).toLocaleString()}</span>
                     </div>
+
+                    {/* Order Notes */}
+                    <OrderNotes orderId={selectedOrder.id} authorName="Admin" authorRole="admin" />
                   </>
                 )}
 
