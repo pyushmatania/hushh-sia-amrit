@@ -46,7 +46,7 @@ export default function Admin() {
     analytics: "Analytics", curations: "Curations", tags: "Tags",
     campaigns: "Campaigns", coupons: "Coupons", orders: "Live Orders",
     exports: "Exports", ai: "AI Assistant", alerts: "Smart Alerts",
-    audit: "Audit Trail", earnings: "Earnings", pricing: "Pricing",
+    audit: "Audit Trail", earnings: "Finance Hub", pricing: "Pricing",
     achievements: "Achievements", loyalty: "Loyalty", calendar: "Calendar",
     requests: "Requests", history: "Property History", inventory: "Inventory",
     "staff-mgmt": "Staff Mgmt", budget: "Budget",
