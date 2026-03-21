@@ -324,11 +324,16 @@ export default function BookingHub({
                   })}
                 </div>
                 {uniqueProperties.length > 1 && (
-                  <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                  <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
                     <button onClick={() => setPropertyFilter("all")} className={`shrink-0 px-3 py-1.5 rounded-xl text-[11px] font-semibold border transition-all ${propertyFilter === "all" ? "bg-primary text-primary-foreground border-primary" : "bg-secondary/60 text-muted-foreground border-border/60"}`}>All Venues</button>
                     {uniqueProperties.map(p => (
-                      <button key={p.id} onClick={() => setPropertyFilter(p.id === propertyFilter ? "all" : p.id)} className={`shrink-0 px-3 py-1.5 rounded-xl text-[11px] font-semibold border transition-all truncate max-w-[160px] ${propertyFilter === p.id ? "bg-primary text-primary-foreground border-primary" : "bg-secondary/60 text-muted-foreground border-border/60"}`}>
-                        {p.name}
+                      <button key={p.id} onClick={() => setPropertyFilter(p.id === propertyFilter ? "all" : p.id)} className={`shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-semibold border transition-all max-w-[180px] ${propertyFilter === p.id ? "bg-primary text-primary-foreground border-primary" : "bg-secondary/60 text-muted-foreground border-border/60"}`}>
+                        {p.image ? (
+                          <img src={p.image} className="w-5 h-5 rounded-md object-cover shrink-0" alt="" />
+                        ) : (
+                          <Building2 size={12} className="shrink-0" />
+                        )}
+                        <span className="truncate">{p.name}</span>
                       </button>
                     ))}
                   </div>
