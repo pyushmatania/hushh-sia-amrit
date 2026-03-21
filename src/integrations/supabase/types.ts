@@ -176,6 +176,42 @@ export type Database = {
         }
         Relationships: []
       }
+      client_notes: {
+        Row: {
+          author_id: string | null
+          author_name: string
+          client_user_id: string
+          content: string
+          created_at: string
+          id: string
+          note_type: string
+          pinned: boolean
+          updated_at: string
+        }
+        Insert: {
+          author_id?: string | null
+          author_name?: string
+          client_user_id: string
+          content?: string
+          created_at?: string
+          id?: string
+          note_type?: string
+          pinned?: boolean
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string | null
+          author_name?: string
+          client_user_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          note_type?: string
+          pinned?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       conversations: {
         Row: {
           created_at: string
