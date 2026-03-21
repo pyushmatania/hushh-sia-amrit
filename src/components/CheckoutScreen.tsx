@@ -39,6 +39,21 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
   const [selectedPayment, setSelectedPayment] = useState("upi");
   const [extras, setExtras] = useState<Property[]>(initialExtras || []);
   const [liveSelections, setLiveSelections] = useState<Record<string, number>>(initialSelections);
+  const [conflict, setConflict] = useState<ConflictResult | null>(null);
+  const [checkingConflict, setCheckingConflict] = useState(false);
+
+  // Check for booking conflicts when date or slot changes
+  useEffect(() => {
+    const check = async () => {
+      setCheckingConflict(true);
+      const dateStr = liveDate.toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" });
+      const slotStr = `${slot.label} · ${slot.time}`;
+      const result = await checkBookingConflict(property.id, dateStr, slotStr);
+      setConflict(result);
+      setCheckingConflict(false);
+    };
+    check();
+  }, [liveDate, property.id, slot]);
 
   const removeAddon = (id: string) => {
     setLiveSelections(prev => {
