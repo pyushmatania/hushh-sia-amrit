@@ -155,6 +155,10 @@ export default function Admin() {
       case "staff-mgmt": return <AdminStaffManagement />;
       case "budget": return <FinanceHub />;
       case "audit": return <AdminAuditLog />;
+      case "checkin": return <AdminCheckin />;
+      case "reports": return <AdminReports />;
+      case "notifications": return <AdminNotifications />;
+      case "settings": return <AdminSettings />;
       default: return <CommandCenter onNavigate={setPage} />;
     }
   };

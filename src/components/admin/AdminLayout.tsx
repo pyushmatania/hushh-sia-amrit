@@ -389,7 +389,7 @@ export default function AdminLayout({ activePage, onNavigate, children, breadcru
           </div>
         </div>
 
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 pb-20 md:pb-6">
           <AnimatePresence mode="wait">
             <motion.div
               key={activePage}
@@ -403,6 +403,36 @@ export default function AdminLayout({ activePage, onNavigate, children, breadcru
           </AnimatePresence>
         </main>
       </div>
+
+      {/* Mobile Bottom Nav */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl border-t border-zinc-200/80 dark:border-zinc-800/80 px-2 py-1.5 safe-area-bottom">
+        <div className="flex items-center justify-around">
+          {[
+            { id: "dashboard" as AdminPage, icon: LayoutDashboard, label: "Home" },
+            { id: "orders" as AdminPage, icon: ShoppingCart, label: "Orders" },
+            { id: "checkin" as AdminPage, icon: UserCheck, label: "Check-in" },
+            { id: "notifications" as AdminPage, icon: Bell, label: "Alerts" },
+            { id: "settings" as AdminPage, icon: Menu, label: "More" },
+          ].map(tab => {
+            const active = activePage === tab.id;
+            return (
+              <motion.button
+                key={tab.id}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => onNavigate(tab.id)}
+                className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all ${
+                  active ? "text-primary" : "text-muted-foreground"
+                }`}
+              >
+                <tab.icon size={20} strokeWidth={active ? 2.5 : 1.5} />
+                <span className={`text-[9px] font-medium ${active ? "font-bold" : ""}`}>{tab.label}</span>
+                {active && <motion.div layoutId="mobile-tab-dot" className="w-1 h-1 rounded-full bg-primary" />}
+              </motion.button>
+            );
+          })}
+        </div>
+      </div>
+
       <FloatingChecklist />
     </div>
   );
