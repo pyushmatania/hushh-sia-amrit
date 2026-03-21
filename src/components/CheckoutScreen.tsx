@@ -41,6 +41,43 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
   const [liveSelections, setLiveSelections] = useState<Record<string, number>>(initialSelections);
   const [conflict, setConflict] = useState<ConflictResult | null>(null);
   const [checkingConflict, setCheckingConflict] = useState(false);
+  const [extraMattressCount, setExtraMattressCount] = useState(0);
+
+  const ROOM_CAPACITY = 2;
+  const EXTRA_MATTRESS_PRICE = 500; // ₹500 per extra mattress
+  const isStay = property.primaryCategory === "stay";
+
+  // Room allocation logic for stays
+  const roomInfo = useMemo(() => {
+    if (!isStay) return null;
+    const totalRooms = Math.max(1, Math.floor((property.capacity || 6) / ROOM_CAPACITY));
+    const roomsNeeded = Math.ceil(liveGuests / ROOM_CAPACITY);
+    const fitsExactly = liveGuests % ROOM_CAPACITY === 0;
+    const oddGuest = !fitsExactly ? 1 : 0; // 1 person needs mattress if odd
+    const suggestedMattresses = oddGuest;
+    const canFitWithMattress = liveGuests <= roomsNeeded * (ROOM_CAPACITY + 1);
+    const roomsWithoutMattress = Math.ceil(liveGuests / ROOM_CAPACITY);
+    const roomsWithMattress = Math.ceil(liveGuests / (ROOM_CAPACITY + 1));
+    const isOverCapacity = roomsWithMattress > totalRooms;
+
+    return {
+      totalRooms,
+      roomsNeeded: extraMattressCount > 0 ? roomsWithMattress : roomsWithoutMattress,
+      fitsExactly,
+      oddGuest,
+      suggestedMattresses,
+      canFitWithMattress,
+      isOverCapacity,
+      maxMattresses: Math.min(roomsWithMattress, totalRooms), // max 1 per room
+    };
+  }, [isStay, liveGuests, property.capacity, extraMattressCount]);
+
+  // Auto-suggest mattress when guest count is odd for stays
+  useEffect(() => {
+    if (roomInfo && roomInfo.oddGuest > 0 && extraMattressCount === 0) {
+      // Don't auto-set, just suggest via UI
+    }
+  }, [roomInfo]);
 
   // Check for booking conflicts when date or slot changes
   useEffect(() => {
