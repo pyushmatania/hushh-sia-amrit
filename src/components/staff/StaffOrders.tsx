@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { ShoppingCart, Clock, CheckCircle2, ChefHat, Loader2, Bell, User } from "lucide-react";
+import { ShoppingCart, Clock, CheckCircle2, ChefHat, Loader2, Bell, User, Search, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { getListingThumbnail } from "@/lib/listing-thumbnails";
 import { playWinJingle } from "@/lib/spin-sounds";
@@ -26,6 +26,7 @@ export default function StaffOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("active");
+  const [searchQuery, setSearchQuery] = useState("");
   const initialLoadDone = useRef(false);
 
   const loadOrders = async () => {
@@ -97,11 +98,12 @@ export default function StaffOrders() {
     }
   };
 
-  const filtered = orders.filter(o =>
-    filter === "active" ? ["pending", "preparing"].includes(o.status) :
-    filter === "delivered" ? o.status === "delivered" :
-    o.status === "completed"
-  );
+  const filtered = orders.filter(o => {
+    const statusMatch = filter === "active" ? ["pending", "preparing"].includes(o.status) :
+      filter === "delivered" ? o.status === "delivered" : o.status === "completed";
+    const nameMatch = !searchQuery || (o.guestName || "").toLowerCase().includes(searchQuery.toLowerCase());
+    return statusMatch && nameMatch;
+  });
 
   const pendingCount = orders.filter(o => o.status === "pending").length;
 
@@ -125,6 +127,22 @@ export default function StaffOrders() {
               filter === f ? "bg-primary/15 text-primary" : "bg-secondary text-muted-foreground"
             }`}>{f}</button>
         ))}
+      </div>
+
+      <div className="relative">
+        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+        <input
+          type="text"
+          placeholder="Search by guest name…"
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          className="w-full pl-9 pr-8 py-2 rounded-xl bg-secondary text-sm text-foreground placeholder:text-muted-foreground border border-border focus:outline-none focus:ring-1 focus:ring-primary/30"
+        />
+        {searchQuery && (
+          <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+            <X size={14} />
+          </button>
+        )}
       </div>
 
       {loading ? (
