@@ -746,10 +746,11 @@ function InsightsTab({ bookings, slotPopularity, topProperties, topClients, onNa
   );
 }
 
-function BookingCard({ booking: b, index, onNavigate, onStatusChange, conflicts = [] }: { booking: Booking; index: number; onNavigate?: any; onStatusChange: (id: string, status: string) => void; conflicts?: Booking[] }) {
+function BookingCard({ booking: b, index, onNavigate, onStatusChange, conflicts = [], capacityInfo }: { booking: Booking; index: number; onNavigate?: any; onStatusChange: (id: string, status: string) => void; conflicts?: Booking[]; capacityInfo?: any }) {
   const sc = statusConfig[b.status] || statusConfig.pending;
   const StatusIcon = sc.icon;
   const hasConflict = conflicts.length > 0;
+  const isOverCapacity = capacityInfo?.isOverCapacity;
 
   return (
     <motion.div
@@ -758,7 +759,7 @@ function BookingCard({ booking: b, index, onNavigate, onStatusChange, conflicts 
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ delay: index * 0.02 }}
-      className={`rounded-2xl bg-card border ${hasConflict ? "border-destructive/40 ring-1 ring-destructive/20" : "border-border/60"} overflow-hidden hover:shadow-lg ${sc.glow} transition-all duration-200 group`}
+      className={`rounded-2xl bg-card border ${isOverCapacity ? "border-destructive/60 ring-2 ring-destructive/30" : hasConflict ? "border-amber-400/40 ring-1 ring-amber-400/20" : "border-border/60"} overflow-hidden hover:shadow-lg ${sc.glow} transition-all duration-200 group`}
     >
       {/* Property Image + Info Header */}
       <div className="relative cursor-pointer" onClick={() => onNavigate?.("history", { propertyId: b.property_id })}>
@@ -786,12 +787,27 @@ function BookingCard({ booking: b, index, onNavigate, onStatusChange, conflicts 
         </div>
       </div>
 
-      {hasConflict && (
-        <div className="px-3 py-2 bg-destructive/10 border-b border-destructive/20 flex items-center gap-2">
-          <AlertTriangle size={12} className="text-destructive shrink-0" />
-          <p className="text-[10px] font-medium text-destructive">
-            ⚠️ Conflicts with {conflicts.length} other booking{conflicts.length > 1 ? "s" : ""} — same property, date & slot
-          </p>
+      {/* Capacity-aware conflict banner */}
+      {capacityInfo && (hasConflict || isOverCapacity) && (
+        <div className={`px-3 py-2 border-b flex items-start gap-2 ${isOverCapacity ? "bg-destructive/10 border-destructive/20" : "bg-amber-50 dark:bg-amber-500/10 border-amber-200/40 dark:border-amber-500/20"}`}>
+          <AlertTriangle size={12} className={`shrink-0 mt-0.5 ${isOverCapacity ? "text-destructive" : "text-amber-600 dark:text-amber-400"}`} />
+          <div className="text-[10px]">
+            {isOverCapacity ? (
+              <p className="font-semibold text-destructive">
+                🚨 Over capacity! {capacityInfo.totalGuests}/{capacityInfo.maxGuests} guests
+                {capacityInfo.type === "stay" && ` · Needs ${capacityInfo.roomsNeeded} rooms (${capacityInfo.rooms} available)`}
+              </p>
+            ) : capacityInfo.type === "stay" ? (
+              <p className="font-medium text-amber-700 dark:text-amber-300">
+                🛏️ {capacityInfo.totalGuests}/{capacityInfo.maxGuests} guests · {capacityInfo.roomsNeeded}/{capacityInfo.rooms} rooms
+                {capacityInfo.needsMattress && " · Extra mattress needed"}
+              </p>
+            ) : (
+              <p className="font-medium text-amber-700 dark:text-amber-300">
+                👥 {capacityInfo.totalGuests}/{capacityInfo.maxGuests} guests on same slot · {conflicts.length} overlapping booking{conflicts.length > 1 ? "s" : ""}
+              </p>
+            )}
+          </div>
         </div>
       )}
 
