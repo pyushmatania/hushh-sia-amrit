@@ -83,6 +83,9 @@ export default function AdminStaffManagement() {
   const [staff, setStaff] = useState<StaffMember[]>([]);
   const [attendance, setAttendance] = useState<Attendance[]>([]);
   const [salaries, setSalaries] = useState<SalaryPayment[]>([]);
+  const [leaves, setLeaves] = useState<StaffLeave[]>([]);
+  const [showLeaveForm, setShowLeaveForm] = useState(false);
+  const [newLeave, setNewLeave] = useState({ staff_id: "", leave_type: "casual", start_date: "", end_date: "", reason: "" });
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
