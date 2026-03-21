@@ -48,7 +48,7 @@ function ThinkingPulse() {
           animate={{ x: ["-100%", "100%"] }}
           transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
         />
-        <HushhBot size={32} state="thinking" />
+        <HushhBot size={46} state="thinking" />
         <div className="flex-1 relative z-10">
           <span className="text-[11px] font-semibold text-primary font-display">Analyzing...</span>
           <div className="flex gap-1 mt-1">
@@ -132,7 +132,7 @@ function AnswerCard({ content, onDismiss }: { content: string; onDismiss: () => 
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: "spring", damping: 12, stiffness: 200 }}
           >
-            <HushhBot size={36} state="speaking" />
+            <HushhBot size={52} state="speaking" />
           </motion.div>
           <div className="flex-1 min-w-0">
             <MarkdownRender content={content} />
@@ -304,7 +304,7 @@ export default function NeuralSearchWidget({
             whileHover={{ scale: 1.1, rotate: [0, -5, 5, 0] }}
             transition={{ duration: 0.5 }}
           >
-            <HushhBot size={compact ? 56 : 72} state={botState} />
+            <HushhBot size={compact ? 86 : 112} state={botState} />
           </motion.div>
           <h3 className="text-sm font-bold text-foreground flex items-center gap-2 font-display mt-1">
             {title}
