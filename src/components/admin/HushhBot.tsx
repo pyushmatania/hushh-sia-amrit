@@ -272,8 +272,8 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
 
             {/* Eyes */}
             <div className="flex items-center justify-center" style={{ gap: s * 0.1 }}>
-              <FlameEye size={s * 0.065} state={state} side="left" hovered={hovered} />
-              <FlameEye size={s * 0.065} state={state} side="right" hovered={hovered} />
+              <FlameEye size={s * 0.065} state={state} side="left" hovered={hovered} eyeStyle={expr.eyeStyle} />
+              <FlameEye size={s * 0.065} state={state} side="right" hovered={hovered} eyeStyle={expr.eyeStyle} />
             </div>
 
             {/* Cheek blush */}
