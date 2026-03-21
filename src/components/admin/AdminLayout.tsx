@@ -25,6 +25,7 @@ interface AdminLayoutProps {
   activePage: AdminPage;
   onNavigate: (page: AdminPage) => void;
   children: React.ReactNode;
+  breadcrumb?: { page: AdminPage; label: string }[];
 }
 
 const navSections: { title: string; items: { id: AdminPage; label: string; icon: typeof LayoutDashboard; color: string; activeGlow: string; adminOnly?: boolean }[] }[] = [
