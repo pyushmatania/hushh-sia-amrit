@@ -70,13 +70,13 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
                 ? { scale: [1, 1.06, 1], y: [0, -4, 0] }
                 : state === "listening"
                   ? { scale: [1, 1.04, 0.98, 1], y: [0, -2, 0] }
-                  : {}
-            : idleAnimations[currentExpression] || {}
+                  : { scale: 1 }
+            : (idleAnimations[currentExpression] as any) || { scale: 1 }
       }
       transition={
         hovered
-          ? { duration: 0.5, ease: "easeOut" }
-          : { duration: 2, repeat: Infinity, ease: "easeInOut" }
+          ? { duration: 0.5, ease: "easeOut" as const }
+          : { duration: 2, repeat: Infinity, ease: "easeInOut" as const }
       }
     >
       {/* Glow ring */}
