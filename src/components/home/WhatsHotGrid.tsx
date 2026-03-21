@@ -1,4 +1,5 @@
 import { type Property } from "@/data/properties";
+import { getListingThumbnail } from "@/lib/listing-thumbnails";
 
 interface WhatsHotGridProps {
   properties: Property[];

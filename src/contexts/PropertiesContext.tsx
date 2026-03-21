@@ -12,6 +12,7 @@ import {
   type TimeSlot,
   type PropertyRule,
 } from "@/data/properties";
+import { getListingThumbnail } from "@/lib/listing-thumbnails";
 
 interface PropertiesContextValue {
   properties: Property[];
