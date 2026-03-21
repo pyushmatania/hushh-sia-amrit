@@ -107,7 +107,7 @@ function getSlotIcon(slot: string) {
 const PIE_COLORS = ["hsl(250, 80%, 60%)", "hsl(280, 65%, 62%)", "hsl(200, 75%, 55%)", "hsl(340, 70%, 60%)", "hsl(160, 60%, 50%)"];
 
 export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (page: AdminPage) => void; userRole?: "super_admin" | "ops_manager" | "host" | "staff" | null }) {
-  const [stats, setStats] = useState<Stats>({ revenue: 0, bookings: 0, activeListings: 0, totalUsers: 0, pendingOrders: 0, todayBookings: 0, avgRating: 0, lowStock: 0 });
+  const [stats, setStats] = useState<Stats>({ revenue: 0, bookings: 0, activeListings: 0, totalUsers: 0, pendingOrders: 0, todayBookings: 0, avgRating: 0, lowStock: 0, conflicts: 0 });
   const [greeting, setGreeting] = useState("Good morning");
   const [topProperties, setTopProperties] = useState<TopProperty[]>([]);
   const [recentReviews, setRecentReviews] = useState<RecentReview[]>([]);
