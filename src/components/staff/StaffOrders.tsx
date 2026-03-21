@@ -173,7 +173,22 @@ export default function StaffOrders() {
                   </div>
                 </div>
 
-                <div className="space-y-1.5 mb-3">
+                {/* Guest info */}
+                <div className="flex items-center gap-2 mb-3 px-1">
+                  <Avatar className="h-6 w-6">
+                    {order.guestAvatar ? (
+                      <AvatarImage src={order.guestAvatar} alt={order.guestName} />
+                    ) : null}
+                    <AvatarFallback className="text-[10px] bg-primary/10 text-primary font-bold">
+                      {(order.guestName || "G")[0].toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-xs text-foreground font-medium truncate">{order.guestName}</span>
+                  {order.booking_id && (
+                    <span className="text-[10px] text-muted-foreground ml-auto">🔑 {order.booking_id.slice(0, 8)}</span>
+                  )}
+                </div>
+
                   {(order.items || []).map((item, j) => (
                     <div key={j} className="flex items-center justify-between">
                       <span className="text-sm text-foreground">{item.item_emoji} {item.item_name}</span>
