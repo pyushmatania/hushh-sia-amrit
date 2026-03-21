@@ -495,7 +495,7 @@ export default function BookingHub({
                         </button>
                       )}
                       <div className="flex-1">
-                        <BookingCard booking={b} index={i} onNavigate={onNavigate} onStatusChange={updateStatus} conflicts={getConflicts(b)} />
+                        <BookingCard booking={b} index={i} onNavigate={onNavigate} onStatusChange={updateStatus} conflicts={getConflicts(b)} capacityInfo={getSlotCapacity(b)} />
                       </div>
                     </div>
                   ))}
