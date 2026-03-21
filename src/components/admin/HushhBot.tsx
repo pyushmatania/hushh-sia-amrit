@@ -1,17 +1,38 @@
 import { motion } from "framer-motion";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 
 interface HushhBotProps {
   size?: number;
   state?: "idle" | "thinking" | "speaking" | "listening" | "success" | "error";
 }
 
+const idleCycle: { eyeStyle: string; mouthType: string }[] = [
+  { eyeStyle: "curious", mouthType: "pout" },
+  { eyeStyle: "happy", mouthType: "grin" },
+  { eyeStyle: "sleepy", mouthType: "hmm" },
+  { eyeStyle: "excited", mouthType: "smile" },
+];
+
 export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
   const s = size;
   const [hovered, setHovered] = useState(false);
+  const [cycleIndex, setCycleIndex] = useState(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const onEnter = useCallback(() => setHovered(true), []);
   const onLeave = useCallback(() => setHovered(false), []);
+
+  // Cycle expressions when idle
+  useEffect(() => {
+    if (state === "idle" && !hovered) {
+      intervalRef.current = setInterval(() => {
+        setCycleIndex(prev => (prev + 1) % idleCycle.length);
+      }, 3000);
+      return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+    }
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, [state, hovered]);
+
   const palette: Record<string, { core: string; bright: string; mid: string; outer: string; deep: string; glow: string }> = {
     idle:      { core: "#FFF8E7", bright: "#FFE082", mid: "#FFB74D", outer: "#FF8F00", deep: "#E65100", glow: "rgba(255,160,0,0.5)" },
     thinking:  { core: "#E3F2FD", bright: "#90CAF9", mid: "#42A5F5", outer: "#1E88E5", deep: "#0D47A1", glow: "rgba(30,136,229,0.5)" },
@@ -23,9 +44,7 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
 
   const c = palette[state];
 
-  // Expression changes every few seconds
-  const expressions: Record<string, { eyeStyle: string; mouthType: string }> = {
-    idle:      { eyeStyle: "curious", mouthType: "pout" },
+  const stateExpressions: Record<string, { eyeStyle: string; mouthType: string }> = {
     thinking:  { eyeStyle: "look-up", mouthType: "hmm" },
     speaking:  { eyeStyle: "wide", mouthType: "talk" },
     listening: { eyeStyle: "soft", mouthType: "smile" },
@@ -35,9 +54,9 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
 
   const expr = hovered
     ? { eyeStyle: "scared", mouthType: "gasp" }
-    : expressions[state];
-
-  const activeState = hovered ? "hover" : state;
+    : state === "idle"
+      ? idleCycle[cycleIndex]
+      : (stateExpressions[state] || idleCycle[0]);
 
   return (
     <motion.div
