@@ -140,15 +140,15 @@ function VideoCard({
     if (!card) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
           setShouldLoad(true);
           const video = videoRef.current;
-          if (video && entry.intersectionRatio > 0.5) video.play().catch(() => {});
-        } else {
+          if (video) video.play().catch(() => {});
+        } else if (!entry.isIntersecting) {
           videoRef.current?.pause();
         }
       },
-      { threshold: [0, 0.5], rootMargin: "200px" }
+      { threshold: [0, 0.3], rootMargin: "100px" }
     );
     observer.observe(card);
     return () => observer.disconnect();
