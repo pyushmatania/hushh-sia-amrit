@@ -17,9 +17,9 @@ import AdminTags from "@/components/admin/AdminTags";
 import AdminExports from "@/components/admin/AdminExports";
 import AdminAI from "@/components/admin/AdminAI";
 import AdminAlerts from "@/components/admin/AdminAlerts";
+import BusinessIntelligence from "@/components/admin/BusinessIntelligence";
 import AdminAuditLog from "@/components/admin/AdminAuditLog";
 import FinanceHub from "@/components/admin/FinanceHub";
-import DynamicPricing from "@/components/admin/DynamicPricing";
 import AdminAchievements from "@/components/admin/AdminAchievements";
 import AdminLoyaltyReferrals from "@/components/admin/AdminLoyaltyReferrals";
 import HostCalendar from "@/components/admin/HostCalendar";
@@ -45,8 +45,8 @@ export default function Admin() {
     bookings: "Booking Hub", users: "Users CRM", clients: "Clients",
     analytics: "Analytics", curations: "Curations", tags: "Tags",
     campaigns: "Campaigns", coupons: "Coupons", orders: "Live Orders",
-    exports: "Exports", ai: "AI Assistant", alerts: "Smart Alerts",
-    audit: "Audit Trail", earnings: "Finance Hub", pricing: "Pricing",
+    exports: "Exports", ai: "AI Assistant", alerts: "Intelligence",
+    audit: "Audit Trail", earnings: "Finance Hub", pricing: "Intelligence",
     achievements: "Achievements", loyalty: "Loyalty", calendar: "Calendar",
     requests: "Requests", history: "Property History", inventory: "Inventory",
     "staff-mgmt": "Staff Mgmt", budget: "Budget",
@@ -121,8 +121,8 @@ export default function Admin() {
       case "catalog": return <AdminCatalog />;
       case "dashboard": return <CommandCenter onNavigate={setPage} />;
       case "ai": return <AdminAI />;
-      case "alerts": return <AdminAlerts onNavigate={(p) => setPage(p as AdminPage)} />;
-      case "pricing": return <DynamicPricing />;
+      case "alerts": return <BusinessIntelligence onNavigate={(p) => setPage(p as AdminPage)} />;
+      case "pricing": return <BusinessIntelligence onNavigate={(p) => setPage(p as AdminPage)} />;
       case "properties": return <AdminProperties />;
       case "bookings": return <BookingHub onNavigate={(p, ctx) => navigateTo(p as AdminPage, ctx)} />;
       case "users": return <AdminUsers />;
