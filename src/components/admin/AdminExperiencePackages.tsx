@@ -424,6 +424,14 @@ export default function AdminExperiencePackages() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <DeleteConfirmDialog
+        open={!!deleteTarget}
+        title="Delete this package?"
+        description="This experience package will be permanently removed."
+        onConfirm={confirmDeletePackage}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   );
 }
