@@ -35,9 +35,21 @@ export default function Admin() {
   const { user, loading: authLoading } = useAuth();
   const { hasAdminAccess, loading: roleLoading } = useAdmin();
   const [page, setPage] = useState<AdminPage>("dashboard");
+  const [prevPage, setPrevPage] = useState<AdminPage | null>(null);
   const [skipAuth, setSkipAuth] = useState(false);
   const [historyContext, setHistoryContext] = useState<{ bookingId?: string; propertyId?: string } | null>(null);
   const [clientContext, setClientContext] = useState<{ userId?: string } | null>(null);
+
+  const navigateTo = (target: AdminPage, ctx?: { propertyId?: string; userId?: string; bookingId?: string }) => {
+    setPrevPage(page);
+    if (ctx?.propertyId) setHistoryContext(ctx);
+    if (ctx?.userId) setClientContext({ userId: ctx.userId });
+    setPage(target);
+  };
+
+  const goBack = () => {
+    if (prevPage) { setPage(prevPage); setPrevPage(null); }
+  };
 
   if (authLoading || roleLoading) {
     return (
