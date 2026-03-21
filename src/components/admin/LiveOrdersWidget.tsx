@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart, ChefHat, MapPin, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { getListingThumbnail } from "@/lib/listing-thumbnails";
 
 interface LiveOrder {
   id: string; user_id: string; property_id: string; total: number;
