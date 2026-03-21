@@ -25,7 +25,9 @@ export default function AdminBookings({ onNavigate }: { onNavigate?: (page: stri
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [propertyFilter, setPropertyFilter] = useState("all");
   const [loading, setLoading] = useState(true);
+  const [propertyNames, setPropertyNames] = useState<Map<string, string>>(new Map());
 
   useEffect(() => {
     const load = async () => {
@@ -35,6 +37,7 @@ export default function AdminBookings({ onNavigate }: { onNavigate?: (page: stri
       ]);
       const listingMap = new Map<string, string>();
       (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, l.name));
+      setPropertyNames(listingMap);
       const data = (bookingsRes.data ?? []).map(b => ({
         ...b,
         propertyName: listingMap.get(b.property_id) || `Property ${b.property_id.slice(0, 6)}`,
@@ -45,8 +48,15 @@ export default function AdminBookings({ onNavigate }: { onNavigate?: (page: stri
     load();
   }, []);
 
+  // Unique properties from bookings
+  const uniqueProperties = Array.from(new Set(bookings.map(b => b.property_id))).map(id => ({
+    id,
+    name: propertyNames.get(id) || `Property ${id.slice(0, 6)}`,
+  }));
+
   const filtered = bookings.filter(b =>
     (statusFilter === "all" || b.status === statusFilter) &&
+    (propertyFilter === "all" || b.property_id === propertyFilter) &&
     (b.booking_id?.toLowerCase().includes(search.toLowerCase()) || b.property_id?.toLowerCase().includes(search.toLowerCase()) || b.propertyName?.toLowerCase().includes(search.toLowerCase()))
   );
 
@@ -117,6 +127,38 @@ export default function AdminBookings({ onNavigate }: { onNavigate?: (page: stri
           })}
         </div>
       </motion.div>
+
+      {/* Property Filter */}
+      {uniqueProperties.length > 1 && (
+        <motion.div variants={fadeUp} className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+          <button
+            onClick={() => setPropertyFilter("all")}
+            className={`shrink-0 px-3 py-1.5 rounded-xl text-[11px] font-semibold border transition-all ${
+              propertyFilter === "all"
+                ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                : "bg-secondary/60 text-muted-foreground border-border/60 hover:bg-secondary"
+            }`}
+          >
+            All Venues
+          </button>
+          {uniqueProperties.map(p => {
+            const count = bookings.filter(b => b.property_id === p.id).length;
+            return (
+              <button
+                key={p.id}
+                onClick={() => setPropertyFilter(p.id === propertyFilter ? "all" : p.id)}
+                className={`shrink-0 px-3 py-1.5 rounded-xl text-[11px] font-semibold border transition-all truncate max-w-[160px] ${
+                  propertyFilter === p.id
+                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                    : "bg-secondary/60 text-muted-foreground border-border/60 hover:bg-secondary"
+                }`}
+              >
+                {p.name} <span className="opacity-60">({count})</span>
+              </button>
+            );
+          })}
+        </motion.div>
+      )}
 
       {loading ? (
         <div className="space-y-3">
