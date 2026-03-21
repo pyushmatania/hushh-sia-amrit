@@ -617,6 +617,10 @@ export default function AdminPropertyHistory({ onNavigateToClient, initialProper
   const [usersMap, setUsersMap] = useState<Map<string, UserMini>>(new Map());
   const [sortBy, setSortBy] = useState<"revenue" | "bookings" | "guests" | "recent">("revenue");
 
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
   useEffect(() => {
     const load = async () => {
       const [listingsRes, bookingsRes, ordersRes, orderItemsRes, reviewsRes, profilesRes] = await Promise.all([
