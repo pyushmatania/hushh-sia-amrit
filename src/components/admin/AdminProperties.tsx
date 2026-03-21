@@ -347,32 +347,45 @@ export default function AdminProperties() {
           {filtered.map((listing, i) => (
             <motion.div key={listing.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03 }}
-              className="rounded-xl border border-border bg-card overflow-hidden cursor-pointer hover:border-primary/30 transition"
+              whileHover={{ y: -3, transition: { duration: 0.15 } }}
+              className="rounded-2xl border border-border bg-card overflow-hidden cursor-pointer hover:shadow-lg hover:border-primary/20 transition-all group"
               onClick={() => openEdit(listing)}>
               <div className="aspect-[4/3] bg-secondary relative overflow-hidden">
                 {listing.image_urls?.[0] ? (
-                  <img src={listing.image_urls[0]} alt="" className="w-full h-full object-cover" />
+                  <img src={listing.image_urls[0]} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center">
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-500/5 dark:to-violet-500/5">
                     <Building2 size={28} className="text-muted-foreground/30" />
                   </div>
                 )}
-                <span className={`absolute top-2 right-2 text-[9px] font-bold px-2 py-0.5 rounded-full capitalize border ${statusColors[listing.status] || statusColors.draft}`}>
+                <span className={`absolute top-2 right-2 text-[9px] font-bold px-2 py-0.5 rounded-full capitalize border backdrop-blur-sm ${statusColors[listing.status] || statusColors.draft}`}>
                   {listing.status}
                 </span>
+                {listing.rating > 0 && (
+                  <div className="absolute bottom-2 left-2 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/50 backdrop-blur-sm">
+                    <Star size={9} className="text-amber-400 fill-amber-400" />
+                    <span className="text-[10px] font-semibold text-white">{listing.rating}</span>
+                  </div>
+                )}
               </div>
               <div className="p-3">
                 <h3 className="font-semibold text-xs text-foreground truncate">{listing.name}</h3>
-                <p className="text-[10px] text-muted-foreground truncate">{listing.location}</p>
-                {(() => {
-                  const slots = Array.isArray(listing.slots) ? listing.slots : [];
-                  if (slots.length > 0) {
-                    const prices = slots.map((s: any) => Number(s.price || 0)).filter((p: number) => p > 0);
-                    const min = Math.min(...prices);
-                    const max = Math.max(...prices);
-                    return <p className="text-xs font-medium text-foreground mt-1 tabular-nums">₹{min.toLocaleString()}{max !== min && <span className="text-muted-foreground"> – ₹{max.toLocaleString()}</span>}<span className="text-muted-foreground font-normal">/slot</span></p>;
-                  }
-                  return <p className="text-xs font-medium text-foreground mt-1 tabular-nums">₹{listing.base_price?.toLocaleString()}<span className="text-muted-foreground font-normal">/base</span></p>;
+                <p className="text-[10px] text-muted-foreground truncate flex items-center gap-1"><MapPin size={8} />{listing.location}</p>
+                <div className="flex items-center justify-between mt-1.5">
+                  {(() => {
+                    const slots = Array.isArray(listing.slots) ? listing.slots : [];
+                    if (slots.length > 0) {
+                      const prices = slots.map((s: any) => Number(s.price || 0)).filter((p: number) => p > 0);
+                      const min = Math.min(...prices);
+                      return <p className="text-xs font-bold text-foreground tabular-nums">₹{min.toLocaleString()}<span className="text-muted-foreground font-normal text-[10px]">/slot</span></p>;
+                    }
+                    return <p className="text-xs font-bold text-foreground tabular-nums">₹{listing.base_price?.toLocaleString()}</p>;
+                  })()}
+                  <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground"><Users size={9} />{listing.capacity}</span>
+                </div>
+              </div>
+            </motion.div>
+          ))}
                 })()}
               </div>
             </motion.div>
