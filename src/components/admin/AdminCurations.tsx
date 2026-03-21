@@ -106,10 +106,13 @@ export default function AdminCurations() {
   // Stats
   const totalCurations = curations.length;
   const activeCurations = curations.filter(c => c.active).length;
-  const totalRevenue = curations.reduce((s, c) => s + Number(c.price), 0);
-  const avgPrice = totalCurations ? Math.round(totalRevenue / totalCurations) : 0;
+  const avgPrice = totalCurations ? Math.round(curations.reduce((s, c) => s + Number(c.price), 0) / totalCurations) : 0;
   const uniqueMoods = new Set(curations.flatMap(c => c.mood || []));
   const discountedCount = curations.filter(c => c.original_price && c.original_price > c.price).length;
+  const totalEarned = curations.reduce((s, c) => {
+    const r = revenueMap.get(c.property_id);
+    return s + (r ? r.bookingRev + r.orderRev : 0);
+  }, 0);
 
   // Filtering
   const filtered = [...curations]
