@@ -555,7 +555,7 @@ export default function AdminStaffManagement() {
                     )}
                   </div>
                 ))}
-                {p.notes && payments.length > 0 && payments[0].notes && (
+                {payments.length > 0 && payments[0].notes && (
                   <p className="text-[9px] text-muted-foreground mt-1 italic">{payments[0].notes}</p>
                 )}
               </motion.div>
