@@ -403,10 +403,7 @@ export default function ExperienceBuilder({ property, slotId, guests, date, onBa
                     }}
                   >
                     <div className="relative aspect-square overflow-hidden">
-                      {imgUrl ? (
-                        <img src={imgUrl} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-2xl bg-secondary">{item.categoryEmoji}</div>
+                      <AddonImage src={imgUrl} alt={item.name} className="w-full h-full object-cover" />
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                       {qty > 0 && (
