@@ -41,6 +41,7 @@ export default function AdminExperiencePackages() {
   const [isCreating, setIsCreating] = useState(false);
   const [includeInput, setIncludeInput] = useState("");
   const [previewMode, setPreviewMode] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
   const loadPackages = async () => {
     const { data } = await supabase
