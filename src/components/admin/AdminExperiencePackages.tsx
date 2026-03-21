@@ -5,6 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useDragReorder } from "@/hooks/use-drag-reorder";
+import SwipeableRow from "./SwipeableRow";
+import DeleteConfirmDialog from "./DeleteConfirmDialog";
 
 interface PackageRow {
   id: string;
