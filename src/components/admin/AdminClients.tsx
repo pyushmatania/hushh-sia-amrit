@@ -160,11 +160,178 @@ function timeAgo(d: string) {
   return `${Math.floor(days / 365)}y ago`;
 }
 
+/* ─── Notes types ─── */
+interface ClientNote {
+  id: string;
+  client_user_id: string;
+  author_id: string | null;
+  author_name: string;
+  content: string;
+  note_type: string;
+  pinned: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+const noteTypeConfig: Record<string, { label: string; emoji: string; color: string }> = {
+  general: { label: "General", emoji: "📝", color: "bg-secondary text-foreground" },
+  important: { label: "Important", emoji: "⚠️", color: "bg-amber-500/10 text-amber-400" },
+  followup: { label: "Follow-up", emoji: "📞", color: "bg-blue-500/10 text-blue-400" },
+  positive: { label: "Positive", emoji: "👍", color: "bg-emerald-500/10 text-emerald-400" },
+  concern: { label: "Concern", emoji: "🚩", color: "bg-destructive/10 text-destructive" },
+};
+
+/* ─── Notes Panel ─── */
+function ClientNotesPanel({ clientUserId }: { clientUserId: string }) {
+  const { user } = useAuth();
+  const [notes, setNotes] = useState<ClientNote[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [newNote, setNewNote] = useState("");
+  const [noteType, setNoteType] = useState("general");
+  const [saving, setSaving] = useState(false);
+
+  const fetchNotes = useCallback(async () => {
+    const { data } = await supabase
+      .from("client_notes")
+      .select("*")
+      .eq("client_user_id", clientUserId)
+      .order("pinned", { ascending: false })
+      .order("created_at", { ascending: false });
+    setNotes((data as ClientNote[]) || []);
+    setLoading(false);
+  }, [clientUserId]);
+
+  useEffect(() => { fetchNotes(); }, [fetchNotes]);
+
+  // Realtime
+  useEffect(() => {
+    const channel = supabase
+      .channel(`client-notes-${clientUserId}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "client_notes", filter: `client_user_id=eq.${clientUserId}` }, () => fetchNotes())
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [clientUserId, fetchNotes]);
+
+  const addNote = async () => {
+    if (!newNote.trim()) return;
+    setSaving(true);
+    const authorName = user?.email?.split("@")[0] || "Admin";
+    await supabase.from("client_notes").insert({
+      client_user_id: clientUserId,
+      author_id: user?.id || null,
+      author_name: authorName,
+      content: newNote.trim(),
+      note_type: noteType,
+    } as any);
+    setNewNote("");
+    setNoteType("general");
+    setSaving(false);
+  };
+
+  const togglePin = async (note: ClientNote) => {
+    await supabase.from("client_notes").update({ pinned: !note.pinned } as any).eq("id", note.id);
+  };
+
+  const deleteNote = async (id: string) => {
+    await supabase.from("client_notes").delete().eq("id", id);
+    setNotes(prev => prev.filter(n => n.id !== id));
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Add note */}
+      <div className="rounded-2xl border border-border bg-card overflow-hidden">
+        <div className="p-3 border-b border-border/50">
+          <div className="flex items-center gap-2 mb-2">
+            <StickyNote size={12} className="text-primary" />
+            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Add Note</span>
+          </div>
+          <Textarea
+            value={newNote}
+            onChange={e => setNewNote(e.target.value)}
+            placeholder="Write an internal note about this client..."
+            className="min-h-[72px] text-xs bg-secondary/40 border-border/50 resize-none rounded-xl"
+          />
+        </div>
+        <div className="flex items-center justify-between p-2.5 bg-secondary/20">
+          <div className="flex gap-1 flex-wrap">
+            {Object.entries(noteTypeConfig).map(([key, cfg]) => (
+              <button key={key} onClick={() => setNoteType(key)}
+                className={`text-[9px] font-medium px-2 py-0.5 rounded-full transition ${noteType === key ? cfg.color + " ring-1 ring-current/20" : "bg-secondary text-muted-foreground"}`}>
+                {cfg.emoji} {cfg.label}
+              </button>
+            ))}
+          </div>
+          <button onClick={addNote} disabled={!newNote.trim() || saving}
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-[10px] font-semibold disabled:opacity-50 transition active:scale-95">
+            {saving ? <Loader2 size={10} className="animate-spin" /> : <Send size={10} />}
+            Save
+          </button>
+        </div>
+      </div>
+
+      {/* Notes list */}
+      {loading ? (
+        <div className="space-y-2">{[1, 2].map(i => (
+          <div key={i} className="h-20 rounded-xl bg-secondary animate-pulse" />
+        ))}</div>
+      ) : notes.length === 0 ? (
+        <div className="text-center py-12">
+          <MessageSquare size={32} className="mx-auto text-muted-foreground/30 mb-2" />
+          <p className="text-sm text-muted-foreground">No notes yet</p>
+          <p className="text-[10px] text-muted-foreground/60 mt-1">Add internal notes to track interactions & preferences</p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {notes.map((note, i) => {
+            const cfg = noteTypeConfig[note.note_type] || noteTypeConfig.general;
+            return (
+              <motion.div key={note.id}
+                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
+                className={`rounded-xl border bg-card overflow-hidden ${note.pinned ? "border-primary/30 shadow-sm shadow-primary/5" : "border-border"}`}
+              >
+                {note.pinned && (
+                  <div className="px-3 py-1 bg-primary/5 border-b border-primary/10 flex items-center gap-1">
+                    <Pin size={8} className="text-primary" />
+                    <span className="text-[8px] font-bold text-primary uppercase tracking-wider">Pinned</span>
+                  </div>
+                )}
+                <div className="p-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-foreground whitespace-pre-wrap leading-relaxed">{note.content}</p>
+                    </div>
+                    <div className="flex items-center gap-0.5 shrink-0">
+                      <button onClick={() => togglePin(note)} className="w-6 h-6 rounded-md hover:bg-secondary flex items-center justify-center transition" title={note.pinned ? "Unpin" : "Pin"}>
+                        {note.pinned ? <PinOff size={10} className="text-primary" /> : <Pin size={10} className="text-muted-foreground" />}
+                      </button>
+                      <button onClick={() => deleteNote(note.id)} className="w-6 h-6 rounded-md hover:bg-destructive/10 flex items-center justify-center transition" title="Delete">
+                        <Trash2 size={10} className="text-muted-foreground hover:text-destructive" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 mt-2 pt-2 border-t border-border/40">
+                    <span className={`text-[8px] font-medium px-1.5 py-0.5 rounded-full ${cfg.color}`}>{cfg.emoji} {cfg.label}</span>
+                    <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
+                      <User size={8} /> {note.author_name}
+                    </span>
+                    <span className="text-[9px] text-muted-foreground ml-auto">{formatDate(note.created_at)}</span>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ─── Client Detail Drawer ─── */
 function ClientDetailDrawer({ client, onClose, listingMap, listingInfoMap }: {
   client: ClientProfile; onClose: () => void; listingMap: Map<string, string>; listingInfoMap: Map<string, ListingInfo>;
 }) {
-  const [activeTab, setActiveTab] = useState<"overview" | "bookings" | "orders" | "timeline">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "bookings" | "orders" | "notes" | "timeline">("overview");
   const tier = tierGradients[client.tier] || tierGradients.Silver;
   const seg = segmentConfig[client.segment] || segmentConfig.regular;
   const lifetimeValue = client.totalSpend + client.orderSpend;
