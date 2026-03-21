@@ -33,10 +33,21 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
     error:     { eyeStyle: "sad", mouthType: "frown" },
   };
 
-  const expr = expressions[state];
+  const expr = hovered
+    ? { eyeStyle: "scared", mouthType: "gasp" }
+    : expressions[state];
+
+  const activeState = hovered ? "hover" : state;
 
   return (
-    <motion.div className="relative" style={{ width: s, height: s * 1.3 }}>
+    <motion.div
+      className="relative cursor-pointer"
+      style={{ width: s, height: s * 1.3 }}
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
+      onTouchStart={onEnter}
+      onTouchEnd={onLeave}
+    >
       {/* ── LARGE AMBIENT GLOW ── */}
       <motion.div
         className="absolute rounded-full"
