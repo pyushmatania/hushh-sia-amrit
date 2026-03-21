@@ -17,6 +17,7 @@ interface BookingRequest {
   status: string;
   created_at: string;
   property_id: string;
+  propertyName?: string;
 }
 
 type FilterStatus = "all" | "upcoming" | "confirmed" | "cancelled" | "completed";
