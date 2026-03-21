@@ -390,13 +390,16 @@ export default function AdminProperties() {
               className="rounded-2xl border border-border bg-card overflow-hidden cursor-pointer hover:shadow-lg hover:border-primary/20 transition-all group"
               onClick={() => openEdit(listing)}>
               <div className="aspect-[4/3] bg-secondary relative overflow-hidden">
-                {listing.image_urls?.[0] ? (
-                  <img src={listing.image_urls[0]} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-500/5 dark:to-violet-500/5">
-                    <Building2 size={28} className="text-muted-foreground/30" />
-                  </div>
-                )}
+                {(() => {
+                  const thumb = getListingThumbnail(listing.name, listing.image_urls);
+                  return thumb ? (
+                    <img src={thumb} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-500/5 dark:to-violet-500/5">
+                      <Building2 size={28} className="text-muted-foreground/30" />
+                    </div>
+                  );
+                })()}
                 <span className={`absolute top-2 right-2 text-[9px] font-bold px-2 py-0.5 rounded-full capitalize border backdrop-blur-sm ${statusColors[listing.status] || statusColors.draft}`}>
                   {listing.status}
                 </span>
