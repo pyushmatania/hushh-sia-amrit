@@ -89,7 +89,7 @@ export default function AdminBookings({ onNavigate }: { onNavigate?: (page: stri
               ) : filtered.map((b) => {
                 const sc = statusConfig[b.status] || statusConfig.pending;
                 return (
-                  <TableRow key={b.id}>
+                  <TableRow key={b.id} className={onNavigate ? "cursor-pointer hover:bg-secondary/60 transition" : ""} onClick={() => onNavigate?.("history", { bookingId: b.booking_id, propertyId: b.property_id })}>
                     <TableCell className="font-mono text-xs">{b.booking_id?.slice(0, 10)}</TableCell>
                     <TableCell className="hidden md:table-cell text-xs">{b.property_id?.slice(0, 12)}</TableCell>
                     <TableCell>
