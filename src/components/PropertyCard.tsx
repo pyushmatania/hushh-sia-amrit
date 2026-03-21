@@ -122,15 +122,17 @@ export default function PropertyCard({ property, index, onTap, isWishlisted = fa
 
         {!imgLoaded && (
           <div className="absolute inset-0 bg-secondary animate-pulse rounded-2xl">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-muted/50 to-transparent animate-[shimmer_1.5s_infinite]" />
+            <div className="absolute inset-0 shimmer-bg" />
           </div>
         )}
-        <img
+        <OptimizedImage
           src={property.images[imgIndex]}
           alt={property.name}
-          className="w-full h-full object-cover touch-pan-y"
-          onLoad={() => setImgLoaded(true)}
-          loading="lazy"
+          fill
+          className="object-cover touch-pan-y"
+          sizes="(max-width: 640px) 90vw, 380px"
+          onImageLoad={() => setImgLoaded(true)}
+          showSkeleton={false}
         />
 
         <AccentTag tag={accent.tag} className="absolute top-3 left-3 z-10" />
