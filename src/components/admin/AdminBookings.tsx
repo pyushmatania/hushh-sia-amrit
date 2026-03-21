@@ -28,8 +28,21 @@ export default function AdminBookings({ onNavigate }: { onNavigate?: (page: stri
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.from("bookings").select("*").order("created_at", { ascending: false })
-      .then(({ data }) => { setBookings(data ?? []); setLoading(false); });
+    const load = async () => {
+      const [bookingsRes, listingsRes] = await Promise.all([
+        supabase.from("bookings").select("*").order("created_at", { ascending: false }),
+        supabase.from("host_listings").select("id, name"),
+      ]);
+      const listingMap = new Map<string, string>();
+      (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, l.name));
+      const data = (bookingsRes.data ?? []).map(b => ({
+        ...b,
+        propertyName: listingMap.get(b.property_id) || `Property ${b.property_id.slice(0, 6)}`,
+      }));
+      setBookings(data);
+      setLoading(false);
+    };
+    load();
   }, []);
 
   const filtered = bookings.filter(b =>
