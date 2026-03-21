@@ -706,6 +706,9 @@ export default function AdminPropertyHistory({ onNavigateToClient, initialProper
           onContextConsumed?.();
         }
       }
+    };
+    load();
+  }, [initialPropertyId]);
 
   const categories = useMemo(() => {
     const cats = new Set(properties.map(p => p.category));
