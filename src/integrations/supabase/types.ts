@@ -112,9 +112,11 @@ export type Database = {
           booking_id: string
           created_at: string
           date: string
+          extra_mattresses: number | null
           guests: number
           id: string
           property_id: string
+          rooms_count: number | null
           slot: string
           status: string
           total: number
@@ -125,9 +127,11 @@ export type Database = {
           booking_id: string
           created_at?: string
           date: string
+          extra_mattresses?: number | null
           guests: number
           id?: string
           property_id: string
+          rooms_count?: number | null
           slot: string
           status?: string
           total: number
@@ -138,9 +142,11 @@ export type Database = {
           booking_id?: string
           created_at?: string
           date?: string
+          extra_mattresses?: number | null
           guests?: number
           id?: string
           property_id?: string
+          rooms_count?: number | null
           slot?: string
           status?: string
           total?: number
