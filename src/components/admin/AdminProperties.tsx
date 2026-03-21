@@ -831,6 +831,14 @@ export default function AdminProperties() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <DeleteConfirmDialog
+        open={!!deleteTarget}
+        title="Delete this property?"
+        description="This property and all its data will be permanently removed. This action cannot be undone."
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   );
 }
