@@ -104,7 +104,7 @@ function PropertyThumb({ name, imageUrls, size = 40 }: { name: string; imageUrls
   );
 }
 
-/* ─── Netflix-style Profile DP ─── */
+/* ─── Character Avatar DP ─── */
 const profileGradients = [
   "from-red-500 to-orange-400",
   "from-violet-600 to-fuchsia-400",
@@ -119,8 +119,6 @@ const profileGradients = [
   "from-cyan-500 to-blue-400",
   "from-rose-500 to-pink-400",
 ];
-
-const profileEmojis = ["😎", "🦊", "🐱", "🦄", "🐼", "🦋", "🌸", "🎭", "🦅", "🐯", "🌟", "🍀"];
 
 function hashString(str: string): number {
   let hash = 0;
@@ -138,16 +136,12 @@ function ProfileAvatar({ client, size = 48 }: { client: ClientProfile; size?: nu
     .split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
   const hash = hashString(client.user_id);
   const gradient = profileGradients[hash % profileGradients.length];
-  const emoji = profileEmojis[hash % profileEmojis.length];
-  const isLarge = size >= 64;
 
   return (
     <div className="relative shrink-0" style={{ width: size, height: size }}>
-      {/* Tier glow ring */}
       <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${tier.ring} p-[2.5px]`} style={{ borderRadius: size * 0.3 }}>
         <div className="w-full h-full bg-card" style={{ borderRadius: size * 0.28 }} />
       </div>
-      {/* Profile DP */}
       <div className="absolute inset-0 flex items-center justify-center">
         {client.avatar_url ? (
           <img
@@ -158,23 +152,19 @@ function ProfileAvatar({ client, size = 48 }: { client: ClientProfile; size?: nu
           />
         ) : (
           <div
-            className={`bg-gradient-to-br ${gradient} flex flex-col items-center justify-center relative overflow-hidden`}
+            className={`bg-gradient-to-br ${gradient} flex items-center justify-center relative overflow-hidden`}
             style={{ width: imgSize, height: imgSize, borderRadius: size * 0.26 }}
           >
-            {/* Background pattern */}
             <div className="absolute inset-0 opacity-10">
               <div className="absolute top-0 right-0 w-3/4 h-3/4 rounded-full bg-white/20 -translate-y-1/3 translate-x-1/3" />
               <div className="absolute bottom-0 left-0 w-1/2 h-1/2 rounded-full bg-black/10 translate-y-1/4 -translate-x-1/4" />
             </div>
-            {/* Emoji + initials */}
-            <span style={{ fontSize: size * (isLarge ? 0.32 : 0.28) }} className="relative z-10 drop-shadow-sm">
-              {emoji}
+            <span
+              className="text-white font-black relative z-10 drop-shadow-md tracking-tight select-none"
+              style={{ fontSize: size * (initials.length > 1 ? 0.34 : 0.42), lineHeight: 1 }}
+            >
+              {initials}
             </span>
-            {isLarge && (
-              <span className="text-white/90 font-bold relative z-10 drop-shadow-sm -mt-0.5" style={{ fontSize: size * 0.14 }}>
-                {initials}
-              </span>
-            )}
           </div>
         )}
       </div>
