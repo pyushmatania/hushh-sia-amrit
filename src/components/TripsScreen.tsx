@@ -227,7 +227,7 @@ function TiltCard({
 
               <div className="flex flex-wrap gap-2">
                 <span className="flex items-center gap-1.5 bg-secondary/80 rounded-lg px-2.5 py-1.5 text-xs text-foreground" style={{ boxShadow: "inset 0 1px 0 hsla(0,0%,100%,0.04), 0 1px 2px hsla(0,0%,0%,0.15)" }}>
-                  <Calendar size={12} className="text-primary" /> {booking.date}
+                  <CalendarIcon size={12} className="text-primary" /> {booking.date}
                 </span>
                 <span className="flex items-center gap-1.5 bg-secondary/80 rounded-lg px-2.5 py-1.5 text-xs text-foreground" style={{ boxShadow: "inset 0 1px 0 hsla(0,0%,100%,0.04), 0 1px 2px hsla(0,0%,0%,0.15)" }}>
                   <Clock size={12} className="text-primary" /> {booking.slot}
