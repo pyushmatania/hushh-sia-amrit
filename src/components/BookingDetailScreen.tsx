@@ -538,7 +538,21 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
             </motion.button>
           </div>
         ) : isCompleted ? (
-          <div className="flex gap-3">
+          <div className="flex gap-2">
+            <motion.button
+              onClick={() => setShowPhotos(true)}
+              className="w-12 flex items-center justify-center rounded-xl border border-border"
+              whileTap={{ scale: 0.95 }}
+            >
+              <Camera size={16} className="text-muted-foreground" />
+            </motion.button>
+            <motion.button
+              onClick={() => setShowReceipt(true)}
+              className="w-12 flex items-center justify-center rounded-xl border border-border"
+              whileTap={{ scale: 0.95 }}
+            >
+              <Receipt size={16} className="text-muted-foreground" />
+            </motion.button>
             <motion.button
               onClick={() => onRebook(booking.propertyId)}
               className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm glow-primary flex items-center justify-center gap-2"
