@@ -104,30 +104,84 @@ function PropertyThumb({ name, imageUrls, size = 40 }: { name: string; imageUrls
   );
 }
 
-/* ─── Avatar with tier ring ─── */
+/* ─── Netflix-style Profile DP ─── */
+const profileGradients = [
+  "from-red-500 to-orange-400",
+  "from-violet-600 to-fuchsia-400",
+  "from-emerald-500 to-teal-400",
+  "from-blue-600 to-cyan-400",
+  "from-pink-500 to-rose-400",
+  "from-amber-500 to-yellow-400",
+  "from-indigo-600 to-blue-400",
+  "from-teal-500 to-emerald-400",
+  "from-fuchsia-600 to-pink-400",
+  "from-orange-500 to-red-400",
+  "from-cyan-500 to-blue-400",
+  "from-rose-500 to-pink-400",
+];
+
+const profileEmojis = ["😎", "🦊", "🐱", "🦄", "🐼", "🦋", "🌸", "🎭", "🦅", "🐯", "🌟", "🍀"];
+
+function hashString(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
 function ProfileAvatar({ client, size = 48 }: { client: ClientProfile; size?: number }) {
   const tier = tierGradients[client.tier] || tierGradients.Silver;
   const imgSize = size - 6;
   const initials = (client.display_name || "?")
     .split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+  const hash = hashString(client.user_id);
+  const gradient = profileGradients[hash % profileGradients.length];
+  const emoji = profileEmojis[hash % profileEmojis.length];
+  const isLarge = size >= 64;
 
   return (
     <div className="relative shrink-0" style={{ width: size, height: size }}>
-      <div className={`absolute inset-0 rounded-full bg-gradient-to-br ${tier.ring} p-[2.5px]`}>
-        <div className="w-full h-full rounded-full bg-card" />
+      {/* Tier glow ring */}
+      <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${tier.ring} p-[2.5px]`} style={{ borderRadius: size * 0.3 }}>
+        <div className="w-full h-full bg-card" style={{ borderRadius: size * 0.28 }} />
       </div>
+      {/* Profile DP */}
       <div className="absolute inset-0 flex items-center justify-center">
         {client.avatar_url ? (
-          <img src={client.avatar_url} alt={client.display_name || ""} className="rounded-full object-cover" style={{ width: imgSize, height: imgSize }} />
+          <img
+            src={client.avatar_url}
+            alt={client.display_name || ""}
+            className="object-cover"
+            style={{ width: imgSize, height: imgSize, borderRadius: size * 0.26 }}
+          />
         ) : (
-          <div className="rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center font-bold text-foreground" style={{ width: imgSize, height: imgSize, fontSize: size * 0.28 }}>
-            {initials}
+          <div
+            className={`bg-gradient-to-br ${gradient} flex flex-col items-center justify-center relative overflow-hidden`}
+            style={{ width: imgSize, height: imgSize, borderRadius: size * 0.26 }}
+          >
+            {/* Background pattern */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute top-0 right-0 w-3/4 h-3/4 rounded-full bg-white/20 -translate-y-1/3 translate-x-1/3" />
+              <div className="absolute bottom-0 left-0 w-1/2 h-1/2 rounded-full bg-black/10 translate-y-1/4 -translate-x-1/4" />
+            </div>
+            {/* Emoji + initials */}
+            <span style={{ fontSize: size * (isLarge ? 0.32 : 0.28) }} className="relative z-10 drop-shadow-sm">
+              {emoji}
+            </span>
+            {isLarge && (
+              <span className="text-white/90 font-bold relative z-10 drop-shadow-sm -mt-0.5" style={{ fontSize: size * 0.14 }}>
+                {initials}
+              </span>
+            )}
           </div>
         )}
       </div>
+      {/* Verified badge */}
       {client.verifications.some(v => v.status === "approved") && (
-        <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-card flex items-center justify-center">
-          <CheckCircle2 size={12} className="text-emerald-400" />
+        <div className="absolute -bottom-0.5 -right-0.5 rounded-lg bg-card flex items-center justify-center" style={{ width: size * 0.28, height: size * 0.28 }}>
+          <CheckCircle2 size={size * 0.22} className="text-emerald-400" />
         </div>
       )}
     </div>
