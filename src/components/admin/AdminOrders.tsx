@@ -188,12 +188,16 @@ export default function AdminOrders() {
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <motion.div
-                        whileHover={{ rotate: 12 }}
-                        className="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-100 to-violet-100 dark:from-indigo-500/20 dark:to-violet-500/20 flex items-center justify-center text-sm font-bold text-indigo-600 shadow-sm"
-                      >
-                        {order.guestName?.[0]?.toUpperCase() || "?"}
-                      </motion.div>
+                      {(() => {
+                        const thumb = getListingThumbnail(order.propertyName || "", order.propertyImageUrls, { preferMapped: true });
+                        return thumb ? (
+                          <img src={thumb} alt={order.propertyName} className="w-11 h-11 rounded-2xl object-cover shadow-sm ring-1 ring-border/30" />
+                        ) : (
+                          <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-100 to-violet-100 dark:from-indigo-500/20 dark:to-violet-500/20 flex items-center justify-center text-sm font-bold text-indigo-600 shadow-sm">
+                            {order.propertyName?.[0]?.toUpperCase() || "?"}
+                          </div>
+                        );
+                      })()}
                       <div>
                         <div className="flex items-center gap-2">
                           <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">{order.guestName}</p>
