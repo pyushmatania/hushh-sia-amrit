@@ -694,11 +694,18 @@ export default function AdminPropertyHistory({ onNavigateToClient, initialProper
         prop.topItems = Array.from(itemCount.values()).sort((a, b) => b.count - a.count).slice(0, 5);
       });
 
-      setProperties(Array.from(propMap.values()));
+      const allProps = Array.from(propMap.values());
+      setProperties(allProps);
       setLoading(false);
-    };
-    load();
-  }, []);
+
+      // Auto-open property from calendar navigation
+      if (initialPropertyId) {
+        const targetProp = allProps.find(p => p.id === initialPropertyId);
+        if (targetProp) {
+          setSelectedProperty(targetProp);
+          onContextConsumed?.();
+        }
+      }
 
   const categories = useMemo(() => {
     const cats = new Set(properties.map(p => p.category));
