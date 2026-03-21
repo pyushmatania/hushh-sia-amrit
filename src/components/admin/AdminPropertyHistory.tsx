@@ -5,11 +5,13 @@ import {
   ChevronRight, ArrowLeft, MapPin, Star, IndianRupee, Home,
   ChefHat, TrendingUp, BarChart3, Filter, Sparkles, Eye,
   Flame, Coffee, Utensils, ChevronLeft, Send, Bot, Loader2,
-  ArrowRight, X, Hash, UserCheck, Package, Activity
+  ArrowRight, X, Hash, UserCheck, Package, Activity, Calendar,
+  BadgePercent, Repeat, PieChart, Zap, Award
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import NeuralSearchWidget from "./NeuralSearchWidget";
+import { getListingThumbnail } from "@/lib/listing-thumbnails";
 
 /* ─── Types ─── */
 interface PropertyBooking {
@@ -27,10 +29,13 @@ interface PropertyOrder {
 
 interface PropertySummary {
   id: string; name: string; category: string; location: string;
+  imageUrls: string[];
   bookings: PropertyBooking[]; orders: PropertyOrder[];
   totalRevenue: number; totalGuests: number; uniqueGuests: number;
   avgRating: number; reviewCount: number;
   topItems: { name: string; emoji: string; count: number }[];
+  basePrice: number; capacity: number; status: string;
+  amenities: string[]; tags: string[];
 }
 
 interface CalendarDay {
@@ -64,6 +69,26 @@ const statusColors: Record<string, string> = {
   pending: "bg-amber-500/15 text-amber-400",
 };
 
+function PropertyThumbnail({ name, imageUrls, size = "md", className = "" }: { name: string; imageUrls?: string[]; size?: "sm" | "md" | "lg" | "hero"; className?: string }) {
+  const thumb = getListingThumbnail(name, imageUrls, { preferMapped: true });
+  const sizeClasses = {
+    sm: "w-10 h-10 rounded-xl",
+    md: "w-14 h-14 rounded-2xl",
+    lg: "w-20 h-20 rounded-2xl",
+    hero: "w-full h-40 rounded-none",
+  };
+  if (!thumb) {
+    return (
+      <div className={`${sizeClasses[size]} bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center shrink-0 ${className}`}>
+        <Building2 size={size === "hero" ? 40 : size === "lg" ? 24 : 16} className="text-primary/40" />
+      </div>
+    );
+  }
+  return (
+    <img src={thumb} alt={name} className={`${sizeClasses[size]} object-cover shrink-0 ${className}`} loading="lazy" />
+  );
+}
+
 /* ─── Calendar Component ─── */
 function BookingCalendar({ bookings, onDayClick }: { bookings: PropertyBooking[]; onDayClick: (date: string, bookings: PropertyBooking[]) => void }) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -77,18 +102,15 @@ function BookingCalendar({ bookings, onDayClick }: { bookings: PropertyBooking[]
     const result: CalendarDay[] = [];
     const today = new Date().toISOString().split("T")[0];
 
-    // Pad start
     for (let i = startPad - 1; i >= 0; i--) {
       const d = new Date(year, month, -i);
       result.push({ date: d.toISOString().split("T")[0], dayNum: d.getDate(), bookings: [], isToday: false, isCurrentMonth: false });
     }
-    // Current month
     for (let d = 1; d <= lastDay.getDate(); d++) {
       const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
       const dayBookings = bookings.filter(b => b.date === dateStr);
       result.push({ date: dateStr, dayNum: d, bookings: dayBookings, isToday: dateStr === today, isCurrentMonth: true });
     }
-    // Pad end
     const remaining = 42 - result.length;
     for (let i = 1; i <= remaining; i++) {
       const d = new Date(year, month + 1, i);
@@ -120,7 +142,6 @@ function BookingCalendar({ bookings, onDayClick }: { bookings: PropertyBooking[]
       <div className="grid grid-cols-7 gap-1">
         {days.map((day, i) => {
           const hasBookings = day.bookings.length > 0;
-          const guestCount = day.bookings.reduce((s, b) => s + b.guests, 0);
           return (
             <button
               key={i}
@@ -215,7 +236,6 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
     return Array.from(map.values()).sort((a, b) => b.totalSpend - a.totalSpend);
   }, [property, users]);
 
-  // Top food analytics
   const foodAnalytics = useMemo(() => {
     const itemMap = new Map<string, { name: string; emoji: string; count: number; revenue: number }>();
     property.orders.forEach(o => o.items.forEach(item => {
@@ -228,14 +248,12 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
     return Array.from(itemMap.values()).sort((a, b) => b.count - a.count);
   }, [property.orders]);
 
-  // Slot distribution
   const slotDistribution = useMemo(() => {
     const map = new Map<string, number>();
     property.bookings.forEach(b => map.set(b.slot, (map.get(b.slot) || 0) + 1));
     return Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
   }, [property.bookings]);
 
-  // Monthly revenue trend
   const monthlyRevenue = useMemo(() => {
     const map = new Map<string, number>();
     property.bookings.forEach(b => {
@@ -251,7 +269,6 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
 
   const maxRevenue = Math.max(...monthlyRevenue.map(m => m[1]), 1);
 
-  // Timeline events
   const timelineEvents = useMemo(() => {
     const events: { type: string; icon: string; label: string; detail: string; date: string; userId?: string }[] = [];
     property.bookings.forEach(b => {
@@ -266,10 +283,15 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
     return events.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [property, users]);
 
+  // Last booking date
+  const lastBookingDate = property.bookings.length > 0 ? property.bookings.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0]?.created_at : null;
+  const bookingRevenue = property.bookings.reduce((s, b) => s + Number(b.total), 0);
+  const orderRevenue = property.orders.reduce((s, o) => s + Number(o.total), 0);
+
   const tabs = [
     { id: "calendar" as const, label: "Calendar", icon: CalendarCheck },
-    { id: "guests" as const, label: `Guests (${property.uniqueGuests})`, icon: Users },
-    { id: "orders" as const, label: `Food (${foodAnalytics.length})`, icon: Utensils },
+    { id: "guests" as const, label: `Guests`, icon: Users },
+    { id: "orders" as const, label: `Food`, icon: Utensils },
     { id: "timeline" as const, label: `Timeline`, icon: Activity },
     { id: "analytics" as const, label: "Analytics", icon: BarChart3 },
   ];
@@ -287,53 +309,122 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
         onClick={e => e.stopPropagation()}
         ref={el => { if (el) el.scrollTop = 0; }}
       >
-        {/* Enhanced Header */}
-        <div className="sticky top-0 z-20 bg-card/95 backdrop-blur-sm border-b border-border">
-          <div className="relative">
-            <div className="h-20 bg-gradient-to-br from-primary/15 to-accent/10" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,hsl(var(--primary)/0.1),transparent_60%)]" />
-            <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-card/95 to-transparent" />
+        {/* ── Hero Header with Real Thumbnail ── */}
+        <div className="relative">
+          <PropertyThumbnail name={property.name} imageUrls={property.imageUrls} size="hero" className="w-full h-44" />
+          <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent" />
+
+          {/* Back button */}
+          <button onClick={onClose} className="absolute top-3 left-3 w-9 h-9 rounded-full bg-card/80 backdrop-blur-md border border-border/50 flex items-center justify-center hover:bg-card transition active:scale-95 z-10">
+            <ArrowLeft size={16} className="text-foreground" />
+          </button>
+
+          {/* Status badge */}
+          <div className="absolute top-3 right-3 z-10">
+            <span className={`text-[9px] font-bold px-2.5 py-1 rounded-full backdrop-blur-md ${
+              property.status === "published" ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "bg-amber-500/20 text-amber-400 border border-amber-500/30"
+            }`}>{property.status || "active"}</span>
           </div>
-          <div className="px-4 pb-3 -mt-8">
+
+          {/* Property info overlay */}
+          <div className="absolute bottom-0 left-0 right-0 px-4 pb-4">
             <div className="flex items-end gap-3">
-              <button onClick={onClose} className="w-9 h-9 rounded-full bg-card/90 backdrop-blur-sm border border-border flex items-center justify-center hover:bg-card transition active:scale-95 shrink-0 mb-1">
-                <ArrowLeft size={16} className="text-foreground" />
-              </button>
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-card flex items-center justify-center text-2xl shrink-0 shadow-lg" style={{ boxShadow: "0 8px 24px hsl(var(--primary) / 0.15)" }}>
-                {property.category === "Stays" ? "🏡" : property.category === "Experiences" ? "✨" : property.category === "Food" ? "🍽️" : "🏢"}
-              </div>
               <div className="flex-1 min-w-0">
-                <h2 className="text-base font-bold text-foreground truncate">{property.name}</h2>
-                <p className="text-[10px] text-muted-foreground flex items-center gap-1"><MapPin size={8} />{property.location} · {property.category}</p>
+                <h2 className="text-lg font-bold text-foreground drop-shadow-sm">{property.name}</h2>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-[10px] text-muted-foreground flex items-center gap-1"><MapPin size={9} />{property.location}</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/15 text-primary font-medium">{property.category}</span>
+                </div>
                 {property.avgRating > 0 && (
-                  <div className="flex items-center gap-1 mt-0.5">
-                    <Star size={10} fill="currentColor" className="text-amber-400" />
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <div className="flex">
+                      {[1, 2, 3, 4, 5].map(s => (
+                        <Star key={s} size={10} fill={s <= Math.round(property.avgRating) ? "currentColor" : "none"}
+                          className={s <= Math.round(property.avgRating) ? "text-amber-400" : "text-muted-foreground/30"} />
+                      ))}
+                    </div>
                     <span className="text-[10px] font-bold text-foreground">{property.avgRating.toFixed(1)}</span>
-                    <span className="text-[9px] text-muted-foreground">({property.reviewCount} reviews)</span>
+                    <span className="text-[9px] text-muted-foreground">({property.reviewCount})</span>
                   </div>
                 )}
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* Quick stats */}
-            <div className="grid grid-cols-4 gap-2 mt-3">
+        {/* ── Stats Row ── */}
+        <div className="px-4 pt-3 pb-2">
+          <div className="grid grid-cols-2 gap-2">
+            <div className="rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/15 p-3">
+              <div className="flex items-center gap-2 mb-1">
+                <div className="w-7 h-7 rounded-lg bg-primary/15 flex items-center justify-center"><TrendingUp size={13} className="text-primary" /></div>
+                <p className="text-[9px] text-muted-foreground font-medium">Total Revenue</p>
+              </div>
+              <p className="text-base font-bold text-foreground tabular-nums">₹{property.totalRevenue.toLocaleString("en-IN")}</p>
+              <div className="flex items-center gap-2 mt-1 text-[8px] text-muted-foreground">
+                <span>Bookings: ₹{bookingRevenue.toLocaleString("en-IN")}</span>
+                <span>·</span>
+                <span>Food: ₹{orderRevenue.toLocaleString("en-IN")}</span>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-1.5">
               {[
-                { label: "Revenue", value: `₹${property.totalRevenue.toLocaleString("en-IN")}`, color: "text-foreground" },
-                { label: "Bookings", value: property.bookings.length.toString(), color: "text-primary" },
-                { label: "Guests", value: property.uniqueGuests.toString(), color: "text-emerald-400" },
-                { label: "Orders", value: property.orders.length.toString(), color: "text-amber-400" },
+                { label: "Bookings", value: property.bookings.length, icon: CalendarCheck, color: "text-blue-400" },
+                { label: "Guests", value: property.uniqueGuests, icon: Users, color: "text-emerald-400" },
+                { label: "Orders", value: property.orders.length, icon: Utensils, color: "text-amber-400" },
+                { label: "Capacity", value: property.capacity || "—", icon: Home, color: "text-purple-400" },
               ].map(s => (
-                <div key={s.label} className="rounded-xl bg-secondary/40 border border-border/50 p-2 text-center">
-                  <p className={`text-sm font-bold tabular-nums ${s.color}`}>{s.value}</p>
-                  <p className="text-[8px] text-muted-foreground">{s.label}</p>
+                <div key={s.label} className="rounded-lg bg-secondary/40 border border-border/40 p-2 text-center">
+                  <s.icon size={10} className={`${s.color} mx-auto mb-0.5`} />
+                  <p className="text-xs font-bold text-foreground tabular-nums">{s.value}</p>
+                  <p className="text-[7px] text-muted-foreground">{s.label}</p>
                 </div>
               ))}
             </div>
           </div>
+
+          {/* Property details row */}
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {property.basePrice > 0 && (
+              <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+                <IndianRupee size={8} />Base: ₹{property.basePrice.toLocaleString("en-IN")}
+              </span>
+            )}
+            {lastBookingDate && (
+              <span className="text-[9px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center gap-1">
+                <Clock size={8} />Last: {timeAgo(lastBookingDate)}
+              </span>
+            )}
+            {property.tags.slice(0, 3).map((tag, i) => (
+              <span key={i} className="text-[9px] px-2 py-0.5 rounded-full bg-secondary text-muted-foreground">{tag}</span>
+            ))}
+          </div>
+
+          {/* Amenities */}
+          {property.amenities.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1">
+              {property.amenities.slice(0, 6).map((a, i) => (
+                <span key={i} className="text-[8px] px-1.5 py-0.5 rounded bg-secondary/60 text-muted-foreground">{a}</span>
+              ))}
+              {property.amenities.length > 6 && <span className="text-[8px] px-1.5 py-0.5 rounded bg-secondary/60 text-muted-foreground">+{property.amenities.length - 6}</span>}
+            </div>
+          )}
+
+          {/* Top ordered items quick view */}
+          {property.topItems.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1">
+              {property.topItems.slice(0, 4).map((item, i) => (
+                <span key={i} className="text-[9px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/15">
+                  {item.emoji} {item.name} ({item.count})
+                </span>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Tabs */}
-        <div className="sticky top-0 z-10 bg-card/95 backdrop-blur-sm border-b border-border">
+        {/* ── Tabs ── */}
+        <div className="sticky top-0 z-10 bg-card/95 backdrop-blur-sm border-y border-border">
           <div className="flex">
             {tabs.map(tab => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
@@ -365,8 +456,8 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
                       const user = users.get(b.user_id);
                       return (
                         <div key={i} className="flex items-center gap-3 rounded-xl bg-card border border-border p-3">
-                          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-xs font-bold text-foreground shrink-0">
-                            {(user?.display_name || b.userName || "?")[0]?.toUpperCase()}
+                          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-xs font-bold text-foreground shrink-0 overflow-hidden">
+                            {user?.avatar_url ? <img src={user.avatar_url} className="w-full h-full object-cover" alt="" /> : (user?.display_name || b.userName || "?")[0]?.toUpperCase()}
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
@@ -385,7 +476,6 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
                 )}
               </AnimatePresence>
 
-              {/* Recent bookings list */}
               <div>
                 <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Recent Stays</h4>
                 <div className="space-y-1.5">
@@ -394,16 +484,19 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
                     return (
                       <button key={i} onClick={() => onUserClick(b.user_id)}
                         className="w-full flex items-center gap-2.5 rounded-xl bg-secondary/30 p-2.5 text-left hover:bg-secondary/60 transition active:scale-[0.98]">
-                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-[10px] font-bold text-foreground shrink-0">
-                          {(user?.display_name || "?")[0]?.toUpperCase()}
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-[10px] font-bold text-foreground shrink-0 overflow-hidden">
+                          {user?.avatar_url ? <img src={user.avatar_url} className="w-full h-full object-cover" alt="" /> : (user?.display_name || "?")[0]?.toUpperCase()}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-[11px] font-medium text-foreground truncate">{user?.display_name || "Guest"}</p>
-                          <p className="text-[9px] text-muted-foreground">{b.date} · {b.slot}</p>
+                          <div className="flex items-center gap-1.5">
+                            <p className="text-[11px] font-medium text-foreground truncate">{user?.display_name || "Guest"}</p>
+                            <span className="text-[8px] text-muted-foreground bg-secondary px-1 py-0.5 rounded">{user?.tier || "Silver"}</span>
+                          </div>
+                          <p className="text-[9px] text-muted-foreground">{b.date} · {b.slot} · {b.guests}g</p>
                         </div>
                         <div className="text-right">
                           <p className="text-[10px] font-bold text-foreground tabular-nums">₹{Number(b.total).toLocaleString("en-IN")}</p>
-                          <p className="text-[8px] text-muted-foreground">{b.guests}g</p>
+                          <span className={`text-[7px] font-bold px-1 py-0.5 rounded capitalize ${statusColors[b.status] || "bg-secondary text-muted-foreground"}`}>{b.status}</span>
                         </div>
                       </button>
                     );
@@ -416,6 +509,7 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
           {/* Guests tab */}
           {activeTab === "guests" && (
             <div className="space-y-2">
+              <p className="text-[10px] text-muted-foreground mb-2">{uniqueGuestList.length} unique guests</p>
               {uniqueGuestList.length === 0 ? (
                 <div className="text-center py-12">
                   <Users size={32} className="mx-auto text-muted-foreground/30 mb-2" />
@@ -427,8 +521,8 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
                   onClick={() => onUserClick(g.user.user_id)}
                   className="w-full rounded-xl border border-border bg-card p-3 text-left hover:border-primary/30 transition active:scale-[0.97] group">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-sm font-bold text-foreground shrink-0">
-                      {(g.user.display_name || "?")[0]?.toUpperCase()}
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-sm font-bold text-foreground shrink-0 overflow-hidden">
+                      {g.user.avatar_url ? <img src={g.user.avatar_url} className="w-full h-full object-cover" alt="" /> : (g.user.display_name || "?")[0]?.toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
@@ -444,7 +538,6 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
                     </div>
                     <ChevronRight size={12} className="text-muted-foreground group-hover:text-primary transition shrink-0" />
                   </div>
-                  {/* What they ordered */}
                   {g.orders.length > 0 && (
                     <div className="mt-2 pt-2 border-t border-border flex flex-wrap gap-1">
                       {g.orders.flatMap(o => o.items).slice(0, 5).map((item, j) => (
@@ -490,7 +583,6 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
                 </div>
               </div>
 
-              {/* Recent orders */}
               <div>
                 <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Recent Orders</h4>
                 <div className="space-y-1.5">
@@ -498,7 +590,7 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
                     <div key={i} className="rounded-xl border border-border bg-card p-3">
                       <div className="flex items-center justify-between mb-1.5">
                         <div className="flex items-center gap-2">
-                          <p className="text-xs font-semibold text-foreground">{o.userName || "Guest"}</p>
+                          <button onClick={() => onUserClick(o.user_id)} className="text-xs font-semibold text-foreground hover:text-primary transition">{o.userName || "Guest"}</button>
                           {o.assigned_name && <span className="text-[9px] text-muted-foreground flex items-center gap-0.5"><ChefHat size={8} />{o.assigned_name}</span>}
                         </div>
                         <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full capitalize ${
@@ -534,7 +626,6 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
                   initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.02, duration: 0.3 }}
                   className="flex gap-3 group"
                 >
-                  {/* Timeline line */}
                   <div className="flex flex-col items-center">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm shrink-0 ${
                       ev.type === "booking" ? "bg-primary/10" : "bg-amber-500/10"
@@ -556,14 +647,14 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
 
           {activeTab === "analytics" && (
             <div className="space-y-4">
-              {/* Revenue trend */}
               <div>
                 <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Monthly Revenue</h4>
                 <div className="rounded-xl bg-secondary/30 p-3">
                   <div className="flex items-end gap-1 h-24">
                     {monthlyRevenue.map(([month, rev], i) => (
                       <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                        <motion.div initial={{ height: 0 }} animate={{ height: `${(rev / maxRevenue) * 80}%` }}
+                        <span className="text-[7px] text-muted-foreground tabular-nums">₹{(rev / 1000).toFixed(0)}k</span>
+                        <motion.div initial={{ height: 0 }} animate={{ height: `${(rev / maxRevenue) * 70}%` }}
                           transition={{ duration: 0.5, delay: i * 0.1 }}
                           className="w-full rounded-t-lg bg-gradient-to-t from-primary/60 to-primary/30 min-h-[4px]" />
                         <span className="text-[7px] text-muted-foreground">{month.slice(5)}</span>
@@ -574,7 +665,6 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
                 </div>
               </div>
 
-              {/* Slot distribution */}
               <div>
                 <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Popular Slots</h4>
                 <div className="space-y-1.5">
@@ -594,17 +684,17 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
                 </div>
               </div>
 
-              {/* Key metrics */}
               <div>
                 <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Key Metrics</h4>
                 <div className="grid grid-cols-2 gap-2">
                   {[
-                    { label: "Avg Booking Value", value: `₹${property.bookings.length ? Math.round(property.bookings.reduce((s, b) => s + Number(b.total), 0) / property.bookings.length).toLocaleString("en-IN") : 0}` },
-                    { label: "Avg Guests/Booking", value: property.bookings.length ? (property.totalGuests / property.bookings.length).toFixed(1) : "0" },
-                    { label: "Repeat Guest Rate", value: `${property.uniqueGuests > 0 ? Math.round(((property.bookings.length - property.uniqueGuests) / property.bookings.length) * 100) : 0}%` },
-                    { label: "Food Attach Rate", value: `${property.bookings.length > 0 ? Math.round((property.orders.length / property.bookings.length) * 100) : 0}%` },
+                    { label: "Avg Booking Value", value: `₹${property.bookings.length ? Math.round(property.bookings.reduce((s, b) => s + Number(b.total), 0) / property.bookings.length).toLocaleString("en-IN") : 0}`, icon: IndianRupee },
+                    { label: "Avg Guests/Booking", value: property.bookings.length ? (property.totalGuests / property.bookings.length).toFixed(1) : "0", icon: Users },
+                    { label: "Repeat Guest Rate", value: `${property.uniqueGuests > 0 ? Math.round(((property.bookings.length - property.uniqueGuests) / property.bookings.length) * 100) : 0}%`, icon: Repeat },
+                    { label: "Food Attach Rate", value: `${property.bookings.length > 0 ? Math.round((property.orders.length / property.bookings.length) * 100) : 0}%`, icon: Utensils },
                   ].map((m, i) => (
                     <div key={i} className="rounded-xl bg-secondary/40 border border-border/50 p-3">
+                      <m.icon size={12} className="text-primary mb-1" />
                       <p className="text-sm font-bold text-foreground">{m.value}</p>
                       <p className="text-[9px] text-muted-foreground">{m.label}</p>
                     </div>
@@ -635,10 +725,10 @@ export default function AdminPropertyHistory({ onNavigateToClient, initialProper
   const [usersMap, setUsersMap] = useState<Map<string, UserMini>>(new Map());
   const [sortBy, setSortBy] = useState<"revenue" | "bookings" | "guests" | "recent">("revenue");
 
-  // Scroll to top on mount
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
+
   useEffect(() => {
     const load = async () => {
       const [listingsRes, bookingsRes, ordersRes, orderItemsRes, reviewsRes, profilesRes] = await Promise.all([
@@ -650,19 +740,16 @@ export default function AdminPropertyHistory({ onNavigateToClient, initialProper
         supabase.from("profiles").select("user_id, display_name, avatar_url, tier"),
       ]);
 
-      // User map
       const uMap = new Map<string, UserMini>();
       (profilesRes.data ?? []).forEach(p => uMap.set(p.user_id, p));
       setUsersMap(uMap);
 
-      // Order items map
       const oiMap = new Map<string, any[]>();
       (orderItemsRes.data ?? []).forEach(item => {
         const list = oiMap.get(item.order_id) || [];
         list.push(item); oiMap.set(item.order_id, list);
       });
 
-      // Reviews map
       const reviewMap = new Map<string, { total: number; count: number }>();
       (reviewsRes.data ?? []).forEach(r => {
         const existing = reviewMap.get(r.property_id) || { total: 0, count: 0 };
@@ -670,14 +757,19 @@ export default function AdminPropertyHistory({ onNavigateToClient, initialProper
         reviewMap.set(r.property_id, existing);
       });
 
-      // Build property summaries
       const propMap = new Map<string, PropertySummary>();
       (listingsRes.data ?? []).forEach(l => {
         propMap.set(l.id, {
           id: l.id, name: l.name, category: l.category, location: l.location,
+          imageUrls: l.image_urls || [],
           bookings: [], orders: [],
           totalRevenue: 0, totalGuests: 0, uniqueGuests: 0,
           avgRating: 0, reviewCount: 0, topItems: [],
+          basePrice: Number(l.base_price) || 0,
+          capacity: l.capacity || 0,
+          status: l.status || "draft",
+          amenities: l.amenities || [],
+          tags: l.tags || [],
         });
       });
 
@@ -700,7 +792,6 @@ export default function AdminPropertyHistory({ onNavigateToClient, initialProper
         }
       });
 
-      // Calculate summaries
       propMap.forEach((prop, id) => {
         prop.totalRevenue = prop.bookings.reduce((s, b) => s + Number(b.total), 0) + prop.orders.reduce((s, o) => s + Number(o.total), 0);
         prop.totalGuests = prop.bookings.reduce((s, b) => s + b.guests, 0);
@@ -708,7 +799,6 @@ export default function AdminPropertyHistory({ onNavigateToClient, initialProper
         const rev = reviewMap.get(id);
         prop.avgRating = rev ? rev.total / rev.count : 0;
         prop.reviewCount = rev?.count || 0;
-        // Top items
         const itemCount = new Map<string, { name: string; emoji: string; count: number }>();
         prop.orders.forEach(o => o.items.forEach(i => {
           const ex = itemCount.get(i.item_name) || { name: i.item_name, emoji: i.item_emoji, count: 0 };
@@ -721,7 +811,6 @@ export default function AdminPropertyHistory({ onNavigateToClient, initialProper
       setProperties(allProps);
       setLoading(false);
 
-      // Auto-open property from calendar navigation
       if (initialPropertyId) {
         const targetProp = allProps.find(p => p.id === initialPropertyId);
         if (targetProp) {
@@ -762,9 +851,7 @@ export default function AdminPropertyHistory({ onNavigateToClient, initialProper
   }), [filtered]);
 
   const handleUserClick = useCallback((userId: string) => {
-    if (onNavigateToClient) {
-      onNavigateToClient(userId);
-    }
+    if (onNavigateToClient) onNavigateToClient(userId);
   }, [onNavigateToClient]);
 
   return (
@@ -787,7 +874,6 @@ export default function AdminPropertyHistory({ onNavigateToClient, initialProper
         </div>
       </div>
 
-      {/* AI Search */}
       <AISearchBar onResult={() => {}} properties={properties} />
 
       {/* Stats */}
@@ -835,10 +921,10 @@ export default function AdminPropertyHistory({ onNavigateToClient, initialProper
         </div>
       </div>
 
-      {/* Property cards */}
+      {/* ── Property Cards with Thumbnails ── */}
       {loading ? (
         <div className="space-y-3">{[1, 2, 3].map(i => (
-          <div key={i} className="h-28 rounded-2xl bg-secondary animate-pulse" />
+          <div key={i} className="h-32 rounded-2xl bg-secondary animate-pulse" />
         ))}</div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-16">
@@ -846,7 +932,7 @@ export default function AdminPropertyHistory({ onNavigateToClient, initialProper
           <p className="text-sm text-muted-foreground">No properties match</p>
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           {filtered.map((prop, i) => (
             <motion.button
               key={prop.id}
@@ -854,48 +940,50 @@ export default function AdminPropertyHistory({ onNavigateToClient, initialProper
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
               onClick={() => setSelectedProperty(prop)}
-              className="w-full rounded-2xl border border-border bg-card p-4 text-left hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 active:scale-[0.97] group"
+              className="w-full rounded-2xl border border-border bg-card overflow-hidden text-left hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 active:scale-[0.97] group"
             >
-              <div className="flex items-start gap-3">
-                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/15 to-accent/15 flex items-center justify-center text-lg shrink-0">
-                  {prop.category === "Stays" ? "🏡" : prop.category === "Experiences" ? "✨" : prop.category === "Food" ? "🍽️" : "🏢"}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-sm font-bold text-foreground truncate">{prop.name}</h3>
-                    {prop.avgRating > 0 && (
-                      <span className="flex items-center gap-0.5 text-[9px] text-amber-400 font-bold">
-                        <Star size={8} fill="currentColor" /> {prop.avgRating.toFixed(1)}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-[10px] text-muted-foreground flex items-center gap-1 mt-0.5">
-                    <MapPin size={8} /> {prop.location} · {prop.category}
-                  </p>
-
-                  {/* Top items preview */}
-                  {prop.topItems.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mt-1.5">
-                      {prop.topItems.slice(0, 3).map((item, j) => (
-                        <span key={j} className="text-[8px] bg-secondary px-1.5 py-0.5 rounded-full">
-                          {item.emoji} {item.name} ({item.count})
-                        </span>
-                      ))}
-                    </div>
+              {/* Thumbnail + overlay */}
+              <div className="relative h-24 overflow-hidden">
+                <PropertyThumbnail name={prop.name} imageUrls={prop.imageUrls} size="hero" className="w-full h-24" />
+                <div className="absolute inset-0 bg-gradient-to-t from-card via-card/30 to-transparent" />
+                <div className="absolute top-2 right-2 flex items-center gap-1">
+                  {prop.avgRating > 0 && (
+                    <span className="flex items-center gap-0.5 text-[9px] font-bold bg-black/50 backdrop-blur-sm text-white px-1.5 py-0.5 rounded-full">
+                      <Star size={8} fill="currentColor" className="text-amber-400" /> {prop.avgRating.toFixed(1)}
+                    </span>
                   )}
+                  <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full backdrop-blur-sm ${
+                    prop.status === "published" ? "bg-emerald-500/30 text-emerald-300" : "bg-amber-500/30 text-amber-300"
+                  }`}>{prop.status}</span>
+                </div>
+                <div className="absolute bottom-2 left-3">
+                  <h3 className="text-sm font-bold text-foreground drop-shadow-sm">{prop.name}</h3>
+                  <p className="text-[9px] text-muted-foreground flex items-center gap-1">
+                    <MapPin size={7} /> {prop.location} · {prop.category}
+                  </p>
+                </div>
+              </div>
+
+              {/* Details */}
+              <div className="p-3 pt-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3 text-[9px] text-muted-foreground">
+                    <span className="flex items-center gap-0.5"><CalendarCheck size={9} className="text-blue-400" /> {prop.bookings.length} bookings</span>
+                    <span className="flex items-center gap-0.5"><Users size={9} className="text-emerald-400" /> {prop.uniqueGuests} guests</span>
+                    <span className="flex items-center gap-0.5"><Utensils size={9} className="text-amber-400" /> {prop.orders.length} orders</span>
+                  </div>
+                  <p className="text-sm font-bold text-foreground tabular-nums">₹{prop.totalRevenue.toLocaleString("en-IN")}</p>
                 </div>
 
-                <div className="text-right shrink-0 space-y-0.5">
-                  <p className="text-sm font-bold text-foreground tabular-nums">₹{prop.totalRevenue.toLocaleString("en-IN")}</p>
-                  <div className="flex items-center gap-1 justify-end text-[9px] text-muted-foreground">
-                    <CalendarCheck size={8} /><span>{prop.bookings.length}</span>
-                    <span>·</span>
-                    <Users size={8} /><span>{prop.uniqueGuests}</span>
-                    <span>·</span>
-                    <Utensils size={8} /><span>{prop.orders.length}</span>
+                {prop.topItems.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {prop.topItems.slice(0, 3).map((item, j) => (
+                      <span key={j} className="text-[8px] bg-secondary px-1.5 py-0.5 rounded-full text-muted-foreground">
+                        {item.emoji} {item.name} ({item.count})
+                      </span>
+                    ))}
                   </div>
-                </div>
-                <ChevronRight size={14} className="text-muted-foreground shrink-0 mt-1 group-hover:text-primary transition" />
+                )}
               </div>
             </motion.button>
           ))}
