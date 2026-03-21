@@ -2,6 +2,7 @@ import { motion, useMotionValue, useTransform, useSpring, useAnimation, useScrol
 import { MapPin, Calendar as CalendarIcon, Clock, ChevronRight, Ticket, QrCode, Users, X, Utensils, ShoppingCart, Shield, Upload, ChevronDown, ChevronUp } from "lucide-react";
 import { useRef, useState, useCallback, useMemo, useEffect } from "react";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
+import { Calendar } from "@/components/ui/calendar";
 import PullToRefresh from "./PullToRefresh";
 import type { Booking } from "@/pages/Index";
 import OrderHistorySection from "./OrderHistorySection";
