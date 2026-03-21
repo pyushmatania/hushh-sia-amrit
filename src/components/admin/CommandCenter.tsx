@@ -136,7 +136,13 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
       </div>
 
       {/* AI Command Search */}
-      <AdminAISearch />
+      <NeuralSearchWidget
+        title="Neural Command"
+        subtitle="Full-spectrum business intelligence"
+        placeholder="Query: revenue trends, guest patterns, inventory..."
+        examples={commandCenterExamples}
+        onSearch={handleCommandCenterSearch}
+      />
 
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">

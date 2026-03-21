@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
+import NeuralSearchWidget from "./NeuralSearchWidget";
 
 /* ─── Types ─── */
 interface PropertyBooking {
