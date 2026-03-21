@@ -402,7 +402,7 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
 }
 
 /* ─── Eye Component ─── */
-function FlameEye({ size, state, side }: { size: number; state: string; side: "left" | "right" }) {
+function FlameEye({ size, state, side, hovered = false }: { size: number; state: string; side: "left" | "right"; hovered?: boolean }) {
   const isHappy = state === "success";
   const pupilR = size * 0.45;
 
