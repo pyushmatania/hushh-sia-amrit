@@ -3,7 +3,8 @@ import {
   ArrowLeft, MapPin, Calendar, Clock, Users, QrCode,
   Phone, MessageCircle, X, AlertTriangle, Check, ChevronRight,
   Navigation, Share2, Plus, Minus, Sparkles, ShoppingBag,
-  Utensils, Star, Shield, Wifi, Music, Flame, Home, Info
+  Utensils, Star, Shield, Wifi, Music, Flame, Home, Info,
+  Camera, Receipt, Split
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import type { Addon } from "@/data/properties";
@@ -11,6 +12,9 @@ import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { useToast } from "@/hooks/use-toast";
 import type { Booking } from "@/pages/Index";
 import LiveOrderingSheet from "./LiveOrderingSheet";
+import BookingPhotosSheet from "./BookingPhotosSheet";
+import ReceiptSheet from "./ReceiptSheet";
+import SplitPaymentSheet from "./SplitPaymentSheet";
 
 interface BookingDetailScreenProps {
   booking: Booking;
