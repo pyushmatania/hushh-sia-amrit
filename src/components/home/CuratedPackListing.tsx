@@ -134,14 +134,18 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
           className="relative w-full h-full overflow-hidden rounded-[20px]"
           style={{ border: "1px solid hsl(var(--border) / 0.24)" }}
         >
-          {/* Poster fallback */}
-          <img
-            src={media.poster}
-            alt={pack.name}
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ opacity: videoReady ? 0 : 1, transition: "opacity 0.3s" }}
-            loading={index < 2 ? "eager" : "lazy"}
-          />
+          {/* Poster + buffer shimmer */}
+          {!videoReady && (
+            <div className="absolute inset-0 z-[2] pointer-events-none">
+              <img
+                src={media.poster}
+                alt={pack.name}
+                className="absolute inset-0 w-full h-full object-cover"
+                loading={index < 2 ? "eager" : "lazy"}
+              />
+              <div className="absolute inset-0 video-buffer-shimmer" />
+            </div>
+          )}
 
           {/* Autoplay video */}
           {shouldLoad && (

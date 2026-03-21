@@ -178,16 +178,20 @@ function VideoCard({
           style={{ border: "1px solid hsl(var(--border) / 0.24)" }}
         >
 
-        <OptimizedImage
-          src={property.images[0]}
-          alt={property.name}
-          fill
-          className="object-cover"
-          sizes="(max-width: 640px) 85vw, 380px"
-          priority={isFirst}
-          style={{ opacity: videoReady ? 0 : 1, transition: "opacity 0.5s" }}
-          showSkeleton={!isFirst}
-        />
+        {/* Buffering skeleton — shows until video is ready */}
+        {!videoReady && (
+          <div className="absolute inset-0 z-[2] pointer-events-none">
+            <OptimizedImage
+              src={property.images[0]}
+              alt={property.name}
+              fill
+              className="object-cover"
+              sizes="(max-width: 640px) 85vw, 380px"
+              priority={isFirst}
+            />
+            <div className="absolute inset-0 video-buffer-shimmer" />
+          </div>
+        )}
         {shouldLoad && (
           <video
             ref={videoRef}

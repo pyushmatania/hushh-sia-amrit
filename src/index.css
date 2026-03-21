@@ -290,3 +290,21 @@
   background: linear-gradient(90deg, transparent 0%, hsl(var(--foreground) / 0.06) 50%, transparent 100%);
   animation: shimmer 1.5s infinite;
 }
+
+/* Video buffering shimmer overlay */
+.video-buffer-shimmer {
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    hsl(var(--primary) / 0.08) 42%,
+    hsl(var(--foreground) / 0.12) 50%,
+    hsl(var(--primary) / 0.08) 58%,
+    transparent 70%
+  );
+  background-size: 250% 100%;
+  animation: videoBufferPulse 2s ease-in-out infinite;
+}
+@keyframes videoBufferPulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
