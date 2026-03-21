@@ -25,6 +25,7 @@ import type { AdminPage } from "./AdminLayout";
 interface Stats {
   revenue: number; bookings: number; activeListings: number; totalUsers: number;
   pendingOrders: number; todayBookings: number; avgRating: number; lowStock: number;
+  conflicts: number;
 }
 interface TopProperty { name: string; bookings: number; revenue: number; }
 interface RecentReview { id: string; rating: number; content: string; propertyName: string; time: string; }
