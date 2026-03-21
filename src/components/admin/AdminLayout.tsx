@@ -19,7 +19,7 @@ export type AdminPage =
   | "analytics" | "curations" | "tags" | "campaigns"
   | "coupons" | "orders" | "exports" | "ai" | "alerts" | "audit"
   | "earnings" | "pricing" | "achievements" | "loyalty"
-  | "calendar" | "requests" | "history" | "inventory";
+  | "calendar" | "requests" | "history" | "inventory" | "staff-mgmt";
 
 interface AdminLayoutProps {
   activePage: AdminPage;
@@ -51,6 +51,7 @@ const navSections: { title: string; items: { id: AdminPage; label: string; icon:
     items: [
       { id: "clients", label: "Clients", icon: UserCheck, color: "bg-pink-100 text-pink-600 dark:bg-pink-500/20 dark:text-pink-400", activeGlow: "shadow-pink-200/60" },
       { id: "users", label: "Users CRM", icon: Users, color: "bg-fuchsia-100 text-fuchsia-600 dark:bg-fuchsia-500/20 dark:text-fuchsia-400", activeGlow: "shadow-fuchsia-200/60", adminOnly: true },
+      { id: "staff-mgmt", label: "Staff Mgmt", icon: UserCheck, color: "bg-cyan-100 text-cyan-600 dark:bg-cyan-500/20 dark:text-cyan-400", activeGlow: "shadow-cyan-200/60" },
     ]
   },
   {

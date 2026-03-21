@@ -894,6 +894,166 @@ export type Database = {
         }
         Relationships: []
       }
+      staff_attendance: {
+        Row: {
+          check_in: string | null
+          check_out: string | null
+          created_at: string
+          date: string
+          hours_worked: number | null
+          id: string
+          meal_provided: boolean | null
+          notes: string | null
+          overtime_hours: number | null
+          staff_id: string
+          status: string
+        }
+        Insert: {
+          check_in?: string | null
+          check_out?: string | null
+          created_at?: string
+          date?: string
+          hours_worked?: number | null
+          id?: string
+          meal_provided?: boolean | null
+          notes?: string | null
+          overtime_hours?: number | null
+          staff_id: string
+          status?: string
+        }
+        Update: {
+          check_in?: string | null
+          check_out?: string | null
+          created_at?: string
+          date?: string
+          hours_worked?: number | null
+          id?: string
+          meal_provided?: boolean | null
+          notes?: string | null
+          overtime_hours?: number | null
+          staff_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_attendance_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "staff_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      staff_members: {
+        Row: {
+          avatar_url: string | null
+          bank_account: string | null
+          created_at: string
+          department: string
+          email: string
+          emergency_contact: string | null
+          id: string
+          joining_date: string
+          name: string
+          notes: string | null
+          phone: string
+          role: string
+          salary: number
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bank_account?: string | null
+          created_at?: string
+          department?: string
+          email?: string
+          emergency_contact?: string | null
+          id?: string
+          joining_date?: string
+          name: string
+          notes?: string | null
+          phone?: string
+          role?: string
+          salary?: number
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bank_account?: string | null
+          created_at?: string
+          department?: string
+          email?: string
+          emergency_contact?: string | null
+          id?: string
+          joining_date?: string
+          name?: string
+          notes?: string | null
+          phone?: string
+          role?: string
+          salary?: number
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      staff_salary_payments: {
+        Row: {
+          amount: number
+          bonus: number | null
+          created_at: string
+          deductions: number | null
+          id: string
+          month: string
+          notes: string | null
+          paid_at: string | null
+          payment_method: string | null
+          staff_id: string
+          status: string
+          year: number
+        }
+        Insert: {
+          amount?: number
+          bonus?: number | null
+          created_at?: string
+          deductions?: number | null
+          id?: string
+          month: string
+          notes?: string | null
+          paid_at?: string | null
+          payment_method?: string | null
+          staff_id: string
+          status?: string
+          year: number
+        }
+        Update: {
+          amount?: number
+          bonus?: number | null
+          created_at?: string
+          deductions?: number | null
+          id?: string
+          month?: string
+          notes?: string | null
+          paid_at?: string | null
+          payment_method?: string | null
+          staff_id?: string
+          status?: string
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_salary_payments_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "staff_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       staff_tasks: {
         Row: {
           assigned_to: string | null
