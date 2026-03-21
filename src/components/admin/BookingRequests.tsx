@@ -29,14 +29,23 @@ export default function BookingRequests() {
   const [filter, setFilter] = useState<FilterStatus>("all");
 
   const load = useCallback(async () => {
-    const query = supabase
-      .from("bookings")
-      .select("id, booking_id, date, slot, guests, total, status, created_at, property_id")
-      .order("created_at", { ascending: false })
-      .limit(50);
+    const [bookingsRes, listingsRes] = await Promise.all([
+      supabase
+        .from("bookings")
+        .select("id, booking_id, date, slot, guests, total, status, created_at, property_id")
+        .order("created_at", { ascending: false })
+        .limit(50),
+      supabase.from("host_listings").select("id, name"),
+    ]);
 
-    const { data } = await query;
-    setBookings(data ?? []);
+    const listingMap = new Map<string, string>();
+    (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, l.name));
+
+    const data = (bookingsRes.data ?? []).map(b => ({
+      ...b,
+      propertyName: listingMap.get(b.property_id) || `Property ${b.property_id.slice(0, 6)}`,
+    }));
+    setBookings(data);
     setLoading(false);
   }, []);
 
