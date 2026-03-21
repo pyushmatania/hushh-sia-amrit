@@ -119,6 +119,7 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
   const [loading, setLoading] = useState(true);
   const [blockedSlots, setBlockedSlots] = useState<Set<string>>(new Set());
   const [filterPropertyId, setFilterPropertyId] = useState<string>("all");
+  const [userProfiles, setUserProfiles] = useState<Map<string, UserProfile>>(new Map());
   const propertyMap = usePropertyMap();
 
   useEffect(() => {
@@ -129,17 +130,31 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
 
       const { data } = await supabase
         .from("bookings")
-        .select("date, slot, status, guests, total, booking_id, property_id, user_id")
+        .select("date, slot, status, guests, total, booking_id, property_id, user_id, created_at")
         .gte("date", startDate)
         .lte("date", endDate);
 
       const map = new Map<string, BookingEntry[]>();
+      const userIds = new Set<string>();
       (data ?? []).forEach(b => {
         const existing = map.get(b.date) ?? [];
         existing.push(b);
         map.set(b.date, existing);
+        if (b.user_id) userIds.add(b.user_id);
       });
       setBookingMap(map);
+
+      // Fetch user profiles
+      if (userIds.size > 0) {
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("user_id, display_name, avatar_url, tier")
+          .in("user_id", Array.from(userIds));
+        const profileMap = new Map<string, UserProfile>();
+        (profiles ?? []).forEach(p => profileMap.set(p.user_id, { display_name: p.display_name, avatar_url: p.avatar_url, tier: p.tier }));
+        setUserProfiles(profileMap);
+      }
+
       setLoading(false);
     };
     load();
