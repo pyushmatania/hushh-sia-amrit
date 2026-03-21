@@ -148,14 +148,84 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
       setCategoryData(Object.entries(catMap).map(([name, value]) => ({ name, value })));
       setRecentReviews(reviews.map(r => ({ id: r.id, rating: r.rating, content: r.content || "", propertyName: listingMap.get(r.property_id) || "Property", time: r.created_at })));
       setTodaySchedule(todayBk.slice(0, 6).map(b => ({ id: b.property_id + b.slot, propertyName: listingMap.get(b.property_id) || "Property", slot: b.slot || "Evening", guests: b.guests, total: Number(b.total), status: b.status })));
+
+      // Build real 14-day revenue chart data
+      const now = new Date();
+      const dayMap14 = new Map<string, number>();
+      for (let i = 13; i >= 0; i--) {
+        const d = new Date(now.getTime() - i * 86400000);
+        const key = d.toISOString().slice(0, 10);
+        dayMap14.set(key, 0);
+      }
+      bookings.forEach(b => {
+        if (dayMap14.has(b.date)) dayMap14.set(b.date, (dayMap14.get(b.date) || 0) + Number(b.total));
+      });
+      setRevenueChartData(Array.from(dayMap14, ([day, revenue]) => ({ day: day.slice(5), revenue })));
+
+      // Weekly performance (bookings per day of week)
+      const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const weekMap = weekDays.map(() => 0);
+      bookings.forEach(b => {
+        const d = new Date(b.date + "T00:00:00");
+        if (!isNaN(d.getTime())) weekMap[d.getDay()]++;
+      });
+      setWeeklyPerfData(weekDays.map((day, i) => ({ day, value: weekMap[i] })));
+
+      // Calculate previous month stats for trend comparison
+      const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
+      const prevMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().slice(0, 10);
+      const prevBookings = bookings.filter(b => b.date >= prevMonthStart && b.date < thisMonthStart);
+      const currBookings = bookings.filter(b => b.date >= thisMonthStart);
+      const prevRev = prevBookings.reduce((s, b) => s + Number(b.total), 0);
+      const currRev = currBookings.reduce((s, b) => s + Number(b.total), 0);
+      setPrevMonthStats({
+        revenue: prevRev > 0 ? Math.round(((currRev - prevRev) / prevRev) * 100) : 0,
+        bookings: prevBookings.length > 0 ? Math.round(((currBookings.length - prevBookings.length) / prevBookings.length) * 100) : 0,
+        listings: listings.filter(l => l.status === "published").length,
+        users: users.length,
+      });
+    });
+
+    // Fetch financial data (real expenses + revenue by month)
+    Promise.all([
+      supabase.from("expenses").select("amount, date, category"),
+      supabase.from("bookings").select("total, date"),
+    ]).then(([expRes, revRes]) => {
+      const monthMap = new Map<string, { expenses: number; revenue: number }>();
+      const now = new Date();
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const key = d.toLocaleDateString("en-US", { month: "short" });
+        monthMap.set(key, { expenses: 0, revenue: 0 });
+      }
+      (expRes.data ?? []).forEach(e => {
+        const d = new Date(e.date);
+        const key = d.toLocaleDateString("en-US", { month: "short" });
+        if (monthMap.has(key)) {
+          const entry = monthMap.get(key)!;
+          entry.expenses += Number(e.amount);
+        }
+      });
+      (revRes.data ?? []).forEach(b => {
+        const d = new Date(b.date + "T00:00:00");
+        const key = d.toLocaleDateString("en-US", { month: "short" });
+        if (monthMap.has(key)) {
+          const entry = monthMap.get(key)!;
+          entry.revenue += Number(b.total);
+        }
+      });
+      setFinancialData(Array.from(monthMap, ([month, data]) => ({ month, ...data })));
     });
   }, []);
 
+  const revTrendPct = prevMonthStats.revenue;
+  const bkTrendPct = prevMonthStats.bookings;
+
   const statCards = [
-    { label: "Revenue", value: stats.revenue, prefix: "₹", icon: IndianRupee, accent: "from-emerald-500 to-emerald-600", accentLight: "bg-emerald-500/8", change: "+12.5%", up: true },
-    { label: "Bookings", value: stats.bookings, prefix: "", icon: CalendarCheck, accent: "from-blue-500 to-blue-600", accentLight: "bg-blue-500/8", change: "+8.2%", up: true },
-    { label: "Listings", value: stats.activeListings, prefix: "", icon: Eye, accent: "from-violet-500 to-violet-600", accentLight: "bg-violet-500/8", change: "+3", up: true },
-    { label: "Users", value: stats.totalUsers, prefix: "", icon: Users, accent: "from-rose-500 to-rose-600", accentLight: "bg-rose-500/8", change: "+24", up: true },
+    { label: "Revenue", value: stats.revenue, prefix: "₹", icon: IndianRupee, accent: "from-emerald-500 to-emerald-600", accentLight: "bg-emerald-500/8", change: revTrendPct !== 0 ? `${revTrendPct > 0 ? '+' : ''}${revTrendPct}%` : "—", up: revTrendPct >= 0 },
+    { label: "Bookings", value: stats.bookings, prefix: "", icon: CalendarCheck, accent: "from-blue-500 to-blue-600", accentLight: "bg-blue-500/8", change: bkTrendPct !== 0 ? `${bkTrendPct > 0 ? '+' : ''}${bkTrendPct}%` : "—", up: bkTrendPct >= 0 },
+    { label: "Listings", value: stats.activeListings, prefix: "", icon: Eye, accent: "from-violet-500 to-violet-600", accentLight: "bg-violet-500/8", change: `${stats.activeListings} active`, up: true },
+    { label: "Users", value: stats.totalUsers, prefix: "", icon: Users, accent: "from-rose-500 to-rose-600", accentLight: "bg-rose-500/8", change: `${stats.totalUsers} total`, up: true },
   ];
 
   const quickActions = [
