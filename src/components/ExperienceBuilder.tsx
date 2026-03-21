@@ -341,11 +341,7 @@ export default function ExperienceBuilder({ property, slotId, guests, date, onBa
                     }}
                   >
                     <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0">
-                      {addonImages[item.name] ? (
-                        <img src={addonImages[item.name]} alt="" className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-lg bg-secondary">{item.categoryEmoji}</div>
-                      )}
+                      <AddonImage src={addonImages[item.name]} alt={item.name} className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-[11px] text-foreground font-medium leading-tight">{reason}</p>
