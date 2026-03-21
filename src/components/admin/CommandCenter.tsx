@@ -8,7 +8,9 @@ import {
   Calendar, Gift, AlertTriangle, CheckCircle2,
   MessageSquare, CreditCard, Ticket,
   Sun, Moon, Sunrise, Sunset, PieChart,
-  Wallet, UserCog, ClipboardList, FileText
+  Wallet, UserCog, ClipboardList, FileText,
+  UserCheck, Bell, Settings, Tag, Trophy, BadgeDollarSign,
+  BedDouble, Megaphone
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, BarChart, Bar, CartesianGrid, PieChart as RPieChart, Pie, Cell } from "recharts";
@@ -23,6 +25,7 @@ import type { AdminPage } from "./AdminLayout";
 interface Stats {
   revenue: number; bookings: number; activeListings: number; totalUsers: number;
   pendingOrders: number; todayBookings: number; avgRating: number; lowStock: number;
+  conflicts: number;
 }
 interface TopProperty { name: string; bookings: number; revenue: number; }
 interface RecentReview { id: string; rating: number; content: string; propertyName: string; time: string; }
@@ -104,7 +107,7 @@ function getSlotIcon(slot: string) {
 const PIE_COLORS = ["hsl(250, 80%, 60%)", "hsl(280, 65%, 62%)", "hsl(200, 75%, 55%)", "hsl(340, 70%, 60%)", "hsl(160, 60%, 50%)"];
 
 export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (page: AdminPage) => void; userRole?: "super_admin" | "ops_manager" | "host" | "staff" | null }) {
-  const [stats, setStats] = useState<Stats>({ revenue: 0, bookings: 0, activeListings: 0, totalUsers: 0, pendingOrders: 0, todayBookings: 0, avgRating: 0, lowStock: 0 });
+  const [stats, setStats] = useState<Stats>({ revenue: 0, bookings: 0, activeListings: 0, totalUsers: 0, pendingOrders: 0, todayBookings: 0, avgRating: 0, lowStock: 0, conflicts: 0 });
   const [greeting, setGreeting] = useState("Good morning");
   const [topProperties, setTopProperties] = useState<TopProperty[]>([]);
   const [recentReviews, setRecentReviews] = useState<RecentReview[]>([]);
@@ -139,7 +142,17 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
       const ratings = reviews.map(r => r.rating);
       const avgRating = ratings.length > 0 ? +(ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1) : 0;
       const lowStock = inventory.filter(i => (i as any).stock <= (i as any).low_stock_threshold && (i as any).available).length;
-      setStats({ revenue: bookings.reduce((s, b) => s + Number(b.total), 0), bookings: bookings.length, activeListings: listings.filter(l => l.status === "published").length, totalUsers: users.length, pendingOrders, todayBookings: todayBk.length, avgRating, lowStock });
+      // Count booking conflicts (same property+date+slot, non-cancelled/completed)
+      const activeBookings = bookings.filter(b => !["cancelled", "completed"].includes(b.status));
+      const conflictSet = new Set<string>();
+      for (let i = 0; i < activeBookings.length; i++) {
+        for (let j = i + 1; j < activeBookings.length; j++) {
+          if (activeBookings[i].property_id === activeBookings[j].property_id && activeBookings[i].date === activeBookings[j].date && activeBookings[i].slot === activeBookings[j].slot) {
+            conflictSet.add(activeBookings[i].property_id + activeBookings[i].date + activeBookings[i].slot);
+          }
+        }
+      }
+      setStats({ revenue: bookings.reduce((s, b) => s + Number(b.total), 0), bookings: bookings.length, activeListings: listings.filter(l => l.status === "published").length, totalUsers: users.length, pendingOrders, todayBookings: todayBk.length, avgRating, lowStock, conflicts: conflictSet.size });
       const propMap: Record<string, { name: string; bookings: number; revenue: number }> = {};
       bookings.forEach(b => { const key = b.property_id; if (!propMap[key]) propMap[key] = { name: listingMap.get(key) || "Unknown", bookings: 0, revenue: 0 }; propMap[key].bookings += 1; propMap[key].revenue += Number(b.total); });
       setTopProperties(Object.values(propMap).sort((a, b) => b.revenue - a.revenue).slice(0, 5));
@@ -262,20 +275,28 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
   const allActions = [
     { label: "Bookings", icon: CalendarCheck, page: "bookings" as AdminPage, roles: ["super_admin", "ops_manager", "host"] },
     { label: "Orders", icon: ShoppingCart, page: "orders" as AdminPage, roles: ["super_admin", "ops_manager", "staff"] },
-    { label: "Analytics", icon: BarChart3, page: "analytics" as AdminPage, roles: ["super_admin", "ops_manager"] },
-    { label: "Staff", icon: UserCog, page: "staff-mgmt" as AdminPage, roles: ["super_admin", "ops_manager"] },
-    { label: "Budget", icon: Wallet, page: "budget" as AdminPage, roles: ["super_admin"] },
+    { label: "Check-in", icon: UserCheck, page: "checkin" as AdminPage, roles: ["super_admin", "ops_manager", "staff"] },
     { label: "Calendar", icon: Calendar, page: "calendar" as AdminPage, roles: ["super_admin", "ops_manager", "host"] },
-    { label: "Campaigns", icon: Target, page: "campaigns" as AdminPage, roles: ["super_admin", "ops_manager"] },
-    { label: "Catalog", icon: Package, page: "catalog" as AdminPage, roles: ["super_admin", "ops_manager"] },
-    { label: "Coupons", icon: Ticket, page: "coupons" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Analytics", icon: BarChart3, page: "analytics" as AdminPage, roles: ["super_admin", "ops_manager"] },
     { label: "Clients", icon: Users, page: "clients" as AdminPage, roles: ["super_admin", "ops_manager"] },
-    { label: "Loyalty", icon: Gift, page: "loyalty" as AdminPage, roles: ["super_admin", "ops_manager"] },
-    { label: "Earnings", icon: CreditCard, page: "earnings" as AdminPage, roles: ["super_admin", "ops_manager", "host"] },
+    { label: "Staff", icon: UserCog, page: "staff-mgmt" as AdminPage, roles: ["super_admin", "ops_manager"] },
     { label: "Inventory", icon: Utensils, page: "inventory" as AdminPage, roles: ["super_admin", "ops_manager", "staff"] },
+    { label: "Budget", icon: Wallet, page: "budget" as AdminPage, roles: ["super_admin"] },
+    { label: "Catalog", icon: Package, page: "catalog" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Curations", icon: Sparkles, page: "curations" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Campaigns", icon: Megaphone, page: "campaigns" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Coupons", icon: Ticket, page: "coupons" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Pricing", icon: BadgeDollarSign, page: "pricing" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Loyalty", icon: Gift, page: "loyalty" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Achievements", icon: Trophy, page: "achievements" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Earnings", icon: CreditCard, page: "earnings" as AdminPage, roles: ["super_admin", "ops_manager", "host"] },
     { label: "Requests", icon: ClipboardList, page: "requests" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Alerts", icon: Bell, page: "notifications" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Reports", icon: FileText, page: "reports" as AdminPage, roles: ["super_admin", "ops_manager"] },
     { label: "Exports", icon: FileText, page: "exports" as AdminPage, roles: ["super_admin"] },
+    { label: "Tags", icon: Tag, page: "tags" as AdminPage, roles: ["super_admin", "ops_manager"] },
     { label: "Audit", icon: Shield, page: "audit" as AdminPage, roles: ["super_admin"] },
+    { label: "Settings", icon: Settings, page: "settings" as AdminPage, roles: ["super_admin"] },
   ];
   const quickActions = userRole
     ? allActions.filter(a => a.roles.includes(userRole))
@@ -762,14 +783,15 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
       </div>
 
       {/* Mini stats row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+      <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
         {[
-          { label: "Today", value: stats.todayBookings, icon: Calendar, alert: false },
-          { label: "Pending", value: stats.pendingOrders, icon: ShoppingCart, alert: stats.pendingOrders > 0 },
-          { label: "Rating", value: stats.avgRating, icon: Star, alert: false },
-          { label: "Low Stock", value: stats.lowStock, icon: AlertTriangle, alert: stats.lowStock > 0 },
+          { label: "Today", value: stats.todayBookings, icon: Calendar, alert: false, page: "calendar" as AdminPage },
+          { label: "Pending", value: stats.pendingOrders, icon: ShoppingCart, alert: stats.pendingOrders > 0, page: "orders" as AdminPage },
+          { label: "Conflicts", value: stats.conflicts, icon: AlertTriangle, alert: stats.conflicts > 0, page: "bookings" as AdminPage },
+          { label: "Rating", value: stats.avgRating, icon: Star, alert: false, page: "analytics" as AdminPage },
+          { label: "Low Stock", value: stats.lowStock, icon: AlertTriangle, alert: stats.lowStock > 0, page: "inventory" as AdminPage },
         ].map((card) => (
-          <div key={card.label} className="flex items-center gap-2.5 rounded-xl bg-card border border-border/60 p-2.5">
+          <motion.div key={card.label} whileTap={{ scale: 0.97 }} onClick={() => onNavigate?.(card.page)} className="flex items-center gap-2.5 rounded-xl bg-card border border-border/60 p-2.5 cursor-pointer hover:border-primary/20 transition-colors">
             <div className="w-7 h-7 rounded-lg bg-muted flex items-center justify-center shrink-0">
               <card.icon size={13} className="text-foreground/60" />
             </div>
@@ -780,7 +802,7 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
               </p>
               <p className="text-[9px] text-muted-foreground mt-0.5">{card.label}</p>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
 
