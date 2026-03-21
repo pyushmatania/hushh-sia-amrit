@@ -235,6 +235,14 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
           </motion.div>
         )}
       </AnimatePresence>
+
+      <DeleteConfirmDialog
+        open={!!deleteTarget}
+        title="Delete this item?"
+        description="This inventory item will be permanently removed."
+        onConfirm={confirmDeleteItem}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </motion.div>
   );
 }
