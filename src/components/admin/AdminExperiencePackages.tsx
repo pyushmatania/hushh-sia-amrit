@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useDragReorder } from "@/hooks/use-drag-reorder";
 import SwipeableRow from "./SwipeableRow";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
+import BatchOperationsBar from "./BatchOperationsBar";
 
 interface PackageRow {
   id: string;
@@ -42,6 +43,21 @@ export default function AdminExperiencePackages() {
   const [includeInput, setIncludeInput] = useState("");
   const [previewMode, setPreviewMode] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
+
+  const bulkDelete = async (ids: string[]) => {
+    for (const id of ids) {
+      await supabase.from("experience_packages").delete().eq("id", id);
+    }
+    setPackages(prev => prev.filter(p => !ids.includes(p.id)));
+    setSelectedIds([]);
+    window.dispatchEvent(new Event("hushh:listings-updated"));
+    toast({ title: `${ids.length} packages deleted` });
+  };
 
   const loadPackages = async () => {
     const { data } = await supabase
@@ -210,9 +226,18 @@ export default function AdminExperiencePackages() {
                 {...getDropTargetProps(pkg)}
                 onDragEnd={handleDragEnd}
                 style={getDragItemStyle(pkg)}
-                className={`rounded-xl border border-border bg-card p-4 flex items-center gap-2 select-none ${
-                  !pkg.active ? "opacity-50" : ""}`}
+                className={`rounded-xl border bg-card p-4 flex items-center gap-2 select-none ${
+                  !pkg.active ? "opacity-50" : ""} ${selectedIds.includes(pkg.id) ? "border-primary/50 bg-primary/5" : "border-border"}`}
               >
+                <button
+                  type="button"
+                  onClick={e => { e.stopPropagation(); toggleSelect(pkg.id); }}
+                  className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${
+                    selectedIds.includes(pkg.id) ? "bg-primary border-primary text-primary-foreground" : "border-muted-foreground/30 hover:border-primary/50"
+                  }`}
+                >
+                  {selectedIds.includes(pkg.id) && <span className="text-[10px] font-bold">✓</span>}
+                </button>
                 <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${pkg.gradient} flex items-center justify-center text-lg`}>
                   {pkg.emoji}
                 </div>
@@ -429,6 +454,15 @@ export default function AdminExperiencePackages() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <BatchOperationsBar
+        selectedIds={selectedIds}
+        totalCount={filtered.length}
+        onSelectAll={() => setSelectedIds(filtered.map(p => p.id))}
+        onDeselectAll={() => setSelectedIds([])}
+        onBulkDelete={bulkDelete}
+        entityName="packages"
+      />
 
       <DeleteConfirmDialog
         open={!!deleteTarget}

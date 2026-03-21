@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import SwipeableRow from "./SwipeableRow";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
+import BatchOperationsBar from "./BatchOperationsBar";
 
 const MOOD_OPTIONS = ["Romantic", "Party", "Chill", "Adventure", "Work", "Celebration", "Family"];
 const INCLUDE_OPTIONS = [
@@ -48,6 +49,21 @@ export default function AdminCurations() {
   const [saving, setSaving] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
+
+  const bulkDelete = async (ids: string[]) => {
+    for (const id of ids) {
+      await supabase.from("curations").delete().eq("id", id);
+    }
+    setCurations(prev => prev.filter(c => !ids.includes(c.id)));
+    setSelectedIds([]);
+    window.dispatchEvent(new Event("hushh:listings-updated"));
+    toast({ title: `${ids.length} curations deleted` });
+  };
 
   const loadCurations = () => {
     supabase.from("curations").select("*").order("sort_order")
@@ -333,10 +349,19 @@ export default function AdminCurations() {
                 {...getDropTargetProps(c)}
                 onDragEnd={handleDragEnd}
                 style={getDragItemStyle(c)}
-                className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 select-none"
+                className={`rounded-xl border bg-card p-4 hover:border-primary/30 select-none ${selectedIds.includes(c.id) ? "border-primary/50 bg-primary/5" : "border-border"}`}
                 onClick={() => startEdit(c)}
               >
                 <div className="flex items-start gap-2">
+                  <button
+                    type="button"
+                    onClick={e => { e.stopPropagation(); toggleSelect(c.id); }}
+                    className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 mt-1 transition-all ${
+                      selectedIds.includes(c.id) ? "bg-primary border-primary text-primary-foreground" : "border-muted-foreground/30 hover:border-primary/50"
+                    }`}
+                  >
+                    {selectedIds.includes(c.id) && <span className="text-[10px] font-bold">✓</span>}
+                  </button>
                   <span className="text-2xl">{c.emoji}</span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
@@ -394,6 +419,15 @@ export default function AdminCurations() {
           ))}
         </div>
       )}
+
+      <BatchOperationsBar
+        selectedIds={selectedIds}
+        totalCount={filtered.length}
+        onSelectAll={() => setSelectedIds(filtered.map(c => c.id))}
+        onDeselectAll={() => setSelectedIds([])}
+        onBulkDelete={bulkDelete}
+        entityName="curations"
+      />
 
       <DeleteConfirmDialog
         open={!!deleteTarget}

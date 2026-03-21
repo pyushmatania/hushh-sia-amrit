@@ -13,6 +13,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import SwipeableRow from "./SwipeableRow";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
+import BatchOperationsBar from "./BatchOperationsBar";
 
 interface Listing {
   id: string;
@@ -91,6 +92,7 @@ export default function AdminProperties() {
   const [expandedSection, setExpandedSection] = useState<string>("basic");
   const [previewMode, setPreviewMode] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   useEffect(() => {
     supabase.from("host_listings").select("*").order("sort_order").order("created_at", { ascending: false })
@@ -135,6 +137,30 @@ export default function AdminProperties() {
 
   const deleteListing = (id: string) => {
     setDeleteTarget(id);
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
+
+  const bulkDelete = async (ids: string[]) => {
+    for (const id of ids) {
+      await supabase.from("host_listings").delete().eq("id", id);
+    }
+    setListings(prev => prev.filter(l => !ids.includes(l.id)));
+    setSelectedIds([]);
+    notifyListingsUpdated();
+    toast({ title: `${ids.length} properties deleted` });
+  };
+
+  const bulkStatusChange = async (ids: string[], status: string) => {
+    for (const id of ids) {
+      await supabase.from("host_listings").update({ status }).eq("id", id);
+    }
+    setListings(prev => prev.map(l => ids.includes(l.id) ? { ...l, status } : l));
+    setSelectedIds([]);
+    notifyListingsUpdated();
+    toast({ title: `${ids.length} properties set to ${status}` });
   };
 
   const duplicateListing = async (listing: Listing) => {
@@ -400,9 +426,18 @@ export default function AdminProperties() {
                 {...getDropTargetProps(listing)}
                 onDragEnd={handleDragEnd}
                 style={getDragItemStyle(listing)}
-                className="rounded-xl border border-border bg-card p-3 flex gap-2 cursor-pointer hover:border-primary/30 select-none"
+                className={`rounded-xl border bg-card p-3 flex gap-2 cursor-pointer hover:border-primary/30 select-none ${selectedIds.includes(listing.id) ? "border-primary/50 bg-primary/5" : "border-border"}`}
                 onClick={() => openEdit(listing)}
               >
+                <button
+                  type="button"
+                  onClick={e => { e.stopPropagation(); toggleSelect(listing.id); }}
+                  className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 self-center transition-all ${
+                    selectedIds.includes(listing.id) ? "bg-primary border-primary text-primary-foreground" : "border-muted-foreground/30 hover:border-primary/50"
+                  }`}
+                >
+                  {selectedIds.includes(listing.id) && <span className="text-[10px] font-bold">✓</span>}
+                </button>
                 <div className="w-16 h-16 rounded-lg bg-secondary shrink-0 overflow-hidden">
                   {listing.image_urls?.[0] ? (
                     <img src={listing.image_urls[0]} alt="" className="w-full h-full object-cover" />
@@ -850,6 +885,16 @@ export default function AdminProperties() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <BatchOperationsBar
+        selectedIds={selectedIds}
+        totalCount={filtered.length}
+        onSelectAll={() => setSelectedIds(filtered.map(l => l.id))}
+        onDeselectAll={() => setSelectedIds([])}
+        onBulkDelete={bulkDelete}
+        onBulkStatusChange={bulkStatusChange}
+        entityName="properties"
+      />
 
       <DeleteConfirmDialog
         open={!!deleteTarget}

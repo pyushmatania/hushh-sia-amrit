@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useDragReorder } from "@/hooks/use-drag-reorder";
 import SwipeableRow from "./SwipeableRow";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
+import BatchOperationsBar from "./BatchOperationsBar";
 
 interface InventoryItem {
   id: string; name: string; emoji: string; category: string; unit_price: number;
@@ -31,6 +32,21 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
   const [isCreating, setIsCreating] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
+
+  const bulkDelete = async (ids: string[]) => {
+    for (const id of ids) {
+      await supabase.from("inventory").delete().eq("id", id);
+    }
+    setItems(prev => prev.filter(i => !ids.includes(i.id)));
+    setSelectedIds([]);
+    window.dispatchEvent(new Event("hushh:listings-updated"));
+    toast({ title: `${ids.length} items deleted` });
+  };
 
   const loadInventory = () => {
     supabase.from("inventory").select("*").order("sort_order").order("name")
@@ -159,8 +175,17 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
                     whileHover={{ x: 3, transition: { duration: 0.15 } }}
                     {...getDropTargetProps(item)} onDragEnd={handleDragEnd} style={getDragItemStyle(item)}
                     className={`rounded-2xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm border p-3.5 flex items-center gap-3 select-none transition-all hover:shadow-md group ${
-                      item.stock <= item.low_stock_threshold ? "border-amber-200/60 dark:border-amber-500/20" : "border-zinc-100/80 dark:border-zinc-800/80"
+                      item.stock <= item.low_stock_threshold ? "border-amber-200/60 dark:border-amber-500/20" : selectedIds.includes(item.id) ? "border-primary/50 bg-primary/5" : "border-zinc-100/80 dark:border-zinc-800/80"
                     } ${!item.available ? "opacity-50" : ""}`}>
+                    <button
+                      type="button"
+                      onClick={e => { e.stopPropagation(); toggleSelect(item.id); }}
+                      className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${
+                        selectedIds.includes(item.id) ? "bg-primary border-primary text-primary-foreground" : "border-muted-foreground/30 hover:border-primary/50"
+                      }`}
+                    >
+                      {selectedIds.includes(item.id) && <span className="text-[10px] font-bold">✓</span>}
+                    </button>
                     <span className="text-2xl">{item.emoji}</span>
                     <div className="flex-1 min-w-0">
                       <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">{item.name}</h4>
@@ -236,6 +261,15 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
           </motion.div>
         )}
       </AnimatePresence>
+
+      <BatchOperationsBar
+        selectedIds={selectedIds}
+        totalCount={filtered.length}
+        onSelectAll={() => setSelectedIds(filtered.map(i => i.id))}
+        onDeselectAll={() => setSelectedIds([])}
+        onBulkDelete={bulkDelete}
+        entityName="items"
+      />
 
       <DeleteConfirmDialog
         open={!!deleteTarget}
