@@ -75,13 +75,12 @@ const FoodieVideoCard = memo(function FoodieVideoCard({
       <div className="relative" style={{ height: "65vh", maxHeight: "520px" }}>
         <AccentFrame color={accent.color} radius="20px" glowAlpha={0.08} />
         <div className="relative w-full h-full overflow-hidden rounded-[20px]" style={{ border: "1px solid hsl(var(--border) / 0.24)" }}>
-          <img
-            src={property.images[0]}
-            alt={property.name}
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ opacity: videoReady ? 0 : 1, transition: "opacity 0.5s" }}
-            loading="lazy"
-          />
+          {!videoReady && (
+            <div className="absolute inset-0 z-[2] pointer-events-none">
+              <img src={property.images[0]} alt={property.name} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+              <div className="absolute inset-0 video-buffer-shimmer" />
+            </div>
+          )}
           {shouldLoad && (
             <video
               ref={videoRef}
