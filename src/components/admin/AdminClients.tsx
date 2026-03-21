@@ -736,14 +736,21 @@ export default function AdminClients({ initialUserId, onContextConsumed, onBack 
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
-              <Users size={16} className="text-primary" />
-            </div>
-            Client Directory
-          </h1>
-          <p className="text-xs text-muted-foreground mt-0.5 ml-10">{clients.length} clients · {filtered.length} shown</p>
+        <div className="flex items-center gap-3">
+          {onBack && (
+            <button onClick={onBack} className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center hover:bg-primary/10 transition active:scale-95">
+              <ArrowLeft size={16} className="text-foreground" />
+            </button>
+          )}
+          <div>
+            <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Users size={16} className="text-primary" />
+              </div>
+              Client Directory
+            </h1>
+            <p className="text-xs text-muted-foreground mt-0.5 ml-10">{clients.length} clients · {filtered.length} shown</p>
+          </div>
         </div>
         <button onClick={exportCSV} className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition active:scale-95">
           <Download size={14} /> Export

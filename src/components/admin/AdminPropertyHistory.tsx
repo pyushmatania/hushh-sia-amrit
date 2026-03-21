@@ -752,14 +752,21 @@ export default function AdminPropertyHistory({ onNavigateToClient, initialProper
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div>
-        <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
-            <Activity size={16} className="text-primary" />
-          </div>
-          Property History
-        </h1>
-        <p className="text-xs text-muted-foreground mt-0.5 ml-10">Full operational history · Calendar · AI Search</p>
+      <div className="flex items-center gap-3">
+        {onBack && (
+          <button onClick={onBack} className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center hover:bg-primary/10 transition active:scale-95">
+            <ArrowLeft size={16} className="text-foreground" />
+          </button>
+        )}
+        <div>
+          <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
+            <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Activity size={16} className="text-primary" />
+            </div>
+            Property History
+          </h1>
+          <p className="text-xs text-muted-foreground mt-0.5 ml-10">Full operational history · Calendar · AI Search</p>
+        </div>
       </div>
 
       {/* AI Search */}
