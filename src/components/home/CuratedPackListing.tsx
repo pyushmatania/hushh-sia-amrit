@@ -182,13 +182,13 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
             </div>
           )}
 
-          {/* Overlay tagline text */}
-          <div className="absolute inset-0 flex items-end pointer-events-none" style={{ paddingBottom: "45%" }}>
+          {/* Tagline — shown above the bottom content area */}
+          <div className="absolute left-0 right-0 pointer-events-none px-5" style={{ bottom: "52%" }}>
             <p
-              className="text-[26px] font-black italic text-white/90 leading-[1.15] px-5"
+              className="text-[15px] font-bold italic text-white/80 leading-snug"
               style={{
                 fontFamily: "'Playfair Display', serif",
-                textShadow: "0 2px 8px rgba(0,0,0,0.8), 0 4px 24px rgba(0,0,0,0.5)",
+                textShadow: "0 2px 8px rgba(0,0,0,0.9), 0 4px 20px rgba(0,0,0,0.6)",
               }}
             >
               {pack.tagline}
