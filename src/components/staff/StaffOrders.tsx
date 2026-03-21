@@ -98,11 +98,12 @@ export default function StaffOrders() {
     }
   };
 
-  const filtered = orders.filter(o =>
-    filter === "active" ? ["pending", "preparing"].includes(o.status) :
-    filter === "delivered" ? o.status === "delivered" :
-    o.status === "completed"
-  );
+  const filtered = orders.filter(o => {
+    const statusMatch = filter === "active" ? ["pending", "preparing"].includes(o.status) :
+      filter === "delivered" ? o.status === "delivered" : o.status === "completed";
+    const nameMatch = !searchQuery || (o.guestName || "").toLowerCase().includes(searchQuery.toLowerCase());
+    return statusMatch && nameMatch;
+  });
 
   const pendingCount = orders.filter(o => o.status === "pending").length;
 
