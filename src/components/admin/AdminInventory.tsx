@@ -262,6 +262,15 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
         )}
       </AnimatePresence>
 
+      <BatchOperationsBar
+        selectedIds={selectedIds}
+        totalCount={filtered.length}
+        onSelectAll={() => setSelectedIds(filtered.map(i => i.id))}
+        onDeselectAll={() => setSelectedIds([])}
+        onBulkDelete={bulkDelete}
+        entityName="items"
+      />
+
       <DeleteConfirmDialog
         open={!!deleteTarget}
         title="Delete this item?"
