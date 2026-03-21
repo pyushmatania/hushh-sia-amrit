@@ -20,7 +20,7 @@ const statusConfig: Record<string, { color: string; icon: typeof Clock }> = {
   pending: { color: "bg-amber-500/15 text-amber-400", icon: Clock },
 };
 
-export default function AdminBookings() {
+export default function AdminBookings({ onNavigate }: { onNavigate?: (page: string, ctx?: { bookingId?: string; propertyId?: string }) => void }) {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -89,7 +89,7 @@ export default function AdminBookings() {
               ) : filtered.map((b) => {
                 const sc = statusConfig[b.status] || statusConfig.pending;
                 return (
-                  <TableRow key={b.id}>
+                  <TableRow key={b.id} className={onNavigate ? "cursor-pointer hover:bg-secondary/60 transition" : ""} onClick={() => onNavigate?.("history", { bookingId: b.booking_id, propertyId: b.property_id })}>
                     <TableCell className="font-mono text-xs">{b.booking_id?.slice(0, 10)}</TableCell>
                     <TableCell className="hidden md:table-cell text-xs">{b.property_id?.slice(0, 12)}</TableCell>
                     <TableCell>
