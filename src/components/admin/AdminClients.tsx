@@ -257,19 +257,24 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
         </div>
 
         {/* Name & tier */}
-        <div className="pt-12 px-4 pb-4 border-b border-border">
-          <div className="flex items-start justify-between">
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold text-foreground truncate">{client.display_name || "Unnamed"}</h2>
-                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${tier.badge} ${tier.text}`}>
-                  {tier.icon} {client.tier}
-                </span>
-              </div>
-              {client.bio && <p className="text-[11px] text-muted-foreground mt-1 italic line-clamp-2">{client.bio}</p>}
-              <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1">
-                <CalendarCheck size={9} /> Member since {formatDate(client.created_at)} · {timeAgo(client.created_at)}
+        <div className="pt-14 px-4 pb-4 border-b border-border text-center">
+          <div className="flex flex-col items-center">
+            <div className="flex items-center gap-2 mb-1">
+              <h2 className="text-lg font-bold text-foreground">{client.display_name || "Unnamed"}</h2>
+              <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${tier.badge} ${tier.text}`}>
+                {tier.icon} {client.tier}
+              </span>
+            </div>
+            {client.bio && <p className="text-[11px] text-muted-foreground italic line-clamp-2 max-w-[260px]">{client.bio}</p>}
+            <div className="flex items-center gap-3 mt-1.5">
+              <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+                <CalendarCheck size={9} /> Joined {formatDate(client.created_at)}
               </p>
+              {client.location && (
+                <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+                  <MapPin size={9} /> {client.location}
+                </p>
+              )}
             </div>
           </div>
 
