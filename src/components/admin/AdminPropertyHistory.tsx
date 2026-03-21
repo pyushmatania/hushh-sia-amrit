@@ -602,7 +602,12 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
 }
 
 /* ─── Main Component ─── */
-export default function AdminPropertyHistory({ onNavigateToClient }: { onNavigateToClient?: (userId: string) => void }) {
+export default function AdminPropertyHistory({ onNavigateToClient, initialPropertyId, initialBookingId, onContextConsumed }: {
+  onNavigateToClient?: (userId: string) => void;
+  initialPropertyId?: string;
+  initialBookingId?: string;
+  onContextConsumed?: () => void;
+}) {
   const [properties, setProperties] = useState<PropertySummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
