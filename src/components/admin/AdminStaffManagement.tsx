@@ -289,6 +289,13 @@ export default function AdminStaffManagement() {
     const end = new Date(newLeave.end_date);
     if (end < start) { toast.error("End date must be after start date"); return; }
     const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    // Quota validation
+    if (LEAVE_QUOTAS[newLeave.leave_type]) {
+      const balance = getLeaveBalance(newLeave.staff_id).find(b => b.type === newLeave.leave_type);
+      if (balance && days > balance.remaining) {
+        toast.error(`Only ${balance.remaining} ${balance.label} leaves remaining (requesting ${days})`); return;
+      }
+    }
     const { error } = await supabase.from("staff_leaves").insert({
       staff_id: newLeave.staff_id, leave_type: newLeave.leave_type,
       start_date: newLeave.start_date, end_date: newLeave.end_date,
