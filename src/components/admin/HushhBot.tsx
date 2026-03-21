@@ -420,6 +420,27 @@ function FlameEye({ size, state, side, hovered = false }: { size: number; state:
     );
   }
 
+  if (hovered) {
+    // Scared wide eyes
+    return (
+      <motion.div
+        className="relative rounded-full"
+        style={{ width: size * 1.4, height: size * 2, background: "#1a0e05" }}
+        animate={{ scale: [1, 1.15, 1] }}
+        transition={{ duration: 0.3, repeat: Infinity }}
+      >
+        <motion.div
+          className="absolute bg-white rounded-full"
+          style={{ width: pupilR * 0.8, height: pupilR * 0.8, top: "12%", right: "15%" }}
+        />
+        <div
+          className="absolute bg-white/50 rounded-full"
+          style={{ width: pupilR * 0.4, height: pupilR * 0.4, bottom: "20%", left: "18%" }}
+        />
+      </motion.div>
+    );
+  }
+
   return (
     <motion.div
       className="relative rounded-full"
@@ -430,7 +451,6 @@ function FlameEye({ size, state, side, hovered = false }: { size: number; state:
       animate={
         state === "thinking" ? { scaleY: [1, 0.1, 1] } :
         state === "listening" ? { scaleY: [1, 1.15, 1] } :
-        // Blink randomly
         { scaleY: [1, 1, 1, 0.1, 1, 1, 1] }
       }
       transition={{
@@ -439,7 +459,6 @@ function FlameEye({ size, state, side, hovered = false }: { size: number; state:
         delay: side === "right" ? 0.1 : 0,
       }}
     >
-      {/* Pupil / highlight */}
       <motion.div
         className="absolute bg-white rounded-full"
         style={{ width: pupilR, height: pupilR, top: "18%", right: "18%" }}
@@ -450,7 +469,6 @@ function FlameEye({ size, state, side, hovered = false }: { size: number; state:
         }
         transition={{ duration: 2, repeat: Infinity }}
       />
-      {/* Tiny secondary highlight */}
       <div
         className="absolute bg-white/60 rounded-full"
         style={{ width: pupilR * 0.5, height: pupilR * 0.5, bottom: "25%", left: "22%" }}
