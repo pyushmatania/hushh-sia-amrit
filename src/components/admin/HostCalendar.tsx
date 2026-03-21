@@ -111,6 +111,7 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [blockedSlots, setBlockedSlots] = useState<Set<string>>(new Set());
+  const [filterPropertyId, setFilterPropertyId] = useState<string>("all");
   const propertyMap = usePropertyMap();
 
   useEffect(() => {
@@ -137,6 +138,24 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
     load();
   }, [year, month]);
 
+  // Apply property filter to bookingMap
+  const filteredBookingMap = useMemo(() => {
+    if (filterPropertyId === "all") return bookingMap;
+    const filtered = new Map<string, BookingEntry[]>();
+    bookingMap.forEach((entries, date) => {
+      const matched = entries.filter(b => b.property_id === filterPropertyId);
+      if (matched.length > 0) filtered.set(date, matched);
+    });
+    return filtered;
+  }, [bookingMap, filterPropertyId]);
+
+  // All unique property IDs from current month bookings
+  const bookedPropertyIds = useMemo(() => {
+    const ids = new Set<string>();
+    bookingMap.forEach(entries => entries.forEach(b => ids.add(b.property_id)));
+    return Array.from(ids);
+  }, [bookingMap]);
+
   // Previous month stats for trend
   const [prevMonthRevenue, setPrevMonthRevenue] = useState(0);
   useEffect(() => {
@@ -150,22 +169,21 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
   }, [year, month]);
 
   const monthStats = useMemo(() => {
-    const allBookings = Array.from(bookingMap.values()).flat();
+    const allBookings = Array.from(filteredBookingMap.values()).flat();
     const totalRevenue = allBookings.reduce((s, b) => s + Number(b.total), 0);
     const totalGuests = allBookings.reduce((s, b) => s + b.guests, 0);
     const totalBookings = allBookings.length;
     const confirmed = allBookings.filter(b => b.status === "confirmed" || b.status === "completed").length;
-    const daysWithBookings = bookingMap.size;
+    const daysWithBookings = filteredBookingMap.size;
     const daysInMonth = getDaysInMonth(year, month);
     const occupancyRate = daysInMonth > 0 ? Math.round((daysWithBookings / daysInMonth) * 100) : 0;
     const avgRevPerBooking = totalBookings > 0 ? Math.round(totalRevenue / totalBookings) : 0;
     const revTrend = prevMonthRevenue > 0 ? Math.round(((totalRevenue - prevMonthRevenue) / prevMonthRevenue) * 100) : 0;
-    // Unique properties
     const uniqueProperties = new Set(allBookings.map(b => b.property_id)).size;
     return { totalRevenue, totalGuests, totalBookings, confirmed, occupancyRate, avgRevPerBooking, daysWithBookings, revTrend, uniqueProperties };
-  }, [bookingMap, year, month, prevMonthRevenue]);
+  }, [filteredBookingMap, year, month, prevMonthRevenue]);
 
-  const selectedBookings = selectedDate ? bookingMap.get(selectedDate) ?? [] : [];
+  const selectedBookings = selectedDate ? filteredBookingMap.get(selectedDate) ?? [] : [];
   const selectedStats = useMemo(() => {
     const revenue = selectedBookings.reduce((s, b) => s + Number(b.total), 0);
     const guests = selectedBookings.reduce((s, b) => s + b.guests, 0);
@@ -199,7 +217,7 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
     });
   };
 
-  const maxBookingsInDay = Math.max(1, ...Array.from(bookingMap.values()).map(b => b.length));
+  const maxBookingsInDay = Math.max(1, ...Array.from(filteredBookingMap.values()).map(b => b.length));
 
   const getPropertyName = (id: string) => propertyMap.get(id)?.name || `Property ${id.slice(0, 6)}`;
   const getPropertyInfo = (id: string) => propertyMap.get(id) || { name: `Property ${id.slice(0, 6)}`, location: "Jeypore", category: "Stays" };
@@ -224,6 +242,35 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
           <span className="text-[9px] text-primary/70">occupied</span>
         </motion.div>
       </div>
+
+      {/* Property Filter */}
+      {bookedPropertyIds.length > 0 && (
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+          <button
+            onClick={() => setFilterPropertyId("all")}
+            className={`shrink-0 px-3 py-1.5 rounded-xl text-[11px] font-bold border transition ${
+              filterPropertyId === "all"
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-secondary/60 text-muted-foreground border-border/60 hover:bg-secondary"
+            }`}
+          >
+            All Properties
+          </button>
+          {bookedPropertyIds.map(pid => (
+            <button
+              key={pid}
+              onClick={() => setFilterPropertyId(pid === filterPropertyId ? "all" : pid)}
+              className={`shrink-0 px-3 py-1.5 rounded-xl text-[11px] font-bold border transition truncate max-w-[140px] ${
+                filterPropertyId === pid
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "bg-secondary/60 text-muted-foreground border-border/60 hover:bg-secondary"
+              }`}
+            >
+              {getPropertyName(pid)}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Monthly Stats */}
       <div className="grid grid-cols-2 gap-2.5">
@@ -288,7 +335,7 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
               {Array.from({ length: daysInMonth }).map((_, i) => {
                 const day = i + 1;
                 const dateStr = formatDate(year, month, day);
-                const dayBookings = bookingMap.get(dateStr) ?? [];
+                const dayBookings = filteredBookingMap.get(dateStr) ?? [];
                 const isToday = dateStr === today;
                 const isSelected = dateStr === selectedDate;
                 const hasBookings = dayBookings.length > 0;
