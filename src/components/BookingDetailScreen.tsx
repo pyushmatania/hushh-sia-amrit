@@ -778,6 +778,42 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
         propertyId={booking.propertyId}
         bookingId={booking.bookingId}
       />
+
+      {/* Booking Photos Gallery */}
+      <AnimatePresence>
+        {showPhotos && (
+          <BookingPhotosSheet
+            open={showPhotos}
+            onClose={() => setShowPhotos(false)}
+            bookingId={booking.bookingId}
+            propertyName={property.name}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Digital Receipt */}
+      <AnimatePresence>
+        {showReceipt && (
+          <ReceiptSheet
+            open={showReceipt}
+            onClose={() => setShowReceipt(false)}
+            booking={booking}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Split Payment */}
+      <AnimatePresence>
+        {showSplit && (
+          <SplitPaymentSheet
+            open={showSplit}
+            onClose={() => setShowSplit(false)}
+            bookingId={booking.bookingId}
+            totalAmount={booking.total}
+            propertyName={property.name}
+          />
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
