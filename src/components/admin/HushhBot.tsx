@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useState, useCallback } from "react";
 
 interface HushhBotProps {
   size?: number;
@@ -7,7 +8,10 @@ interface HushhBotProps {
 
 export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
   const s = size;
+  const [hovered, setHovered] = useState(false);
 
+  const onEnter = useCallback(() => setHovered(true), []);
+  const onLeave = useCallback(() => setHovered(false), []);
   const palette: Record<string, { core: string; bright: string; mid: string; outer: string; deep: string; glow: string }> = {
     idle:      { core: "#FFF8E7", bright: "#FFE082", mid: "#FFB74D", outer: "#FF8F00", deep: "#E65100", glow: "rgba(255,160,0,0.5)" },
     thinking:  { core: "#E3F2FD", bright: "#90CAF9", mid: "#42A5F5", outer: "#1E88E5", deep: "#0D47A1", glow: "rgba(30,136,229,0.5)" },
