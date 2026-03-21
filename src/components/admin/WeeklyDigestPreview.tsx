@@ -43,12 +43,13 @@ export default function WeeklyDigestPreview() {
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}
-      className="rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 p-5"
+      className="relative rounded-[20px] bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl border border-white/40 dark:border-zinc-700/40 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_-8px_rgba(0,0,0,0.3)] overflow-hidden p-5"
     >
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-bold text-zinc-800 dark:text-zinc-100 flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-violet-50 dark:bg-violet-500/10 flex items-center justify-center">
-            <FileBarChart size={14} className="text-violet-600" />
+      <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-3xl opacity-15 bg-violet-400 pointer-events-none" />
+      <div className="relative flex items-center justify-between mb-5">
+        <h3 className="text-[13px] font-bold text-foreground flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center shadow-lg shadow-violet-500/10">
+            <FileBarChart size={15} className="text-white" />
           </div>
           Weekly Digest
         </h3>
