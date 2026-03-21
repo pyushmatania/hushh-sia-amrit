@@ -284,101 +284,112 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
           </AnimatePresence>
         </motion.div>
 
-        {/* Room Allocation Card — Stay properties only */}
+        {/* Room Allocation — Clean stepper style */}
         {isStay && roomInfo && (
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.12 }}
-            className={`rounded-2xl border p-4 ${roomInfo.isOverCapacity ? "border-destructive/40 bg-destructive/5" : "border-border"}`}
+            className={`rounded-2xl border p-4 space-y-4 ${roomInfo.isOverCapacity ? "border-destructive/40 bg-destructive/5" : "border-border"}`}
           >
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
                 <BedDouble size={16} className="text-primary" />
               </div>
               <div>
-                <h4 className="font-semibold text-sm text-foreground">Room Allocation</h4>
-                <p className="text-[10px] text-muted-foreground">{roomInfo.totalRooms} rooms · {ROOM_CAPACITY} guests per room</p>
+                <h4 className="font-semibold text-sm text-foreground">Room & Bed Setup</h4>
+                <p className="text-[10px] text-muted-foreground">{ROOM_CAPACITY} guests per room · {roomInfo.totalRooms} rooms available</p>
               </div>
             </div>
 
-            {/* Room visual */}
-            <div className="flex flex-wrap gap-2 mb-3">
-              {Array.from({ length: roomInfo.totalRooms }).map((_, i) => {
-                const isUsed = i < roomInfo.roomsNeeded;
-                const hasMattress = isUsed && extraMattressCount > 0 && i < extraMattressCount;
-                return (
-                  <div
-                    key={i}
-                    className={`flex-1 min-w-[70px] rounded-xl p-2.5 border text-center transition-all ${
-                      isUsed
-                        ? hasMattress
-                          ? "bg-primary/10 border-primary/30"
-                          : "bg-primary/5 border-primary/20"
-                        : "bg-secondary/50 border-border/50"
-                    }`}
-                  >
-                    <p className="text-lg">🛏️</p>
-                    <p className="text-[10px] font-semibold text-foreground">Room {i + 1}</p>
-                    <p className="text-[9px] text-muted-foreground">
-                      {isUsed ? `${ROOM_CAPACITY} guests` : "Empty"}
-                    </p>
-                    {hasMattress && (
-                      <span className="inline-block mt-1 text-[8px] px-1.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 font-semibold">
-                        +1 mattress
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Summary & suggestion */}
-            <div className="rounded-xl bg-secondary/50 p-3 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">{liveGuests} guests → {roomInfo.roomsNeeded} room{roomInfo.roomsNeeded > 1 ? "s" : ""}</span>
-                {roomInfo.isOverCapacity && (
-                  <span className="text-[10px] font-semibold text-destructive">⚠️ Over capacity</span>
-                )}
-              </div>
-
-              {/* Odd guest mattress suggestion */}
-              {roomInfo.oddGuest > 0 && !roomInfo.isOverCapacity && (
-                <div className="flex items-center justify-between gap-2 pt-2 border-t border-border/40">
-                  <div className="flex-1">
-                    <p className="text-[11px] font-medium text-foreground">
-                      {liveGuests % ROOM_CAPACITY === 1 ? "1 guest" : `${liveGuests % ROOM_CAPACITY} guests`} need{liveGuests % ROOM_CAPACITY === 1 ? "s" : ""} extra mattress
-                    </p>
-                    <p className="text-[10px] text-muted-foreground">₹{EXTRA_MATTRESS_PRICE}/mattress · Max 1 per room</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setExtraMattressCount(Math.max(0, extraMattressCount - 1))}
-                      disabled={extraMattressCount <= 0}
-                      className="w-7 h-7 rounded-full border border-border flex items-center justify-center disabled:opacity-30"
-                    >
-                      <Minus size={12} />
-                    </button>
-                    <span className="text-sm font-bold text-foreground w-4 text-center">{extraMattressCount}</span>
-                    <button
-                      onClick={() => setExtraMattressCount(Math.min(roomInfo.maxMattresses, extraMattressCount + 1))}
-                      disabled={extraMattressCount >= roomInfo.maxMattresses}
-                      className="w-7 h-7 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center disabled:opacity-30"
-                    >
-                      <Plus size={12} />
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Over capacity — suggest fewer guests or more rooms */}
-              {roomInfo.isOverCapacity && (
-                <p className="text-[10px] text-destructive font-medium pt-1">
-                  Only {roomInfo.totalRooms} rooms available ({roomInfo.totalRooms * (ROOM_CAPACITY + 1)} max with mattresses).
-                  Please reduce guests to {roomInfo.totalRooms * (ROOM_CAPACITY + 1)} or fewer.
+            {/* Rooms stepper */}
+            <div className="flex items-center justify-between rounded-xl bg-secondary/50 px-4 py-3">
+              <div>
+                <p className="text-sm font-medium text-foreground">Rooms</p>
+                <p className="text-[10px] text-muted-foreground">
+                  {roomInfo.roomsNeeded} recommended for {liveGuests} guests
                 </p>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <button
+                  onClick={() => {
+                    const newRooms = Math.max(1, roomInfo.roomsNeeded - 1);
+                    const maxGuests = newRooms * ROOM_CAPACITY + Math.min(extraMattressCount, newRooms);
+                    if (liveGuests > maxGuests) return; // can't reduce below what's needed
+                  }}
+                  disabled
+                  className="w-8 h-8 rounded-full border border-border flex items-center justify-center disabled:opacity-30"
+                >
+                  <Minus size={14} className="text-foreground" />
+                </button>
+                <span className="text-lg font-bold text-foreground w-6 text-center">{roomInfo.roomsNeeded}</span>
+                <button
+                  disabled
+                  className="w-8 h-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center disabled:opacity-30"
+                >
+                  <Plus size={14} className="text-primary" />
+                </button>
+              </div>
+            </div>
+
+            {/* Extra mattress stepper */}
+            {!roomInfo.isOverCapacity && (
+              <div className="flex items-center justify-between rounded-xl bg-secondary/50 px-4 py-3">
+                <div>
+                  <p className="text-sm font-medium text-foreground">Extra Mattress</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    ₹{EXTRA_MATTRESS_PRICE}/night · Max 1 per room
+                  </p>
+                  {roomInfo.oddGuest > 0 && extraMattressCount === 0 && (
+                    <p className="text-[10px] text-amber-400 font-medium mt-0.5">
+                      💡 Suggested: {roomInfo.suggestedMattresses} mattress for odd guest
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <button
+                    onClick={() => setExtraMattressCount(Math.max(0, extraMattressCount - 1))}
+                    disabled={extraMattressCount <= 0}
+                    className="w-8 h-8 rounded-full border border-border flex items-center justify-center disabled:opacity-30 active:scale-90 transition-transform"
+                  >
+                    <Minus size={14} className="text-foreground" />
+                  </button>
+                  <span className="text-lg font-bold text-foreground w-6 text-center">{extraMattressCount}</span>
+                  <button
+                    onClick={() => setExtraMattressCount(Math.min(roomInfo.maxMattresses, extraMattressCount + 1))}
+                    disabled={extraMattressCount >= roomInfo.maxMattresses}
+                    className="w-8 h-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center disabled:opacity-30 active:scale-90 transition-transform"
+                  >
+                    <Plus size={14} className="text-primary" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Summary bar */}
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <BedDouble size={12} className="text-primary" />
+              <span>{roomInfo.roomsNeeded} room{roomInfo.roomsNeeded > 1 ? "s" : ""}</span>
+              <span className="text-border">·</span>
+              <Users size={12} />
+              <span>{liveGuests} guests</span>
+              {extraMattressCount > 0 && (
+                <>
+                  <span className="text-border">·</span>
+                  <Layers size={12} className="text-amber-400" />
+                  <span className="text-amber-400 font-medium">{extraMattressCount} mattress (+₹{(extraMattressCount * EXTRA_MATTRESS_PRICE).toLocaleString()})</span>
+                </>
+              )}
+              {roomInfo.isOverCapacity && (
+                <span className="text-destructive font-semibold ml-auto">⚠️ Over capacity</span>
               )}
             </div>
+
+            {roomInfo.isOverCapacity && (
+              <p className="text-[10px] text-destructive font-medium">
+                Only {roomInfo.totalRooms} rooms available. Please reduce to {roomInfo.totalRooms * (ROOM_CAPACITY + 1)} guests max.
+              </p>
+            )}
           </motion.div>
         )}
 
