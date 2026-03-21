@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { ShoppingCart, Clock, CheckCircle2, ChefHat, Loader2, Bell } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { getListingThumbnail } from "@/lib/listing-thumbnails";
 import { playWinJingle } from "@/lib/spin-sounds";
 import { hapticHeavy } from "@/lib/haptics";
 
