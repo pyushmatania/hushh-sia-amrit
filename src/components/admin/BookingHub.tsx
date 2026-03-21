@@ -836,6 +836,13 @@ function BookingCard({ booking: b, index, onNavigate, onStatusChange, conflicts 
             <Users size={11} className="text-muted-foreground shrink-0" />
             <span className="text-[10px] text-muted-foreground">{b.guests}</span>
           </div>
+          {b.rooms_count && b.rooms_count > 0 && (
+            <div className="flex items-center gap-1">
+              <span className="text-[9px] font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded-full">
+                🛏️ {b.rooms_count}R{b.extra_mattresses && b.extra_mattresses > 0 ? ` +${b.extra_mattresses}M` : ""}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Client + Actions */}
