@@ -618,53 +618,108 @@ function BookingCard({ booking: b, index, onNavigate, onStatusChange }: { bookin
 }
 
 function RequestCard({ booking: b, index, updating, onAccept, onReject, onNavigate, timeAgo }: any) {
+  const sc = statusConfig[b.status] || statusConfig.pending;
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: -100 }}
       transition={{ delay: index * 0.03 }}
-      className="rounded-2xl border border-amber-200/60 dark:border-amber-500/20 bg-gradient-to-r from-amber-50/50 to-card dark:from-amber-500/5 dark:to-card p-4"
+      className="rounded-2xl border border-amber-200/60 dark:border-amber-500/20 bg-card overflow-hidden"
     >
-      <div className="flex items-start justify-between mb-3">
-        <div>
-          <p className="text-sm font-bold text-foreground cursor-pointer hover:text-primary transition" onClick={() => onNavigate?.("history", { propertyId: b.property_id })}>{b.propertyName}</p>
-          <p className="text-[10px] text-muted-foreground">#{b.booking_id?.slice(0, 10)} · {timeAgo(b.created_at)}</p>
+      {/* Property Header with Image */}
+      <div className="relative cursor-pointer" onClick={() => onNavigate?.("history", { propertyId: b.property_id })}>
+        {b.propertyImage ? (
+          <div className="h-28 w-full overflow-hidden">
+            <img src={b.propertyImage} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" alt="" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+          </div>
+        ) : (
+          <div className="h-20 w-full bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-500/10 dark:to-orange-500/10 flex items-center justify-center">
+            <Building2 size={28} className="text-amber-400" />
+          </div>
+        )}
+        <div className="absolute bottom-0 left-0 right-0 p-3">
+          <p className="text-sm font-bold text-white drop-shadow-md">{b.propertyName}</p>
+          {b.propertyLocation && (
+            <div className="flex items-center gap-1 mt-0.5">
+              <MapPin size={10} className="text-white/80" />
+              <span className="text-[10px] text-white/80">{b.propertyLocation}</span>
+            </div>
+          )}
         </div>
-        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 capitalize">{b.status}</span>
-      </div>
-
-      <div className="grid grid-cols-2 gap-y-1.5 gap-x-4 mb-3">
-        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground"><CalendarCheck size={12} /> {b.date}</div>
-        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground"><Clock size={12} /> {b.slot}</div>
-        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground"><Users size={12} /> {b.guests} guests</div>
-        <div className="flex items-center gap-1.5 text-[11px] text-foreground font-semibold"><IndianRupee size={12} /> ₹{Number(b.total).toLocaleString()}</div>
-      </div>
-
-      {/* Client */}
-      <div className="flex items-center gap-2 mb-3 pb-3 border-b border-border/40">
-        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center">
-          <span className="text-[9px] font-bold text-primary">{(b.userName || "G").charAt(0)}</span>
+        <div className="absolute top-2 right-2">
+          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100/90 dark:bg-amber-500/80 text-amber-700 dark:text-amber-100 capitalize backdrop-blur-sm">{b.status}</span>
         </div>
-        <button onClick={() => onNavigate?.("clients", { userId: b.user_id })} className="text-[11px] font-medium text-foreground hover:text-primary transition">{b.userName || "Guest"}</button>
       </div>
 
-      <div className="flex gap-2">
-        <button
-          onClick={() => onAccept(b.id)}
-          disabled={updating === b.id}
-          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-semibold hover:bg-emerald-500/20 transition disabled:opacity-50"
-        >
-          {updating === b.id ? <Loader2 size={12} className="animate-spin" /> : <Check size={14} />}
-          Accept
-        </button>
-        <button
-          onClick={() => onReject(b.id)}
-          disabled={updating === b.id}
-          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-destructive/10 text-destructive text-xs font-semibold hover:bg-destructive/20 transition disabled:opacity-50"
-        >
-          <X size={14} /> Reject
-        </button>
+      <div className="p-4">
+        {/* Booking ID & Time */}
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-[10px] text-muted-foreground font-mono">#{b.booking_id?.slice(0, 12)}</p>
+          <p className="text-[10px] text-muted-foreground">{timeAgo(b.created_at)}</p>
+        </div>
+
+        {/* Details Grid */}
+        <div className="grid grid-cols-2 gap-2 mb-3">
+          <div className="rounded-xl bg-secondary/50 p-2.5 flex items-center gap-2">
+            <CalendarCheck size={14} className="text-muted-foreground shrink-0" />
+            <div>
+              <p className="text-[9px] text-muted-foreground">Date</p>
+              <p className="text-[11px] font-semibold text-foreground">{b.date}</p>
+            </div>
+          </div>
+          <div className="rounded-xl bg-secondary/50 p-2.5 flex items-center gap-2">
+            <Clock size={14} className="text-muted-foreground shrink-0" />
+            <div>
+              <p className="text-[9px] text-muted-foreground">Slot</p>
+              <p className="text-[11px] font-semibold text-foreground truncate">{b.slot}</p>
+            </div>
+          </div>
+          <div className="rounded-xl bg-secondary/50 p-2.5 flex items-center gap-2">
+            <Users size={14} className="text-muted-foreground shrink-0" />
+            <div>
+              <p className="text-[9px] text-muted-foreground">Guests</p>
+              <p className="text-[11px] font-semibold text-foreground">{b.guests} people</p>
+            </div>
+          </div>
+          <div className="rounded-xl bg-emerald-50 dark:bg-emerald-500/10 p-2.5 flex items-center gap-2">
+            <IndianRupee size={14} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <div>
+              <p className="text-[9px] text-muted-foreground">Total</p>
+              <p className="text-[11px] font-bold text-emerald-700 dark:text-emerald-300">₹{Number(b.total).toLocaleString()}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Client */}
+        <div className="flex items-center gap-2.5 mb-3 pb-3 border-b border-border/40">
+          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center">
+            <span className="text-[10px] font-bold text-primary">{(b.userName || "G").charAt(0)}</span>
+          </div>
+          <div className="flex-1">
+            <button onClick={() => onNavigate?.("clients", { userId: b.user_id })} className="text-xs font-semibold text-foreground hover:text-primary transition">{b.userName || "Guest"}</button>
+            <p className="text-[9px] text-muted-foreground">Client</p>
+          </div>
+        </div>
+
+        <div className="flex gap-2">
+          <button
+            onClick={() => onAccept(b.id)}
+            disabled={updating === b.id}
+            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-semibold hover:bg-emerald-500/20 transition disabled:opacity-50"
+          >
+            {updating === b.id ? <Loader2 size={12} className="animate-spin" /> : <Check size={14} />}
+            Accept
+          </button>
+          <button
+            onClick={() => onReject(b.id)}
+            disabled={updating === b.id}
+            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-destructive/10 text-destructive text-xs font-semibold hover:bg-destructive/20 transition disabled:opacity-50"
+          >
+            <X size={14} /> Reject
+          </button>
+        </div>
       </div>
     </motion.div>
   );
