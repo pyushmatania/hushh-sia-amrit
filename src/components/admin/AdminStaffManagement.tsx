@@ -39,7 +39,15 @@ type SalaryPayment = {
   notes: string; payment_method: string;
 };
 
-type Tab = "roster" | "attendance" | "salary" | "performance" | "details";
+type StaffLeave = {
+  id: string; staff_id: string; leave_type: string;
+  start_date: string; end_date: string; days: number;
+  reason: string; status: string; approved_by: string | null;
+  approved_at: string | null; rejection_note: string;
+  created_at: string;
+};
+
+type Tab = "roster" | "attendance" | "salary" | "leaves" | "performance" | "details";
 
 const ROLE_ICONS: Record<string, typeof Users> = {
   chef: ChefHat, cook: UtensilsCrossed, driver: Car,
