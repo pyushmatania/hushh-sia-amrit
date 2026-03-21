@@ -167,7 +167,9 @@ export default function BookingHub({
 
   const uniqueProperties = useMemo(() =>
     Array.from(new Set(bookings.map(b => b.property_id))).map(id => ({
-      id, name: propertyMap.get(id)?.name || `Property ${id.slice(0, 6)}`,
+      id,
+      name: propertyMap.get(id)?.name || `Property ${id.slice(0, 6)}`,
+      image: propertyMap.get(id)?.image || "",
     })),
   [bookings, propertyMap]);
 
