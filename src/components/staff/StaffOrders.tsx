@@ -1,16 +1,18 @@
 import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { ShoppingCart, Clock, CheckCircle2, ChefHat, Loader2, Bell } from "lucide-react";
+import { ShoppingCart, Clock, CheckCircle2, ChefHat, Loader2, Bell, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { getListingThumbnail } from "@/lib/listing-thumbnails";
 import { playWinJingle } from "@/lib/spin-sounds";
 import { hapticHeavy } from "@/lib/haptics";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface Order {
   id: string; user_id: string; property_id: string; booking_id: string | null;
   total: number; status: string; created_at: string;
   items?: { item_name: string; item_emoji: string; quantity: number; unit_price: number }[];
   propertyName?: string; propertyImageUrls?: string[];
+  guestName?: string; guestAvatar?: string | null;
 }
 const statusFlow = ["pending", "preparing", "delivered", "completed"];
 const statusConfig: Record<string, { color: string; bg: string; label: string }> = {
@@ -27,10 +29,11 @@ export default function StaffOrders() {
   const initialLoadDone = useRef(false);
 
   const loadOrders = async () => {
-    const [ordersRes, itemsRes, listingsRes] = await Promise.all([
+    const [ordersRes, itemsRes, listingsRes, profilesRes] = await Promise.all([
       supabase.from("orders").select("*").order("created_at", { ascending: false }).limit(50),
       supabase.from("order_items").select("*"),
       supabase.from("host_listings").select("id, name, image_urls"),
+      supabase.from("profiles").select("user_id, display_name, avatar_url"),
     ]);
     if (!ordersRes.data) { setLoading(false); return; }
 
@@ -45,13 +48,19 @@ export default function StaffOrders() {
     const listingMap = new Map<string, { name: string; imageUrls: string[] }>();
     (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, { name: l.name, imageUrls: l.image_urls || [] }));
 
+    const profileMap = new Map<string, { name: string; avatar: string | null }>();
+    (profilesRes.data ?? []).forEach(p => profileMap.set(p.user_id, { name: p.display_name || "Guest", avatar: p.avatar_url }));
+
     setOrders(ordersRes.data.map(o => {
       const listing = listingMap.get(o.property_id);
+      const profile = profileMap.get(o.user_id);
       return {
         ...o,
         items: itemMap.get(o.id) || [],
         propertyName: listing?.name || "Property",
         propertyImageUrls: listing?.imageUrls || [],
+        guestName: profile?.name || "Guest",
+        guestAvatar: profile?.avatar || null,
       };
     }));
     setLoading(false);
@@ -162,6 +171,22 @@ export default function StaffOrders() {
                       {new Date(order.created_at).toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit" })}
                     </p>
                   </div>
+                </div>
+
+                {/* Guest info */}
+                <div className="flex items-center gap-2 mb-3 px-1">
+                  <Avatar className="h-6 w-6">
+                    {order.guestAvatar ? (
+                      <AvatarImage src={order.guestAvatar} alt={order.guestName} />
+                    ) : null}
+                    <AvatarFallback className="text-[10px] bg-primary/10 text-primary font-bold">
+                      {(order.guestName || "G")[0].toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-xs text-foreground font-medium truncate">{order.guestName}</span>
+                  {order.booking_id && (
+                    <span className="text-[10px] text-muted-foreground ml-auto">🔑 {order.booking_id.slice(0, 8)}</span>
+                  )}
                 </div>
 
                 <div className="space-y-1.5 mb-3">
