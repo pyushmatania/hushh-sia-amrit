@@ -148,7 +148,7 @@ export default function Admin() {
       />;
       case "inventory": return <AdminInventory />;
       case "staff-mgmt": return <AdminStaffManagement />;
-      case "budget": return <AdminBudgetTracker />;
+      case "budget": return <FinanceHub />;
       case "audit": return <AdminAuditLog />;
       default: return <CommandCenter onNavigate={setPage} />;
     }
