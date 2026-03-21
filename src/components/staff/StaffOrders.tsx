@@ -29,10 +29,11 @@ export default function StaffOrders() {
   const initialLoadDone = useRef(false);
 
   const loadOrders = async () => {
-    const [ordersRes, itemsRes, listingsRes] = await Promise.all([
+    const [ordersRes, itemsRes, listingsRes, profilesRes] = await Promise.all([
       supabase.from("orders").select("*").order("created_at", { ascending: false }).limit(50),
       supabase.from("order_items").select("*"),
       supabase.from("host_listings").select("id, name, image_urls"),
+      supabase.from("profiles").select("user_id, display_name, avatar_url"),
     ]);
     if (!ordersRes.data) { setLoading(false); return; }
 
@@ -47,13 +48,19 @@ export default function StaffOrders() {
     const listingMap = new Map<string, { name: string; imageUrls: string[] }>();
     (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, { name: l.name, imageUrls: l.image_urls || [] }));
 
+    const profileMap = new Map<string, { name: string; avatar: string | null }>();
+    (profilesRes.data ?? []).forEach(p => profileMap.set(p.user_id, { name: p.display_name || "Guest", avatar: p.avatar_url }));
+
     setOrders(ordersRes.data.map(o => {
       const listing = listingMap.get(o.property_id);
+      const profile = profileMap.get(o.user_id);
       return {
         ...o,
         items: itemMap.get(o.id) || [],
         propertyName: listing?.name || "Property",
         propertyImageUrls: listing?.imageUrls || [],
+        guestName: profile?.name || "Guest",
+        guestAvatar: profile?.avatar || null,
       };
     }));
     setLoading(false);
