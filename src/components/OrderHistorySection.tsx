@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { ShoppingBag, Clock, ChevronRight, Package } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import OrderNotes from "@/components/shared/OrderNotes";
 import { useAuth } from "@/hooks/use-auth";
 
 interface OrderRow {
@@ -178,6 +179,9 @@ export default function OrderHistorySection() {
                       <div className="border-t border-foreground/[0.06] pt-1.5 flex justify-between text-xs">
                         <span className="text-muted-foreground">Total</span>
                         <span className="font-bold text-foreground">₹{order.total}</span>
+                      </div>
+                      <div className="border-t border-foreground/[0.06] pt-3 mt-2">
+                        <OrderNotes orderId={order.id} authorName={user?.email?.split("@")[0] || "Guest"} authorRole="guest" />
                       </div>
                     </motion.div>
                   )}
