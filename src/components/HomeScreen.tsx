@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
+import LazySection from "./home/LazySection";
 import { Bell, MapPin, ArrowRight } from "lucide-react";
 import { hapticSelection } from "@/lib/haptics";
 import PullToRefresh from "./PullToRefresh";
@@ -243,31 +244,44 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 ))}
               </div>
 
-              <SectionDivider title="PLAY YOUR GAME" />
-              <SportsCards properties={properties} onPropertyTap={onPropertyTap} />
+              <LazySection minHeight="300px">
+                <SectionDivider title="PLAY YOUR GAME" />
+                <SportsCards properties={properties} onPropertyTap={onPropertyTap} />
+              </LazySection>
 
-              <SectionDivider title="FOODIE FRONT ROW" />
-              <FoodieCarousel properties={properties} onPropertyTap={onPropertyTap} />
+              <LazySection minHeight="500px">
+                <SectionDivider title="FOODIE FRONT ROW" />
+                <FoodieCarousel properties={properties} onPropertyTap={onPropertyTap} />
+              </LazySection>
 
-              <SectionDivider title="COUPLE SPECIALS 💑" />
-              <CoupleSpecials properties={properties} onPropertyTap={onPropertyTap} />
+              <LazySection minHeight="200px">
+                <SectionDivider title="COUPLE SPECIALS 💑" />
+                <CoupleSpecials properties={properties} onPropertyTap={onPropertyTap} />
+              </LazySection>
 
-              <SectionDivider title="UPCOMING EVENTS" />
-              <UpcomingEvents properties={properties} onPropertyTap={onPropertyTap} />
+              <LazySection minHeight="200px">
+                <SectionDivider title="UPCOMING EVENTS" />
+                <UpcomingEvents properties={properties} onPropertyTap={onPropertyTap} />
+              </LazySection>
 
-              <SectionDivider title="WHAT'S HOT ON HUSHH" />
-              <WhatsHotGrid properties={properties} onPropertyTap={onPropertyTap} />
+              <LazySection minHeight="200px">
+                <SectionDivider title="WHAT'S HOT ON HUSHH" />
+                <WhatsHotGrid properties={properties} onPropertyTap={onPropertyTap} />
+              </LazySection>
 
-              <SectionDivider title="BLOCKBUSTER RELEASE" />
-              <BlockbusterBanner properties={properties} onPropertyTap={onPropertyTap} />
+              <LazySection minHeight="200px">
+                <SectionDivider title="BLOCKBUSTER RELEASE" />
+                <BlockbusterBanner properties={properties} onPropertyTap={onPropertyTap} />
+              </LazySection>
 
-              {/* ✨ Curated Packs — Bottom of Home */}
-              <SectionDivider title="✨ CURATED PACKS" />
-              <div className="space-y-5 pb-2">
-                {filteredPacks.slice(0, 4).map((pack, i) => (
-                  <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
-                ))}
-              </div>
+              <LazySection minHeight="400px">
+                <SectionDivider title="✨ CURATED PACKS" />
+                <div className="space-y-5 pb-2">
+                  {filteredPacks.slice(0, 4).map((pack, i) => (
+                    <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
+                  ))}
+                </div>
+              </LazySection>
             </>
           )}
 

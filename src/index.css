@@ -259,3 +259,34 @@
   85% { transform: scale(0.995) rotate(0deg); }
   100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
+
+/* Category icon CSS animations — replaces framer-motion */
+.category-icon {
+  transition: filter 0.3s ease, opacity 0.2s ease, transform 0.3s ease;
+  will-change: transform;
+}
+.category-icon-active {
+  animation: catBounce 0.5s ease-out;
+  filter: drop-shadow(0 0 6px hsla(270, 80%, 65%, 0.5));
+}
+@keyframes catBounce {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.18) rotate(-3deg); }
+  50% { transform: scale(0.95) rotate(2deg); }
+  70% { transform: scale(1.08) rotate(-1deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+.category-icon:active {
+  transform: scale(1.15);
+}
+.cat-underline {
+  animation: catSlide 0.3s ease-out;
+}
+@keyframes catSlide {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.shimmer-bg {
+  background: linear-gradient(90deg, transparent 0%, hsl(var(--foreground) / 0.06) 50%, transparent 100%);
+  animation: shimmer 1.5s infinite;
+}
