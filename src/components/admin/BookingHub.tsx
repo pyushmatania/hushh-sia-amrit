@@ -3,11 +3,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   CalendarCheck, Search, CheckCircle2, Clock, Ban, ChevronRight, Users, IndianRupee,
   Inbox, Check, X, Loader2, TrendingUp, TrendingDown, BarChart3, PieChart,
-  ArrowUpRight, ArrowDownRight, MapPin, Star, Filter, Eye, Building2, Activity
+  ArrowUpRight, ArrowDownRight, MapPin, Star, Filter, Eye, Building2, Activity,
+  CalendarIcon
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart as RPieChart, Pie, Cell } from "recharts";
 
 interface Booking {
