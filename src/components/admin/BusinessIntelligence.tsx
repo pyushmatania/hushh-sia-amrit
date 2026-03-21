@@ -103,6 +103,7 @@ export default function BusinessIntelligence({ onNavigate }: { onNavigate?: (pag
   const [predictions, setPredictions] = useState<Predictions | null>(null);
   const [slots, setSlots] = useState<SlotDemand[]>([]);
   const [propertyDemand, setPropertyDemand] = useState<PropertyDemand[]>([]);
+  const [weeklyTrends, setWeeklyTrends] = useState<WeeklyDay[]>([]);
   const [loadingAlerts, setLoadingAlerts] = useState(true);
   const [loadingPricing, setLoadingPricing] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
