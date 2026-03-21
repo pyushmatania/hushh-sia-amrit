@@ -3,6 +3,22 @@ import { useEffect, useState } from "react";
 import splashEvening from "@/assets/splash-jeypore-evening.jpg";
 import splashDay from "@/assets/splash-jeypore-day.jpg";
 
+// Preload 3D category icons so they're cached before home screen renders
+import iconHome from "@/assets/icon-home.png";
+import iconStays from "@/assets/icon-stays-new.png";
+import iconExperiences from "@/assets/icon-experiences-new.png";
+import iconServices from "@/assets/icon-services-new.png";
+import iconCurations from "@/assets/icon-curations.png";
+import icon3dPickleball from "@/assets/icon-3d-pickleball.png";
+import icon3dBadminton from "@/assets/icon-3d-badminton.png";
+import icon3dArchery from "@/assets/icon-3d-archery.png";
+import icon3dSwimming from "@/assets/icon-3d-swimming.png";
+
+const preloadIcons = [
+  iconHome, iconStays, iconExperiences, iconServices, iconCurations,
+  icon3dPickleball, icon3dBadminton, icon3dArchery, icon3dSwimming,
+];
+
 function getTimeGreeting() {
   const hour = new Date().getHours();
   if (hour >= 5 && hour < 12) return { greeting: "Good Morning", emoji: "☀️", bg: splashDay };
