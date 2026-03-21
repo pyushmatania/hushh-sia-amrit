@@ -740,6 +740,15 @@ function BookingCard({ booking: b, index, onNavigate, onStatusChange, conflicts 
         </div>
       </div>
 
+      {hasConflict && (
+        <div className="px-3 py-2 bg-destructive/10 border-b border-destructive/20 flex items-center gap-2">
+          <AlertTriangle size={12} className="text-destructive shrink-0" />
+          <p className="text-[10px] font-medium text-destructive">
+            ⚠️ Conflicts with {conflicts.length} other booking{conflicts.length > 1 ? "s" : ""} — same property, date & slot
+          </p>
+        </div>
+      )}
+
       <div className="p-3.5">
         {/* Booking ID + Amount */}
         <div className="flex items-center justify-between mb-2">
