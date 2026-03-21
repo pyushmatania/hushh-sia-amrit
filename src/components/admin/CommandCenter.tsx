@@ -324,6 +324,67 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
       ),
     },
     {
+      id: "financial-summary",
+      label: "Finance",
+      render: () => {
+        const monthlyExpenses = [
+          { month: "Jan", expenses: 45000, revenue: 62000 },
+          { month: "Feb", expenses: 52000, revenue: 71000 },
+          { month: "Mar", expenses: 48000, revenue: 85000 },
+          { month: "Apr", expenses: 55000, revenue: 78000 },
+          { month: "May", expenses: 41000, revenue: 69000 },
+          { month: "Jun", expenses: 58000, revenue: 92000 },
+        ];
+        const totalRev = monthlyExpenses.reduce((s, m) => s + m.revenue, 0);
+        const totalExp = monthlyExpenses.reduce((s, m) => s + m.expenses, 0);
+        const netProfit = totalRev - totalExp;
+        const margin = totalRev > 0 ? ((netProfit / totalRev) * 100).toFixed(1) : "0";
+        return (
+          <div className="rounded-2xl bg-card border border-border/60 p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Wallet size={14} className="text-primary" />
+                <span className="text-xs font-semibold text-foreground">Financial Summary</span>
+                <span className="text-[9px] text-muted-foreground">6 months</span>
+              </div>
+              <button onClick={() => onNavigate?.("budget")} className="text-[10px] text-primary font-medium hover:underline flex items-center gap-0.5">
+                Details <ChevronRight size={10} />
+              </button>
+            </div>
+            <div className="grid grid-cols-3 gap-2 mb-4">
+              <div className="rounded-xl bg-emerald-500/10 p-2.5 text-center">
+                <p className="text-[9px] text-muted-foreground font-medium">Revenue</p>
+                <p className="text-sm font-bold text-emerald-600">₹{(totalRev / 1000).toFixed(0)}K</p>
+              </div>
+              <div className="rounded-xl bg-rose-500/10 p-2.5 text-center">
+                <p className="text-[9px] text-muted-foreground font-medium">Expenses</p>
+                <p className="text-sm font-bold text-rose-500">₹{(totalExp / 1000).toFixed(0)}K</p>
+              </div>
+              <div className={`rounded-xl p-2.5 text-center ${netProfit >= 0 ? "bg-emerald-500/10" : "bg-rose-500/10"}`}>
+                <p className="text-[9px] text-muted-foreground font-medium">Net Profit</p>
+                <p className={`text-sm font-bold ${netProfit >= 0 ? "text-emerald-600" : "text-rose-500"}`}>
+                  {netProfit >= 0 ? "+" : ""}₹{(netProfit / 1000).toFixed(0)}K
+                </p>
+                <p className="text-[8px] text-muted-foreground">{margin}% margin</p>
+              </div>
+            </div>
+            <div className="h-[160px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={monthlyExpenses} barGap={2}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} strokeOpacity={0.5} />
+                  <XAxis dataKey="month" tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={35} tickFormatter={(v: number) => `${(v/1000).toFixed(0)}K`} />
+                  <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 12, fontSize: 11, boxShadow: "0 8px 30px -8px rgba(0,0,0,0.12)", padding: "8px 12px" }} formatter={(value: number) => [`₹${value.toLocaleString("en-IN")}`, ""]} />
+                  <Bar dataKey="revenue" fill="hsl(152, 69%, 40%)" radius={[4, 4, 0, 0]} name="Revenue" />
+                  <Bar dataKey="expenses" fill="hsl(0, 72%, 51%)" radius={[4, 4, 0, 0]} name="Expenses" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        );
+      },
+    },
+    {
       id: "top-properties",
       label: "Top Properties",
       render: () => (
