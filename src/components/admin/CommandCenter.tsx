@@ -433,7 +433,7 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
             </div>
             <div className="h-[160px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={monthlyExpenses} barGap={2}>
+                <BarChart data={fData} barGap={2}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} strokeOpacity={0.5} />
                   <XAxis dataKey="month" tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={35} tickFormatter={(v: number) => `${(v/1000).toFixed(0)}K`} />
