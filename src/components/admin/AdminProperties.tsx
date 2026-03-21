@@ -4,7 +4,8 @@ import {
   Building2, Search, Plus, Trash2, Pause, Play, Pencil,
   X, Upload, Image, MapPin, DollarSign, Users, Tag, Star,
   Clock, ChevronDown, ChevronRight, Eye, Copy, MoreHorizontal,
-  Sparkles, Filter, LayoutGrid, LayoutList, Hash, GripVertical, CheckSquare
+  Sparkles, Filter, LayoutGrid, LayoutList, Hash, GripVertical, CheckSquare,
+  Shield, Zap, Globe, Camera, Layers, BarChart3, Info
 } from "lucide-react";
 import { useDragReorder } from "@/hooks/use-drag-reorder";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import SwipeableRow from "./SwipeableRow";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
 import BatchOperationsBar from "./BatchOperationsBar";
+import { getListingThumbnail } from "@/lib/listing-thumbnails";
 
 interface Listing {
   id: string;
@@ -388,13 +390,16 @@ export default function AdminProperties() {
               className="rounded-2xl border border-border bg-card overflow-hidden cursor-pointer hover:shadow-lg hover:border-primary/20 transition-all group"
               onClick={() => openEdit(listing)}>
               <div className="aspect-[4/3] bg-secondary relative overflow-hidden">
-                {listing.image_urls?.[0] ? (
-                  <img src={listing.image_urls[0]} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-500/5 dark:to-violet-500/5">
-                    <Building2 size={28} className="text-muted-foreground/30" />
-                  </div>
-                )}
+                {(() => {
+                  const thumb = getListingThumbnail(listing.name, listing.image_urls);
+                  return thumb ? (
+                    <img src={thumb} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-500/5 dark:to-violet-500/5">
+                      <Building2 size={28} className="text-muted-foreground/30" />
+                    </div>
+                  );
+                })()}
                 <span className={`absolute top-2 right-2 text-[9px] font-bold px-2 py-0.5 rounded-full capitalize border backdrop-blur-sm ${statusColors[listing.status] || statusColors.draft}`}>
                   {listing.status}
                 </span>
@@ -452,13 +457,16 @@ export default function AdminProperties() {
                   </button>
                 )}
                 <div className="w-[72px] h-[72px] rounded-xl bg-secondary shrink-0 overflow-hidden shadow-sm">
-                  {listing.image_urls?.[0] ? (
-                    <img src={listing.image_urls[0]} alt="" className="w-full h-full object-cover" loading="lazy" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-violet-100 dark:from-indigo-500/15 dark:to-violet-500/10">
-                      <Building2 size={24} className="text-indigo-400/60" />
-                    </div>
-                  )}
+                  {(() => {
+                    const thumb = getListingThumbnail(listing.name, listing.image_urls);
+                    return thumb ? (
+                      <img src={thumb} alt="" className="w-full h-full object-cover" loading="lazy" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-violet-100 dark:from-indigo-500/15 dark:to-violet-500/10">
+                        <Building2 size={24} className="text-indigo-400/60" />
+                      </div>
+                    );
+                  })()}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
@@ -522,44 +530,79 @@ export default function AdminProperties() {
               className="absolute right-0 top-0 bottom-0 w-full max-w-lg bg-card border-l border-border overflow-y-auto"
               onClick={e => e.stopPropagation()}>
 
-              {/* Sheet Header */}
-              <div className="sticky top-0 z-10 bg-card/95 backdrop-blur-sm border-b border-border p-4 flex items-center justify-between">
-                <div>
-                  <h2 className="text-lg font-bold text-foreground">{isCreating ? "New Property" : "Edit Property"}</h2>
-                  <p className="text-xs text-muted-foreground">{isCreating ? "Fill in the details" : editingListing.name}</p>
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setPreviewMode(!previewMode)}
-                    className={`px-3 py-2 rounded-xl text-sm font-medium active:scale-95 transition flex items-center gap-1.5 ${
-                      previewMode ? "bg-primary/15 text-primary" : "bg-secondary text-foreground hover:bg-secondary/80"
-                    }`}
-                  >
-                    <Eye size={14} /> {previewMode ? "Edit" : "Preview"}
-                  </button>
-                  <button onClick={saveListing}
-                    className="px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 active:scale-95 transition">
-                    {isCreating ? "Create" : "Save"}
-                  </button>
-                  <button onClick={() => { setEditingListing(null); setPreviewMode(false); }} className="p-2 rounded-xl hover:bg-secondary transition">
-                    <X size={18} className="text-muted-foreground" />
-                  </button>
+              {/* Hero Header with Image */}
+              <div className="relative">
+                {(() => {
+                  const thumb = getListingThumbnail(editingListing.name || "", editingListing.image_urls);
+                  return thumb ? (
+                    <div className="h-48 overflow-hidden relative">
+                      <img src={thumb} alt="" className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent" />
+                    </div>
+                  ) : (
+                    <div className="h-32 bg-gradient-to-br from-indigo-500/20 to-violet-500/10 relative">
+                      <div className="absolute inset-0 bg-gradient-to-t from-card to-transparent" />
+                    </div>
+                  );
+                })()}
+                <div className="absolute bottom-0 left-0 right-0 p-4">
+                  <div className="flex items-end justify-between">
+                    <div>
+                      <h2 className="text-xl font-bold text-foreground">{isCreating ? "New Property" : "Edit Property"}</h2>
+                      <p className="text-xs text-muted-foreground mt-0.5">{isCreating ? "Fill in all the details below" : editingListing.name}</p>
+                    </div>
+                    <div className="flex gap-1.5">
+                      <motion.button whileTap={{ scale: 0.95 }}
+                        onClick={() => setPreviewMode(!previewMode)}
+                        className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                          previewMode ? "bg-primary/15 text-primary border border-primary/30" : "bg-card/80 backdrop-blur-sm text-foreground border border-border"
+                        }`}>
+                        <Eye size={13} /> Preview
+                      </motion.button>
+                      <motion.button whileTap={{ scale: 0.95 }}
+                        onClick={saveListing}
+                        className="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white text-xs font-semibold shadow-lg shadow-indigo-200/30 dark:shadow-indigo-900/30">
+                        Save
+                      </motion.button>
+                      <button onClick={() => { setEditingListing(null); setPreviewMode(false); }}
+                        className="p-2 rounded-xl bg-card/80 backdrop-blur-sm border border-border hover:bg-secondary transition">
+                        <X size={16} className="text-muted-foreground" />
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
 
+              {/* Status Bar */}
+              {!isCreating && (
+                <div className="px-4 py-2.5 border-b border-border flex items-center gap-3">
+                  <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full capitalize border ${statusColors[editingListing.status || "draft"] || statusColors.draft}`}>
+                    {editingListing.status || "draft"}
+                  </span>
+                  <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                    {editingListing.rating ? <span className="flex items-center gap-0.5"><Star size={10} className="text-amber-400 fill-amber-400" /> {editingListing.rating}</span> : null}
+                    <span className="flex items-center gap-0.5"><Users size={10} /> {editingListing.capacity || 0}</span>
+                    <span className="flex items-center gap-0.5"><MapPin size={10} /> {editingListing.location || "—"}</span>
+                  </div>
+                  <span className="ml-auto text-[10px] text-muted-foreground/60 capitalize">{editingListing.property_type || editingListing.category}</span>
+                </div>
+              )}
+
               {previewMode ? (
                 <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="p-4 space-y-4">
-                  {/* Property Preview Card */}
                   <div className="rounded-2xl border border-border bg-background overflow-hidden">
                     <div className="aspect-[16/10] bg-secondary relative overflow-hidden">
-                      {(editingListing.image_urls || []).length > 0 ? (
-                        <img src={editingListing.image_urls![0]} alt="" className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Building2 size={40} className="text-muted-foreground/30" />
-                          <p className="absolute bottom-3 text-xs text-muted-foreground">No images added yet</p>
-                        </div>
-                      )}
+                      {(() => {
+                        const thumb = getListingThumbnail(editingListing.name || "", editingListing.image_urls);
+                        return thumb ? (
+                          <img src={thumb} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <Building2 size={40} className="text-muted-foreground/30" />
+                            <p className="absolute bottom-3 text-xs text-muted-foreground">No images added yet</p>
+                          </div>
+                        );
+                      })()}
                       {editingListing.discount_label && (
                         <span className="absolute top-3 left-3 bg-destructive text-destructive-foreground text-[10px] font-bold px-2.5 py-1 rounded-full">
                           {editingListing.discount_label}
@@ -597,18 +640,30 @@ export default function AdminProperties() {
                           {editingListing.amenities!.length > 6 && <span className="text-[10px] text-muted-foreground">+{editingListing.amenities!.length - 6}</span>}
                         </div>
                       )}
-                      {(editingListing.tags || []).length > 0 && (
-                        <div className="flex flex-wrap gap-1.5">
-                          {editingListing.tags!.map(t => (
-                            <span key={t} className="text-[10px] bg-secondary text-muted-foreground px-2 py-0.5 rounded">{t}</span>
-                          ))}
-                        </div>
-                      )}
                     </div>
                   </div>
                 </motion.div>
               ) : (
-              <div className="p-4 space-y-4">
+              <div className="p-4 space-y-3">
+
+                {/* Quick Stats (edit mode) */}
+                {!isCreating && (
+                  <div className="grid grid-cols-4 gap-2">
+                    {[
+                      { label: "Price", value: `₹${(editingListing.base_price || 0).toLocaleString()}`, icon: DollarSign, color: "text-emerald-500" },
+                      { label: "Capacity", value: editingListing.capacity || 0, icon: Users, color: "text-blue-500" },
+                      { label: "Rating", value: editingListing.rating || "—", icon: Star, color: "text-amber-500" },
+                      { label: "Slots", value: (Array.isArray(editingListing.slots) ? editingListing.slots : []).length, icon: Clock, color: "text-violet-500" },
+                    ].map(s => (
+                      <div key={s.label} className="rounded-xl bg-secondary/50 border border-border/50 p-2.5 text-center">
+                        <s.icon size={14} className={`mx-auto mb-1 ${s.color}`} />
+                        <p className="text-sm font-bold text-foreground tabular-nums">{s.value}</p>
+                        <p className="text-[9px] text-muted-foreground uppercase tracking-wider">{s.label}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 {/* Basic Info */}
                 <EditSection title="Basic Info" icon={<Building2 size={16} />} id="basic" expanded={expandedSection} onToggle={setExpandedSection}>
                   <div className="space-y-3">
@@ -620,26 +675,26 @@ export default function AdminProperties() {
                     </Field>
                     <Field label="Full Description">
                       <textarea value={editingListing.full_description || ""} onChange={e => setEditingListing(p => ({ ...p!, full_description: e.target.value }))}
-                        className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm min-h-[80px] focus:ring-2 focus:ring-ring"
-                        placeholder="Detailed description..." />
+                        className="w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm min-h-[100px] focus:ring-2 focus:ring-ring resize-none"
+                        placeholder="Detailed description of the property..." />
                     </Field>
                     <div className="grid grid-cols-2 gap-3">
                       <Field label="Category">
                         <select value={editingListing.category || "Stays"} onChange={e => setEditingListing(p => ({ ...p!, category: e.target.value }))}
-                          className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm">
+                          className="w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm">
                           {categoryOptions.map(c => <option key={c} value={c}>{c}</option>)}
                         </select>
                       </Field>
                       <Field label="Primary Category">
                         <select value={editingListing.primary_category || "stay"} onChange={e => setEditingListing(p => ({ ...p!, primary_category: e.target.value }))}
-                          className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm">
+                          className="w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm">
                           {primaryCategoryOptions.map(c => <option key={c} value={c}>{c}</option>)}
                         </select>
                       </Field>
                     </div>
                     <Field label="Property Type">
                       <select value={editingListing.property_type || ""} onChange={e => setEditingListing(p => ({ ...p!, property_type: e.target.value }))}
-                        className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm">
+                        className="w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm">
                         <option value="">Select type</option>
                         {propertyTypeOptions.map(t => <option key={t} value={t}>{t}</option>)}
                       </select>
@@ -647,7 +702,7 @@ export default function AdminProperties() {
                     <div className="grid grid-cols-2 gap-3">
                       <Field label="Status">
                         <select value={editingListing.status || "draft"} onChange={e => setEditingListing(p => ({ ...p!, status: e.target.value }))}
-                          className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm">
+                          className="w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm">
                           <option value="draft">Draft</option>
                           <option value="published">Published</option>
                           <option value="paused">Paused</option>
@@ -660,59 +715,29 @@ export default function AdminProperties() {
                   </div>
                 </EditSection>
 
-                {/* Pricing & Capacity */}
-                <EditSection title="Pricing & Capacity" icon={<DollarSign size={16} />} id="pricing" expanded={expandedSection} onToggle={setExpandedSection}>
+                {/* Media Gallery */}
+                <EditSection title="Media Gallery" icon={<Camera size={16} />} id="images" expanded={expandedSection} onToggle={setExpandedSection}>
                   <div className="space-y-3">
-                    <div className="grid grid-cols-2 gap-3">
-                      <Field label="Base Price (₹)">
-                        <Input type="number" value={editingListing.base_price ?? ""} onChange={e => setEditingListing(p => ({ ...p!, base_price: parseNumberInput(e.target.value) }))} />
-                      </Field>
-                      <Field label="Capacity">
-                        <Input type="number" value={editingListing.capacity ?? ""} onChange={e => setEditingListing(p => ({ ...p!, capacity: parseNumberInput(e.target.value) }))} />
-                      </Field>
-                    </div>
-                    <Field label="Discount Label">
-                      <Input value={editingListing.discount_label || ""} onChange={e => setEditingListing(p => ({ ...p!, discount_label: e.target.value }))} placeholder="20% OFF this week" />
-                    </Field>
-                    <div className="grid grid-cols-2 gap-3">
-                      <Field label="Rating">
-                        <Input type="number" step="0.1" min="0" max="5" value={editingListing.rating ?? ""} onChange={e => setEditingListing(p => ({ ...p!, rating: parseNumberInput(e.target.value) }))} />
-                      </Field>
-                      <Field label="Review Count">
-                        <Input type="number" value={editingListing.review_count ?? ""} onChange={e => setEditingListing(p => ({ ...p!, review_count: parseNumberInput(e.target.value) }))} />
-                      </Field>
-                    </div>
-                  </div>
-                </EditSection>
-
-                {/* Location */}
-                <EditSection title="Location" icon={<MapPin size={16} />} id="location" expanded={expandedSection} onToggle={setExpandedSection}>
-                  <div className="space-y-3">
-                    <Field label="Location">
-                      <Input value={editingListing.location || ""} onChange={e => setEditingListing(p => ({ ...p!, location: e.target.value }))} placeholder="Jeypore, Odisha" />
-                    </Field>
-                    <div className="grid grid-cols-2 gap-3">
-                      <Field label="Latitude">
-                        <Input type="number" step="0.001" value={editingListing.lat ?? ""} onChange={e => setEditingListing(p => ({ ...p!, lat: parseNumberInput(e.target.value) }))} />
-                      </Field>
-                      <Field label="Longitude">
-                        <Input type="number" step="0.001" value={editingListing.lng ?? ""} onChange={e => setEditingListing(p => ({ ...p!, lng: parseNumberInput(e.target.value) }))} />
-                      </Field>
-                    </div>
-                    <Field label="Entry Instructions">
-                      <textarea value={editingListing.entry_instructions || ""} onChange={e => setEditingListing(p => ({ ...p!, entry_instructions: e.target.value }))}
-                        className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm min-h-[60px] focus:ring-2 focus:ring-ring"
-                        placeholder="How to reach the property..." />
-                    </Field>
-                  </div>
-                </EditSection>
-
-                {/* Images */}
-                <EditSection title="Images" icon={<Image size={16} />} id="images" expanded={expandedSection} onToggle={setExpandedSection}>
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-3 gap-2">
+                    {/* Current thumbnail preview */}
+                    {(() => {
+                      const thumb = getListingThumbnail(editingListing.name || "", editingListing.image_urls);
+                      return thumb ? (
+                        <div className="rounded-xl overflow-hidden border border-border aspect-video relative group">
+                          <img src={thumb} alt="" className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition flex items-center justify-center">
+                            <span className="text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition">Cover Image</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="rounded-xl border-2 border-dashed border-border aspect-video flex flex-col items-center justify-center gap-2 text-muted-foreground">
+                          <Camera size={24} className="text-muted-foreground/40" />
+                          <p className="text-xs">No images yet</p>
+                        </div>
+                      );
+                    })()}
+                    <div className="grid grid-cols-4 gap-2">
                       {(editingListing.image_urls || []).map((url, i) => (
-                        <div key={i} className="relative aspect-square rounded-lg overflow-hidden bg-secondary group">
+                        <div key={i} className="relative aspect-square rounded-xl overflow-hidden bg-secondary group border border-border">
                           <img src={url} alt="" className="w-full h-full object-cover" />
                           <button onClick={() => {
                             const urls = [...(editingListing.image_urls || [])];
@@ -726,21 +751,79 @@ export default function AdminProperties() {
                     </div>
                     <Field label="Add Image URL">
                       <div className="flex gap-2">
-                        <Input id="new-image-url" placeholder="https://..." className="flex-1" />
+                        <Input id="new-image-url" placeholder="https://..." className="flex-1 rounded-xl" />
                         <button onClick={() => {
                           const input = document.getElementById("new-image-url") as HTMLInputElement;
                           if (input.value) {
                             setEditingListing(p => ({ ...p!, image_urls: [...(p?.image_urls || []), input.value] }));
                             input.value = "";
                           }
-                        }} className="px-3 py-2 rounded-lg bg-primary/15 text-primary text-sm font-medium hover:bg-primary/25 transition">Add</button>
+                        }} className="px-4 py-2 rounded-xl bg-primary/15 text-primary text-sm font-semibold hover:bg-primary/25 transition">Add</button>
                       </div>
+                    </Field>
+                    <p className="text-[10px] text-muted-foreground flex items-center gap-1"><Info size={9} /> Images from the local asset library are shown automatically based on property name</p>
+                  </div>
+                </EditSection>
+
+                {/* Pricing & Capacity */}
+                <EditSection title="Pricing & Capacity" icon={<DollarSign size={16} />} id="pricing" expanded={expandedSection} onToggle={setExpandedSection}>
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <Field label="Base Price (₹)">
+                        <Input type="number" value={editingListing.base_price ?? ""} onChange={e => setEditingListing(p => ({ ...p!, base_price: parseNumberInput(e.target.value) }))} className="rounded-xl" />
+                      </Field>
+                      <Field label="Capacity">
+                        <Input type="number" value={editingListing.capacity ?? ""} onChange={e => setEditingListing(p => ({ ...p!, capacity: parseNumberInput(e.target.value) }))} className="rounded-xl" />
+                      </Field>
+                    </div>
+                    <Field label="Discount Label">
+                      <Input value={editingListing.discount_label || ""} onChange={e => setEditingListing(p => ({ ...p!, discount_label: e.target.value }))} placeholder="20% OFF this week" className="rounded-xl" />
+                    </Field>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Field label="Rating">
+                        <Input type="number" step="0.1" min="0" max="5" value={editingListing.rating ?? ""} onChange={e => setEditingListing(p => ({ ...p!, rating: parseNumberInput(e.target.value) }))} className="rounded-xl" />
+                      </Field>
+                      <Field label="Review Count">
+                        <Input type="number" value={editingListing.review_count ?? ""} onChange={e => setEditingListing(p => ({ ...p!, review_count: parseNumberInput(e.target.value) }))} className="rounded-xl" />
+                      </Field>
+                    </div>
+                  </div>
+                </EditSection>
+
+                {/* Location & Access */}
+                <EditSection title="Location & Access" icon={<Globe size={16} />} id="location" expanded={expandedSection} onToggle={setExpandedSection}>
+                  <div className="space-y-3">
+                    <Field label="Location">
+                      <Input value={editingListing.location || ""} onChange={e => setEditingListing(p => ({ ...p!, location: e.target.value }))} placeholder="Jeypore, Odisha" className="rounded-xl" />
+                    </Field>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Field label="Latitude">
+                        <Input type="number" step="0.001" value={editingListing.lat ?? ""} onChange={e => setEditingListing(p => ({ ...p!, lat: parseNumberInput(e.target.value) }))} className="rounded-xl" />
+                      </Field>
+                      <Field label="Longitude">
+                        <Input type="number" step="0.001" value={editingListing.lng ?? ""} onChange={e => setEditingListing(p => ({ ...p!, lng: parseNumberInput(e.target.value) }))} className="rounded-xl" />
+                      </Field>
+                    </div>
+                    {/* Mini map placeholder */}
+                    <div className="rounded-xl bg-secondary/50 border border-border p-3 flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <MapPin size={16} className="text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-xs font-medium text-foreground">{editingListing.location || "No location set"}</p>
+                        <p className="text-[10px] text-muted-foreground tabular-nums">{editingListing.lat || 0}°N, {editingListing.lng || 0}°E</p>
+                      </div>
+                    </div>
+                    <Field label="Entry Instructions">
+                      <textarea value={editingListing.entry_instructions || ""} onChange={e => setEditingListing(p => ({ ...p!, entry_instructions: e.target.value }))}
+                        className="w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm min-h-[60px] focus:ring-2 focus:ring-ring resize-none"
+                        placeholder="How to reach the property, gate code, parking..." />
                     </Field>
                   </div>
                 </EditSection>
 
                 {/* Tags & Amenities */}
-                <EditSection title="Tags & Amenities" icon={<Tag size={16} />} id="tags" expanded={expandedSection} onToggle={setExpandedSection}>
+                <EditSection title="Tags & Amenities" icon={<Layers size={16} />} id="tags" expanded={expandedSection} onToggle={setExpandedSection}>
                   <div className="space-y-3">
                     <TagEditor label="Tags" items={editingListing.tags || []} onChange={tags => setEditingListing(p => ({ ...p!, tags }))}
                       suggestions={["🔥 Hot Today", "💑 Couple Friendly", "🎉 Party Venue", "⭐ Top Rated", "🌌 Stargazer's Pick", "🏕️ Adventure", "💻 Work Friendly", "💸 Budget"]} />
@@ -754,10 +837,28 @@ export default function AdminProperties() {
                 {/* Time Slots */}
                 <EditSection title="Time Slots" icon={<Clock size={16} />} id="slots" expanded={expandedSection} onToggle={setExpandedSection}>
                   <div className="space-y-3">
+                    {/* Slots summary */}
+                    {(Array.isArray(editingListing.slots) ? editingListing.slots : []).length > 0 && (
+                      <div className="rounded-xl bg-secondary/50 border border-border p-3 flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-violet-500/10 flex items-center justify-center">
+                          <BarChart3 size={16} className="text-violet-500" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-medium text-foreground">{(editingListing.slots as any[]).length} time slots configured</p>
+                          <p className="text-[10px] text-muted-foreground">
+                            Price range: ₹{Math.min(...(editingListing.slots as any[]).map((s: any) => Number(s.price || 0)).filter(p => p > 0) || [0]).toLocaleString()} – ₹{Math.max(...(editingListing.slots as any[]).map((s: any) => Number(s.price || 0)) || [0]).toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                    )}
                     {(Array.isArray(editingListing.slots) ? editingListing.slots : []).map((slot: any, i: number) => (
-                      <div key={i} className="p-3 rounded-xl border border-border bg-secondary/30 space-y-2">
+                      <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                        className="p-3 rounded-xl border border-border bg-card space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-semibold text-foreground">{slot.label || `Slot ${i + 1}`}</span>
+                          <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                            <Clock size={11} className="text-violet-500" />
+                            {slot.label || `Slot ${i + 1}`}
+                          </span>
                           <div className="flex items-center gap-2">
                             <button onClick={() => {
                               const slots = [...(editingListing.slots || [])];
@@ -770,7 +871,7 @@ export default function AdminProperties() {
                               const slots = [...(editingListing.slots || [])];
                               slots.splice(i, 1);
                               setEditingListing(p => ({ ...p!, slots }));
-                            }} className="p-1 hover:bg-destructive/10 rounded transition">
+                            }} className="p-1 hover:bg-destructive/10 rounded-lg transition">
                               <X size={12} className="text-destructive" />
                             </button>
                           </div>
@@ -781,14 +882,14 @@ export default function AdminProperties() {
                               const slots = [...(editingListing.slots || [])];
                               slots[i] = { ...slots[i], label: e.target.value };
                               setEditingListing(p => ({ ...p!, slots }));
-                            }} placeholder="Morning" className="text-xs" />
+                            }} placeholder="Morning" className="text-xs rounded-xl" />
                           </Field>
                           <Field label="Time Range">
                             <Input value={slot.time || ""} onChange={e => {
                               const slots = [...(editingListing.slots || [])];
                               slots[i] = { ...slots[i], time: e.target.value };
                               setEditingListing(p => ({ ...p!, slots }));
-                            }} placeholder="8 AM - 12 PM" className="text-xs" />
+                            }} placeholder="8 AM - 12 PM" className="text-xs rounded-xl" />
                           </Field>
                         </div>
                         <div className="grid grid-cols-2 gap-2">
@@ -797,14 +898,14 @@ export default function AdminProperties() {
                               const slots = [...(editingListing.slots || [])];
                               slots[i] = { ...slots[i], price: parseNumberInput(e.target.value) };
                               setEditingListing(p => ({ ...p!, slots }));
-                            }} className="text-xs" />
+                            }} className="text-xs rounded-xl" />
                           </Field>
                           <Field label="Original Price (₹)">
                             <Input type="number" value={slot.originalPrice ?? ""} onChange={e => {
                               const slots = [...(editingListing.slots || [])];
                               slots[i] = { ...slots[i], originalPrice: parseNumberInput(e.target.value) };
                               setEditingListing(p => ({ ...p!, slots }));
-                            }} placeholder="Strikethrough" className="text-xs" />
+                            }} placeholder="Strikethrough" className="text-xs rounded-xl" />
                           </Field>
                         </div>
                         <div className="grid grid-cols-3 gap-2">
@@ -813,7 +914,7 @@ export default function AdminProperties() {
                               const slots = [...(editingListing.slots || [])];
                               slots[i] = { ...slots[i], tag: e.target.value || undefined };
                               setEditingListing(p => ({ ...p!, slots }));
-                            }} className="w-full rounded-lg border border-input bg-background px-2 py-1.5 text-xs">
+                            }} className="w-full rounded-xl border border-input bg-background px-2 py-1.5 text-xs">
                               <option value="">None</option>
                               <option value="Best Price">Best Price</option>
                               <option value="Work Best">Work Best</option>
@@ -829,14 +930,14 @@ export default function AdminProperties() {
                               const slots = [...(editingListing.slots || [])];
                               slots[i] = { ...slots[i], demandScore: e.target.value ? Number(e.target.value) : undefined };
                               setEditingListing(p => ({ ...p!, slots }));
-                            }} placeholder="0" className="text-xs" />
+                            }} placeholder="0" className="text-xs rounded-xl" />
                           </Field>
                           <Field label="Viewers Now">
                             <Input type="number" min="0" value={slot.viewersNow || ""} onChange={e => {
                               const slots = [...(editingListing.slots || [])];
                               slots[i] = { ...slots[i], viewersNow: e.target.value ? Number(e.target.value) : undefined };
                               setEditingListing(p => ({ ...p!, slots }));
-                            }} placeholder="0" className="text-xs" />
+                            }} placeholder="0" className="text-xs rounded-xl" />
                           </Field>
                         </div>
                         <label className="flex items-center gap-2 cursor-pointer">
@@ -847,46 +948,47 @@ export default function AdminProperties() {
                           }} className="rounded border-border" />
                           <span className="text-[11px] text-muted-foreground">Mark as Popular</span>
                         </label>
-                      </div>
+                      </motion.div>
                     ))}
                     <button onClick={() => {
                       const slots = [...(editingListing.slots || []), { id: `s${Date.now()}`, label: "", time: "", price: 0, available: true, popular: false }];
                       setEditingListing(p => ({ ...p!, slots }));
-                    }} className="w-full py-2.5 rounded-xl border border-dashed border-border text-xs text-muted-foreground hover:text-foreground hover:border-primary/30 transition">
-                      + Add Time Slot
+                    }} className="w-full py-2.5 rounded-xl border border-dashed border-primary/30 text-xs text-primary font-medium hover:bg-primary/5 transition flex items-center justify-center gap-1.5">
+                      <Plus size={13} /> Add Time Slot
                     </button>
                   </div>
                 </EditSection>
 
                 {/* Rules */}
-                <EditSection title="Rules" icon={<Hash size={16} />} id="rules" expanded={expandedSection} onToggle={setExpandedSection}>
+                <EditSection title="House Rules" icon={<Shield size={16} />} id="rules" expanded={expandedSection} onToggle={setExpandedSection}>
                   <div className="space-y-2">
                     {(Array.isArray(editingListing.rules) ? editingListing.rules : []).map((rule: any, i: number) => (
-                      <div key={i} className="flex items-center gap-2">
+                      <motion.div key={i} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}
+                        className="flex items-center gap-2">
                         <Input value={rule.icon || ""} onChange={e => {
                           const rules = [...(editingListing.rules || [])];
                           rules[i] = { ...rules[i], icon: e.target.value };
                           setEditingListing(p => ({ ...p!, rules }));
-                        }} placeholder="🕐" className="w-12 text-center" />
+                        }} placeholder="🕐" className="w-12 text-center rounded-xl" />
                         <Input value={rule.text || ""} onChange={e => {
                           const rules = [...(editingListing.rules || [])];
                           rules[i] = { ...rules[i], text: e.target.value };
                           setEditingListing(p => ({ ...p!, rules }));
-                        }} placeholder="Rule text" className="flex-1" />
+                        }} placeholder="Rule text" className="flex-1 rounded-xl" />
                         <button onClick={() => {
                           const rules = [...(editingListing.rules || [])];
                           rules.splice(i, 1);
                           setEditingListing(p => ({ ...p!, rules }));
-                        }} className="p-1 hover:bg-destructive/10 rounded transition">
+                        }} className="p-1.5 hover:bg-destructive/10 rounded-lg transition">
                           <X size={12} className="text-destructive" />
                         </button>
-                      </div>
+                      </motion.div>
                     ))}
                     <button onClick={() => {
                       const rules = [...(editingListing.rules || []), { icon: "🕐", text: "" }];
                       setEditingListing(p => ({ ...p!, rules }));
-                    }} className="w-full py-2 rounded-lg border border-dashed border-border text-xs text-muted-foreground hover:text-foreground hover:border-primary/30 transition">
-                      + Add Rule
+                    }} className="w-full py-2.5 rounded-xl border border-dashed border-primary/30 text-xs text-primary font-medium hover:bg-primary/5 transition flex items-center justify-center gap-1.5">
+                      <Plus size={13} /> Add Rule
                     </button>
                   </div>
                 </EditSection>
@@ -927,17 +1029,19 @@ function EditSection({ title, icon, id, expanded, onToggle, children }: {
 }) {
   const isOpen = expanded === id;
   return (
-    <div className="rounded-xl border border-border bg-card/50 overflow-hidden">
-      <button onClick={() => onToggle(isOpen ? "" : id)} className="w-full flex items-center gap-2 p-3 text-sm font-medium text-foreground hover:bg-secondary/50 transition">
-        <span className="text-primary">{icon}</span>
+    <div className={`rounded-2xl border overflow-hidden transition-all ${isOpen ? "border-primary/20 bg-card shadow-sm" : "border-border bg-card/50"}`}>
+      <button onClick={() => onToggle(isOpen ? "" : id)} className="w-full flex items-center gap-2.5 p-3.5 text-sm font-semibold text-foreground hover:bg-secondary/30 transition">
+        <div className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${isOpen ? "bg-primary/15 text-primary" : "bg-secondary text-muted-foreground"}`}>
+          {icon}
+        </div>
         {title}
-        <ChevronRight size={14} className={`ml-auto text-muted-foreground transition-transform ${isOpen ? "rotate-90" : ""}`} />
+        <ChevronDown size={14} className={`ml-auto text-muted-foreground transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
       </button>
       <AnimatePresence>
         {isOpen && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }} className="overflow-hidden">
-            <div className="p-3 pt-0">{children}</div>
+            transition={{ duration: 0.25, ease: "easeInOut" }} className="overflow-hidden">
+            <div className="px-3.5 pb-3.5 pt-1">{children}</div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -948,7 +1052,7 @@ function EditSection({ title, icon, id, expanded, onToggle, children }: {
 function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div>
-      <label className="text-xs font-medium text-muted-foreground mb-1 block">
+      <label className="text-[11px] font-semibold text-primary/80 mb-1.5 block uppercase tracking-wider">
         {label}{required && <span className="text-destructive ml-0.5">*</span>}
       </label>
       {children}
