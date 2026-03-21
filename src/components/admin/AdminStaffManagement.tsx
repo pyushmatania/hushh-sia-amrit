@@ -271,6 +271,16 @@ export default function AdminStaffManagement() {
     return { pending, approved, rejected, thisMonth };
   }, [leaves]);
 
+  const getLeaveBalance = (staffId: string) => {
+    const currentYear = new Date().getFullYear();
+    const approvedLeaves = leaves.filter(l => l.staff_id === staffId && l.status === "approved" && new Date(l.start_date).getFullYear() === currentYear);
+    const used: Record<string, number> = { casual: 0, sick: 0, earned: 0 };
+    approvedLeaves.forEach(l => { if (used[l.leave_type] !== undefined) used[l.leave_type] += l.days; });
+    return Object.entries(LEAVE_QUOTAS).map(([key, q]) => ({
+      type: key, label: q.label, max: q.max, used: used[key] || 0, remaining: q.max - (used[key] || 0), color: q.color,
+    }));
+  };
+
   const handleLeaveSubmit = async () => {
     if (!newLeave.staff_id || !newLeave.start_date || !newLeave.end_date) {
       toast.error("Please fill all required fields"); return;
