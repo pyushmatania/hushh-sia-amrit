@@ -5,6 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useDragReorder } from "@/hooks/use-drag-reorder";
+import SwipeableRow from "./SwipeableRow";
+import DeleteConfirmDialog from "./DeleteConfirmDialog";
 
 interface InventoryItem {
   id: string; name: string; emoji: string; category: string; unit_price: number;
@@ -28,6 +30,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
   const [editing, setEditing] = useState<Partial<InventoryItem> | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
   const loadInventory = () => {
     supabase.from("inventory").select("*").order("sort_order").order("name")
@@ -82,7 +85,8 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
     window.dispatchEvent(new Event("hushh:listings-updated"));
   };
 
-  const deleteItem = async (id: string) => { if (!confirm("Delete?")) return; await supabase.from("inventory").delete().eq("id", id); setItems(prev => prev.filter(i => i.id !== id)); toast({ title: "Deleted" }); window.dispatchEvent(new Event("hushh:listings-updated")); };
+  const deleteItem = async (id: string) => { setDeleteTarget(id); };
+  const confirmDeleteItem = async () => { if (!deleteTarget) return; await supabase.from("inventory").delete().eq("id", deleteTarget); setItems(prev => prev.filter(i => i.id !== deleteTarget)); toast({ title: "Deleted" }); window.dispatchEvent(new Event("hushh:listings-updated")); setDeleteTarget(null); };
   const toggleAvailability = async (item: InventoryItem) => { const next = !item.available; await supabase.from("inventory").update({ available: next }).eq("id", item.id); setItems(prev => prev.map(i => i.id === item.id ? { ...i, available: next } : i)); };
 
   const lowStock = scopedItems.filter(i => i.stock <= i.low_stock_threshold && i.available);
@@ -145,30 +149,36 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
             <h3 className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-2 capitalize">{cat}</h3>
             <div className="space-y-1.5">
               {catItems.map((item) => (
-                <motion.div key={item.id}
-                  whileHover={{ x: 3, transition: { duration: 0.15 } }}
-                  {...getDropTargetProps(item)} onDragEnd={handleDragEnd} style={getDragItemStyle(item)}
-                  className={`rounded-2xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm border p-3.5 flex items-center gap-3 select-none transition-all hover:shadow-md group ${
-                    item.stock <= item.low_stock_threshold ? "border-amber-200/60 dark:border-amber-500/20" : "border-zinc-100/80 dark:border-zinc-800/80"
-                  } ${!item.available ? "opacity-50" : ""}`}>
-                  <span className="text-2xl">{item.emoji}</span>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">{item.name}</h4>
-                    <p className="text-[11px] text-zinc-400 tabular-nums">₹{item.unit_price} · Stock: {item.stock}</p>
-                  </div>
-                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => toggleAvailability(item)}
-                      className={`px-2.5 py-1 rounded-xl text-[10px] font-semibold transition ${item.available ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600" : "bg-zinc-100 dark:bg-zinc-800 text-zinc-500"}`}>
-                      {item.available ? "Available" : "Unavailable"}
+                <SwipeableRow
+                  key={item.id}
+                  onEdit={() => { setEditing({ ...item }); setIsCreating(false); setPreviewMode(false); }}
+                  onDelete={() => deleteItem(item.id)}
+                >
+                  <motion.div
+                    whileHover={{ x: 3, transition: { duration: 0.15 } }}
+                    {...getDropTargetProps(item)} onDragEnd={handleDragEnd} style={getDragItemStyle(item)}
+                    className={`rounded-2xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm border p-3.5 flex items-center gap-3 select-none transition-all hover:shadow-md group ${
+                      item.stock <= item.low_stock_threshold ? "border-amber-200/60 dark:border-amber-500/20" : "border-zinc-100/80 dark:border-zinc-800/80"
+                    } ${!item.available ? "opacity-50" : ""}`}>
+                    <span className="text-2xl">{item.emoji}</span>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">{item.name}</h4>
+                      <p className="text-[11px] text-zinc-400 tabular-nums">₹{item.unit_price} · Stock: {item.stock}</p>
+                    </div>
+                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={() => toggleAvailability(item)}
+                        className={`px-2.5 py-1 rounded-xl text-[10px] font-semibold transition ${item.available ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600" : "bg-zinc-100 dark:bg-zinc-800 text-zinc-500"}`}>
+                        {item.available ? "Available" : "Unavailable"}
+                      </button>
+                      <button onClick={() => { setEditing({ ...item }); setIsCreating(false); setPreviewMode(false); }} className="p-1.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800 transition"><Pencil size={13} className="text-zinc-400" /></button>
+                      <button onClick={() => deleteItem(item.id)} className="p-1.5 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-500/10 transition"><Trash2 size={13} className="text-rose-400" /></button>
+                    </div>
+                    <button type="button" {...getDragHandleProps(item)}
+                      className="ml-1 h-10 w-10 rounded-xl flex items-center justify-center text-zinc-300 hover:text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition shrink-0 cursor-grab active:cursor-grabbing touch-none">
+                      <GripVertical size={18} />
                     </button>
-                    <button onClick={() => { setEditing({ ...item }); setIsCreating(false); setPreviewMode(false); }} className="p-1.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800 transition"><Pencil size={13} className="text-zinc-400" /></button>
-                    <button onClick={() => deleteItem(item.id)} className="p-1.5 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-500/10 transition"><Trash2 size={13} className="text-rose-400" /></button>
-                  </div>
-                  <button type="button" {...getDragHandleProps(item)}
-                    className="ml-1 h-10 w-10 rounded-xl flex items-center justify-center text-zinc-300 hover:text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition shrink-0 cursor-grab active:cursor-grabbing touch-none">
-                    <GripVertical size={18} />
-                  </button>
-                </motion.div>
+                  </motion.div>
+                </SwipeableRow>
               ))}
             </div>
           </div>
@@ -225,6 +235,14 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
           </motion.div>
         )}
       </AnimatePresence>
+
+      <DeleteConfirmDialog
+        open={!!deleteTarget}
+        title="Delete this item?"
+        description="This inventory item will be permanently removed."
+        onConfirm={confirmDeleteItem}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </motion.div>
   );
 }

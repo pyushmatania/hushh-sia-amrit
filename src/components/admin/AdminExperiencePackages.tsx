@@ -5,6 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useDragReorder } from "@/hooks/use-drag-reorder";
+import SwipeableRow from "./SwipeableRow";
+import DeleteConfirmDialog from "./DeleteConfirmDialog";
 
 interface PackageRow {
   id: string;
@@ -39,6 +41,7 @@ export default function AdminExperiencePackages() {
   const [isCreating, setIsCreating] = useState(false);
   const [includeInput, setIncludeInput] = useState("");
   const [previewMode, setPreviewMode] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
   const loadPackages = async () => {
     const { data } = await supabase
@@ -122,11 +125,16 @@ export default function AdminExperiencePackages() {
   };
 
   const deletePackage = async (id: string) => {
-    if (!confirm("Delete this package?")) return;
-    await supabase.from("experience_packages").delete().eq("id", id);
-    setPackages(prev => prev.filter(p => p.id !== id));
+    setDeleteTarget(id);
+  };
+
+  const confirmDeletePackage = async () => {
+    if (!deleteTarget) return;
+    await supabase.from("experience_packages").delete().eq("id", deleteTarget);
+    setPackages(prev => prev.filter(p => p.id !== deleteTarget));
     toast({ title: "Package deleted" });
     window.dispatchEvent(new Event("hushh:listings-updated"));
+    setDeleteTarget(null);
   };
 
   const toggleActive = async (pkg: PackageRow) => {
@@ -188,59 +196,64 @@ export default function AdminExperiencePackages() {
       ) : (
         <div className="space-y-2">
           {filtered.map((pkg) => (
-            <div
+            <SwipeableRow
               key={pkg.id}
-              {...getDropTargetProps(pkg)}
-              onDragEnd={handleDragEnd}
-              style={getDragItemStyle(pkg)}
-              className={`rounded-xl border border-border bg-card p-4 flex items-center gap-2 select-none ${
-                !pkg.active ? "opacity-50" : ""}`}
+              onEdit={() => { setEditing({ ...pkg }); setIsCreating(false); setIncludeInput(""); setPreviewMode(false); }}
+              onDelete={() => deletePackage(pkg.id)}
             >
-              <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${pkg.gradient} flex items-center justify-center text-lg`}>
-                {pkg.emoji}
-              </div>
-              <div className="flex-1 min-w-0">
-                <h4 className="text-sm font-semibold text-foreground">{pkg.name}</h4>
-                <p className="text-xs text-muted-foreground tabular-nums">₹{pkg.price} · {pkg.includes.length} items</p>
-                <div className="flex flex-wrap gap-1 mt-1">
-                  {pkg.includes.slice(0, 3).map((inc, j) => (
-                    <span key={j} className="text-[10px] px-1.5 py-0.5 rounded bg-secondary text-muted-foreground">{inc}</span>
-                  ))}
-                  {pkg.includes.length > 3 && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-secondary text-muted-foreground">+{pkg.includes.length - 3}</span>
-                  )}
-                </div>
-              </div>
-              <div className="flex gap-1">
-                <button
-                  onClick={() => toggleActive(pkg)}
-                  className={`px-2 py-1 rounded-lg text-[10px] font-medium transition ${
-                    pkg.active ? "bg-emerald-500/15 text-emerald-400" : "bg-muted text-muted-foreground"
-                  }`}
-                >
-                  {pkg.active ? "Active" : "Inactive"}
-                </button>
-                <button
-                  onClick={() => { setEditing({ ...pkg }); setIsCreating(false); setIncludeInput(""); setPreviewMode(false); }}
-                  className="p-1.5 rounded-lg hover:bg-secondary transition"
-                >
-                  <Pencil size={13} className="text-muted-foreground" />
-                </button>
-                <button
-                  onClick={() => deletePackage(pkg.id)}
-                  className="p-1.5 rounded-lg hover:bg-destructive/10 transition"
-                >
-                  <Trash2 size={13} className="text-destructive" />
-                </button>
-              </div>
-              <button
-                type="button"
-                {...getDragHandleProps(pkg)}
-                className="ml-1 h-10 w-10 rounded-lg flex items-center justify-center text-muted-foreground/50 hover:text-foreground hover:bg-secondary transition shrink-0 cursor-grab active:cursor-grabbing touch-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              <div
+                {...getDropTargetProps(pkg)}
+                onDragEnd={handleDragEnd}
+                style={getDragItemStyle(pkg)}
+                className={`rounded-xl border border-border bg-card p-4 flex items-center gap-2 select-none ${
+                  !pkg.active ? "opacity-50" : ""}`}
               >
-                <GripVertical size={20} />
-              </button>
-            </div>
+                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${pkg.gradient} flex items-center justify-center text-lg`}>
+                  {pkg.emoji}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-sm font-semibold text-foreground">{pkg.name}</h4>
+                  <p className="text-xs text-muted-foreground tabular-nums">₹{pkg.price} · {pkg.includes.length} items</p>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {pkg.includes.slice(0, 3).map((inc, j) => (
+                      <span key={j} className="text-[10px] px-1.5 py-0.5 rounded bg-secondary text-muted-foreground">{inc}</span>
+                    ))}
+                    {pkg.includes.length > 3 && (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-secondary text-muted-foreground">+{pkg.includes.length - 3}</span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => toggleActive(pkg)}
+                    className={`px-2 py-1 rounded-lg text-[10px] font-medium transition ${
+                      pkg.active ? "bg-emerald-500/15 text-emerald-400" : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    {pkg.active ? "Active" : "Inactive"}
+                  </button>
+                  <button
+                    onClick={() => { setEditing({ ...pkg }); setIsCreating(false); setIncludeInput(""); setPreviewMode(false); }}
+                    className="p-1.5 rounded-lg hover:bg-secondary transition"
+                  >
+                    <Pencil size={13} className="text-muted-foreground" />
+                  </button>
+                  <button
+                    onClick={() => deletePackage(pkg.id)}
+                    className="p-1.5 rounded-lg hover:bg-destructive/10 transition"
+                  >
+                    <Trash2 size={13} className="text-destructive" />
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  {...getDragHandleProps(pkg)}
+                  className="ml-1 h-10 w-10 rounded-lg flex items-center justify-center text-muted-foreground/50 hover:text-foreground hover:bg-secondary transition shrink-0 cursor-grab active:cursor-grabbing touch-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <GripVertical size={20} />
+                </button>
+              </div>
+            </SwipeableRow>
           ))}
         </div>
       )}
@@ -411,6 +424,14 @@ export default function AdminExperiencePackages() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <DeleteConfirmDialog
+        open={!!deleteTarget}
+        title="Delete this package?"
+        description="This experience package will be permanently removed."
+        onConfirm={confirmDeletePackage}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   );
 }
