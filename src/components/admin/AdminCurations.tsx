@@ -320,80 +320,95 @@ export default function AdminCurations() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {filtered.map((c) => (
-            <div
+            <SwipeableRow
               key={c.id}
-              {...getDropTargetProps(c)}
-              onDragEnd={handleDragEnd}
-              style={getDragItemStyle(c)}
-              className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 select-none"
-              onClick={() => startEdit(c)}
+              onEdit={() => startEdit(c)}
+              onDelete={() => setDeleteTarget({ id: c.id, name: c.name })}
             >
-              <div className="flex items-start gap-2">
-                <span className="text-2xl">{c.emoji}</span>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-sm text-foreground">{c.name}</h3>
-                    {c.badge && <span className="text-[10px] bg-primary/15 text-primary px-2 py-0.5 rounded-full">{c.badge}</span>}
-                    <div className="ml-auto flex gap-1">
-                      <button
-                        onClick={(e) => { e.stopPropagation(); startEdit(c); setPreviewMode(true); }}
-                        className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-primary transition"
-                        title="Preview"
-                      >
-                        <Eye size={14} />
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (!confirm(`Delete "${c.name}"?`)) return;
-                          supabase.from("curations").delete().eq("id", c.id).then(({ error }) => {
-                            if (error) {
-                              toast({ title: "Delete failed", description: error.message, variant: "destructive" });
-                            } else {
-                              setCurations(prev => prev.filter(x => x.id !== c.id));
-                              toast({ title: "Curation deleted" });
-                              window.dispatchEvent(new Event("hushh:listings-updated"));
-                            }
-                          });
-                        }}
-                        className="p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition"
-                      >
-                        <Trash2 size={14} />
-                      </button>
+              <div
+                {...getDropTargetProps(c)}
+                onDragEnd={handleDragEnd}
+                style={getDragItemStyle(c)}
+                className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 select-none"
+                onClick={() => startEdit(c)}
+              >
+                <div className="flex items-start gap-2">
+                  <span className="text-2xl">{c.emoji}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold text-sm text-foreground">{c.name}</h3>
+                      {c.badge && <span className="text-[10px] bg-primary/15 text-primary px-2 py-0.5 rounded-full">{c.badge}</span>}
+                      <div className="ml-auto flex gap-1">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); startEdit(c); setPreviewMode(true); }}
+                          className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-primary transition"
+                          title="Preview"
+                        >
+                          <Eye size={14} />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDeleteTarget({ id: c.id, name: c.name });
+                          }}
+                          className="p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5">{c.tagline}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <p className="text-sm font-bold text-foreground tabular-nums">₹{Number(c.price).toLocaleString()}</p>
+                      {c.original_price && (
+                        <p className="text-xs text-muted-foreground line-through tabular-nums">₹{Number(c.original_price).toLocaleString()}</p>
+                      )}
+                      <span className={`ml-auto text-[10px] font-medium px-2 py-0.5 rounded-full ${c.active ? "bg-emerald-500/15 text-emerald-400" : "bg-muted text-muted-foreground"}`}>
+                        {c.active ? "Active" : "Inactive"}
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {(c.includes || []).slice(0, 4).map((inc: string) => (
+                        <span key={inc} className="text-[10px] bg-secondary text-muted-foreground px-1.5 py-0.5 rounded">{inc}</span>
+                      ))}
+                      {(c.includes || []).length > 4 && (
+                        <span className="text-[10px] text-muted-foreground">+{c.includes.length - 4}</span>
+                      )}
                     </div>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-0.5">{c.tagline}</p>
-                  <div className="flex items-center gap-2 mt-2">
-                    <p className="text-sm font-bold text-foreground tabular-nums">₹{Number(c.price).toLocaleString()}</p>
-                    {c.original_price && (
-                      <p className="text-xs text-muted-foreground line-through tabular-nums">₹{Number(c.original_price).toLocaleString()}</p>
-                    )}
-                    <span className={`ml-auto text-[10px] font-medium px-2 py-0.5 rounded-full ${c.active ? "bg-emerald-500/15 text-emerald-400" : "bg-muted text-muted-foreground"}`}>
-                      {c.active ? "Active" : "Inactive"}
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {(c.includes || []).slice(0, 4).map((inc: string) => (
-                      <span key={inc} className="text-[10px] bg-secondary text-muted-foreground px-1.5 py-0.5 rounded">{inc}</span>
-                    ))}
-                    {(c.includes || []).length > 4 && (
-                      <span className="text-[10px] text-muted-foreground">+{c.includes.length - 4}</span>
-                    )}
-                  </div>
+                  <button
+                    type="button"
+                    {...getDragHandleProps(c)}
+                    onClick={(e) => e.stopPropagation()}
+                    className="h-10 w-10 rounded-lg flex items-center justify-center text-muted-foreground/50 hover:text-foreground hover:bg-secondary transition shrink-0 cursor-grab active:cursor-grabbing touch-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  >
+                    <GripVertical size={20} />
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  {...getDragHandleProps(c)}
-                  onClick={(e) => e.stopPropagation()}
-                  className="h-10 w-10 rounded-lg flex items-center justify-center text-muted-foreground/50 hover:text-foreground hover:bg-secondary transition shrink-0 cursor-grab active:cursor-grabbing touch-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                >
-                  <GripVertical size={20} />
-                </button>
               </div>
-            </div>
+            </SwipeableRow>
           ))}
         </div>
       )}
+
+      <DeleteConfirmDialog
+        open={!!deleteTarget}
+        title={`Delete "${deleteTarget?.name}"?`}
+        description="This curation will be permanently removed."
+        onConfirm={async () => {
+          if (!deleteTarget) return;
+          const { error } = await supabase.from("curations").delete().eq("id", deleteTarget.id);
+          if (error) {
+            toast({ title: "Delete failed", description: error.message, variant: "destructive" });
+          } else {
+            setCurations(prev => prev.filter(x => x.id !== deleteTarget.id));
+            toast({ title: "Curation deleted" });
+            window.dispatchEvent(new Event("hushh:listings-updated"));
+          }
+          setDeleteTarget(null);
+        }}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   );
 }
