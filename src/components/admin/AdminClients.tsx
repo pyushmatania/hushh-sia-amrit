@@ -394,6 +394,7 @@ function ClientDetailDrawer({ client, onClose, listingMap, listingInfoMap }: {
     { id: "overview" as const, label: "Overview", icon: Eye },
     { id: "bookings" as const, label: `Stays (${client.bookings.length})`, icon: Home },
     { id: "orders" as const, label: `Orders (${client.orders.length})`, icon: ShoppingCart },
+    { id: "notes" as const, label: "Notes", icon: StickyNote },
     { id: "timeline" as const, label: "Timeline", icon: Clock },
   ];
 
