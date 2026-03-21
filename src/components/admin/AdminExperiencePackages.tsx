@@ -456,6 +456,15 @@ export default function AdminExperiencePackages() {
         )}
       </AnimatePresence>
 
+      <BatchOperationsBar
+        selectedIds={selectedIds}
+        totalCount={filtered.length}
+        onSelectAll={() => setSelectedIds(filtered.map(p => p.id))}
+        onDeselectAll={() => setSelectedIds([])}
+        onBulkDelete={bulkDelete}
+        entityName="packages"
+      />
+
       <DeleteConfirmDialog
         open={!!deleteTarget}
         title="Delete this package?"
