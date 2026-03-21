@@ -1,6 +1,6 @@
-import { useState, useRef, useCallback } from "react";
-import { motion, useMotionValue, useTransform, PanInfo } from "framer-motion";
-import { Pencil, Trash2 } from "lucide-react";
+import { useState, useRef, useCallback, useEffect } from "react";
+import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo } from "framer-motion";
+import { Pencil, Trash2, ChevronLeft } from "lucide-react";
 import { hapticLight, hapticMedium, hapticHeavy } from "@/lib/haptics";
 
 // Tiny synthesized swipe sounds via AudioContext
