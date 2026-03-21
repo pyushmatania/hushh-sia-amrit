@@ -22,6 +22,7 @@ interface Booking {
   status: string; created_at: string; updated_at: string;
   propertyName?: string; propertyImage?: string; propertyLocation?: string;
   userName?: string;
+  rooms_count?: number | null; extra_mattresses?: number | null;
 }
 
 const statusConfig: Record<string, { color: string; bg: string; icon: typeof Clock; border: string; glow: string }> = {
@@ -835,6 +836,13 @@ function BookingCard({ booking: b, index, onNavigate, onStatusChange, conflicts 
             <Users size={11} className="text-muted-foreground shrink-0" />
             <span className="text-[10px] text-muted-foreground">{b.guests}</span>
           </div>
+          {b.rooms_count && b.rooms_count > 0 && (
+            <div className="flex items-center gap-1">
+              <span className="text-[9px] font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded-full">
+                🛏️ {b.rooms_count}R{b.extra_mattresses && b.extra_mattresses > 0 ? ` +${b.extra_mattresses}M` : ""}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Client + Actions */}
@@ -967,6 +975,11 @@ function RequestCard({ booking: b, index, updating, onAccept, onReject, onNaviga
             <div>
               <p className="text-[9px] text-muted-foreground">Guests</p>
               <p className="text-[11px] font-semibold text-foreground">{b.guests} people</p>
+              {b.rooms_count && b.rooms_count > 0 && (
+                <p className="text-[9px] text-primary font-medium mt-0.5">
+                  🛏️ {b.rooms_count} {b.rooms_count === 1 ? "room" : "rooms"}{b.extra_mattresses && b.extra_mattresses > 0 ? ` · +${b.extra_mattresses} mattress` : ""}
+                </p>
+              )}
             </div>
           </div>
           <div className="rounded-xl bg-emerald-50 dark:bg-emerald-500/10 p-2.5 flex items-center gap-2">
