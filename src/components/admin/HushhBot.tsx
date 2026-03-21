@@ -459,8 +459,46 @@ function FlameEye({ size, state, side, hovered = false, eyeStyle = "" }: { size:
       </motion.div>
     );
   }
+  // Sleepy - half-closed eyes
+  if (eyeStyle === "sleepy") {
+    return (
+      <motion.div
+        className="relative"
+        style={{
+          width: size * 1.2, height: size * 0.6,
+          borderRadius: "40% 40% 50% 50%",
+          background: "#1a0e05",
+          overflow: "hidden",
+        }}
+        animate={{ scaleY: [1, 0.7, 1] }}
+        transition={{ duration: 3, repeat: Infinity }}
+      >
+        <div className="absolute bg-white rounded-full" style={{ width: pupilR * 0.6, height: pupilR * 0.6, top: "15%", right: "20%" }} />
+      </motion.div>
+    );
+  }
 
-  return (
+  // Excited - big sparkly eyes
+  if (eyeStyle === "excited") {
+    return (
+      <motion.div
+        className="relative rounded-full"
+        style={{ width: size * 1.3, height: size * 1.8, background: "#1a0e05" }}
+        animate={{ scale: [1, 1.1, 1] }}
+        transition={{ duration: 0.6, repeat: Infinity }}
+      >
+        <motion.div
+          className="absolute bg-white rounded-full"
+          style={{ width: pupilR, height: pupilR, top: "12%", right: "12%" }}
+          animate={{ scale: [1, 1.3, 1] }}
+          transition={{ duration: 0.8, repeat: Infinity }}
+        />
+        <div className="absolute bg-white/60 rounded-full" style={{ width: pupilR * 0.4, height: pupilR * 0.4, bottom: "22%", left: "18%" }} />
+      </motion.div>
+    );
+  }
+
+
     <motion.div
       className="relative rounded-full"
       style={{
