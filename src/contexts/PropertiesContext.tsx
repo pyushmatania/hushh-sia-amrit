@@ -149,7 +149,8 @@ function inventoryToAddons(rows: any[]): Record<string, Addon[]> {
   return grouped;
 }
 
-function curationsToCombo(row: any, staticMatch: CuratedCombo | undefined): CuratedCombo {
+function curationsToCombo(row: any, staticMatch: CuratedCombo | undefined, propertyImage?: string): CuratedCombo {
+  const resolvedImage = staticMatch?.image || propertyImage || "";
   return {
     id: staticMatch?.id || row.id,
     name: row.name,
@@ -158,7 +159,7 @@ function curationsToCombo(row: any, staticMatch: CuratedCombo | undefined): Cura
     time: row.slot || staticMatch?.time || "",
     priceRange: [Number(row.price), Number(row.original_price || row.price)],
     includes: row.includes?.length ? row.includes : staticMatch?.includes || [],
-    image: staticMatch?.image || "",
+    image: resolvedImage,
     gradient: row.gradient || staticMatch?.gradient || "from-primary/80 to-primary/40",
     tags: row.tags?.length ? row.tags : staticMatch?.tags || [],
     popular: !!row.badge || staticMatch?.popular,
@@ -222,11 +223,22 @@ export function PropertiesProvider({ children }: { children: ReactNode }) {
     }
 
     // Process curations → curatedCombos
+    // Build a property image map from listings for curations that don't match static combos
+    const listingImageMap = new Map<string, string>();
+    if (listingsRes.data) {
+      for (const row of listingsRes.data) {
+        const thumb = getListingThumbnail(row.name, row.image_urls || [], { preferMapped: true });
+        if (thumb) listingImageMap.set(row.id, thumb);
+        else if (row.image_urls?.[0]) listingImageMap.set(row.id, row.image_urls[0]);
+      }
+    }
+
     if (!curationsRes.error && curationsRes.data && curationsRes.data.length > 0) {
       const staticByName = new Map(staticCombos.map((c) => [c.name.toLowerCase().trim(), c]));
       const merged = curationsRes.data.map((row) => {
         const staticMatch = staticByName.get((row.name || "").toLowerCase().trim());
-        return curationsToCombo(row, staticMatch);
+        const propertyImage = listingImageMap.get(row.property_id);
+        return curationsToCombo(row, staticMatch, propertyImage);
       });
       setCuratedCombos(merged);
     } else {
