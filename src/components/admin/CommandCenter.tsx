@@ -49,15 +49,9 @@ const smartCards = [
   { icon: Clock, text: "Low bookings tomorrow 12–4 PM", tag: "Action", tagColor: "bg-amber-500" },
 ];
 
-const mockChartData = Array.from({ length: 14 }, (_, i) => ({
-  day: `${i + 1}`,
-  revenue: Math.floor(Math.random() * 15000) + 5000,
-}));
-
-const weeklyData = [
-  { day: "Mon", value: 44 }, { day: "Tue", value: 34 }, { day: "Wed", value: 110 },
-  { day: "Thu", value: 47 }, { day: "Fri", value: 32 }, { day: "Sat", value: 79 }, { day: "Sun", value: 24 },
-];
+// These will be replaced with real data in the useEffect
+const emptyChartData: { day: string; revenue: number }[] = [];
+const emptyWeeklyData: { day: string; value: number }[] = [];
 
 const commandCenterExamples = [
   "What was our busiest day this month?",
