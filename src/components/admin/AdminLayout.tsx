@@ -19,7 +19,8 @@ export type AdminPage =
   | "analytics" | "curations" | "tags" | "campaigns"
   | "coupons" | "orders" | "exports" | "ai" | "alerts" | "audit"
   | "earnings" | "pricing" | "achievements" | "loyalty"
-  | "calendar" | "requests" | "history" | "inventory" | "staff-mgmt" | "budget";
+  | "calendar" | "requests" | "history" | "inventory" | "staff-mgmt" | "budget"
+  | "checkin" | "reports" | "notifications" | "settings";
 
 interface AdminLayoutProps {
   activePage: AdminPage;
@@ -42,6 +43,7 @@ const navSections: { title: string; items: { id: AdminPage; label: string; icon:
     items: [
       { id: "calendar", label: "Calendar", icon: CalendarCheck, color: "bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400", activeGlow: "shadow-emerald-200/60" },
       { id: "bookings", label: "Booking Hub", icon: CalendarCheck, color: "bg-sky-100 text-sky-600 dark:bg-sky-500/20 dark:text-sky-400", activeGlow: "shadow-sky-200/60" },
+      { id: "checkin", label: "Check-in", icon: UserCheck, color: "bg-teal-100 text-teal-600 dark:bg-teal-500/20 dark:text-teal-400", activeGlow: "shadow-teal-200/60" },
       { id: "orders", label: "Live Orders", icon: ShoppingCart, color: "bg-orange-100 text-orange-600 dark:bg-orange-500/20 dark:text-orange-400", activeGlow: "shadow-orange-200/60" },
       { id: "inventory", label: "Inventory", icon: Package, color: "bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400", activeGlow: "shadow-amber-200/60" },
     ]
@@ -75,9 +77,12 @@ const navSections: { title: string; items: { id: AdminPage; label: string; icon:
   {
     title: "More",
     items: [
+      { id: "notifications", label: "Notifications", icon: Bell, color: "bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400", activeGlow: "shadow-rose-200/60" },
+      { id: "reports", label: "Reports", icon: FileSpreadsheet, color: "bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400", activeGlow: "shadow-violet-200/60" },
       { id: "achievements", label: "Achievements", icon: Trophy, color: "bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400", activeGlow: "shadow-amber-200/60" },
       { id: "loyalty", label: "Loyalty", icon: Sparkles, color: "bg-pink-100 text-pink-600 dark:bg-pink-500/20 dark:text-pink-400", activeGlow: "shadow-pink-200/60" },
       { id: "exports", label: "Exports", icon: FileSpreadsheet, color: "bg-gray-100 text-gray-600 dark:bg-gray-500/20 dark:text-gray-400", activeGlow: "shadow-gray-200/60" },
+      { id: "settings", label: "Settings", icon: Search, color: "bg-zinc-100 text-zinc-600 dark:bg-zinc-500/20 dark:text-zinc-400", activeGlow: "shadow-zinc-200/60" },
       { id: "audit", label: "Audit Trail", icon: ScrollText, color: "bg-neutral-100 text-neutral-600 dark:bg-neutral-500/20 dark:text-neutral-400", activeGlow: "shadow-neutral-200/60", adminOnly: true },
     ]
   },
@@ -384,7 +389,7 @@ export default function AdminLayout({ activePage, onNavigate, children, breadcru
           </div>
         </div>
 
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 pb-20 md:pb-6">
           <AnimatePresence mode="wait">
             <motion.div
               key={activePage}
@@ -398,6 +403,36 @@ export default function AdminLayout({ activePage, onNavigate, children, breadcru
           </AnimatePresence>
         </main>
       </div>
+
+      {/* Mobile Bottom Nav */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl border-t border-zinc-200/80 dark:border-zinc-800/80 px-2 py-1.5 safe-area-bottom">
+        <div className="flex items-center justify-around">
+          {[
+            { id: "dashboard" as AdminPage, icon: LayoutDashboard, label: "Home" },
+            { id: "orders" as AdminPage, icon: ShoppingCart, label: "Orders" },
+            { id: "checkin" as AdminPage, icon: UserCheck, label: "Check-in" },
+            { id: "notifications" as AdminPage, icon: Bell, label: "Alerts" },
+            { id: "settings" as AdminPage, icon: Menu, label: "More" },
+          ].map(tab => {
+            const active = activePage === tab.id;
+            return (
+              <motion.button
+                key={tab.id}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => onNavigate(tab.id)}
+                className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all ${
+                  active ? "text-primary" : "text-muted-foreground"
+                }`}
+              >
+                <tab.icon size={20} strokeWidth={active ? 2.5 : 1.5} />
+                <span className={`text-[9px] font-medium ${active ? "font-bold" : ""}`}>{tab.label}</span>
+                {active && <motion.div layoutId="mobile-tab-dot" className="w-1 h-1 rounded-full bg-primary" />}
+              </motion.button>
+            );
+          })}
+        </div>
+      </div>
+
       <FloatingChecklist />
     </div>
   );

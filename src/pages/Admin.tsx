@@ -28,6 +28,10 @@ import AdminPropertyHistory from "@/components/admin/AdminPropertyHistory";
 import AdminInventory from "@/components/admin/AdminInventory";
 import AdminStaffManagement from "@/components/admin/AdminStaffManagement";
 import AdminBudgetTracker from "@/components/admin/AdminBudgetTracker";
+import AdminCheckin from "@/components/admin/AdminCheckin";
+import AdminReports from "@/components/admin/AdminReports";
+import AdminNotifications from "@/components/admin/AdminNotifications";
+import AdminSettings from "@/components/admin/AdminSettings";
 import AuthScreen from "@/components/AuthScreen";
 import { Shield, Loader2 } from "lucide-react";
 
@@ -50,6 +54,7 @@ export default function Admin() {
     achievements: "Achievements", loyalty: "Loyalty", calendar: "Calendar",
     requests: "Requests", history: "Property History", inventory: "Inventory",
     "staff-mgmt": "Staff Mgmt", budget: "Budget",
+    checkin: "Check-in", reports: "Reports", notifications: "Notifications", settings: "Settings",
   };
 
   const navigateTo = (target: AdminPage, ctx?: { propertyId?: string; userId?: string; bookingId?: string }) => {
@@ -150,6 +155,10 @@ export default function Admin() {
       case "staff-mgmt": return <AdminStaffManagement />;
       case "budget": return <FinanceHub />;
       case "audit": return <AdminAuditLog />;
+      case "checkin": return <AdminCheckin />;
+      case "reports": return <AdminReports />;
+      case "notifications": return <AdminNotifications />;
+      case "settings": return <AdminSettings />;
       default: return <CommandCenter onNavigate={setPage} />;
     }
   };
