@@ -182,11 +182,14 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
             </div>
           )}
 
-          {/* Overlay text */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          {/* Overlay tagline text */}
+          <div className="absolute inset-0 flex items-end pointer-events-none" style={{ paddingBottom: "45%" }}>
             <p
-              className="text-3xl font-bold italic text-white/60"
-              style={{ fontFamily: "'Playfair Display', serif", textShadow: "0 2px 20px rgba(0,0,0,0.5)" }}
+              className="text-[26px] font-black italic text-white/90 leading-[1.15] px-5"
+              style={{
+                fontFamily: "'Playfair Display', serif",
+                textShadow: "0 2px 8px rgba(0,0,0,0.8), 0 4px 24px rgba(0,0,0,0.5)",
+              }}
             >
               {pack.tagline}
             </p>
@@ -195,28 +198,28 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
           {/* Bottom content */}
           <div
             className="absolute bottom-0 left-0 right-0 p-5"
-            style={{ background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)" }}
+            style={{ background: "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.7) 45%, rgba(0,0,0,0.25) 70%, transparent 100%)" }}
           >
             <span className="text-3xl">{pack.emoji}</span>
-            <h3 className="text-[20px] font-bold text-white leading-tight mt-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+            <h3 className="text-[22px] font-extrabold text-white leading-tight mt-1" style={{ fontFamily: "'Space Grotesk', sans-serif", textShadow: "0 1px 6px rgba(0,0,0,0.5)" }}>
               {pack.name}
             </h3>
 
             {/* Slot */}
             <div className="flex items-center gap-1.5 mt-2">
-              <Clock size={12} className="text-white/50" />
-              <span className="text-[11px] text-white/60 font-medium">{pack.slot}</span>
+              <Clock size={13} className="text-white/70" />
+              <span className="text-[12px] text-white/80 font-semibold tracking-wide">{pack.slot}</span>
             </div>
 
             {/* Includes chips */}
             <div className="flex flex-wrap gap-1.5 mt-2.5">
               {pack.includes.slice(0, 4).map((item, i) => (
-                <span key={i} className="text-[9px] px-2 py-0.5 rounded-full text-white/80 border border-white/15" style={{ background: "hsl(var(--foreground) / 0.15)" }}>
+                <span key={i} className="text-[10px] px-2.5 py-1 rounded-full text-white/90 font-medium border border-white/20" style={{ background: "hsl(var(--foreground) / 0.22)", backdropFilter: "blur(4px)" }}>
                   {item}
                 </span>
               ))}
               {pack.includes.length > 4 && (
-                <span className="text-[9px] px-2 py-0.5 rounded-full text-primary font-medium" style={{ background: "hsl(var(--primary) / 0.2)" }}>
+                <span className="text-[10px] px-2.5 py-1 rounded-full text-primary font-bold" style={{ background: "hsl(var(--primary) / 0.25)" }}>
                   +{pack.includes.length - 4} more
                 </span>
               )}
@@ -224,14 +227,14 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
 
             {/* Price + CTA */}
             <div className="flex items-center justify-between mt-3">
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-xl font-bold text-white">₹{pack.price}</span>
+              <div className="flex items-baseline gap-2">
+                <span className="text-2xl font-extrabold text-white" style={{ textShadow: "0 1px 4px rgba(0,0,0,0.4)" }}>₹{pack.price}</span>
                 {pack.originalPrice && (
-                  <span className="text-[11px] text-white/40 line-through">₹{pack.originalPrice}</span>
+                  <span className="text-[12px] text-white/50 line-through font-medium">₹{pack.originalPrice}</span>
                 )}
               </div>
-              <div className="flex items-center gap-1.5 bg-primary/90 text-primary-foreground px-4 py-2 rounded-full text-xs font-bold active:scale-95 transition-transform">
-                Book Now <ArrowRight size={12} />
+              <div className="flex items-center gap-1.5 bg-primary text-primary-foreground px-5 py-2.5 rounded-full text-[13px] font-bold active:scale-95 transition-transform shadow-lg" style={{ boxShadow: "0 4px 16px hsl(var(--primary) / 0.4)" }}>
+                Book Now <ArrowRight size={13} />
               </div>
             </div>
           </div>
