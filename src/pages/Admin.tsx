@@ -121,8 +121,8 @@ export default function Admin() {
       case "catalog": return <AdminCatalog />;
       case "dashboard": return <CommandCenter onNavigate={setPage} />;
       case "ai": return <AdminAI />;
-      case "alerts": return <AdminAlerts onNavigate={(p) => setPage(p as AdminPage)} />;
-      case "pricing": return <DynamicPricing />;
+      case "alerts": return <BusinessIntelligence onNavigate={(p) => setPage(p as AdminPage)} />;
+      case "pricing": return <BusinessIntelligence onNavigate={(p) => setPage(p as AdminPage)} />;
       case "properties": return <AdminProperties />;
       case "bookings": return <BookingHub onNavigate={(p, ctx) => navigateTo(p as AdminPage, ctx)} />;
       case "users": return <AdminUsers />;
