@@ -15,7 +15,7 @@ interface CheckoutScreenProps {
   selections: Record<string, number>;
   total: number;
   onBack: () => void;
-  onConfirm: (total: number) => void;
+  onConfirm: (total: number, roomsCount?: number, extraMattresses?: number) => void;
   extras?: Property[];
   isWishlisted?: boolean;
   onToggleWishlist?: (propertyId: string) => void;
