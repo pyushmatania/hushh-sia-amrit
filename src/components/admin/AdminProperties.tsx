@@ -120,17 +120,21 @@ export default function AdminProperties() {
     toast({ title: `Property ${next}`, description: `Status changed to ${next}` });
   };
 
-  const deleteListing = async (id: string) => {
-    if (!confirm("Delete this property permanently?")) return;
-    const { error } = await supabase.from("host_listings").delete().eq("id", id);
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    const { error } = await supabase.from("host_listings").delete().eq("id", deleteTarget);
     if (error) {
       toast({ title: "Delete failed", description: error.message, variant: "destructive" });
-      return;
+    } else {
+      setListings(prev => prev.filter(l => l.id !== deleteTarget));
+      notifyListingsUpdated();
+      toast({ title: "Property deleted" });
     }
+    setDeleteTarget(null);
+  };
 
-    setListings(prev => prev.filter(l => l.id !== id));
-    notifyListingsUpdated();
-    toast({ title: "Property deleted" });
+  const deleteListing = (id: string) => {
+    setDeleteTarget(id);
   };
 
   const duplicateListing = async (listing: Listing) => {
