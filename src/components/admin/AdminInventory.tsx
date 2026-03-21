@@ -32,6 +32,21 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
   const [isCreating, setIsCreating] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
+
+  const bulkDelete = async (ids: string[]) => {
+    for (const id of ids) {
+      await supabase.from("inventory").delete().eq("id", id);
+    }
+    setItems(prev => prev.filter(i => !ids.includes(i.id)));
+    setSelectedIds([]);
+    window.dispatchEvent(new Event("hushh:listings-updated"));
+    toast({ title: `${ids.length} items deleted` });
+  };
 
   const loadInventory = () => {
     supabase.from("inventory").select("*").order("sort_order").order("name")
