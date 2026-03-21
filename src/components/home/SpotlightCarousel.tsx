@@ -136,22 +136,21 @@ function VideoCard({
   const [muted, setMuted] = useState(true);
   const saved = isSaved ?? false;
   const [videoReady, setVideoReady] = useState(false);
-  const [shouldLoad, setShouldLoad] = useState(isFirst ?? false);
+  const [shouldLoad, setShouldLoad] = useState(true);
 
   useEffect(() => {
     const card = cardRef.current;
     if (!card) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
-          setShouldLoad(true);
+        if (entry.isIntersecting) {
           const video = videoRef.current;
           if (video) video.play().catch(() => {});
-        } else if (!entry.isIntersecting) {
+        } else {
           videoRef.current?.pause();
         }
       },
-      { threshold: [0, 0.3], rootMargin: "100px" }
+      { threshold: [0, 0.1], rootMargin: "400px" }
     );
     observer.observe(card);
     return () => observer.disconnect();
