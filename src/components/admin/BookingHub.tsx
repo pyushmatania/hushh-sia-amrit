@@ -540,54 +540,62 @@ function BookingCard({ booking: b, index, onNavigate, onStatusChange }: { bookin
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ delay: index * 0.02 }}
-      className={`rounded-2xl bg-card border border-border/60 border-l-[3px] ${sc.border} overflow-hidden hover:shadow-lg ${sc.glow} transition-all duration-200 group`}
+      className={`rounded-2xl bg-card border border-border/60 overflow-hidden hover:shadow-lg ${sc.glow} transition-all duration-200 group`}
     >
-      {/* Property Image Strip */}
-      {b.propertyImage && (
-        <div className="h-16 w-full overflow-hidden cursor-pointer" onClick={() => onNavigate?.("history", { propertyId: b.property_id })}>
-          <img src={b.propertyImage} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-        </div>
-      )}
-
-      <div className="p-4">
-        <div className="flex items-start justify-between mb-2">
-          <div className="flex items-center gap-2.5">
-            <div className={`w-9 h-9 rounded-xl ${sc.bg} flex items-center justify-center shrink-0`}>
-              <StatusIcon size={16} className={sc.color} />
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-semibold text-foreground truncate cursor-pointer hover:text-primary transition" onClick={() => onNavigate?.("history", { propertyId: b.property_id })}>{b.propertyName}</p>
-                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full capitalize ${sc.bg} ${sc.color}`}>{b.status}</span>
+      {/* Property Image + Info Header */}
+      <div className="relative cursor-pointer" onClick={() => onNavigate?.("history", { propertyId: b.property_id })}>
+        {b.propertyImage ? (
+          <div className="h-24 w-full overflow-hidden">
+            <img src={b.propertyImage} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+          </div>
+        ) : (
+          <div className="h-16 w-full bg-gradient-to-r from-secondary to-secondary/50 flex items-center justify-center">
+            <Building2 size={22} className="text-muted-foreground" />
+          </div>
+        )}
+        <div className="absolute bottom-0 left-0 right-0 p-3 flex items-end justify-between">
+          <div>
+            <p className="text-sm font-bold text-white drop-shadow-md">{b.propertyName}</p>
+            {b.propertyLocation && (
+              <div className="flex items-center gap-1 mt-0.5">
+                <MapPin size={9} className="text-white/80" />
+                <span className="text-[9px] text-white/80">{b.propertyLocation}</span>
               </div>
-              <p className="text-[10px] text-muted-foreground font-mono">#{b.booking_id?.slice(0, 12)}</p>
-            </div>
+            )}
           </div>
-          <div className="text-right">
+          <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full capitalize backdrop-blur-sm ${sc.bg} ${sc.color}`}>{b.status}</span>
+        </div>
+      </div>
+
+      <div className="p-3.5">
+        {/* Booking ID + Amount */}
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-[10px] text-muted-foreground font-mono">#{b.booking_id?.slice(0, 12)}</p>
+          <div className="flex items-center gap-1">
             <p className="text-sm font-bold text-foreground tabular-nums">₹{Number(b.total).toLocaleString()}</p>
-            <p className="text-[10px] text-muted-foreground">{timeAgoShort(b.created_at)}</p>
+            <span className="text-[9px] text-muted-foreground">· {timeAgoShort(b.created_at)}</span>
           </div>
         </div>
 
-        {/* Details Grid */}
-        <div className="grid grid-cols-3 gap-2 mt-2 pt-2 border-t border-border/40">
-          <div className="flex items-center gap-1.5">
+        {/* Details Row */}
+        <div className="flex items-center gap-3 py-2 border-t border-border/40">
+          <div className="flex items-center gap-1.5 flex-1">
             <CalendarCheck size={11} className="text-muted-foreground shrink-0" />
             <span className="text-[10px] text-muted-foreground truncate">{b.date}</span>
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 flex-1">
             <Clock size={11} className="text-muted-foreground shrink-0" />
             <span className="text-[10px] text-muted-foreground truncate">{b.slot}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <Users size={11} className="text-muted-foreground shrink-0" />
-            <span className="text-[10px] text-muted-foreground">{b.guests} guests</span>
+            <span className="text-[10px] text-muted-foreground">{b.guests}</span>
           </div>
         </div>
 
-        {/* Client + Actions Row */}
-        <div className="flex items-center justify-between mt-2.5 pt-2 border-t border-border/40">
+        {/* Client + Actions */}
+        <div className="flex items-center justify-between pt-2 border-t border-border/40">
           <button onClick={() => onNavigate?.("clients", { userId: b.user_id })} className="flex items-center gap-1.5 hover:text-primary transition">
             <div className="w-5 h-5 rounded-full bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center">
               <span className="text-[8px] font-bold text-primary">{(b.userName || "G").charAt(0).toUpperCase()}</span>
@@ -616,7 +624,6 @@ function BookingCard({ booking: b, index, onNavigate, onStatusChange }: { bookin
     </motion.div>
   );
 }
-
 function RequestCard({ booking: b, index, updating, onAccept, onReject, onNavigate, timeAgo }: any) {
   const sc = statusConfig[b.status] || statusConfig.pending;
   return (
