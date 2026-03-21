@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { ShoppingBag, Clock, ChevronRight, Package } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import OrderNotes from "@/components/shared/OrderNotes";
 import { useAuth } from "@/hooks/use-auth";
 
 interface OrderRow {
