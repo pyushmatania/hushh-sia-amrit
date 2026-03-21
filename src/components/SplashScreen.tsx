@@ -31,6 +31,14 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
   const [show, setShow] = useState(true);
   const { greeting, emoji, bg } = getTimeGreeting();
 
+  // Eagerly preload all 3D icons into browser cache during splash
+  useEffect(() => {
+    preloadIcons.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setShow(false);
