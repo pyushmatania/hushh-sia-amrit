@@ -96,6 +96,7 @@ function LiveClock() {
 export default function AdminLayout({ activePage, onNavigate, children }: AdminLayoutProps) {
   const { signOut, user } = useAuth();
   const { isAdmin } = useAdmin();
+  const { theme, setTheme, resolvedTheme } = useTheme();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
