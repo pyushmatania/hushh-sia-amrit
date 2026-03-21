@@ -232,15 +232,17 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
         transition={{ type: "spring", damping: 30, stiffness: 300 }}
         className="w-full max-w-md h-full bg-card border-l border-border overflow-y-auto"
         onClick={e => e.stopPropagation()}
+        ref={el => { if (el) el.scrollTop = 0; }}
       >
         {/* Hero header with gradient */}
         <div className="relative">
-          <div className={`h-28 bg-gradient-to-br ${tier.ring} opacity-20`} />
-          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card to-transparent" />
+          <div className={`h-36 bg-gradient-to-br ${tier.ring} opacity-25`} />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,hsl(var(--primary)/0.15),transparent_60%)]" />
+          <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-card to-transparent" />
 
           {/* Back button */}
-          <button onClick={onClose} className="absolute top-3 left-3 w-8 h-8 rounded-full bg-card/80 backdrop-blur-sm border border-border flex items-center justify-center hover:bg-card transition">
-            <ArrowLeft size={14} className="text-foreground" />
+          <button onClick={onClose} className="absolute top-3 left-3 w-9 h-9 rounded-full bg-card/80 backdrop-blur-sm border border-border flex items-center justify-center hover:bg-card transition active:scale-95">
+            <ArrowLeft size={16} className="text-foreground" />
           </button>
 
           {/* Segment badge */}
@@ -249,8 +251,8 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
           </span>
 
           {/* Profile avatar - overlapping */}
-          <div className="absolute -bottom-8 left-4">
-            <ProfileAvatar client={client} size={72} />
+          <div className="absolute -bottom-10 left-1/2 -translate-x-1/2">
+            <ProfileAvatar client={client} size={80} />
           </div>
         </div>
 
