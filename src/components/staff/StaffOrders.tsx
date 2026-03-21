@@ -27,13 +27,14 @@ export default function StaffOrders() {
   const initialLoadDone = useRef(false);
 
   const loadOrders = async () => {
-    const { data: ordersData } = await supabase.from("orders").select("*")
-      .order("created_at", { ascending: false }).limit(50);
-    if (!ordersData) { setLoading(false); return; }
+    const [ordersRes, itemsRes, listingsRes] = await Promise.all([
+      supabase.from("orders").select("*").order("created_at", { ascending: false }).limit(50),
+      supabase.from("order_items").select("*"),
+      supabase.from("host_listings").select("id, name, image_urls"),
+    ]);
+    if (!ordersRes.data) { setLoading(false); return; }
 
-    const { data: items } = await supabase.from("order_items").select("*")
-      .in("order_id", ordersData.map(o => o.id));
-
+    const { data: items } = itemsRes;
     const itemMap = new Map<string, any[]>();
     (items ?? []).forEach(item => {
       const list = itemMap.get(item.order_id) || [];
@@ -41,7 +42,18 @@ export default function StaffOrders() {
       itemMap.set(item.order_id, list);
     });
 
-    setOrders(ordersData.map(o => ({ ...o, items: itemMap.get(o.id) || [] })));
+    const listingMap = new Map<string, { name: string; imageUrls: string[] }>();
+    (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, { name: l.name, imageUrls: l.image_urls || [] }));
+
+    setOrders(ordersRes.data.map(o => {
+      const listing = listingMap.get(o.property_id);
+      return {
+        ...o,
+        items: itemMap.get(o.id) || [],
+        propertyName: listing?.name || "Property",
+        propertyImageUrls: listing?.imageUrls || [],
+      };
+    }));
     setLoading(false);
     initialLoadDone.current = true;
   };
