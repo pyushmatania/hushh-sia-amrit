@@ -1,32 +1,23 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Package, Search, Plus, Trash2, Pencil, X, AlertTriangle, Eye, GripVertical } from "lucide-react";
+import { Package, Search, Plus, Trash2, Pencil, X, AlertTriangle, Eye, GripVertical, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useDragReorder } from "@/hooks/use-drag-reorder";
 
 interface InventoryItem {
-  id: string;
-  name: string;
-  emoji: string;
-  category: string;
-  unit_price: number;
-  stock: number;
-  low_stock_threshold: number;
-  available: boolean;
-  property_id: string | null;
-  sort_order: number;
-  created_at: string;
+  id: string; name: string; emoji: string; category: string; unit_price: number;
+  stock: number; low_stock_threshold: number; available: boolean;
+  property_id: string | null; sort_order: number; created_at: string;
 }
 
 const categoryOptions = ["food", "drinks", "decoration", "entertainment", "activity", "comfort", "work", "staff", "decor", "equipment"];
 const foodDrinksCategories = ["food", "drinks"];
 const addonsCategories = ["decoration", "decor", "entertainment", "activity", "comfort", "work", "staff", "equipment"];
+const fadeUp = { initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 } };
 
-interface AdminInventoryProps {
-  filterCategory?: "food-drinks" | "addons";
-}
+interface AdminInventoryProps { filterCategory?: "food-drinks" | "addons"; }
 
 export default function AdminInventory({ filterCategory }: AdminInventoryProps = {}) {
   const { toast } = useToast();
@@ -50,44 +41,18 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
     return () => window.removeEventListener("hushh:listings-updated", onRefresh);
   }, []);
 
-  const scopedItems = filterCategory === "food-drinks"
-    ? items.filter(i => foodDrinksCategories.includes(i.category))
-    : filterCategory === "addons"
-    ? items.filter(i => addonsCategories.includes(i.category))
-    : items;
-
-  const availableCats = filterCategory === "food-drinks"
-    ? foodDrinksCategories
-    : filterCategory === "addons"
-    ? addonsCategories
-    : categoryOptions;
-
-  const filtered = scopedItems.filter(i =>
-    (catFilter === "all" || i.category === catFilter) &&
-    i.name.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const grouped = filtered.reduce<Record<string, InventoryItem[]>>((acc, item) => {
-    (acc[item.category] = acc[item.category] || []).push(item);
-    return acc;
-  }, {});
-
-  // Sort items within each group
+  const scopedItems = filterCategory === "food-drinks" ? items.filter(i => foodDrinksCategories.includes(i.category)) : filterCategory === "addons" ? items.filter(i => addonsCategories.includes(i.category)) : items;
+  const availableCats = filterCategory === "food-drinks" ? foodDrinksCategories : filterCategory === "addons" ? addonsCategories : categoryOptions;
+  const filtered = scopedItems.filter(i => (catFilter === "all" || i.category === catFilter) && i.name.toLowerCase().includes(search.toLowerCase()));
+  const grouped = filtered.reduce<Record<string, InventoryItem[]>>((acc, item) => { (acc[item.category] = acc[item.category] || []).push(item); return acc; }, {});
   Object.values(grouped).forEach(arr => arr.sort((a, b) => a.sort_order - b.sort_order));
 
-  const { getDragHandleProps, getDragItemStyle, getDropTargetProps, handleDragEnd, isDragging, isDragOver } = useDragReorder({
+  const { getDragHandleProps, getDragItemStyle, getDropTargetProps, handleDragEnd } = useDragReorder({
     items: [...scopedItems].sort((a, b) => a.sort_order - b.sort_order),
-    getId: (i) => i.id,
-    getCategory: (i) => i.category,
-    getA11yLabel: (i) => `Reorder ${i.name}`,
+    getId: (i) => i.id, getCategory: (i) => i.category, getA11yLabel: (i) => `Reorder ${i.name}`,
     onReorder: async (updates) => {
-      setItems(prev => prev.map(i => {
-        const u = updates.find(u => u.id === i.id);
-        return u ? { ...i, sort_order: u.sort_order } : i;
-      }));
-      for (const u of updates) {
-        await supabase.from("inventory").update({ sort_order: u.sort_order }).eq("id", u.id);
-      }
+      setItems(prev => prev.map(i => { const u = updates.find(u => u.id === i.id); return u ? { ...i, sort_order: u.sort_order } : i; }));
+      for (const u of updates) await supabase.from("inventory").update({ sort_order: u.sort_order }).eq("id", u.id);
       toast({ title: "Order saved" });
       window.dispatchEvent(new Event("hushh:listings-updated"));
     },
@@ -95,30 +60,17 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
 
   const openCreate = () => {
     const defaultCat = filterCategory === "food-drinks" ? "food" : filterCategory === "addons" ? "decoration" : "food";
-    const defaultEmoji = filterCategory === "addons" ? "🎉" : "🍽️";
-    setEditing({ name: "", emoji: defaultEmoji, category: defaultCat, unit_price: 0, stock: 100, low_stock_threshold: 10, available: true, property_id: null, sort_order: 0 });
-    setIsCreating(true);
-    setPreviewMode(false);
+    setEditing({ name: "", emoji: filterCategory === "addons" ? "🎉" : "🍽️", category: defaultCat, unit_price: 0, stock: 100, low_stock_threshold: 10, available: true, property_id: null, sort_order: 0 });
+    setIsCreating(true); setPreviewMode(false);
   };
 
   const save = async () => {
     if (!editing?.name) { toast({ title: "Name required", variant: "destructive" }); return; }
-    const payload = {
-      name: editing.name,
-      emoji: editing.emoji || "🍽️",
-      category: editing.category || "food",
-      unit_price: editing.unit_price || 0,
-      stock: editing.stock || 100,
-      low_stock_threshold: editing.low_stock_threshold || 10,
-      available: editing.available ?? true,
-      property_id: editing.property_id || null,
-      sort_order: editing.sort_order || 0,
-    };
-
+    const payload = { name: editing.name, emoji: editing.emoji || "🍽️", category: editing.category || "food", unit_price: editing.unit_price || 0, stock: editing.stock || 100, low_stock_threshold: editing.low_stock_threshold || 10, available: editing.available ?? true, property_id: editing.property_id || null, sort_order: editing.sort_order || 0 };
     if (isCreating) {
       const { data, error } = await supabase.from("inventory").insert(payload).select().maybeSingle();
       if (error) { toast({ title: "Failed to add", description: error.message, variant: "destructive" }); return; }
-      if (data) { setItems(prev => [...prev, data as InventoryItem]); }
+      if (data) setItems(prev => [...prev, data as InventoryItem]);
       toast({ title: "Item added!" });
     } else {
       const { error } = await supabase.from("inventory").update(payload).eq("id", editing.id!);
@@ -130,108 +82,93 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
     window.dispatchEvent(new Event("hushh:listings-updated"));
   };
 
-  const deleteItem = async (id: string) => {
-    if (!confirm("Delete this item?")) return;
-    await supabase.from("inventory").delete().eq("id", id);
-    setItems(prev => prev.filter(i => i.id !== id));
-    toast({ title: "Item deleted" });
-    window.dispatchEvent(new Event("hushh:listings-updated"));
-  };
-
-  const toggleAvailability = async (item: InventoryItem) => {
-    const next = !item.available;
-    await supabase.from("inventory").update({ available: next }).eq("id", item.id);
-    setItems(prev => prev.map(i => i.id === item.id ? { ...i, available: next } : i));
-  };
+  const deleteItem = async (id: string) => { if (!confirm("Delete?")) return; await supabase.from("inventory").delete().eq("id", id); setItems(prev => prev.filter(i => i.id !== id)); toast({ title: "Deleted" }); window.dispatchEvent(new Event("hushh:listings-updated")); };
+  const toggleAvailability = async (item: InventoryItem) => { const next = !item.available; await supabase.from("inventory").update({ available: next }).eq("id", item.id); setItems(prev => prev.map(i => i.id === item.id ? { ...i, available: next } : i)); };
 
   const lowStock = scopedItems.filter(i => i.stock <= i.low_stock_threshold && i.available);
   const sectionTitle = filterCategory === "food-drinks" ? "Food & Drinks" : filterCategory === "addons" ? "Add-ons & Services" : "Inventory";
 
   return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-between">
+    <motion.div className="space-y-5" initial="initial" animate="animate">
+      <motion.div variants={fadeUp} className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <Package size={22} className="text-primary" /> {sectionTitle}
+          <h1 className="text-2xl font-bold text-zinc-800 dark:text-zinc-100 flex items-center gap-2.5">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-500/10 dark:to-orange-500/10 flex items-center justify-center shadow-sm">
+              <Package size={20} className="text-amber-600" />
+            </div>
+            {sectionTitle}
           </h1>
-          <p className="text-sm text-muted-foreground">{scopedItems.length} items · {lowStock.length} low stock · Drag ⠿ to reorder</p>
+          <p className="text-sm text-zinc-400 mt-1">{scopedItems.length} items · {lowStock.length} low stock · Drag ⠿ to reorder</p>
         </div>
-        <button onClick={openCreate}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 active:scale-95 transition">
+        <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={openCreate}
+          className="flex items-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-violet-500 text-white rounded-xl text-sm font-semibold shadow-md shadow-indigo-200/50 dark:shadow-indigo-900/30">
           <Plus size={16} /> Add Item
-        </button>
-      </div>
+        </motion.button>
+      </motion.div>
 
       {lowStock.length > 0 && (
-        <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 flex items-start gap-2">
-          <AlertTriangle size={16} className="text-amber-400 mt-0.5 shrink-0" />
-          <div>
-            <p className="text-sm font-medium text-foreground">Low Stock Alert</p>
-            <p className="text-xs text-muted-foreground">{lowStock.map(i => `${i.emoji} ${i.name} (${i.stock})`).join(", ")}</p>
-          </div>
-        </div>
+        <motion.div variants={fadeUp} className="rounded-2xl border border-amber-200/60 dark:border-amber-500/20 bg-gradient-to-r from-amber-50 to-yellow-50/50 dark:from-amber-500/5 dark:to-yellow-500/5 p-4 flex items-start gap-3">
+          <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center shrink-0 shadow-sm"><AlertTriangle size={16} className="text-amber-600" /></div>
+          <div><p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">Low Stock Alert</p><p className="text-xs text-zinc-500 mt-0.5">{lowStock.map(i => `${i.emoji} ${i.name} (${i.stock})`).join(", ")}</p></div>
+        </motion.div>
       )}
 
-      <div className="flex flex-col sm:flex-row gap-3">
+      <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input placeholder="Search items..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+          <Input placeholder="Search items..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9 rounded-xl bg-white/80 dark:bg-zinc-900/80 border-zinc-200 dark:border-zinc-700" />
         </div>
-        <div className="flex gap-2 overflow-x-auto hide-scrollbar">
+        <div className="flex gap-1.5 overflow-x-auto hide-scrollbar">
           {["all", ...availableCats].map(c => (
             <button key={c} onClick={() => setCatFilter(c)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize whitespace-nowrap transition ${
-                catFilter === c ? "bg-primary/15 text-primary" : "bg-secondary text-muted-foreground hover:text-foreground"
+              className={`px-3 py-1.5 rounded-xl text-[11px] font-medium capitalize whitespace-nowrap transition-all ${
+                catFilter === c ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 border border-indigo-100 dark:border-indigo-500/20 shadow-sm" : "bg-white dark:bg-zinc-800 text-zinc-400 border border-zinc-100 dark:border-zinc-700"
               }`}>{c}</button>
           ))}
         </div>
-      </div>
+      </motion.div>
 
       {loading ? (
-        <div className="space-y-3">{[1,2,3].map(i => <div key={i} className="h-16 rounded-xl bg-secondary animate-pulse" />)}</div>
+        <div className="space-y-3">{[1,2,3].map(i => <div key={i} className="h-16 rounded-2xl bg-zinc-100 dark:bg-zinc-800 animate-pulse" />)}</div>
       ) : Object.keys(grouped).length === 0 ? (
-        <div className="text-center py-16">
-          <Package size={40} className="mx-auto text-muted-foreground mb-3" />
-          <p className="text-muted-foreground">No items found</p>
-        </div>
+        <motion.div variants={fadeUp} className="text-center py-20">
+          <motion.div animate={{ y: [0, -8, 0] }} transition={{ repeat: Infinity, duration: 3 }}
+            className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-500/10 dark:to-orange-500/10 flex items-center justify-center mx-auto mb-4 shadow-sm">
+            <Package size={28} className="text-amber-400" />
+          </motion.div>
+          <p className="text-zinc-500 text-sm font-medium">No items found</p>
+          <p className="text-zinc-400 text-xs mt-1">Add inventory items to get started</p>
+        </motion.div>
       ) : (
         Object.entries(grouped).map(([cat, catItems]) => (
           <div key={cat}>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 capitalize">{cat}</h3>
+            <h3 className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-2 capitalize">{cat}</h3>
             <div className="space-y-1.5">
               {catItems.map((item) => (
-                <div
-                  key={item.id}
-                  {...getDropTargetProps(item)}
-                  onDragEnd={handleDragEnd}
-                  style={getDragItemStyle(item)}
-                  className={`rounded-xl border bg-card p-3 flex items-center gap-2 select-none ${
-                    item.stock <= item.low_stock_threshold ? "border-amber-500/30" : "border-border"
-                  } ${!item.available ? "opacity-50" : ""}`}
-                >
-                  <span className="text-xl">{item.emoji}</span>
+                <motion.div key={item.id}
+                  whileHover={{ x: 3, transition: { duration: 0.15 } }}
+                  {...getDropTargetProps(item)} onDragEnd={handleDragEnd} style={getDragItemStyle(item)}
+                  className={`rounded-2xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm border p-3.5 flex items-center gap-3 select-none transition-all hover:shadow-md group ${
+                    item.stock <= item.low_stock_threshold ? "border-amber-200/60 dark:border-amber-500/20" : "border-zinc-100/80 dark:border-zinc-800/80"
+                  } ${!item.available ? "opacity-50" : ""}`}>
+                  <span className="text-2xl">{item.emoji}</span>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-medium text-foreground">{item.name}</h4>
-                    <p className="text-[11px] text-muted-foreground tabular-nums">₹{item.unit_price} · Stock: {item.stock}</p>
+                    <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">{item.name}</h4>
+                    <p className="text-[11px] text-zinc-400 tabular-nums">₹{item.unit_price} · Stock: {item.stock}</p>
                   </div>
-                  <div className="flex gap-1">
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button onClick={() => toggleAvailability(item)}
-                      className={`px-2 py-1 rounded-lg text-[10px] font-medium transition ${
-                        item.available ? "bg-emerald-500/15 text-emerald-400" : "bg-muted text-muted-foreground"
-                      }`}>{item.available ? "Available" : "Unavailable"}</button>
-                    <button onClick={() => { setEditing({ ...item }); setIsCreating(false); setPreviewMode(false); }}
-                      className="p-1.5 rounded-lg hover:bg-secondary transition"><Pencil size={13} className="text-muted-foreground" /></button>
-                    <button onClick={() => deleteItem(item.id)}
-                      className="p-1.5 rounded-lg hover:bg-destructive/10 transition"><Trash2 size={13} className="text-destructive" /></button>
+                      className={`px-2.5 py-1 rounded-xl text-[10px] font-semibold transition ${item.available ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600" : "bg-zinc-100 dark:bg-zinc-800 text-zinc-500"}`}>
+                      {item.available ? "Available" : "Unavailable"}
+                    </button>
+                    <button onClick={() => { setEditing({ ...item }); setIsCreating(false); setPreviewMode(false); }} className="p-1.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800 transition"><Pencil size={13} className="text-zinc-400" /></button>
+                    <button onClick={() => deleteItem(item.id)} className="p-1.5 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-500/10 transition"><Trash2 size={13} className="text-rose-400" /></button>
                   </div>
-                  <button
-                    type="button"
-                    {...getDragHandleProps(item)}
-                    className="ml-1 h-10 w-10 rounded-lg flex items-center justify-center text-muted-foreground/50 hover:text-foreground hover:bg-secondary transition shrink-0 cursor-grab active:cursor-grabbing touch-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  >
-                    <GripVertical size={20} />
+                  <button type="button" {...getDragHandleProps(item)}
+                    className="ml-1 h-10 w-10 rounded-xl flex items-center justify-center text-zinc-300 hover:text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition shrink-0 cursor-grab active:cursor-grabbing touch-none">
+                    <GripVertical size={18} />
                   </button>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -242,93 +179,52 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
       <AnimatePresence>
         {editing && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setEditing(null)}>
+            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setEditing(null)}>
             <motion.div initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 100, opacity: 0 }}
-              className="w-full max-w-md bg-card rounded-t-2xl sm:rounded-2xl border border-border p-5 space-y-4"
+              className="w-full max-w-md bg-white dark:bg-zinc-900 rounded-t-2xl sm:rounded-2xl border border-zinc-100 dark:border-zinc-800 p-5 space-y-4 shadow-2xl"
               onClick={e => e.stopPropagation()}>
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold text-foreground">{isCreating ? "Add Item" : "Edit Item"}</h2>
+                <h2 className="text-lg font-bold text-zinc-800 dark:text-zinc-100 flex items-center gap-2"><Sparkles size={14} className="text-indigo-500" /> {isCreating ? "Add Item" : "Edit Item"}</h2>
                 <div className="flex items-center gap-1">
                   <button onClick={() => setPreviewMode(!previewMode)}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1 transition ${previewMode ? "bg-primary/15 text-primary" : "bg-secondary text-muted-foreground"}`}>
+                    className={`px-2.5 py-1 rounded-xl text-xs font-medium flex items-center gap-1 transition ${previewMode ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600" : "bg-zinc-100 dark:bg-zinc-800 text-zinc-500"}`}>
                     <Eye size={12} /> {previewMode ? "Edit" : "Preview"}
                   </button>
-                  <button onClick={() => setEditing(null)} className="p-1 rounded-lg hover:bg-secondary">
-                    <X size={18} className="text-muted-foreground" />
-                  </button>
+                  <button onClick={() => setEditing(null)} className="p-1.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"><X size={16} className="text-zinc-400" /></button>
                 </div>
               </div>
-
               {previewMode ? (
                 <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                  className="rounded-xl border border-border bg-background p-4 flex items-center gap-3">
+                  className="rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 p-4 flex items-center gap-3">
                   <span className="text-3xl">{editing.emoji || "🍽️"}</span>
-                  <div className="flex-1">
-                    <h4 className="text-base font-semibold text-foreground">{editing.name || "Item Name"}</h4>
-                    <p className="text-sm text-muted-foreground capitalize">{editing.category || "food"}</p>
-                    <p className="text-lg font-bold text-foreground mt-1 tabular-nums">₹{editing.unit_price || 0}</p>
-                  </div>
-                  <div className="text-right">
-                    <span className={`px-2 py-1 rounded-lg text-[10px] font-medium ${editing.available ? "bg-emerald-500/15 text-emerald-400" : "bg-muted text-muted-foreground"}`}>
-                      {editing.available ? "Available" : "Unavailable"}
-                    </span>
-                    <p className="text-[11px] text-muted-foreground mt-1 tabular-nums">Stock: {editing.stock || 0}</p>
-                  </div>
+                  <div className="flex-1"><h4 className="text-base font-bold text-zinc-800 dark:text-zinc-100">{editing.name || "Item Name"}</h4><p className="text-sm text-zinc-400 capitalize">{editing.category || "food"}</p><p className="text-lg font-bold text-zinc-800 dark:text-zinc-100 mt-1 tabular-nums">₹{editing.unit_price || 0}</p></div>
+                  <div className="text-right"><span className={`px-2 py-1 rounded-xl text-[10px] font-semibold ${editing.available ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600" : "bg-zinc-100 dark:bg-zinc-800 text-zinc-500"}`}>{editing.available ? "Available" : "Unavailable"}</span><p className="text-[11px] text-zinc-400 mt-1 tabular-nums">Stock: {editing.stock || 0}</p></div>
                 </motion.div>
               ) : (
                 <>
                   <div className="grid grid-cols-[60px_1fr] gap-3">
-                    <div>
-                      <label className="text-xs text-muted-foreground mb-1 block">Emoji</label>
-                      <Input value={editing.emoji || ""} onChange={e => setEditing(p => ({ ...p!, emoji: e.target.value }))} className="text-center text-lg" />
-                    </div>
-                    <div>
-                      <label className="text-xs text-muted-foreground mb-1 block">Name</label>
-                      <Input value={editing.name || ""} onChange={e => setEditing(p => ({ ...p!, name: e.target.value }))} placeholder="Tribal Thali" />
-                    </div>
+                    <div><label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1.5 block">Emoji</label><Input value={editing.emoji || ""} onChange={e => setEditing(p => ({ ...p!, emoji: e.target.value }))} className="text-center text-lg rounded-xl bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700" /></div>
+                    <div><label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1.5 block">Name</label><Input value={editing.name || ""} onChange={e => setEditing(p => ({ ...p!, name: e.target.value }))} placeholder="Tribal Thali" className="rounded-xl bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700" /></div>
                   </div>
-
                   <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="text-xs text-muted-foreground mb-1 block">Category</label>
-                      <select value={editing.category || "food"} onChange={e => setEditing(p => ({ ...p!, category: e.target.value }))}
-                        className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm">
-                        {categoryOptions.map(c => <option key={c} value={c}>{c}</option>)}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="text-xs text-muted-foreground mb-1 block">Unit Price (₹)</label>
-                      <Input type="number" value={editing.unit_price || 0} onChange={e => setEditing(p => ({ ...p!, unit_price: Number(e.target.value) }))} />
-                    </div>
+                    <div><label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1.5 block">Category</label><select value={editing.category || "food"} onChange={e => setEditing(p => ({ ...p!, category: e.target.value }))} className="w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-3 py-2 text-sm text-zinc-700 dark:text-zinc-200">{categoryOptions.map(c => <option key={c} value={c}>{c}</option>)}</select></div>
+                    <div><label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1.5 block">Unit Price (₹)</label><Input type="number" value={editing.unit_price || 0} onChange={e => setEditing(p => ({ ...p!, unit_price: Number(e.target.value) }))} className="rounded-xl bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700" /></div>
                   </div>
-
                   <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="text-xs text-muted-foreground mb-1 block">Stock</label>
-                      <Input type="number" value={editing.stock || 0} onChange={e => setEditing(p => ({ ...p!, stock: Number(e.target.value) }))} />
-                    </div>
-                    <div>
-                      <label className="text-xs text-muted-foreground mb-1 block">Low Stock Threshold</label>
-                      <Input type="number" value={editing.low_stock_threshold || 0} onChange={e => setEditing(p => ({ ...p!, low_stock_threshold: Number(e.target.value) }))} />
-                    </div>
+                    <div><label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1.5 block">Stock</label><Input type="number" value={editing.stock || 0} onChange={e => setEditing(p => ({ ...p!, stock: Number(e.target.value) }))} className="rounded-xl bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700" /></div>
+                    <div><label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1.5 block">Low Threshold</label><Input type="number" value={editing.low_stock_threshold || 0} onChange={e => setEditing(p => ({ ...p!, low_stock_threshold: Number(e.target.value) }))} className="rounded-xl bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700" /></div>
                   </div>
-
-                  <div className="flex items-center gap-2">
-                    <input type="checkbox" checked={editing.available ?? true} onChange={e => setEditing(p => ({ ...p!, available: e.target.checked }))}
-                      className="rounded border-input" id="avail" />
-                    <label htmlFor="avail" className="text-sm text-foreground">Available for ordering</label>
-                  </div>
+                  <div className="flex items-center gap-2"><input type="checkbox" checked={editing.available ?? true} onChange={e => setEditing(p => ({ ...p!, available: e.target.checked }))} className="rounded border-zinc-300" id="avail" /><label htmlFor="avail" className="text-sm text-zinc-700 dark:text-zinc-200">Available for ordering</label></div>
                 </>
               )}
-
-              <button onClick={save}
-                className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 active:scale-[0.98] transition">
-                {isCreating ? "Add Item" : "Save Changes"}
-              </button>
+              <motion.button whileTap={{ scale: 0.97 }} onClick={save}
+                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white font-semibold text-sm shadow-md">
+                {isCreating ? "✨ Add Item" : "💾 Save Changes"}
+              </motion.button>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }
