@@ -362,7 +362,9 @@ export default function AdminCurations() {
                   >
                     {selectedIds.includes(c.id) && <span className="text-[10px] font-bold">✓</span>}
                   </button>
-                  <span className="text-2xl">{c.emoji}</span>
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary/15 to-accent/10 flex items-center justify-center text-2xl shadow-sm shrink-0">
+                    {c.emoji}
+                  </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold text-sm text-foreground">{c.name}</h3>
