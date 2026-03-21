@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Package, Search, Plus, Trash2, Pencil, X, AlertTriangle, Eye, GripVertical, Sparkles } from "lucide-react";
+import { Package, Search, Plus, Trash2, Pencil, X, AlertTriangle, Eye, GripVertical, Sparkles, CheckSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
