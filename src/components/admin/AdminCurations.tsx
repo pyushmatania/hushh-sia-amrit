@@ -563,6 +563,37 @@ export default function AdminCurations() {
                         className="overflow-hidden"
                       >
                         <div className="px-4 pb-4 pt-1 border-t border-border space-y-3">
+                          {/* Revenue breakdown */}
+                          <div>
+                            <p className="text-[10px] text-muted-foreground mb-1.5">Revenue Analytics</p>
+                            <div className="grid grid-cols-3 gap-2">
+                              <div className="rounded-lg bg-primary/5 p-2 text-center">
+                                <p className="text-xs font-bold text-foreground tabular-nums">₹{(rev?.bookingRev || 0).toLocaleString()}</p>
+                                <p className="text-[8px] text-muted-foreground">Bookings</p>
+                              </div>
+                              <div className="rounded-lg bg-blue-500/5 p-2 text-center">
+                                <p className="text-xs font-bold text-foreground tabular-nums">₹{(rev?.orderRev || 0).toLocaleString()}</p>
+                                <p className="text-[8px] text-muted-foreground">Food Orders</p>
+                              </div>
+                              <div className="rounded-lg bg-emerald-500/5 p-2 text-center">
+                                <p className="text-xs font-bold text-foreground tabular-nums">₹{curationRevenue.toLocaleString()}</p>
+                                <p className="text-[8px] text-muted-foreground">Total</p>
+                              </div>
+                            </div>
+                            {bookings > 0 && (
+                              <div className="mt-2">
+                                <div className="flex justify-between text-[9px] text-muted-foreground mb-1">
+                                  <span>Avg per booking</span>
+                                  <span className="font-semibold text-foreground tabular-nums">₹{Math.round(curationRevenue / bookings).toLocaleString()}</span>
+                                </div>
+                                <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
+                                  <div className="h-full rounded-full bg-gradient-to-r from-primary to-primary/60"
+                                    style={{ width: `${Math.min(100, (curationRevenue / (totalEarned || 1)) * 100)}%` }} />
+                                </div>
+                                <p className="text-[8px] text-muted-foreground mt-0.5">{((curationRevenue / (totalEarned || 1)) * 100).toFixed(1)}% of total revenue</p>
+                              </div>
+                            )}
+                          </div>
                           {/* Includes */}
                           <div>
                             <p className="text-[10px] text-muted-foreground mb-1.5">What's Included</p>
