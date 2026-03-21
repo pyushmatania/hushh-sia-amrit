@@ -232,15 +232,17 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
         transition={{ type: "spring", damping: 30, stiffness: 300 }}
         className="w-full max-w-md h-full bg-card border-l border-border overflow-y-auto"
         onClick={e => e.stopPropagation()}
+        ref={el => { if (el) el.scrollTop = 0; }}
       >
         {/* Hero header with gradient */}
         <div className="relative">
-          <div className={`h-28 bg-gradient-to-br ${tier.ring} opacity-20`} />
-          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card to-transparent" />
+          <div className={`h-36 bg-gradient-to-br ${tier.ring} opacity-25`} />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,hsl(var(--primary)/0.15),transparent_60%)]" />
+          <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-card to-transparent" />
 
           {/* Back button */}
-          <button onClick={onClose} className="absolute top-3 left-3 w-8 h-8 rounded-full bg-card/80 backdrop-blur-sm border border-border flex items-center justify-center hover:bg-card transition">
-            <ArrowLeft size={14} className="text-foreground" />
+          <button onClick={onClose} className="absolute top-3 left-3 w-9 h-9 rounded-full bg-card/80 backdrop-blur-sm border border-border flex items-center justify-center hover:bg-card transition active:scale-95">
+            <ArrowLeft size={16} className="text-foreground" />
           </button>
 
           {/* Segment badge */}
@@ -249,25 +251,30 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
           </span>
 
           {/* Profile avatar - overlapping */}
-          <div className="absolute -bottom-8 left-4">
-            <ProfileAvatar client={client} size={72} />
+          <div className="absolute -bottom-10 left-1/2 -translate-x-1/2">
+            <ProfileAvatar client={client} size={80} />
           </div>
         </div>
 
         {/* Name & tier */}
-        <div className="pt-12 px-4 pb-4 border-b border-border">
-          <div className="flex items-start justify-between">
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold text-foreground truncate">{client.display_name || "Unnamed"}</h2>
-                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${tier.badge} ${tier.text}`}>
-                  {tier.icon} {client.tier}
-                </span>
-              </div>
-              {client.bio && <p className="text-[11px] text-muted-foreground mt-1 italic line-clamp-2">{client.bio}</p>}
-              <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1">
-                <CalendarCheck size={9} /> Member since {formatDate(client.created_at)} · {timeAgo(client.created_at)}
+        <div className="pt-14 px-4 pb-4 border-b border-border text-center">
+          <div className="flex flex-col items-center">
+            <div className="flex items-center gap-2 mb-1">
+              <h2 className="text-lg font-bold text-foreground">{client.display_name || "Unnamed"}</h2>
+              <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${tier.badge} ${tier.text}`}>
+                {tier.icon} {client.tier}
+              </span>
+            </div>
+            {client.bio && <p className="text-[11px] text-muted-foreground italic line-clamp-2 max-w-[260px]">{client.bio}</p>}
+            <div className="flex items-center gap-3 mt-1.5">
+              <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+                <CalendarCheck size={9} /> Joined {formatDate(client.created_at)}
               </p>
+              {client.location && (
+                <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+                  <MapPin size={9} /> {client.location}
+                </p>
+              )}
             </div>
           </div>
 
@@ -575,7 +582,7 @@ function ClientAISearch({ clients, listingMap }: { clients: ClientProfile[]; lis
 }
 
 /* ─── Main Component ─── */
-export default function AdminClients({ initialUserId, onContextConsumed }: { initialUserId?: string; onContextConsumed?: () => void } = {}) {
+export default function AdminClients({ initialUserId, onContextConsumed, onBack }: { initialUserId?: string; onContextConsumed?: () => void; onBack?: () => void } = {}) {
   const [clients, setClients] = useState<ClientProfile[]>([]);
   const [search, setSearch] = useState("");
   const [segmentFilter, setSegmentFilter] = useState<string | null>(null);
@@ -596,6 +603,10 @@ export default function AdminClients({ initialUserId, onContextConsumed }: { ini
     }
   }, [initialUserId, loading, clients, onContextConsumed]);
 
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
   useEffect(() => {
     const load = async () => {
       const [profilesRes, bookingsRes, ordersRes, orderItemsRes, reviewsRes, wishlistsRes, referralsRes, verificationsRes, listingsRes] = await Promise.all([
@@ -732,14 +743,21 @@ export default function AdminClients({ initialUserId, onContextConsumed }: { ini
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
-              <Users size={16} className="text-primary" />
-            </div>
-            Client Directory
-          </h1>
-          <p className="text-xs text-muted-foreground mt-0.5 ml-10">{clients.length} clients · {filtered.length} shown</p>
+        <div className="flex items-center gap-3">
+          {onBack && (
+            <button onClick={onBack} className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center hover:bg-primary/10 transition active:scale-95">
+              <ArrowLeft size={16} className="text-foreground" />
+            </button>
+          )}
+          <div>
+            <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Users size={16} className="text-primary" />
+              </div>
+              Client Directory
+            </h1>
+            <p className="text-xs text-muted-foreground mt-0.5 ml-10">{clients.length} clients · {filtered.length} shown</p>
+          </div>
         </div>
         <button onClick={exportCSV} className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition active:scale-95">
           <Download size={14} /> Export
