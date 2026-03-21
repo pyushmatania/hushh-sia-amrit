@@ -332,6 +332,7 @@ function fmtInline(text: string) {
 export default function AdminAI() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
+  const rotatingPlaceholder = useRotatingPlaceholder(input);
   const [loading, setLoading] = useState(false);
   const [context, setContext] = useState<any>(null);
   const [expanded, setExpanded] = useState(false);
