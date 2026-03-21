@@ -32,8 +32,8 @@ export default function LiveOrdersWidget({ onViewAll }: { onViewAll: () => void 
     (itemsRes.data ?? []).forEach(item => { const list = itemMap.get(item.order_id) || []; list.push(item); itemMap.set(item.order_id, list); });
     const profileMap = new Map<string, string>();
     (profilesRes.data ?? []).forEach(p => profileMap.set(p.user_id, p.display_name || "Guest"));
-    const listingMap = new Map<string, string>();
-    (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, l.name));
+    const listingMap = new Map<string, { name: string; imageUrls: string[] }>();
+    (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, { name: l.name, imageUrls: l.image_urls || [] }));
 
     setOrders(ordersData.map(o => ({
       ...o, assigned_name: (o as any).assigned_name || null,
