@@ -1,17 +1,38 @@
 import { motion } from "framer-motion";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 
 interface HushhBotProps {
   size?: number;
   state?: "idle" | "thinking" | "speaking" | "listening" | "success" | "error";
 }
 
+const idleCycle: { eyeStyle: string; mouthType: string }[] = [
+  { eyeStyle: "curious", mouthType: "pout" },
+  { eyeStyle: "happy", mouthType: "grin" },
+  { eyeStyle: "sleepy", mouthType: "hmm" },
+  { eyeStyle: "excited", mouthType: "smile" },
+];
+
 export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
   const s = size;
   const [hovered, setHovered] = useState(false);
+  const [cycleIndex, setCycleIndex] = useState(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const onEnter = useCallback(() => setHovered(true), []);
   const onLeave = useCallback(() => setHovered(false), []);
+
+  // Cycle expressions when idle
+  useEffect(() => {
+    if (state === "idle" && !hovered) {
+      intervalRef.current = setInterval(() => {
+        setCycleIndex(prev => (prev + 1) % idleCycle.length);
+      }, 3000);
+      return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+    }
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, [state, hovered]);
+
   const palette: Record<string, { core: string; bright: string; mid: string; outer: string; deep: string; glow: string }> = {
     idle:      { core: "#FFF8E7", bright: "#FFE082", mid: "#FFB74D", outer: "#FF8F00", deep: "#E65100", glow: "rgba(255,160,0,0.5)" },
     thinking:  { core: "#E3F2FD", bright: "#90CAF9", mid: "#42A5F5", outer: "#1E88E5", deep: "#0D47A1", glow: "rgba(30,136,229,0.5)" },
@@ -23,9 +44,7 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
 
   const c = palette[state];
 
-  // Expression changes every few seconds
-  const expressions: Record<string, { eyeStyle: string; mouthType: string }> = {
-    idle:      { eyeStyle: "curious", mouthType: "pout" },
+  const stateExpressions: Record<string, { eyeStyle: string; mouthType: string }> = {
     thinking:  { eyeStyle: "look-up", mouthType: "hmm" },
     speaking:  { eyeStyle: "wide", mouthType: "talk" },
     listening: { eyeStyle: "soft", mouthType: "smile" },
@@ -35,9 +54,9 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
 
   const expr = hovered
     ? { eyeStyle: "scared", mouthType: "gasp" }
-    : expressions[state];
-
-  const activeState = hovered ? "hover" : state;
+    : state === "idle"
+      ? idleCycle[cycleIndex]
+      : (stateExpressions[state] || idleCycle[0]);
 
   return (
     <motion.div
@@ -253,8 +272,8 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
 
             {/* Eyes */}
             <div className="flex items-center justify-center" style={{ gap: s * 0.1 }}>
-              <FlameEye size={s * 0.065} state={state} side="left" hovered={hovered} />
-              <FlameEye size={s * 0.065} state={state} side="right" hovered={hovered} />
+              <FlameEye size={s * 0.065} state={state} side="left" hovered={hovered} eyeStyle={expr.eyeStyle} />
+              <FlameEye size={s * 0.065} state={state} side="right" hovered={hovered} eyeStyle={expr.eyeStyle} />
             </div>
 
             {/* Cheek blush */}
@@ -402,8 +421,8 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
 }
 
 /* ─── Eye Component ─── */
-function FlameEye({ size, state, side, hovered = false }: { size: number; state: string; side: "left" | "right"; hovered?: boolean }) {
-  const isHappy = state === "success";
+function FlameEye({ size, state, side, hovered = false, eyeStyle = "" }: { size: number; state: string; side: "left" | "right"; hovered?: boolean; eyeStyle?: string }) {
+  const isHappy = state === "success" || eyeStyle === "happy";
   const pupilR = size * 0.45;
 
   if (isHappy) {
@@ -437,6 +456,44 @@ function FlameEye({ size, state, side, hovered = false }: { size: number; state:
           className="absolute bg-white/50 rounded-full"
           style={{ width: pupilR * 0.4, height: pupilR * 0.4, bottom: "20%", left: "18%" }}
         />
+      </motion.div>
+    );
+  }
+  // Sleepy - half-closed eyes
+  if (eyeStyle === "sleepy") {
+    return (
+      <motion.div
+        className="relative"
+        style={{
+          width: size * 1.2, height: size * 0.6,
+          borderRadius: "40% 40% 50% 50%",
+          background: "#1a0e05",
+          overflow: "hidden",
+        }}
+        animate={{ scaleY: [1, 0.7, 1] }}
+        transition={{ duration: 3, repeat: Infinity }}
+      >
+        <div className="absolute bg-white rounded-full" style={{ width: pupilR * 0.6, height: pupilR * 0.6, top: "15%", right: "20%" }} />
+      </motion.div>
+    );
+  }
+
+  // Excited - big sparkly eyes
+  if (eyeStyle === "excited") {
+    return (
+      <motion.div
+        className="relative rounded-full"
+        style={{ width: size * 1.3, height: size * 1.8, background: "#1a0e05" }}
+        animate={{ scale: [1, 1.1, 1] }}
+        transition={{ duration: 0.6, repeat: Infinity }}
+      >
+        <motion.div
+          className="absolute bg-white rounded-full"
+          style={{ width: pupilR, height: pupilR, top: "12%", right: "12%" }}
+          animate={{ scale: [1, 1.3, 1] }}
+          transition={{ duration: 0.8, repeat: Infinity }}
+        />
+        <div className="absolute bg-white/60 rounded-full" style={{ width: pupilR * 0.4, height: pupilR * 0.4, bottom: "22%", left: "18%" }} />
       </motion.div>
     );
   }
