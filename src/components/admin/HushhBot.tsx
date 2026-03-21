@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useState, useCallback } from "react";
 
 interface HushhBotProps {
   size?: number;
@@ -7,7 +8,10 @@ interface HushhBotProps {
 
 export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
   const s = size;
+  const [hovered, setHovered] = useState(false);
 
+  const onEnter = useCallback(() => setHovered(true), []);
+  const onLeave = useCallback(() => setHovered(false), []);
   const palette: Record<string, { core: string; bright: string; mid: string; outer: string; deep: string; glow: string }> = {
     idle:      { core: "#FFF8E7", bright: "#FFE082", mid: "#FFB74D", outer: "#FF8F00", deep: "#E65100", glow: "rgba(255,160,0,0.5)" },
     thinking:  { core: "#E3F2FD", bright: "#90CAF9", mid: "#42A5F5", outer: "#1E88E5", deep: "#0D47A1", glow: "rgba(30,136,229,0.5)" },
@@ -29,10 +33,21 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
     error:     { eyeStyle: "sad", mouthType: "frown" },
   };
 
-  const expr = expressions[state];
+  const expr = hovered
+    ? { eyeStyle: "scared", mouthType: "gasp" }
+    : expressions[state];
+
+  const activeState = hovered ? "hover" : state;
 
   return (
-    <motion.div className="relative" style={{ width: s, height: s * 1.3 }}>
+    <motion.div
+      className="relative cursor-pointer"
+      style={{ width: s, height: s * 1.3 }}
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
+      onTouchStart={onEnter}
+      onTouchEnd={onLeave}
+    >
       {/* ── LARGE AMBIENT GLOW ── */}
       <motion.div
         className="absolute rounded-full"
@@ -65,6 +80,7 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
         className="absolute"
         style={{ inset: 0 }}
         animate={
+          hovered ? { y: -12, scale: 0.88, rotate: [0, -6, 6, -3, 0] } :
           state === "thinking" ? { y: [0, -5, 0], rotate: [0, 2, -2, 0] } :
           state === "speaking" ? { y: [0, -3, 0] } :
           state === "success" ? { y: [0, -8, 0] } :
@@ -73,8 +89,8 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
           { y: [0, -4, 0] }
         }
         transition={{
-          duration: state === "error" ? 0.4 : state === "success" ? 0.6 : state === "thinking" ? 1.2 : 2.5,
-          repeat: Infinity, ease: "easeInOut",
+          duration: hovered ? 0.35 : state === "error" ? 0.4 : state === "success" ? 0.6 : state === "thinking" ? 1.2 : 2.5,
+          repeat: hovered ? 0 : Infinity, ease: "easeInOut",
         }}
       >
         {/* ── OUTER FLAME LAYER 1 (biggest, deepest color) ── */}
@@ -204,33 +220,41 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
           {/* ── FACE ── */}
           <div className="absolute flex flex-col items-center" style={{ top: s * 0.1, left: 0, right: 0 }}>
             {/* Eyebrows for expressions */}
-            {(expr.eyeStyle === "curious" || expr.eyeStyle === "sad") && (
+            {(expr.eyeStyle === "curious" || expr.eyeStyle === "sad" || expr.eyeStyle === "scared") && (
               <div className="flex justify-center" style={{ gap: s * 0.1, marginBottom: s * 0.01 }}>
                 <motion.div
                   style={{
                     width: s * 0.06, height: 2,
                     background: "rgba(80,40,10,0.5)", borderRadius: 2,
-                    transform: expr.eyeStyle === "sad" ? "rotate(15deg)" : "rotate(-8deg)",
                   }}
-                  animate={expr.eyeStyle === "curious" ? { rotate: [-8, -12, -8] } : {}}
-                  transition={{ duration: 2, repeat: Infinity }}
+                  animate={
+                    expr.eyeStyle === "scared" ? { rotate: [20, 25, 20], y: [-2, -4, -2] } :
+                    expr.eyeStyle === "curious" ? { rotate: [-8, -12, -8] } :
+                    {}
+                  }
+                  initial={{ rotate: expr.eyeStyle === "sad" ? 15 : expr.eyeStyle === "scared" ? 20 : -8 }}
+                  transition={{ duration: expr.eyeStyle === "scared" ? 0.4 : 2, repeat: Infinity }}
                 />
                 <motion.div
                   style={{
                     width: s * 0.06, height: 2,
                     background: "rgba(80,40,10,0.5)", borderRadius: 2,
-                    transform: expr.eyeStyle === "sad" ? "rotate(-15deg)" : "rotate(8deg)",
                   }}
-                  animate={expr.eyeStyle === "curious" ? { rotate: [8, 12, 8] } : {}}
-                  transition={{ duration: 2, repeat: Infinity }}
+                  animate={
+                    expr.eyeStyle === "scared" ? { rotate: [-20, -25, -20], y: [-2, -4, -2] } :
+                    expr.eyeStyle === "curious" ? { rotate: [8, 12, 8] } :
+                    {}
+                  }
+                  initial={{ rotate: expr.eyeStyle === "sad" ? -15 : expr.eyeStyle === "scared" ? -20 : 8 }}
+                  transition={{ duration: expr.eyeStyle === "scared" ? 0.4 : 2, repeat: Infinity }}
                 />
               </div>
             )}
 
             {/* Eyes */}
             <div className="flex items-center justify-center" style={{ gap: s * 0.1 }}>
-              <FlameEye size={s * 0.065} state={state} side="left" />
-              <FlameEye size={s * 0.065} state={state} side="right" />
+              <FlameEye size={s * 0.065} state={state} side="left" hovered={hovered} />
+              <FlameEye size={s * 0.065} state={state} side="right" hovered={hovered} />
             </div>
 
             {/* Cheek blush */}
@@ -378,7 +402,7 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
 }
 
 /* ─── Eye Component ─── */
-function FlameEye({ size, state, side }: { size: number; state: string; side: "left" | "right" }) {
+function FlameEye({ size, state, side, hovered = false }: { size: number; state: string; side: "left" | "right"; hovered?: boolean }) {
   const isHappy = state === "success";
   const pupilR = size * 0.45;
 
@@ -396,6 +420,27 @@ function FlameEye({ size, state, side }: { size: number; state: string; side: "l
     );
   }
 
+  if (hovered) {
+    // Scared wide eyes
+    return (
+      <motion.div
+        className="relative rounded-full"
+        style={{ width: size * 1.4, height: size * 2, background: "#1a0e05" }}
+        animate={{ scale: [1, 1.15, 1] }}
+        transition={{ duration: 0.3, repeat: Infinity }}
+      >
+        <motion.div
+          className="absolute bg-white rounded-full"
+          style={{ width: pupilR * 0.8, height: pupilR * 0.8, top: "12%", right: "15%" }}
+        />
+        <div
+          className="absolute bg-white/50 rounded-full"
+          style={{ width: pupilR * 0.4, height: pupilR * 0.4, bottom: "20%", left: "18%" }}
+        />
+      </motion.div>
+    );
+  }
+
   return (
     <motion.div
       className="relative rounded-full"
@@ -406,7 +451,6 @@ function FlameEye({ size, state, side }: { size: number; state: string; side: "l
       animate={
         state === "thinking" ? { scaleY: [1, 0.1, 1] } :
         state === "listening" ? { scaleY: [1, 1.15, 1] } :
-        // Blink randomly
         { scaleY: [1, 1, 1, 0.1, 1, 1, 1] }
       }
       transition={{
@@ -415,7 +459,6 @@ function FlameEye({ size, state, side }: { size: number; state: string; side: "l
         delay: side === "right" ? 0.1 : 0,
       }}
     >
-      {/* Pupil / highlight */}
       <motion.div
         className="absolute bg-white rounded-full"
         style={{ width: pupilR, height: pupilR, top: "18%", right: "18%" }}
@@ -426,7 +469,6 @@ function FlameEye({ size, state, side }: { size: number; state: string; side: "l
         }
         transition={{ duration: 2, repeat: Infinity }}
       />
-      {/* Tiny secondary highlight */}
       <div
         className="absolute bg-white/60 rounded-full"
         style={{ width: pupilR * 0.5, height: pupilR * 0.5, bottom: "25%", left: "22%" }}
@@ -439,7 +481,24 @@ function FlameEye({ size, state, side }: { size: number; state: string; side: "l
 function FlameMouth({ size, type, state }: { size: number; type: string; state: string }) {
   const s = size;
 
-  if (type === "talk" || state === "speaking") {
+  // Scared gasp - round "O" mouth
+  if (type === "gasp") {
+    return (
+      <motion.div
+        className="rounded-full"
+        style={{
+          width: s * 0.07, height: s * 0.07,
+          marginTop: s * 0.02,
+          background: "#1a0e05",
+          opacity: 0.55,
+        }}
+        animate={{ scale: [1, 1.2, 0.9, 1], y: [0, -1, 1, 0] }}
+        transition={{ duration: 0.5, repeat: Infinity }}
+      />
+    );
+  }
+
+
     return (
       <motion.div
         className="rounded-full"
