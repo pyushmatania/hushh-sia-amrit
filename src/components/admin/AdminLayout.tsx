@@ -43,6 +43,7 @@ const navSections: { title: string; items: { id: AdminPage; label: string; icon:
     items: [
       { id: "calendar", label: "Calendar", icon: CalendarCheck, color: "bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400", activeGlow: "shadow-emerald-200/60" },
       { id: "bookings", label: "Booking Hub", icon: CalendarCheck, color: "bg-sky-100 text-sky-600 dark:bg-sky-500/20 dark:text-sky-400", activeGlow: "shadow-sky-200/60" },
+      { id: "checkin", label: "Check-in", icon: UserCheck, color: "bg-teal-100 text-teal-600 dark:bg-teal-500/20 dark:text-teal-400", activeGlow: "shadow-teal-200/60" },
       { id: "orders", label: "Live Orders", icon: ShoppingCart, color: "bg-orange-100 text-orange-600 dark:bg-orange-500/20 dark:text-orange-400", activeGlow: "shadow-orange-200/60" },
       { id: "inventory", label: "Inventory", icon: Package, color: "bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400", activeGlow: "shadow-amber-200/60" },
     ]
