@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useDragReorder } from "@/hooks/use-drag-reorder";
 import SwipeableRow from "./SwipeableRow";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
+import BatchOperationsBar from "./BatchOperationsBar";
 
 interface PackageRow {
   id: string;
