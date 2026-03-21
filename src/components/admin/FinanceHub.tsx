@@ -549,9 +549,9 @@ export default function FinanceHub() {
               <p className="text-xs font-bold text-foreground mb-2 flex items-center gap-1.5">
                 <Layers size={13} className="text-primary" /> Revenue by Time Slot
               </p>
-              {Object.entries(revenueData.slotRevenue).sort(([,a],[,b]) => b - a).map(([slot, amount]) => {
+              {Object.entries(revenueData.slotRevenue).sort(([,a],[,b]) => Number(b) - Number(a)).map(([slot, amount]) => {
                 const total = revenueData.totalBookingRev || 1;
-                const pct = Math.round((amount / total) * 100);
+                const pct = Math.round((Number(amount) / total) * 100);
                 return (
                   <div key={slot} className="flex items-center gap-2 py-1.5 border-b border-border/30 last:border-0">
                     <span className="text-[11px] font-medium text-foreground w-28 truncate">{slot}</span>

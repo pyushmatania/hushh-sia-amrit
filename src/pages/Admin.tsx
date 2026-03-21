@@ -128,7 +128,7 @@ export default function Admin() {
       case "users": return <AdminUsers />;
       case "clients": return <AdminClients initialUserId={clientContext?.userId} onContextConsumed={() => setClientContext(null)} onBack={pageHistory.length > 0 ? goBack : undefined} />;
       case "analytics": return <AdminAnalytics />;
-      case "earnings": return <HostEarnings />;
+      case "earnings": return <FinanceHub />;
       case "curations": return <AdminCurations />;
       case "campaigns": return <AdminCampaigns />;
       case "coupons": return <AdminCoupons />;
