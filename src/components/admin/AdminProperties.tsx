@@ -457,13 +457,16 @@ export default function AdminProperties() {
                   </button>
                 )}
                 <div className="w-[72px] h-[72px] rounded-xl bg-secondary shrink-0 overflow-hidden shadow-sm">
-                  {listing.image_urls?.[0] ? (
-                    <img src={listing.image_urls[0]} alt="" className="w-full h-full object-cover" loading="lazy" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-violet-100 dark:from-indigo-500/15 dark:to-violet-500/10">
-                      <Building2 size={24} className="text-indigo-400/60" />
-                    </div>
-                  )}
+                  {(() => {
+                    const thumb = getListingThumbnail(listing.name, listing.image_urls);
+                    return thumb ? (
+                      <img src={thumb} alt="" className="w-full h-full object-cover" loading="lazy" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-violet-100 dark:from-indigo-500/15 dark:to-violet-500/10">
+                        <Building2 size={24} className="text-indigo-400/60" />
+                      </div>
+                    );
+                  })()}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
