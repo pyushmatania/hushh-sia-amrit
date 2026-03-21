@@ -342,7 +342,34 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
     setOrderingBooking(booking);
   }, []);
 
-  return (
+  // Build set of booked dates for the calendar
+  const bookedDatesMap = useMemo(() => {
+    const map = new Map<string, Booking[]>();
+    bookings.forEach(b => {
+      if (b.status === "cancelled") return;
+      const parsed = new Date(b.date);
+      if (!isNaN(parsed.getTime())) {
+        const key = `${parsed.getFullYear()}-${parsed.getMonth()}-${parsed.getDate()}`;
+        map.set(key, [...(map.get(key) || []), b]);
+      }
+    });
+    return map;
+  }, [bookings]);
+
+  const bookedDates = useMemo(() =>
+    Array.from(bookedDatesMap.keys()).map(key => {
+      const [y, m, d] = key.split("-").map(Number);
+      return new Date(y, m, d);
+    }),
+    [bookedDatesMap]
+  );
+
+  const selectedDateBookings = useMemo(() => {
+    if (!selectedCalDate) return [];
+    const key = `${selectedCalDate.getFullYear()}-${selectedCalDate.getMonth()}-${selectedCalDate.getDate()}`;
+    return bookedDatesMap.get(key) || [];
+  }, [selectedCalDate, bookedDatesMap]);
+
     <PullToRefresh onRefresh={handleRefresh}>
     <div key={refreshKey} className="pb-24 bg-mesh min-h-screen">
       <div className="px-5 pt-6 pb-2">
