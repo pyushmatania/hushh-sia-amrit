@@ -5,11 +5,12 @@ import {
   Shield, CheckCircle2, Clock, X, MapPin, Star, Heart, ShoppingCart,
   Share2, Zap, Award, ChevronRight, ArrowLeft, FileText, User,
   ChefHat, Receipt, Phone, Mail, CreditCard, Home, Globe, Hash,
-  Sparkles, TrendingUp, Eye, Bot, Send, Loader2
+  Sparkles, TrendingUp, Eye, Bot, Send, Loader2, UtensilsCrossed, Gift
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import NeuralSearchWidget from "./NeuralSearchWidget";
+import { getListingThumbnail } from "@/lib/listing-thumbnails";
 
 /* ─── Types ─── */
 interface BookingRecord {
@@ -41,6 +42,10 @@ interface ClientProfile {
   bookings: BookingRecord[]; orders: OrderRecord[]; reviews: ReviewRecord[];
   verifications: IdVerification[]; wishlistCount: number; referralCount: number;
   totalSpend: number; orderSpend: number; segment: string; engagementScore: number;
+}
+
+interface ListingInfo {
+  id: string; name: string; image_urls: string[]; location: string; category: string;
 }
 
 /* ─── Config ─── */
@@ -84,6 +89,18 @@ function calcEngagement(b: number, o: number, r: number, w: number, ref: number,
   return Math.min(100, Math.round((b * 15) + (o * 10) + (r * 20) + (w * 5) + (ref * 15) + (pts / 50)));
 }
 
+/* ─── Property Thumbnail Helper ─── */
+function PropertyThumb({ name, imageUrls, size = 40 }: { name: string; imageUrls?: string[]; size?: number }) {
+  const thumb = getListingThumbnail(name, imageUrls, { preferMapped: true });
+  return thumb ? (
+    <img src={thumb} alt={name} className="rounded-lg object-cover shrink-0" style={{ width: size, height: size }} />
+  ) : (
+    <div className="rounded-lg bg-gradient-to-br from-primary/15 to-accent/15 flex items-center justify-center shrink-0" style={{ width: size, height: size }}>
+      <Home size={size * 0.4} className="text-primary/60" />
+    </div>
+  );
+}
+
 /* ─── Avatar with tier ring ─── */
 function ProfileAvatar({ client, size = 48 }: { client: ClientProfile; size?: number }) {
   const tier = tierGradients[client.tier] || tierGradients.Silver;
@@ -93,29 +110,18 @@ function ProfileAvatar({ client, size = 48 }: { client: ClientProfile; size?: nu
 
   return (
     <div className="relative shrink-0" style={{ width: size, height: size }}>
-      {/* Gradient ring */}
       <div className={`absolute inset-0 rounded-full bg-gradient-to-br ${tier.ring} p-[2.5px]`}>
         <div className="w-full h-full rounded-full bg-card" />
       </div>
-      {/* Avatar */}
       <div className="absolute inset-0 flex items-center justify-center">
         {client.avatar_url ? (
-          <img
-            src={client.avatar_url}
-            alt={client.display_name || ""}
-            className="rounded-full object-cover"
-            style={{ width: imgSize, height: imgSize }}
-          />
+          <img src={client.avatar_url} alt={client.display_name || ""} className="rounded-full object-cover" style={{ width: imgSize, height: imgSize }} />
         ) : (
-          <div
-            className="rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center font-bold text-foreground"
-            style={{ width: imgSize, height: imgSize, fontSize: size * 0.28 }}
-          >
+          <div className="rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center font-bold text-foreground" style={{ width: imgSize, height: imgSize, fontSize: size * 0.28 }}>
             {initials}
           </div>
         )}
       </div>
-      {/* Online dot / verified badge */}
       {client.verifications.some(v => v.status === "approved") && (
         <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-card flex items-center justify-center">
           <CheckCircle2 size={12} className="text-emerald-400" />
@@ -129,13 +135,9 @@ function EngagementBar({ score }: { score: number }) {
   const color = score >= 70 ? "from-emerald-500 to-emerald-400" : score >= 40 ? "from-amber-500 to-amber-400" : "from-red-500 to-red-400";
   return (
     <div className="flex items-center gap-2">
-      <div className="flex-1 h-1 rounded-full bg-secondary overflow-hidden">
-        <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: `${score}%` }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className={`h-full rounded-full bg-gradient-to-r ${color}`}
-        />
+      <div className="flex-1 h-1.5 rounded-full bg-secondary overflow-hidden">
+        <motion.div initial={{ width: 0 }} animate={{ width: `${score}%` }} transition={{ duration: 0.8, ease: "easeOut" }}
+          className={`h-full rounded-full bg-gradient-to-r ${color}`} />
       </div>
       <span className="text-[9px] font-bold text-muted-foreground tabular-nums w-5 text-right">{score}</span>
     </div>
@@ -155,45 +157,53 @@ function timeAgo(d: string) {
   return `${Math.floor(days / 365)}y ago`;
 }
 
-function ContactPill({ icon: Icon, label, value }: { icon: typeof Phone; label: string; value: string }) {
-  return (
-    <div className="flex items-center gap-2 rounded-lg bg-secondary/60 px-3 py-2">
-      <Icon size={12} className="text-muted-foreground shrink-0" />
-      <div className="min-w-0">
-        <p className="text-[8px] text-muted-foreground uppercase tracking-wider">{label}</p>
-        <p className="text-[11px] font-medium text-foreground truncate">{value}</p>
-      </div>
-    </div>
-  );
-}
-
 /* ─── Client Detail Drawer ─── */
-function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientProfile; onClose: () => void; listingMap: Map<string, string> }) {
+function ClientDetailDrawer({ client, onClose, listingMap, listingInfoMap }: {
+  client: ClientProfile; onClose: () => void; listingMap: Map<string, string>; listingInfoMap: Map<string, ListingInfo>;
+}) {
   const [activeTab, setActiveTab] = useState<"overview" | "bookings" | "orders" | "timeline">("overview");
   const tier = tierGradients[client.tier] || tierGradients.Silver;
   const seg = segmentConfig[client.segment] || segmentConfig.regular;
   const lifetimeValue = client.totalSpend + client.orderSpend;
   const idDoc = client.verifications[0];
 
+  // Most visited property
+  const propVisits = new Map<string, number>();
+  client.bookings.forEach(b => propVisits.set(b.property_id, (propVisits.get(b.property_id) || 0) + 1));
+  const topPropertyId = [...propVisits.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
+  const topProperty = topPropertyId ? listingInfoMap.get(topPropertyId) : null;
+
+  // Favorite food items
+  const foodCount = new Map<string, { name: string; emoji: string; count: number }>();
+  client.orders.forEach(o => o.items.forEach(i => {
+    const key = i.item_name;
+    const prev = foodCount.get(key) || { name: i.item_name, emoji: i.item_emoji, count: 0 };
+    foodCount.set(key, { ...prev, count: prev.count + i.quantity });
+  }));
+  const topFoods = [...foodCount.values()].sort((a, b) => b.count - a.count).slice(0, 4);
+
+  // Avg rating given
+  const avgRating = client.reviews.length ? (client.reviews.reduce((s, r) => s + r.rating, 0) / client.reviews.length).toFixed(1) : null;
+
   const timeline = useMemo(() => {
-    const events: { date: string; type: string; title: string; subtitle: string; icon: typeof Clock; color: string }[] = [];
+    const events: { date: string; type: string; title: string; subtitle: string; icon: typeof Clock; color: string; propertyId?: string }[] = [];
     client.bookings.forEach(b => events.push({
       date: b.created_at, type: "booking",
       title: `Booked ${listingMap.get(b.property_id) || "Property"}`,
-      subtitle: `${b.date} · ${b.slot} · ${b.guests} guests · ₹${Number(b.total).toLocaleString("en-IN")} · ${b.booking_id}`,
-      icon: CalendarCheck, color: "text-primary",
+      subtitle: `${b.date} · ${b.slot} · ${b.guests} guests · ₹${Number(b.total).toLocaleString("en-IN")}`,
+      icon: CalendarCheck, color: "text-primary", propertyId: b.property_id,
     }));
     client.orders.forEach(o => events.push({
       date: o.created_at, type: "order",
       title: `Ordered ${o.items.map(i => `${i.item_emoji}${i.item_name}`).join(", ") || "items"}`,
-      subtitle: `₹${Number(o.total).toLocaleString("en-IN")} · ${o.status}${o.assigned_name ? ` · Chef: ${o.assigned_name}` : ""}`,
-      icon: ShoppingCart, color: "text-amber-400",
+      subtitle: `₹${Number(o.total).toLocaleString("en-IN")} · ${o.status}`,
+      icon: ShoppingCart, color: "text-amber-400", propertyId: o.property_id,
     }));
     client.reviews.forEach(r => events.push({
       date: r.created_at, type: "review",
       title: `Reviewed ${listingMap.get(r.property_id) || "Property"}`,
-      subtitle: `${"⭐".repeat(r.rating)} · "${r.content.slice(0, 60)}${r.content.length > 60 ? "..." : ""}"`,
-      icon: Star, color: "text-yellow-400",
+      subtitle: `${"⭐".repeat(r.rating)} · "${r.content.slice(0, 50)}${r.content.length > 50 ? "…" : ""}"`,
+      icon: Star, color: "text-yellow-400", propertyId: r.property_id,
     }));
     if (idDoc) events.push({
       date: idDoc.submitted_at, type: "id",
@@ -204,7 +214,7 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
     events.push({
       date: client.created_at, type: "joined",
       title: "Account Created",
-      subtitle: `Joined Hushh`,
+      subtitle: "Joined Hushh",
       icon: User, color: "text-muted-foreground",
     });
     return events.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -217,15 +227,12 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
     { id: "timeline" as const, label: "Timeline", icon: Clock },
   ];
 
-  // Generate mock contact from user_id for demo
   const mockPhone = `+91 ${client.user_id.slice(0, 5).replace(/[^0-9]/g, "9")}${Math.floor(1000000 + Math.random() * 9000000)}`.slice(0, 14);
   const mockEmail = `${(client.display_name || "user").toLowerCase().replace(/\s+/g, ".")}@gmail.com`;
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex justify-end"
-      onClick={onClose}
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex justify-end" onClick={onClose}
     >
       <motion.div
         initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
@@ -234,70 +241,92 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
         onClick={e => e.stopPropagation()}
         ref={el => { if (el) el.scrollTop = 0; }}
       >
-        {/* Hero header with gradient */}
+        {/* ── Hero header ── */}
         <div className="relative">
-          <div className={`h-36 bg-gradient-to-br ${tier.ring} opacity-25`} />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,hsl(var(--primary)/0.15),transparent_60%)]" />
-          <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-card to-transparent" />
+          {/* Background: show top property image if available */}
+          {topProperty ? (
+            <div className="h-44 relative overflow-hidden">
+              <img
+                src={getListingThumbnail(topProperty.name, topProperty.image_urls, { preferMapped: true }) || ""}
+                alt="" className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-card" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_80%,hsl(var(--primary)/0.1),transparent_60%)]" />
+            </div>
+          ) : (
+            <>
+              <div className={`h-44 bg-gradient-to-br ${tier.ring} opacity-20`} />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,hsl(var(--primary)/0.15),transparent_60%)]" />
+              <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-card to-transparent" />
+            </>
+          )}
 
-          {/* Back button */}
           <button onClick={onClose} className="absolute top-3 left-3 w-9 h-9 rounded-full bg-card/80 backdrop-blur-sm border border-border flex items-center justify-center hover:bg-card transition active:scale-95">
             <ArrowLeft size={16} className="text-foreground" />
           </button>
 
-          {/* Segment badge */}
-          <span className={`absolute top-3 right-3 text-[9px] font-bold px-2.5 py-1 rounded-full border ${seg.bg} ${seg.color} backdrop-blur-sm`}>
-            {seg.label}
-          </span>
+          <div className="absolute top-3 right-3 flex items-center gap-1.5">
+            <span className={`text-[9px] font-bold px-2.5 py-1 rounded-full border ${seg.bg} ${seg.color} backdrop-blur-sm`}>
+              {seg.label}
+            </span>
+            <span className={`text-[9px] font-bold px-2.5 py-1 rounded-full border ${tier.badge} ${tier.text} backdrop-blur-sm`}>
+              {tier.icon} {client.tier}
+            </span>
+          </div>
 
-          {/* Profile avatar - overlapping */}
-          <div className="absolute -bottom-10 left-1/2 -translate-x-1/2">
-            <ProfileAvatar client={client} size={80} />
+          <div className="absolute -bottom-12 left-1/2 -translate-x-1/2">
+            <ProfileAvatar client={client} size={88} />
           </div>
         </div>
 
-        {/* Name & tier */}
-        <div className="pt-14 px-4 pb-4 border-b border-border text-center">
-          <div className="flex flex-col items-center">
-            <div className="flex items-center gap-2 mb-1">
-              <h2 className="text-lg font-bold text-foreground">{client.display_name || "Unnamed"}</h2>
-              <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${tier.badge} ${tier.text}`}>
-                {tier.icon} {client.tier}
-              </span>
-            </div>
-            {client.bio && <p className="text-[11px] text-muted-foreground italic line-clamp-2 max-w-[260px]">{client.bio}</p>}
-            <div className="flex items-center gap-3 mt-1.5">
-              <p className="text-[10px] text-muted-foreground flex items-center gap-1">
-                <CalendarCheck size={9} /> Joined {formatDate(client.created_at)}
-              </p>
-              {client.location && (
-                <p className="text-[10px] text-muted-foreground flex items-center gap-1">
-                  <MapPin size={9} /> {client.location}
-                </p>
-              )}
-            </div>
+        {/* ── Name & meta ── */}
+        <div className="pt-16 px-4 pb-4 text-center">
+          <h2 className="text-xl font-bold text-foreground">{client.display_name || "Unnamed"}</h2>
+          {client.bio && <p className="text-[11px] text-muted-foreground italic mt-1 line-clamp-2 max-w-[280px] mx-auto">{client.bio}</p>}
+          <div className="flex items-center justify-center gap-3 mt-2 flex-wrap">
+            <span className="text-[10px] text-muted-foreground flex items-center gap-1"><CalendarCheck size={9} /> Joined {formatDate(client.created_at)}</span>
+            {client.location && <span className="text-[10px] text-muted-foreground flex items-center gap-1"><MapPin size={9} /> {client.location}</span>}
+            {client.verifications.some(v => v.status === "approved") && (
+              <span className="text-[10px] text-emerald-400 flex items-center gap-1"><CheckCircle2 size={9} /> Verified</span>
+            )}
           </div>
 
-          {/* Contact info row */}
-          <div className="grid grid-cols-1 gap-1.5 mt-3">
-            <ContactPill icon={Phone} label="Phone" value={mockPhone} />
-            <ContactPill icon={Mail} label="Email" value={mockEmail} />
-            {client.location && <ContactPill icon={MapPin} label="Address" value={client.location} />}
-            <ContactPill icon={Hash} label="User ID" value={client.user_id.slice(0, 12) + "…"} />
+          {/* Contact row */}
+          <div className="flex gap-2 mt-3 justify-center">
+            <div className="flex items-center gap-1.5 rounded-lg bg-secondary/60 px-3 py-1.5">
+              <Phone size={10} className="text-muted-foreground" />
+              <span className="text-[10px] text-foreground">{mockPhone}</span>
+            </div>
+            <div className="flex items-center gap-1.5 rounded-lg bg-secondary/60 px-3 py-1.5">
+              <Mail size={10} className="text-muted-foreground" />
+              <span className="text-[10px] text-foreground truncate max-w-[140px]">{mockEmail}</span>
+            </div>
           </div>
+        </div>
 
-          {/* Quick stats cards */}
-          <div className="grid grid-cols-4 gap-2 mt-4">
+        {/* ── Lifetime stats (3D cards) ── */}
+        <div className="px-4 pb-4">
+          <div className="grid grid-cols-2 gap-2">
             {[
-              { label: "Revenue", value: `₹${lifetimeValue.toLocaleString("en-IN")}`, color: "text-foreground", sub: "lifetime" },
-              { label: "Stays", value: client.bookings.length.toString(), color: "text-primary", sub: "bookings" },
-              { label: "Orders", value: client.orders.length.toString(), color: "text-amber-400", sub: "food" },
-              { label: "Points", value: client.loyalty_points.toLocaleString(), color: "text-emerald-400", sub: "loyalty" },
+              { label: "Total Revenue", value: `₹${lifetimeValue.toLocaleString("en-IN")}`, sub: `₹${client.totalSpend.toLocaleString("en-IN")} stays · ₹${client.orderSpend.toLocaleString("en-IN")} food`, icon: IndianRupee, gradient: "from-emerald-500/15 to-emerald-500/5" },
+              { label: "Engagement", value: `${client.engagementScore}/100`, sub: avgRating ? `Avg rating: ${avgRating}★` : "No reviews yet", icon: Zap, gradient: "from-purple-500/15 to-purple-500/5" },
+              { label: "Activity", value: `${client.bookings.length} stays · ${client.orders.length} orders`, sub: `${client.reviews.length} reviews · ${client.referralCount} referrals`, icon: TrendingUp, gradient: "from-blue-500/15 to-blue-500/5" },
+              { label: "Loyalty", value: `${client.loyalty_points.toLocaleString()} pts`, sub: `${client.wishlistCount} wishlist · ${client.referralCount} referrals`, icon: Award, gradient: "from-amber-500/15 to-amber-500/5" },
             ].map(s => (
-              <div key={s.label} className="rounded-xl bg-secondary/40 border border-border/50 p-2.5 text-center">
-                <p className={`text-base font-bold tabular-nums ${s.color}`}>{s.value}</p>
-                <p className="text-[8px] text-muted-foreground mt-0.5">{s.label}</p>
-              </div>
+              <motion.div key={s.label}
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                className={`rounded-2xl bg-gradient-to-br ${s.gradient} border border-border/60 p-3 group`}
+                style={{ perspective: "600px" }}
+              >
+                <div className="flex items-center gap-2 mb-1.5">
+                  <div className="w-7 h-7 rounded-lg bg-card/80 flex items-center justify-center">
+                    <s.icon size={14} className="text-foreground" />
+                  </div>
+                  <span className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider">{s.label}</span>
+                </div>
+                <p className="text-sm font-bold text-foreground">{s.value}</p>
+                <p className="text-[9px] text-muted-foreground mt-0.5">{s.sub}</p>
+              </motion.div>
             ))}
           </div>
 
@@ -311,8 +340,35 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
           </div>
         </div>
 
-        {/* ID & verification */}
-        <div className="px-4 py-3 border-b border-border">
+        {/* ── Favourite Property & Foods ── */}
+        <div className="px-4 pb-3 space-y-2">
+          {topProperty && (
+            <div className="rounded-xl bg-secondary/40 border border-border/50 p-3 flex items-center gap-3">
+              <PropertyThumb name={topProperty.name} imageUrls={topProperty.image_urls} size={48} />
+              <div className="flex-1 min-w-0">
+                <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Favourite Venue</p>
+                <p className="text-xs font-semibold text-foreground truncate">{topProperty.name}</p>
+                <p className="text-[9px] text-muted-foreground">{propVisits.get(topPropertyId!) || 0} visits · {topProperty.location}</p>
+              </div>
+            </div>
+          )}
+
+          {topFoods.length > 0 && (
+            <div className="rounded-xl bg-secondary/40 border border-border/50 p-3">
+              <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1"><UtensilsCrossed size={9} /> Top Orders</p>
+              <div className="flex flex-wrap gap-1.5">
+                {topFoods.map(f => (
+                  <span key={f.name} className="text-[10px] px-2 py-1 rounded-lg bg-card border border-border/50">
+                    {f.emoji} {f.name} <span className="text-muted-foreground">×{f.count}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ── ID verification ── */}
+        <div className="px-4 pb-3">
           <div className="flex items-center gap-3 rounded-xl bg-secondary/40 border border-border/50 p-3">
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
               idDoc?.status === "approved" ? "bg-emerald-500/10" : idDoc ? "bg-amber-500/10" : "bg-secondary"
@@ -346,7 +402,7 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
           </div>
         </div>
 
-        {/* Tabs */}
+        {/* ── Tabs ── */}
         <div className="sticky top-0 z-10 bg-card/95 backdrop-blur-sm border-b border-border">
           <div className="flex">
             {tabs.map(tab => (
@@ -361,10 +417,11 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
           </div>
         </div>
 
-        {/* Tab content */}
+        {/* ── Tab content ── */}
         <div className="p-4">
           {activeTab === "overview" && (
             <div className="space-y-4">
+              {/* Engagement breakdown */}
               <div>
                 <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Engagement Breakdown</h4>
                 <div className="rounded-xl bg-secondary/40 border border-border/50 p-3 space-y-2.5">
@@ -389,33 +446,48 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
                 </div>
               </div>
 
-              <div>
-                <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Revenue Split</h4>
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="rounded-xl bg-secondary/40 border border-border/50 p-3">
-                    <Home size={14} className="text-primary mb-1.5" />
-                    <p className="text-sm font-bold text-foreground tabular-nums">₹{client.totalSpend.toLocaleString("en-IN")}</p>
-                    <p className="text-[9px] text-muted-foreground">{client.bookings.length} stays</p>
-                  </div>
-                  <div className="rounded-xl bg-secondary/40 border border-border/50 p-3">
-                    <ShoppingCart size={14} className="text-amber-400 mb-1.5" />
-                    <p className="text-sm font-bold text-foreground tabular-nums">₹{client.orderSpend.toLocaleString("en-IN")}</p>
-                    <p className="text-[9px] text-muted-foreground">{client.orders.length} orders</p>
+              {/* Properties visited */}
+              {propVisits.size > 0 && (
+                <div>
+                  <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Properties Visited ({propVisits.size})</h4>
+                  <div className="space-y-1.5">
+                    {[...propVisits.entries()]
+                      .sort((a, b) => b[1] - a[1])
+                      .slice(0, 6)
+                      .map(([pid, count]) => {
+                        const info = listingInfoMap.get(pid);
+                        const name = info?.name || listingMap.get(pid) || pid;
+                        return (
+                          <div key={pid} className="flex items-center gap-2.5 rounded-xl bg-secondary/30 border border-border/40 p-2.5">
+                            <PropertyThumb name={name} imageUrls={info?.image_urls} size={36} />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[11px] font-semibold text-foreground truncate">{name}</p>
+                              <p className="text-[9px] text-muted-foreground">{info?.location || ""} · {info?.category || ""}</p>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <p className="text-xs font-bold text-foreground">{count}</p>
+                              <p className="text-[8px] text-muted-foreground">visits</p>
+                            </div>
+                          </div>
+                        );
+                      })}
                   </div>
                 </div>
-              </div>
+              )}
 
+              {/* Recent activity */}
               <div>
                 <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Recent Activity</h4>
                 <div className="space-y-1.5">
                   {timeline.slice(0, 5).map((ev, i) => (
                     <div key={i} className="flex items-start gap-2 rounded-lg bg-secondary/30 p-2.5">
-                      <div className="w-6 h-6 rounded-lg bg-secondary flex items-center justify-center shrink-0">
-                        <ev.icon size={11} className={ev.color} />
+                      <div className="w-7 h-7 rounded-lg bg-secondary flex items-center justify-center shrink-0">
+                        <ev.icon size={12} className={ev.color} />
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-[10px] font-medium text-foreground truncate">{ev.title}</p>
-                        <p className="text-[9px] text-muted-foreground">{formatDate(ev.date)}</p>
+                        <p className="text-[9px] text-muted-foreground">{ev.subtitle}</p>
+                        <p className="text-[8px] text-muted-foreground mt-0.5">{formatDate(ev.date)}</p>
                       </div>
                     </div>
                   ))}
@@ -425,7 +497,7 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
           )}
 
           {activeTab === "bookings" && (
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {client.bookings.length === 0 ? (
                 <div className="text-center py-12">
                   <Home size={32} className="mx-auto text-muted-foreground/40 mb-2" />
@@ -433,35 +505,46 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
                 </div>
               ) : client.bookings
                 .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                .map((b, i) => (
-                <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
-                  className="rounded-xl border border-border bg-card p-3 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Home size={12} className="text-primary" />
-                      <p className="text-xs font-semibold text-foreground">{listingMap.get(b.property_id) || `Property ${b.property_id}`}</p>
-                    </div>
-                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full capitalize ${bookingStatusColors[b.status] || "bg-secondary text-muted-foreground"}`}>
-                      {b.status}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 text-[10px] text-muted-foreground">
-                    <span className="flex items-center gap-1"><CalendarCheck size={9} /> {b.date}</span>
-                    <span className="flex items-center gap-1"><Clock size={9} /> {b.slot}</span>
-                    <span className="flex items-center gap-1"><Users size={9} /> {b.guests} guests</span>
-                    <span className="flex items-center gap-1 font-semibold text-foreground"><IndianRupee size={9} /> ₹{Number(b.total).toLocaleString("en-IN")}</span>
-                  </div>
-                  <div className="flex items-center justify-between pt-1.5 border-t border-border">
-                    <span className="text-[9px] font-mono text-muted-foreground">{b.booking_id}</span>
-                    <span className="text-[9px] text-muted-foreground">{formatDate(b.created_at)}</span>
-                  </div>
-                </motion.div>
-              ))}
+                .map((b, i) => {
+                  const info = listingInfoMap.get(b.property_id);
+                  const pName = info?.name || listingMap.get(b.property_id) || `Property ${b.property_id}`;
+                  return (
+                    <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
+                      className="rounded-2xl border border-border bg-card overflow-hidden"
+                      style={{ perspective: "800px" }}
+                    >
+                      {/* Property thumbnail header */}
+                      <div className="flex items-center gap-3 p-3 bg-secondary/30">
+                        <PropertyThumb name={pName} imageUrls={info?.image_urls} size={44} />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-semibold text-foreground truncate">{pName}</p>
+                          <p className="text-[9px] text-muted-foreground">{info?.location || ""}</p>
+                        </div>
+                        <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full capitalize ${bookingStatusColors[b.status] || "bg-secondary text-muted-foreground"}`}>
+                          {b.status}
+                        </span>
+                      </div>
+                      {/* Details */}
+                      <div className="p-3 space-y-2">
+                        <div className="grid grid-cols-2 gap-2 text-[10px] text-muted-foreground">
+                          <span className="flex items-center gap-1"><CalendarCheck size={9} /> {b.date}</span>
+                          <span className="flex items-center gap-1"><Clock size={9} /> {b.slot}</span>
+                          <span className="flex items-center gap-1"><Users size={9} /> {b.guests} guests</span>
+                          <span className="flex items-center gap-1 font-semibold text-foreground"><IndianRupee size={9} /> ₹{Number(b.total).toLocaleString("en-IN")}</span>
+                        </div>
+                        <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                          <span className="text-[9px] font-mono text-muted-foreground">{b.booking_id}</span>
+                          <span className="text-[9px] text-muted-foreground">Booked {timeAgo(b.created_at)}</span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
             </div>
           )}
 
           {activeTab === "orders" && (
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {client.orders.length === 0 ? (
                 <div className="text-center py-12">
                   <ShoppingCart size={32} className="mx-auto text-muted-foreground/40 mb-2" />
@@ -469,64 +552,81 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
                 </div>
               ) : client.orders
                 .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-                .map((o, i) => (
-                <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
-                  className="rounded-xl border border-border bg-card p-3 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <ShoppingCart size={12} className="text-amber-400" />
-                      <p className="text-xs font-semibold text-foreground">{listingMap.get(o.property_id) || "Property"}</p>
-                    </div>
-                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full capitalize ${
-                      o.status === "delivered" ? "bg-emerald-500/15 text-emerald-400" :
-                      o.status === "preparing" ? "bg-blue-500/15 text-blue-400" :
-                      o.status === "pending" ? "bg-amber-500/15 text-amber-400" :
-                      "bg-muted text-muted-foreground"
-                    }`}>{o.status}</span>
-                  </div>
-                  {o.items.length > 0 && (
-                    <div className="bg-secondary/50 rounded-lg p-2 space-y-1">
-                      {o.items.map((item, j) => (
-                        <div key={j} className="flex items-center justify-between text-[10px]">
-                          <span>{item.item_emoji} {item.item_name} ×{item.quantity}</span>
-                          <span className="text-muted-foreground tabular-nums">₹{(item.unit_price * item.quantity).toLocaleString("en-IN")}</span>
+                .map((o, i) => {
+                  const info = listingInfoMap.get(o.property_id);
+                  const pName = info?.name || listingMap.get(o.property_id) || "Property";
+                  return (
+                    <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
+                      className="rounded-2xl border border-border bg-card overflow-hidden"
+                    >
+                      {/* Property header */}
+                      <div className="flex items-center gap-3 p-3 bg-secondary/30">
+                        <PropertyThumb name={pName} imageUrls={info?.image_urls} size={40} />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-semibold text-foreground truncate">{pName}</p>
+                          <p className="text-[9px] text-muted-foreground">{info?.location || ""}</p>
                         </div>
-                      ))}
-                    </div>
-                  )}
-                  <div className="flex items-center justify-between pt-1.5 border-t border-border">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-foreground tabular-nums">₹{Number(o.total).toLocaleString("en-IN")}</span>
-                      {o.assigned_name && (
-                        <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
-                          <ChefHat size={8} /> {o.assigned_name}
-                        </span>
-                      )}
-                    </div>
-                    <span className="text-[9px] text-muted-foreground">{formatDate(o.created_at)}</span>
-                  </div>
-                </motion.div>
-              ))}
+                        <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full capitalize ${
+                          o.status === "delivered" ? "bg-emerald-500/15 text-emerald-400" :
+                          o.status === "preparing" ? "bg-blue-500/15 text-blue-400" :
+                          o.status === "pending" ? "bg-amber-500/15 text-amber-400" :
+                          "bg-muted text-muted-foreground"
+                        }`}>{o.status}</span>
+                      </div>
+                      <div className="p-3 space-y-2">
+                        {o.items.length > 0 && (
+                          <div className="bg-secondary/50 rounded-lg p-2 space-y-1">
+                            {o.items.map((item, j) => (
+                              <div key={j} className="flex items-center justify-between text-[10px]">
+                                <span>{item.item_emoji} {item.item_name} ×{item.quantity}</span>
+                                <span className="text-muted-foreground tabular-nums">₹{(item.unit_price * item.quantity).toLocaleString("en-IN")}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-foreground tabular-nums">₹{Number(o.total).toLocaleString("en-IN")}</span>
+                            {o.assigned_name && (
+                              <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
+                                <ChefHat size={8} /> {o.assigned_name}
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-[9px] text-muted-foreground">{timeAgo(o.created_at)}</span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
             </div>
           )}
 
           {activeTab === "timeline" && (
             <div className="relative">
-              <div className="absolute left-[11px] top-2 bottom-2 w-px bg-border" />
+              <div className="absolute left-[13px] top-2 bottom-2 w-px bg-border" />
               <div className="space-y-3">
-                {timeline.map((ev, i) => (
-                  <motion.div key={i} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }}
-                    className="flex items-start gap-3 relative">
-                    <div className="w-6 h-6 rounded-full bg-card border-2 border-border flex items-center justify-center shrink-0 z-10">
-                      <ev.icon size={10} className={ev.color} />
-                    </div>
-                    <div className="flex-1 min-w-0 pb-1">
-                      <p className="text-xs font-medium text-foreground">{ev.title}</p>
-                      <p className="text-[10px] text-muted-foreground mt-0.5">{ev.subtitle}</p>
-                      <p className="text-[9px] text-muted-foreground mt-0.5">{formatDate(ev.date)}</p>
-                    </div>
-                  </motion.div>
-                ))}
+                {timeline.map((ev, i) => {
+                  const info = ev.propertyId ? listingInfoMap.get(ev.propertyId) : null;
+                  return (
+                    <motion.div key={i} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }}
+                      className="flex items-start gap-3 relative">
+                      <div className="w-7 h-7 rounded-full bg-card border-2 border-border flex items-center justify-center shrink-0 z-10">
+                        <ev.icon size={11} className={ev.color} />
+                      </div>
+                      <div className="flex-1 min-w-0 pb-1">
+                        <div className="flex items-center gap-2">
+                          {info && <PropertyThumb name={info.name} imageUrls={info.image_urls} size={24} />}
+                          <div className="min-w-0 flex-1">
+                            <p className="text-xs font-medium text-foreground truncate">{ev.title}</p>
+                            <p className="text-[10px] text-muted-foreground mt-0.5">{ev.subtitle}</p>
+                          </div>
+                        </div>
+                        <p className="text-[9px] text-muted-foreground mt-0.5">{formatDate(ev.date)}</p>
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -536,7 +636,7 @@ function ClientDetailDrawer({ client, onClose, listingMap }: { client: ClientPro
   );
 }
 
-/* ─── AI Search for Client Directory ─── */
+/* ─── AI Search ─── */
 function ClientAISearch({ clients, listingMap }: { clients: ClientProfile[]; listingMap: Map<string, string> }) {
   const handleSearch = async (query: string): Promise<string> => {
     const context = clients.slice(0, 50).map(c => ({
@@ -592,9 +692,8 @@ export default function AdminClients({ initialUserId, onContextConsumed, onBack 
   const [loading, setLoading] = useState(true);
   const [selectedClient, setSelectedClient] = useState<ClientProfile | null>(null);
   const [listingMap, setListingMap] = useState<Map<string, string>>(new Map());
-  const [viewMode, setViewMode] = useState<"cards" | "compact">("cards");
+  const [listingInfoMap, setListingInfoMap] = useState<Map<string, ListingInfo>>(new Map());
 
-  // Auto-select client when navigated from calendar with userId
   useEffect(() => {
     if (initialUserId && !loading && clients.length > 0) {
       const target = clients.find(c => c.user_id === initialUserId);
@@ -603,10 +702,8 @@ export default function AdminClients({ initialUserId, onContextConsumed, onBack 
     }
   }, [initialUserId, loading, clients, onContextConsumed]);
 
-  // Scroll to top on mount
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
+  useEffect(() => { window.scrollTo({ top: 0, behavior: "smooth" }); }, []);
+
   useEffect(() => {
     const load = async () => {
       const [profilesRes, bookingsRes, ordersRes, orderItemsRes, reviewsRes, wishlistsRes, referralsRes, verificationsRes, listingsRes] = await Promise.all([
@@ -618,12 +715,17 @@ export default function AdminClients({ initialUserId, onContextConsumed, onBack 
         supabase.from("wishlists").select("user_id"),
         supabase.from("referral_codes").select("user_id, uses"),
         supabase.from("identity_verifications").select("*"),
-        supabase.from("host_listings").select("id, name"),
+        supabase.from("host_listings").select("id, name, image_urls, location, category"),
       ]);
 
       const lMap = new Map<string, string>();
-      (listingsRes.data ?? []).forEach(l => lMap.set(l.id, l.name));
+      const lInfoMap = new Map<string, ListingInfo>();
+      (listingsRes.data ?? []).forEach((l: any) => {
+        lMap.set(l.id, l.name);
+        lInfoMap.set(l.id, { id: l.id, name: l.name, image_urls: l.image_urls || [], location: l.location || "", category: l.category || "" });
+      });
       setListingMap(lMap);
+      setListingInfoMap(lInfoMap);
 
       const oiMap = new Map<string, any[]>();
       (orderItemsRes.data ?? []).forEach(item => {
@@ -727,8 +829,7 @@ export default function AdminClients({ initialUserId, onContextConsumed, onBack 
     const rows = filtered.map(c => [
       c.display_name || "Unnamed", c.tier, c.segment, c.engagementScore, c.bookings.length, c.orders.length,
       c.totalSpend, c.orderSpend, c.totalSpend + c.orderSpend, c.reviews.length, c.wishlistCount, c.referralCount,
-      c.loyalty_points, c.location || "-",
-      c.verifications[0]?.status || "none",
+      c.loyalty_points, c.location || "-", c.verifications[0]?.status || "none",
       new Date(c.created_at).toLocaleDateString(),
     ]);
     const csv = [headers, ...rows].map(r => r.join(",")).join("\n");
@@ -839,7 +940,7 @@ export default function AdminClients({ initialUserId, onContextConsumed, onBack 
         </motion.div>
       )}
 
-      {/* Client cards */}
+      {/* Client cards - 3D enhanced */}
       {loading ? (
         <div className="space-y-3">{[1, 2, 3, 4].map(i => (
           <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-secondary animate-pulse">
@@ -853,64 +954,89 @@ export default function AdminClients({ initialUserId, onContextConsumed, onBack 
           <p className="text-muted-foreground text-sm">No clients match your filters</p>
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           {filtered.map((c, i) => {
             const seg = segmentConfig[c.segment] || segmentConfig.regular;
             const tier = tierGradients[c.tier] || tierGradients.Silver;
             const lifetimeValue = c.totalSpend + c.orderSpend;
-            const mockEmail = `${(c.display_name || "user").toLowerCase().replace(/\s+/g, ".")}@gmail.com`;
+
+            // Get top property for this client
+            const propVisits = new Map<string, number>();
+            c.bookings.forEach(b => propVisits.set(b.property_id, (propVisits.get(b.property_id) || 0) + 1));
+            const topPropId = [...propVisits.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
+            const topPropInfo = topPropId ? listingInfoMap.get(topPropId) : null;
 
             return (
               <motion.button
                 key={c.id}
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.025, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ delay: i * 0.02, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                 onClick={() => setSelectedClient(c)}
-                className="w-full rounded-2xl border border-border bg-card p-3.5 text-left hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 active:scale-[0.97] group"
+                className="w-full rounded-2xl border border-border bg-card text-left hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 active:scale-[0.97] group overflow-hidden"
+                style={{ perspective: "800px" }}
               >
-                <div className="flex items-center gap-3">
-                  <ProfileAvatar client={c} size={48} />
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      <p className="text-sm font-semibold text-foreground truncate">{c.display_name || "Unnamed"}</p>
-                      <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full border ${tier.badge} ${tier.text}`}>
+                {/* Top property thumbnail strip */}
+                {topPropInfo && (
+                  <div className="relative h-16 overflow-hidden">
+                    <img
+                      src={getListingThumbnail(topPropInfo.name, topPropInfo.image_urls, { preferMapped: true }) || ""}
+                      alt="" className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-card" />
+                    <div className="absolute top-1.5 right-1.5 flex items-center gap-1">
+                      <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full border backdrop-blur-sm ${tier.badge} ${tier.text}`}>
                         {tier.icon}
                       </span>
-                      <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full ${seg.bg} ${seg.color}`}>
+                      <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full backdrop-blur-sm ${seg.bg} ${seg.color}`}>
                         {seg.label}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 mt-1">
-                      {c.location && (
-                        <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
-                          <MapPin size={8} /> {c.location}
-                        </span>
-                      )}
-                      <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
-                        <Mail size={8} /> {mockEmail.length > 18 ? mockEmail.slice(0, 18) + "…" : mockEmail}
-                      </span>
-                    </div>
-                    {/* Mini engagement bar */}
-                    <div className="mt-1.5 max-w-[140px]">
-                      <EngagementBar score={c.engagementScore} />
+                    <div className="absolute bottom-1 left-2 text-[8px] text-white/80 font-medium backdrop-blur-sm bg-black/30 px-1.5 py-0.5 rounded">
+                      🏠 {topPropInfo.name}
                     </div>
                   </div>
+                )}
 
-                  <div className="text-right shrink-0 space-y-1">
-                    <p className="text-sm font-bold text-foreground tabular-nums">₹{lifetimeValue.toLocaleString("en-IN")}</p>
-                    <div className="flex items-center gap-1 justify-end text-[9px] text-muted-foreground">
-                      <span className="flex items-center gap-0.5"><CalendarCheck size={8} />{c.bookings.length}</span>
-                      <span>·</span>
-                      <span className="flex items-center gap-0.5"><ShoppingCart size={8} />{c.orders.length}</span>
-                      <span>·</span>
-                      <span className="flex items-center gap-0.5"><Star size={8} />{c.reviews.length}</span>
+                <div className="p-3.5">
+                  <div className="flex items-center gap-3">
+                    <ProfileAvatar client={c} size={48} />
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-sm font-semibold text-foreground truncate">{c.display_name || "Unnamed"}</p>
+                        {!topPropInfo && (
+                          <>
+                            <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full border ${tier.badge} ${tier.text}`}>{tier.icon}</span>
+                            <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full ${seg.bg} ${seg.color}`}>{seg.label}</span>
+                          </>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        {c.location && (
+                          <span className="text-[9px] text-muted-foreground flex items-center gap-0.5"><MapPin size={8} /> {c.location}</span>
+                        )}
+                        <span className="text-[9px] text-muted-foreground">Joined {timeAgo(c.created_at)}</span>
+                      </div>
+                      <div className="mt-1.5 max-w-[160px]">
+                        <EngagementBar score={c.engagementScore} />
+                      </div>
                     </div>
-                    <p className="text-[8px] text-muted-foreground">{timeAgo(c.created_at)}</p>
-                  </div>
 
-                  <ChevronRight size={14} className="text-muted-foreground shrink-0 group-hover:text-primary transition-colors" />
+                    <div className="text-right shrink-0 space-y-1">
+                      <p className="text-sm font-bold text-foreground tabular-nums">₹{lifetimeValue.toLocaleString("en-IN")}</p>
+                      <div className="flex items-center gap-1 justify-end text-[9px] text-muted-foreground">
+                        <span className="flex items-center gap-0.5"><CalendarCheck size={8} />{c.bookings.length}</span>
+                        <span>·</span>
+                        <span className="flex items-center gap-0.5"><ShoppingCart size={8} />{c.orders.length}</span>
+                        <span>·</span>
+                        <span className="flex items-center gap-0.5"><Star size={8} />{c.reviews.length}</span>
+                      </div>
+                      <p className="text-[8px] text-muted-foreground">{c.loyalty_points} pts</p>
+                    </div>
+
+                    <ChevronRight size={14} className="text-muted-foreground shrink-0 group-hover:text-primary transition-colors" />
+                  </div>
                 </div>
               </motion.button>
             );
@@ -925,6 +1051,7 @@ export default function AdminClients({ initialUserId, onContextConsumed, onBack 
             client={selectedClient}
             onClose={() => setSelectedClient(null)}
             listingMap={listingMap}
+            listingInfoMap={listingInfoMap}
           />
         )}
       </AnimatePresence>
