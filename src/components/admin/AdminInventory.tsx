@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useDragReorder } from "@/hooks/use-drag-reorder";
 import SwipeableRow from "./SwipeableRow";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
+import BatchOperationsBar from "./BatchOperationsBar";
 
 interface InventoryItem {
   id: string; name: string; emoji: string; category: string; unit_price: number;

@@ -43,6 +43,21 @@ export default function AdminExperiencePackages() {
   const [includeInput, setIncludeInput] = useState("");
   const [previewMode, setPreviewMode] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
+
+  const bulkDelete = async (ids: string[]) => {
+    for (const id of ids) {
+      await supabase.from("experience_packages").delete().eq("id", id);
+    }
+    setPackages(prev => prev.filter(p => !ids.includes(p.id)));
+    setSelectedIds([]);
+    window.dispatchEvent(new Event("hushh:listings-updated"));
+    toast({ title: `${ids.length} packages deleted` });
+  };
 
   const loadPackages = async () => {
     const { data } = await supabase
