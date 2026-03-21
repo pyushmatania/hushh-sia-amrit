@@ -575,7 +575,7 @@ function ClientAISearch({ clients, listingMap }: { clients: ClientProfile[]; lis
 }
 
 /* ─── Main Component ─── */
-export default function AdminClients() {
+export default function AdminClients({ initialUserId, onContextConsumed }: { initialUserId?: string; onContextConsumed?: () => void } = {}) {
   const [clients, setClients] = useState<ClientProfile[]>([]);
   const [search, setSearch] = useState("");
   const [segmentFilter, setSegmentFilter] = useState<string | null>(null);
@@ -586,6 +586,15 @@ export default function AdminClients() {
   const [selectedClient, setSelectedClient] = useState<ClientProfile | null>(null);
   const [listingMap, setListingMap] = useState<Map<string, string>>(new Map());
   const [viewMode, setViewMode] = useState<"cards" | "compact">("cards");
+
+  // Auto-select client when navigated from calendar with userId
+  useEffect(() => {
+    if (initialUserId && !loading && clients.length > 0) {
+      const target = clients.find(c => c.user_id === initialUserId);
+      if (target) setSelectedClient(target);
+      onContextConsumed?.();
+    }
+  }, [initialUserId, loading, clients, onContextConsumed]);
 
   useEffect(() => {
     const load = async () => {

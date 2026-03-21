@@ -37,6 +37,7 @@ export default function Admin() {
   const [page, setPage] = useState<AdminPage>("dashboard");
   const [skipAuth, setSkipAuth] = useState(false);
   const [historyContext, setHistoryContext] = useState<{ bookingId?: string; propertyId?: string } | null>(null);
+  const [clientContext, setClientContext] = useState<{ userId?: string } | null>(null);
 
   if (authLoading || roleLoading) {
     return (
@@ -86,7 +87,7 @@ export default function Admin() {
       case "properties": return <AdminProperties />;
       case "bookings": return <AdminBookings onNavigate={(p, ctx) => { if (ctx?.propertyId) setHistoryContext(ctx); setPage(p as AdminPage); }} />;
       case "users": return <AdminUsers />;
-      case "clients": return <AdminClients />;
+      case "clients": return <AdminClients initialUserId={clientContext?.userId} onContextConsumed={() => setClientContext(null)} />;
       case "analytics": return <AdminAnalytics />;
       case "earnings": return <HostEarnings />;
       case "curations": return <AdminCurations />;
@@ -99,11 +100,12 @@ export default function Admin() {
       case "loyalty": return <AdminLoyaltyReferrals />;
       case "calendar": return <HostCalendar onNavigate={(p, ctx) => {
         if (ctx?.propertyId) setHistoryContext(ctx);
+        if (ctx?.userId) setClientContext({ userId: ctx.userId });
         setPage(p as AdminPage);
       }} />;
       case "requests": return <BookingRequests />;
       case "history": return <AdminPropertyHistory
-        onNavigateToClient={(userId) => { setPage("clients"); }}
+        onNavigateToClient={(userId) => { setClientContext({ userId }); setPage("clients"); }}
         initialPropertyId={historyContext?.propertyId}
         initialBookingId={historyContext?.bookingId}
         onContextConsumed={() => setHistoryContext(null)}
