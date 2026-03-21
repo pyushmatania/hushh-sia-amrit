@@ -584,6 +584,9 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
                             {slotBookings.map((b, j) => {
                               const cfg = statusConfig[b.status] || statusConfig.upcoming;
                               const pInfo = getPropertyInfo(b.property_id);
+                              const userProfile = b.user_id ? userProfiles.get(b.user_id) : null;
+                              const userName = userProfile?.display_name || (b.user_id ? `User ${b.user_id.slice(0, 6)}` : "Guest");
+                              const bookedAt = b.created_at ? new Date(b.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "";
                               return (
                                 <motion.div
                                   key={j}
@@ -596,17 +599,31 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
                                 >
                                   <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                                      <div className={`w-2 h-2 rounded-full shrink-0 ${cfg.dot}`} />
+                                      {userProfile?.avatar_url ? (
+                                        <img src={userProfile.avatar_url} alt={userName} className="w-8 h-8 rounded-full object-cover border-2 border-border/50 shrink-0" />
+                                      ) : (
+                                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 border-2 border-border/50">
+                                          <User size={13} className="text-primary" />
+                                        </div>
+                                      )}
                                       <div className="min-w-0 flex-1">
-                                        <p className="text-[12px] font-bold text-foreground truncate">{pInfo.name}</p>
+                                        <div className="flex items-center gap-1.5">
+                                          <p className="text-[12px] font-bold text-foreground truncate">{userName}</p>
+                                          {userProfile?.tier && userProfile.tier !== "Silver" && (
+                                            <span className="text-[8px] px-1.5 py-0.5 rounded-md bg-amber-500/10 text-amber-500 font-bold">{userProfile.tier}</span>
+                                          )}
+                                        </div>
+                                        <p className="text-[10px] text-foreground/80 font-medium truncate">{pInfo.name}</p>
                                         <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                                           <span className="text-[9px] text-muted-foreground font-mono">#{b.booking_id.length > 10 ? b.booking_id.slice(0, 10) : b.booking_id}</span>
                                           <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
                                             <Users size={8} /> {b.guests} guests
                                           </span>
-                                          <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
-                                            <MapPin size={7} /> {pInfo.location.split(',')[0]}
-                                          </span>
+                                          {bookedAt && (
+                                            <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
+                                              <Clock size={7} /> {bookedAt}
+                                            </span>
+                                          )}
                                         </div>
                                       </div>
                                     </div>
