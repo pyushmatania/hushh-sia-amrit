@@ -34,7 +34,7 @@ const navSections: { title: string; items: { id: AdminPage; label: string; icon:
     items: [
       { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, color: "bg-indigo-100 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400", activeGlow: "shadow-indigo-200/60 dark:shadow-indigo-500/20" },
       { id: "ai", label: "AI Assistant", icon: Bot, color: "bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400", activeGlow: "shadow-violet-200/60 dark:shadow-violet-500/20" },
-      { id: "alerts", label: "Smart Alerts", icon: Bell, color: "bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400", activeGlow: "shadow-rose-200/60 dark:shadow-rose-500/20" },
+      { id: "alerts", label: "Intelligence", icon: Bell, color: "bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400", activeGlow: "shadow-rose-200/60 dark:shadow-rose-500/20" },
     ]
   },
   {
