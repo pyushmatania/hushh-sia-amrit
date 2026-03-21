@@ -94,7 +94,8 @@ function usePropertyMap() {
     const map = new Map<string, PropertyInfo>();
     // Static properties first
     properties.forEach(p => {
-      map.set(p.id, { name: p.name, location: p.location || "Jeypore, Odisha", category: p.category || "Stays", image: p.images?.[0] });
+      const firstImg = Array.isArray(p.images) ? p.images[0] : typeof p.images === 'string' ? p.images : undefined;
+      map.set(p.id, { name: p.name, location: p.location || "Jeypore, Odisha", category: p.category || "Stays", image: firstImg });
     });
     // DB listings override
     dbListings.forEach((v, k) => map.set(k, v));
