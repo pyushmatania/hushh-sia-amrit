@@ -438,7 +438,6 @@ export default function AdminProperties() {
                 >
                   {selectedIds.includes(listing.id) && <span className="text-[10px] font-bold">✓</span>}
                 </button>
-              >
                 <div className="w-16 h-16 rounded-lg bg-secondary shrink-0 overflow-hidden">
                   {listing.image_urls?.[0] ? (
                     <img src={listing.image_urls[0]} alt="" className="w-full h-full object-cover" />
