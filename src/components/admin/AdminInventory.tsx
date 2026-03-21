@@ -30,6 +30,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
   const [editing, setEditing] = useState<Partial<InventoryItem> | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
   const loadInventory = () => {
     supabase.from("inventory").select("*").order("sort_order").order("name")
