@@ -58,6 +58,8 @@ export default function BookingHub({
   const [propertyFilter, setPropertyFilter] = useState("all");
   const [tab, setTab] = useState<TabId>("overview");
   const [updating, setUpdating] = useState<string | null>(null);
+  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
+  const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
   const [propertyMap, setPropertyMap] = useState<Map<string, { name: string; image: string; location: string }>>(new Map());
   const [profileMap, setProfileMap] = useState<Map<string, string>>(new Map());
 
