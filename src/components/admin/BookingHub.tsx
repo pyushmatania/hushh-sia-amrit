@@ -867,16 +867,17 @@ function BookingCard({ booking: b, index, onNavigate, onStatusChange, conflicts 
     </motion.div>
   );
 }
-function RequestCard({ booking: b, index, updating, onAccept, onReject, onNavigate, timeAgo, conflicts = [] }: any) {
+function RequestCard({ booking: b, index, updating, onAccept, onReject, onNavigate, timeAgo, conflicts = [], capacityInfo }: any) {
   const sc = statusConfig[b.status] || statusConfig.pending;
   const hasConflict = conflicts.length > 0;
+  const isOverCapacity = capacityInfo?.isOverCapacity;
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: -100 }}
       transition={{ delay: index * 0.03 }}
-      className={`rounded-2xl border ${hasConflict ? "border-destructive/40 ring-1 ring-destructive/20" : "border-amber-200/60 dark:border-amber-500/20"} bg-card overflow-hidden`}
+      className={`rounded-2xl border ${isOverCapacity ? "border-destructive/60 ring-2 ring-destructive/30" : hasConflict ? "border-amber-400/40 ring-1 ring-amber-400/20" : "border-amber-200/60 dark:border-amber-500/20"} bg-card overflow-hidden`}
     >
       {/* Property Header with Image */}
       <div className="relative cursor-pointer" onClick={() => onNavigate?.("history", { propertyId: b.property_id })}>
@@ -904,14 +905,36 @@ function RequestCard({ booking: b, index, updating, onAccept, onReject, onNaviga
         </div>
       </div>
 
-      {hasConflict && (
-        <div className="px-4 py-2.5 bg-destructive/10 border-b border-destructive/20 flex items-start gap-2">
-          <AlertTriangle size={14} className="text-destructive shrink-0 mt-0.5" />
+      {/* Capacity-aware conflict banner */}
+      {capacityInfo && (hasConflict || isOverCapacity) && (
+        <div className={`px-4 py-2.5 border-b flex items-start gap-2 ${isOverCapacity ? "bg-destructive/10 border-destructive/20" : "bg-amber-50 dark:bg-amber-500/10 border-amber-200/40 dark:border-amber-500/20"}`}>
+          <AlertTriangle size={14} className={`shrink-0 mt-0.5 ${isOverCapacity ? "text-destructive" : "text-amber-600 dark:text-amber-400"}`} />
           <div>
-            <p className="text-[11px] font-semibold text-destructive">Scheduling Conflict</p>
-            <p className="text-[10px] text-destructive/80 mt-0.5">
-              {conflicts.length} other booking{conflicts.length > 1 ? "s" : ""} for this property on {b.date} at {b.slot} — total {conflicts.reduce((s: number, c: Booking) => s + c.guests, 0) + b.guests} guests
-            </p>
+            {isOverCapacity ? (
+              <>
+                <p className="text-[11px] font-semibold text-destructive">🚨 Over Capacity</p>
+                <p className="text-[10px] text-destructive/80 mt-0.5">
+                  {capacityInfo.totalGuests} guests requested, max {capacityInfo.maxGuests}
+                  {capacityInfo.type === "stay" && ` · Needs ${capacityInfo.roomsNeeded} rooms (only ${capacityInfo.rooms} available)`}
+                </p>
+              </>
+            ) : capacityInfo.type === "stay" ? (
+              <>
+                <p className="text-[11px] font-semibold text-amber-700 dark:text-amber-300">🛏️ Room Allocation</p>
+                <p className="text-[10px] text-amber-600/80 dark:text-amber-400/80 mt-0.5">
+                  {capacityInfo.totalGuests} guests · {capacityInfo.roomsNeeded}/{capacityInfo.rooms} rooms needed
+                  {capacityInfo.needsMattress && " · Extra mattress for odd guest"}
+                  {` · ${conflicts.length} overlapping booking${conflicts.length > 1 ? "s" : ""}`}
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-[11px] font-semibold text-amber-700 dark:text-amber-300">👥 Capacity Warning</p>
+                <p className="text-[10px] text-amber-600/80 dark:text-amber-400/80 mt-0.5">
+                  {capacityInfo.totalGuests}/{capacityInfo.maxGuests} guests on {b.date} at {b.slot} · {conflicts.length} overlapping booking{conflicts.length > 1 ? "s" : ""}
+                </p>
+              </>
+            )}
           </div>
         </div>
       )}
