@@ -128,6 +128,38 @@ export default function AdminBookings({ onNavigate }: { onNavigate?: (page: stri
         </div>
       </motion.div>
 
+      {/* Property Filter */}
+      {uniqueProperties.length > 1 && (
+        <motion.div variants={fadeUp} className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+          <button
+            onClick={() => setPropertyFilter("all")}
+            className={`shrink-0 px-3 py-1.5 rounded-xl text-[11px] font-semibold border transition-all ${
+              propertyFilter === "all"
+                ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                : "bg-secondary/60 text-muted-foreground border-border/60 hover:bg-secondary"
+            }`}
+          >
+            All Venues
+          </button>
+          {uniqueProperties.map(p => {
+            const count = bookings.filter(b => b.property_id === p.id).length;
+            return (
+              <button
+                key={p.id}
+                onClick={() => setPropertyFilter(p.id === propertyFilter ? "all" : p.id)}
+                className={`shrink-0 px-3 py-1.5 rounded-xl text-[11px] font-semibold border transition-all truncate max-w-[160px] ${
+                  propertyFilter === p.id
+                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                    : "bg-secondary/60 text-muted-foreground border-border/60 hover:bg-secondary"
+                }`}
+              >
+                {p.name} <span className="opacity-60">({count})</span>
+              </button>
+            );
+          })}
+        </motion.div>
+      )}
+
       {loading ? (
         <div className="space-y-3">
           {[1,2,3,4,5].map(i => (
