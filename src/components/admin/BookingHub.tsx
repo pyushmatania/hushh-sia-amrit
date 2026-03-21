@@ -805,15 +805,16 @@ function BookingCard({ booking: b, index, onNavigate, onStatusChange, conflicts 
     </motion.div>
   );
 }
-function RequestCard({ booking: b, index, updating, onAccept, onReject, onNavigate, timeAgo }: any) {
+function RequestCard({ booking: b, index, updating, onAccept, onReject, onNavigate, timeAgo, conflicts = [] }: any) {
   const sc = statusConfig[b.status] || statusConfig.pending;
+  const hasConflict = conflicts.length > 0;
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: -100 }}
       transition={{ delay: index * 0.03 }}
-      className="rounded-2xl border border-amber-200/60 dark:border-amber-500/20 bg-card overflow-hidden"
+      className={`rounded-2xl border ${hasConflict ? "border-destructive/40 ring-1 ring-destructive/20" : "border-amber-200/60 dark:border-amber-500/20"} bg-card overflow-hidden`}
     >
       {/* Property Header with Image */}
       <div className="relative cursor-pointer" onClick={() => onNavigate?.("history", { propertyId: b.property_id })}>
