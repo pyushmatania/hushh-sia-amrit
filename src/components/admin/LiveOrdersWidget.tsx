@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart, ChefHat, MapPin, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { getListingThumbnail } from "@/lib/listing-thumbnails";
 
 interface LiveOrder {
   id: string; user_id: string; property_id: string; total: number;
   status: string; created_at: string; assigned_name: string | null;
   items: { item_name: string; item_emoji: string; quantity: number }[];
-  guestName: string; propertyName: string;
+  guestName: string; propertyName: string; propertyImageUrls: string[];
 }
 
 const statusSteps = ["pending", "preparing", "delivered"];
@@ -24,21 +25,25 @@ export default function LiveOrdersWidget({ onViewAll }: { onViewAll: () => void 
     const [itemsRes, profilesRes, listingsRes] = await Promise.all([
       supabase.from("order_items").select("*").in("order_id", ordersData.map(o => o.id)),
       supabase.from("profiles").select("user_id, display_name"),
-      supabase.from("host_listings").select("id, name"),
+      supabase.from("host_listings").select("id, name, image_urls"),
     ]);
 
     const itemMap = new Map<string, any[]>();
     (itemsRes.data ?? []).forEach(item => { const list = itemMap.get(item.order_id) || []; list.push(item); itemMap.set(item.order_id, list); });
     const profileMap = new Map<string, string>();
     (profilesRes.data ?? []).forEach(p => profileMap.set(p.user_id, p.display_name || "Guest"));
-    const listingMap = new Map<string, string>();
-    (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, l.name));
+    const listingMap = new Map<string, { name: string; imageUrls: string[] }>();
+    (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, { name: l.name, imageUrls: l.image_urls || [] }));
 
-    setOrders(ordersData.map(o => ({
-      ...o, assigned_name: (o as any).assigned_name || null,
-      items: itemMap.get(o.id) || [], guestName: profileMap.get(o.user_id) || "Guest",
-      propertyName: listingMap.get(o.property_id) || `Property`,
-    })));
+    setOrders(ordersData.map(o => {
+      const listing = listingMap.get(o.property_id);
+      return {
+        ...o, assigned_name: (o as any).assigned_name || null,
+        items: itemMap.get(o.id) || [], guestName: profileMap.get(o.user_id) || "Guest",
+        propertyName: listing?.name || "Property",
+        propertyImageUrls: listing?.imageUrls || [],
+      };
+    }));
     setLoading(false);
   };
 
@@ -90,9 +95,16 @@ export default function LiveOrdersWidget({ onViewAll }: { onViewAll: () => void 
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-lg bg-muted flex items-center justify-center text-[10px] font-bold text-foreground/60">
-                        {order.guestName[0]}
-                      </div>
+                      {(() => {
+                        const thumb = getListingThumbnail(order.propertyName, order.propertyImageUrls, { preferMapped: true });
+                        return thumb ? (
+                          <img src={thumb} alt={order.propertyName} className="w-7 h-7 rounded-lg object-cover" />
+                        ) : (
+                          <div className="w-7 h-7 rounded-lg bg-muted flex items-center justify-center text-[10px] font-bold text-foreground/60">
+                            {order.propertyName[0]}
+                          </div>
+                        );
+                      })()}
                       <div>
                         <p className="text-[11px] font-semibold text-foreground">{order.guestName}</p>
                         <p className="text-[9px] text-muted-foreground flex items-center gap-0.5"><MapPin size={7} /> {order.propertyName}</p>
