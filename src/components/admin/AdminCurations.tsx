@@ -47,6 +47,7 @@ export default function AdminCurations() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
   const loadCurations = () => {
     supabase.from("curations").select("*").order("sort_order")

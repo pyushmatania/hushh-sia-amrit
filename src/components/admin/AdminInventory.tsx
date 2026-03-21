@@ -85,7 +85,8 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
     window.dispatchEvent(new Event("hushh:listings-updated"));
   };
 
-  const deleteItem = async (id: string) => { if (!confirm("Delete?")) return; await supabase.from("inventory").delete().eq("id", id); setItems(prev => prev.filter(i => i.id !== id)); toast({ title: "Deleted" }); window.dispatchEvent(new Event("hushh:listings-updated")); };
+  const deleteItem = async (id: string) => { setDeleteTarget(id); };
+  const confirmDeleteItem = async () => { if (!deleteTarget) return; await supabase.from("inventory").delete().eq("id", deleteTarget); setItems(prev => prev.filter(i => i.id !== deleteTarget)); toast({ title: "Deleted" }); window.dispatchEvent(new Event("hushh:listings-updated")); setDeleteTarget(null); };
   const toggleAvailability = async (item: InventoryItem) => { const next = !item.available; await supabase.from("inventory").update({ available: next }).eq("id", item.id); setItems(prev => prev.map(i => i.id === item.id ? { ...i, available: next } : i)); };
 
   const lowStock = scopedItems.filter(i => i.stock <= i.low_stock_threshold && i.available);

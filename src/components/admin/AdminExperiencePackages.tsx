@@ -125,11 +125,16 @@ export default function AdminExperiencePackages() {
   };
 
   const deletePackage = async (id: string) => {
-    if (!confirm("Delete this package?")) return;
-    await supabase.from("experience_packages").delete().eq("id", id);
-    setPackages(prev => prev.filter(p => p.id !== id));
+    setDeleteTarget(id);
+  };
+
+  const confirmDeletePackage = async () => {
+    if (!deleteTarget) return;
+    await supabase.from("experience_packages").delete().eq("id", deleteTarget);
+    setPackages(prev => prev.filter(p => p.id !== deleteTarget));
     toast({ title: "Package deleted" });
     window.dispatchEvent(new Event("hushh:listings-updated"));
+    setDeleteTarget(null);
   };
 
   const toggleActive = async (pkg: PackageRow) => {
