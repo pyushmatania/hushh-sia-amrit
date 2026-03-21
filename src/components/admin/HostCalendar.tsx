@@ -473,32 +473,37 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
                   )}
                 </div>
 
-                {/* Properties Summary for the day */}
+                {/* Properties → Slots → Bookings (merged hierarchy) */}
                 {selectedStats.count > 0 && (
-                  <div className="space-y-2">
-                    <h5 className="text-xs font-bold text-muted-foreground px-1 flex items-center gap-1.5 uppercase tracking-wider">
-                      <Home size={11} /> Properties Booked
-                    </h5>
-                    <div className="space-y-2">
-                      {Array.from(new Set(selectedBookings.map(b => b.property_id))).map((pid, idx) => {
-                        const info = getPropertyInfo(pid);
-                        const propBookings = selectedBookings.filter(b => b.property_id === pid);
-                        const propRevenue = propBookings.reduce((s, b) => s + Number(b.total), 0);
-                        const propGuests = propBookings.reduce((s, b) => s + b.guests, 0);
-                        return (
-                          <motion.div
-                            key={pid}
-                            initial={{ opacity: 0, x: -8 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: idx * 0.06 }}
-                            className="rounded-xl border border-border/60 bg-card/80 p-3"
-                          >
+                  <div className="space-y-3">
+                    {Array.from(new Set(selectedBookings.map(b => b.property_id))).map((pid, idx) => {
+                      const info = getPropertyInfo(pid);
+                      const propBookings = selectedBookings.filter(b => b.property_id === pid);
+                      const propRevenue = propBookings.reduce((s, b) => s + Number(b.total), 0);
+                      const propGuests = propBookings.reduce((s, b) => s + b.guests, 0);
+
+                      const slotGroups = SLOTS.map(slot => ({
+                        slot,
+                        bookings: propBookings.filter(b => b.slot.includes(slot.split("–")[0])),
+                        isBlocked: blockedSlots.has(`${selectedDate}|${slot}`),
+                      })).filter(sg => sg.bookings.length > 0 || sg.isBlocked);
+
+                      return (
+                        <motion.div
+                          key={pid}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: idx * 0.08 }}
+                          className="rounded-2xl border border-border/60 bg-card/80 overflow-hidden"
+                        >
+                          {/* Property Header */}
+                          <div className="p-3.5 border-b border-border/40 bg-gradient-to-r from-card to-secondary/20">
                             <div className="flex items-center gap-3">
                               {info.image ? (
-                                <img src={info.image} alt={info.name} className="w-10 h-10 rounded-lg object-cover" loading="lazy" />
+                                <img src={info.image} alt={info.name} className="w-12 h-12 rounded-xl object-cover border border-border/50" loading="lazy" />
                               ) : (
-                                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                                  <Home size={16} className="text-primary" />
+                                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                                  <Home size={18} className="text-primary" />
                                 </div>
                               )}
                               <div className="flex-1 min-w-0">
@@ -509,161 +514,138 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
                                 </div>
                               </div>
                               <div className="text-right shrink-0">
-                                <span className="text-sm font-black text-foreground">₹{propRevenue.toLocaleString()}</span>
-                                <div className="flex items-center gap-1.5 mt-0.5 justify-end">
-                                  <span className="text-[9px] text-muted-foreground">{propBookings.length} booking{propBookings.length > 1 ? 's' : ''}</span>
-                                  <span className="text-[9px] text-muted-foreground">· {propGuests} guests</span>
-                                </div>
+                                <span className="text-base font-black text-foreground">₹{propRevenue.toLocaleString()}</span>
+                                <p className="text-[9px] text-muted-foreground">{propBookings.length} booking{propBookings.length > 1 ? 's' : ''} · {propGuests} guests</p>
                               </div>
                             </div>
-                          </motion.div>
-                        );
-                      })}
-                    </div>
+                          </div>
+
+                          {/* Slots under this property */}
+                          <div className="divide-y divide-border/30">
+                            {slotGroups.map((sg) => {
+                              const slotRevenue = sg.bookings.reduce((s, b) => s + Number(b.total), 0);
+                              const slotGuests = sg.bookings.reduce((s, b) => s + b.guests, 0);
+
+                              return (
+                                <div key={sg.slot} className={`p-3 ${sg.isBlocked && sg.bookings.length === 0 ? 'bg-destructive/5' : ''}`}>
+                                  <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center gap-2">
+                                      <div className={`w-2 h-2 rounded-full ${sg.bookings.length > 0 ? 'bg-emerald-500 shadow-sm shadow-emerald-500/50' : sg.isBlocked ? 'bg-destructive' : 'bg-muted-foreground/20'}`} />
+                                      <span className="text-[11px] font-bold text-foreground">{sg.slot}</span>
+                                      {sg.bookings.length > 0 && (
+                                        <span className="text-[9px] text-muted-foreground">· {sg.bookings.length} booking{sg.bookings.length > 1 ? 's' : ''}</span>
+                                      )}
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      {slotRevenue > 0 && (
+                                        <span className="text-[10px] font-bold text-primary">₹{slotRevenue.toLocaleString()}</span>
+                                      )}
+                                      <button
+                                        onClick={() => toggleBlock(selectedDate!, sg.slot)}
+                                        className={`flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-semibold transition ${
+                                          sg.isBlocked ? "bg-destructive/10 text-destructive" : "bg-secondary/80 text-muted-foreground"
+                                        }`}
+                                      >
+                                        {sg.isBlocked ? <><Lock size={8} /> Blocked</> : <><Unlock size={8} /> Open</>}
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  {sg.bookings.length === 0 ? (
+                                    <p className="text-[9px] text-muted-foreground pl-4 italic">{sg.isBlocked ? "Slot blocked" : "Available"}</p>
+                                  ) : (
+                                    <div className="space-y-1.5 pl-4">
+                                      {sg.bookings.map((b, j) => {
+                                        const cfg = statusConfig[b.status] || statusConfig.upcoming;
+                                        const userProfile = b.user_id ? userProfiles.get(b.user_id) : null;
+                                        const userName = userProfile?.display_name || (b.user_id ? `User ${b.user_id.slice(0, 6)}` : "Guest");
+                                        const bookedAt = b.created_at ? new Date(b.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "";
+
+                                        return (
+                                          <motion.div
+                                            key={j}
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            transition={{ delay: j * 0.04 }}
+                                            whileTap={{ scale: 0.97 }}
+                                            onClick={() => onNavigate?.("clients", { userId: b.user_id })}
+                                            className={`rounded-xl border px-3 py-2.5 cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all ${cfg.bg}`}
+                                          >
+                                            <div className="flex items-center justify-between">
+                                              <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                                                {userProfile?.avatar_url ? (
+                                                  <img src={userProfile.avatar_url} alt={userName} className="w-9 h-9 rounded-full object-cover border-2 border-border/50 shrink-0" />
+                                                ) : (
+                                                  <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0 border-2 border-border/50">
+                                                    <User size={14} className="text-primary" />
+                                                  </div>
+                                                )}
+                                                <div className="min-w-0 flex-1">
+                                                  <div className="flex items-center gap-1.5">
+                                                    <p className="text-[12px] font-bold text-foreground truncate">{userName}</p>
+                                                    {userProfile?.tier && userProfile.tier !== "Silver" && (
+                                                      <span className="text-[8px] px-1.5 py-0.5 rounded-md bg-amber-500/10 text-amber-500 font-bold">{userProfile.tier}</span>
+                                                    )}
+                                                  </div>
+                                                  <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                                                    <span className="text-[9px] text-muted-foreground font-mono">#{b.booking_id.length > 10 ? b.booking_id.slice(0, 10) : b.booking_id}</span>
+                                                    <span className="text-[9px] text-muted-foreground flex items-center gap-0.5"><Users size={8} /> {b.guests} guests</span>
+                                                    {bookedAt && (
+                                                      <span className="text-[9px] text-muted-foreground flex items-center gap-0.5"><Clock size={7} /> {bookedAt}</span>
+                                                    )}
+                                                  </div>
+                                                </div>
+                                              </div>
+                                              <div className="flex items-center gap-2 shrink-0">
+                                                <div className="text-right">
+                                                  <span className="text-[12px] font-black text-foreground">₹{Number(b.total).toLocaleString()}</span>
+                                                  <div><span className={`text-[9px] font-semibold ${cfg.color}`}>{cfg.label}</span></div>
+                                                </div>
+                                                <Eye size={12} className="text-muted-foreground" />
+                                              </div>
+                                            </div>
+                                          </motion.div>
+                                        );
+                                      })}
+                                    </div>
+                                  )}
+
+                                  {sg.bookings.length > 0 && (
+                                    <div className="mt-2 pl-4">
+                                      <div className="flex items-center justify-between text-[8px] text-muted-foreground mb-0.5">
+                                        <span>{slotGuests} guests</span>
+                                        <span>₹{Math.round(slotRevenue / Math.max(sg.bookings.length, 1))}/avg</span>
+                                      </div>
+                                      <div className="h-1 rounded-full bg-secondary overflow-hidden">
+                                        <motion.div
+                                          initial={{ width: 0 }}
+                                          animate={{ width: `${Math.min((slotGuests / 30) * 100, 100)}%` }}
+                                          transition={{ delay: 0.3, duration: 0.5 }}
+                                          className="h-full rounded-full bg-gradient-to-r from-primary to-emerald-500"
+                                        />
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+
+                            {SLOTS.filter(slot => !slotGroups.some(sg => sg.slot === slot)).length > 0 && (
+                              <div className="px-3 py-2 flex items-center gap-2 flex-wrap">
+                                <span className="text-[9px] text-muted-foreground font-medium">Available:</span>
+                                {SLOTS.filter(slot => !slotGroups.some(sg => sg.slot === slot)).map(slot => (
+                                  <span key={slot} className="text-[9px] text-emerald-500/70 bg-emerald-500/5 px-2 py-0.5 rounded-md font-medium">{slot}</span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </motion.div>
+                      );
+                    })}
                   </div>
                 )}
 
-                {/* Slot Breakdown */}
-                <div className="space-y-2">
-                  <h5 className="text-xs font-bold text-muted-foreground px-1 flex items-center gap-1.5 uppercase tracking-wider">
-                    <BarChart3 size={11} /> Slot Breakdown
-                  </h5>
-                  {SLOTS.map((slot, idx) => {
-                    const slotBookings = selectedBookings.filter(b => b.slot.includes(slot.split("–")[0]));
-                    const isBlocked = blockedSlots.has(`${selectedDate}|${slot}`);
-                    const slotRevenue = slotBookings.reduce((s, b) => s + Number(b.total), 0);
-                    const slotGuests = slotBookings.reduce((s, b) => s + b.guests, 0);
 
-                    return (
-                      <motion.div
-                        key={slot}
-                        initial={{ opacity: 0, x: -8 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: idx * 0.08 }}
-                        className={`rounded-xl border p-3.5 transition-all ${
-                          isBlocked
-                            ? "bg-destructive/5 border-destructive/20"
-                            : slotBookings.length > 0
-                            ? "bg-card/80 border-border/60"
-                            : "bg-secondary/20 border-border/40"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between mb-2.5">
-                          <div className="flex items-center gap-2">
-                            <div className={`w-2.5 h-2.5 rounded-full ${slotBookings.length > 0 ? 'bg-emerald-500 shadow-sm shadow-emerald-500/50' : isBlocked ? 'bg-destructive' : 'bg-muted-foreground/20'}`} />
-                            <span className="text-xs font-bold text-foreground">{slot}</span>
-                            {slotBookings.length > 0 && (
-                              <span className="text-[10px] text-muted-foreground">
-                                · {slotBookings.length} booking{slotBookings.length > 1 ? 's' : ''}
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            {slotRevenue > 0 && (
-                              <span className="text-[11px] font-bold text-primary">₹{slotRevenue.toLocaleString()}</span>
-                            )}
-                            <button
-                              onClick={() => toggleBlock(selectedDate!, slot)}
-                              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold transition ${
-                                isBlocked
-                                  ? "bg-destructive/10 text-destructive hover:bg-destructive/20"
-                                  : "bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary"
-                              }`}
-                            >
-                              {isBlocked ? <><Lock size={9} /> Blocked</> : <><Unlock size={9} /> Open</>}
-                            </button>
-                          </div>
-                        </div>
-
-                        {slotBookings.length === 0 ? (
-                          <p className="text-[10px] text-muted-foreground pl-5 italic">
-                            {isBlocked ? "Slot is blocked for this date" : "No bookings — slot available"}
-                          </p>
-                        ) : (
-                          <div className="space-y-2 pl-5">
-                            {slotBookings.map((b, j) => {
-                              const cfg = statusConfig[b.status] || statusConfig.upcoming;
-                              const pInfo = getPropertyInfo(b.property_id);
-                              const userProfile = b.user_id ? userProfiles.get(b.user_id) : null;
-                              const userName = userProfile?.display_name || (b.user_id ? `User ${b.user_id.slice(0, 6)}` : "Guest");
-                              const bookedAt = b.created_at ? new Date(b.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "";
-                              return (
-                                <motion.div
-                                  key={j}
-                                  initial={{ opacity: 0 }}
-                                  animate={{ opacity: 1 }}
-                                  transition={{ delay: j * 0.05 }}
-                                  whileTap={{ scale: 0.97 }}
-                                  onClick={() => onNavigate?.("history", { bookingId: b.booking_id, propertyId: b.property_id })}
-                                  className={`rounded-xl border px-3 py-2.5 cursor-pointer hover:ring-1 hover:ring-primary/30 active:ring-primary/50 transition-all ${cfg.bg}`}
-                                >
-                                  <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                                      {userProfile?.avatar_url ? (
-                                        <img src={userProfile.avatar_url} alt={userName} className="w-8 h-8 rounded-full object-cover border-2 border-border/50 shrink-0" />
-                                      ) : (
-                                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 border-2 border-border/50">
-                                          <User size={13} className="text-primary" />
-                                        </div>
-                                      )}
-                                      <div className="min-w-0 flex-1">
-                                        <div className="flex items-center gap-1.5">
-                                          <p className="text-[12px] font-bold text-foreground truncate">{userName}</p>
-                                          {userProfile?.tier && userProfile.tier !== "Silver" && (
-                                            <span className="text-[8px] px-1.5 py-0.5 rounded-md bg-amber-500/10 text-amber-500 font-bold">{userProfile.tier}</span>
-                                          )}
-                                        </div>
-                                        <p className="text-[10px] text-foreground/80 font-medium truncate">{pInfo.name}</p>
-                                        <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                                          <span className="text-[9px] text-muted-foreground font-mono">#{b.booking_id.length > 10 ? b.booking_id.slice(0, 10) : b.booking_id}</span>
-                                          <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
-                                            <Users size={8} /> {b.guests} guests
-                                          </span>
-                                          {bookedAt && (
-                                            <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
-                                              <Clock size={7} /> {bookedAt}
-                                            </span>
-                                          )}
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div className="flex items-center gap-2 shrink-0">
-                                      <div className="text-right">
-                                        <span className="text-[12px] font-black text-foreground">₹{Number(b.total).toLocaleString()}</span>
-                                        <div>
-                                          <span className={`text-[9px] font-semibold ${cfg.color}`}>{cfg.label}</span>
-                                        </div>
-                                      </div>
-                                      <ChevronRight size={12} className="text-muted-foreground" />
-                                    </div>
-                                  </div>
-                                </motion.div>
-                              );
-                            })}
-                          </div>
-                        )}
-
-                        {/* Slot utilization bar */}
-                        {slotBookings.length > 0 && (
-                          <div className="mt-2.5 pl-5">
-                            <div className="flex items-center justify-between text-[9px] text-muted-foreground mb-1">
-                              <span>{slotGuests} guests</span>
-                              <span>₹{Math.round(slotRevenue / Math.max(slotBookings.length, 1))}/avg</span>
-                            </div>
-                            <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
-                              <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: `${Math.min((slotGuests / 30) * 100, 100)}%` }}
-                                transition={{ delay: 0.3, duration: 0.5 }}
-                                className="h-full rounded-full bg-gradient-to-r from-primary to-emerald-500"
-                              />
-                            </div>
-                          </div>
-                        )}
-                      </motion.div>
-                    );
-                  })}
-                </div>
 
                 {/* Revenue Split by Status */}
                 {selectedStats.count > 0 && (
