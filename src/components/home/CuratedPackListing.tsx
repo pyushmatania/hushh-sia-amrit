@@ -153,9 +153,10 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
               ref={videoRef}
               src={media.video}
               muted={muted}
+              autoPlay
               loop
               playsInline
-              preload="none"
+              preload="auto"
               onCanPlay={() => setVideoReady(true)}
               className="absolute inset-0 w-full h-full object-cover"
               style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.3s" }}
