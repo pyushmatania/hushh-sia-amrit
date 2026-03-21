@@ -64,7 +64,7 @@ export default function BookingHub({
   const [bulkMode, setBulkMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [bulkUpdating, setBulkUpdating] = useState(false);
-  const [propertyMap, setPropertyMap] = useState<Map<string, { name: string; image: string; location: string }>>(new Map());
+  const [propertyMap, setPropertyMap] = useState<Map<string, { name: string; image: string; location: string; capacity: number; category: string }>>(new Map());
   const [profileMap, setProfileMap] = useState<Map<string, string>>(new Map());
 
   const load = useCallback(async () => {
