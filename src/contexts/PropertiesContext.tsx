@@ -149,7 +149,8 @@ function inventoryToAddons(rows: any[]): Record<string, Addon[]> {
   return grouped;
 }
 
-function curationsToCombo(row: any, staticMatch: CuratedCombo | undefined): CuratedCombo {
+function curationsToCombo(row: any, staticMatch: CuratedCombo | undefined, propertyImage?: string): CuratedCombo {
+  const resolvedImage = staticMatch?.image || propertyImage || "";
   return {
     id: staticMatch?.id || row.id,
     name: row.name,
@@ -158,7 +159,7 @@ function curationsToCombo(row: any, staticMatch: CuratedCombo | undefined): Cura
     time: row.slot || staticMatch?.time || "",
     priceRange: [Number(row.price), Number(row.original_price || row.price)],
     includes: row.includes?.length ? row.includes : staticMatch?.includes || [],
-    image: staticMatch?.image || "",
+    image: resolvedImage,
     gradient: row.gradient || staticMatch?.gradient || "from-primary/80 to-primary/40",
     tags: row.tags?.length ? row.tags : staticMatch?.tags || [],
     popular: !!row.badge || staticMatch?.popular,
