@@ -217,7 +217,7 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
     });
   };
 
-  const maxBookingsInDay = Math.max(1, ...Array.from(bookingMap.values()).map(b => b.length));
+  const maxBookingsInDay = Math.max(1, ...Array.from(filteredBookingMap.values()).map(b => b.length));
 
   const getPropertyName = (id: string) => propertyMap.get(id)?.name || `Property ${id.slice(0, 6)}`;
   const getPropertyInfo = (id: string) => propertyMap.get(id) || { name: `Property ${id.slice(0, 6)}`, location: "Jeypore", category: "Stays" };
