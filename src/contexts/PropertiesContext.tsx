@@ -223,11 +223,22 @@ export function PropertiesProvider({ children }: { children: ReactNode }) {
     }
 
     // Process curations → curatedCombos
+    // Build a property image map from listings for curations that don't match static combos
+    const listingImageMap = new Map<string, string>();
+    if (listingsRes.data) {
+      for (const row of listingsRes.data) {
+        const thumb = getListingThumbnail(row.name, row.image_urls || [], { preferMapped: true });
+        if (thumb) listingImageMap.set(row.id, thumb);
+        else if (row.image_urls?.[0]) listingImageMap.set(row.id, row.image_urls[0]);
+      }
+    }
+
     if (!curationsRes.error && curationsRes.data && curationsRes.data.length > 0) {
       const staticByName = new Map(staticCombos.map((c) => [c.name.toLowerCase().trim(), c]));
       const merged = curationsRes.data.map((row) => {
         const staticMatch = staticByName.get((row.name || "").toLowerCase().trim());
-        return curationsToCombo(row, staticMatch);
+        const propertyImage = listingImageMap.get(row.property_id);
+        return curationsToCombo(row, staticMatch, propertyImage);
       });
       setCuratedCombos(merged);
     } else {
