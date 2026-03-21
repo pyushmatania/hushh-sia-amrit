@@ -95,9 +95,16 @@ export default function LiveOrdersWidget({ onViewAll }: { onViewAll: () => void 
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-lg bg-muted flex items-center justify-center text-[10px] font-bold text-foreground/60">
-                        {order.guestName[0]}
-                      </div>
+                      {(() => {
+                        const thumb = getListingThumbnail(order.propertyName, order.propertyImageUrls, { preferMapped: true });
+                        return thumb ? (
+                          <img src={thumb} alt={order.propertyName} className="w-7 h-7 rounded-lg object-cover" />
+                        ) : (
+                          <div className="w-7 h-7 rounded-lg bg-muted flex items-center justify-center text-[10px] font-bold text-foreground/60">
+                            {order.propertyName[0]}
+                          </div>
+                        );
+                      })()}
                       <div>
                         <p className="text-[11px] font-semibold text-foreground">{order.guestName}</p>
                         <p className="text-[9px] text-muted-foreground flex items-center gap-0.5"><MapPin size={7} /> {order.propertyName}</p>
