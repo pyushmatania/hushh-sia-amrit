@@ -285,6 +285,8 @@ export function useBookings() {
             total: booking.total,
             status: booking.status,
             booking_id: booking.bookingId,
+            rooms_count: booking.roomsCount ?? null,
+            extra_mattresses: booking.extraMattresses ?? 0,
           })
           .select()
           .single();
