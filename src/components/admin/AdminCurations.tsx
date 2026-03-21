@@ -547,7 +547,10 @@ export default function AdminCurations() {
                       <span className="text-[10px] text-muted-foreground flex items-center gap-1"><Clock size={9} /> {c.slot}</span>
                     )}
                     <span className="text-[10px] text-muted-foreground flex items-center gap-1"><Users size={9} /> {bookings} bookings</span>
-                    <span className="text-[10px] text-muted-foreground">{(c.includes || []).length} items included</span>
+                    <span className="text-[10px] font-medium text-primary flex items-center gap-1">
+                      <TrendingUp size={9} /> ₹{curationRevenue >= 1000 ? `${(curationRevenue / 1000).toFixed(1)}k` : curationRevenue.toLocaleString()}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">{(c.includes || []).length} items</span>
                   </div>
 
                   {/* Expanded detail */}
