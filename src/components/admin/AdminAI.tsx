@@ -487,10 +487,85 @@ export default function AdminAI() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
-                className="text-xs text-muted-foreground max-w-xs mx-auto leading-relaxed"
+                className="text-xs text-muted-foreground max-w-xs mx-auto leading-relaxed mb-4"
               >
                 I can query your data, generate analytics, manage inventory, and execute actions — all through natural language.
               </motion.p>
+
+              {/* Input bar below avatar */}
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <input
+                    value={input}
+                    onChange={e => setInput(e.target.value)}
+                    onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage(input)}
+                    placeholder="Ask anything or give a command..."
+                    className="w-full bg-background/50 border border-border rounded-xl pl-4 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition font-display"
+                    disabled={loading}
+                  />
+                </div>
+                <motion.button
+                  onPointerDown={startHold}
+                  onPointerUp={stopHold}
+                  onPointerLeave={stopHold}
+                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ scale: 1.05 }}
+                  className={`relative w-11 h-11 rounded-xl flex items-center justify-center border transition ${
+                    isHolding
+                      ? "bg-red-500/20 border-red-400/40 text-red-400"
+                      : "bg-secondary/50 border-border/60 text-muted-foreground hover:text-primary hover:border-primary/30"
+                  }`}
+                >
+                  <AnimatePresence mode="wait">
+                    {isHolding ? (
+                      <motion.div key="wave" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                        <VoiceWaveVisualizer />
+                      </motion.div>
+                    ) : (
+                      <motion.div key="mic" initial={{ scale: 0.8 }} animate={{ scale: 1 }}>
+                        <Mic size={18} />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  {isHolding && (
+                    <motion.div
+                      className="absolute inset-0 rounded-xl border-2 border-red-400/40"
+                      animate={{ scale: [1, 1.15, 1], opacity: [0.6, 0, 0.6] }}
+                      transition={{ duration: 0.8, repeat: Infinity }}
+                    />
+                  )}
+                </motion.button>
+                <motion.button
+                  onClick={() => sendMessage(input)}
+                  disabled={!input.trim() || loading}
+                  whileTap={{ scale: 0.93 }}
+                  whileHover={{ scale: 1.05 }}
+                  className="px-4 h-11 rounded-xl text-primary-foreground disabled:opacity-40 transition overflow-hidden flex items-center relative"
+                  style={{
+                    background: "linear-gradient(135deg, hsl(var(--primary)), hsl(270 80% 60%))",
+                    boxShadow: "0 4px 14px -2px hsl(var(--primary) / 0.25)",
+                  }}
+                >
+                  {loading ? (
+                    <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}>
+                      <Loader2 size={18} />
+                    </motion.div>
+                  ) : (
+                    <motion.div animate={{ x: [0, 2, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
+                      <Send size={18} />
+                    </motion.div>
+                  )}
+                </motion.button>
+              </div>
+              <div className="flex items-center justify-between mt-2 px-1">
+                <p className="text-[9px] text-muted-foreground/40 flex items-center gap-1 font-mono">
+                  <motion.div animate={{ rotate: [0, 360] }} transition={{ duration: 6, repeat: Infinity, ease: "linear" }}>
+                    <Sparkles size={8} />
+                  </motion.div>
+                  Hushh AI · Hold 🎤 to speak
+                </p>
+                <p className="text-[9px] text-muted-foreground/40 font-mono">Enter ↵</p>
+              </div>
 
               {/* Capabilities */}
               <div className="grid grid-cols-2 gap-2 mt-4">
@@ -581,99 +656,84 @@ export default function AdminAI() {
           <motion.div
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            ref={scrollRef}
-            className={`rounded-2xl border border-border/50 overflow-y-auto transition-all relative ${expanded ? "h-[60vh]" : "h-[45vh]"}`}
-            style={{ background: "linear-gradient(180deg, hsl(var(--card)), hsl(var(--background) / 0.5))" }}
+            className="space-y-4 relative z-10"
           >
-            <FloatingParticles count={4} />
-            <div className="p-4 space-y-4 relative z-10">
-              {messages.map((msg, i) => (
-                <MessageBubble key={i} msg={msg} isLatest={i === messages.length - 1 && msg.role === "assistant"} />
-              ))}
-              <AnimatePresence>{loading && <ThinkingIndicator />}</AnimatePresence>
+            {/* Input bar below header when chatting */}
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <input
+                  value={input}
+                  onChange={e => setInput(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage(input)}
+                  placeholder="Ask anything or give a command..."
+                  className="w-full bg-card border border-border rounded-xl pl-4 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition font-display"
+                  disabled={loading}
+                />
+              </div>
+              <motion.button
+                onPointerDown={startHold}
+                onPointerUp={stopHold}
+                onPointerLeave={stopHold}
+                whileTap={{ scale: 0.9 }}
+                whileHover={{ scale: 1.05 }}
+                className={`relative w-11 h-11 rounded-xl flex items-center justify-center border transition ${
+                  isHolding
+                    ? "bg-red-500/20 border-red-400/40 text-red-400"
+                    : "bg-secondary/50 border-border/60 text-muted-foreground hover:text-primary hover:border-primary/30"
+                }`}
+              >
+                <AnimatePresence mode="wait">
+                  {isHolding ? (
+                    <motion.div key="wave" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                      <VoiceWaveVisualizer />
+                    </motion.div>
+                  ) : (
+                    <motion.div key="mic" initial={{ scale: 0.8 }} animate={{ scale: 1 }}>
+                      <Mic size={18} />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.button>
+              <motion.button
+                onClick={() => sendMessage(input)}
+                disabled={!input.trim() || loading}
+                whileTap={{ scale: 0.93 }}
+                whileHover={{ scale: 1.05 }}
+                className="px-4 h-11 rounded-xl text-primary-foreground disabled:opacity-40 transition overflow-hidden flex items-center relative"
+                style={{
+                  background: "linear-gradient(135deg, hsl(var(--primary)), hsl(270 80% 60%))",
+                  boxShadow: "0 4px 14px -2px hsl(var(--primary) / 0.25)",
+                }}
+              >
+                {loading ? (
+                  <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}>
+                    <Loader2 size={18} />
+                  </motion.div>
+                ) : (
+                  <motion.div animate={{ x: [0, 2, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
+                    <Send size={18} />
+                  </motion.div>
+                )}
+              </motion.button>
+            </div>
+
+            {/* Chat messages */}
+            <div
+              ref={scrollRef}
+              className={`rounded-2xl border border-border/50 overflow-y-auto transition-all relative ${expanded ? "h-[60vh]" : "h-[45vh]"}`}
+              style={{ background: "linear-gradient(180deg, hsl(var(--card)), hsl(var(--background) / 0.5))" }}
+            >
+              <FloatingParticles count={4} />
+              <div className="p-4 space-y-4 relative z-10">
+                {messages.map((msg, i) => (
+                  <MessageBubble key={i} msg={msg} isLatest={i === messages.length - 1 && msg.role === "assistant"} />
+                ))}
+                <AnimatePresence>{loading && <ThinkingIndicator />}</AnimatePresence>
+              </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Input bar */}
-      <div className="relative z-10">
-        <div className="flex gap-2">
-          <div className="relative flex-1">
-            <input
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage(input)}
-              placeholder="Ask anything or give a command..."
-              className="w-full bg-card border border-border rounded-xl pl-4 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition font-display"
-              disabled={loading}
-            />
-          </div>
-          {/* Voice */}
-          <motion.button
-            onPointerDown={startHold}
-            onPointerUp={stopHold}
-            onPointerLeave={stopHold}
-            whileTap={{ scale: 0.9 }}
-            whileHover={{ scale: 1.05 }}
-            className={`relative w-11 h-11 rounded-xl flex items-center justify-center border transition ${
-              isHolding
-                ? "bg-red-500/20 border-red-400/40 text-red-400"
-                : "bg-secondary/50 border-border/60 text-muted-foreground hover:text-primary hover:border-primary/30"
-            }`}
-          >
-            <AnimatePresence mode="wait">
-              {isHolding ? (
-                <motion.div key="wave" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <VoiceWaveVisualizer />
-                </motion.div>
-              ) : (
-                <motion.div key="mic" initial={{ scale: 0.8 }} animate={{ scale: 1 }}>
-                  <Mic size={18} />
-                </motion.div>
-              )}
-            </AnimatePresence>
-            {isHolding && (
-              <motion.div
-                className="absolute inset-0 rounded-xl border-2 border-red-400/40"
-                animate={{ scale: [1, 1.15, 1], opacity: [0.6, 0, 0.6] }}
-                transition={{ duration: 0.8, repeat: Infinity }}
-              />
-            )}
-          </motion.button>
-          {/* Send */}
-          <motion.button
-            onClick={() => sendMessage(input)}
-            disabled={!input.trim() || loading}
-            whileTap={{ scale: 0.93 }}
-            whileHover={{ scale: 1.05 }}
-            className="px-4 h-11 rounded-xl text-primary-foreground disabled:opacity-40 transition overflow-hidden flex items-center relative"
-            style={{
-              background: "linear-gradient(135deg, hsl(var(--primary)), hsl(270 80% 60%))",
-              boxShadow: "0 4px 14px -2px hsl(var(--primary) / 0.25)",
-            }}
-          >
-            {loading ? (
-              <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}>
-                <Loader2 size={18} />
-              </motion.div>
-            ) : (
-              <motion.div animate={{ x: [0, 2, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
-                <Send size={18} />
-              </motion.div>
-            )}
-          </motion.button>
-        </div>
-        <div className="flex items-center justify-between mt-2 px-1">
-          <p className="text-[9px] text-muted-foreground/40 flex items-center gap-1 font-mono">
-            <motion.div animate={{ rotate: [0, 360] }} transition={{ duration: 6, repeat: Infinity, ease: "linear" }}>
-              <Sparkles size={8} />
-            </motion.div>
-            Hushh AI · Hold 🎤 to speak
-          </p>
-          <p className="text-[9px] text-muted-foreground/40 font-mono">Enter ↵</p>
-        </div>
-      </div>
     </motion.div>
   );
 }
