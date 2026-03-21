@@ -258,24 +258,28 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
     { label: "Users", value: stats.totalUsers, prefix: "", icon: Users, accent: "from-rose-500 to-rose-600", accentLight: "bg-rose-500/8", change: `${stats.totalUsers} total`, up: true },
   ];
 
-  const quickActions = [
-    { label: "Bookings", icon: CalendarCheck, page: "bookings" as AdminPage },
-    { label: "Orders", icon: ShoppingCart, page: "orders" as AdminPage },
-    { label: "Analytics", icon: BarChart3, page: "analytics" as AdminPage },
-    { label: "Staff", icon: UserCog, page: "staff-mgmt" as AdminPage },
-    { label: "Budget", icon: Wallet, page: "budget" as AdminPage },
-    { label: "Calendar", icon: Calendar, page: "calendar" as AdminPage },
-    { label: "Campaigns", icon: Target, page: "campaigns" as AdminPage },
-    { label: "Catalog", icon: Package, page: "catalog" as AdminPage },
-    { label: "Coupons", icon: Ticket, page: "coupons" as AdminPage },
-    { label: "Clients", icon: Users, page: "clients" as AdminPage },
-    { label: "Loyalty", icon: Gift, page: "loyalty" as AdminPage },
-    { label: "Earnings", icon: CreditCard, page: "earnings" as AdminPage },
-    { label: "Inventory", icon: Utensils, page: "inventory" as AdminPage },
-    { label: "Requests", icon: ClipboardList, page: "requests" as AdminPage },
-    { label: "Exports", icon: FileText, page: "exports" as AdminPage },
-    { label: "Audit", icon: Shield, page: "audit" as AdminPage },
+  // Phase 5: Role-based quick actions
+  const allActions = [
+    { label: "Bookings", icon: CalendarCheck, page: "bookings" as AdminPage, roles: ["super_admin", "ops_manager", "host"] },
+    { label: "Orders", icon: ShoppingCart, page: "orders" as AdminPage, roles: ["super_admin", "ops_manager", "staff"] },
+    { label: "Analytics", icon: BarChart3, page: "analytics" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Staff", icon: UserCog, page: "staff-mgmt" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Budget", icon: Wallet, page: "budget" as AdminPage, roles: ["super_admin"] },
+    { label: "Calendar", icon: Calendar, page: "calendar" as AdminPage, roles: ["super_admin", "ops_manager", "host"] },
+    { label: "Campaigns", icon: Target, page: "campaigns" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Catalog", icon: Package, page: "catalog" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Coupons", icon: Ticket, page: "coupons" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Clients", icon: Users, page: "clients" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Loyalty", icon: Gift, page: "loyalty" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Earnings", icon: CreditCard, page: "earnings" as AdminPage, roles: ["super_admin", "ops_manager", "host"] },
+    { label: "Inventory", icon: Utensils, page: "inventory" as AdminPage, roles: ["super_admin", "ops_manager", "staff"] },
+    { label: "Requests", icon: ClipboardList, page: "requests" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Exports", icon: FileText, page: "exports" as AdminPage, roles: ["super_admin"] },
+    { label: "Audit", icon: Shield, page: "audit" as AdminPage, roles: ["super_admin"] },
   ];
+  const quickActions = userRole
+    ? allActions.filter(a => a.roles.includes(userRole))
+    : allActions;
 
   const timeAgo = (ts: string) => {
     const diff = Date.now() - new Date(ts).getTime();
