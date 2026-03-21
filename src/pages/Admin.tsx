@@ -19,6 +19,7 @@ import AdminAI from "@/components/admin/AdminAI";
 import AdminAlerts from "@/components/admin/AdminAlerts";
 import BusinessIntelligence from "@/components/admin/BusinessIntelligence";
 import AdminAuditLog from "@/components/admin/AdminAuditLog";
+import FinanceHub from "@/components/admin/FinanceHub";
 import AdminAchievements from "@/components/admin/AdminAchievements";
 import AdminLoyaltyReferrals from "@/components/admin/AdminLoyaltyReferrals";
 import HostCalendar from "@/components/admin/HostCalendar";
