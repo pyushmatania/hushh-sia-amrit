@@ -292,23 +292,66 @@ export default function AdminAI() {
   useEffect(() => { loadContext(); }, []);
 
   const loadContext = async () => {
-    const [bookingsRes, profilesRes, listingsRes, ordersRes] = await Promise.all([
-      supabase.from("bookings").select("total, status, date, slot, property_id, created_at"),
-      supabase.from("profiles").select("display_name, loyalty_points, tier, created_at"),
-      supabase.from("host_listings").select("name, base_price, capacity, status, category, location"),
-      supabase.from("orders").select("total, status, created_at"),
+    const [bookingsRes, profilesRes, listingsRes, ordersRes, inventoryRes, curationsRes, campaignsRes, couponsRes, reviewsRes, orderItemsRes, staffTasksRes] = await Promise.all([
+      supabase.from("bookings").select("total, status, date, slot, property_id, user_id, booking_id, guests, created_at").order("created_at", { ascending: false }).limit(100),
+      supabase.from("profiles").select("user_id, display_name, loyalty_points, tier, location, created_at"),
+      supabase.from("host_listings").select("id, name, base_price, capacity, status, category, location, rating, review_count, tags, primary_category, host_name"),
+      supabase.from("orders").select("id, total, status, property_id, user_id, booking_id, created_at").order("created_at", { ascending: false }).limit(100),
+      supabase.from("inventory").select("name, category, emoji, unit_price, stock, available, low_stock_threshold, sort_order"),
+      supabase.from("curations").select("name, price, original_price, tagline, slot, mood, tags, active, badge, property_id, sort_order"),
+      supabase.from("campaigns").select("title, type, discount_type, discount_value, active, start_date, end_date, target_audience, target_properties"),
+      supabase.from("coupons").select("code, discount_type, discount_value, active, uses, max_uses, min_order, expires_at"),
+      supabase.from("reviews").select("rating, content, property_id, user_id, verified, created_at").order("created_at", { ascending: false }).limit(50),
+      supabase.from("order_items").select("item_name, item_emoji, quantity, unit_price, order_id").limit(200),
+      supabase.from("staff_tasks").select("title, status, priority, assigned_to, property_id, due_date").limit(50),
     ]);
+
+    const bookings = bookingsRes.data ?? [];
+    const orders = ordersRes.data ?? [];
+    const profiles = profilesRes.data ?? [];
+    const listings = listingsRes.data ?? [];
+    const inventory = inventoryRes.data ?? [];
+    const curations = curationsRes.data ?? [];
+    const reviews = reviewsRes.data ?? [];
+
+    // Build rich summary
+    const totalRevenue = bookings.reduce((s, b) => s + Number(b.total), 0);
+    const orderRevenue = orders.reduce((s, o) => s + Number(o.total), 0);
+    const avgBookingValue = bookings.length ? Math.round(totalRevenue / bookings.length) : 0;
+    const avgRating = reviews.length ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1) : "N/A";
+    const lowStockItems = inventory.filter(i => i.stock <= i.low_stock_threshold);
+    const statusBreakdown = bookings.reduce((acc, b) => { acc[b.status] = (acc[b.status] || 0) + 1; return acc; }, {} as Record<string, number>);
+    const tierBreakdown = profiles.reduce((acc, p) => { acc[p.tier] = (acc[p.tier] || 0) + 1; return acc; }, {} as Record<string, number>);
+
     setContext({
       summary: {
-        totalRevenue: (bookingsRes.data ?? []).reduce((s, b) => s + Number(b.total), 0),
-        totalBookings: (bookingsRes.data ?? []).length,
-        totalUsers: (profilesRes.data ?? []).length,
-        activeListings: (listingsRes.data ?? []).filter(l => l.status === "published").length,
-        totalOrders: (ordersRes.data ?? []).length,
-        orderRevenue: (ordersRes.data ?? []).reduce((s, o) => s + Number(o.total), 0),
+        totalRevenue,
+        orderRevenue,
+        combinedRevenue: totalRevenue + orderRevenue,
+        totalBookings: bookings.length,
+        totalUsers: profiles.length,
+        activeListings: listings.filter(l => l.status === "published").length,
+        totalListings: listings.length,
+        totalOrders: orders.length,
+        avgBookingValue,
+        avgRating,
+        lowStockCount: lowStockItems.length,
+        activeCampaigns: (campaignsRes.data ?? []).filter(c => c.active).length,
+        activeCoupons: (couponsRes.data ?? []).filter(c => c.active).length,
+        pendingTasks: (staffTasksRes.data ?? []).filter(t => t.status === "pending").length,
+        bookingStatusBreakdown: statusBreakdown,
+        userTierBreakdown: tierBreakdown,
       },
-      listings: (listingsRes.data ?? []).map(l => ({ name: l.name, price: l.base_price, category: l.category, status: l.status })),
-      recentBookings: (bookingsRes.data ?? []).slice(0, 20).map(b => ({ total: b.total, status: b.status, date: b.date, slot: b.slot, property: b.property_id })),
+      listings: listings.map(l => ({ name: l.name, price: l.base_price, capacity: l.capacity, category: l.category, status: l.status, location: l.location, rating: l.rating, reviews: l.review_count, tags: l.tags, host: l.host_name })),
+      recentBookings: bookings.slice(0, 30).map(b => ({ total: b.total, status: b.status, date: b.date, slot: b.slot, guests: b.guests, property: b.property_id, user: b.user_id })),
+      inventory: inventory.map(i => ({ name: i.name, category: i.category, emoji: i.emoji, price: i.unit_price, stock: i.stock, available: i.available, lowStock: i.stock <= i.low_stock_threshold })),
+      curations: curations.map(c => ({ name: c.name, price: c.price, originalPrice: c.original_price, tagline: c.tagline, slot: c.slot, active: c.active, badge: c.badge, mood: c.mood })),
+      campaigns: (campaignsRes.data ?? []).map(c => ({ title: c.title, type: c.type, discount: `${c.discount_value}${c.discount_type === "percent" ? "%" : "₹"}`, active: c.active, start: c.start_date, end: c.end_date })),
+      coupons: (couponsRes.data ?? []).map(c => ({ code: c.code, discount: `${c.discount_value}${c.discount_type === "percent" ? "%" : "₹"}`, active: c.active, uses: c.uses, maxUses: c.max_uses, minOrder: c.min_order })),
+      recentReviews: reviews.slice(0, 20).map(r => ({ rating: r.rating, content: r.content?.slice(0, 100), property: r.property_id, verified: r.verified })),
+      topOrderedItems: Object.entries((orderItemsRes.data ?? []).reduce((acc, i) => { acc[i.item_name] = (acc[i.item_name] || 0) + i.quantity; return acc; }, {} as Record<string, number>)).sort((a, b) => b[1] - a[1]).slice(0, 15).map(([name, qty]) => ({ name, totalQty: qty })),
+      staffTasks: (staffTasksRes.data ?? []).map(t => ({ title: t.title, status: t.status, priority: t.priority })),
+      profiles: profiles.map(p => ({ name: p.display_name, points: p.loyalty_points, tier: p.tier, location: p.location })),
     });
   };
 
