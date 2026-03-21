@@ -38,6 +38,10 @@ interface PropertyDemand {
   trend: "up" | "down" | "flat"; avgPrice: number;
 }
 
+interface WeeklyDay {
+  day: string; thisWeek: number; lastWeek: number; thisRevenue: number; lastRevenue: number;
+}
+
 interface AutoAction {
   id: string; icon: typeof Zap; title: string; description: string;
   color: string; bg: string; running: boolean;
