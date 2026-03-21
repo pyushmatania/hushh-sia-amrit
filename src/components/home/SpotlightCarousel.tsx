@@ -196,10 +196,10 @@ function VideoCard({
             ref={videoRef}
             src={videoSrc}
             muted={muted}
-            autoPlay={isFirst}
+            autoPlay
             loop
             playsInline
-            preload={isFirst ? "auto" : "none"}
+            preload="auto"
             onCanPlay={() => setVideoReady(true)}
             className="absolute inset-0 w-full h-full object-cover"
             style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.5s" }}
