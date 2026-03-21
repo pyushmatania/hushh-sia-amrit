@@ -655,7 +655,7 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
         </div>
       ),
     },
-  ], [stats, topProperties, recentReviews, todaySchedule, categoryData, onNavigate]);
+  ], [stats, topProperties, recentReviews, todaySchedule, categoryData, onNavigate, revenueChartData, weeklyPerfData, financialData, revTrendPct, prevMonthStats]);
 
   const { orderedWidgets, editMode, setEditMode, dragIdx, overIdx, handlePointerDown, handlePointerMove, handlePointerUp, resetOrder, containerRef } = useDraggableWidgets(widgets);
 
