@@ -4,7 +4,8 @@ import {
   Building2, Search, Plus, Trash2, Pause, Play, Pencil,
   X, Upload, Image, MapPin, DollarSign, Users, Tag, Star,
   Clock, ChevronDown, ChevronRight, Eye, Copy, MoreHorizontal,
-  Sparkles, Filter, LayoutGrid, LayoutList, Hash, GripVertical, CheckSquare
+  Sparkles, Filter, LayoutGrid, LayoutList, Hash, GripVertical, CheckSquare,
+  Shield, Zap, Globe, Camera, Layers, BarChart3, Info
 } from "lucide-react";
 import { useDragReorder } from "@/hooks/use-drag-reorder";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import SwipeableRow from "./SwipeableRow";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
 import BatchOperationsBar from "./BatchOperationsBar";
+import { getListingThumbnail } from "@/lib/listing-thumbnails";
 
 interface Listing {
   id: string;
