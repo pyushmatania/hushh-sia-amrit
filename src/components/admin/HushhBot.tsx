@@ -60,7 +60,7 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
 
   return (
     <div
-      style={{ width: size * 1.3, height: size * 1.3, cursor: "pointer" }}
+      style={{ width: size * 1.8, height: size * 1.8, cursor: "pointer" }}
       className="relative flex items-center justify-center select-none"
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
