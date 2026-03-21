@@ -70,12 +70,12 @@ export default function BookingHub({
   const load = useCallback(async () => {
     const [bookingsRes, listingsRes, profilesRes] = await Promise.all([
       supabase.from("bookings").select("*").order("created_at", { ascending: false }),
-      supabase.from("host_listings").select("id, name, image_urls, location"),
+      supabase.from("host_listings").select("id, name, image_urls, location, capacity, primary_category"),
       supabase.from("profiles").select("user_id, display_name"),
     ]);
 
-    const lMap = new Map<string, { name: string; image: string; location: string }>();
-    (listingsRes.data ?? []).forEach(l => lMap.set(l.id, { name: l.name, image: l.image_urls?.[0] || "", location: l.location }));
+    const lMap = new Map<string, { name: string; image: string; location: string; capacity: number; category: string }>();
+    (listingsRes.data ?? []).forEach(l => lMap.set(l.id, { name: l.name, image: l.image_urls?.[0] || "", location: l.location, capacity: l.capacity || 15, category: l.primary_category || "experience" }));
     setPropertyMap(lMap);
 
     const pMap = new Map<string, string>();
