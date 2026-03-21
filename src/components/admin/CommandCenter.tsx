@@ -691,7 +691,19 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
     },
   ], [stats, topProperties, recentReviews, todaySchedule, categoryData, onNavigate, revenueChartData, weeklyPerfData, financialData, revTrendPct, prevMonthStats]);
 
-  const { orderedWidgets, editMode, setEditMode, dragIdx, overIdx, handlePointerDown, handlePointerMove, handlePointerUp, resetOrder, containerRef } = useDraggableWidgets(widgets);
+  // Phase 5: Filter widgets by role
+  const roleWidgetFilter: Record<string, string[]> = {
+    staff: ["smart-insights", "quick-shortcuts", "today-schedule", "live-orders"],
+    host: ["smart-insights", "quick-shortcuts", "today-schedule", "revenue-trend", "recent-reviews", "live-orders", "category-mix"],
+    ops_manager: ["smart-insights", "quick-shortcuts", "today-schedule", "revenue-trend", "financial-summary", "live-orders", "system-health", "heatmap-activity", "category-mix", "weekly-performance", "recent-reviews"],
+  };
+  const filteredWidgets = useMemo(() => {
+    if (!userRole || userRole === "super_admin") return widgets;
+    const allowed = roleWidgetFilter[userRole];
+    return allowed ? widgets.filter(w => allowed.includes(w.id)) : widgets;
+  }, [widgets, userRole]);
+
+  const { orderedWidgets, editMode, setEditMode, dragIdx, overIdx, handlePointerDown, handlePointerMove, handlePointerUp, resetOrder, containerRef } = useDraggableWidgets(filteredWidgets);
 
   return (
     <div className="space-y-4 pb-8">
