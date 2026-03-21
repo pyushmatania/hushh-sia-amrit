@@ -107,14 +107,14 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
     if (!card) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && entry.intersectionRatio > 0.2) {
+        if (entry.isIntersecting) {
           setShouldLoad(true);
           if (videoRef.current) videoRef.current.play().catch(() => {});
-        } else if (!entry.isIntersecting) {
+        } else {
           videoRef.current?.pause();
         }
       },
-      { threshold: [0, 0.2], rootMargin: "150px" }
+      { threshold: [0, 0.1], rootMargin: "400px" }
     );
     observer.observe(card);
     return () => observer.disconnect();
