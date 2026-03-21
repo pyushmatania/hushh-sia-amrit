@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Send, Loader2, Zap, Maximize2, Minimize2, Sparkles,
@@ -8,6 +8,55 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { playAIThinkingSound, playAISuccessSound, playAIActionSound, playAIErrorSound } from "@/lib/ai-sounds";
 import HushhBot from "./HushhBot";
+
+const ROTATING_PLACEHOLDERS = [
+  "Show me today's revenue breakdown...",
+  "Which properties have the most bookings?",
+  "Create a 15% off coupon for weekends...",
+  "How many orders are pending right now?",
+  "List low stock inventory items...",
+  "Who are the top 5 spending customers?",
+  "Compare this week vs last week revenue...",
+  "Show me all upcoming bookings for tomorrow...",
+  "What's the average booking value this month?",
+  "Find all 5-star reviews from last week...",
+];
+
+function useRotatingPlaceholder(userInput: string) {
+  const [index, setIndex] = useState(0);
+  const [displayed, setDisplayed] = useState("");
+  const [typing, setTyping] = useState(true);
+
+  useEffect(() => {
+    if (userInput) return; // stop when user is typing
+    const text = ROTATING_PLACEHOLDERS[index];
+    let charIdx = 0;
+    setDisplayed("");
+    setTyping(true);
+
+    const typeTimer = setInterval(() => {
+      charIdx++;
+      setDisplayed(text.slice(0, charIdx));
+      if (charIdx >= text.length) {
+        clearInterval(typeTimer);
+        setTyping(false);
+      }
+    }, 35);
+
+    return () => clearInterval(typeTimer);
+  }, [index, userInput]);
+
+  useEffect(() => {
+    if (userInput) return;
+    if (typing) return;
+    const pause = setTimeout(() => {
+      setIndex(prev => (prev + 1) % ROTATING_PLACEHOLDERS.length);
+    }, 2000);
+    return () => clearTimeout(pause);
+  }, [typing, userInput]);
+
+  return userInput ? "" : displayed;
+}
 
 interface Message {
   role: "user" | "assistant";
@@ -283,6 +332,7 @@ function fmtInline(text: string) {
 export default function AdminAI() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
+  const rotatingPlaceholder = useRotatingPlaceholder(input);
   const [loading, setLoading] = useState(false);
   const [context, setContext] = useState<any>(null);
   const [expanded, setExpanded] = useState(false);
@@ -542,7 +592,7 @@ export default function AdminAI() {
                     value={input}
                     onChange={e => setInput(e.target.value)}
                     onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage(input)}
-                    placeholder="Ask anything or give a command..."
+                    placeholder={rotatingPlaceholder || "Ask anything or give a command..."}
                     className="w-full bg-background/50 border border-border rounded-xl pl-4 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition font-display"
                     disabled={loading}
                   />
@@ -708,7 +758,7 @@ export default function AdminAI() {
                   value={input}
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage(input)}
-                  placeholder="Ask anything or give a command..."
+                  placeholder={rotatingPlaceholder || "Ask anything or give a command..."}
                   className="w-full bg-card border border-border rounded-xl pl-4 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition font-display"
                   disabled={loading}
                 />
