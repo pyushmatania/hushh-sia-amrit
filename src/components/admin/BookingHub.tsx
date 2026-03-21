@@ -64,18 +64,18 @@ export default function BookingHub({
   const [bulkMode, setBulkMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [bulkUpdating, setBulkUpdating] = useState(false);
-  const [propertyMap, setPropertyMap] = useState<Map<string, { name: string; image: string; location: string }>>(new Map());
+  const [propertyMap, setPropertyMap] = useState<Map<string, { name: string; image: string; location: string; capacity: number; category: string }>>(new Map());
   const [profileMap, setProfileMap] = useState<Map<string, string>>(new Map());
 
   const load = useCallback(async () => {
     const [bookingsRes, listingsRes, profilesRes] = await Promise.all([
       supabase.from("bookings").select("*").order("created_at", { ascending: false }),
-      supabase.from("host_listings").select("id, name, image_urls, location"),
+      supabase.from("host_listings").select("id, name, image_urls, location, capacity, primary_category"),
       supabase.from("profiles").select("user_id, display_name"),
     ]);
 
-    const lMap = new Map<string, { name: string; image: string; location: string }>();
-    (listingsRes.data ?? []).forEach(l => lMap.set(l.id, { name: l.name, image: l.image_urls?.[0] || "", location: l.location }));
+    const lMap = new Map<string, { name: string; image: string; location: string; capacity: number; category: string }>();
+    (listingsRes.data ?? []).forEach(l => lMap.set(l.id, { name: l.name, image: l.image_urls?.[0] || "", location: l.location, capacity: l.capacity || 15, category: l.primary_category || "experience" }));
     setPropertyMap(lMap);
 
     const pMap = new Map<string, string>();
@@ -205,9 +205,26 @@ export default function BookingHub({
 
   const pendingBookings = useMemo(() => bookings.filter(b => b.status === "upcoming" || b.status === "pending"), [bookings]);
 
-  // Conflict detection: find bookings that share same property+date+slot with active statuses
+  // Capacity-aware conflict detection
+  const ROOM_CAPACITY = 2; // persons per room
+  const EXTRA_MATTRESS_LIMIT = 1; // extra person per room on mattress
+
+  const getCapacityInfo = useCallback((propertyId: string) => {
+    const prop = propertyMap.get(propertyId);
+    const category = prop?.category || "experience";
+    const totalCapacity = prop?.capacity || 15;
+
+    if (category === "stay") {
+      // Stay: room-based — capacity field = total rooms * persons per room
+      const rooms = Math.max(1, Math.floor(totalCapacity / ROOM_CAPACITY));
+      return { type: "stay" as const, rooms, perRoom: ROOM_CAPACITY, extraMattress: EXTRA_MATTRESS_LIMIT, maxGuests: rooms * (ROOM_CAPACITY + EXTRA_MATTRESS_LIMIT), totalCapacity };
+    }
+    // Experience / Service / Curation: flat guest limit
+    return { type: "experience" as const, rooms: 0, perRoom: 0, extraMattress: 0, maxGuests: totalCapacity, totalCapacity };
+  }, [propertyMap]);
+
   const conflictMap = useMemo(() => {
-    const map = new Map<string, string[]>(); // bookingId -> conflicting booking IDs
+    const map = new Map<string, string[]>();
     const activeBookings = bookings.filter(b => !["cancelled", "completed"].includes(b.status));
     for (let i = 0; i < activeBookings.length; i++) {
       for (let j = i + 1; j < activeBookings.length; j++) {
@@ -221,6 +238,27 @@ export default function BookingHub({
     return map;
   }, [bookings]);
 
+  // Capacity analysis for a booking slot
+  const getSlotCapacity = useCallback((booking: Booking) => {
+    const capInfo = getCapacityInfo(booking.property_id);
+    const activeBookings = bookings.filter(b =>
+      b.id !== booking.id &&
+      b.property_id === booking.property_id &&
+      b.date === booking.date &&
+      b.slot === booking.slot &&
+      !["cancelled", "completed"].includes(b.status)
+    );
+    const totalGuests = activeBookings.reduce((s, b) => s + b.guests, 0) + booking.guests;
+    const isOverCapacity = totalGuests > capInfo.maxGuests;
+
+    if (capInfo.type === "stay") {
+      const roomsNeeded = Math.ceil(totalGuests / (ROOM_CAPACITY + EXTRA_MATTRESS_LIMIT));
+      const needsMattress = totalGuests > roomsNeeded * ROOM_CAPACITY;
+      return { ...capInfo, totalGuests, isOverCapacity, roomsNeeded, needsMattress, otherBookings: activeBookings.length };
+    }
+    return { ...capInfo, totalGuests, isOverCapacity, roomsNeeded: 0, needsMattress: false, otherBookings: activeBookings.length };
+  }, [bookings, getCapacityInfo]);
+
   const getConflicts = useCallback((booking: Booking) => {
     const ids = conflictMap.get(booking.id);
     if (!ids || ids.length === 0) return [];
@@ -228,23 +266,31 @@ export default function BookingHub({
   }, [conflictMap, bookings]);
 
   const updateStatus = async (id: string, status: string) => {
-    // Warn on confirming a conflicting booking
     if (status === "confirmed" || status === "active") {
       const booking = bookings.find(b => b.id === id);
       if (booking) {
-        const activeStatuses = ["confirmed", "active", "upcoming", "pending"];
-        const overlapping = bookings.filter(b =>
-          b.id !== id &&
-          b.property_id === booking.property_id &&
-          b.date === booking.date &&
-          b.slot === booking.slot &&
-          activeStatuses.includes(b.status)
-        );
-        if (overlapping.length > 0) {
-          const proceed = window.confirm(
-            `⚠️ Conflict detected!\n\nThis property already has ${overlapping.length} booking(s) for ${booking.date} at ${booking.slot}.\n\nGuests: ${overlapping.reduce((s, b) => s + b.guests, 0) + booking.guests} total\n\nProceed anyway?`
-          );
-          if (!proceed) return;
+        const cap = getSlotCapacity(booking);
+        if (cap.otherBookings > 0 || cap.isOverCapacity) {
+          let msg = `⚠️ Capacity Alert!\n\n`;
+          if (cap.type === "stay") {
+            msg += `Stay Property: ${cap.rooms} room(s), ${cap.perRoom} per room + ${cap.extraMattress} mattress\n`;
+            msg += `Max capacity: ${cap.maxGuests} guests\n`;
+            msg += `Total guests for this slot: ${cap.totalGuests}\n`;
+            if (cap.isOverCapacity) {
+              msg += `\n🚨 OVER CAPACITY by ${cap.totalGuests - cap.maxGuests} guest(s)!\n`;
+              msg += `Rooms needed: ${cap.roomsNeeded} (only ${cap.rooms} available)\n`;
+            } else {
+              msg += `\nRooms needed: ${cap.roomsNeeded}`;
+              if (cap.needsMattress) msg += ` (extra mattress required)`;
+              msg += `\n`;
+            }
+          } else {
+            msg += `Experience/Event: Max ${cap.maxGuests} guests\n`;
+            msg += `Total guests for this slot: ${cap.totalGuests}\n`;
+            if (cap.isOverCapacity) msg += `\n🚨 OVER CAPACITY by ${cap.totalGuests - cap.maxGuests} guest(s)!\n`;
+          }
+          msg += `\n${cap.otherBookings} other booking(s) on same slot.\n\nProceed anyway?`;
+          if (!window.confirm(msg)) return;
         }
       }
     }
@@ -449,7 +495,7 @@ export default function BookingHub({
                         </button>
                       )}
                       <div className="flex-1">
-                        <BookingCard booking={b} index={i} onNavigate={onNavigate} onStatusChange={updateStatus} conflicts={getConflicts(b)} />
+                        <BookingCard booking={b} index={i} onNavigate={onNavigate} onStatusChange={updateStatus} conflicts={getConflicts(b)} capacityInfo={getSlotCapacity(b)} />
                       </div>
                     </div>
                   ))}
@@ -467,7 +513,7 @@ export default function BookingHub({
               ) : (
                 <div className="space-y-3">
                   {pendingBookings.map((b, i) => (
-                    <RequestCard key={b.id} booking={b} index={i} updating={updating} onAccept={(id) => updateStatus(id, "confirmed")} onReject={(id) => updateStatus(id, "cancelled")} onNavigate={onNavigate} timeAgo={timeAgo} conflicts={getConflicts(b)} />
+                    <RequestCard key={b.id} booking={b} index={i} updating={updating} onAccept={(id: string) => updateStatus(id, "confirmed")} onReject={(id: string) => updateStatus(id, "cancelled")} onNavigate={onNavigate} timeAgo={timeAgo} conflicts={getConflicts(b)} capacityInfo={getSlotCapacity(b)} />
                   ))}
                 </div>
               )}
@@ -700,10 +746,11 @@ function InsightsTab({ bookings, slotPopularity, topProperties, topClients, onNa
   );
 }
 
-function BookingCard({ booking: b, index, onNavigate, onStatusChange, conflicts = [] }: { booking: Booking; index: number; onNavigate?: any; onStatusChange: (id: string, status: string) => void; conflicts?: Booking[] }) {
+function BookingCard({ booking: b, index, onNavigate, onStatusChange, conflicts = [], capacityInfo }: { booking: Booking; index: number; onNavigate?: any; onStatusChange: (id: string, status: string) => void; conflicts?: Booking[]; capacityInfo?: any }) {
   const sc = statusConfig[b.status] || statusConfig.pending;
   const StatusIcon = sc.icon;
   const hasConflict = conflicts.length > 0;
+  const isOverCapacity = capacityInfo?.isOverCapacity;
 
   return (
     <motion.div
@@ -712,7 +759,7 @@ function BookingCard({ booking: b, index, onNavigate, onStatusChange, conflicts 
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ delay: index * 0.02 }}
-      className={`rounded-2xl bg-card border ${hasConflict ? "border-destructive/40 ring-1 ring-destructive/20" : "border-border/60"} overflow-hidden hover:shadow-lg ${sc.glow} transition-all duration-200 group`}
+      className={`rounded-2xl bg-card border ${isOverCapacity ? "border-destructive/60 ring-2 ring-destructive/30" : hasConflict ? "border-amber-400/40 ring-1 ring-amber-400/20" : "border-border/60"} overflow-hidden hover:shadow-lg ${sc.glow} transition-all duration-200 group`}
     >
       {/* Property Image + Info Header */}
       <div className="relative cursor-pointer" onClick={() => onNavigate?.("history", { propertyId: b.property_id })}>
@@ -740,12 +787,27 @@ function BookingCard({ booking: b, index, onNavigate, onStatusChange, conflicts 
         </div>
       </div>
 
-      {hasConflict && (
-        <div className="px-3 py-2 bg-destructive/10 border-b border-destructive/20 flex items-center gap-2">
-          <AlertTriangle size={12} className="text-destructive shrink-0" />
-          <p className="text-[10px] font-medium text-destructive">
-            ⚠️ Conflicts with {conflicts.length} other booking{conflicts.length > 1 ? "s" : ""} — same property, date & slot
-          </p>
+      {/* Capacity-aware conflict banner */}
+      {capacityInfo && (hasConflict || isOverCapacity) && (
+        <div className={`px-3 py-2 border-b flex items-start gap-2 ${isOverCapacity ? "bg-destructive/10 border-destructive/20" : "bg-amber-50 dark:bg-amber-500/10 border-amber-200/40 dark:border-amber-500/20"}`}>
+          <AlertTriangle size={12} className={`shrink-0 mt-0.5 ${isOverCapacity ? "text-destructive" : "text-amber-600 dark:text-amber-400"}`} />
+          <div className="text-[10px]">
+            {isOverCapacity ? (
+              <p className="font-semibold text-destructive">
+                🚨 Over capacity! {capacityInfo.totalGuests}/{capacityInfo.maxGuests} guests
+                {capacityInfo.type === "stay" && ` · Needs ${capacityInfo.roomsNeeded} rooms (${capacityInfo.rooms} available)`}
+              </p>
+            ) : capacityInfo.type === "stay" ? (
+              <p className="font-medium text-amber-700 dark:text-amber-300">
+                🛏️ {capacityInfo.totalGuests}/{capacityInfo.maxGuests} guests · {capacityInfo.roomsNeeded}/{capacityInfo.rooms} rooms
+                {capacityInfo.needsMattress && " · Extra mattress needed"}
+              </p>
+            ) : (
+              <p className="font-medium text-amber-700 dark:text-amber-300">
+                👥 {capacityInfo.totalGuests}/{capacityInfo.maxGuests} guests on same slot · {conflicts.length} overlapping booking{conflicts.length > 1 ? "s" : ""}
+              </p>
+            )}
+          </div>
         </div>
       )}
 
@@ -805,16 +867,17 @@ function BookingCard({ booking: b, index, onNavigate, onStatusChange, conflicts 
     </motion.div>
   );
 }
-function RequestCard({ booking: b, index, updating, onAccept, onReject, onNavigate, timeAgo, conflicts = [] }: any) {
+function RequestCard({ booking: b, index, updating, onAccept, onReject, onNavigate, timeAgo, conflicts = [], capacityInfo }: any) {
   const sc = statusConfig[b.status] || statusConfig.pending;
   const hasConflict = conflicts.length > 0;
+  const isOverCapacity = capacityInfo?.isOverCapacity;
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: -100 }}
       transition={{ delay: index * 0.03 }}
-      className={`rounded-2xl border ${hasConflict ? "border-destructive/40 ring-1 ring-destructive/20" : "border-amber-200/60 dark:border-amber-500/20"} bg-card overflow-hidden`}
+      className={`rounded-2xl border ${isOverCapacity ? "border-destructive/60 ring-2 ring-destructive/30" : hasConflict ? "border-amber-400/40 ring-1 ring-amber-400/20" : "border-amber-200/60 dark:border-amber-500/20"} bg-card overflow-hidden`}
     >
       {/* Property Header with Image */}
       <div className="relative cursor-pointer" onClick={() => onNavigate?.("history", { propertyId: b.property_id })}>
@@ -842,14 +905,36 @@ function RequestCard({ booking: b, index, updating, onAccept, onReject, onNaviga
         </div>
       </div>
 
-      {hasConflict && (
-        <div className="px-4 py-2.5 bg-destructive/10 border-b border-destructive/20 flex items-start gap-2">
-          <AlertTriangle size={14} className="text-destructive shrink-0 mt-0.5" />
+      {/* Capacity-aware conflict banner */}
+      {capacityInfo && (hasConflict || isOverCapacity) && (
+        <div className={`px-4 py-2.5 border-b flex items-start gap-2 ${isOverCapacity ? "bg-destructive/10 border-destructive/20" : "bg-amber-50 dark:bg-amber-500/10 border-amber-200/40 dark:border-amber-500/20"}`}>
+          <AlertTriangle size={14} className={`shrink-0 mt-0.5 ${isOverCapacity ? "text-destructive" : "text-amber-600 dark:text-amber-400"}`} />
           <div>
-            <p className="text-[11px] font-semibold text-destructive">Scheduling Conflict</p>
-            <p className="text-[10px] text-destructive/80 mt-0.5">
-              {conflicts.length} other booking{conflicts.length > 1 ? "s" : ""} for this property on {b.date} at {b.slot} — total {conflicts.reduce((s: number, c: Booking) => s + c.guests, 0) + b.guests} guests
-            </p>
+            {isOverCapacity ? (
+              <>
+                <p className="text-[11px] font-semibold text-destructive">🚨 Over Capacity</p>
+                <p className="text-[10px] text-destructive/80 mt-0.5">
+                  {capacityInfo.totalGuests} guests requested, max {capacityInfo.maxGuests}
+                  {capacityInfo.type === "stay" && ` · Needs ${capacityInfo.roomsNeeded} rooms (only ${capacityInfo.rooms} available)`}
+                </p>
+              </>
+            ) : capacityInfo.type === "stay" ? (
+              <>
+                <p className="text-[11px] font-semibold text-amber-700 dark:text-amber-300">🛏️ Room Allocation</p>
+                <p className="text-[10px] text-amber-600/80 dark:text-amber-400/80 mt-0.5">
+                  {capacityInfo.totalGuests} guests · {capacityInfo.roomsNeeded}/{capacityInfo.rooms} rooms needed
+                  {capacityInfo.needsMattress && " · Extra mattress for odd guest"}
+                  {` · ${conflicts.length} overlapping booking${conflicts.length > 1 ? "s" : ""}`}
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-[11px] font-semibold text-amber-700 dark:text-amber-300">👥 Capacity Warning</p>
+                <p className="text-[10px] text-amber-600/80 dark:text-amber-400/80 mt-0.5">
+                  {capacityInfo.totalGuests}/{capacityInfo.maxGuests} guests on {b.date} at {b.slot} · {conflicts.length} overlapping booking{conflicts.length > 1 ? "s" : ""}
+                </p>
+              </>
+            )}
           </div>
         </div>
       )}
