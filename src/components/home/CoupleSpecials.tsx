@@ -1,4 +1,5 @@
 import { type Property } from "@/data/properties";
+import { getListingThumbnail } from "@/lib/listing-thumbnails";
 
 interface CoupleSpecialsProps {
   properties: Property[];
@@ -25,11 +26,14 @@ export default function CoupleSpecials({ properties, onPropertyTap }: CoupleSpec
           className="shrink-0 relative rounded-[20px] overflow-hidden cursor-pointer active:scale-[0.97] transition-transform"
           style={{ width: "280px", height: "180px", border: "1px solid rgba(255,255,255,0.08)" }}
           onClick={() => onPropertyTap(p)}>
-          {p.images[0] ? (
-            <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
-          ) : (
-            <div className="w-full h-full bg-secondary flex items-center justify-center text-3xl">🏠</div>
-          )}
+          {(() => {
+            const imageSrc = getListingThumbnail(p.name, p.images, { preferMapped: true });
+            return imageSrc ? (
+              <img src={imageSrc} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
+            ) : (
+              <div className="w-full h-full bg-secondary" />
+            );
+          })()}
           <div className="absolute inset-0 flex flex-col justify-end p-4"
             style={{ background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 60%, transparent 100%)" }}>
             <p className="text-base font-bold text-white">{couplePackages[i % couplePackages.length].name}</p>

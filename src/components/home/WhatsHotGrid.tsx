@@ -1,4 +1,5 @@
 import { type Property } from "@/data/properties";
+import { getListingThumbnail } from "@/lib/listing-thumbnails";
 
 interface WhatsHotGridProps {
   properties: Property[];
@@ -25,11 +26,14 @@ export default function WhatsHotGrid({ properties, onPropertyTap }: WhatsHotGrid
             border: "1px solid rgba(255,255,255,0.08)",
           }}
           onClick={() => onPropertyTap(p)}>
-          {p.images[0] ? (
-            <img src={p.images[0]} alt={p.name} className="w-full h-28 object-cover" loading="lazy" />
-          ) : (
-            <div className="w-full h-28 bg-secondary flex items-center justify-center text-2xl">🏠</div>
-          )}
+          {(() => {
+            const imageSrc = getListingThumbnail(p.name, p.images, { preferMapped: true });
+            return imageSrc ? (
+              <img src={imageSrc} alt={p.name} className="w-full h-28 object-cover" loading="lazy" />
+            ) : (
+              <div className="w-full h-28 bg-secondary" />
+            );
+          })()}
           <div className="p-3">
             <p className="text-sm font-bold text-foreground line-clamp-1">{hotItems[i]?.title || p.name}</p>
             <p className="text-xs text-foreground/50 mt-0.5 line-clamp-1">{hotItems[i]?.desc || p.description}</p>

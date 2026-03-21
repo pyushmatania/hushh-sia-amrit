@@ -28,42 +28,59 @@ import listingChefOnCall from "@/assets/listing-chef-on-call.jpg";
 import listingPartyDecor from "@/assets/listing-party-decor.jpg";
 import listingDjSound from "@/assets/listing-dj-sound.jpg";
 
+const normalizeListingName = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9\s]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
 const thumbnailMap: Record<string, string> = {
-  "The Firefly Villas": listingFireflyVilla,
-  "Koraput Garden House": listingKoraputGarden,
-  "Ember Grounds": listingEmberGrounds,
-  "Moonrise Terrace": listingMoonriseTerrace,
-  "Tribal Camp": listingTribalCamp,
-  "The Sports Arena": listingSportsArena,
-  "Karaoke Cube": listingKaraokeCube,
-  "Sunset Pavilion": listingSunsetPavilion,
-  "Birthday Bliss Hall": listingBirthdayHall,
-  "Anniversary Garden": listingAnniversaryGarden,
-  "Smash Pickleball Club": listingPickleball,
-  "Kitty Party Lounge": listingKittyParty,
-  "Heritage Walk Jeypore": listingHeritageWalk,
-  "Tribal Pottery Workshop": listingPottery,
-  "Koraput Coffee Trail": listingCoffeeTrail,
-  "Haldi Mehndi Garden": listingHaldiMehndi,
-  "Stargazing Deck": listingStargazing,
-  "White Water Rafting": listingRafting,
-  "Open Air Cinema": listingMovieAmphitheater,
-  "Tribal Dance Circle": listingTribalDance,
-  "Work Pod": listingWorkPod,
-  "Couple Cocoon": listingCoupleCocoon,
-  "Blue Lagoon Pool": listingBlueLagoon,
-  "Green Lawn Events": listingGreenLawn,
-  "Hushh Rides": listingHushhRides,
-  "Chef On Call": listingChefOnCall,
-  "Party Decor Studio": listingPartyDecor,
-  "DJ & Sound System": listingDjSound,
+  [normalizeListingName("The Firefly Villas")]: listingFireflyVilla,
+  [normalizeListingName("Koraput Garden House")]: listingKoraputGarden,
+  [normalizeListingName("Ember Grounds")]: listingEmberGrounds,
+  [normalizeListingName("Moonrise Terrace")]: listingMoonriseTerrace,
+  [normalizeListingName("Tribal Camp")]: listingTribalCamp,
+  [normalizeListingName("The Sports Arena")]: listingSportsArena,
+  [normalizeListingName("Karaoke Cube")]: listingKaraokeCube,
+  [normalizeListingName("Sunset Pavilion")]: listingSunsetPavilion,
+  [normalizeListingName("Birthday Bliss Hall")]: listingBirthdayHall,
+  [normalizeListingName("Anniversary Garden")]: listingAnniversaryGarden,
+  [normalizeListingName("Smash Pickleball Club")]: listingPickleball,
+  [normalizeListingName("Kitty Party Lounge")]: listingKittyParty,
+  [normalizeListingName("Heritage Walk Jeypore")]: listingHeritageWalk,
+  [normalizeListingName("Tribal Pottery Workshop")]: listingPottery,
+  [normalizeListingName("Koraput Coffee Trail")]: listingCoffeeTrail,
+  [normalizeListingName("Haldi Mehndi Garden")]: listingHaldiMehndi,
+  [normalizeListingName("Stargazing Deck")]: listingStargazing,
+  [normalizeListingName("White Water Rafting")]: listingRafting,
+  [normalizeListingName("Open Air Cinema")]: listingMovieAmphitheater,
+  [normalizeListingName("Tribal Dance Circle")]: listingTribalDance,
+  [normalizeListingName("Work Pod")]: listingWorkPod,
+  [normalizeListingName("Couple Cocoon")]: listingCoupleCocoon,
+  [normalizeListingName("Blue Lagoon Pool")]: listingBlueLagoon,
+  [normalizeListingName("Green Lawn Events")]: listingGreenLawn,
+  [normalizeListingName("Hushh Rides")]: listingHushhRides,
+  [normalizeListingName("Chef On Call")]: listingChefOnCall,
+  [normalizeListingName("Party Decor Studio")]: listingPartyDecor,
+  [normalizeListingName("DJ & Sound System")]: listingDjSound,
 };
 
 /**
  * Get the thumbnail image for a listing.
- * Priority: image_urls[0] > name-based local asset > null
+ * Priority (default): image_urls[0] > mapped local asset > null
+ * When preferMapped=true: mapped local asset > image_urls[0] > null
  */
-export function getListingThumbnail(name: string, imageUrls?: string[]): string | null {
-  if (imageUrls && imageUrls.length > 0 && imageUrls[0]) return imageUrls[0];
-  return thumbnailMap[name] || null;
+export function getListingThumbnail(
+  name: string,
+  imageUrls?: string[],
+  options?: { preferMapped?: boolean }
+): string | null {
+  const normalizedName = normalizeListingName(name || "");
+  const mapped = thumbnailMap[normalizedName] || null;
+  const firstUrl = imageUrls?.find((url) => !!url) || null;
+
+  if (options?.preferMapped) return mapped || firstUrl;
+  return firstUrl || mapped;
 }
