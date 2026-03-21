@@ -3,11 +3,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   CalendarCheck, Search, CheckCircle2, Clock, Ban, ChevronRight, Users, IndianRupee,
   Inbox, Check, X, Loader2, TrendingUp, TrendingDown, BarChart3, PieChart,
-  ArrowUpRight, ArrowDownRight, MapPin, Star, Filter, Eye, Building2, Activity
+  ArrowUpRight, ArrowDownRight, MapPin, Star, Filter, Eye, Building2, Activity,
+  CalendarIcon
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart as RPieChart, Pie, Cell } from "recharts";
 
 interface Booking {
@@ -52,6 +58,8 @@ export default function BookingHub({
   const [propertyFilter, setPropertyFilter] = useState("all");
   const [tab, setTab] = useState<TabId>("overview");
   const [updating, setUpdating] = useState<string | null>(null);
+  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
+  const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
   const [propertyMap, setPropertyMap] = useState<Map<string, { name: string; image: string; location: string }>>(new Map());
   const [profileMap, setProfileMap] = useState<Map<string, string>>(new Map());
 
@@ -159,17 +167,37 @@ export default function BookingHub({
 
   const uniqueProperties = useMemo(() =>
     Array.from(new Set(bookings.map(b => b.property_id))).map(id => ({
-      id, name: propertyMap.get(id)?.name || `Property ${id.slice(0, 6)}`,
+      id,
+      name: propertyMap.get(id)?.name || `Property ${id.slice(0, 6)}`,
+      image: propertyMap.get(id)?.image || "",
     })),
   [bookings, propertyMap]);
 
-  const filtered = useMemo(() => bookings.filter(b =>
-    (statusFilter === "all" || b.status === statusFilter) &&
-    (propertyFilter === "all" || b.property_id === propertyFilter) &&
-    (b.booking_id?.toLowerCase().includes(search.toLowerCase()) ||
-     b.propertyName?.toLowerCase().includes(search.toLowerCase()) ||
-     b.userName?.toLowerCase().includes(search.toLowerCase()))
-  ), [bookings, statusFilter, propertyFilter, search]);
+  const filtered = useMemo(() => bookings.filter(b => {
+    if (statusFilter !== "all" && b.status !== statusFilter) return false;
+    if (propertyFilter !== "all" && b.property_id !== propertyFilter) return false;
+    if (dateFrom) {
+      const bDate = new Date(b.created_at);
+      bDate.setHours(0, 0, 0, 0);
+      const from = new Date(dateFrom);
+      from.setHours(0, 0, 0, 0);
+      if (bDate < from) return false;
+    }
+    if (dateTo) {
+      const bDate = new Date(b.created_at);
+      bDate.setHours(23, 59, 59, 999);
+      const to = new Date(dateTo);
+      to.setHours(23, 59, 59, 999);
+      if (bDate > to) return false;
+    }
+    if (search) {
+      const q = search.toLowerCase();
+      return (b.booking_id?.toLowerCase().includes(q) ||
+        b.propertyName?.toLowerCase().includes(q) ||
+        b.userName?.toLowerCase().includes(q));
+    }
+    return true;
+  }), [bookings, statusFilter, propertyFilter, search, dateFrom, dateTo]);
 
   const pendingBookings = useMemo(() => bookings.filter(b => b.status === "upcoming" || b.status === "pending"), [bookings]);
 
@@ -247,6 +275,39 @@ export default function BookingHub({
                   <Input placeholder="Search bookings, properties, or clients..." value={search} onChange={e => setSearch(e.target.value)}
                     className="pl-9 rounded-xl" />
                 </div>
+
+                {/* Date Range Picker */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className={cn("h-8 px-3 text-[11px] rounded-xl gap-1.5 font-medium", !dateFrom && "text-muted-foreground")}>
+                        <CalendarIcon size={12} />
+                        {dateFrom ? format(dateFrom, "dd MMM yyyy") : "From date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 z-50" align="start">
+                      <Calendar mode="single" selected={dateFrom} onSelect={setDateFrom} initialFocus className={cn("p-3 pointer-events-auto")} />
+                    </PopoverContent>
+                  </Popover>
+                  <span className="text-[10px] text-muted-foreground">→</span>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className={cn("h-8 px-3 text-[11px] rounded-xl gap-1.5 font-medium", !dateTo && "text-muted-foreground")}>
+                        <CalendarIcon size={12} />
+                        {dateTo ? format(dateTo, "dd MMM yyyy") : "To date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 z-50" align="start">
+                      <Calendar mode="single" selected={dateTo} onSelect={setDateTo} initialFocus className={cn("p-3 pointer-events-auto")} />
+                    </PopoverContent>
+                  </Popover>
+                  {(dateFrom || dateTo) && (
+                    <Button variant="ghost" size="sm" className="h-8 px-2 text-[10px] text-muted-foreground hover:text-destructive" onClick={() => { setDateFrom(undefined); setDateTo(undefined); }}>
+                      <X size={12} /> Clear
+                    </Button>
+                  )}
+                </div>
+
                 <div className="flex gap-1.5 flex-wrap">
                   {statuses.map(s => {
                     const count = s === "all" ? bookings.length : bookings.filter(b => b.status === s).length;
@@ -263,11 +324,16 @@ export default function BookingHub({
                   })}
                 </div>
                 {uniqueProperties.length > 1 && (
-                  <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                  <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
                     <button onClick={() => setPropertyFilter("all")} className={`shrink-0 px-3 py-1.5 rounded-xl text-[11px] font-semibold border transition-all ${propertyFilter === "all" ? "bg-primary text-primary-foreground border-primary" : "bg-secondary/60 text-muted-foreground border-border/60"}`}>All Venues</button>
                     {uniqueProperties.map(p => (
-                      <button key={p.id} onClick={() => setPropertyFilter(p.id === propertyFilter ? "all" : p.id)} className={`shrink-0 px-3 py-1.5 rounded-xl text-[11px] font-semibold border transition-all truncate max-w-[160px] ${propertyFilter === p.id ? "bg-primary text-primary-foreground border-primary" : "bg-secondary/60 text-muted-foreground border-border/60"}`}>
-                        {p.name}
+                      <button key={p.id} onClick={() => setPropertyFilter(p.id === propertyFilter ? "all" : p.id)} className={`shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-semibold border transition-all max-w-[180px] ${propertyFilter === p.id ? "bg-primary text-primary-foreground border-primary" : "bg-secondary/60 text-muted-foreground border-border/60"}`}>
+                        {p.image ? (
+                          <img src={p.image} className="w-5 h-5 rounded-md object-cover shrink-0" alt="" />
+                        ) : (
+                          <Building2 size={12} className="shrink-0" />
+                        )}
+                        <span className="truncate">{p.name}</span>
                       </button>
                     ))}
                   </div>
