@@ -69,10 +69,11 @@ export default function AdminCurations() {
   };
 
   const loadCurations = async () => {
-    const [curRes, listRes, bookRes] = await Promise.all([
+    const [curRes, listRes, bookRes, orderRes] = await Promise.all([
       supabase.from("curations").select("*").order("sort_order"),
       supabase.from("host_listings").select("id, name, image_urls, location, rating"),
-      supabase.from("bookings").select("property_id"),
+      supabase.from("bookings").select("property_id, total"),
+      supabase.from("orders").select("property_id, total"),
     ]);
     setCurations(curRes.data ?? []);
 
@@ -81,8 +82,21 @@ export default function AdminCurations() {
     setPropertyMap(pMap);
 
     const bMap = new Map<string, number>();
-    (bookRes.data ?? []).forEach(b => bMap.set(b.property_id, (bMap.get(b.property_id) || 0) + 1));
+    const rMap = new Map<string, { bookingRev: number; orderRev: number; totalBookings: number }>();
+    (bookRes.data ?? []).forEach(b => {
+      bMap.set(b.property_id, (bMap.get(b.property_id) || 0) + 1);
+      const prev = rMap.get(b.property_id) || { bookingRev: 0, orderRev: 0, totalBookings: 0 };
+      prev.bookingRev += Number(b.total);
+      prev.totalBookings += 1;
+      rMap.set(b.property_id, prev);
+    });
+    (orderRes.data ?? []).forEach(o => {
+      const prev = rMap.get(o.property_id) || { bookingRev: 0, orderRev: 0, totalBookings: 0 };
+      prev.orderRev += Number(o.total);
+      rMap.set(o.property_id, prev);
+    });
     setBookingCounts(bMap);
+    setRevenueMap(rMap);
 
     setLoading(false);
   };
