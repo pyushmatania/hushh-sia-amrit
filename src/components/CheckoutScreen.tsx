@@ -659,7 +659,7 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
                 setEditingGuests(true);
                 return;
               }
-              onConfirm(finalTotal);
+              onConfirm(finalTotal, isStay ? roomInfo?.roomsNeeded : undefined, isStay ? extraMattressCount : undefined);
             }}
             disabled={liveGuests < 1}
             className="bg-primary text-primary-foreground px-8 py-3.5 rounded-xl font-semibold text-sm flex items-center gap-2 glow-primary disabled:opacity-50"

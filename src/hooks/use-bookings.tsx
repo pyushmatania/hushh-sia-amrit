@@ -303,6 +303,8 @@ export function useBookings() {
             total: Number(data.total),
             status: data.status as Booking["status"],
             bookingId: data.booking_id,
+            roomsCount: (data as any).rooms_count ?? null,
+            extraMattresses: (data as any).extra_mattresses ?? 0,
           });
           setBookings((prev) => sortBookings([newBooking, ...prev]));
           return newBooking;

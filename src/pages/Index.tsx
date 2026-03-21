@@ -91,7 +91,7 @@ export default function Index() {
 
   const handleCheckoutConfirm = useCallback(
     (property: Property, slotId: string, guests: number, date: Date) =>
-      async (finalTotal: number) => {
+      async (finalTotal: number, roomsCount?: number, extraMattresses?: number) => {
         const bookingData = {
           propertyId: property.id,
           date: date.toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" }),
@@ -100,9 +100,10 @@ export default function Index() {
           total: finalTotal,
           status: "upcoming" as const,
           bookingId: `HUSHH-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+          roomsCount: roomsCount ?? null,
+          extraMattresses: extraMattresses ?? null,
         };
         await createBooking(bookingData);
-        // Award loyalty points: 5 pts per ₹100 spent
         const earnedPts = Math.floor(finalTotal / 100) * 5;
         if (earnedPts > 0) {
           await awardPoints(earnedPts, `Booking: ${property.name}`, "🏨");
