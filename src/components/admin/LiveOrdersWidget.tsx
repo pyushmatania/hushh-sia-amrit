@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getListingThumbnail } from "@/lib/listing-thumbnails";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import OrderNotes from "@/components/shared/OrderNotes";
 
 interface LiveOrder {
   id: string; user_id: string; property_id: string; total: number;
@@ -287,6 +288,9 @@ export default function LiveOrdersWidget({ onViewAll }: { onViewAll: () => void 
                       <span className="text-sm font-bold text-foreground">Total</span>
                       <span className="text-lg font-bold text-primary tabular-nums">₹{Number(selectedOrder.total).toLocaleString()}</span>
                     </div>
+
+                    {/* Order Notes */}
+                    <OrderNotes orderId={selectedOrder.id} authorName="Admin" authorRole="admin" />
                   </>
                 )}
 

@@ -7,6 +7,7 @@ import { playWinJingle } from "@/lib/spin-sounds";
 import { hapticHeavy } from "@/lib/haptics";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import OrderNotes from "@/components/shared/OrderNotes";
 
 interface Order {
   id: string; user_id: string; property_id: string; booking_id: string | null;
@@ -420,6 +421,9 @@ export default function StaffOrders() {
                         <span className="text-lg font-bold text-primary tabular-nums">₹{Number(selectedOrder.total).toLocaleString()}</span>
                       </div>
                     </div>
+
+                    {/* Order Notes */}
+                    <OrderNotes orderId={selectedOrder.id} authorName="Kitchen Staff" authorRole="staff" />
 
                     {/* Status action */}
                     {selectedOrder.status !== "completed" && (
