@@ -42,7 +42,7 @@ export default function Admin() {
 
   const pageLabels: Record<AdminPage, string> = {
     dashboard: "Dashboard", catalog: "Catalog", properties: "Properties",
-    bookings: "Bookings", users: "Users CRM", clients: "Clients",
+    bookings: "Booking Hub", users: "Users CRM", clients: "Clients",
     analytics: "Analytics", curations: "Curations", tags: "Tags",
     campaigns: "Campaigns", coupons: "Coupons", orders: "Live Orders",
     exports: "Exports", ai: "AI Assistant", alerts: "Smart Alerts",
