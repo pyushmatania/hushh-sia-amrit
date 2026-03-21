@@ -235,6 +235,16 @@ function TiltCard({
                 <span className="flex items-center gap-1.5 bg-secondary/80 rounded-lg px-2.5 py-1.5 text-xs text-foreground" style={{ boxShadow: "inset 0 1px 0 hsla(0,0%,100%,0.04), 0 1px 2px hsla(0,0%,0%,0.15)" }}>
                   <Users size={12} className="text-primary" /> {booking.guests}
                 </span>
+                {booking.roomsCount && booking.roomsCount > 0 && (
+                  <span className="flex items-center gap-1.5 bg-secondary/80 rounded-lg px-2.5 py-1.5 text-xs text-foreground" style={{ boxShadow: "inset 0 1px 0 hsla(0,0%,100%,0.04), 0 1px 2px hsla(0,0%,0%,0.15)" }}>
+                    🛏️ {booking.roomsCount} {booking.roomsCount === 1 ? "room" : "rooms"}
+                  </span>
+                )}
+                {booking.extraMattresses && booking.extraMattresses > 0 && (
+                  <span className="flex items-center gap-1.5 bg-primary/10 rounded-lg px-2.5 py-1.5 text-xs text-primary font-medium" style={{ boxShadow: "inset 0 1px 0 hsla(0,0%,100%,0.04), 0 1px 2px hsla(0,0%,0%,0.15)" }}>
+                    🛏️ +{booking.extraMattresses} mattress
+                  </span>
+                )}
               </div>
 
               {/* Footer */}
