@@ -96,7 +96,7 @@ function LiveClock() {
   );
 }
 
-export default function AdminLayout({ activePage, onNavigate, children }: AdminLayoutProps) {
+export default function AdminLayout({ activePage, onNavigate, children, breadcrumb }: AdminLayoutProps) {
   const { signOut, user } = useAuth();
   const { isAdmin } = useAdmin();
   const { theme, setTheme, resolvedTheme } = useTheme();
