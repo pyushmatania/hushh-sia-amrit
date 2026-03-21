@@ -12,6 +12,7 @@ import CommandPalette from "./CommandPalette";
 import FloatingChecklist from "./FloatingChecklist";
 import { useAuth } from "@/hooks/use-auth";
 import { useAdmin } from "@/hooks/use-admin";
+import { useTheme } from "@/hooks/use-theme";
 
 export type AdminPage =
   | "dashboard" | "catalog" | "properties" | "bookings" | "users" | "clients"
@@ -95,6 +96,7 @@ function LiveClock() {
 export default function AdminLayout({ activePage, onNavigate, children }: AdminLayoutProps) {
   const { signOut, user } = useAuth();
   const { isAdmin } = useAdmin();
+  const { theme, setTheme, resolvedTheme } = useTheme();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -285,6 +287,28 @@ export default function AdminLayout({ activePage, onNavigate, children }: AdminL
           {/* Right side */}
           <div className="flex items-center gap-3">
             <LiveClock />
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9, rotate: resolvedTheme === "dark" ? -30 : 30 }}
+              onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+              className="relative w-8 h-8 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={resolvedTheme}
+                  initial={{ rotate: -90, opacity: 0, scale: 0.5 }}
+                  animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                  exit={{ rotate: 90, opacity: 0, scale: 0.5 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {resolvedTheme === "dark" ? (
+                    <Sun size={15} className="text-amber-400" />
+                  ) : (
+                    <Moon size={15} className="text-indigo-500" />
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            </motion.button>
             <div className="flex items-center gap-1.5">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
