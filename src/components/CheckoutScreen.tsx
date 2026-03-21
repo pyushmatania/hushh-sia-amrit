@@ -118,10 +118,11 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
     return sum + (cheapest?.price || ext.basePrice);
   }, 0);
 
+  const mattressTotal = isStay ? extraMattressCount * EXTRA_MATTRESS_PRICE : 0;
   const baseTotal = slot.price + addonTotal;
-  const discount = couponApplied ? Math.round((baseTotal + extrasTotal) * 0.1) : 0;
+  const discount = couponApplied ? Math.round((baseTotal + extrasTotal + mattressTotal) * 0.1) : 0;
   const platformFee = 49;
-  const finalTotal = baseTotal + extrasTotal - discount + platformFee;
+  const finalTotal = baseTotal + extrasTotal + mattressTotal - discount + platformFee;
 
   // Build line items from live selections
   const lineItems: { id: string; name: string; qty: number; unitPrice: number; subtotal: number }[] = [];
