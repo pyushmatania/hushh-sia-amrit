@@ -130,8 +130,8 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
         draggable={false}
         onDragStart={e => e.preventDefault()}
         style={{
-          width: size * 1.25,
-          height: size * 1.25,
+          width: size * 1.7,
+          height: size * 1.7,
           objectFit: "contain",
           filter: `drop-shadow(0 0 14px rgba(255,140,0,0.6)) drop-shadow(0 6px 12px rgba(0,0,0,0.35)) brightness(${expr.brightness}) hue-rotate(${expr.hueShift}deg) saturate(${expr.saturate})`,
           WebkitUserSelect: "none",
