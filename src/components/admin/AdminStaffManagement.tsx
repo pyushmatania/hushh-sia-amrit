@@ -642,6 +642,214 @@ export default function AdminStaffManagement() {
         </div>
       )}
 
+      {/* ===== LEAVES TAB ===== */}
+      {tab === "leaves" && (
+        <div className="space-y-3">
+          {/* Leave Stats */}
+          <div className="grid grid-cols-4 gap-2">
+            {[
+              { label: "Pending", value: leaveStats.pending, icon: Clock, color: "text-amber-500" },
+              { label: "Approved", value: leaveStats.approved, icon: CheckCircle2, color: "text-emerald-500" },
+              { label: "Rejected", value: leaveStats.rejected, icon: XCircle, color: "text-red-500" },
+              { label: "This Mo.", value: leaveStats.thisMonth, icon: Calendar, color: "text-primary" },
+            ].map((s, i) => (
+              <div key={i} className="p-2 rounded-xl bg-card border border-border text-center">
+                <s.icon size={14} className={`${s.color} mx-auto`} />
+                <p className={`text-lg font-bold ${s.color}`}>{s.value}</p>
+                <p className="text-[9px] text-muted-foreground">{s.label}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* New Leave Request */}
+          <Button size="sm" variant="outline" className="w-full gap-1.5 rounded-xl" onClick={() => setShowLeaveForm(!showLeaveForm)}>
+            <CalendarPlus size={14} /> {showLeaveForm ? "Cancel" : "New Leave Request"}
+          </Button>
+
+          <AnimatePresence>
+            {showLeaveForm && (
+              <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+                className="overflow-hidden">
+                <div className="p-3 rounded-2xl bg-card border border-border space-y-2.5">
+                  <div>
+                    <label className="text-[11px] font-medium text-muted-foreground mb-1 block">Staff Member *</label>
+                    <select value={newLeave.staff_id} onChange={e => setNewLeave(p => ({ ...p, staff_id: e.target.value }))}
+                      className="w-full h-9 rounded-xl border border-input bg-background px-3 text-sm">
+                      <option value="">Select staff...</option>
+                      {staff.filter(s => s.status === "active").map(s => (
+                        <option key={s.id} value={s.id}>{s.name} ({s.role})</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-medium text-muted-foreground mb-1 block">Leave Type</label>
+                    <div className="flex gap-1.5">
+                      {["casual", "sick", "earned", "emergency"].map(t => (
+                        <button key={t} onClick={() => setNewLeave(p => ({ ...p, leave_type: t }))}
+                          className={`flex-1 py-1.5 rounded-lg text-[10px] font-medium transition capitalize ${
+                            newLeave.leave_type === t ? LEAVE_COLORS[t] : "bg-muted/50 text-muted-foreground"
+                          }`}>
+                          {t}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="text-[11px] font-medium text-muted-foreground mb-1 block">Start Date *</label>
+                      <Input type="date" value={newLeave.start_date} onChange={e => setNewLeave(p => ({ ...p, start_date: e.target.value }))}
+                        className="rounded-xl h-9 text-sm" />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-medium text-muted-foreground mb-1 block">End Date *</label>
+                      <Input type="date" value={newLeave.end_date} onChange={e => setNewLeave(p => ({ ...p, end_date: e.target.value }))}
+                        className="rounded-xl h-9 text-sm" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-medium text-muted-foreground mb-1 block">Reason</label>
+                    <Input value={newLeave.reason} onChange={e => setNewLeave(p => ({ ...p, reason: e.target.value }))}
+                      className="rounded-xl h-9 text-sm" placeholder="Reason for leave..." />
+                  </div>
+                  <Button size="sm" className="w-full rounded-xl" onClick={handleLeaveSubmit}>
+                    Submit Leave Request
+                  </Button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Pending Leaves */}
+          {leaves.filter(l => l.status === "pending").length > 0 && (
+            <div className="space-y-2">
+              <h3 className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                <Clock size={12} className="text-amber-500" /> Pending Approval ({leaves.filter(l => l.status === "pending").length})
+              </h3>
+              {leaves.filter(l => l.status === "pending").map((l, i) => {
+                const member = staff.find(s => s.id === l.staff_id);
+                const Icon = ROLE_ICONS[member?.role || ""] || Users;
+                return (
+                  <motion.div key={l.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.03 }}
+                    className="p-3 rounded-2xl bg-card border-2 border-amber-500/30">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${DEPT_COLORS[member?.department || ""] || "bg-muted"}`}>
+                          <Icon size={14} />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-sm text-foreground">{member?.name || "Unknown"}</p>
+                          <p className="text-[10px] text-muted-foreground capitalize">{member?.role} • {member?.department}</p>
+                        </div>
+                      </div>
+                      <Badge className={`text-[10px] ${LEAVE_COLORS[l.leave_type]}`}>
+                        {l.leave_type}
+                      </Badge>
+                    </div>
+                    <div className="mt-2 p-2 rounded-lg bg-muted/30">
+                      <div className="flex items-center gap-2 text-[11px] text-foreground">
+                        <Calendar size={11} />
+                        <span>{format(new Date(l.start_date), "dd MMM")} → {format(new Date(l.end_date), "dd MMM yyyy")}</span>
+                        <Badge variant="outline" className="text-[9px] px-1">{l.days} day{l.days > 1 ? "s" : ""}</Badge>
+                      </div>
+                      {l.reason && <p className="text-[10px] text-muted-foreground mt-1">"{l.reason}"</p>}
+                    </div>
+                    <div className="flex gap-2 mt-2">
+                      <Button size="sm" className="flex-1 h-8 rounded-xl gap-1 text-[11px] bg-emerald-600 hover:bg-emerald-700"
+                        onClick={() => handleLeaveAction(l.id, "approved")}>
+                        <Check size={12} /> Approve
+                      </Button>
+                      <Button size="sm" variant="destructive" className="flex-1 h-8 rounded-xl gap-1 text-[11px]"
+                        onClick={() => handleLeaveAction(l.id, "rejected", "Leave quota exceeded")}>
+                        <X size={12} /> Reject
+                      </Button>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Leave History */}
+          <div className="space-y-2">
+            <h3 className="text-xs font-bold text-foreground flex items-center gap-1.5">
+              <FileText size={12} className="text-muted-foreground" /> Leave History
+            </h3>
+            {leaves.filter(l => l.status !== "pending").length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-6">No leave history yet</p>
+            ) : (
+              leaves.filter(l => l.status !== "pending").map((l, i) => {
+                const member = staff.find(s => s.id === l.staff_id);
+                return (
+                  <motion.div key={l.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.03 }}
+                    className="p-3 rounded-2xl bg-card border border-border">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-sm text-foreground">{member?.name || "Unknown"}</p>
+                        <p className="text-[10px] text-muted-foreground">
+                          {format(new Date(l.start_date), "dd MMM")} → {format(new Date(l.end_date), "dd MMM")} • {l.days}d
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Badge className={`text-[10px] ${LEAVE_COLORS[l.leave_type]}`}>
+                          {l.leave_type}
+                        </Badge>
+                        <Badge className={`text-[10px] ${LEAVE_STATUS_COLORS[l.status]}`}>
+                          {l.status === "approved" ? <><Check size={9} className="mr-0.5" /> Approved</> :
+                           <><X size={9} className="mr-0.5" /> Rejected</>}
+                        </Badge>
+                      </div>
+                    </div>
+                    {l.reason && <p className="text-[10px] text-muted-foreground mt-1 italic">"{l.reason}"</p>}
+                    {l.rejection_note && l.status === "rejected" && (
+                      <p className="text-[10px] text-red-400 mt-0.5">Reason: {l.rejection_note}</p>
+                    )}
+                  </motion.div>
+                );
+              })
+            )}
+          </div>
+
+          {/* Per-staff leave summary */}
+          <div className="space-y-2">
+            <h3 className="text-xs font-bold text-foreground flex items-center gap-1.5">
+              <BarChart3 size={12} className="text-primary" /> Staff Leave Summary
+            </h3>
+            {staff.filter(s => s.status === "active").map((s, i) => {
+              const staffLeaves = leaves.filter(l => l.staff_id === s.id && l.status === "approved");
+              const casualDays = staffLeaves.filter(l => l.leave_type === "casual").reduce((sum, l) => sum + l.days, 0);
+              const sickDays = staffLeaves.filter(l => l.leave_type === "sick").reduce((sum, l) => sum + l.days, 0);
+              const earnedDays = staffLeaves.filter(l => l.leave_type === "earned").reduce((sum, l) => sum + l.days, 0);
+              const totalDays = casualDays + sickDays + earnedDays;
+              if (totalDays === 0 && staffLeaves.length === 0) return null;
+              return (
+                <motion.div key={s.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.02 }}
+                  className="p-3 rounded-2xl bg-card border border-border">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <p className="font-medium text-sm text-foreground">{s.name}</p>
+                    <span className="text-xs font-bold text-foreground">{totalDays}d total</span>
+                  </div>
+                  <div className="flex gap-2">
+                    {[
+                      { label: "Casual", value: casualDays, color: "bg-blue-500" },
+                      { label: "Sick", value: sickDays, color: "bg-red-500" },
+                      { label: "Earned", value: earnedDays, color: "bg-violet-500" },
+                    ].map((t, j) => (
+                      <div key={j} className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                        <div className={`w-2 h-2 rounded-full ${t.color}`} />
+                        {t.label}: {t.value}d
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* ===== PERFORMANCE TAB ===== */}
       {tab === "performance" && (
         <div className="space-y-3">
