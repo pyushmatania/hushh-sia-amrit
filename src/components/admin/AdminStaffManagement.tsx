@@ -98,14 +98,16 @@ export default function AdminStaffManagement() {
 
   const loadData = async () => {
     setLoading(true);
-    const [s, a, p] = await Promise.all([
+    const [s, a, p, l] = await Promise.all([
       supabase.from("staff_members").select("*").order("name"),
       supabase.from("staff_attendance").select("*").order("date", { ascending: false }),
       supabase.from("staff_salary_payments").select("*").order("year", { ascending: false }),
+      supabase.from("staff_leaves").select("*").order("created_at", { ascending: false }),
     ]);
     setStaff((s.data as any[]) ?? []);
     setAttendance((a.data as any[]) ?? []);
     setSalaries((p.data as any[]) ?? []);
+    setLeaves((l.data as any[]) ?? []);
     setLoading(false);
   };
 
