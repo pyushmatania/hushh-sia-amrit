@@ -34,6 +34,7 @@ export default function Admin() {
   const { hasAdminAccess, loading: roleLoading } = useAdmin();
   const [page, setPage] = useState<AdminPage>("dashboard");
   const [skipAuth, setSkipAuth] = useState(false);
+  const [historyContext, setHistoryContext] = useState<{ bookingId?: string; propertyId?: string } | null>(null);
 
   if (authLoading || roleLoading) {
     return (
@@ -94,9 +95,17 @@ export default function Admin() {
       case "exports": return <AdminExports />;
       case "achievements": return <AdminAchievements />;
       case "loyalty": return <AdminLoyaltyReferrals />;
-      case "calendar": return <HostCalendar />;
+      case "calendar": return <HostCalendar onNavigate={(p, ctx) => {
+        if (ctx?.propertyId) setHistoryContext(ctx);
+        setPage(p as AdminPage);
+      }} />;
       case "requests": return <BookingRequests />;
-      case "history": return <AdminPropertyHistory onNavigateToClient={(userId) => { setPage("clients"); }} />;
+      case "history": return <AdminPropertyHistory
+        onNavigateToClient={(userId) => { setPage("clients"); }}
+        initialPropertyId={historyContext?.propertyId}
+        initialBookingId={historyContext?.bookingId}
+        onContextConsumed={() => setHistoryContext(null)}
+      />;
       case "inventory": return <AdminInventory />;
       case "audit": return <AdminAuditLog />;
       default: return <CommandCenter onNavigate={setPage} />;

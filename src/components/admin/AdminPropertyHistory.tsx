@@ -602,7 +602,12 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
 }
 
 /* ─── Main Component ─── */
-export default function AdminPropertyHistory({ onNavigateToClient }: { onNavigateToClient?: (userId: string) => void }) {
+export default function AdminPropertyHistory({ onNavigateToClient, initialPropertyId, initialBookingId, onContextConsumed }: {
+  onNavigateToClient?: (userId: string) => void;
+  initialPropertyId?: string;
+  initialBookingId?: string;
+  onContextConsumed?: () => void;
+}) {
   const [properties, setProperties] = useState<PropertySummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -689,11 +694,21 @@ export default function AdminPropertyHistory({ onNavigateToClient }: { onNavigat
         prop.topItems = Array.from(itemCount.values()).sort((a, b) => b.count - a.count).slice(0, 5);
       });
 
-      setProperties(Array.from(propMap.values()));
+      const allProps = Array.from(propMap.values());
+      setProperties(allProps);
       setLoading(false);
+
+      // Auto-open property from calendar navigation
+      if (initialPropertyId) {
+        const targetProp = allProps.find(p => p.id === initialPropertyId);
+        if (targetProp) {
+          setSelectedProperty(targetProp);
+          onContextConsumed?.();
+        }
+      }
     };
     load();
-  }, []);
+  }, [initialPropertyId]);
 
   const categories = useMemo(() => {
     const cats = new Set(properties.map(p => p.category));
