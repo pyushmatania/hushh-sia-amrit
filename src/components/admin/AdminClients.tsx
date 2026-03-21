@@ -773,6 +773,10 @@ function ClientDetailDrawer({ client, onClose, listingMap, listingInfoMap }: {
             </div>
           )}
 
+          {activeTab === "notes" && (
+            <ClientNotesPanel clientUserId={client.user_id} />
+          )}
+
           {activeTab === "timeline" && (
             <div className="relative">
               <div className="absolute left-[13px] top-2 bottom-2 w-px bg-border" />
