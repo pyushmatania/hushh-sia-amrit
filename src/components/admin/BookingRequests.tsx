@@ -17,6 +17,7 @@ interface BookingRequest {
   status: string;
   created_at: string;
   property_id: string;
+  propertyName?: string;
 }
 
 type FilterStatus = "all" | "upcoming" | "confirmed" | "cancelled" | "completed";
@@ -28,14 +29,23 @@ export default function BookingRequests() {
   const [filter, setFilter] = useState<FilterStatus>("all");
 
   const load = useCallback(async () => {
-    const query = supabase
-      .from("bookings")
-      .select("id, booking_id, date, slot, guests, total, status, created_at, property_id")
-      .order("created_at", { ascending: false })
-      .limit(50);
+    const [bookingsRes, listingsRes] = await Promise.all([
+      supabase
+        .from("bookings")
+        .select("id, booking_id, date, slot, guests, total, status, created_at, property_id")
+        .order("created_at", { ascending: false })
+        .limit(50),
+      supabase.from("host_listings").select("id, name"),
+    ]);
 
-    const { data } = await query;
-    setBookings(data ?? []);
+    const listingMap = new Map<string, string>();
+    (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, l.name));
+
+    const data = (bookingsRes.data ?? []).map(b => ({
+      ...b,
+      propertyName: listingMap.get(b.property_id) || `Property ${b.property_id.slice(0, 6)}`,
+    }));
+    setBookings(data);
     setLoading(false);
   }, []);
 
@@ -126,8 +136,8 @@ export default function BookingRequests() {
               >
                 <div className="flex items-start justify-between mb-3">
                   <div>
-                    <p className="text-sm font-bold text-foreground">#{b.booking_id.slice(0, 10)}</p>
-                    <p className="text-[10px] text-muted-foreground">{timeAgo(b.created_at)}</p>
+                    <p className="text-sm font-bold text-foreground">{b.propertyName}</p>
+                    <p className="text-[10px] text-muted-foreground">#{b.booking_id.slice(0, 10)} · {timeAgo(b.created_at)}</p>
                   </div>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium capitalize ${
                     b.status === "confirmed" ? "bg-emerald-500/15 text-emerald-500" :

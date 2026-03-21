@@ -49,15 +49,9 @@ const smartCards = [
   { icon: Clock, text: "Low bookings tomorrow 12–4 PM", tag: "Action", tagColor: "bg-amber-500" },
 ];
 
-const mockChartData = Array.from({ length: 14 }, (_, i) => ({
-  day: `${i + 1}`,
-  revenue: Math.floor(Math.random() * 15000) + 5000,
-}));
-
-const weeklyData = [
-  { day: "Mon", value: 44 }, { day: "Tue", value: 34 }, { day: "Wed", value: 110 },
-  { day: "Thu", value: 47 }, { day: "Fri", value: 32 }, { day: "Sat", value: 79 }, { day: "Sun", value: 24 },
-];
+// These will be replaced with real data in the useEffect
+const emptyChartData: { day: string; revenue: number }[] = [];
+const emptyWeeklyData: { day: string; value: number }[] = [];
 
 const commandCenterExamples = [
   "What was our busiest day this month?",
@@ -117,6 +111,10 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
   const [todaySchedule, setTodaySchedule] = useState<TodaySlot[]>([]);
   const [categoryData, setCategoryData] = useState<{ name: string; value: number }[]>([]);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [revenueChartData, setRevenueChartData] = useState<{ day: string; revenue: number }[]>([]);
+  const [weeklyPerfData, setWeeklyPerfData] = useState<{ day: string; value: number }[]>([]);
+  const [financialData, setFinancialData] = useState<{ month: string; expenses: number; revenue: number }[]>([]);
+  const [prevMonthStats, setPrevMonthStats] = useState({ revenue: 0, bookings: 0, listings: 0, users: 0 });
 
   useEffect(() => { const t = setInterval(() => setCurrentTime(new Date()), 60000); return () => clearInterval(t); }, []);
 
@@ -150,14 +148,84 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
       setCategoryData(Object.entries(catMap).map(([name, value]) => ({ name, value })));
       setRecentReviews(reviews.map(r => ({ id: r.id, rating: r.rating, content: r.content || "", propertyName: listingMap.get(r.property_id) || "Property", time: r.created_at })));
       setTodaySchedule(todayBk.slice(0, 6).map(b => ({ id: b.property_id + b.slot, propertyName: listingMap.get(b.property_id) || "Property", slot: b.slot || "Evening", guests: b.guests, total: Number(b.total), status: b.status })));
+
+      // Build real 14-day revenue chart data
+      const now = new Date();
+      const dayMap14 = new Map<string, number>();
+      for (let i = 13; i >= 0; i--) {
+        const d = new Date(now.getTime() - i * 86400000);
+        const key = d.toISOString().slice(0, 10);
+        dayMap14.set(key, 0);
+      }
+      bookings.forEach(b => {
+        if (dayMap14.has(b.date)) dayMap14.set(b.date, (dayMap14.get(b.date) || 0) + Number(b.total));
+      });
+      setRevenueChartData(Array.from(dayMap14, ([day, revenue]) => ({ day: day.slice(5), revenue })));
+
+      // Weekly performance (bookings per day of week)
+      const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const weekMap = weekDays.map(() => 0);
+      bookings.forEach(b => {
+        const d = new Date(b.date + "T00:00:00");
+        if (!isNaN(d.getTime())) weekMap[d.getDay()]++;
+      });
+      setWeeklyPerfData(weekDays.map((day, i) => ({ day, value: weekMap[i] })));
+
+      // Calculate previous month stats for trend comparison
+      const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
+      const prevMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().slice(0, 10);
+      const prevBookings = bookings.filter(b => b.date >= prevMonthStart && b.date < thisMonthStart);
+      const currBookings = bookings.filter(b => b.date >= thisMonthStart);
+      const prevRev = prevBookings.reduce((s, b) => s + Number(b.total), 0);
+      const currRev = currBookings.reduce((s, b) => s + Number(b.total), 0);
+      setPrevMonthStats({
+        revenue: prevRev > 0 ? Math.round(((currRev - prevRev) / prevRev) * 100) : 0,
+        bookings: prevBookings.length > 0 ? Math.round(((currBookings.length - prevBookings.length) / prevBookings.length) * 100) : 0,
+        listings: listings.filter(l => l.status === "published").length,
+        users: users.length,
+      });
+    });
+
+    // Fetch financial data (real expenses + revenue by month)
+    Promise.all([
+      supabase.from("expenses").select("amount, date, category"),
+      supabase.from("bookings").select("total, date"),
+    ]).then(([expRes, revRes]) => {
+      const monthMap = new Map<string, { expenses: number; revenue: number }>();
+      const now = new Date();
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const key = d.toLocaleDateString("en-US", { month: "short" });
+        monthMap.set(key, { expenses: 0, revenue: 0 });
+      }
+      (expRes.data ?? []).forEach(e => {
+        const d = new Date(e.date);
+        const key = d.toLocaleDateString("en-US", { month: "short" });
+        if (monthMap.has(key)) {
+          const entry = monthMap.get(key)!;
+          entry.expenses += Number(e.amount);
+        }
+      });
+      (revRes.data ?? []).forEach(b => {
+        const d = new Date(b.date + "T00:00:00");
+        const key = d.toLocaleDateString("en-US", { month: "short" });
+        if (monthMap.has(key)) {
+          const entry = monthMap.get(key)!;
+          entry.revenue += Number(b.total);
+        }
+      });
+      setFinancialData(Array.from(monthMap, ([month, data]) => ({ month, ...data })));
     });
   }, []);
 
+  const revTrendPct = prevMonthStats.revenue;
+  const bkTrendPct = prevMonthStats.bookings;
+
   const statCards = [
-    { label: "Revenue", value: stats.revenue, prefix: "₹", icon: IndianRupee, accent: "from-emerald-500 to-emerald-600", accentLight: "bg-emerald-500/8", change: "+12.5%", up: true },
-    { label: "Bookings", value: stats.bookings, prefix: "", icon: CalendarCheck, accent: "from-blue-500 to-blue-600", accentLight: "bg-blue-500/8", change: "+8.2%", up: true },
-    { label: "Listings", value: stats.activeListings, prefix: "", icon: Eye, accent: "from-violet-500 to-violet-600", accentLight: "bg-violet-500/8", change: "+3", up: true },
-    { label: "Users", value: stats.totalUsers, prefix: "", icon: Users, accent: "from-rose-500 to-rose-600", accentLight: "bg-rose-500/8", change: "+24", up: true },
+    { label: "Revenue", value: stats.revenue, prefix: "₹", icon: IndianRupee, accent: "from-emerald-500 to-emerald-600", accentLight: "bg-emerald-500/8", change: revTrendPct !== 0 ? `${revTrendPct > 0 ? '+' : ''}${revTrendPct}%` : "—", up: revTrendPct >= 0 },
+    { label: "Bookings", value: stats.bookings, prefix: "", icon: CalendarCheck, accent: "from-blue-500 to-blue-600", accentLight: "bg-blue-500/8", change: bkTrendPct !== 0 ? `${bkTrendPct > 0 ? '+' : ''}${bkTrendPct}%` : "—", up: bkTrendPct >= 0 },
+    { label: "Listings", value: stats.activeListings, prefix: "", icon: Eye, accent: "from-violet-500 to-violet-600", accentLight: "bg-violet-500/8", change: `${stats.activeListings} active`, up: true },
+    { label: "Users", value: stats.totalUsers, prefix: "", icon: Users, accent: "from-rose-500 to-rose-600", accentLight: "bg-rose-500/8", change: `${stats.totalUsers} total`, up: true },
   ];
 
   const quickActions = [
@@ -297,15 +365,17 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
               <span className="text-xs font-semibold text-foreground">Revenue Trend</span>
               <span className="text-[9px] text-muted-foreground">14 days</span>
             </div>
-            <div className="flex items-center gap-1 text-emerald-600">
-              <ArrowUpRight size={11} />
-              <span className="text-[10px] font-bold">+12.5%</span>
-            </div>
+            {revTrendPct !== 0 && (
+              <div className={`flex items-center gap-1 ${revTrendPct >= 0 ? 'text-emerald-600' : 'text-rose-500'}`}>
+                {revTrendPct >= 0 ? <ArrowUpRight size={11} /> : <ArrowDownRight size={11} />}
+                <span className="text-[10px] font-bold">{revTrendPct > 0 ? '+' : ''}{revTrendPct}%</span>
+              </div>
+            )}
           </div>
-          <p className="text-xl font-bold text-foreground tabular-nums mb-3">₹{mockChartData.reduce((s, d) => s + d.revenue, 0).toLocaleString("en-IN")}</p>
+          <p className="text-xl font-bold text-foreground tabular-nums mb-3">₹{revenueChartData.reduce((s, d) => s + d.revenue, 0).toLocaleString("en-IN")}</p>
           <div className="h-[180px]">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={mockChartData}>
+              <AreaChart data={revenueChartData}>
                 <defs>
                   <linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="hsl(250, 80%, 60%)" stopOpacity={0.15} />
@@ -327,16 +397,9 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
       id: "financial-summary",
       label: "Finance",
       render: () => {
-        const monthlyExpenses = [
-          { month: "Jan", expenses: 45000, revenue: 62000 },
-          { month: "Feb", expenses: 52000, revenue: 71000 },
-          { month: "Mar", expenses: 48000, revenue: 85000 },
-          { month: "Apr", expenses: 55000, revenue: 78000 },
-          { month: "May", expenses: 41000, revenue: 69000 },
-          { month: "Jun", expenses: 58000, revenue: 92000 },
-        ];
-        const totalRev = monthlyExpenses.reduce((s, m) => s + m.revenue, 0);
-        const totalExp = monthlyExpenses.reduce((s, m) => s + m.expenses, 0);
+        const fData = financialData.length > 0 ? financialData : [{ month: "—", expenses: 0, revenue: 0 }];
+        const totalRev = fData.reduce((s, m) => s + m.revenue, 0);
+        const totalExp = fData.reduce((s, m) => s + m.expenses, 0);
         const netProfit = totalRev - totalExp;
         const margin = totalRev > 0 ? ((netProfit / totalRev) * 100).toFixed(1) : "0";
         return (
@@ -370,7 +433,7 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
             </div>
             <div className="h-[160px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={monthlyExpenses} barGap={2}>
+                <BarChart data={fData} barGap={2}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} strokeOpacity={0.5} />
                   <XAxis dataKey="month" tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={35} tickFormatter={(v: number) => `${(v/1000).toFixed(0)}K`} />
@@ -459,11 +522,11 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
               <Activity size={14} className="text-primary" />
               <span className="text-xs font-semibold text-foreground">Weekly Performance</span>
             </div>
-            <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-0.5"><TrendingUp size={10} /> +18%</span>
+            <span className="text-[10px] font-bold text-muted-foreground">Bookings by day</span>
           </div>
           <div className="h-[160px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={weeklyData} barCategoryGap="25%">
+              <BarChart data={weeklyPerfData} barCategoryGap="25%">
                 <defs>
                   <linearGradient id="barFill" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="hsl(250, 80%, 60%)" />
@@ -592,7 +655,7 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
         </div>
       ),
     },
-  ], [stats, topProperties, recentReviews, todaySchedule, categoryData, onNavigate]);
+  ], [stats, topProperties, recentReviews, todaySchedule, categoryData, onNavigate, revenueChartData, weeklyPerfData, financialData, revTrendPct, prevMonthStats]);
 
   const { orderedWidgets, editMode, setEditMode, dragIdx, overIdx, handlePointerDown, handlePointerMove, handlePointerUp, resetOrder, containerRef } = useDraggableWidgets(widgets);
 

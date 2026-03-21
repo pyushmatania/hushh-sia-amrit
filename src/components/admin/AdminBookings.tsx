@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 interface Booking {
   id: string; booking_id: string; user_id: string; property_id: string;
   date: string; slot: string; guests: number; total: number;
-  status: string; created_at: string;
+  status: string; created_at: string; propertyName?: string;
 }
 
 const statusConfig: Record<string, { color: string; bg: string; icon: typeof Clock; border: string }> = {
@@ -28,13 +28,26 @@ export default function AdminBookings({ onNavigate }: { onNavigate?: (page: stri
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.from("bookings").select("*").order("created_at", { ascending: false })
-      .then(({ data }) => { setBookings(data ?? []); setLoading(false); });
+    const load = async () => {
+      const [bookingsRes, listingsRes] = await Promise.all([
+        supabase.from("bookings").select("*").order("created_at", { ascending: false }),
+        supabase.from("host_listings").select("id, name"),
+      ]);
+      const listingMap = new Map<string, string>();
+      (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, l.name));
+      const data = (bookingsRes.data ?? []).map(b => ({
+        ...b,
+        propertyName: listingMap.get(b.property_id) || `Property ${b.property_id.slice(0, 6)}`,
+      }));
+      setBookings(data);
+      setLoading(false);
+    };
+    load();
   }, []);
 
   const filtered = bookings.filter(b =>
     (statusFilter === "all" || b.status === statusFilter) &&
-    (b.booking_id?.toLowerCase().includes(search.toLowerCase()) || b.property_id?.toLowerCase().includes(search.toLowerCase()))
+    (b.booking_id?.toLowerCase().includes(search.toLowerCase()) || b.property_id?.toLowerCase().includes(search.toLowerCase()) || b.propertyName?.toLowerCase().includes(search.toLowerCase()))
   );
 
   const updateStatus = async (id: string, status: string) => {
@@ -151,19 +164,21 @@ export default function AdminBookings({ onNavigate }: { onNavigate?: (page: stri
                       >
                         <StatusIcon size={18} className={sc.color} />
                       </motion.div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200 font-mono">{b.booking_id?.slice(0, 12)}</p>
-                          <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full capitalize ${sc.bg} ${sc.color}`}>{b.status}</span>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">{b.propertyName}</p>
+                            <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full capitalize ${sc.bg} ${sc.color}`}>{b.status}</span>
+                          </div>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-[11px] text-zinc-500 font-medium font-mono">#{b.booking_id?.slice(0, 10)}</span>
+                            <span className="text-zinc-300 dark:text-zinc-600">·</span>
+                            <span className="text-[11px] text-zinc-400">{b.date}</span>
+                            <span className="text-zinc-300 dark:text-zinc-600">·</span>
+                            <span className="text-[11px] text-zinc-400">{b.slot}</span>
+                            <span className="text-zinc-300 dark:text-zinc-600">·</span>
+                            <span className="text-[11px] text-zinc-400 flex items-center gap-0.5"><Users size={10} /> {b.guests}</span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-[11px] text-zinc-500 font-medium">{b.date}</span>
-                          <span className="text-zinc-300 dark:text-zinc-600">·</span>
-                          <span className="text-[11px] text-zinc-400">{b.slot}</span>
-                          <span className="text-zinc-300 dark:text-zinc-600">·</span>
-                          <span className="text-[11px] text-zinc-400 flex items-center gap-0.5"><Users size={10} /> {b.guests}</span>
-                        </div>
-                      </div>
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="text-right hidden sm:block">
