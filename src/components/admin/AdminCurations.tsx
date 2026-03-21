@@ -53,6 +53,7 @@ export default function AdminCurations() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [propertyMap, setPropertyMap] = useState(new Map<string, PropertyInfo>());
   const [bookingCounts, setBookingCounts] = useState(new Map<string, number>());
+  const [revenueMap, setRevenueMap] = useState(new Map<string, { bookingRev: number; orderRev: number; totalBookings: number }>());
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const toggleSelect = (id: string) => {
@@ -68,10 +69,11 @@ export default function AdminCurations() {
   };
 
   const loadCurations = async () => {
-    const [curRes, listRes, bookRes] = await Promise.all([
+    const [curRes, listRes, bookRes, orderRes] = await Promise.all([
       supabase.from("curations").select("*").order("sort_order"),
       supabase.from("host_listings").select("id, name, image_urls, location, rating"),
-      supabase.from("bookings").select("property_id"),
+      supabase.from("bookings").select("property_id, total"),
+      supabase.from("orders").select("property_id, total"),
     ]);
     setCurations(curRes.data ?? []);
 
@@ -80,8 +82,21 @@ export default function AdminCurations() {
     setPropertyMap(pMap);
 
     const bMap = new Map<string, number>();
-    (bookRes.data ?? []).forEach(b => bMap.set(b.property_id, (bMap.get(b.property_id) || 0) + 1));
+    const rMap = new Map<string, { bookingRev: number; orderRev: number; totalBookings: number }>();
+    (bookRes.data ?? []).forEach(b => {
+      bMap.set(b.property_id, (bMap.get(b.property_id) || 0) + 1);
+      const prev = rMap.get(b.property_id) || { bookingRev: 0, orderRev: 0, totalBookings: 0 };
+      prev.bookingRev += Number(b.total);
+      prev.totalBookings += 1;
+      rMap.set(b.property_id, prev);
+    });
+    (orderRes.data ?? []).forEach(o => {
+      const prev = rMap.get(o.property_id) || { bookingRev: 0, orderRev: 0, totalBookings: 0 };
+      prev.orderRev += Number(o.total);
+      rMap.set(o.property_id, prev);
+    });
     setBookingCounts(bMap);
+    setRevenueMap(rMap);
 
     setLoading(false);
   };
@@ -91,10 +106,13 @@ export default function AdminCurations() {
   // Stats
   const totalCurations = curations.length;
   const activeCurations = curations.filter(c => c.active).length;
-  const totalRevenue = curations.reduce((s, c) => s + Number(c.price), 0);
-  const avgPrice = totalCurations ? Math.round(totalRevenue / totalCurations) : 0;
+  const avgPrice = totalCurations ? Math.round(curations.reduce((s, c) => s + Number(c.price), 0) / totalCurations) : 0;
   const uniqueMoods = new Set(curations.flatMap(c => c.mood || []));
   const discountedCount = curations.filter(c => c.original_price && c.original_price > c.price).length;
+  const totalEarned = curations.reduce((s, c) => {
+    const r = revenueMap.get(c.property_id);
+    return s + (r ? r.bookingRev + r.orderRev : 0);
+  }, 0);
 
   // Filtering
   const filtered = [...curations]
@@ -374,19 +392,20 @@ export default function AdminCurations() {
       </motion.div>
 
       {/* Stats Cards */}
-      <motion.div variants={fadeUp} className="grid grid-cols-4 gap-2">
+      <motion.div variants={fadeUp} className="grid grid-cols-5 gap-2">
         {[
           { label: "Active", value: activeCurations, icon: Zap, color: "text-emerald-500", bg: "bg-emerald-500/10" },
           { label: "Avg Price", value: `₹${avgPrice.toLocaleString()}`, icon: IndianRupee, color: "text-blue-500", bg: "bg-blue-500/10" },
+          { label: "Revenue", value: `₹${totalEarned >= 1000 ? `${(totalEarned / 1000).toFixed(1)}k` : totalEarned.toLocaleString()}`, icon: TrendingUp, color: "text-primary", bg: "bg-primary/10" },
           { label: "Deals", value: discountedCount, icon: Tag, color: "text-amber-500", bg: "bg-amber-500/10" },
           { label: "Moods", value: uniqueMoods.size, icon: Heart, color: "text-violet-500", bg: "bg-violet-500/10" },
         ].map(s => (
-          <div key={s.label} className="rounded-xl bg-card border border-border p-3 text-center">
-            <div className={`w-7 h-7 rounded-lg ${s.bg} flex items-center justify-center mx-auto mb-1`}>
-              <s.icon size={14} className={s.color} />
+          <div key={s.label} className="rounded-xl bg-card border border-border p-2.5 text-center">
+            <div className={`w-6 h-6 rounded-lg ${s.bg} flex items-center justify-center mx-auto mb-1`}>
+              <s.icon size={12} className={s.color} />
             </div>
-            <p className="text-sm font-bold text-foreground tabular-nums">{s.value}</p>
-            <p className="text-[9px] text-muted-foreground">{s.label}</p>
+            <p className="text-xs font-bold text-foreground tabular-nums">{s.value}</p>
+            <p className="text-[8px] text-muted-foreground">{s.label}</p>
           </div>
         ))}
       </motion.div>
@@ -436,6 +455,8 @@ export default function AdminCurations() {
             const propInfo = propertyMap.get(c.property_id);
             const thumb = propInfo ? getListingThumbnail(propInfo.name, propInfo.imageUrls, { preferMapped: true }) : null;
             const bookings = bookingCounts.get(c.property_id) || 0;
+            const rev = revenueMap.get(c.property_id);
+            const curationRevenue = rev ? rev.bookingRev + rev.orderRev : 0;
             const discount = c.original_price && c.original_price > c.price
               ? Math.round(((c.original_price - c.price) / c.original_price) * 100)
               : 0;
@@ -526,7 +547,10 @@ export default function AdminCurations() {
                       <span className="text-[10px] text-muted-foreground flex items-center gap-1"><Clock size={9} /> {c.slot}</span>
                     )}
                     <span className="text-[10px] text-muted-foreground flex items-center gap-1"><Users size={9} /> {bookings} bookings</span>
-                    <span className="text-[10px] text-muted-foreground">{(c.includes || []).length} items included</span>
+                    <span className="text-[10px] font-medium text-primary flex items-center gap-1">
+                      <TrendingUp size={9} /> ₹{curationRevenue >= 1000 ? `${(curationRevenue / 1000).toFixed(1)}k` : curationRevenue.toLocaleString()}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">{(c.includes || []).length} items</span>
                   </div>
 
                   {/* Expanded detail */}
@@ -539,6 +563,37 @@ export default function AdminCurations() {
                         className="overflow-hidden"
                       >
                         <div className="px-4 pb-4 pt-1 border-t border-border space-y-3">
+                          {/* Revenue breakdown */}
+                          <div>
+                            <p className="text-[10px] text-muted-foreground mb-1.5">Revenue Analytics</p>
+                            <div className="grid grid-cols-3 gap-2">
+                              <div className="rounded-lg bg-primary/5 p-2 text-center">
+                                <p className="text-xs font-bold text-foreground tabular-nums">₹{(rev?.bookingRev || 0).toLocaleString()}</p>
+                                <p className="text-[8px] text-muted-foreground">Bookings</p>
+                              </div>
+                              <div className="rounded-lg bg-blue-500/5 p-2 text-center">
+                                <p className="text-xs font-bold text-foreground tabular-nums">₹{(rev?.orderRev || 0).toLocaleString()}</p>
+                                <p className="text-[8px] text-muted-foreground">Food Orders</p>
+                              </div>
+                              <div className="rounded-lg bg-emerald-500/5 p-2 text-center">
+                                <p className="text-xs font-bold text-foreground tabular-nums">₹{curationRevenue.toLocaleString()}</p>
+                                <p className="text-[8px] text-muted-foreground">Total</p>
+                              </div>
+                            </div>
+                            {bookings > 0 && (
+                              <div className="mt-2">
+                                <div className="flex justify-between text-[9px] text-muted-foreground mb-1">
+                                  <span>Avg per booking</span>
+                                  <span className="font-semibold text-foreground tabular-nums">₹{Math.round(curationRevenue / bookings).toLocaleString()}</span>
+                                </div>
+                                <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
+                                  <div className="h-full rounded-full bg-gradient-to-r from-primary to-primary/60"
+                                    style={{ width: `${Math.min(100, (curationRevenue / (totalEarned || 1)) * 100)}%` }} />
+                                </div>
+                                <p className="text-[8px] text-muted-foreground mt-0.5">{((curationRevenue / (totalEarned || 1)) * 100).toFixed(1)}% of total revenue</p>
+                              </div>
+                            )}
+                          </div>
                           {/* Includes */}
                           <div>
                             <p className="text-[10px] text-muted-foreground mb-1.5">What's Included</p>
