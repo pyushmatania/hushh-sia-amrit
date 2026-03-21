@@ -22,6 +22,7 @@ interface Booking {
   status: string; created_at: string; updated_at: string;
   propertyName?: string; propertyImage?: string; propertyLocation?: string;
   userName?: string;
+  rooms_count?: number | null; extra_mattresses?: number | null;
 }
 
 const statusConfig: Record<string, { color: string; bg: string; icon: typeof Clock; border: string; glow: string }> = {
