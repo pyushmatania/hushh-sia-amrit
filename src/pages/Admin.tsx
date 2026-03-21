@@ -100,6 +100,7 @@ export default function Admin() {
       case "loyalty": return <AdminLoyaltyReferrals />;
       case "calendar": return <HostCalendar onNavigate={(p, ctx) => {
         if (ctx?.propertyId) setHistoryContext(ctx);
+        if (ctx?.userId) setClientContext({ userId: ctx.userId });
         setPage(p as AdminPage);
       }} />;
       case "requests": return <BookingRequests />;
