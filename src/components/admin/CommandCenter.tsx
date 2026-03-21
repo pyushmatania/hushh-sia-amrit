@@ -593,7 +593,7 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
     },
   ], [stats, topProperties, recentReviews, todaySchedule, categoryData, onNavigate]);
 
-  const { orderedWidgets, editMode, setEditMode, dragIdx, overIdx, handleDragStart, handleDragOver, handleDrop, resetOrder, setDragIdx } = useDraggableWidgets(widgets);
+  const { orderedWidgets, editMode, setEditMode, dragIdx, overIdx, handlePointerDown, handlePointerMove, handlePointerUp, resetOrder, containerRef } = useDraggableWidgets(widgets);
 
   return (
     <motion.div className="space-y-5" variants={stagger} initial="initial" animate="animate">
