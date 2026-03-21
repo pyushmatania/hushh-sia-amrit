@@ -126,7 +126,7 @@ export default function Admin() {
       case "properties": return <AdminProperties />;
       case "bookings": return <AdminBookings onNavigate={(p, ctx) => navigateTo(p as AdminPage, ctx)} />;
       case "users": return <AdminUsers />;
-      case "clients": return <AdminClients initialUserId={clientContext?.userId} onContextConsumed={() => setClientContext(null)} onBack={prevPage ? goBack : undefined} />;
+      case "clients": return <AdminClients initialUserId={clientContext?.userId} onContextConsumed={() => setClientContext(null)} onBack={pageHistory.length > 0 ? goBack : undefined} />;
       case "analytics": return <AdminAnalytics />;
       case "earnings": return <HostEarnings />;
       case "curations": return <AdminCurations />;
