@@ -49,9 +49,261 @@ function ThinkingPulse() {
           transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
         />
         <HushhBot size={46} state="thinking" />
-...
+        <div className="flex-1 relative z-10">
+          <span className="text-[11px] font-semibold text-primary font-display">Analyzing...</span>
+          <div className="flex gap-1 mt-1">
+            {[0, 1, 2, 3, 4].map(i => (
+              <motion.div
+                key={i}
+                className="h-1 rounded-full bg-primary/30"
+                style={{ width: 6 + Math.random() * 12 }}
+                animate={{ opacity: [0.3, 1, 0.3], scaleX: [0.5, 1, 0.5] }}
+                transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.08 }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ─── Typewriter text ─── */
+function TypewriterText({ text }: { text: string }) {
+  const [displayed, setDisplayed] = useState("");
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    let idx = 0;
+    setDisplayed("");
+    setDone(false);
+    const iv = setInterval(() => {
+      idx++;
+      setDisplayed(text.slice(0, idx));
+      if (idx >= text.length) { clearInterval(iv); setDone(true); }
+    }, 12);
+    return () => clearInterval(iv);
+  }, [text]);
+
+  return (
+    <span>
+      {displayed}
+      {!done && (
+        <motion.span
+          className="inline-block w-[2px] h-[1em] bg-primary/60 ml-0.5 align-text-bottom"
+          animate={{ opacity: [1, 0, 1] }}
+          transition={{ duration: 0.6, repeat: Infinity }}
+        />
+      )}
+    </span>
+  );
+}
+
+/* ─── Rich answer card ─── */
+function AnswerCard({ content, onDismiss }: { content: string; onDismiss: () => void }) {
+  const [copied, setCopied] = useState(false);
+  const copy = () => {
+    navigator.clipboard.writeText(content);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
+  return (
+    <motion.div
+      initial={{ height: 0, opacity: 0 }}
+      animate={{ height: "auto", opacity: 1 }}
+      exit={{ height: 0, opacity: 0 }}
+      transition={{ type: "spring", damping: 25, stiffness: 200 }}
+      className="border-t border-primary/10 overflow-hidden"
+    >
+      <div className="p-4 bg-gradient-to-br from-primary/[0.03] to-card relative">
+        {/* Subtle sparkle overlay */}
+        <motion.div
+          className="absolute top-2 right-2"
+          animate={{ rotate: [0, 180, 360], scale: [0.8, 1, 0.8] }}
+          transition={{ duration: 4, repeat: Infinity }}
+        >
+          <Sparkles size={10} className="text-primary/20" />
+        </motion.div>
+
+        <div className="flex items-start gap-3">
+          <motion.div
+            initial={{ scale: 0, rotate: -30 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: "spring", damping: 12, stiffness: 200 }}
+          >
             <HushhBot size={52} state="speaking" />
-...
+          </motion.div>
+          <div className="flex-1 min-w-0">
+            <MarkdownRender content={content} />
+          </div>
+        </div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="flex items-center justify-between mt-3 pt-2 border-t border-border/30"
+        >
+          <button onClick={onDismiss} className="text-[10px] text-muted-foreground/50 hover:text-foreground transition flex items-center gap-1">
+            <X size={9} /> Dismiss
+          </button>
+          <div className="flex items-center gap-3">
+            <button onClick={copy} className="text-[10px] text-muted-foreground/50 hover:text-primary transition flex items-center gap-1">
+              {copied ? <Check size={9} className="text-emerald-400" /> : <Copy size={9} />}
+              {copied ? "Copied" : "Copy"}
+            </button>
+            <span className="text-[8px] text-muted-foreground/30 flex items-center gap-1 font-mono">
+              <Wand2 size={7} /> Hushh AI
+            </span>
+          </div>
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ─── Markdown renderer ─── */
+function MarkdownRender({ content }: { content: string }) {
+  const lines = content.split("\n");
+  return (
+    <div className="text-xs text-foreground leading-relaxed space-y-1 font-display">
+      {lines.map((line, i) => {
+        if (line.startsWith("### ")) return <motion.h3 key={i} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }} className="font-bold text-sm mt-2 text-foreground">{line.slice(4)}</motion.h3>;
+        if (line.startsWith("## ")) return <motion.h2 key={i} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }} className="font-bold text-sm mt-2 text-foreground">{line.slice(3)}</motion.h2>;
+        if (line.startsWith("# ")) return <motion.h1 key={i} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }} className="font-bold mt-2 text-foreground">{line.slice(2)}</motion.h1>;
+        if (line.startsWith("- ") || line.startsWith("* ")) return (
+          <motion.li key={i} initial={{ opacity: 0, x: -4 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }} className="ml-4 list-disc text-foreground/80">{formatInline(line.slice(2))}</motion.li>
+        );
+        if (/^\d+\.\s/.test(line)) return (
+          <motion.li key={i} initial={{ opacity: 0, x: -4 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }} className="ml-4 list-decimal text-foreground/80">{formatInline(line.replace(/^\d+\.\s/, ""))}</motion.li>
+        );
+        if (line.trim() === "") return <div key={i} className="h-1" />;
+        return <motion.p key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.03 }} className="text-foreground/85">{formatInline(line)}</motion.p>;
+      })}
+    </div>
+  );
+}
+
+function formatInline(text: string) {
+  return text.split(/(\*\*.*?\*\*)/g).map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**"))
+      return <strong key={i} className="text-foreground font-semibold">{part.slice(2, -2)}</strong>;
+    return part;
+  });
+}
+
+/* ─── Voice wave visualizer ─── */
+function VoiceWave() {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="flex items-center gap-[3px] h-6"
+    >
+      {Array.from({ length: 7 }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="w-[3px] rounded-full bg-red-400"
+          animate={{ height: [6, 14 + i * 2, 6] }}
+          transition={{ duration: 0.35 + i * 0.04, repeat: Infinity, delay: i * 0.05 }}
+        />
+      ))}
+    </motion.div>
+  );
+}
+
+/* ─── Main Widget ─── */
+interface NeuralSearchWidgetProps {
+  title?: string;
+  subtitle?: string;
+  placeholder?: string;
+  examples: string[];
+  onSearch: (query: string) => Promise<string>;
+  compact?: boolean;
+}
+
+export default function NeuralSearchWidget({
+  title = "Hushh AI",
+  subtitle,
+  placeholder = "Ask anything about your data...",
+  examples,
+  onSearch,
+  compact = false,
+}: NeuralSearchWidgetProps) {
+  const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [answer, setAnswer] = useState<string | null>(null);
+  const [focused, setFocused] = useState(false);
+  const [isHolding, setIsHolding] = useState(false);
+
+  const handleSearch = async () => {
+    if (!query.trim() || loading) return;
+    setLoading(true);
+    setAnswer(null);
+    playAIThinkingSound();
+    try {
+      const result = await onSearch(query);
+      playAISuccessSound();
+      setAnswer(result);
+    } catch {
+      playAIErrorSound();
+      setAnswer("Sorry, couldn't process the query. Try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const startHold = useCallback(() => {
+    setIsHolding(true);
+    if ("vibrate" in navigator) navigator.vibrate(30);
+    if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognition.lang = "en-IN";
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.onresult = (e: any) => {
+        const text = e.results[0][0].transcript;
+        setQuery(text);
+        setIsHolding(false);
+      };
+      recognition.onerror = () => setIsHolding(false);
+      recognition.onend = () => setIsHolding(false);
+      recognition.start();
+      (window as any).__hushhRecognition = recognition;
+    }
+  }, []);
+
+  const stopHold = useCallback(() => {
+    setIsHolding(false);
+    if ((window as any).__hushhRecognition) {
+      (window as any).__hushhRecognition.stop();
+    }
+  }, []);
+
+  const botState = loading ? "thinking" : isHolding ? "listening" : answer ? "success" : "idle";
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: "spring", damping: 25 }}
+      className="relative rounded-2xl border border-primary/15 overflow-hidden transition-all duration-300"
+      style={{
+        background: "linear-gradient(135deg, hsl(var(--card)), hsl(var(--primary) / 0.03))",
+        boxShadow: focused ? "0 0 30px -4px hsl(var(--primary) / 0.15)" : "0 4px 20px -8px hsl(var(--primary) / 0.06)",
+      }}
+    >
+      <FloatingParticles />
+
+      <div className={`${compact ? "p-3" : "p-5"} relative z-10`}>
+        {/* Centered Avatar + Title */}
+        <div className="flex flex-col items-center mb-4">
+          <motion.div
+            whileHover={{ scale: 1.1, rotate: [0, -5, 5, 0] }}
+            transition={{ duration: 0.5 }}
+          >
             <HushhBot size={compact ? 86 : 112} state={botState} />
           </motion.div>
           <h3 className="text-sm font-bold text-foreground flex items-center gap-2 font-display mt-1">
