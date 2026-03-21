@@ -525,11 +525,7 @@ export default function ExperienceBuilder({ property, slotId, guests, date, onBa
                   >
                     {/* Thumbnail */}
                     <div className="relative w-[88px] h-[88px] rounded-xl overflow-hidden shrink-0">
-                      {imgUrl ? (
-                        <img src={imgUrl} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-2xl bg-secondary">{item.categoryEmoji}</div>
-                      )}
+                      <AddonImage src={imgUrl} alt={item.name} className="w-full h-full object-cover" />
                       {qty > 0 && (
                         <motion.div
                           initial={{ scale: 0, rotate: -90 }}
