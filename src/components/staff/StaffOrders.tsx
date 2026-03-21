@@ -189,6 +189,7 @@ export default function StaffOrders() {
                   )}
                 </div>
 
+                <div className="space-y-1.5 mb-3">
                   {(order.items || []).map((item, j) => (
                     <div key={j} className="flex items-center justify-between">
                       <span className="text-sm text-foreground">{item.item_emoji} {item.item_name}</span>
