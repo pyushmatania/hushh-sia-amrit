@@ -4,7 +4,7 @@ import {
   CalendarCheck, Search, CheckCircle2, Clock, Ban, ChevronRight, Users, IndianRupee,
   Inbox, Check, X, Loader2, TrendingUp, TrendingDown, BarChart3, PieChart,
   ArrowUpRight, ArrowDownRight, MapPin, Star, Filter, Eye, Building2, Activity,
-  CalendarIcon
+  CalendarIcon, AlertTriangle
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -205,7 +205,49 @@ export default function BookingHub({
 
   const pendingBookings = useMemo(() => bookings.filter(b => b.status === "upcoming" || b.status === "pending"), [bookings]);
 
+  // Conflict detection: find bookings that share same property+date+slot with active statuses
+  const conflictMap = useMemo(() => {
+    const map = new Map<string, string[]>(); // bookingId -> conflicting booking IDs
+    const activeBookings = bookings.filter(b => !["cancelled", "completed"].includes(b.status));
+    for (let i = 0; i < activeBookings.length; i++) {
+      for (let j = i + 1; j < activeBookings.length; j++) {
+        const a = activeBookings[i], b2 = activeBookings[j];
+        if (a.property_id === b2.property_id && a.date === b2.date && a.slot === b2.slot) {
+          map.set(a.id, [...(map.get(a.id) || []), b2.id]);
+          map.set(b2.id, [...(map.get(b2.id) || []), a.id]);
+        }
+      }
+    }
+    return map;
+  }, [bookings]);
+
+  const getConflicts = useCallback((booking: Booking) => {
+    const ids = conflictMap.get(booking.id);
+    if (!ids || ids.length === 0) return [];
+    return bookings.filter(b => ids.includes(b.id));
+  }, [conflictMap, bookings]);
+
   const updateStatus = async (id: string, status: string) => {
+    // Warn on confirming a conflicting booking
+    if (status === "confirmed" || status === "active") {
+      const booking = bookings.find(b => b.id === id);
+      if (booking) {
+        const activeStatuses = ["confirmed", "active", "upcoming", "pending"];
+        const overlapping = bookings.filter(b =>
+          b.id !== id &&
+          b.property_id === booking.property_id &&
+          b.date === booking.date &&
+          b.slot === booking.slot &&
+          activeStatuses.includes(b.status)
+        );
+        if (overlapping.length > 0) {
+          const proceed = window.confirm(
+            `⚠️ Conflict detected!\n\nThis property already has ${overlapping.length} booking(s) for ${booking.date} at ${booking.slot}.\n\nGuests: ${overlapping.reduce((s, b) => s + b.guests, 0) + booking.guests} total\n\nProceed anyway?`
+          );
+          if (!proceed) return;
+        }
+      }
+    }
     setUpdating(id);
     const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
     if (error) toast.error("Failed to update"); else {
@@ -407,7 +449,7 @@ export default function BookingHub({
                         </button>
                       )}
                       <div className="flex-1">
-                        <BookingCard booking={b} index={i} onNavigate={onNavigate} onStatusChange={updateStatus} />
+                        <BookingCard booking={b} index={i} onNavigate={onNavigate} onStatusChange={updateStatus} conflicts={getConflicts(b)} />
                       </div>
                     </div>
                   ))}
@@ -425,7 +467,7 @@ export default function BookingHub({
               ) : (
                 <div className="space-y-3">
                   {pendingBookings.map((b, i) => (
-                    <RequestCard key={b.id} booking={b} index={i} updating={updating} onAccept={(id) => updateStatus(id, "confirmed")} onReject={(id) => updateStatus(id, "cancelled")} onNavigate={onNavigate} timeAgo={timeAgo} />
+                    <RequestCard key={b.id} booking={b} index={i} updating={updating} onAccept={(id) => updateStatus(id, "confirmed")} onReject={(id) => updateStatus(id, "cancelled")} onNavigate={onNavigate} timeAgo={timeAgo} conflicts={getConflicts(b)} />
                   ))}
                 </div>
               )}
@@ -658,9 +700,10 @@ function InsightsTab({ bookings, slotPopularity, topProperties, topClients, onNa
   );
 }
 
-function BookingCard({ booking: b, index, onNavigate, onStatusChange }: { booking: Booking; index: number; onNavigate?: any; onStatusChange: (id: string, status: string) => void }) {
+function BookingCard({ booking: b, index, onNavigate, onStatusChange, conflicts = [] }: { booking: Booking; index: number; onNavigate?: any; onStatusChange: (id: string, status: string) => void; conflicts?: Booking[] }) {
   const sc = statusConfig[b.status] || statusConfig.pending;
   const StatusIcon = sc.icon;
+  const hasConflict = conflicts.length > 0;
 
   return (
     <motion.div
@@ -669,7 +712,7 @@ function BookingCard({ booking: b, index, onNavigate, onStatusChange }: { bookin
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ delay: index * 0.02 }}
-      className={`rounded-2xl bg-card border border-border/60 overflow-hidden hover:shadow-lg ${sc.glow} transition-all duration-200 group`}
+      className={`rounded-2xl bg-card border ${hasConflict ? "border-destructive/40 ring-1 ring-destructive/20" : "border-border/60"} overflow-hidden hover:shadow-lg ${sc.glow} transition-all duration-200 group`}
     >
       {/* Property Image + Info Header */}
       <div className="relative cursor-pointer" onClick={() => onNavigate?.("history", { propertyId: b.property_id })}>
@@ -696,6 +739,15 @@ function BookingCard({ booking: b, index, onNavigate, onStatusChange }: { bookin
           <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full capitalize backdrop-blur-sm ${sc.bg} ${sc.color}`}>{b.status}</span>
         </div>
       </div>
+
+      {hasConflict && (
+        <div className="px-3 py-2 bg-destructive/10 border-b border-destructive/20 flex items-center gap-2">
+          <AlertTriangle size={12} className="text-destructive shrink-0" />
+          <p className="text-[10px] font-medium text-destructive">
+            ⚠️ Conflicts with {conflicts.length} other booking{conflicts.length > 1 ? "s" : ""} — same property, date & slot
+          </p>
+        </div>
+      )}
 
       <div className="p-3.5">
         {/* Booking ID + Amount */}
@@ -753,15 +805,16 @@ function BookingCard({ booking: b, index, onNavigate, onStatusChange }: { bookin
     </motion.div>
   );
 }
-function RequestCard({ booking: b, index, updating, onAccept, onReject, onNavigate, timeAgo }: any) {
+function RequestCard({ booking: b, index, updating, onAccept, onReject, onNavigate, timeAgo, conflicts = [] }: any) {
   const sc = statusConfig[b.status] || statusConfig.pending;
+  const hasConflict = conflicts.length > 0;
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: -100 }}
       transition={{ delay: index * 0.03 }}
-      className="rounded-2xl border border-amber-200/60 dark:border-amber-500/20 bg-card overflow-hidden"
+      className={`rounded-2xl border ${hasConflict ? "border-destructive/40 ring-1 ring-destructive/20" : "border-amber-200/60 dark:border-amber-500/20"} bg-card overflow-hidden`}
     >
       {/* Property Header with Image */}
       <div className="relative cursor-pointer" onClick={() => onNavigate?.("history", { propertyId: b.property_id })}>
@@ -788,6 +841,18 @@ function RequestCard({ booking: b, index, updating, onAccept, onReject, onNaviga
           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100/90 dark:bg-amber-500/80 text-amber-700 dark:text-amber-100 capitalize backdrop-blur-sm">{b.status}</span>
         </div>
       </div>
+
+      {hasConflict && (
+        <div className="px-4 py-2.5 bg-destructive/10 border-b border-destructive/20 flex items-start gap-2">
+          <AlertTriangle size={14} className="text-destructive shrink-0 mt-0.5" />
+          <div>
+            <p className="text-[11px] font-semibold text-destructive">Scheduling Conflict</p>
+            <p className="text-[10px] text-destructive/80 mt-0.5">
+              {conflicts.length} other booking{conflicts.length > 1 ? "s" : ""} for this property on {b.date} at {b.slot} — total {conflicts.reduce((s: number, c: Booking) => s + c.guests, 0) + b.guests} guests
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="p-4">
         {/* Booking ID & Time */}
