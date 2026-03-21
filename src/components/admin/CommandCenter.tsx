@@ -111,6 +111,10 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
   const [todaySchedule, setTodaySchedule] = useState<TodaySlot[]>([]);
   const [categoryData, setCategoryData] = useState<{ name: string; value: number }[]>([]);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [revenueChartData, setRevenueChartData] = useState<{ day: string; revenue: number }[]>([]);
+  const [weeklyPerfData, setWeeklyPerfData] = useState<{ day: string; value: number }[]>([]);
+  const [financialData, setFinancialData] = useState<{ month: string; expenses: number; revenue: number }[]>([]);
+  const [prevMonthStats, setPrevMonthStats] = useState({ revenue: 0, bookings: 0, listings: 0, users: 0 });
 
   useEffect(() => { const t = setInterval(() => setCurrentTime(new Date()), 60000); return () => clearInterval(t); }, []);
 
