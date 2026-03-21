@@ -102,28 +102,19 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
   const [videoReady, setVideoReady] = useState(false);
   const [shouldLoad, setShouldLoad] = useState(false);
 
-  // Eagerly load first 2 cards, lazy load rest
-  useEffect(() => {
-    if (index < 2) {
-      setShouldLoad(true);
-    }
-  }, [index]);
-
   useEffect(() => {
     const card = cardRef.current;
     if (!card) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && entry.intersectionRatio > 0.2) {
           setShouldLoad(true);
-          if (videoRef.current && entry.intersectionRatio > 0.3) {
-            videoRef.current.play().catch(() => {});
-          }
-        } else {
+          if (videoRef.current) videoRef.current.play().catch(() => {});
+        } else if (!entry.isIntersecting) {
           videoRef.current?.pause();
         }
       },
-      { threshold: [0, 0.3], rootMargin: "400px" }
+      { threshold: [0, 0.2], rootMargin: "150px" }
     );
     observer.observe(card);
     return () => observer.disconnect();
