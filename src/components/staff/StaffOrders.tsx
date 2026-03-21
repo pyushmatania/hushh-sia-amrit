@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { ShoppingCart, Clock, CheckCircle2, ChefHat, Loader2, Bell } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { getListingThumbnail } from "@/lib/listing-thumbnails";
 import { playWinJingle } from "@/lib/spin-sounds";
 import { hapticHeavy } from "@/lib/haptics";
 
@@ -9,8 +10,8 @@ interface Order {
   id: string; user_id: string; property_id: string; booking_id: string | null;
   total: number; status: string; created_at: string;
   items?: { item_name: string; item_emoji: string; quantity: number; unit_price: number }[];
+  propertyName?: string; propertyImageUrls?: string[];
 }
-
 const statusFlow = ["pending", "preparing", "delivered", "completed"];
 const statusConfig: Record<string, { color: string; bg: string; label: string }> = {
   pending: { color: "text-amber-400", bg: "bg-amber-500/15", label: "🔔 New" },
@@ -26,13 +27,14 @@ export default function StaffOrders() {
   const initialLoadDone = useRef(false);
 
   const loadOrders = async () => {
-    const { data: ordersData } = await supabase.from("orders").select("*")
-      .order("created_at", { ascending: false }).limit(50);
-    if (!ordersData) { setLoading(false); return; }
+    const [ordersRes, itemsRes, listingsRes] = await Promise.all([
+      supabase.from("orders").select("*").order("created_at", { ascending: false }).limit(50),
+      supabase.from("order_items").select("*"),
+      supabase.from("host_listings").select("id, name, image_urls"),
+    ]);
+    if (!ordersRes.data) { setLoading(false); return; }
 
-    const { data: items } = await supabase.from("order_items").select("*")
-      .in("order_id", ordersData.map(o => o.id));
-
+    const { data: items } = itemsRes;
     const itemMap = new Map<string, any[]>();
     (items ?? []).forEach(item => {
       const list = itemMap.get(item.order_id) || [];
@@ -40,7 +42,18 @@ export default function StaffOrders() {
       itemMap.set(item.order_id, list);
     });
 
-    setOrders(ordersData.map(o => ({ ...o, items: itemMap.get(o.id) || [] })));
+    const listingMap = new Map<string, { name: string; imageUrls: string[] }>();
+    (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, { name: l.name, imageUrls: l.image_urls || [] }));
+
+    setOrders(ordersRes.data.map(o => {
+      const listing = listingMap.get(o.property_id);
+      return {
+        ...o,
+        items: itemMap.get(o.id) || [],
+        propertyName: listing?.name || "Property",
+        propertyImageUrls: listing?.imageUrls || [],
+      };
+    }));
     setLoading(false);
     initialLoadDone.current = true;
   };
@@ -128,12 +141,27 @@ export default function StaffOrders() {
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${sc.bg} ${sc.color}`}>{sc.label}</span>
-                    <span className="text-[10px] text-muted-foreground font-mono">#{order.id.slice(0, 6)}</span>
+                    {(() => {
+                      const thumb = getListingThumbnail(order.propertyName || "", order.propertyImageUrls, { preferMapped: true });
+                      return thumb ? (
+                        <img src={thumb} alt={order.propertyName} className="w-8 h-8 rounded-xl object-cover ring-1 ring-border/30" />
+                      ) : (
+                        <div className="w-8 h-8 rounded-xl bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">
+                          {order.propertyName?.[0] || "?"}
+                        </div>
+                      );
+                    })()}
+                    <div>
+                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${sc.bg} ${sc.color}`}>{sc.label}</span>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">{order.propertyName}</p>
+                    </div>
                   </div>
-                  <span className="text-[10px] text-muted-foreground">
-                    {new Date(order.created_at).toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit" })}
-                  </span>
+                  <div className="text-right">
+                    <span className="text-[10px] text-muted-foreground font-mono">#{order.id.slice(0, 6)}</span>
+                    <p className="text-[10px] text-muted-foreground">
+                      {new Date(order.created_at).toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit" })}
+                    </p>
+                  </div>
                 </div>
 
                 <div className="space-y-1.5 mb-3">
