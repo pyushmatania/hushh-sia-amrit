@@ -685,20 +685,22 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
       </div>
 
       {/* Draggable widgets */}
-      {orderedWidgets.map((widget, index) => (
-        <DraggableWidgetWrapper
-          key={widget.id}
-          widget={widget}
-          index={index}
-          editMode={editMode}
-          isDragging={dragIdx === index}
-          isDragOver={overIdx === index && dragIdx !== index}
-          onDragStart={handleDragStart}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-          onDragEnd={() => setDragIdx(null)}
-        />
-      ))}
+      <div ref={containerRef}>
+        {orderedWidgets.map((widget, index) => (
+          <div key={widget.id} className="mb-5">
+            <DraggableWidgetWrapper
+              widget={widget}
+              index={index}
+              editMode={editMode}
+              isDragging={dragIdx === index}
+              isDragOver={overIdx === index && dragIdx !== index}
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+            />
+          </div>
+        ))}
+      </div>
     </motion.div>
   );
 }
