@@ -522,7 +522,7 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
               <Activity size={14} className="text-primary" />
               <span className="text-xs font-semibold text-foreground">Weekly Performance</span>
             </div>
-            <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-0.5"><TrendingUp size={10} /> +18%</span>
+            <span className="text-[10px] font-bold text-muted-foreground">Bookings by day</span>
           </div>
           <div className="h-[160px]">
             <ResponsiveContainer width="100%" height="100%">
