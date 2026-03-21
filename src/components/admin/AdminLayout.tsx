@@ -60,6 +60,7 @@ const navSections: { title: string; items: { id: AdminPage; label: string; icon:
       { id: "catalog", label: "Catalog", icon: Package, color: "bg-lime-100 text-lime-600 dark:bg-lime-500/20 dark:text-lime-400", activeGlow: "shadow-lime-200/60" },
       { id: "analytics", label: "Analytics", icon: BarChart3, color: "bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400", activeGlow: "shadow-blue-200/60" },
       { id: "earnings", label: "Earnings", icon: Wallet, color: "bg-green-100 text-green-600 dark:bg-green-500/20 dark:text-green-400", activeGlow: "shadow-green-200/60" },
+      { id: "budget", label: "Budget", icon: Wallet, color: "bg-teal-100 text-teal-600 dark:bg-teal-500/20 dark:text-teal-400", activeGlow: "shadow-teal-200/60" },
       { id: "pricing", label: "Pricing", icon: Zap, color: "bg-yellow-100 text-yellow-600 dark:bg-yellow-500/20 dark:text-yellow-400", activeGlow: "shadow-yellow-200/60" },
       { id: "history", label: "History", icon: ScrollText, color: "bg-slate-100 text-slate-600 dark:bg-slate-500/20 dark:text-slate-400", activeGlow: "shadow-slate-200/60" },
     ]
