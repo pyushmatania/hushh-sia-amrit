@@ -107,14 +107,14 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
     if (!card) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && entry.intersectionRatio > 0.2) {
+        if (entry.isIntersecting) {
           setShouldLoad(true);
           if (videoRef.current) videoRef.current.play().catch(() => {});
-        } else if (!entry.isIntersecting) {
+        } else {
           videoRef.current?.pause();
         }
       },
-      { threshold: [0, 0.2], rootMargin: "150px" }
+      { threshold: [0, 0.1], rootMargin: "400px" }
     );
     observer.observe(card);
     return () => observer.disconnect();
@@ -153,9 +153,10 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
               ref={videoRef}
               src={media.video}
               muted={muted}
+              autoPlay
               loop
               playsInline
-              preload="none"
+              preload="auto"
               onCanPlay={() => setVideoReady(true)}
               className="absolute inset-0 w-full h-full object-cover"
               style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.3s" }}
