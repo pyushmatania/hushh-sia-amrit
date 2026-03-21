@@ -41,7 +41,7 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
         setExpression(expressionOrder[next]);
         return next;
       });
-    }, 2800);
+    }, 7000);
     return () => clearInterval(iv);
   }, []);
 
