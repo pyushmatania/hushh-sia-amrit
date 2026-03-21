@@ -385,11 +385,6 @@ export default function AdminProperties() {
                 </div>
               </div>
             </motion.div>
-          ))}
-                })()}
-              </div>
-            </motion.div>
-          ))}
         </div>
       ) : (
         <div className="space-y-2">
