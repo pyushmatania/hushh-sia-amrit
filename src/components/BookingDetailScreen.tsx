@@ -301,6 +301,21 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
                 <p className="text-xs text-muted-foreground">Group size</p>
               </div>
             </div>
+            {booking.roomsCount && booking.roomsCount > 0 && (
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center">
+                  <Home size={16} className="text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">{booking.roomsCount} {booking.roomsCount === 1 ? "Room" : "Rooms"}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {booking.extraMattresses && booking.extraMattresses > 0
+                      ? `+ ${booking.extraMattresses} extra mattress (₹${(booking.extraMattresses * 500).toLocaleString()})`
+                      : "Room allocation"}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </motion.div>
 
