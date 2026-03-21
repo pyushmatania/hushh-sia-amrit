@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart, Clock, CheckCircle2, Loader2, Search, UtensilsCrossed, MapPin, ChefHat, Zap, IndianRupee } from "lucide-react";
+import { getListingThumbnail } from "@/lib/listing-thumbnails";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 
@@ -8,7 +9,7 @@ interface Order {
   id: string; user_id: string; property_id: string; booking_id: string | null;
   total: number; status: string; created_at: string; assigned_name: string | null;
   items?: { item_name: string; item_emoji: string; quantity: number; unit_price: number }[];
-  guestName?: string; propertyName?: string;
+  guestName?: string; propertyName?: string; propertyImageUrls?: string[];
 }
 
 const statusColors: Record<string, { color: string; bg: string; border: string; glow: string }> = {
@@ -40,20 +41,24 @@ export default function AdminOrders() {
         supabase.from("orders").select("*").order("created_at", { ascending: false }).limit(50),
         supabase.from("order_items").select("*"),
         supabase.from("profiles").select("user_id, display_name"),
-        supabase.from("host_listings").select("id, name"),
+        supabase.from("host_listings").select("id, name, image_urls"),
       ]);
       if (!ordersRes.data) { setLoading(false); return; }
       const itemMap = new Map<string, any[]>();
       (itemsRes.data ?? []).forEach(item => { const list = itemMap.get(item.order_id) || []; list.push(item); itemMap.set(item.order_id, list); });
       const profileMap = new Map<string, string>();
       (profilesRes.data ?? []).forEach(p => profileMap.set(p.user_id, p.display_name || "Guest"));
-      const listingMap = new Map<string, string>();
-      (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, l.name));
-      setOrders(ordersRes.data.map(o => ({
-        ...o, assigned_name: (o as any).assigned_name || null,
-        items: itemMap.get(o.id) || [], guestName: profileMap.get(o.user_id) || "Unknown Guest",
-        propertyName: listingMap.get(o.property_id) || `Property`,
-      })));
+      const listingMap = new Map<string, { name: string; imageUrls: string[] }>();
+      (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, { name: l.name, imageUrls: l.image_urls || [] }));
+      setOrders(ordersRes.data.map(o => {
+        const listing = listingMap.get(o.property_id);
+        return {
+          ...o, assigned_name: (o as any).assigned_name || null,
+          items: itemMap.get(o.id) || [], guestName: profileMap.get(o.user_id) || "Unknown Guest",
+          propertyName: listing?.name || "Property",
+          propertyImageUrls: listing?.imageUrls || [],
+        };
+      }));
       setLoading(false);
     };
     load();
@@ -183,12 +188,16 @@ export default function AdminOrders() {
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <motion.div
-                        whileHover={{ rotate: 12 }}
-                        className="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-100 to-violet-100 dark:from-indigo-500/20 dark:to-violet-500/20 flex items-center justify-center text-sm font-bold text-indigo-600 shadow-sm"
-                      >
-                        {order.guestName?.[0]?.toUpperCase() || "?"}
-                      </motion.div>
+                      {(() => {
+                        const thumb = getListingThumbnail(order.propertyName || "", order.propertyImageUrls, { preferMapped: true });
+                        return thumb ? (
+                          <img src={thumb} alt={order.propertyName} className="w-11 h-11 rounded-2xl object-cover shadow-sm ring-1 ring-border/30" />
+                        ) : (
+                          <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-100 to-violet-100 dark:from-indigo-500/20 dark:to-violet-500/20 flex items-center justify-center text-sm font-bold text-indigo-600 shadow-sm">
+                            {order.propertyName?.[0]?.toUpperCase() || "?"}
+                          </div>
+                        );
+                      })()}
                       <div>
                         <div className="flex items-center gap-2">
                           <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">{order.guestName}</p>
