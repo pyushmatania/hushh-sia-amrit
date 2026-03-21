@@ -24,7 +24,7 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
 
   return (
     <motion.div className="relative" style={{ width: s, height: s }}>
-      {/* Outer glow */}
+      {/* Outer glow ring */}
       <motion.div
         className="absolute rounded-full"
         style={{
@@ -34,7 +34,7 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
           background: `radial-gradient(circle, ${glow}, transparent 70%)`,
         }}
         animate={{
-          scale: state === "thinking" ? [1, 1.15, 1] : state === "listening" ? [1, 1.2, 1] : [1, 1.05, 1],
+          scale: state === "thinking" ? [1, 1.15, 1] : state === "listening" ? [1, 1.25, 1] : [1, 1.05, 1],
           opacity: state === "thinking" ? [0.5, 0.9, 0.5] : [0.4, 0.6, 0.4],
         }}
         transition={{
@@ -42,6 +42,24 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
           repeat: Infinity,
         }}
       />
+
+      {/* Secondary halo ring for active states */}
+      {(state === "thinking" || state === "listening" || state === "speaking") && (
+        <motion.div
+          className="absolute rounded-full border"
+          style={{
+            width: s * 1.5, height: s * 1.5,
+            top: "50%", left: "50%",
+            transform: "translate(-50%, -50%)",
+            borderColor: glow,
+          }}
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.3, 0, 0.3],
+          }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeOut" }}
+        />
+      )}
 
       {/* Body */}
       <motion.div
@@ -56,10 +74,11 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
           state === "thinking" ? { y: [0, -4, 0], rotate: [0, 3, -3, 0] } :
           state === "listening" ? { scale: [1, 1.04, 1] } :
           state === "speaking" ? { y: [0, -2, 0] } :
+          state === "success" ? { y: [0, -5, 0], rotate: [0, 5, -5, 0] } :
           { y: [0, -3, 0] }
         }
         transition={{
-          duration: state === "thinking" ? 1.2 : state === "listening" ? 0.6 : 2.5,
+          duration: state === "thinking" ? 1.2 : state === "listening" ? 0.6 : state === "success" ? 0.6 : 2.5,
           repeat: Infinity,
           ease: "easeInOut",
         }}
@@ -119,22 +138,68 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
       {/* Sparkle particles */}
       {(state === "success" || state === "speaking") && (
         <>
-          {[0, 1, 2, 3].map(i => (
+          {[0, 1, 2, 3, 4, 5].map(i => (
             <motion.div
               key={i}
               className="absolute"
               style={{
-                width: 4, height: 4, borderRadius: "50%",
+                width: 3 + (i % 2) * 2, height: 3 + (i % 2) * 2, borderRadius: "50%",
                 background: state === "success" ? "hsl(150 80% 60%)" : "hsl(280 80% 75%)",
               }}
               initial={{ x: s / 2, y: s / 2, opacity: 0, scale: 0 }}
               animate={{
-                x: s / 2 + Math.cos(i * Math.PI / 2) * s * 0.6,
-                y: s / 2 + Math.sin(i * Math.PI / 2) * s * 0.6 - 10,
+                x: s / 2 + Math.cos(i * Math.PI / 3) * s * 0.65,
+                y: s / 2 + Math.sin(i * Math.PI / 3) * s * 0.65 - 10,
                 opacity: [0, 1, 0],
                 scale: [0, 1.2, 0],
               }}
-              transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.2 }}
+              transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.15 }}
+            />
+          ))}
+        </>
+      )}
+
+      {/* Listening wave bars */}
+      {state === "listening" && (
+        <div className="absolute flex items-end justify-center gap-[2px]" style={{ bottom: -s * 0.15, left: 0, right: 0, height: s * 0.2 }}>
+          {[0, 1, 2, 3, 4].map(i => (
+            <motion.div
+              key={i}
+              className="rounded-full"
+              style={{ width: 3, background: "hsl(340 75% 65%)" }}
+              animate={{ height: [4, 8 + i * 3, 4] }}
+              transition={{ duration: 0.4 + i * 0.05, repeat: Infinity, delay: i * 0.06 }}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Thinking orbit dots */}
+      {state === "thinking" && (
+        <>
+          {[0, 1, 2].map(i => (
+            <motion.div
+              key={`orbit-${i}`}
+              className="absolute rounded-full"
+              style={{
+                width: 4, height: 4,
+                background: "hsl(200 80% 70%)",
+                top: "50%", left: "50%",
+              }}
+              animate={{
+                x: [
+                  Math.cos((i * 2 * Math.PI) / 3) * s * 0.55,
+                  Math.cos((i * 2 * Math.PI) / 3 + Math.PI) * s * 0.55,
+                  Math.cos((i * 2 * Math.PI) / 3) * s * 0.55,
+                ],
+                y: [
+                  Math.sin((i * 2 * Math.PI) / 3) * s * 0.55,
+                  Math.sin((i * 2 * Math.PI) / 3 + Math.PI) * s * 0.55,
+                  Math.sin((i * 2 * Math.PI) / 3) * s * 0.55,
+                ],
+                opacity: [0.4, 1, 0.4],
+              }}
+              transition={{ duration: 2, repeat: Infinity, delay: i * 0.3, ease: "easeInOut" }}
             />
           ))}
         </>
