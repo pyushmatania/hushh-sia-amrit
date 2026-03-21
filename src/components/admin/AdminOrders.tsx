@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart, Clock, CheckCircle2, Loader2, Search, UtensilsCrossed, MapPin, ChefHat, Zap, IndianRupee } from "lucide-react";
+import { getListingThumbnail } from "@/lib/listing-thumbnails";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 
