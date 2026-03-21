@@ -95,6 +95,7 @@ export default function AdminStaffManagement() {
   const [viewingStaff, setViewingStaff] = useState<StaffMember | null>(null);
   const [deptFilter, setDeptFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<"name" | "salary" | "joining">("name");
+  const [generatingReport, setGeneratingReport] = useState(false);
 
   const loadData = async () => {
     setLoading(true);
