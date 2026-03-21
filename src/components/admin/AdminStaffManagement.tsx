@@ -329,6 +329,150 @@ export default function AdminStaffManagement() {
     { id: "details", label: "Details", icon: FileText },
   ];
 
+  const generatePDFReport = async () => {
+    setGeneratingReport(true);
+    try {
+      const month = format(new Date(), "MMMM");
+      const year = new Date().getFullYear();
+      const datePrefix = format(new Date(), "yyyy-MM");
+
+      // Use local data instead of edge function for speed
+      const activeStaff = staff.filter(s => s.status === "active");
+      const monthAttendance = attendance.filter(a => a.date?.startsWith(datePrefix));
+      const monthSalaries = salaries.filter(s => s.month === month && s.year === year);
+      const monthLeaves = leaves.filter(l => l.start_date?.startsWith(datePrefix));
+
+      const staffRows = activeStaff.map(s => {
+        const records = monthAttendance.filter(a => a.staff_id === s.id);
+        const presentDays = records.filter(a => a.status === "present").length;
+        const halfDays = records.filter(a => a.status === "half_day").length;
+        const absentDays = records.filter(a => a.status === "absent").length;
+        const leaveDays = records.filter(a => a.status === "on_leave").length;
+        const totalHours = records.reduce((sum, a) => sum + (Number(a.hours_worked) || 0), 0);
+        const overtimeHours = records.reduce((sum, a) => sum + (Number(a.overtime_hours) || 0), 0);
+        const mealsConsumed = records.filter(a => a.meal_provided).length;
+        const payment = monthSalaries.find(p => p.staff_id === s.id);
+        const attendanceRate = records.length > 0 ? Math.round((presentDays / records.length) * 100) : 0;
+        return { ...s, presentDays, halfDays, absentDays, leaveDays, totalHours, overtimeHours, mealsConsumed, attendanceRate, payment };
+      });
+
+      const departments = [...new Set(activeStaff.map(s => s.department))];
+      const deptData = departments.map(d => {
+        const ds = staffRows.filter(s => s.department === d);
+        return {
+          name: d, count: ds.length,
+          totalSalary: ds.reduce((sum, s) => sum + Number(s.salary), 0),
+          avgAttendance: ds.length ? Math.round(ds.reduce((sum, s) => sum + s.attendanceRate, 0) / ds.length) : 0,
+          totalMeals: ds.reduce((sum, s) => sum + s.mealsConsumed, 0),
+          totalOT: ds.reduce((sum, s) => sum + s.overtimeHours, 0),
+        };
+      });
+
+      const totalPayroll = staffRows.reduce((sum, s) => sum + Number(s.salary), 0);
+      const totalPaid = monthSalaries.filter(s => s.status === "paid").reduce((sum, s) => sum + Number(s.amount), 0);
+      const totalPending = monthSalaries.filter(s => s.status === "pending").reduce((sum, s) => sum + Number(s.amount), 0);
+      const avgAtt = staffRows.length ? Math.round(staffRows.reduce((sum, s) => sum + s.attendanceRate, 0) / staffRows.length) : 0;
+      const totalMeals = staffRows.reduce((sum, s) => sum + s.mealsConsumed, 0);
+      const totalOT = staffRows.reduce((sum, s) => sum + s.overtimeHours, 0);
+
+      const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Staff Report - ${month} ${year}</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#1a1a2e;padding:32px;font-size:11px;line-height:1.5}
+h1{font-size:22px;font-weight:800;margin-bottom:4px;color:#1a1a2e}
+h2{font-size:14px;font-weight:700;margin:20px 0 8px;color:#1a1a2e;border-bottom:2px solid #e2e8f0;padding-bottom:4px}
+.subtitle{color:#64748b;font-size:11px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px;text-align:center}
+.card .value{font-size:20px;font-weight:800;color:#1a1a2e}
+.card .label{font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:0.5px}
+.card.green .value{color:#059669}
+.card.amber .value{color:#d97706}
+.card.red .value{color:#dc2626}
+.card.blue .value{color:#2563eb}
+table{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:10px}
+th{background:#f1f5f9;font-weight:600;text-align:left;padding:6px 8px;border:1px solid #e2e8f0;color:#334155}
+td{padding:5px 8px;border:1px solid #e2e8f0;color:#475569}
+tr:nth-child(even){background:#f8fafc}
+.badge{display:inline-block;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:600}
+.badge-green{background:#d1fae5;color:#065f46}
+.badge-amber{background:#fef3c7;color:#92400e}
+.badge-red{background:#fee2e2;color:#991b1b}
+.footer{margin-top:24px;padding-top:10px;border-top:1px solid #e2e8f0;color:#94a3b8;font-size:9px;text-align:center}
+@media print{body{padding:16px}@page{margin:12mm}}
+</style></head><body>
+<h1>📊 Monthly Staff Report</h1>
+<p class="subtitle">${month} ${year} • Generated ${format(new Date(), "dd MMM yyyy, hh:mm a")} • ${activeStaff.length} active staff</p>
+
+<h2>Summary</h2>
+<div class="grid">
+<div class="card"><div class="value">${activeStaff.length}</div><div class="label">Active Staff</div></div>
+<div class="card green"><div class="value">${avgAtt}%</div><div class="label">Avg Attendance</div></div>
+<div class="card blue"><div class="value">₹${(totalPayroll/1000).toFixed(0)}K</div><div class="label">Total Payroll</div></div>
+<div class="card amber"><div class="value">${totalOT}h</div><div class="label">Overtime Hours</div></div>
+<div class="card green"><div class="value">₹${(totalPaid/1000).toFixed(0)}K</div><div class="label">Paid</div></div>
+<div class="card red"><div class="value">₹${(totalPending/1000).toFixed(0)}K</div><div class="label">Pending</div></div>
+<div class="card"><div class="value">${totalMeals}</div><div class="label">Meals Served</div></div>
+<div class="card"><div class="value">${monthLeaves.filter(l => l.status === "approved").length}</div><div class="label">Leaves Approved</div></div>
+</div>
+
+<h2>Department Breakdown</h2>
+<table><tr><th>Department</th><th>Staff</th><th>Salary Cost</th><th>Avg Attendance</th><th>OT Hours</th><th>Meals</th></tr>
+${deptData.map(d => `<tr><td style="text-transform:capitalize;font-weight:600">${d.name}</td><td>${d.count}</td><td>₹${d.totalSalary.toLocaleString()}</td><td><span class="badge ${d.avgAttendance >= 80 ? 'badge-green' : d.avgAttendance >= 60 ? 'badge-amber' : 'badge-red'}">${d.avgAttendance}%</span></td><td>${d.totalOT}h</td><td>${d.totalMeals}</td></tr>`).join("")}
+<tr style="font-weight:700;background:#f1f5f9"><td>Total</td><td>${activeStaff.length}</td><td>₹${totalPayroll.toLocaleString()}</td><td>${avgAtt}%</td><td>${totalOT}h</td><td>${totalMeals}</td></tr>
+</table>
+
+<h2>Attendance Summary</h2>
+<table><tr><th>Name</th><th>Role</th><th>Dept</th><th>Present</th><th>Half</th><th>Absent</th><th>Leave</th><th>Hours</th><th>OT</th><th>Rate</th></tr>
+${staffRows.map(s => `<tr><td style="font-weight:600">${s.name}</td><td style="text-transform:capitalize">${s.role}</td><td style="text-transform:capitalize">${s.department}</td><td>${s.presentDays}</td><td>${s.halfDays}</td><td>${s.absentDays}</td><td>${s.leaveDays}</td><td>${s.totalHours}h</td><td>${s.overtimeHours}h</td><td><span class="badge ${s.attendanceRate >= 80 ? 'badge-green' : s.attendanceRate >= 60 ? 'badge-amber' : 'badge-red'}">${s.attendanceRate}%</span></td></tr>`).join("")}
+</table>
+
+<h2>Salary Breakdown</h2>
+<table><tr><th>Name</th><th>Base Salary</th><th>Bonus</th><th>Deductions</th><th>Net Amount</th><th>Status</th></tr>
+${staffRows.map(s => {
+  const p = s.payment;
+  return `<tr><td style="font-weight:600">${s.name}</td><td>₹${Number(s.salary).toLocaleString()}</td><td style="color:#059669">${p ? `+₹${p.bonus}` : '—'}</td><td style="color:#dc2626">${p ? `-₹${p.deductions}` : '—'}</td><td style="font-weight:700">${p ? `₹${Number(p.amount).toLocaleString()}` : '—'}</td><td>${p ? `<span class="badge ${p.status === 'paid' ? 'badge-green' : 'badge-amber'}">${p.status}</span>` : '<span class="badge badge-red">No slip</span>'}</td></tr>`;
+}).join("")}
+</table>
+
+<h2>Meals & Overtime</h2>
+<table><tr><th>Name</th><th>Meals Consumed</th><th>Overtime Hours</th><th>Est. Meal Cost</th><th>OT Compensation</th></tr>
+${staffRows.filter(s => s.mealsConsumed > 0 || s.overtimeHours > 0).map(s => {
+  const mealCost = s.mealsConsumed * 80;
+  const otComp = Math.round(s.overtimeHours * (Number(s.salary) / 30 / 8) * 1.5);
+  return `<tr><td style="font-weight:600">${s.name}</td><td>${s.mealsConsumed}</td><td>${s.overtimeHours}h</td><td>₹${mealCost}</td><td>₹${otComp.toLocaleString()}</td></tr>`;
+}).join("")}
+</table>
+
+<div class="footer">
+This report was auto-generated by Hushh Staff Management System • ${format(new Date(), "dd MMM yyyy")} • Confidential
+</div>
+</body></html>`;
+
+      // Open print dialog
+      const printWindow = window.open("", "_blank");
+      if (printWindow) {
+        printWindow.document.write(html);
+        printWindow.document.close();
+        setTimeout(() => { printWindow.print(); }, 500);
+      } else {
+        // Fallback: download as HTML
+        const blob = new Blob([html], { type: "text/html" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `staff-report-${month}-${year}.html`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+      toast.success("Report generated!");
+    } catch (err: any) {
+      toast.error("Failed to generate report");
+    } finally {
+      setGeneratingReport(false);
+    }
+  };
+
   return (
     <div className="space-y-4 pb-24">
       {/* Header */}
