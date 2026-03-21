@@ -1,9 +1,9 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   CalendarDays, ChevronLeft, ChevronRight, Loader2, Lock, Unlock,
   Users, IndianRupee, TrendingUp, Clock, BarChart3, Flame,
-  ArrowUpRight, ArrowDownRight, Star, Zap, MapPin, Home, Eye
+  ArrowUpRight, ArrowDownRight, Star, Zap, MapPin, Home, Eye, User
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { properties } from "@/data/properties";
@@ -16,6 +16,13 @@ interface BookingEntry {
   booking_id: string;
   property_id: string;
   user_id?: string;
+  created_at?: string;
+}
+
+interface UserProfile {
+  display_name: string | null;
+  avatar_url: string | null;
+  tier: string;
 }
 
 interface PropertyInfo {
