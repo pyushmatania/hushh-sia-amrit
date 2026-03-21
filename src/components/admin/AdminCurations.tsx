@@ -392,19 +392,20 @@ export default function AdminCurations() {
       </motion.div>
 
       {/* Stats Cards */}
-      <motion.div variants={fadeUp} className="grid grid-cols-4 gap-2">
+      <motion.div variants={fadeUp} className="grid grid-cols-5 gap-2">
         {[
           { label: "Active", value: activeCurations, icon: Zap, color: "text-emerald-500", bg: "bg-emerald-500/10" },
           { label: "Avg Price", value: `₹${avgPrice.toLocaleString()}`, icon: IndianRupee, color: "text-blue-500", bg: "bg-blue-500/10" },
+          { label: "Revenue", value: `₹${totalEarned >= 1000 ? `${(totalEarned / 1000).toFixed(1)}k` : totalEarned.toLocaleString()}`, icon: TrendingUp, color: "text-primary", bg: "bg-primary/10" },
           { label: "Deals", value: discountedCount, icon: Tag, color: "text-amber-500", bg: "bg-amber-500/10" },
           { label: "Moods", value: uniqueMoods.size, icon: Heart, color: "text-violet-500", bg: "bg-violet-500/10" },
         ].map(s => (
-          <div key={s.label} className="rounded-xl bg-card border border-border p-3 text-center">
-            <div className={`w-7 h-7 rounded-lg ${s.bg} flex items-center justify-center mx-auto mb-1`}>
-              <s.icon size={14} className={s.color} />
+          <div key={s.label} className="rounded-xl bg-card border border-border p-2.5 text-center">
+            <div className={`w-6 h-6 rounded-lg ${s.bg} flex items-center justify-center mx-auto mb-1`}>
+              <s.icon size={12} className={s.color} />
             </div>
-            <p className="text-sm font-bold text-foreground tabular-nums">{s.value}</p>
-            <p className="text-[9px] text-muted-foreground">{s.label}</p>
+            <p className="text-xs font-bold text-foreground tabular-nums">{s.value}</p>
+            <p className="text-[8px] text-muted-foreground">{s.label}</p>
           </div>
         ))}
       </motion.div>
