@@ -90,6 +90,7 @@ export default function AdminProperties() {
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
   const [expandedSection, setExpandedSection] = useState<string>("basic");
   const [previewMode, setPreviewMode] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.from("host_listings").select("*").order("sort_order").order("created_at", { ascending: false })
