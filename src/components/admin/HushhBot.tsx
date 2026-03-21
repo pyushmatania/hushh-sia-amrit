@@ -498,7 +498,7 @@ function FlameEye({ size, state, side, hovered = false, eyeStyle = "" }: { size:
     );
   }
 
-
+  return (
     <motion.div
       className="relative rounded-full"
       style={{
