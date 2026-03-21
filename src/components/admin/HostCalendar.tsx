@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   CalendarDays, ChevronLeft, ChevronRight, Loader2, Lock, Unlock,
   Users, IndianRupee, TrendingUp, Clock, BarChart3, Flame,
-  ArrowUpRight, ArrowDownRight, Star, Zap
+  ArrowUpRight, ArrowDownRight, Star, Zap, ChevronRight as ChevronRightIcon
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
