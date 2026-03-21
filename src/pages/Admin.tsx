@@ -27,6 +27,7 @@ import BookingRequests from "@/components/admin/BookingRequests";
 import AdminPropertyHistory from "@/components/admin/AdminPropertyHistory";
 import AdminInventory from "@/components/admin/AdminInventory";
 import AdminStaffManagement from "@/components/admin/AdminStaffManagement";
+import AdminBudgetTracker from "@/components/admin/AdminBudgetTracker";
 import AuthScreen from "@/components/AuthScreen";
 import { Shield, Loader2 } from "lucide-react";
 
@@ -109,6 +110,7 @@ export default function Admin() {
       />;
       case "inventory": return <AdminInventory />;
       case "staff-mgmt": return <AdminStaffManagement />;
+      case "budget": return <AdminBudgetTracker />;
       case "audit": return <AdminAuditLog />;
       default: return <CommandCenter onNavigate={setPage} />;
     }

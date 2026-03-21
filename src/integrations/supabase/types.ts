@@ -86,6 +86,42 @@ export type Database = {
         }
         Relationships: []
       }
+      budget_allocations: {
+        Row: {
+          allocated: number
+          category: string
+          created_at: string
+          id: string
+          month: string
+          notes: string
+          spent: number
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          allocated?: number
+          category: string
+          created_at?: string
+          id?: string
+          month: string
+          notes?: string
+          spent?: number
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          allocated?: number
+          category?: string
+          created_at?: string
+          id?: string
+          month?: string
+          notes?: string
+          spent?: number
+          updated_at?: string
+          year?: number
+        }
+        Relationships: []
+      }
       campaigns: {
         Row: {
           active: boolean
@@ -266,6 +302,63 @@ export type Database = {
           tagline?: string
           tags?: string[]
           updated_at?: string
+        }
+        Relationships: []
+      }
+      expenses: {
+        Row: {
+          amount: number
+          approved_by: string | null
+          category: string
+          created_at: string
+          created_by: string | null
+          date: string
+          id: string
+          notes: string
+          payment_method: string
+          receipt_url: string | null
+          recurring: boolean
+          recurring_frequency: string | null
+          subcategory: string
+          title: string
+          updated_at: string
+          vendor: string
+        }
+        Insert: {
+          amount?: number
+          approved_by?: string | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          date?: string
+          id?: string
+          notes?: string
+          payment_method?: string
+          receipt_url?: string | null
+          recurring?: boolean
+          recurring_frequency?: string | null
+          subcategory?: string
+          title: string
+          updated_at?: string
+          vendor?: string
+        }
+        Update: {
+          amount?: number
+          approved_by?: string | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          date?: string
+          id?: string
+          notes?: string
+          payment_method?: string
+          receipt_url?: string | null
+          recurring?: boolean
+          recurring_frequency?: string | null
+          subcategory?: string
+          title?: string
+          updated_at?: string
+          vendor?: string
         }
         Relationships: []
       }
