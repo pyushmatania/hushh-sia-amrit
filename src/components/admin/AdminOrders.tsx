@@ -41,20 +41,24 @@ export default function AdminOrders() {
         supabase.from("orders").select("*").order("created_at", { ascending: false }).limit(50),
         supabase.from("order_items").select("*"),
         supabase.from("profiles").select("user_id, display_name"),
-        supabase.from("host_listings").select("id, name"),
+        supabase.from("host_listings").select("id, name, image_urls"),
       ]);
       if (!ordersRes.data) { setLoading(false); return; }
       const itemMap = new Map<string, any[]>();
       (itemsRes.data ?? []).forEach(item => { const list = itemMap.get(item.order_id) || []; list.push(item); itemMap.set(item.order_id, list); });
       const profileMap = new Map<string, string>();
       (profilesRes.data ?? []).forEach(p => profileMap.set(p.user_id, p.display_name || "Guest"));
-      const listingMap = new Map<string, string>();
-      (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, l.name));
-      setOrders(ordersRes.data.map(o => ({
-        ...o, assigned_name: (o as any).assigned_name || null,
-        items: itemMap.get(o.id) || [], guestName: profileMap.get(o.user_id) || "Unknown Guest",
-        propertyName: listingMap.get(o.property_id) || `Property`,
-      })));
+      const listingMap = new Map<string, { name: string; imageUrls: string[] }>();
+      (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, { name: l.name, imageUrls: l.image_urls || [] }));
+      setOrders(ordersRes.data.map(o => {
+        const listing = listingMap.get(o.property_id);
+        return {
+          ...o, assigned_name: (o as any).assigned_name || null,
+          items: itemMap.get(o.id) || [], guestName: profileMap.get(o.user_id) || "Unknown Guest",
+          propertyName: listing?.name || "Property",
+          propertyImageUrls: listing?.imageUrls || [],
+        };
+      }));
       setLoading(false);
     };
     load();
