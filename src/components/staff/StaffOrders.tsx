@@ -1,16 +1,18 @@
 import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { ShoppingCart, Clock, CheckCircle2, ChefHat, Loader2, Bell } from "lucide-react";
+import { ShoppingCart, Clock, CheckCircle2, ChefHat, Loader2, Bell, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { getListingThumbnail } from "@/lib/listing-thumbnails";
 import { playWinJingle } from "@/lib/spin-sounds";
 import { hapticHeavy } from "@/lib/haptics";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface Order {
   id: string; user_id: string; property_id: string; booking_id: string | null;
   total: number; status: string; created_at: string;
   items?: { item_name: string; item_emoji: string; quantity: number; unit_price: number }[];
   propertyName?: string; propertyImageUrls?: string[];
+  guestName?: string; guestAvatar?: string | null;
 }
 const statusFlow = ["pending", "preparing", "delivered", "completed"];
 const statusConfig: Record<string, { color: string; bg: string; label: string }> = {
