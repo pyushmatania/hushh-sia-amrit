@@ -596,6 +596,7 @@ export default function AdminClients({ initialUserId, onContextConsumed }: { ini
     }
   }, [initialUserId, loading, clients, onContextConsumed]);
 
+  useEffect(() => {
     const load = async () => {
       const [profilesRes, bookingsRes, ordersRes, orderItemsRes, reviewsRes, wishlistsRes, referralsRes, verificationsRes, listingsRes] = await Promise.all([
         supabase.from("profiles").select("*").order("created_at", { ascending: false }),
