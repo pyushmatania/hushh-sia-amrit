@@ -886,6 +886,16 @@ export default function AdminProperties() {
         )}
       </AnimatePresence>
 
+      <BatchOperationsBar
+        selectedIds={selectedIds}
+        totalCount={filtered.length}
+        onSelectAll={() => setSelectedIds(filtered.map(l => l.id))}
+        onDeselectAll={() => setSelectedIds([])}
+        onBulkDelete={bulkDelete}
+        onBulkStatusChange={bulkStatusChange}
+        entityName="properties"
+      />
+
       <DeleteConfirmDialog
         open={!!deleteTarget}
         title="Delete this property?"
