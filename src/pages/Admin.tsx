@@ -155,7 +155,7 @@ export default function Admin() {
   };
 
   return (
-    <AdminLayout activePage={page} onNavigate={setPage}>
+    <AdminLayout activePage={page} onNavigate={directNav} breadcrumb={breadcrumb}>
       {renderPage()}
     </AdminLayout>
   );
