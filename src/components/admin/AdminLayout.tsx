@@ -25,6 +25,7 @@ interface AdminLayoutProps {
   activePage: AdminPage;
   onNavigate: (page: AdminPage) => void;
   children: React.ReactNode;
+  breadcrumb?: { page: AdminPage; label: string }[];
 }
 
 const navSections: { title: string; items: { id: AdminPage; label: string; icon: typeof LayoutDashboard; color: string; activeGlow: string; adminOnly?: boolean }[] }[] = [
@@ -95,7 +96,7 @@ function LiveClock() {
   );
 }
 
-export default function AdminLayout({ activePage, onNavigate, children }: AdminLayoutProps) {
+export default function AdminLayout({ activePage, onNavigate, children, breadcrumb }: AdminLayoutProps) {
   const { signOut, user } = useAuth();
   const { isAdmin } = useAdmin();
   const { theme, setTheme, resolvedTheme } = useTheme();
@@ -311,21 +312,45 @@ export default function AdminLayout({ activePage, onNavigate, children }: AdminL
             </div>
           </div>
 
-          {/* Breadcrumb - desktop */}
-          <div className="hidden md:flex items-center gap-2 flex-1">
-            <span className="text-sm text-zinc-400">Admin</span>
-            <ChevronRight size={12} className="text-zinc-300" />
-            <motion.span
-              key={activeLabel}
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-sm font-semibold text-zinc-700 dark:text-zinc-200"
-            >
-              {activeLabel}
-            </motion.span>
+          {/* Breadcrumb - shows on both mobile and desktop */}
+          <div className="flex items-center gap-1.5 flex-1 min-w-0 overflow-x-auto hide-scrollbar">
+            <button onClick={() => onNavigate("dashboard")} className="text-xs text-muted-foreground hover:text-foreground transition shrink-0">
+              Admin
+            </button>
+            {breadcrumb && breadcrumb.length > 0 ? (
+              breadcrumb.map((crumb, i) => (
+                <span key={crumb.page} className="flex items-center gap-1.5 shrink-0">
+                  <ChevronRight size={10} className="text-muted-foreground/50" />
+                  {i < breadcrumb.length - 1 ? (
+                    <button onClick={() => onNavigate(crumb.page)} className="text-xs text-muted-foreground hover:text-foreground transition">
+                      {crumb.label}
+                    </button>
+                  ) : (
+                    <motion.span
+                      key={crumb.label}
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-xs font-semibold text-foreground"
+                    >
+                      {crumb.label}
+                    </motion.span>
+                  )}
+                </span>
+              ))
+            ) : (
+              <>
+                <ChevronRight size={10} className="text-muted-foreground/50 shrink-0" />
+                <motion.span
+                  key={activeLabel}
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-xs font-semibold text-foreground shrink-0"
+                >
+                  {activeLabel}
+                </motion.span>
+              </>
+            )}
           </div>
-
-          <div className="flex-1 md:hidden" />
 
           {/* Right side */}
           <div className="flex items-center gap-3">
