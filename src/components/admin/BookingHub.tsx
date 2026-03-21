@@ -205,9 +205,26 @@ export default function BookingHub({
 
   const pendingBookings = useMemo(() => bookings.filter(b => b.status === "upcoming" || b.status === "pending"), [bookings]);
 
-  // Conflict detection: find bookings that share same property+date+slot with active statuses
+  // Capacity-aware conflict detection
+  const ROOM_CAPACITY = 2; // persons per room
+  const EXTRA_MATTRESS_LIMIT = 1; // extra person per room on mattress
+
+  const getCapacityInfo = useCallback((propertyId: string) => {
+    const prop = propertyMap.get(propertyId);
+    const category = prop?.category || "experience";
+    const totalCapacity = prop?.capacity || 15;
+
+    if (category === "stay") {
+      // Stay: room-based — capacity field = total rooms * persons per room
+      const rooms = Math.max(1, Math.floor(totalCapacity / ROOM_CAPACITY));
+      return { type: "stay" as const, rooms, perRoom: ROOM_CAPACITY, extraMattress: EXTRA_MATTRESS_LIMIT, maxGuests: rooms * (ROOM_CAPACITY + EXTRA_MATTRESS_LIMIT), totalCapacity };
+    }
+    // Experience / Service / Curation: flat guest limit
+    return { type: "experience" as const, rooms: 0, perRoom: 0, extraMattress: 0, maxGuests: totalCapacity, totalCapacity };
+  }, [propertyMap]);
+
   const conflictMap = useMemo(() => {
-    const map = new Map<string, string[]>(); // bookingId -> conflicting booking IDs
+    const map = new Map<string, string[]>();
     const activeBookings = bookings.filter(b => !["cancelled", "completed"].includes(b.status));
     for (let i = 0; i < activeBookings.length; i++) {
       for (let j = i + 1; j < activeBookings.length; j++) {
@@ -220,6 +237,27 @@ export default function BookingHub({
     }
     return map;
   }, [bookings]);
+
+  // Capacity analysis for a booking slot
+  const getSlotCapacity = useCallback((booking: Booking) => {
+    const capInfo = getCapacityInfo(booking.property_id);
+    const activeBookings = bookings.filter(b =>
+      b.id !== booking.id &&
+      b.property_id === booking.property_id &&
+      b.date === booking.date &&
+      b.slot === booking.slot &&
+      !["cancelled", "completed"].includes(b.status)
+    );
+    const totalGuests = activeBookings.reduce((s, b) => s + b.guests, 0) + booking.guests;
+    const isOverCapacity = totalGuests > capInfo.maxGuests;
+
+    if (capInfo.type === "stay") {
+      const roomsNeeded = Math.ceil(totalGuests / (ROOM_CAPACITY + EXTRA_MATTRESS_LIMIT));
+      const needsMattress = totalGuests > roomsNeeded * ROOM_CAPACITY;
+      return { ...capInfo, totalGuests, isOverCapacity, roomsNeeded, needsMattress, otherBookings: activeBookings.length };
+    }
+    return { ...capInfo, totalGuests, isOverCapacity, roomsNeeded: 0, needsMattress: false, otherBookings: activeBookings.length };
+  }, [bookings, getCapacityInfo]);
 
   const getConflicts = useCallback((booking: Booking) => {
     const ids = conflictMap.get(booking.id);
