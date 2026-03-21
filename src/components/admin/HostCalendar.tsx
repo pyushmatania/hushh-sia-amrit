@@ -370,12 +370,14 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
                             {slotBookings.map((b, j) => {
                               const cfg = statusConfig[b.status] || statusConfig.upcoming;
                               return (
-                                <motion.div
+                                 <motion.div
                                   key={j}
                                   initial={{ opacity: 0 }}
                                   animate={{ opacity: 1 }}
                                   transition={{ delay: j * 0.05 }}
-                                  className={`flex items-center justify-between rounded-lg border px-2.5 py-2 ${cfg.bg}`}
+                                  whileTap={{ scale: 0.97 }}
+                                  onClick={() => onNavigate?.("history", { bookingId: b.booking_id, propertyId: b.property_id })}
+                                  className={`flex items-center justify-between rounded-lg border px-2.5 py-2 cursor-pointer hover:ring-1 hover:ring-primary/30 active:ring-primary/50 transition-all ${cfg.bg}`}
                                 >
                                   <div className="flex items-center gap-2">
                                     <div className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
@@ -393,13 +395,16 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
                                       </div>
                                     </div>
                                   </div>
-                                  <div className="text-right">
-                                    <span className="text-[11px] font-bold text-foreground">₹{Number(b.total).toLocaleString()}</span>
-                                    <div>
-                                      <span className={`text-[9px] font-medium capitalize ${cfg.color}`}>
-                                        {b.status}
-                                      </span>
+                                  <div className="flex items-center gap-2">
+                                    <div className="text-right">
+                                      <span className="text-[11px] font-bold text-foreground">₹{Number(b.total).toLocaleString()}</span>
+                                      <div>
+                                        <span className={`text-[9px] font-medium capitalize ${cfg.color}`}>
+                                          {b.status}
+                                        </span>
+                                      </div>
                                     </div>
+                                    <ChevronRight size={12} className="text-muted-foreground" />
                                   </div>
                                 </motion.div>
                               );
