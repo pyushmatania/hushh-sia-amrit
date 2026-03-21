@@ -35,21 +35,48 @@ export default function Admin() {
   const { user, loading: authLoading } = useAuth();
   const { hasAdminAccess, loading: roleLoading } = useAdmin();
   const [page, setPage] = useState<AdminPage>("dashboard");
-  const [prevPage, setPrevPage] = useState<AdminPage | null>(null);
+  const [pageHistory, setPageHistory] = useState<AdminPage[]>([]);
   const [skipAuth, setSkipAuth] = useState(false);
   const [historyContext, setHistoryContext] = useState<{ bookingId?: string; propertyId?: string } | null>(null);
   const [clientContext, setClientContext] = useState<{ userId?: string } | null>(null);
 
+  const pageLabels: Record<AdminPage, string> = {
+    dashboard: "Dashboard", catalog: "Catalog", properties: "Properties",
+    bookings: "Bookings", users: "Users CRM", clients: "Clients",
+    analytics: "Analytics", curations: "Curations", tags: "Tags",
+    campaigns: "Campaigns", coupons: "Coupons", orders: "Live Orders",
+    exports: "Exports", ai: "AI Assistant", alerts: "Smart Alerts",
+    audit: "Audit Trail", earnings: "Earnings", pricing: "Pricing",
+    achievements: "Achievements", loyalty: "Loyalty", calendar: "Calendar",
+    requests: "Requests", history: "Property History", inventory: "Inventory",
+    "staff-mgmt": "Staff Mgmt", budget: "Budget",
+  };
+
   const navigateTo = (target: AdminPage, ctx?: { propertyId?: string; userId?: string; bookingId?: string }) => {
-    setPrevPage(page);
+    setPageHistory(prev => [...prev, page]);
     if (ctx?.propertyId) setHistoryContext(ctx);
     if (ctx?.userId) setClientContext({ userId: ctx.userId });
     setPage(target);
   };
 
   const goBack = () => {
-    if (prevPage) { setPage(prevPage); setPrevPage(null); }
+    const prev = pageHistory[pageHistory.length - 1];
+    if (prev) {
+      setPageHistory(h => h.slice(0, -1));
+      setPage(prev);
+    }
   };
+
+  // Direct nav (sidebar click) resets history
+  const directNav = (target: AdminPage) => {
+    setPageHistory([]);
+    setPage(target);
+  };
+
+  const breadcrumb = [
+    ...pageHistory.map(p => ({ page: p, label: pageLabels[p] })),
+    { page: page, label: pageLabels[page] },
+  ];
 
   if (authLoading || roleLoading) {
     return (
