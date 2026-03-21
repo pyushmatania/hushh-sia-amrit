@@ -196,6 +196,30 @@ export default function BusinessIntelligence({ onNavigate }: { onNavigate?: (pag
     });
     propResults.sort((a, b) => b.revenue - a.revenue);
     setPropertyDemand(propResults.slice(0, 8));
+
+    // Weekly trends: this week vs last week by day of week
+    const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const today = new Date();
+    const todayDay = today.getDay();
+    const thisWeekStart = new Date(today); thisWeekStart.setDate(today.getDate() - todayDay); thisWeekStart.setHours(0, 0, 0, 0);
+    const lastWeekStart = new Date(thisWeekStart); lastWeekStart.setDate(lastWeekStart.getDate() - 7);
+    const thisWeekDays: Record<number, { count: number; revenue: number }> = {};
+    const lastWeekDays: Record<number, { count: number; revenue: number }> = {};
+    for (let i = 0; i < 7; i++) { thisWeekDays[i] = { count: 0, revenue: 0 }; lastWeekDays[i] = { count: 0, revenue: 0 }; }
+    bookings.forEach(b => {
+      const d = new Date(b.date || b.created_at);
+      const dayOfWeek = d.getDay();
+      if (d >= thisWeekStart) {
+        thisWeekDays[dayOfWeek].count++; thisWeekDays[dayOfWeek].revenue += Number(b.total);
+      } else if (d >= lastWeekStart && d < thisWeekStart) {
+        lastWeekDays[dayOfWeek].count++; lastWeekDays[dayOfWeek].revenue += Number(b.total);
+      }
+    });
+    setWeeklyTrends(DAYS.map((day, i) => ({
+      day, thisWeek: thisWeekDays[i].count, lastWeek: lastWeekDays[i].count,
+      thisRevenue: thisWeekDays[i].revenue, lastRevenue: lastWeekDays[i].revenue,
+    })));
+
     setLoadingPricing(false);
   };
 
