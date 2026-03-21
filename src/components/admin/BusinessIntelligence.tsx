@@ -343,6 +343,71 @@ export default function BusinessIntelligence({ onNavigate }: { onNavigate?: (pag
                   accent="bg-amber-100 dark:bg-amber-500/15" />
               </div>
 
+              {/* Weekly Trends Chart */}
+              {weeklyTrends.length > 0 && (
+                <div className="rounded-2xl border border-border/60 bg-card p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                      <Calendar size={14} className="text-primary" /> This Week vs Last Week
+                    </h3>
+                    <div className="flex items-center gap-3">
+                      <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                        <span className="w-2.5 h-2.5 rounded-full bg-primary" /> This week
+                      </span>
+                      <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                        <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/30" /> Last week
+                      </span>
+                    </div>
+                  </div>
+                  <ResponsiveContainer width="100%" height={180}>
+                    <AreaChart data={weeklyTrends}>
+                      <defs>
+                        <linearGradient id="thisWeekGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                        </linearGradient>
+                        <linearGradient id="lastWeekGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(var(--muted-foreground))" stopOpacity={0.15} />
+                          <stop offset="95%" stopColor="hsl(var(--muted-foreground))" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <XAxis dataKey="day" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+                      <YAxis tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={24} allowDecimals={false} />
+                      <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 12, fontSize: 11 }}
+                        formatter={(value: number, name: string) => [value, name === "thisWeek" ? "This Week" : "Last Week"]} />
+                      <Area type="monotone" dataKey="lastWeek" stroke="hsl(var(--muted-foreground))" strokeWidth={1.5} strokeDasharray="4 4" fill="url(#lastWeekGrad)" />
+                      <Area type="monotone" dataKey="thisWeek" stroke="hsl(var(--primary))" strokeWidth={2} fill="url(#thisWeekGrad)" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                  {/* Weekly summary row */}
+                  <div className="flex items-center justify-between mt-3 pt-3 border-t border-border/40">
+                    <div className="text-center flex-1">
+                      <p className="text-lg font-black text-foreground">{weeklyTrends.reduce((s, d) => s + d.thisWeek, 0)}</p>
+                      <p className="text-[9px] text-muted-foreground">This week bookings</p>
+                    </div>
+                    <div className="text-center flex-1">
+                      <p className="text-lg font-black text-foreground">{weeklyTrends.reduce((s, d) => s + d.lastWeek, 0)}</p>
+                      <p className="text-[9px] text-muted-foreground">Last week bookings</p>
+                    </div>
+                    <div className="text-center flex-1">
+                      {(() => {
+                        const tw = weeklyTrends.reduce((s, d) => s + d.thisWeek, 0);
+                        const lw = weeklyTrends.reduce((s, d) => s + d.lastWeek, 0);
+                        const change = lw > 0 ? Math.round(((tw - lw) / lw) * 100) : tw > 0 ? 100 : 0;
+                        return (
+                          <>
+                            <p className={`text-lg font-black ${change >= 0 ? "text-emerald-500" : "text-destructive"}`}>
+                              {change >= 0 ? "+" : ""}{change}%
+                            </p>
+                            <p className="text-[9px] text-muted-foreground">Change</p>
+                          </>
+                        );
+                      })()}
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Demand by Slot Chart */}
               {slotChartData.length > 0 && (
                 <div className="rounded-2xl border border-border/60 bg-card p-4">
