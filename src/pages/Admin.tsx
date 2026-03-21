@@ -124,7 +124,7 @@ export default function Admin() {
       case "alerts": return <AdminAlerts onNavigate={(p) => setPage(p as AdminPage)} />;
       case "pricing": return <DynamicPricing />;
       case "properties": return <AdminProperties />;
-      case "bookings": return <AdminBookings onNavigate={(p, ctx) => navigateTo(p as AdminPage, ctx)} />;
+      case "bookings": return <BookingHub onNavigate={(p, ctx) => navigateTo(p as AdminPage, ctx)} />;
       case "users": return <AdminUsers />;
       case "clients": return <AdminClients initialUserId={clientContext?.userId} onContextConsumed={() => setClientContext(null)} onBack={pageHistory.length > 0 ? goBack : undefined} />;
       case "analytics": return <AdminAnalytics />;
