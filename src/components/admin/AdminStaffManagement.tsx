@@ -179,7 +179,15 @@ export default function AdminStaffManagement() {
       const checkIn = new Date(a.check_in);
       return checkIn.getHours() >= 10;
     }).length;
-    return { attendanceRate, totalHours, overtimeHours, mealsConsumed, presentDays, totalDays: last30.length, lateArrivals };
+    // Phase 3: Composite performance score (0-100)
+    const staffTasks = []; // Would come from staff_tasks table if assigned_to matches
+    const punctualityScore = totalDays > 0 ? Math.max(0, 100 - (lateArrivals / totalDays) * 100) : 100;
+    const dedicationBonus = overtimeHours > 0 ? Math.min(10, overtimeHours * 0.5) : 0;
+    const compositeScore = Math.min(100, Math.round(
+      attendanceRate * 0.6 + punctualityScore * 0.3 + dedicationBonus
+    ));
+    const grade = compositeScore >= 90 ? "A+" : compositeScore >= 80 ? "A" : compositeScore >= 70 ? "B" : compositeScore >= 60 ? "C" : "D";
+    return { attendanceRate, totalHours, overtimeHours, mealsConsumed, presentDays, totalDays: last30.length, lateArrivals, compositeScore, grade, punctualityScore };
   };
 
   // CRUD
