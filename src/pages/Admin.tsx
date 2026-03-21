@@ -144,7 +144,7 @@ export default function Admin() {
         initialPropertyId={historyContext?.propertyId}
         initialBookingId={historyContext?.bookingId}
         onContextConsumed={() => setHistoryContext(null)}
-        onBack={prevPage ? goBack : undefined}
+        onBack={pageHistory.length > 0 ? goBack : undefined}
       />;
       case "inventory": return <AdminInventory />;
       case "staff-mgmt": return <AdminStaffManagement />;
