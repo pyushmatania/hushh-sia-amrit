@@ -12,6 +12,7 @@ import CommandPalette from "./CommandPalette";
 import FloatingChecklist from "./FloatingChecklist";
 import { useAuth } from "@/hooks/use-auth";
 import { useAdmin } from "@/hooks/use-admin";
+import { useTheme } from "@/hooks/use-theme";
 
 export type AdminPage =
   | "dashboard" | "catalog" | "properties" | "bookings" | "users" | "clients"
