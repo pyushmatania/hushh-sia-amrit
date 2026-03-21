@@ -37,7 +37,7 @@ import { Shield, Loader2 } from "lucide-react";
 
 export default function Admin() {
   const { user, loading: authLoading } = useAuth();
-  const { hasAdminAccess, loading: roleLoading } = useAdmin();
+  const { hasAdminAccess, loading: roleLoading, roles } = useAdmin();
   const [page, setPage] = useState<AdminPage>("dashboard");
   const [pageHistory, setPageHistory] = useState<AdminPage[]>([]);
   const [skipAuth, setSkipAuth] = useState(false);
@@ -124,7 +124,7 @@ export default function Admin() {
   const renderPage = () => {
     switch (page) {
       case "catalog": return <AdminCatalog />;
-      case "dashboard": return <CommandCenter onNavigate={setPage} />;
+      case "dashboard": return <CommandCenter onNavigate={setPage} userRole={roles[0] || null} />;
       case "ai": return <AdminAI />;
       case "alerts": return <BusinessIntelligence onNavigate={(p) => setPage(p as AdminPage)} />;
       case "pricing": return <BusinessIntelligence onNavigate={(p) => setPage(p as AdminPage)} />;

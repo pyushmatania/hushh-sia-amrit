@@ -103,7 +103,7 @@ function getSlotIcon(slot: string) {
 
 const PIE_COLORS = ["hsl(250, 80%, 60%)", "hsl(280, 65%, 62%)", "hsl(200, 75%, 55%)", "hsl(340, 70%, 60%)", "hsl(160, 60%, 50%)"];
 
-export default function CommandCenter({ onNavigate }: { onNavigate?: (page: AdminPage) => void }) {
+export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (page: AdminPage) => void; userRole?: "super_admin" | "ops_manager" | "host" | "staff" | null }) {
   const [stats, setStats] = useState<Stats>({ revenue: 0, bookings: 0, activeListings: 0, totalUsers: 0, pendingOrders: 0, todayBookings: 0, avgRating: 0, lowStock: 0 });
   const [greeting, setGreeting] = useState("Good morning");
   const [topProperties, setTopProperties] = useState<TopProperty[]>([]);
@@ -218,6 +218,36 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
     });
   }, []);
 
+  // Phase 1: Real-time dashboard sync
+  useEffect(() => {
+    const channels = [
+      supabase.channel("dashboard-bookings-rt").on("postgres_changes", { event: "*", schema: "public", table: "bookings" }, () => {
+        // Re-fetch stats on booking changes
+        supabase.from("bookings").select("total, status, property_id, date, slot, guests").then(({ data }) => {
+          if (!data) return;
+          const today = new Date().toISOString().split("T")[0];
+          setStats(prev => ({
+            ...prev,
+            revenue: data.reduce((s, b) => s + Number(b.total), 0),
+            bookings: data.length,
+            todayBookings: data.filter(b => b.date === today).length,
+          }));
+        });
+      }).subscribe(),
+      supabase.channel("dashboard-orders-rt").on("postgres_changes", { event: "*", schema: "public", table: "orders" }, () => {
+        supabase.from("orders").select("id, status").then(({ data }) => {
+          if (data) setStats(prev => ({ ...prev, pendingOrders: data.filter(o => o.status === "pending").length }));
+        });
+      }).subscribe(),
+      supabase.channel("dashboard-inventory-rt").on("postgres_changes", { event: "*", schema: "public", table: "inventory" }, () => {
+        supabase.from("inventory").select("id, stock, low_stock_threshold, available").then(({ data }) => {
+          if (data) setStats(prev => ({ ...prev, lowStock: data.filter(i => i.stock <= i.low_stock_threshold && i.available).length }));
+        });
+      }).subscribe(),
+    ];
+    return () => { channels.forEach(ch => supabase.removeChannel(ch)); };
+  }, []);
+
   const revTrendPct = prevMonthStats.revenue;
   const bkTrendPct = prevMonthStats.bookings;
 
@@ -228,24 +258,28 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
     { label: "Users", value: stats.totalUsers, prefix: "", icon: Users, accent: "from-rose-500 to-rose-600", accentLight: "bg-rose-500/8", change: `${stats.totalUsers} total`, up: true },
   ];
 
-  const quickActions = [
-    { label: "Bookings", icon: CalendarCheck, page: "bookings" as AdminPage },
-    { label: "Orders", icon: ShoppingCart, page: "orders" as AdminPage },
-    { label: "Analytics", icon: BarChart3, page: "analytics" as AdminPage },
-    { label: "Staff", icon: UserCog, page: "staff-mgmt" as AdminPage },
-    { label: "Budget", icon: Wallet, page: "budget" as AdminPage },
-    { label: "Calendar", icon: Calendar, page: "calendar" as AdminPage },
-    { label: "Campaigns", icon: Target, page: "campaigns" as AdminPage },
-    { label: "Catalog", icon: Package, page: "catalog" as AdminPage },
-    { label: "Coupons", icon: Ticket, page: "coupons" as AdminPage },
-    { label: "Clients", icon: Users, page: "clients" as AdminPage },
-    { label: "Loyalty", icon: Gift, page: "loyalty" as AdminPage },
-    { label: "Earnings", icon: CreditCard, page: "earnings" as AdminPage },
-    { label: "Inventory", icon: Utensils, page: "inventory" as AdminPage },
-    { label: "Requests", icon: ClipboardList, page: "requests" as AdminPage },
-    { label: "Exports", icon: FileText, page: "exports" as AdminPage },
-    { label: "Audit", icon: Shield, page: "audit" as AdminPage },
+  // Phase 5: Role-based quick actions
+  const allActions = [
+    { label: "Bookings", icon: CalendarCheck, page: "bookings" as AdminPage, roles: ["super_admin", "ops_manager", "host"] },
+    { label: "Orders", icon: ShoppingCart, page: "orders" as AdminPage, roles: ["super_admin", "ops_manager", "staff"] },
+    { label: "Analytics", icon: BarChart3, page: "analytics" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Staff", icon: UserCog, page: "staff-mgmt" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Budget", icon: Wallet, page: "budget" as AdminPage, roles: ["super_admin"] },
+    { label: "Calendar", icon: Calendar, page: "calendar" as AdminPage, roles: ["super_admin", "ops_manager", "host"] },
+    { label: "Campaigns", icon: Target, page: "campaigns" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Catalog", icon: Package, page: "catalog" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Coupons", icon: Ticket, page: "coupons" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Clients", icon: Users, page: "clients" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Loyalty", icon: Gift, page: "loyalty" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Earnings", icon: CreditCard, page: "earnings" as AdminPage, roles: ["super_admin", "ops_manager", "host"] },
+    { label: "Inventory", icon: Utensils, page: "inventory" as AdminPage, roles: ["super_admin", "ops_manager", "staff"] },
+    { label: "Requests", icon: ClipboardList, page: "requests" as AdminPage, roles: ["super_admin", "ops_manager"] },
+    { label: "Exports", icon: FileText, page: "exports" as AdminPage, roles: ["super_admin"] },
+    { label: "Audit", icon: Shield, page: "audit" as AdminPage, roles: ["super_admin"] },
   ];
+  const quickActions = userRole
+    ? allActions.filter(a => a.roles.includes(userRole))
+    : allActions;
 
   const timeAgo = (ts: string) => {
     const diff = Date.now() - new Date(ts).getTime();
@@ -657,7 +691,19 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
     },
   ], [stats, topProperties, recentReviews, todaySchedule, categoryData, onNavigate, revenueChartData, weeklyPerfData, financialData, revTrendPct, prevMonthStats]);
 
-  const { orderedWidgets, editMode, setEditMode, dragIdx, overIdx, handlePointerDown, handlePointerMove, handlePointerUp, resetOrder, containerRef } = useDraggableWidgets(widgets);
+  // Phase 5: Filter widgets by role
+  const roleWidgetFilter: Record<string, string[]> = {
+    staff: ["smart-insights", "quick-shortcuts", "today-schedule", "live-orders"],
+    host: ["smart-insights", "quick-shortcuts", "today-schedule", "revenue-trend", "recent-reviews", "live-orders", "category-mix"],
+    ops_manager: ["smart-insights", "quick-shortcuts", "today-schedule", "revenue-trend", "financial-summary", "live-orders", "system-health", "heatmap-activity", "category-mix", "weekly-performance", "recent-reviews"],
+  };
+  const filteredWidgets = useMemo(() => {
+    if (!userRole || userRole === "super_admin") return widgets;
+    const allowed = roleWidgetFilter[userRole];
+    return allowed ? widgets.filter(w => allowed.includes(w.id)) : widgets;
+  }, [widgets, userRole]);
+
+  const { orderedWidgets, editMode, setEditMode, dragIdx, overIdx, handlePointerDown, handlePointerMove, handlePointerUp, resetOrder, containerRef } = useDraggableWidgets(filteredWidgets);
 
   return (
     <div className="space-y-4 pb-8">
@@ -667,6 +713,7 @@ export default function CommandCenter({ onNavigate }: { onNavigate?: (page: Admi
           <h1 className="text-xl font-bold text-foreground tracking-tight">{greeting} 👋</h1>
           <p className="text-[11px] text-muted-foreground mt-0.5">
             {currentTime.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "short" })} · {currentTime.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
+            {userRole && <span className="ml-2 px-1.5 py-0.5 rounded-md bg-primary/10 text-primary text-[9px] font-bold capitalize">{userRole.replace("_", " ")}</span>}
           </p>
         </div>
         <div className="flex items-center gap-2">
