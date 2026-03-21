@@ -80,6 +80,7 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
         className="absolute"
         style={{ inset: 0 }}
         animate={
+          hovered ? { y: -12, scale: 0.88, rotate: [0, -6, 6, -3, 0] } :
           state === "thinking" ? { y: [0, -5, 0], rotate: [0, 2, -2, 0] } :
           state === "speaking" ? { y: [0, -3, 0] } :
           state === "success" ? { y: [0, -8, 0] } :
@@ -88,8 +89,8 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
           { y: [0, -4, 0] }
         }
         transition={{
-          duration: state === "error" ? 0.4 : state === "success" ? 0.6 : state === "thinking" ? 1.2 : 2.5,
-          repeat: Infinity, ease: "easeInOut",
+          duration: hovered ? 0.35 : state === "error" ? 0.4 : state === "success" ? 0.6 : state === "thinking" ? 1.2 : 2.5,
+          repeat: hovered ? 0 : Infinity, ease: "easeInOut",
         }}
       >
         {/* ── OUTER FLAME LAYER 1 (biggest, deepest color) ── */}
