@@ -496,8 +496,8 @@ export default function AdminStaffManagement() {
         )}
       </AnimatePresence>
 
-      <DeleteConfirmDialog open={!!deleteTarget} onClose={() => setDeleteTarget(null)}
-        onConfirm={handleDelete} entityName={deleteTarget?.name || ""} entityType="staff member" />
+      <DeleteConfirmDialog open={!!deleteTarget} onCancel={() => setDeleteTarget(null)}
+        onConfirm={handleDelete} />
     </div>
   );
 }
