@@ -53,6 +53,7 @@ export default function AdminCurations() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [propertyMap, setPropertyMap] = useState(new Map<string, PropertyInfo>());
   const [bookingCounts, setBookingCounts] = useState(new Map<string, number>());
+  const [revenueMap, setRevenueMap] = useState(new Map<string, { bookingRev: number; orderRev: number; totalBookings: number }>());
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const toggleSelect = (id: string) => {
