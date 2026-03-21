@@ -28,6 +28,10 @@ import AdminPropertyHistory from "@/components/admin/AdminPropertyHistory";
 import AdminInventory from "@/components/admin/AdminInventory";
 import AdminStaffManagement from "@/components/admin/AdminStaffManagement";
 import AdminBudgetTracker from "@/components/admin/AdminBudgetTracker";
+import AdminCheckin from "@/components/admin/AdminCheckin";
+import AdminReports from "@/components/admin/AdminReports";
+import AdminNotifications from "@/components/admin/AdminNotifications";
+import AdminSettings from "@/components/admin/AdminSettings";
 import AuthScreen from "@/components/AuthScreen";
 import { Shield, Loader2 } from "lucide-react";
 
