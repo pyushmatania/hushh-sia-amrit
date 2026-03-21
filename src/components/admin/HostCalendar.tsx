@@ -3,9 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   CalendarDays, ChevronLeft, ChevronRight, Loader2, Lock, Unlock,
   Users, IndianRupee, TrendingUp, Clock, BarChart3, Flame,
-  ArrowUpRight, ArrowDownRight, Star, Zap
+  ArrowUpRight, ArrowDownRight, Star, Zap, MapPin, Home, Eye
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { properties } from "@/data/properties";
 
 interface BookingEntry {
   slot: string;
@@ -14,6 +15,14 @@ interface BookingEntry {
   total: number;
   booking_id: string;
   property_id: string;
+  user_id?: string;
+}
+
+interface PropertyInfo {
+  name: string;
+  location: string;
+  category: string;
+  image?: string;
 }
 
 const SLOTS = ["12–4 PM", "4–7 PM", "7–11 PM"];
@@ -28,36 +37,71 @@ function formatDate(y: number, m: number, d: number) {
   return `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 }
 
-const statusConfig: Record<string, { color: string; bg: string; dot: string }> = {
-  upcoming: { color: "text-blue-400", bg: "bg-blue-500/10 border-blue-500/20", dot: "bg-blue-500" },
-  confirmed: { color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20", dot: "bg-emerald-500" },
-  active: { color: "text-primary", bg: "bg-primary/10 border-primary/20", dot: "bg-primary" },
-  completed: { color: "text-muted-foreground", bg: "bg-muted/30 border-muted/20", dot: "bg-muted-foreground" },
-  cancelled: { color: "text-destructive", bg: "bg-destructive/10 border-destructive/20", dot: "bg-destructive" },
+const statusConfig: Record<string, { color: string; bg: string; dot: string; label: string }> = {
+  upcoming: { color: "text-blue-400", bg: "bg-blue-500/10 border-blue-500/20", dot: "bg-blue-500", label: "Upcoming" },
+  confirmed: { color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20", dot: "bg-emerald-500", label: "Confirmed" },
+  active: { color: "text-primary", bg: "bg-primary/10 border-primary/20", dot: "bg-primary", label: "Active" },
+  completed: { color: "text-muted-foreground", bg: "bg-muted/30 border-muted/20", dot: "bg-muted-foreground", label: "Completed" },
+  cancelled: { color: "text-destructive", bg: "bg-destructive/10 border-destructive/20", dot: "bg-destructive", label: "Cancelled" },
 };
 
-function StatCard({ icon: Icon, label, value, trend, trendUp }: {
-  icon: any; label: string; value: string; trend?: string; trendUp?: boolean;
+function StatCard({ icon: Icon, label, value, trend, trendUp, accent }: {
+  icon: any; label: string; value: string; trend?: string; trendUp?: boolean; accent?: string;
 }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-xl border border-border bg-card/50 backdrop-blur-sm p-3 flex flex-col gap-1"
+      className="rounded-2xl border border-border/60 bg-gradient-to-br from-card to-secondary/20 backdrop-blur-sm p-3.5 flex flex-col gap-1.5"
     >
       <div className="flex items-center justify-between">
-        <Icon size={14} className="text-muted-foreground" />
+        <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${accent || 'bg-primary/10'}`}>
+          <Icon size={13} className={accent ? 'text-foreground' : 'text-primary'} />
+        </div>
         {trend && (
-          <span className={`flex items-center gap-0.5 text-[10px] font-medium ${trendUp ? 'text-emerald-400' : 'text-destructive'}`}>
-            {trendUp ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />}
+          <span className={`flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-md ${trendUp ? 'text-emerald-400 bg-emerald-500/10' : 'text-destructive bg-destructive/10'}`}>
+            {trendUp ? <ArrowUpRight size={9} /> : <ArrowDownRight size={9} />}
             {trend}
           </span>
         )}
       </div>
-      <span className="text-lg font-bold text-foreground tracking-tight">{value}</span>
-      <span className="text-[10px] text-muted-foreground">{label}</span>
+      <span className="text-xl font-black text-foreground tracking-tight leading-none">{value}</span>
+      <span className="text-[10px] text-muted-foreground font-medium">{label}</span>
     </motion.div>
   );
+}
+
+// Build a property name map from static data + DB listings
+function usePropertyMap() {
+  const [dbListings, setDbListings] = useState<Map<string, PropertyInfo>>(new Map());
+
+  useEffect(() => {
+    supabase.from("host_listings").select("id, name, location, category, image_urls").then(({ data }) => {
+      const map = new Map<string, PropertyInfo>();
+      (data ?? []).forEach(l => {
+        map.set(l.id, {
+          name: l.name,
+          location: l.location || "Jeypore",
+          category: l.category || "Stays",
+          image: l.image_urls?.[0],
+        });
+      });
+      setDbListings(map);
+    });
+  }, []);
+
+  return useMemo(() => {
+    const map = new Map<string, PropertyInfo>();
+    // Static properties first
+    properties.forEach(p => {
+      const imgs = (p as any).images;
+      const firstImg = Array.isArray(imgs) ? imgs[0] : typeof imgs === 'string' ? imgs : undefined;
+      map.set(p.id, { name: p.name, location: (p as any).location || "Jeypore, Odisha", category: (p as any).category || "Stays", image: firstImg });
+    });
+    // DB listings override
+    dbListings.forEach((v, k) => map.set(k, v));
+    return map;
+  }, [dbListings]);
 }
 
 export default function HostCalendar({ onNavigate }: { onNavigate?: (page: string, context?: any) => void }) {
@@ -67,6 +111,7 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [blockedSlots, setBlockedSlots] = useState<Set<string>>(new Set());
+  const propertyMap = usePropertyMap();
 
   useEffect(() => {
     const load = async () => {
@@ -76,7 +121,7 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
 
       const { data } = await supabase
         .from("bookings")
-        .select("date, slot, status, guests, total, booking_id, property_id")
+        .select("date, slot, status, guests, total, booking_id, property_id, user_id")
         .gte("date", startDate)
         .lte("date", endDate);
 
@@ -92,22 +137,34 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
     load();
   }, [year, month]);
 
-  // Monthly stats
+  // Previous month stats for trend
+  const [prevMonthRevenue, setPrevMonthRevenue] = useState(0);
+  useEffect(() => {
+    const pm = month === 0 ? 11 : month - 1;
+    const py = month === 0 ? year - 1 : year;
+    const s = formatDate(py, pm, 1);
+    const e = formatDate(py, pm, getDaysInMonth(py, pm));
+    supabase.from("bookings").select("total").gte("date", s).lte("date", e).then(({ data }) => {
+      setPrevMonthRevenue((data ?? []).reduce((sum, b) => sum + Number(b.total), 0));
+    });
+  }, [year, month]);
+
   const monthStats = useMemo(() => {
     const allBookings = Array.from(bookingMap.values()).flat();
     const totalRevenue = allBookings.reduce((s, b) => s + Number(b.total), 0);
     const totalGuests = allBookings.reduce((s, b) => s + b.guests, 0);
     const totalBookings = allBookings.length;
     const confirmed = allBookings.filter(b => b.status === "confirmed" || b.status === "completed").length;
-    const cancelled = allBookings.filter(b => b.status === "cancelled").length;
     const daysWithBookings = bookingMap.size;
     const daysInMonth = getDaysInMonth(year, month);
     const occupancyRate = daysInMonth > 0 ? Math.round((daysWithBookings / daysInMonth) * 100) : 0;
     const avgRevPerBooking = totalBookings > 0 ? Math.round(totalRevenue / totalBookings) : 0;
-    return { totalRevenue, totalGuests, totalBookings, confirmed, cancelled, occupancyRate, avgRevPerBooking, daysWithBookings };
-  }, [bookingMap, year, month]);
+    const revTrend = prevMonthRevenue > 0 ? Math.round(((totalRevenue - prevMonthRevenue) / prevMonthRevenue) * 100) : 0;
+    // Unique properties
+    const uniqueProperties = new Set(allBookings.map(b => b.property_id)).size;
+    return { totalRevenue, totalGuests, totalBookings, confirmed, occupancyRate, avgRevPerBooking, daysWithBookings, revTrend, uniqueProperties };
+  }, [bookingMap, year, month, prevMonthRevenue]);
 
-  // Selected date stats
   const selectedBookings = selectedDate ? bookingMap.get(selectedDate) ?? [] : [];
   const selectedStats = useMemo(() => {
     const revenue = selectedBookings.reduce((s, b) => s + Number(b.total), 0);
@@ -116,7 +173,8 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
     const peakSlot = selectedBookings.length > 0
       ? selectedBookings.reduce((best, b) => Number(b.total) > Number(best.total) ? b : best, selectedBookings[0]).slot
       : "—";
-    return { revenue, guests, slotsFilled, peakSlot, count: selectedBookings.length };
+    const uniqueProps = new Set(selectedBookings.map(b => b.property_id)).size;
+    return { revenue, guests, slotsFilled, peakSlot, count: selectedBookings.length, uniqueProps };
   }, [selectedBookings]);
 
   const daysInMonth = getDaysInMonth(year, month);
@@ -141,45 +199,73 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
     });
   };
 
-  // Heatmap intensity
   const maxBookingsInDay = Math.max(1, ...Array.from(bookingMap.values()).map(b => b.length));
+
+  const getPropertyName = (id: string) => propertyMap.get(id)?.name || `Property ${id.slice(0, 6)}`;
+  const getPropertyInfo = (id: string) => propertyMap.get(id) || { name: `Property ${id.slice(0, 6)}`, location: "Jeypore", category: "Stays" };
 
   return (
     <div className="space-y-5">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+          <h2 className="text-xl font-black text-foreground flex items-center gap-2">
             <CalendarDays size={20} className="text-primary" /> Booking Calendar
           </h2>
-          <p className="text-xs text-muted-foreground mt-0.5">Revenue heatmap · Slot analytics · Occupancy tracking</p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">Revenue heatmap · Property insights · Occupancy tracking</p>
         </div>
-        <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-primary/10 border border-primary/20">
-          <Flame size={12} className="text-primary" />
-          <span className="text-[10px] font-bold text-primary">{monthStats.occupancyRate}% occupied</span>
-        </div>
+        <motion.div
+          animate={{ scale: [1, 1.05, 1] }}
+          transition={{ repeat: Infinity, duration: 2 }}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-primary/15 to-primary/5 border border-primary/25"
+        >
+          <Flame size={13} className="text-primary" />
+          <span className="text-[11px] font-bold text-primary">{monthStats.occupancyRate}%</span>
+          <span className="text-[9px] text-primary/70">occupied</span>
+        </motion.div>
       </div>
 
-      {/* Monthly Stats Row */}
-      <div className="grid grid-cols-4 gap-2">
-        <StatCard icon={IndianRupee} label="Revenue" value={`₹${(monthStats.totalRevenue / 1000).toFixed(1)}K`} trend="+12%" trendUp />
-        <StatCard icon={CalendarDays} label="Bookings" value={String(monthStats.totalBookings)} trend={`${monthStats.confirmed} conf`} trendUp />
-        <StatCard icon={Users} label="Guests" value={String(monthStats.totalGuests)} />
-        <StatCard icon={TrendingUp} label="Avg/Booking" value={`₹${monthStats.avgRevPerBooking}`} />
+      {/* Monthly Stats */}
+      <div className="grid grid-cols-2 gap-2.5">
+        <StatCard
+          icon={IndianRupee}
+          label="Revenue"
+          value={`₹${monthStats.totalRevenue >= 100000 ? `${(monthStats.totalRevenue / 100000).toFixed(1)}L` : `${(monthStats.totalRevenue / 1000).toFixed(1)}K`}`}
+          trend={monthStats.revTrend !== 0 ? `${monthStats.revTrend > 0 ? '+' : ''}${monthStats.revTrend}%` : undefined}
+          trendUp={monthStats.revTrend > 0}
+          accent="bg-emerald-500/15"
+        />
+        <StatCard
+          icon={CalendarDays}
+          label="Total Bookings"
+          value={String(monthStats.totalBookings)}
+          trend={`${monthStats.confirmed} confirmed`}
+          trendUp
+          accent="bg-blue-500/15"
+        />
+        <StatCard icon={Users} label="Total Guests" value={String(monthStats.totalGuests)} accent="bg-amber-500/15" />
+        <StatCard
+          icon={Home}
+          label="Properties Booked"
+          value={String(monthStats.uniqueProperties)}
+          trend={`₹${monthStats.avgRevPerBooking}/avg`}
+          trendUp
+          accent="bg-primary/15"
+        />
       </div>
 
-      {/* Month navigation */}
-      <div className="flex items-center justify-between rounded-xl border border-border bg-card/50 p-2">
-        <button onClick={prevMonth} className="p-2 rounded-lg hover:bg-secondary transition">
-          <ChevronLeft size={16} className="text-muted-foreground" />
-        </button>
+      {/* Month Navigation */}
+      <div className="flex items-center justify-between rounded-2xl border border-border/60 bg-gradient-to-r from-card to-secondary/20 p-3">
+        <motion.button whileTap={{ scale: 0.85 }} onClick={prevMonth} className="w-9 h-9 rounded-xl bg-secondary/80 flex items-center justify-center hover:bg-secondary transition">
+          <ChevronLeft size={16} className="text-foreground" />
+        </motion.button>
         <div className="text-center">
-          <h3 className="text-sm font-bold text-foreground">{MONTHS[month]} {year}</h3>
-          <p className="text-[10px] text-muted-foreground">{monthStats.daysWithBookings} active days</p>
+          <h3 className="text-sm font-black text-foreground tracking-wide">{MONTHS[month]} {year}</h3>
+          <p className="text-[10px] text-muted-foreground mt-0.5">{monthStats.daysWithBookings} active days · {daysInMonth} total</p>
         </div>
-        <button onClick={nextMonth} className="p-2 rounded-lg hover:bg-secondary transition">
-          <ChevronRight size={16} className="text-muted-foreground" />
-        </button>
+        <motion.button whileTap={{ scale: 0.85 }} onClick={nextMonth} className="w-9 h-9 rounded-xl bg-secondary/80 flex items-center justify-center hover:bg-secondary transition">
+          <ChevronRight size={16} className="text-foreground" />
+        </motion.button>
       </div>
 
       {loading ? (
@@ -189,13 +275,15 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
       ) : (
         <>
           {/* Calendar Grid */}
-          <div className="rounded-2xl border border-border bg-card/50 backdrop-blur-sm p-3">
-            <div className="grid grid-cols-7 gap-1 mb-2">
+          <div className="rounded-2xl border border-border/60 bg-gradient-to-br from-card to-card/80 backdrop-blur-sm p-4">
+            {/* Weekday headers */}
+            <div className="grid grid-cols-7 gap-1.5 mb-3">
               {WEEKDAYS.map(d => (
-                <div key={d} className="text-center text-[10px] font-semibold text-muted-foreground py-1">{d}</div>
+                <div key={d} className="text-center text-[10px] font-bold text-muted-foreground/70 uppercase tracking-wider">{d}</div>
               ))}
             </div>
-            <div className="grid grid-cols-7 gap-1">
+            {/* Days */}
+            <div className="grid grid-cols-7 gap-1.5">
               {Array.from({ length: firstDayOfWeek }).map((_, i) => <div key={`e-${i}`} />)}
               {Array.from({ length: daysInMonth }).map((_, i) => {
                 const day = i + 1;
@@ -206,38 +294,44 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
                 const hasBookings = dayBookings.length > 0;
                 const intensity = hasBookings ? Math.min(dayBookings.length / maxBookingsInDay, 1) : 0;
                 const dayRevenue = dayBookings.reduce((s, b) => s + Number(b.total), 0);
+                const uniqueProps = new Set(dayBookings.map(b => b.property_id)).size;
 
                 return (
                   <motion.button
                     key={day}
-                    whileTap={{ scale: 0.9 }}
+                    whileTap={{ scale: 0.88 }}
                     onClick={() => setSelectedDate(isSelected ? null : dateStr)}
-                    className={`relative aspect-square rounded-xl flex flex-col items-center justify-center text-xs transition-all duration-200 ${
+                    className={`relative rounded-xl flex flex-col items-center justify-center py-2 min-h-[52px] transition-all duration-200 ${
                       isSelected
-                        ? "bg-primary text-primary-foreground ring-2 ring-primary/40 shadow-lg shadow-primary/20"
+                        ? "bg-primary text-primary-foreground ring-2 ring-primary/50 shadow-lg shadow-primary/25 scale-105"
                         : isToday
-                        ? "bg-primary/15 text-primary ring-1 ring-primary/30"
+                        ? "bg-primary/20 text-primary ring-1 ring-primary/40"
                         : hasBookings
-                        ? "hover:bg-secondary text-foreground"
-                        : "hover:bg-secondary/50 text-muted-foreground"
+                        ? "hover:bg-secondary/80 text-foreground"
+                        : "hover:bg-secondary/40 text-muted-foreground/60"
                     }`}
-                    style={hasBookings && !isSelected ? {
-                      background: `rgba(139, 92, 246, ${intensity * 0.15})`,
+                    style={hasBookings && !isSelected && !isToday ? {
+                      background: `linear-gradient(135deg, rgba(139, 92, 246, ${intensity * 0.12}), rgba(139, 92, 246, ${intensity * 0.06}))`,
                     } : undefined}
                   >
-                    <span className="font-semibold text-[11px]">{day}</span>
+                    <span className={`font-bold text-[12px] leading-none ${isSelected ? '' : isToday ? 'text-primary' : ''}`}>{day}</span>
                     {hasBookings && (
-                      <div className="flex gap-0.5 mt-0.5">
-                        {dayBookings.slice(0, 3).map((b, j) => (
-                          <div key={j} className={`w-1 h-1 rounded-full ${statusConfig[b.status]?.dot || "bg-muted-foreground"}`} />
+                      <div className="flex gap-[3px] mt-1">
+                        {dayBookings.slice(0, 4).map((b, j) => (
+                          <div key={j} className={`w-[5px] h-[5px] rounded-full ${isSelected ? 'bg-primary-foreground/70' : statusConfig[b.status]?.dot || "bg-muted-foreground"}`} />
                         ))}
-                        {dayBookings.length > 3 && (
-                          <span className="text-[7px] text-muted-foreground ml-0.5">+{dayBookings.length - 3}</span>
+                        {dayBookings.length > 4 && (
+                          <span className={`text-[6px] ml-0.5 font-bold ${isSelected ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>+{dayBookings.length - 4}</span>
                         )}
                       </div>
                     )}
                     {dayRevenue > 0 && !isSelected && (
-                      <span className="text-[7px] text-primary/70 font-medium">₹{dayRevenue >= 1000 ? `${(dayRevenue/1000).toFixed(0)}K` : dayRevenue}</span>
+                      <span className="text-[7px] text-primary font-bold mt-0.5 leading-none">
+                        ₹{dayRevenue >= 1000 ? `${(dayRevenue/1000).toFixed(0)}K` : dayRevenue}
+                      </span>
+                    )}
+                    {uniqueProps > 1 && !isSelected && (
+                      <span className="text-[6px] text-emerald-400 font-semibold">{uniqueProps} props</span>
                     )}
                   </motion.button>
                 );
@@ -246,11 +340,11 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
           </div>
 
           {/* Legend */}
-          <div className="flex flex-wrap gap-3 px-1">
+          <div className="flex flex-wrap gap-4 px-1">
             {Object.entries(statusConfig).map(([status, cfg]) => (
-              <div key={status} className="flex items-center gap-1.5 text-[10px] text-muted-foreground capitalize">
-                <div className={`w-2 h-2 rounded-full ${cfg.dot}`} />
-                {status}
+              <div key={status} className="flex items-center gap-1.5 text-[10px] text-muted-foreground font-medium">
+                <div className={`w-[6px] h-[6px] rounded-full ${cfg.dot}`} />
+                {cfg.label}
               </div>
             ))}
           </div>
@@ -266,22 +360,24 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
                 transition={{ type: "spring", damping: 20, stiffness: 300 }}
                 className="space-y-4"
               >
-                {/* Date Header */}
-                <div className="rounded-2xl border border-border bg-gradient-to-br from-card to-secondary/30 p-4">
-                  <div className="flex items-center justify-between mb-3">
+                {/* Date Header Card */}
+                <div className="rounded-2xl border border-border/60 bg-gradient-to-br from-card via-card to-primary/5 p-5">
+                  <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h4 className="text-base font-bold text-foreground">
+                      <h4 className="text-lg font-black text-foreground">
                         {new Date(selectedDate + "T00:00:00").toLocaleDateString("en-IN", {
                           weekday: "long", day: "numeric", month: "long"
                         })}
                       </h4>
                       <p className="text-[11px] text-muted-foreground mt-0.5">
-                        {selectedStats.count === 0 ? "No bookings" : `${selectedStats.count} booking${selectedStats.count > 1 ? 's' : ''} · ${selectedStats.slotsFilled}/3 slots filled`}
+                        {selectedStats.count === 0
+                          ? "No bookings on this date"
+                          : `${selectedStats.count} booking${selectedStats.count > 1 ? 's' : ''} · ${selectedStats.slotsFilled}/3 slots · ${selectedStats.uniqueProps} propert${selectedStats.uniqueProps > 1 ? 'ies' : 'y'}`}
                       </p>
                     </div>
                     {selectedStats.count > 0 && (
                       <div className="text-right">
-                        <span className="text-lg font-bold text-foreground">₹{selectedStats.revenue.toLocaleString()}</span>
+                        <span className="text-2xl font-black text-foreground">₹{selectedStats.revenue.toLocaleString()}</span>
                         <p className="text-[10px] text-muted-foreground">day revenue</p>
                       </div>
                     )}
@@ -289,30 +385,79 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
 
                   {/* Day Quick Stats */}
                   {selectedStats.count > 0 && (
-                    <div className="grid grid-cols-3 gap-2">
-                      <div className="rounded-lg bg-background/50 border border-border/50 p-2 text-center">
-                        <Users size={12} className="text-primary mx-auto mb-1" />
-                        <span className="text-sm font-bold text-foreground">{selectedStats.guests}</span>
-                        <p className="text-[9px] text-muted-foreground">Guests</p>
-                      </div>
-                      <div className="rounded-lg bg-background/50 border border-border/50 p-2 text-center">
-                        <Clock size={12} className="text-primary mx-auto mb-1" />
-                        <span className="text-sm font-bold text-foreground">{selectedStats.slotsFilled}/3</span>
-                        <p className="text-[9px] text-muted-foreground">Slots Used</p>
-                      </div>
-                      <div className="rounded-lg bg-background/50 border border-border/50 p-2 text-center">
-                        <Zap size={12} className="text-primary mx-auto mb-1" />
-                        <span className="text-[10px] font-bold text-foreground truncate block">{selectedStats.peakSlot}</span>
-                        <p className="text-[9px] text-muted-foreground">Peak Slot</p>
-                      </div>
+                    <div className="grid grid-cols-4 gap-2">
+                      {[
+                        { icon: Users, val: String(selectedStats.guests), label: "Guests", color: "bg-amber-500/10" },
+                        { icon: Clock, val: `${selectedStats.slotsFilled}/3`, label: "Slots", color: "bg-blue-500/10" },
+                        { icon: Home, val: String(selectedStats.uniqueProps), label: "Properties", color: "bg-emerald-500/10" },
+                        { icon: Zap, val: selectedStats.peakSlot.length > 8 ? selectedStats.peakSlot.slice(0, 8) + '…' : selectedStats.peakSlot, label: "Peak", color: "bg-primary/10" },
+                      ].map((s, i) => (
+                        <motion.div key={s.label} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+                          className={`rounded-xl ${s.color} border border-border/30 p-2.5 text-center`}
+                        >
+                          <s.icon size={12} className="text-foreground/60 mx-auto mb-1" />
+                          <span className="text-xs font-bold text-foreground block leading-none">{s.val}</span>
+                          <p className="text-[8px] text-muted-foreground mt-1">{s.label}</p>
+                        </motion.div>
+                      ))}
                     </div>
                   )}
                 </div>
 
+                {/* Properties Summary for the day */}
+                {selectedStats.count > 0 && (
+                  <div className="space-y-2">
+                    <h5 className="text-xs font-bold text-muted-foreground px-1 flex items-center gap-1.5 uppercase tracking-wider">
+                      <Home size={11} /> Properties Booked
+                    </h5>
+                    <div className="space-y-2">
+                      {Array.from(new Set(selectedBookings.map(b => b.property_id))).map((pid, idx) => {
+                        const info = getPropertyInfo(pid);
+                        const propBookings = selectedBookings.filter(b => b.property_id === pid);
+                        const propRevenue = propBookings.reduce((s, b) => s + Number(b.total), 0);
+                        const propGuests = propBookings.reduce((s, b) => s + b.guests, 0);
+                        return (
+                          <motion.div
+                            key={pid}
+                            initial={{ opacity: 0, x: -8 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: idx * 0.06 }}
+                            className="rounded-xl border border-border/60 bg-card/80 p-3"
+                          >
+                            <div className="flex items-center gap-3">
+                              {info.image ? (
+                                <img src={info.image} alt={info.name} className="w-10 h-10 rounded-lg object-cover" loading="lazy" />
+                              ) : (
+                                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                                  <Home size={16} className="text-primary" />
+                                </div>
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-bold text-foreground truncate">{info.name}</p>
+                                <div className="flex items-center gap-2 mt-0.5">
+                                  <span className="text-[9px] text-muted-foreground flex items-center gap-0.5"><MapPin size={8} /> {info.location}</span>
+                                  <span className="text-[9px] text-primary/70 font-medium">{info.category}</span>
+                                </div>
+                              </div>
+                              <div className="text-right shrink-0">
+                                <span className="text-sm font-black text-foreground">₹{propRevenue.toLocaleString()}</span>
+                                <div className="flex items-center gap-1.5 mt-0.5 justify-end">
+                                  <span className="text-[9px] text-muted-foreground">{propBookings.length} booking{propBookings.length > 1 ? 's' : ''}</span>
+                                  <span className="text-[9px] text-muted-foreground">· {propGuests} guests</span>
+                                </div>
+                              </div>
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 {/* Slot Breakdown */}
                 <div className="space-y-2">
-                  <h5 className="text-xs font-semibold text-muted-foreground px-1 flex items-center gap-1.5">
-                    <BarChart3 size={12} /> SLOT BREAKDOWN
+                  <h5 className="text-xs font-bold text-muted-foreground px-1 flex items-center gap-1.5 uppercase tracking-wider">
+                    <BarChart3 size={11} /> Slot Breakdown
                   </h5>
                   {SLOTS.map((slot, idx) => {
                     const slotBookings = selectedBookings.filter(b => b.slot.includes(slot.split("–")[0]));
@@ -326,18 +471,18 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
                         initial={{ opacity: 0, x: -8 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: idx * 0.08 }}
-                        className={`rounded-xl border p-3 transition-all ${
+                        className={`rounded-xl border p-3.5 transition-all ${
                           isBlocked
                             ? "bg-destructive/5 border-destructive/20"
                             : slotBookings.length > 0
-                            ? "bg-card border-border"
-                            : "bg-secondary/30 border-border/50"
+                            ? "bg-card/80 border-border/60"
+                            : "bg-secondary/20 border-border/40"
                         }`}
                       >
-                        <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center justify-between mb-2.5">
                           <div className="flex items-center gap-2">
-                            <div className={`w-2 h-2 rounded-full ${slotBookings.length > 0 ? 'bg-emerald-500' : isBlocked ? 'bg-destructive' : 'bg-muted-foreground/30'}`} />
-                            <span className="text-xs font-semibold text-foreground">{slot}</span>
+                            <div className={`w-2.5 h-2.5 rounded-full ${slotBookings.length > 0 ? 'bg-emerald-500 shadow-sm shadow-emerald-500/50' : isBlocked ? 'bg-destructive' : 'bg-muted-foreground/20'}`} />
+                            <span className="text-xs font-bold text-foreground">{slot}</span>
                             {slotBookings.length > 0 && (
                               <span className="text-[10px] text-muted-foreground">
                                 · {slotBookings.length} booking{slotBookings.length > 1 ? 's' : ''}
@@ -346,14 +491,14 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
                           </div>
                           <div className="flex items-center gap-2">
                             {slotRevenue > 0 && (
-                              <span className="text-[10px] font-bold text-primary">₹{slotRevenue.toLocaleString()}</span>
+                              <span className="text-[11px] font-bold text-primary">₹{slotRevenue.toLocaleString()}</span>
                             )}
                             <button
                               onClick={() => toggleBlock(selectedDate!, slot)}
-                              className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium transition ${
+                              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold transition ${
                                 isBlocked
                                   ? "bg-destructive/10 text-destructive hover:bg-destructive/20"
-                                  : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80"
+                                  : "bg-secondary/80 text-muted-foreground hover:text-foreground hover:bg-secondary"
                               }`}
                             >
                               {isBlocked ? <><Lock size={9} /> Blocked</> : <><Unlock size={9} /> Open</>}
@@ -362,49 +507,49 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
                         </div>
 
                         {slotBookings.length === 0 ? (
-                          <p className="text-[10px] text-muted-foreground pl-4">
+                          <p className="text-[10px] text-muted-foreground pl-5 italic">
                             {isBlocked ? "Slot is blocked for this date" : "No bookings — slot available"}
                           </p>
                         ) : (
-                          <div className="space-y-1.5 pl-4">
+                          <div className="space-y-2 pl-5">
                             {slotBookings.map((b, j) => {
                               const cfg = statusConfig[b.status] || statusConfig.upcoming;
+                              const pInfo = getPropertyInfo(b.property_id);
                               return (
-                                 <motion.div
+                                <motion.div
                                   key={j}
                                   initial={{ opacity: 0 }}
                                   animate={{ opacity: 1 }}
                                   transition={{ delay: j * 0.05 }}
                                   whileTap={{ scale: 0.97 }}
                                   onClick={() => onNavigate?.("history", { bookingId: b.booking_id, propertyId: b.property_id })}
-                                  className={`flex items-center justify-between rounded-lg border px-2.5 py-2 cursor-pointer hover:ring-1 hover:ring-primary/30 active:ring-primary/50 transition-all ${cfg.bg}`}
+                                  className={`rounded-xl border px-3 py-2.5 cursor-pointer hover:ring-1 hover:ring-primary/30 active:ring-primary/50 transition-all ${cfg.bg}`}
                                 >
-                                  <div className="flex items-center gap-2">
-                                    <div className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
-                                    <div>
-                                      <span className="text-[11px] font-medium text-foreground">
-                                        #{b.booking_id.slice(0, 8)}
-                                      </span>
-                                      <div className="flex items-center gap-2 mt-0.5">
-                                        <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
-                                          <Users size={8} /> {b.guests}
-                                        </span>
-                                        <span className="text-[9px] text-muted-foreground">
-                                          {b.property_id.slice(0, 12)}
-                                        </span>
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                                      <div className={`w-2 h-2 rounded-full shrink-0 ${cfg.dot}`} />
+                                      <div className="min-w-0 flex-1">
+                                        <p className="text-[12px] font-bold text-foreground truncate">{pInfo.name}</p>
+                                        <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                                          <span className="text-[9px] text-muted-foreground font-mono">#{b.booking_id.length > 10 ? b.booking_id.slice(0, 10) : b.booking_id}</span>
+                                          <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
+                                            <Users size={8} /> {b.guests} guests
+                                          </span>
+                                          <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
+                                            <MapPin size={7} /> {pInfo.location.split(',')[0]}
+                                          </span>
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <div className="text-right">
-                                      <span className="text-[11px] font-bold text-foreground">₹{Number(b.total).toLocaleString()}</span>
-                                      <div>
-                                        <span className={`text-[9px] font-medium capitalize ${cfg.color}`}>
-                                          {b.status}
-                                        </span>
+                                    <div className="flex items-center gap-2 shrink-0">
+                                      <div className="text-right">
+                                        <span className="text-[12px] font-black text-foreground">₹{Number(b.total).toLocaleString()}</span>
+                                        <div>
+                                          <span className={`text-[9px] font-semibold ${cfg.color}`}>{cfg.label}</span>
+                                        </div>
                                       </div>
+                                      <ChevronRight size={12} className="text-muted-foreground" />
                                     </div>
-                                    <ChevronRight size={12} className="text-muted-foreground" />
                                   </div>
                                 </motion.div>
                               );
@@ -414,17 +559,17 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
 
                         {/* Slot utilization bar */}
                         {slotBookings.length > 0 && (
-                          <div className="mt-2 pl-4">
+                          <div className="mt-2.5 pl-5">
                             <div className="flex items-center justify-between text-[9px] text-muted-foreground mb-1">
                               <span>{slotGuests} guests</span>
                               <span>₹{Math.round(slotRevenue / Math.max(slotBookings.length, 1))}/avg</span>
                             </div>
-                            <div className="h-1 rounded-full bg-secondary overflow-hidden">
+                            <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
                               <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${Math.min((slotGuests / 30) * 100, 100)}%` }}
                                 transition={{ delay: 0.3, duration: 0.5 }}
-                                className="h-full rounded-full bg-gradient-to-r from-primary to-primary/60"
+                                className="h-full rounded-full bg-gradient-to-r from-primary to-emerald-500"
                               />
                             </div>
                           </div>
@@ -434,18 +579,18 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
                   })}
                 </div>
 
-                {/* Revenue Split */}
+                {/* Revenue Split by Status */}
                 {selectedStats.count > 0 && (
                   <motion.div
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="rounded-xl border border-border bg-card/50 p-3"
+                    className="rounded-2xl border border-border/60 bg-card/80 p-4"
                   >
-                    <h5 className="text-[10px] font-semibold text-muted-foreground mb-2 flex items-center gap-1">
-                      <Star size={10} /> REVENUE BY STATUS
+                    <h5 className="text-[11px] font-bold text-muted-foreground mb-3 flex items-center gap-1.5 uppercase tracking-wider">
+                      <Star size={11} /> Revenue by Status
                     </h5>
-                    <div className="space-y-1.5">
+                    <div className="space-y-2">
                       {Object.entries(
                         selectedBookings.reduce((acc, b) => {
                           acc[b.status] = (acc[b.status] || 0) + Number(b.total);
@@ -455,21 +600,62 @@ export default function HostCalendar({ onNavigate }: { onNavigate?: (page: strin
                         const cfg = statusConfig[status] || statusConfig.upcoming;
                         const pct = selectedStats.revenue > 0 ? Math.round((rev / selectedStats.revenue) * 100) : 0;
                         return (
-                          <div key={status} className="flex items-center gap-2">
-                            <div className={`w-2 h-2 rounded-full ${cfg.dot}`} />
-                            <span className="text-[10px] text-foreground capitalize flex-1">{status}</span>
-                            <span className="text-[10px] font-medium text-foreground">₹{rev.toLocaleString()}</span>
-                            <div className="w-16 h-1.5 rounded-full bg-secondary overflow-hidden">
+                          <div key={status} className="flex items-center gap-2.5">
+                            <div className={`w-2.5 h-2.5 rounded-full ${cfg.dot}`} />
+                            <span className="text-[11px] text-foreground font-medium flex-1">{cfg.label}</span>
+                            <span className="text-[11px] font-bold text-foreground">₹{rev.toLocaleString()}</span>
+                            <div className="w-20 h-2 rounded-full bg-secondary overflow-hidden">
                               <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${pct}%` }}
                                 className={`h-full rounded-full ${cfg.dot}`}
                               />
                             </div>
-                            <span className="text-[9px] text-muted-foreground w-6 text-right">{pct}%</span>
+                            <span className="text-[9px] text-muted-foreground w-7 text-right font-mono">{pct}%</span>
                           </div>
                         );
                       })}
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Revenue by Property */}
+                {selectedStats.uniqueProps > 1 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.35 }}
+                    className="rounded-2xl border border-border/60 bg-card/80 p-4"
+                  >
+                    <h5 className="text-[11px] font-bold text-muted-foreground mb-3 flex items-center gap-1.5 uppercase tracking-wider">
+                      <Eye size={11} /> Revenue by Property
+                    </h5>
+                    <div className="space-y-2">
+                      {Array.from(
+                        selectedBookings.reduce((acc, b) => {
+                          acc.set(b.property_id, (acc.get(b.property_id) || 0) + Number(b.total));
+                          return acc;
+                        }, new Map<string, number>())
+                      )
+                        .sort(([, a], [, b]) => b - a)
+                        .map(([pid, rev]) => {
+                          const pct = selectedStats.revenue > 0 ? Math.round((rev / selectedStats.revenue) * 100) : 0;
+                          return (
+                            <div key={pid} className="flex items-center gap-2.5">
+                              <div className="w-2.5 h-2.5 rounded-full bg-primary" />
+                              <span className="text-[11px] text-foreground font-medium flex-1 truncate">{getPropertyName(pid)}</span>
+                              <span className="text-[11px] font-bold text-foreground">₹{rev.toLocaleString()}</span>
+                              <div className="w-20 h-2 rounded-full bg-secondary overflow-hidden">
+                                <motion.div
+                                  initial={{ width: 0 }}
+                                  animate={{ width: `${pct}%` }}
+                                  className="h-full rounded-full bg-primary"
+                                />
+                              </div>
+                              <span className="text-[9px] text-muted-foreground w-7 text-right font-mono">{pct}%</span>
+                            </div>
+                          );
+                        })}
                     </div>
                   </motion.div>
                 )}
