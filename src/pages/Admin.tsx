@@ -26,6 +26,7 @@ import HostCalendar from "@/components/admin/HostCalendar";
 import BookingRequests from "@/components/admin/BookingRequests";
 import AdminPropertyHistory from "@/components/admin/AdminPropertyHistory";
 import AdminInventory from "@/components/admin/AdminInventory";
+import AdminStaffManagement from "@/components/admin/AdminStaffManagement";
 import AuthScreen from "@/components/AuthScreen";
 import { Shield, Loader2 } from "lucide-react";
 
