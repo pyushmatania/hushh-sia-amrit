@@ -120,10 +120,19 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
           </h1>
           <p className="text-sm text-zinc-400 mt-1">{scopedItems.length} items · {lowStock.length} low stock · Drag ⠿ to reorder</p>
         </div>
-        <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={openCreate}
-          className="flex items-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-violet-500 text-white rounded-xl text-sm font-semibold shadow-md shadow-indigo-200/50 dark:shadow-indigo-900/30">
-          <Plus size={16} /> Add Item
-        </motion.button>
+        <div className="flex items-center gap-2">
+          <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+            onClick={() => { setBulkMode(!bulkMode); if (bulkMode) setSelectedIds([]); }}
+            className={`flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+              bulkMode ? "bg-primary/10 text-primary border border-primary/30" : "bg-card border border-border text-muted-foreground hover:text-foreground"
+            }`}>
+            <CheckSquare size={15} /> {bulkMode ? "Cancel" : "Bulk"}
+          </motion.button>
+          <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={openCreate}
+            className="flex items-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-violet-500 text-white rounded-xl text-sm font-semibold shadow-md shadow-indigo-200/50 dark:shadow-indigo-900/30">
+            <Plus size={16} /> Add Item
+          </motion.button>
+        </div>
       </motion.div>
 
       {lowStock.length > 0 && (
