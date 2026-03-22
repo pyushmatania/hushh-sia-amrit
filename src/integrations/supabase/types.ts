@@ -388,6 +388,7 @@ export type Database = {
           emoji: string
           gradient: string
           id: string
+          image_urls: string[] | null
           includes: string[]
           mood: string[]
           name: string
@@ -407,6 +408,7 @@ export type Database = {
           emoji?: string
           gradient?: string
           id?: string
+          image_urls?: string[] | null
           includes?: string[]
           mood?: string[]
           name: string
@@ -426,6 +428,7 @@ export type Database = {
           emoji?: string
           gradient?: string
           id?: string
+          image_urls?: string[] | null
           includes?: string[]
           mood?: string[]
           name?: string
