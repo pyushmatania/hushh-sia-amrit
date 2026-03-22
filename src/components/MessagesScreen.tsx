@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useMessages, type Conversation, type Message } from "@/hooks/use-messages";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow, format, isToday, isYesterday, isSameDay } from "date-fns";
+import { useAppConfig } from "@/hooks/use-app-config";
 
 /* ═══ Types ═══ */
 interface Notification {

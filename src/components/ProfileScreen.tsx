@@ -609,6 +609,64 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
         )}
       </AnimatePresence>
       <IdentityUploadSheet open={showIdentityUpload} onClose={() => setShowIdentityUpload(false)} />
+
+      {/* Help Centre Sheet */}
+      <Sheet open={showHelpCentre} onOpenChange={setShowHelpCentre}>
+        <SheetContent side="bottom" className="rounded-t-3xl pb-8">
+          <SheetHeader className="pb-4">
+            <SheetTitle className="text-lg font-bold">Help Centre</SheetTitle>
+          </SheetHeader>
+          <div className="space-y-3">
+            {appConfig.support_phone && (
+              <a
+                href={`tel:${appConfig.support_phone}`}
+                className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-secondary/60 border border-border active:scale-[0.98] transition-transform"
+              >
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Phone size={18} className="text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground">Call Support</p>
+                  <p className="text-xs text-muted-foreground">{appConfig.support_phone}</p>
+                </div>
+                <ChevronRight size={16} className="text-muted-foreground" />
+              </a>
+            )}
+            {appConfig.support_email && (
+              <a
+                href={`mailto:${appConfig.support_email}`}
+                className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-secondary/60 border border-border active:scale-[0.98] transition-transform"
+              >
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Mail size={18} className="text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground">Email Us</p>
+                  <p className="text-xs text-muted-foreground">{appConfig.support_email}</p>
+                </div>
+                <ChevronRight size={16} className="text-muted-foreground" />
+              </a>
+            )}
+            {appConfig.whatsapp_number && (
+              <a
+                href={`https://wa.me/${appConfig.whatsapp_number.replace(/[^0-9]/g, "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-secondary/60 border border-border active:scale-[0.98] transition-transform"
+              >
+                <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                  <WhatsAppIcon size={18} className="text-emerald-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground">WhatsApp</p>
+                  <p className="text-xs text-muted-foreground">{appConfig.whatsapp_number}</p>
+                </div>
+                <ChevronRight size={16} className="text-muted-foreground" />
+              </a>
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
       <AnimatePresence>
         {showPublicProfile && (
           <PublicProfileScreen userId={user?.id || "mock-guest"} onBack={() => setShowPublicProfile(false)} />
