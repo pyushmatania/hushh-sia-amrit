@@ -1,4 +1,4 @@
-import { useState, useCallback, lazy, Suspense, startTransition } from "react";
+import { useState, useCallback, useEffect, lazy, Suspense, startTransition } from "react";
 import { AnimatePresence } from "framer-motion";
 import { useAppConfig } from "@/hooks/use-app-config";
 import SplashScreen from "@/components/SplashScreen";
