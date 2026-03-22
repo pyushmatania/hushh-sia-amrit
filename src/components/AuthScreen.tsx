@@ -133,7 +133,7 @@ export default function AuthScreen() {
             {mode === "login" ? "Welcome back" : mode === "signup" ? "Create account" : "Reset password"}
           </h2>
           <p className="text-sm text-muted-foreground mt-2">
-            {mode === "login" ? "Sign in to continue your journey" : mode === "signup" ? "Join Hushh and discover private experiences" : "Enter your email to receive a reset link"}
+            {mode === "login" ? "Sign in to continue your journey" : mode === "signup" ? `Join ${brandName} and discover private experiences` : "Enter your email to receive a reset link"}
           </p>
           {mode === "forgot" && (
             <button onClick={() => { setMode("login"); setError(""); }} className="flex items-center gap-1 text-xs text-primary font-semibold mt-2">

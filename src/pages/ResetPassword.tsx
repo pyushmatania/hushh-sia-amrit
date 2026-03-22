@@ -96,7 +96,7 @@ export default function ResetPassword() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-2 mb-6">
             <Sparkles size={28} className="text-primary" />
-            <h1 className="text-3xl font-bold text-foreground tracking-tight">Hushh</h1>
+            <h1 className="text-3xl font-bold text-foreground tracking-tight">{brandName}</h1>
           </div>
           <h2 className="text-2xl font-bold text-foreground leading-tight">Set new password</h2>
           <p className="text-sm text-muted-foreground mt-2">Enter your new password below</p>

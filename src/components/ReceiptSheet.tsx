@@ -154,7 +154,7 @@ export default function ReceiptSheet({ open, onClose, booking }: Props) {
                 <p className="text-[10px] text-muted-foreground">Booking ID</p>
                 <p className="text-xs font-mono font-bold text-foreground">{booking.bookingId}</p>
               </div>
-              <p className="text-[10px] text-muted-foreground">Thank you for choosing Hushh ❤️</p>
+              <p className="text-[10px] text-muted-foreground">Thank you for choosing {brandName} ❤️</p>
             </div>
           </div>
         </div>
