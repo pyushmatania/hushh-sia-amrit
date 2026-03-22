@@ -217,7 +217,7 @@ export default function Index() {
             guests={screen.guests}
             date={screen.date}
             onBack={() => setScreen({ type: "detail", property: screen.property })}
-            onContinue={handleContinue(screen.property, screen.slotId, screen.guests, screen.date, screen.extras)}
+            onContinue={handleContinue(screen.property, screen.slotId, screen.guests, screen.date, screen.extras, screen.roomsCount, screen.extraMattresses)}
             extras={screen.extras}
           />
         )}
@@ -230,11 +230,13 @@ export default function Index() {
             date={screen.date}
             selections={screen.selections}
             total={screen.total}
-            onBack={() => setScreen({ type: "builder", property: screen.property, slotId: screen.slotId, guests: screen.guests, date: screen.date, extras: screen.extras })}
+            onBack={() => setScreen({ type: "builder", property: screen.property, slotId: screen.slotId, guests: screen.guests, date: screen.date, extras: screen.extras, roomsCount: screen.roomsCount, extraMattresses: screen.extraMattresses })}
             extras={screen.extras}
             onConfirm={handleCheckoutConfirm(screen.property, screen.slotId, screen.guests, screen.date)}
             isWishlisted={wishlist.includes(screen.property.id)}
             onToggleWishlist={toggleWishlist}
+            roomsCount={screen.roomsCount}
+            extraMattresses={screen.extraMattresses}
           />
         )}
         {screen.type === "confirmation" && (
