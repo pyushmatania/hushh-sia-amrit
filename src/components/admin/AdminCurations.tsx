@@ -143,6 +143,7 @@ export default function AdminCurations() {
       price: Number(c.price), original_price: c.original_price ? Number(c.original_price) : null,
       slot: c.slot, includes: c.includes || [], tags: c.tags || [],
       mood: c.mood || [], badge: c.badge || "", property_id: c.property_id, active: c.active,
+      image_urls: c.image_urls || [],
     });
     setEditingId(c.id);
     setPreviewMode(false);
