@@ -749,6 +749,26 @@ export default function AdminProperties() {
                         </div>
                       ))}
                     </div>
+                    {/* Upload from device */}
+                    <div className="flex gap-2">
+                      <label className="flex-1 py-3 rounded-xl border-2 border-dashed border-primary/30 text-xs text-primary font-medium hover:bg-primary/5 transition flex items-center justify-center gap-1.5 cursor-pointer">
+                        <Upload size={14} /> Upload from Device
+                        <input type="file" accept="image/*" multiple className="hidden" onChange={async (e) => {
+                          const files = e.target.files;
+                          if (!files) return;
+                          for (const file of Array.from(files)) {
+                            const ext = file.name.split('.').pop();
+                            const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+                            const { data, error } = await (await import("@/integrations/supabase/client")).supabase.storage.from("listing-images").upload(path, file);
+                            if (error) continue;
+                            const { data: urlData } = (await import("@/integrations/supabase/client")).supabase.storage.from("listing-images").getPublicUrl(path);
+                            if (urlData?.publicUrl) {
+                              setEditingListing(p => ({ ...p!, image_urls: [...(p?.image_urls || []), urlData.publicUrl] }));
+                            }
+                          }
+                        }} />
+                      </label>
+                    </div>
                     <Field label="Add Image URL">
                       <div className="flex gap-2">
                         <Input id="new-image-url" placeholder="https://..." className="flex-1 rounded-xl" />
@@ -761,7 +781,7 @@ export default function AdminProperties() {
                         }} className="px-4 py-2 rounded-xl bg-primary/15 text-primary text-sm font-semibold hover:bg-primary/25 transition">Add</button>
                       </div>
                     </Field>
-                    <p className="text-[10px] text-muted-foreground flex items-center gap-1"><Info size={9} /> Images from the local asset library are shown automatically based on property name</p>
+                    <p className="text-[10px] text-muted-foreground flex items-center gap-1"><Info size={9} /> Upload images or paste URLs. Drag to reorder. Local asset thumbnails shown automatically.</p>
                   </div>
                 </EditSection>
 
