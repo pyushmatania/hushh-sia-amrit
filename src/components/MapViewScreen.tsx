@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Star, MapPin, Navigation, Layers, Search, SlidersHorizontal } from "lucide-react";
+import { X, Star, MapPin, Navigation, Layers, Search, SlidersHorizontal, List, Map } from "lucide-react";
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { properties, type Property } from "@/data/properties";
 import L from "leaflet";
