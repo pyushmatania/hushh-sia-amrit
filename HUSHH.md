@@ -135,6 +135,7 @@ Active Trip → Order Food (live ordering sheet) / Add Extras (per-item emoji ic
 
 ### 1. Splash Screen (`SplashScreen.tsx`)
 - Animated brand logo with spring physics, auto-transitions to Home after ~2s
+- **Dynamic branding**: App name and logo pulled from `app_config` (key: `app_name`, `logo_url`)
 
 ### 2. Home / Explore (`HomeScreen.tsx`)
 - **Header**: Profile avatar, location pill, notification bell (unread badge)
