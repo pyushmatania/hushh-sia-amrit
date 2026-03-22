@@ -119,13 +119,14 @@ Active Trip → Order Food (live ordering sheet) / Add Extras (per-item emoji ic
        ├─▸ AI Assistant — Natural language queries across all data
        ├─▸ Smart Alerts — Automated notification system
        ├─▸ Dynamic Pricing — Demand-based price adjustments
-       ├─▸ Tags — Property tag management
+       ├─▸ Homepage Manager — Sections visibility/ordering, video cards, filter pills, tags
        ├─▸ Users (CRM) — User management (admin-only)
        ├─▸ Calendar — Host calendar view
        ├─▸ Booking Requests — Pending approval queue
        ├─▸ Achievements — Milestone management
        ├─▸ Loyalty & Referrals — Points & referral analytics
        ├─▸ Exports — CSV/data export tools
+       ├─▸ Settings — General (pricing/fees/support), Branding (name/logo/tagline/social/legal), Advanced (map/spin/notifications)
        └─▸ Audit Trail — Full activity log (admin-only)
 ```
 
