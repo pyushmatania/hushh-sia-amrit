@@ -22,6 +22,35 @@ export interface AppConfig {
   max_guests_per_booking: number;
   loyalty_points_per_booking: number;
   referral_reward_points: number;
+  // Branding
+  app_name: string;
+  app_tagline: string;
+  logo_url: string;
+  favicon_url: string;
+  // Social Links
+  instagram_url: string;
+  facebook_url: string;
+  youtube_url: string;
+  twitter_url: string;
+  // Legal
+  terms_url: string;
+  privacy_url: string;
+  refund_policy_url: string;
+  // Map
+  map_default_lat: number;
+  map_default_lng: number;
+  map_default_zoom: number;
+  // Spin Wheel
+  spin_cooldown_hours: number;
+  spin_max_points: number;
+  spin_min_points: number;
+  // Booking extras
+  late_checkout_fee: number;
+  early_checkin_fee: number;
+  damage_deposit: number;
+  // Notifications
+  booking_reminder_hours: number;
+  review_prompt_hours: number;
 }
 
 const defaults: AppConfig = {
@@ -45,9 +74,36 @@ const defaults: AppConfig = {
   max_guests_per_booking: 50,
   loyalty_points_per_booking: 50,
   referral_reward_points: 100,
+  app_name: "Hushh",
+  app_tagline: "Your private getaway",
+  logo_url: "",
+  favicon_url: "",
+  instagram_url: "",
+  facebook_url: "",
+  youtube_url: "",
+  twitter_url: "",
+  terms_url: "",
+  privacy_url: "",
+  refund_policy_url: "",
+  map_default_lat: 18.8563,
+  map_default_lng: 82.5716,
+  map_default_zoom: 13,
+  spin_cooldown_hours: 24,
+  spin_max_points: 500,
+  spin_min_points: 10,
+  late_checkout_fee: 300,
+  early_checkin_fee: 300,
+  damage_deposit: 1000,
+  booking_reminder_hours: 24,
+  review_prompt_hours: 48,
 };
 
-const stringKeys = new Set(["check_in_time", "check_out_time", "support_phone", "support_email", "whatsapp_number"]);
+const stringKeys = new Set([
+  "check_in_time", "check_out_time", "support_phone", "support_email", "whatsapp_number",
+  "app_name", "app_tagline", "logo_url", "favicon_url",
+  "instagram_url", "facebook_url", "youtube_url", "twitter_url",
+  "terms_url", "privacy_url", "refund_policy_url",
+]);
 
 let cachedConfig: AppConfig | null = null;
 let listeners: Array<() => void> = [];
