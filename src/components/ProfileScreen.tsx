@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
+import { Phone, Mail, MessageCircle as WhatsAppIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import PublicProfileScreen from "./PublicProfileScreen";
 import {
