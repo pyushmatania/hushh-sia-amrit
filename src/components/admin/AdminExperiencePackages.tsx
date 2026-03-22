@@ -115,7 +115,8 @@ export default function AdminExperiencePackages() {
       gradient: editing.gradient || GRADIENT_OPTIONS[0],
       sort_order: editing.sort_order || 0,
       active: editing.active ?? true,
-      image_url: editing.image_url || null,
+      image_url: (editing.image_urls || [])[0] || editing.image_url || null,
+      image_urls: editing.image_urls || [],
     };
 
     if (isCreating) {
