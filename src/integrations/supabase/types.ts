@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_config: {
+        Row: {
+          category: string
+          description: string
+          id: string
+          key: string
+          label: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          category?: string
+          description?: string
+          id?: string
+          key: string
+          label?: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          category?: string
+          description?: string
+          id?: string
+          key?: string
+          label?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
       audit_logs: {
         Row: {
           action: string
@@ -642,6 +672,7 @@ export type Database = {
           created_at: string
           emoji: string
           id: string
+          image_url: string | null
           low_stock_threshold: number
           name: string
           property_id: string | null
@@ -656,6 +687,7 @@ export type Database = {
           created_at?: string
           emoji?: string
           id?: string
+          image_url?: string | null
           low_stock_threshold?: number
           name: string
           property_id?: string | null
@@ -670,6 +702,7 @@ export type Database = {
           created_at?: string
           emoji?: string
           id?: string
+          image_url?: string | null
           low_stock_threshold?: number
           name?: string
           property_id?: string | null
