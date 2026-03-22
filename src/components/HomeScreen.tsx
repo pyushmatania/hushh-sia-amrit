@@ -11,9 +11,10 @@ import { type Property } from "@/data/properties";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
 import CuratedPackCard, { tonightTags, type ExperiencePack } from "./home/CuratedPackCard";
 import CuratedPackListing from "./home/CuratedPackListing";
-import { useState, useMemo, useCallback, useRef } from "react";
+import { useState, useMemo, useCallback, useRef, type ReactNode } from "react";
 import { useCurations } from "@/hooks/use-curations";
 import { useNotifications } from "@/hooks/use-notifications";
+import { useHomepageSections } from "@/hooks/use-homepage-sections";
 import profileAvatar from "@/assets/profile-avatar.webp";
 
 import RotatingSearchBar from "./home/RotatingSearchBar";
