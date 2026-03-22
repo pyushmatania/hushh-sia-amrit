@@ -258,9 +258,9 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
       <AnimatePresence>
         {editing && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setEditing(null)}>
-            <motion.div initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 100, opacity: 0 }}
-              className="w-full max-w-md bg-white dark:bg-zinc-900 rounded-t-2xl sm:rounded-2xl border border-zinc-100 dark:border-zinc-800 p-5 space-y-4 shadow-2xl"
+            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setEditing(null)}>
+            <motion.div initial={{ y: 40, opacity: 0, scale: 0.95 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 40, opacity: 0, scale: 0.95 }}
+              className="w-full max-w-md bg-card rounded-2xl border border-border p-5 space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto"
               onClick={e => e.stopPropagation()}>
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-bold text-zinc-800 dark:text-zinc-100 flex items-center gap-2"><Sparkles size={14} className="text-indigo-500" /> {isCreating ? "Add Item" : "Edit Item"}</h2>
