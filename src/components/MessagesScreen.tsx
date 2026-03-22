@@ -4,6 +4,7 @@ import {
   CheckCircle2, Send, ArrowLeft, Phone, MoreVertical, Search,
   Image, Smile, Mic, Check, CheckCheck, Pin, Archive,
   HeadphonesIcon, ShieldCheck, Star, Gift, Megaphone, X, Loader2,
+  MapPin, History, Plane,
 } from "lucide-react";
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useAuth } from "@/hooks/use-auth";
@@ -75,26 +76,44 @@ const notifications: Notification[] = [
   },
 ];
 
+type TripStatus = "active" | "upcoming" | "past" | "support";
+
 const mockThreads = [
   {
     id: "c1", name: "Hushh Concierge", avatar: "💎", lastMessage: "Your refund has been processed successfully.",
     time: "Yesterday", unread: 0, online: true, verified: true, role: "Support",
     typing: false, pinned: true,
+    tripStatus: "support" as TripStatus, tripLabel: "24/7 Support",
   },
   {
     id: "c2", name: "Koraput Garden Host", avatar: "🏡", lastMessage: "Welcome! Looking forward to hosting you tomorrow.",
     time: "2 hours ago", unread: 2, online: true, verified: true, role: "Superhost",
     typing: true, pinned: false,
+    tripStatus: "active" as TripStatus, tripLabel: "Mar 18 · Evening Slot",
+  },
+  {
+    id: "c5", name: "Chef Meera", avatar: "👩‍🍳", lastMessage: "The bonfire dinner setup is ready! Come anytime after 7.",
+    time: "1 hour ago", unread: 1, online: true, verified: true, role: "Chef",
+    typing: false, pinned: false,
+    tripStatus: "active" as TripStatus, tripLabel: "Mar 18 · Evening Slot",
   },
   {
     id: "c3", name: "Firefly Villa Host", avatar: "🌿", lastMessage: "Hope you enjoyed your stay! Come back during monsoon 🌧️",
     time: "Mar 10", unread: 0, online: false, verified: false, role: "Host",
     typing: false, pinned: false,
+    tripStatus: "past" as TripStatus, tripLabel: "Mar 8-10 · Weekend Stay",
   },
   {
     id: "c4", name: "Chef Arjun", avatar: "👨‍🍳", lastMessage: "I'll prepare the tribal thali for your group. See you at 7!",
     time: "Mar 8", unread: 0, online: false, verified: true, role: "Service Provider",
     typing: false, pinned: false,
+    tripStatus: "past" as TripStatus, tripLabel: "Mar 8-10 · Weekend Stay",
+  },
+  {
+    id: "c6", name: "Rooftop Lounge Host", avatar: "🌃", lastMessage: "Thanks for visiting! Your review means a lot to us.",
+    time: "Feb 25", unread: 0, online: false, verified: true, role: "Host",
+    typing: false, pinned: false,
+    tripStatus: "past" as TripStatus, tripLabel: "Feb 24-25 · Night Slot",
   },
 ];
 
@@ -121,6 +140,15 @@ const mockMessages: Record<string, Array<{ id: string; text: string; sender: "us
     { id: "m13", text: "Hi Chef Arjun! Can you prepare a tribal thali for 6 guests?", sender: "user", time: "Mar 8, 3:00 PM", status: "read" },
     { id: "m14", text: "Absolutely! I'll prepare the tribal thali for your group. The menu includes badi chura, pakhala, ambil, and more. See you at 7!", sender: "other", time: "Mar 8, 3:15 PM" },
     { id: "m15", text: "Sounds amazing! Can't wait 🍛", sender: "user", time: "Mar 8, 3:16 PM", status: "read", reactions: ["🔥"] },
+  ],
+  c5: [
+    { id: "m16", text: "Hi Chef Meera! What's on the menu tonight?", sender: "user", time: "1 hour ago", status: "delivered" },
+    { id: "m17", text: "Tonight we have a special bonfire menu — bamboo chicken, tribal dal, and rice cooked in banana leaf 🔥", sender: "other", time: "1 hour ago" },
+    { id: "m18", text: "The bonfire dinner setup is ready! Come anytime after 7.", sender: "other", time: "1 hour ago" },
+  ],
+  c6: [
+    { id: "m19", text: "Beautiful rooftop setup! Thank you for the amazing evening 🌃", sender: "user", time: "Feb 25, 10:00 PM", status: "read" },
+    { id: "m20", text: "Thanks for visiting! Your review means a lot to us. Hope to see you again soon! ⭐", sender: "other", time: "Feb 25, 10:30 PM", reactions: ["❤️"] },
   ],
 };
 
@@ -967,6 +995,7 @@ export default function MessagesScreen() {
         time: formatDistanceToNow(new Date(c.last_message_time), { addSuffix: true }),
         unread: c.unread_count, online: false, verified: false, role: "Host" as string,
         typing: false, pinned: pinnedIds.has(c.id), conversation: c,
+        tripStatus: "active" as TripStatus, tripLabel: "Current Trip",
       }))
     : mockThreads.map((t) => ({ ...t, pinned: pinnedIds.has(t.id), conversation: null as Conversation | null }));
 
@@ -976,7 +1005,9 @@ export default function MessagesScreen() {
     : visibleChats;
 
   const pinnedChats = filteredChats.filter(t => t.pinned);
-  const otherChats = filteredChats.filter(t => !t.pinned);
+  const activeTrip = filteredChats.filter(t => !t.pinned && (t.tripStatus === "active" || t.tripStatus === "upcoming"));
+  const pastTrips = filteredChats.filter(t => !t.pinned && t.tripStatus === "past");
+  const supportChats = filteredChats.filter(t => !t.pinned && t.tripStatus === "support");
 
   return (
     <div className="pb-24 min-h-screen" style={{ background: "linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--secondary) / 0.3) 100%)" }}>
@@ -1075,19 +1106,87 @@ export default function MessagesScreen() {
               </div>
             )}
 
-            {/* Recent */}
-            {otherChats.length > 0 && (
-              <div>
-                {pinnedChats.length > 0 && (
-                  <p className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground mb-2">Recent</p>
-                )}
+            {/* Current Trip */}
+            {activeTrip.length > 0 && (
+              <div className="mb-4">
+                <div className="flex items-center gap-2 mb-2.5">
+                  <div className="w-5 h-5 rounded-md bg-emerald-500/15 flex items-center justify-center">
+                    <Plane size={10} className="text-emerald-500" />
+                  </div>
+                  <p className="text-[10px] uppercase tracking-wider font-bold text-emerald-500">Current Trip</p>
+                  <div className="flex-1 h-px bg-emerald-500/10" />
+                </div>
+                {/* Trip context banner */}
+                <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+                  className="mb-2.5 px-3 py-2 rounded-xl bg-emerald-500/8 border border-emerald-500/15">
+                  <div className="flex items-center gap-2">
+                    <MapPin size={12} className="text-emerald-500 shrink-0" />
+                    <p className="text-[11px] text-emerald-400 font-medium">{activeTrip[0]?.tripLabel}</p>
+                    <span className="ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400">ACTIVE</span>
+                  </div>
+                </motion.div>
                 <div className="space-y-2">
-                  {otherChats.map((t, i) => (
+                  {activeTrip.map((t, i) => (
                     <ThreadCard key={t.id} thread={t} index={i + pinnedChats.length} onPin={handlePin} onArchive={handleArchive} onClick={() => {
                       if (t.conversation) setActiveConvo(t.conversation);
                       else setActiveMockThread(mockThreads.find(mt => mt.id === t.id) || null);
                     }} />
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* Support */}
+            {supportChats.length > 0 && (
+              <div className="mb-4">
+                <div className="flex items-center gap-2 mb-2.5">
+                  <div className="w-5 h-5 rounded-md bg-primary/15 flex items-center justify-center">
+                    <HeadphonesIcon size={10} className="text-primary" />
+                  </div>
+                  <p className="text-[10px] uppercase tracking-wider font-bold text-primary">Support</p>
+                  <div className="flex-1 h-px bg-primary/10" />
+                </div>
+                <div className="space-y-2">
+                  {supportChats.map((t, i) => (
+                    <ThreadCard key={t.id} thread={t} index={i + pinnedChats.length + activeTrip.length} onPin={handlePin} onArchive={handleArchive} onClick={() => {
+                      if (t.conversation) setActiveConvo(t.conversation);
+                      else setActiveMockThread(mockThreads.find(mt => mt.id === t.id) || null);
+                    }} />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Past Trips */}
+            {pastTrips.length > 0 && (
+              <div className="mb-4">
+                <div className="flex items-center gap-2 mb-2.5">
+                  <div className="w-5 h-5 rounded-md bg-muted-foreground/10 flex items-center justify-center">
+                    <History size={10} className="text-muted-foreground" />
+                  </div>
+                  <p className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground">Past Trips</p>
+                  <div className="flex-1 h-px bg-border" />
+                </div>
+                <div className="space-y-2">
+                  {pastTrips.map((t, i) => {
+                    // Group label for trip
+                    const prevTrip = pastTrips[i - 1];
+                    const showTripLabel = !prevTrip || prevTrip.tripLabel !== t.tripLabel;
+                    return (
+                      <div key={t.id}>
+                        {showTripLabel && (
+                          <div className="flex items-center gap-2 mb-1.5 mt-1">
+                            <Calendar size={10} className="text-muted-foreground/60" />
+                            <p className="text-[10px] text-muted-foreground/60 font-medium">{t.tripLabel}</p>
+                          </div>
+                        )}
+                        <ThreadCard thread={t} index={i + pinnedChats.length + activeTrip.length + supportChats.length} onPin={handlePin} onArchive={handleArchive} onClick={() => {
+                          if (t.conversation) setActiveConvo(t.conversation);
+                          else setActiveMockThread(mockThreads.find(mt => mt.id === t.id) || null);
+                        }} />
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
