@@ -1,4 +1,5 @@
 import { motion, AnimatePresence, useMotionValue, useTransform, animate, PanInfo } from "framer-motion";
+import { useAppConfig } from "@/hooks/use-app-config";
 import {
   ArrowLeft, Share2, Heart, Star, BadgeCheck, MapPin,
   ChevronDown, ChevronUp, Minus, Plus, Droplets, Flame,
