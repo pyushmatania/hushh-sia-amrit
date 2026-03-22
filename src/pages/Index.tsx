@@ -1,4 +1,4 @@
-import { useState, useCallback, lazy, Suspense } from "react";
+import { useState, useCallback, lazy, Suspense, startTransition } from "react";
 import { AnimatePresence } from "framer-motion";
 import SplashScreen from "@/components/SplashScreen";
 
@@ -173,7 +173,7 @@ export default function Index() {
       <Suspense fallback={lazyFallback}>
       <AnimatePresence mode="wait">
         {screen.type === "home" && activeTab === "home" && (
-          <HomeScreen key="home" onPropertyTap={handlePropertyTap} onSearchTap={() => setShowSearch(true)} onMapTap={() => setShowMap(true)} onNotificationTap={() => setShowNotifications(true)} wishlist={wishlist} onToggleWishlist={toggleWishlist} />
+          <HomeScreen key="home" onPropertyTap={handlePropertyTap} onSearchTap={() => setShowSearch(true)} onMapTap={() => startTransition(() => setShowMap(true))} onNotificationTap={() => setShowNotifications(true)} wishlist={wishlist} onToggleWishlist={toggleWishlist} />
         )}
         {screen.type === "home" && activeTab === "wishlists" && (
           <WishlistScreen
@@ -300,15 +300,17 @@ export default function Index() {
       </AnimatePresence>
 
       {/* Map overlay */}
-      <AnimatePresence>
-        {showMap && (
-          <MapViewScreen
-            key="map"
-            onPropertyTap={(p) => { setShowMap(false); handlePropertyTap(p); }}
-            onClose={() => setShowMap(false)}
-          />
-        )}
-      </AnimatePresence>
+      <Suspense fallback={<ScreenSkeleton />}>
+        <AnimatePresence>
+          {showMap && (
+            <MapViewScreen
+              key="map"
+              onPropertyTap={(p) => { setShowMap(false); handlePropertyTap(p); }}
+              onClose={() => setShowMap(false)}
+            />
+          )}
+        </AnimatePresence>
+      </Suspense>
 
       {/* Notification Center overlay */}
       <AnimatePresence>
