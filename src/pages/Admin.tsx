@@ -32,6 +32,7 @@ import AdminCheckin from "@/components/admin/AdminCheckin";
 import AdminReports from "@/components/admin/AdminReports";
 import AdminNotifications from "@/components/admin/AdminNotifications";
 import AdminSettings from "@/components/admin/AdminSettings";
+import AdminHomepage from "@/components/admin/AdminHomepage";
 import AuthScreen from "@/components/AuthScreen";
 import { Shield, Loader2 } from "lucide-react";
 
@@ -54,7 +55,8 @@ export default function Admin() {
     achievements: "Achievements", loyalty: "Loyalty", calendar: "Calendar",
     requests: "Requests", history: "Property History", inventory: "Inventory",
     "staff-mgmt": "Staff Mgmt", budget: "Budget",
-    checkin: "Check-in", reports: "Reports", notifications: "Notifications", settings: "Settings",
+    checkin: "Check-in", reports: "Reports", notifications: "Notifications",
+    settings: "Settings", homepage: "Homepage Manager",
   };
 
   const navigateTo = (target: AdminPage, ctx?: { propertyId?: string; userId?: string; bookingId?: string }) => {
@@ -137,7 +139,8 @@ export default function Admin() {
       case "curations": return <AdminCurations />;
       case "campaigns": return <AdminCampaigns />;
       case "coupons": return <AdminCoupons />;
-      case "tags": return <AdminTags />;
+      case "tags": return <AdminHomepage />;
+      case "homepage": return <AdminHomepage />;
       case "orders": return <AdminOrders />;
       case "exports": return <AdminExports />;
       case "achievements": return <AdminAchievements />;
