@@ -18,7 +18,9 @@ const Staff = lazy(() => import("./pages/Staff.tsx"));
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const App = () => {
+  useEffect(() => { preloadVideos(); }, []);
+  return (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
       <AuthProvider>
