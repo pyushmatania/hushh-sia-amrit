@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-interface AppConfig {
+export interface AppConfig {
   extra_mattress_price: number;
   room_capacity: number;
   platform_fee: number;
@@ -25,7 +25,7 @@ let listeners: Array<() => void> = [];
 const notify = () => listeners.forEach(l => l());
 
 export async function loadAppConfig(): Promise<AppConfig> {
-  const { data } = await supabase.from("app_config" as any).select("key, value");
+  const { data } = await (supabase as any).from("app_config").select("key, value");
   const config = { ...defaults };
   if (data) {
     for (const row of data as any[]) {
@@ -40,7 +40,7 @@ export async function loadAppConfig(): Promise<AppConfig> {
 }
 
 export async function updateAppConfig(key: string, value: string) {
-  await supabase.from("app_config" as any).update({ value } as any).eq("key" as any, key);
+  await (supabase as any).from("app_config").update({ value }).eq("key", key);
   if (cachedConfig && key in cachedConfig) {
     (cachedConfig as any)[key] = Number(value) || value;
     notify();
