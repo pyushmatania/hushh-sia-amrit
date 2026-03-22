@@ -218,35 +218,61 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
         >
 
           {/* ═══════ HOME TAB ═══════ */}
-          {activeCategory === "home" && (
-            <>
-              <ActiveTripCard onViewTrip={onPropertyTap} />
+          {activeCategory === "home" && (() => {
+              const homeSections: { key: string; order: number; node: ReactNode }[] = [];
 
-              <SectionTitle title="🔥 TONIGHT'S VIBE" />
-              <SpotlightCarousel properties={activeMood ? moodFilteredProperties : properties} onPropertyTap={onPropertyTap} category="home" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
+              if (isSectionVisible("active_trip")) {
+                homeSections.push({ key: "active_trip", order: getSortOrder("active_trip"), node: <ActiveTripCard onViewTrip={onPropertyTap} /> });
+              }
+              if (isSectionVisible("spotlight")) {
+                homeSections.push({ key: "spotlight", order: getSortOrder("spotlight"), node: (
+                  <>
+                    <SectionTitle title="🔥 TONIGHT'S VIBE" />
+                    <SpotlightCarousel properties={activeMood ? moodFilteredProperties : properties} onPropertyTap={onPropertyTap} category="home" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
+                  </>
+                )});
+              }
+              if (isSectionVisible("packages")) {
+                homeSections.push({ key: "packages", order: getSortOrder("packages"), node: (
+                  <>
+                    <SectionTitle title="BOOK YOUR EXPERIENCE" />
+                    <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4">
+                      {packages.map((pkg, i) => (
+                        <PackageCard key={pkg.id} pkg={pkg} index={i} properties={properties} onPropertyTap={onPropertyTap} />
+                      ))}
+                    </div>
+                  </>
+                )});
+              }
+              if (isSectionVisible("foodie")) {
+                homeSections.push({ key: "foodie", order: getSortOrder("foodie"), node: (
+                  <LazySection minHeight="500px">
+                    <SectionTitle title="FOODIE FRONT ROW" />
+                    <FoodieCarousel properties={properties} onPropertyTap={onPropertyTap} />
+                  </LazySection>
+                )});
+              }
+              if (isSectionVisible("curated_packs")) {
+                homeSections.push({ key: "curated_packs", order: getSortOrder("curated_packs"), node: (
+                  <LazySection minHeight="400px">
+                    <SectionTitle title="✨ CURATED PACKS" />
+                    <div className="space-y-5 pb-2">
+                      {filteredPacks.slice(0, 4).map((pack, i) => (
+                        <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
+                      ))}
+                    </div>
+                  </LazySection>
+                )});
+              }
 
-              <SectionTitle title="BOOK YOUR EXPERIENCE" />
-              <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4">
-                {packages.map((pkg, i) => (
-                  <PackageCard key={pkg.id} pkg={pkg} index={i} properties={properties} onPropertyTap={onPropertyTap} />
-                ))}
-              </div>
+              homeSections.sort((a, b) => a.order - b.order);
 
-              <LazySection minHeight="500px">
-                <SectionTitle title="FOODIE FRONT ROW" />
-                <FoodieCarousel properties={properties} onPropertyTap={onPropertyTap} />
-              </LazySection>
-
-              <LazySection minHeight="400px">
-                <SectionTitle title="✨ CURATED PACKS" />
-                <div className="space-y-5 pb-2">
-                  {filteredPacks.slice(0, 4).map((pack, i) => (
-                    <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
-                  ))}
-                </div>
-              </LazySection>
-            </>
-          )}
+              return (
+                <>
+                  {homeSections.map(s => <div key={s.key}>{s.node}</div>)}
+                </>
+              );
+            })()}
 
           {/* ═══════ STAYS TAB ═══════ */}
           {activeCategory === "stay" && (
