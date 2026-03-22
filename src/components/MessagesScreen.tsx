@@ -1166,7 +1166,7 @@ export default function MessagesScreen() {
                   {supportChats.map((t, i) => (
                     <ThreadCard key={t.id} thread={t} index={i + pinnedChats.length + activeTrip.length} onPin={handlePin} onArchive={handleArchive} onClick={() => {
                       if (t.conversation) setActiveConvo(t.conversation);
-                      else setActiveMockThread(mockThreads.find(mt => mt.id === t.id) || null);
+                      else setActiveMockThread(dynamicMockThreads.find(mt => mt.id === t.id) || null);
                     }} />
                   ))}
                 </div>
