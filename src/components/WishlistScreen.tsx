@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Heart, Star, MapPin, BadgeCheck } from "lucide-react";
 import { properties, type Property } from "@/data/properties";
 import { pageSlideUp, cardPress } from "@/lib/animations";
+import EmptyState from "./shared/EmptyState";
 
 interface WishlistScreenProps {
   wishlist: string[];
