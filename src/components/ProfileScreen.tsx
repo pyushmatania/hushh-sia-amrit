@@ -25,6 +25,8 @@ import LoyaltyScreen from "./LoyaltyScreen";
 import ReferralScreen from "./ReferralScreen";
 import AppDocumentation from "./AppDocumentation";
 import IdentityUploadSheet from "./IdentityUploadSheet";
+import { useAppConfig } from "@/hooks/use-app-config";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 const themeOptions = [
   { id: "light" as const, label: "Light", icon: Sun },
