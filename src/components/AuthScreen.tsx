@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
+import { useAppConfig } from "@/hooks/use-app-config";
 import authBg from "@/assets/auth-bg-night.webp";
 
 export default function AuthScreen() {
