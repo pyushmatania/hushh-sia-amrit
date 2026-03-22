@@ -999,7 +999,7 @@ export default function MessagesScreen() {
   const unreadNotifCount = notifications.filter((n) => !n.read && !readNotifications.has(n.id)).length;
   const unreadChatCount = user
     ? conversations.reduce((sum, c) => sum + c.unread_count, 0)
-    : mockThreads.reduce((sum, t) => sum + t.unread, 0);
+    : dynamicMockThreads.reduce((sum, t) => sum + t.unread, 0);
 
   const markRead = (id: string) => setReadNotifications((prev) => new Set(prev).add(id));
 
