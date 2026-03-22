@@ -32,6 +32,7 @@ import AdminCheckin from "@/components/admin/AdminCheckin";
 import AdminReports from "@/components/admin/AdminReports";
 import AdminNotifications from "@/components/admin/AdminNotifications";
 import AdminSettings from "@/components/admin/AdminSettings";
+import AdminHomepage from "@/components/admin/AdminHomepage";
 import AuthScreen from "@/components/AuthScreen";
 import { Shield, Loader2 } from "lucide-react";
 
