@@ -195,6 +195,8 @@ Active Trip → Order Food (live ordering sheet) / Add Extras (per-item emoji ic
 - **Two Cards Grid**: Past Trips, Connections
 - **Become a Host** CTA → Host Dashboard
 - **Theme Switcher**: Light/Dark/Auto animated toggle
+- **Social Media Footer**: Dynamic Instagram/Facebook/YouTube/Twitter icons from branding config
+- **Terms & Privacy Sheet**: Dynamic legal links (terms_url, privacy_url, refund_policy_url) from config
 - **Settings Menu**: 10 items with sheets
 - **Version text**: Tap 5× → App Documentation
 
