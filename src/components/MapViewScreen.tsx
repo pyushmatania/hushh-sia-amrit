@@ -199,7 +199,7 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
     map.eachLayer((layer) => {
       if (layer instanceof L.TileLayer) map.removeLayer(layer);
     });
-    L.tileLayer(TILE_LAYERS[tileStyle], { maxZoom: 19, subdomains: "abcd" }).addTo(map);
+    L.tileLayer(TILE_LAYERS[tileStyle], { maxZoom: 20 }).addTo(map);
   }, [tileStyle]);
 
   // Update selected marker style
