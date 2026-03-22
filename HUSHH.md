@@ -623,6 +623,23 @@ React 18 · TypeScript 5.8 · Vite 8 · Tailwind CSS 3.4 · shadcn/ui · CVA · 
 - Coupons and campaigns seeded in database
 - Identity verification enforcement on booking flow
 
+### v1.19 — Dynamic App Configuration System
+- **`app_config` table** — centralized key-value store for all runtime settings
+- **Admin Settings page** — 3-tab interface (General, Branding, Advanced) for managing all config
+- **Admin Homepage Manager** — 4-tab interface (Sections, Videos, Filters, Tags) for controlling user-facing homepage
+- **Dynamic Branding** — `app_name`, `logo_url`, `app_tagline` wired to SplashScreen and HomeScreen header
+- **Dynamic Homepage Sections** — visibility toggles and drag-to-reorder, stored as JSON in `homepage_sections` config
+- **Dynamic Spotlight Videos** — admin edits video URLs and overlay text, wired to SpotlightCarousel via `useVideoCards`
+- **Dynamic Filter Pills** — category filters for Stays/Experiences/Services/Curations editable in admin, wired via `useHomepageFilters`
+- **Dynamic Support Contacts** — `support_phone`, `support_email`, `whatsapp_number` wired to MessagesScreen help section
+- **Tags merged into Homepage Manager** — property tag CRUD consolidated under Homepage → Tags tab
+- 4 new hooks: `useAppConfig`, `useHomepageSections`, `useHomepageFilters`, `useVideoCards`
+
+### v1.20 — Social & Legal Integration
+- **Social Media Links** — Instagram, Facebook, YouTube, Twitter URLs from branding config rendered as icons in ProfileScreen footer
+- **Terms & Privacy Sheet** — dynamic legal links (terms_url, privacy_url, refund_policy_url) accessible from Profile settings
+- Links only render when URLs are configured in admin, graceful empty state otherwise
+
 ---
 
 ## 📐 Conventions & Guidelines
