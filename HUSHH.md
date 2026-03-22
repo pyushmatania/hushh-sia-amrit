@@ -184,6 +184,7 @@ Active Trip → Order Food (live ordering sheet) / Add Extras (per-item emoji ic
 
 ### 12. Messages Screen (`MessagesScreen.tsx`)
 - Conversation list, unread badges, chat thread, message input
+- **Dynamic support contacts**: Phone, email, WhatsApp pulled from `app_config`
 
 ### 13. Profile Screen (`ProfileScreen.tsx`)
 - **Hero Card**: Centered avatar with glow + verified badge, name, location, bio, stats (Trips/Reviews/Member)
