@@ -292,6 +292,42 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
                     <div><label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1.5 block">Low Threshold</label><Input type="number" value={editing.low_stock_threshold || 0} onChange={e => setEditing(p => ({ ...p!, low_stock_threshold: Number(e.target.value) }))} className="rounded-xl bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700" /></div>
                   </div>
                   <div className="flex items-center gap-2"><input type="checkbox" checked={editing.available ?? true} onChange={e => setEditing(p => ({ ...p!, available: e.target.checked }))} className="rounded border-zinc-300" id="avail" /><label htmlFor="avail" className="text-sm text-zinc-700 dark:text-zinc-200">Available for ordering</label></div>
+                  {/* Image section */}
+                  <div>
+                    <label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1.5 block">Item Image</label>
+                    {editing.image_url ? (
+                      <div className="relative rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-700 aspect-video group">
+                        <img src={editing.image_url} alt="" className="w-full h-full object-cover" />
+                        <button onClick={() => setEditing(p => ({ ...p!, image_url: null }))}
+                          className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 opacity-0 group-hover:opacity-100 transition">
+                          <X size={12} className="text-white" />
+                        </button>
+                      </div>
+                    ) : (
+                      <label className="w-full py-4 rounded-xl border-2 border-dashed border-zinc-300 dark:border-zinc-600 text-xs text-zinc-500 font-medium hover:bg-zinc-50 dark:hover:bg-zinc-800 transition flex flex-col items-center justify-center gap-1.5 cursor-pointer">
+                        <Upload size={18} className="text-zinc-400" />
+                        <span>Upload image</span>
+                        <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          const ext = file.name.split('.').pop();
+                          const path = `inventory/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+                          const { supabase } = await import("@/integrations/supabase/client");
+                          const { error } = await supabase.storage.from("listing-images").upload(path, file);
+                          if (error) return;
+                          const { data: urlData } = supabase.storage.from("listing-images").getPublicUrl(path);
+                          if (urlData?.publicUrl) setEditing(p => ({ ...p!, image_url: urlData.publicUrl }));
+                        }} />
+                      </label>
+                    )}
+                    {!editing.image_url && (
+                      <div className="mt-2 flex gap-2">
+                        <Input placeholder="Or paste image URL..." className="flex-1 text-xs rounded-xl bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700"
+                          onKeyDown={e => { if (e.key === "Enter" && (e.target as HTMLInputElement).value) { setEditing(p => ({ ...p!, image_url: (e.target as HTMLInputElement).value })); (e.target as HTMLInputElement).value = ""; } }}
+                        />
+                      </div>
+                    )}
+                  </div>
                 </>
               )}
               <motion.button whileTap={{ scale: 0.97 }} onClick={save}
