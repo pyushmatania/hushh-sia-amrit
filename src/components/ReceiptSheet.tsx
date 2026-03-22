@@ -79,7 +79,7 @@ export default function ReceiptSheet({ open, onClose, booking }: Props) {
                 <span className="text-xl">🧾</span>
               </div>
               <h4 className="text-lg font-bold text-foreground">Payment Receipt</h4>
-              <p className="text-xs text-muted-foreground mt-1">Hushh Experiences</p>
+              <p className="text-xs text-muted-foreground mt-1">{brandName} Experiences</p>
             </div>
 
             {/* Property Info */}
