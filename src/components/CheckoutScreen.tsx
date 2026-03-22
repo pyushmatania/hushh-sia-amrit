@@ -149,8 +149,8 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
       exit={{ opacity: 0, x: -20 }}
       className="fixed inset-0 z-30 bg-mesh overflow-y-auto pb-36"
     >
-      {/* Header */}
-      <div className="sticky top-0 z-10 glass px-5 py-3">
+      {/* Header with progress */}
+      <div className="sticky top-0 z-10 glass px-5 py-3 space-y-2.5">
         <div className="flex items-center gap-3">
           <button onClick={onBack} className="w-9 h-9 rounded-full border border-border flex items-center justify-center">
             <ArrowLeft size={16} className="text-foreground" />
@@ -159,7 +159,6 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
             <h2 className="font-semibold text-base text-foreground">Confirm & Pay</h2>
             <p className="text-xs text-muted-foreground">Review your booking details</p>
           </div>
-          {/* Save / Wishlist button */}
           {onToggleWishlist && (
             <motion.button
               onClick={() => onToggleWishlist(property.id)}
@@ -172,6 +171,24 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
               />
             </motion.button>
           )}
+        </div>
+        {/* Step progress indicator */}
+        <div className="flex items-center gap-1.5">
+          {["Details", "Add-ons", "Payment"].map((step, i) => (
+            <div key={step} className="flex items-center gap-1.5 flex-1">
+              <div className="flex-1 flex flex-col items-center gap-1">
+                <div className="w-full h-1 rounded-full overflow-hidden bg-secondary">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: "100%" }}
+                    transition={{ delay: i * 0.15, duration: 0.4 }}
+                    className="h-full rounded-full bg-primary"
+                  />
+                </div>
+                <span className="text-[9px] font-medium text-muted-foreground">{step}</span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 

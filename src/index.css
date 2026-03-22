@@ -205,6 +205,26 @@
   100% { transform: translateX(100%); }
 }
 
+/* Shimmer background utility for skeletons */
+.shimmer-bg {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    hsla(var(--muted-foreground) / 0.06) 40%,
+    hsla(var(--muted-foreground) / 0.12) 50%,
+    hsla(var(--muted-foreground) / 0.06) 60%,
+    transparent 100%
+  );
+  animation: shimmer 1.8s infinite;
+}
+
 /* Smooth page transitions */
 .page-transition {
   will-change: transform, opacity;

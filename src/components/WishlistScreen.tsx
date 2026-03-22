@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Heart, Star, MapPin, BadgeCheck } from "lucide-react";
 import { properties, type Property } from "@/data/properties";
 import { pageSlideUp, cardPress } from "@/lib/animations";
+import EmptyState from "./shared/EmptyState";
 
 interface WishlistScreenProps {
   wishlist: string[];
@@ -33,20 +34,12 @@ export default function WishlistScreen({ wishlist, onToggleWishlist, onPropertyT
       </div>
 
       {wishlisted.length === 0 ? (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.15 }}
-          className="flex flex-col items-center justify-center px-10 pt-20"
-        >
-          <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center mb-5">
-            <Heart size={36} className="text-muted-foreground" />
-          </div>
-          <h3 className="text-lg font-semibold text-foreground text-center">No saved places yet</h3>
-          <p className="text-sm text-muted-foreground text-center mt-2 leading-relaxed">
-            Tap the heart icon on any property to save it here. Your favourite villas, venues, and experiences — all in one place.
-          </p>
-        </motion.div>
+        <EmptyState
+          icon={Heart}
+          emoji="💜"
+          title="No saved places yet"
+          description="Tap the heart icon on any property to save it here. Your favourite villas, venues, and experiences — all in one place."
+        />
       ) : (
         <div className="px-5 space-y-4">
           {wishlisted.map((property, i) => (
