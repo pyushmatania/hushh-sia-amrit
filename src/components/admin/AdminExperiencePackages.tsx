@@ -18,6 +18,7 @@ interface PackageRow {
   gradient: string;
   sort_order: number;
   active: boolean;
+  image_url: string | null;
 }
 
 const GRADIENT_OPTIONS = [
