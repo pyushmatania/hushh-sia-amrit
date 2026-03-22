@@ -6,6 +6,7 @@ import type { Property } from "@/data/properties";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { Calendar } from "@/components/ui/calendar";
 import { checkBookingConflict, type ConflictResult } from "@/hooks/use-bookings";
+import { useAppConfig } from "@/hooks/use-app-config";
 
 interface CheckoutScreenProps {
   property: Property;
