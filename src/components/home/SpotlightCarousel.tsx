@@ -3,6 +3,7 @@ import { VolumeX, Volume2, Bookmark, Flame, Zap, Sparkles } from "lucide-react";
 import { type Property } from "@/data/properties";
 import { AccentFrame, AccentTag } from "@/components/shared/AccentFrame";
 import OptimizedImage from "@/components/shared/OptimizedImage";
+import { useVideoCards, type VideoCardConfig } from "@/hooks/use-video-cards";
 
 // Home / generic
 import videoBonfire from "@/assets/video-bonfire-night.mp4.asset.json";
