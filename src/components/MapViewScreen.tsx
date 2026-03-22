@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Star, MapPin, Navigation, Layers, Search, SlidersHorizontal, List, Map as MapIcon, ArrowUpDown, Plus, Minus, Share2 } from "lucide-react";
+import { X, Star, MapPin, Navigation, Layers, Search, SlidersHorizontal, List, Map as MapIcon, ArrowUpDown, Plus, Minus, Share2, LocateFixed, Loader2 } from "lucide-react";
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { properties, type Property } from "@/data/properties";
 import L from "leaflet";
@@ -83,10 +83,14 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [listView, setListView] = useState(false);
   const [sortBy, setSortBy] = useState<"default" | "price_asc" | "price_desc" | "rating" | "distance">("default");
+  const [routeLoading, setRouteLoading] = useState(false);
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
   const clusterGroupRef = useRef<any>(null);
+  const routeLayerRef = useRef<L.Polyline | null>(null);
+  const userMarkerRef = useRef<L.Marker | null>(null);
 
   const filteredProperties = useMemo(() => {
     return properties.filter((p) => {
@@ -220,6 +224,79 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
   const recenter = () => {
     mapInstanceRef.current?.flyTo(CENTER, INITIAL_ZOOM, { duration: 0.8 });
     setSelectedPin(null);
+    clearRoute();
+  };
+
+  const clearRoute = () => {
+    if (routeLayerRef.current && mapInstanceRef.current) {
+      mapInstanceRef.current.removeLayer(routeLayerRef.current);
+      routeLayerRef.current = null;
+    }
+    if (userMarkerRef.current && mapInstanceRef.current) {
+      mapInstanceRef.current.removeLayer(userMarkerRef.current);
+      userMarkerRef.current = null;
+    }
+  };
+
+  const showRouteToPin = async (property: Property) => {
+    const map = mapInstanceRef.current;
+    if (!map) return;
+    setRouteLoading(true);
+    clearRoute();
+
+    try {
+      // Get user location
+      const pos = await new Promise<GeolocationPosition>((resolve, reject) =>
+        navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 8000 })
+      );
+      const userPos: [number, number] = [pos.coords.latitude, pos.coords.longitude];
+      setUserLocation(userPos);
+
+      // Add user marker
+      const userIcon = L.divIcon({
+        className: "custom-photo-marker",
+        html: `<div style="width:32px;height:32px;border-radius:50%;background:hsl(270,80%,65%);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><circle cx="12" cy="12" r="4"/></svg>
+        </div>`,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
+      });
+      userMarkerRef.current = L.marker(userPos, { icon: userIcon }).addTo(map);
+
+      // Fetch route from OSRM
+      const url = `https://router.project-osrm.org/route/v1/driving/${userPos[1]},${userPos[0]};${property.lng},${property.lat}?overview=full&geometries=geojson`;
+      const resp = await fetch(url);
+      const data = await resp.json();
+
+      if (data.routes && data.routes.length > 0) {
+        const coords = data.routes[0].geometry.coordinates.map((c: number[]) => [c[1], c[0]] as [number, number]);
+        routeLayerRef.current = L.polyline(coords, {
+          color: "hsl(270, 80%, 65%)",
+          weight: 5,
+          opacity: 0.85,
+          smoothFactor: 1,
+          dashArray: "10, 6",
+        }).addTo(map);
+        map.fitBounds(routeLayerRef.current.getBounds(), { padding: [60, 60], maxZoom: 15, animate: true });
+
+        const dist = data.routes[0].distance;
+        const duration = data.routes[0].duration;
+        const km = (dist / 1000).toFixed(1);
+        const mins = Math.ceil(duration / 60);
+        import("sonner").then(({ toast }) => toast.success(`${km} km · ~${mins} min drive`));
+      } else {
+        // Fallback: straight line
+        routeLayerRef.current = L.polyline([userPos, [property.lat, property.lng]], {
+          color: "hsl(270, 80%, 65%)", weight: 4, opacity: 0.7, dashArray: "8, 8",
+        }).addTo(map);
+        map.fitBounds(routeLayerRef.current.getBounds(), { padding: [60, 60], animate: true });
+        import("sonner").then(({ toast }) => toast.info("Showing approximate route"));
+      }
+    } catch (err) {
+      import("sonner").then(({ toast }) => toast.error("Could not get your location. Please enable location access."));
+    } finally {
+      setRouteLoading(false);
+    }
   };
 
   const cycleTile = () => {
@@ -523,12 +600,23 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
                       whileTap={{ scale: 0.95 }}
                       onClick={(e) => {
                         e.stopPropagation();
-                        window.open(`https://www.google.com/maps/dir/?api=1&destination=${selectedPin.lat},${selectedPin.lng}`, "_blank");
+                        showRouteToPin(selectedPin);
                       }}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-primary text-primary-foreground text-[12px] font-bold active:scale-[0.97] transition-transform"
+                      disabled={routeLoading}
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-primary text-primary-foreground text-[12px] font-bold active:scale-[0.97] transition-transform disabled:opacity-60"
                       style={{ boxShadow: "0 2px 10px hsl(var(--primary) / 0.3)" }}
                     >
-                      <Navigation size={13} /> Directions
+                      {routeLoading ? <Loader2 size={13} className="animate-spin" /> : <LocateFixed size={13} />} Navigate
+                    </motion.button>
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.open(`https://www.google.com/maps/dir/?api=1&destination=${selectedPin.lat},${selectedPin.lng}`, "_blank");
+                      }}
+                      className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-border bg-secondary text-foreground text-[12px] font-bold active:scale-[0.97] transition-transform"
+                    >
+                      <Navigation size={13} />
                     </motion.button>
                     <motion.button
                       whileTap={{ scale: 0.95 }}
@@ -538,9 +626,9 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
                         navigator.clipboard.writeText(url);
                         import("sonner").then(({ toast }) => toast.success("Location link copied!"));
                       }}
-                      className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl border border-border bg-secondary text-foreground text-[12px] font-bold active:scale-[0.97] transition-transform"
+                      className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-border bg-secondary text-foreground text-[12px] font-bold active:scale-[0.97] transition-transform"
                     >
-                      <Share2 size={13} /> Share
+                      <Share2 size={13} />
                     </motion.button>
                   </div>
                 </div>
