@@ -138,12 +138,14 @@ Active Trip → Order Food (live ordering sheet) / Add Extras (per-item emoji ic
 - **Dynamic branding**: App name and logo pulled from `app_config` (key: `app_name`, `logo_url`)
 
 ### 2. Home / Explore (`HomeScreen.tsx`)
-- **Header**: Profile avatar, location pill, notification bell (unread badge)
+- **Header**: Profile avatar, location pill (dynamic `app_tagline`), notification bell (unread badge)
 - **Rotating Search Bar**: Cycles through placeholder suggestions
 - **Active Trip Card**: Shows current checked-in booking with 1-tap food ordering and trip view
 - **Category Bar**: Horizontal tabs — Home, Stays, Experiences, Services, Curations, Work
-  - Sub-filters per category, smooth scroll on switch (offset 280px on sub-filter)
-- **Content Sections**: Spotlight Carousel, Property Cards (video thumbnails + AccentFrame), Sports Cards, Foodie Carousel, Couple Specials, Service Grid, Curated Pack Listings (vertical cards with autoplay video backgrounds), What's Hot, Events, Blockbuster Banner, Experience Cards
+  - **Dynamic sub-filters** per category from `homepage_filters` config (admin-editable)
+  - Smooth scroll on switch (offset 280px on sub-filter)
+- **Content Sections**: Ordered by `homepage_sections` config (admin can toggle visibility & reorder)
+  - Spotlight Carousel (video URLs + overlay text from `homepage_videos` config), Property Cards, Sports Cards, Foodie Carousel, Couple Specials, Service Grid, Curated Pack Listings, What's Hot, Events, Blockbuster Banner, Experience Cards
 - **Pull-to-refresh** + **Back-to-top button**
 
 ### 3. Property Detail (`PropertyDetail.tsx`)
