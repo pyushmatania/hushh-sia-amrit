@@ -6,6 +6,7 @@ import BottomNav from "@/components/BottomNav";
 import HomeScreen from "@/components/HomeScreen";
 import NotificationToastProvider from "@/components/NotificationToastProvider";
 import NotificationPermissionBanner from "@/components/NotificationPermissionBanner";
+import ScreenSkeleton from "@/components/shared/ScreenSkeleton";
 
 // Lazy-loaded screens (not needed on initial render)
 const PropertyDetail = lazy(() => import("@/components/PropertyDetail"));
