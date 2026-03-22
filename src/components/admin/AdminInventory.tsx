@@ -13,6 +13,7 @@ interface InventoryItem {
   id: string; name: string; emoji: string; category: string; unit_price: number;
   stock: number; low_stock_threshold: number; available: boolean;
   property_id: string | null; sort_order: number; created_at: string;
+  image_url: string | null;
 }
 
 const categoryOptions = ["food", "drinks", "decoration", "entertainment", "activity", "comfort", "work", "staff", "decor", "equipment"];
