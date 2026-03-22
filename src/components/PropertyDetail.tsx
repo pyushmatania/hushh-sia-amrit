@@ -13,7 +13,7 @@ import {
   Armchair, GlassWater, Bell, Truck, Radio, Disc3,
   Wind, Tag, Check, BedDouble, Layers
 } from "lucide-react";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { shareProperty } from "@/lib/share";
 import { useToast } from "@/hooks/use-toast";
 import { hapticMedium, hapticSuccess } from "@/lib/haptics";
