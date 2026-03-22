@@ -75,7 +75,7 @@ function createPhotoIcon(imageUrl: string, isSelected: boolean, price: number) {
 
 export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenProps) {
   const [selectedPin, setSelectedPin] = useState<Property | null>(null);
-  const [tileStyle, setTileStyle] = useState<keyof typeof TILE_LAYERS>("dark");
+  const [tileStyle, setTileStyle] = useState<keyof typeof TILE_LAYERS>("default");
   const [activeCategory, setActiveCategory] = useState("all");
   const [priceRange, setPriceRange] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
