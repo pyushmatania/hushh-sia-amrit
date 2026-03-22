@@ -114,6 +114,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
     if (label === "Loyalty points") { setShowLoyalty(true); return; }
     if (label === "Verify Identity") { setShowIdentityUpload(true); return; }
     if (label === "Help centre") { setShowHelpCentre(true); return; }
+    if (label === "Terms & privacy") { setShowLegal(true); return; }
     if (key) setActiveSetting(key);
   }, []);
 
