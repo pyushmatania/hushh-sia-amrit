@@ -489,7 +489,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
           )}
 
           {/* ═══════ ALL LISTINGS ═══════ */}
-          {activeCategory !== "experience" && activeCategory !== "curation" && activeCategory !== "service" && (
+          {activeCategory !== "experience" && activeCategory !== "curation" && activeCategory !== "service" && (activeCategory !== "home" || isSectionVisible("all_listings")) && (
             <div className="mt-7">
               <div className="flex items-center justify-between px-5 mb-3">
                 <h2 className="text-lg font-bold text-foreground">
