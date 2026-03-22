@@ -1165,12 +1165,14 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
               <span className="font-semibold text-gradient-warm text-lg">₹{selectedSlotData.price.toLocaleString()}</span>
               <span className="text-muted-foreground text-sm"> / {selectedSlotData.label.toLowerCase()}</span>
               <p className="text-xs text-muted-foreground">
+                {isStayProp && <><BedDouble size={10} className="inline text-primary mr-0.5" />{roomsCount}R · </>}
                 {guests} guests · {format(selectedDate, "d MMM")}
+                {extraMattressCount > 0 && <span className="text-amber-400 font-medium"> · +{extraMattressCount}🛏️</span>}
                 {addedExtras.length > 0 && <span className="text-primary font-medium"> · +{addedExtras.length} extra{addedExtras.length > 1 ? "s" : ""}</span>}
               </p>
             </div>
             <motion.button
-              onClick={() => onBook(property, selectedSlot!, guests, selectedDate, addedExtras.length > 0 ? addedExtras : undefined)}
+              onClick={() => onBook(property, selectedSlot!, guests, selectedDate, addedExtras.length > 0 ? addedExtras : undefined, isStayProp ? roomsCount : undefined, isStayProp ? extraMattressCount : undefined)}
               className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold text-sm glow-primary"
               whileTap={{ scale: 0.93 }}
               transition={{ type: "spring", stiffness: 400 }}
