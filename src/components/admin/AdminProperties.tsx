@@ -194,7 +194,7 @@ export default function AdminProperties() {
   const openEdit = (listing: Listing) => {
     setEditingListing({ ...listing });
     setIsCreating(false);
-    setExpandedSection("basic");
+    setExpandedSection("images");
     setPreviewMode(false);
   };
 

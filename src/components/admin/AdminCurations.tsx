@@ -266,6 +266,33 @@ export default function AdminCurations() {
           </motion.div>
         ) : (
           <div className="space-y-4">
+            {/* Property Image Preview */}
+            {propInfo && propInfo.imageUrls.length > 0 && (
+              <div>
+                <label className="text-[10px] text-muted-foreground mb-2 block font-semibold uppercase tracking-wider">Linked Property Images</label>
+                <div className="rounded-xl overflow-hidden border border-border aspect-video relative mb-2">
+                  <img src={getListingThumbnail(propInfo.name, propInfo.imageUrls, { preferMapped: true }) || propInfo.imageUrls[0]} alt="" className="w-full h-full object-cover" />
+                  <div className="absolute bottom-2 left-2 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-sm">
+                    <p className="text-[10px] text-white font-medium">{propInfo.name}</p>
+                  </div>
+                </div>
+                {propInfo.imageUrls.length > 1 && (
+                  <div className="grid grid-cols-4 gap-1.5">
+                    {propInfo.imageUrls.slice(0, 4).map((url, i) => (
+                      <div key={i} className="aspect-square rounded-lg overflow-hidden border border-border">
+                        <img src={url} alt="" className="w-full h-full object-cover" />
+                      </div>
+                    ))}
+                    {propInfo.imageUrls.length > 4 && (
+                      <div className="aspect-square rounded-lg bg-secondary flex items-center justify-center text-xs text-muted-foreground font-medium">
+                        +{propInfo.imageUrls.length - 4}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="grid grid-cols-[60px_1fr] gap-3">
               <div>
                 <label className="text-[10px] text-muted-foreground mb-1 block">Emoji</label>
