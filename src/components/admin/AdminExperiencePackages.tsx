@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Gift, Search, Plus, Trash2, Pencil, X, Eye, GripVertical, CheckSquare, Upload } from "lucide-react";
+import { Gift, Search, Plus, Trash2, Pencil, X, Eye, GripVertical, CheckSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -8,6 +8,7 @@ import { useDragReorder } from "@/hooks/use-drag-reorder";
 import SwipeableRow from "./SwipeableRow";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
 import BatchOperationsBar from "./BatchOperationsBar";
+import MultiImageEditor from "./MultiImageEditor";
 
 interface PackageRow {
   id: string;
@@ -19,6 +20,7 @@ interface PackageRow {
   sort_order: number;
   active: boolean;
   image_url: string | null;
+  image_urls: string[];
 }
 
 const GRADIENT_OPTIONS = [
@@ -81,7 +83,7 @@ export default function AdminExperiencePackages() {
       name: "", emoji: "🎉", price: 0,
       includes: [], gradient: GRADIENT_OPTIONS[0],
       sort_order: packages.length + 1, active: true,
-      image_url: null,
+      image_url: null, image_urls: [],
     });
     setIsCreating(true);
     setIncludeInput("");
@@ -113,7 +115,8 @@ export default function AdminExperiencePackages() {
       gradient: editing.gradient || GRADIENT_OPTIONS[0],
       sort_order: editing.sort_order || 0,
       active: editing.active ?? true,
-      image_url: editing.image_url || null,
+      image_url: (editing.image_urls || [])[0] || editing.image_url || null,
+      image_urls: editing.image_urls || [],
     };
 
     if (isCreating) {
@@ -233,7 +236,7 @@ export default function AdminExperiencePackages() {
             <SwipeableRow
               key={pkg.id}
               showHint={pkg === filtered[0]}
-              onEdit={() => { setEditing({ ...pkg }); setIsCreating(false); setIncludeInput(""); setPreviewMode(false); }}
+              onEdit={() => { setEditing({ ...pkg, image_urls: pkg.image_urls || (pkg.image_url ? [pkg.image_url] : []) }); setIsCreating(false); setIncludeInput(""); setPreviewMode(false); }}
               onDelete={() => deletePackage(pkg.id)}
             >
               <div
@@ -279,7 +282,7 @@ export default function AdminExperiencePackages() {
                     {pkg.active ? "Active" : "Inactive"}
                   </button>
                   <button
-                    onClick={() => { setEditing({ ...pkg }); setIsCreating(false); setIncludeInput(""); setPreviewMode(false); }}
+                    onClick={() => { setEditing({ ...pkg, image_urls: pkg.image_urls || (pkg.image_url ? [pkg.image_url] : []) }); setIsCreating(false); setIncludeInput(""); setPreviewMode(false); }}
                     className="p-1.5 rounded-lg hover:bg-secondary transition"
                   >
                     <Pencil size={13} className="text-muted-foreground" />
@@ -311,7 +314,7 @@ export default function AdminExperiencePackages() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center"
+            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
             onClick={() => setEditing(null)}
           >
             <motion.div
@@ -402,41 +405,14 @@ export default function AdminExperiencePackages() {
                 </div>
               </div>
 
-              {/* Package Image */}
-              <div>
-                <label className="text-xs text-muted-foreground mb-1.5 block">Package Image</label>
-                {editing.image_url ? (
-                  <div className="relative rounded-xl overflow-hidden border border-border aspect-video group">
-                    <img src={editing.image_url} alt="" className="w-full h-full object-cover" />
-                    <button onClick={() => setEditing(p => ({ ...p!, image_url: null }))}
-                      className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 opacity-0 group-hover:opacity-100 transition">
-                      <X size={12} className="text-white" />
-                    </button>
-                  </div>
-                ) : (
-                  <label className="w-full py-4 rounded-xl border-2 border-dashed border-border text-xs text-muted-foreground font-medium hover:bg-secondary transition flex flex-col items-center justify-center gap-1.5 cursor-pointer">
-                    <Upload size={18} className="text-muted-foreground" />
-                    <span>Upload image</span>
-                    <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-                      const ext = file.name.split('.').pop();
-                      const path = `packages/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-                      const { error } = await supabase.storage.from("listing-images").upload(path, file);
-                      if (error) return;
-                      const { data: urlData } = supabase.storage.from("listing-images").getPublicUrl(path);
-                      if (urlData?.publicUrl) setEditing(p => ({ ...p!, image_url: urlData.publicUrl }));
-                    }} />
-                  </label>
-                )}
-                {!editing.image_url && (
-                  <div className="mt-2">
-                    <Input placeholder="Or paste image URL..." className="text-xs"
-                      onKeyDown={e => { if (e.key === "Enter" && (e.target as HTMLInputElement).value) { setEditing(p => ({ ...p!, image_url: (e.target as HTMLInputElement).value })); (e.target as HTMLInputElement).value = ""; } }}
-                    />
-                  </div>
-                )}
-              </div>
+              {/* Package Images */}
+              <MultiImageEditor
+                images={editing.image_urls || []}
+                onChange={urls => setEditing(p => ({ ...p!, image_urls: urls, image_url: urls[0] || null }))}
+                storagePath="packages"
+                label="Package Images"
+                maxImages={8}
+              />
 
               {/* Gradient picker */}
               <div>

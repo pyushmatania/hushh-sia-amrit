@@ -14,6 +14,7 @@ import SwipeableRow from "./SwipeableRow";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
 import BatchOperationsBar from "./BatchOperationsBar";
 import { getListingThumbnail } from "@/lib/listing-thumbnails";
+import MultiImageEditor from "./MultiImageEditor";
 
 const MOOD_OPTIONS = ["Romantic", "Party", "Chill", "Adventure", "Work", "Celebration", "Family"];
 const INCLUDE_OPTIONS = [
@@ -26,11 +27,13 @@ interface CurationDraft {
   name: string; emoji: string; tagline: string; price: number;
   original_price: number | null; slot: string; includes: string[];
   tags: string[]; mood: string[]; badge: string; property_id: string; active: boolean;
+  image_urls: string[];
 }
 
 const emptyDraft: CurationDraft = {
   name: "", emoji: "✨", tagline: "", price: 0, original_price: null,
   slot: "", includes: [], tags: [], mood: [], badge: "", property_id: "", active: true,
+  image_urls: [],
 };
 
 interface PropertyInfo { name: string; imageUrls: string[]; location: string; rating: number | null }
@@ -140,6 +143,7 @@ export default function AdminCurations() {
       price: Number(c.price), original_price: c.original_price ? Number(c.original_price) : null,
       slot: c.slot, includes: c.includes || [], tags: c.tags || [],
       mood: c.mood || [], badge: c.badge || "", property_id: c.property_id, active: c.active,
+      image_urls: c.image_urls || [],
     });
     setEditingId(c.id);
     setPreviewMode(false);
@@ -162,6 +166,7 @@ export default function AdminCurations() {
       price: editing.price, original_price: editing.original_price,
       slot: editing.slot, includes: editing.includes, tags: editing.tags,
       mood: editing.mood, badge: editing.badge || null, property_id: editing.property_id, active: editing.active,
+      image_urls: editing.image_urls || [],
     };
     if (editingId) await supabase.from("curations").update(payload).eq("id", editingId);
     else await supabase.from("curations").insert(payload);
@@ -266,30 +271,31 @@ export default function AdminCurations() {
           </motion.div>
         ) : (
           <div className="space-y-4">
-            {/* Property Image Preview */}
+            {/* Curation Images */}
+            <MultiImageEditor
+              images={editing.image_urls || []}
+              onChange={urls => setEditing({ ...editing, image_urls: urls })}
+              storagePath="curations"
+              label="Curation Images"
+              maxImages={8}
+            />
+
+            {/* Linked Property Images (read-only preview) */}
             {propInfo && propInfo.imageUrls.length > 0 && (
               <div>
-                <label className="text-[10px] text-muted-foreground mb-2 block font-semibold uppercase tracking-wider">Linked Property Images</label>
-                <div className="rounded-xl overflow-hidden border border-border aspect-video relative mb-2">
-                  <img src={getListingThumbnail(propInfo.name, propInfo.imageUrls, { preferMapped: true }) || propInfo.imageUrls[0]} alt="" className="w-full h-full object-cover" />
-                  <div className="absolute bottom-2 left-2 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-sm">
-                    <p className="text-[10px] text-white font-medium">{propInfo.name}</p>
-                  </div>
+                <label className="text-[10px] text-muted-foreground mb-2 block font-semibold uppercase tracking-wider">Linked Property Images (from {propInfo.name})</label>
+                <div className="grid grid-cols-4 gap-1.5">
+                  {propInfo.imageUrls.slice(0, 4).map((url, i) => (
+                    <div key={i} className="aspect-square rounded-lg overflow-hidden border border-border">
+                      <img src={url} alt="" className="w-full h-full object-cover" />
+                    </div>
+                  ))}
+                  {propInfo.imageUrls.length > 4 && (
+                    <div className="aspect-square rounded-lg bg-secondary flex items-center justify-center text-xs text-muted-foreground font-medium">
+                      +{propInfo.imageUrls.length - 4}
+                    </div>
+                  )}
                 </div>
-                {propInfo.imageUrls.length > 1 && (
-                  <div className="grid grid-cols-4 gap-1.5">
-                    {propInfo.imageUrls.slice(0, 4).map((url, i) => (
-                      <div key={i} className="aspect-square rounded-lg overflow-hidden border border-border">
-                        <img src={url} alt="" className="w-full h-full object-cover" />
-                      </div>
-                    ))}
-                    {propInfo.imageUrls.length > 4 && (
-                      <div className="aspect-square rounded-lg bg-secondary flex items-center justify-center text-xs text-muted-foreground font-medium">
-                        +{propInfo.imageUrls.length - 4}
-                      </div>
-                    )}
-                  </div>
-                )}
               </div>
             )}
 
