@@ -388,13 +388,37 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
             className="absolute inset-0 top-[max(100px,calc(env(safe-area-inset-top)+90px))] z-[999] bg-background/95 backdrop-blur-xl rounded-t-3xl border-t border-border overflow-hidden"
           >
-            <div className="flex items-center justify-between px-4 pt-3 pb-2">
-              <h2 className="text-sm font-bold text-foreground">{filteredProperties.length} Results</h2>
-              <button onClick={() => setListView(false)} className="text-xs font-semibold text-primary">Show Map</button>
+            <div className="px-4 pt-3 pb-2 space-y-2">
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-bold text-foreground">{filteredProperties.length} Results</h2>
+                <button onClick={() => setListView(false)} className="text-xs font-semibold text-primary">Show Map</button>
+              </div>
+              <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
+                {([
+                  { key: "default", label: "Relevant" },
+                  { key: "price_asc", label: "Price ↑" },
+                  { key: "price_desc", label: "Price ↓" },
+                  { key: "rating", label: "Top Rated" },
+                  { key: "distance", label: "Nearest" },
+                ] as const).map((s) => (
+                  <button
+                    key={s.key}
+                    onClick={() => setSortBy(s.key)}
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap border transition-colors ${
+                      sortBy === s.key
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-secondary text-foreground border-border"
+                    }`}
+                  >
+                    {sortBy === s.key && <ArrowUpDown size={10} />}
+                    {s.label}
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="overflow-y-auto px-4 pb-36" style={{ maxHeight: "calc(100% - 40px)" }}>
+            <div className="overflow-y-auto px-4 pb-36" style={{ maxHeight: "calc(100% - 80px)" }}>
               <div className="space-y-3">
-                {filteredProperties.map((p) => (
+                {sortedProperties.map((p) => (
                   <motion.div
                     key={p.id}
                     initial={{ opacity: 0, y: 20 }}
