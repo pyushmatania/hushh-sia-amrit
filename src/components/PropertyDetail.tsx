@@ -325,8 +325,9 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
   const [roomsCount, setRoomsCount] = useState(1);
   const [extraMattressCount, setExtraMattressCount] = useState(0);
 
-  const ROOM_CAPACITY = 2;
-  const EXTRA_MATTRESS_PRICE = 500;
+  const appConfig = useAppConfig();
+  const ROOM_CAPACITY = appConfig.room_capacity;
+  const EXTRA_MATTRESS_PRICE = appConfig.extra_mattress_price;
   const isStayProp = property.primaryCategory === "stay";
 
   const roomInfo = useMemo(() => {
