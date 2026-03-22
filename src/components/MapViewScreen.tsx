@@ -17,9 +17,9 @@ const CENTER: [number, number] = [18.855, 82.575];
 const INITIAL_ZOOM = 14;
 
 const TILE_LAYERS = {
-  dark: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-  light: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-  satellite: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+  default: "https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}",
+  satellite: "https://mt1.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}",
+  terrain: "https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}",
 };
 
 const CATEGORIES = [
@@ -75,7 +75,7 @@ function createPhotoIcon(imageUrl: string, isSelected: boolean, price: number) {
 
 export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenProps) {
   const [selectedPin, setSelectedPin] = useState<Property | null>(null);
-  const [tileStyle, setTileStyle] = useState<keyof typeof TILE_LAYERS>("dark");
+  const [tileStyle, setTileStyle] = useState<keyof typeof TILE_LAYERS>("default");
   const [activeCategory, setActiveCategory] = useState("all");
   const [priceRange, setPriceRange] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -132,7 +132,7 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
       attributionControl: false,
     });
 
-    L.tileLayer(TILE_LAYERS[tileStyle], { maxZoom: 19, subdomains: "abcd" }).addTo(map);
+    L.tileLayer(TILE_LAYERS[tileStyle], { maxZoom: 20 }).addTo(map);
     mapInstanceRef.current = map;
 
     clusterGroupRef.current = (L as any).markerClusterGroup({
@@ -199,7 +199,7 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
     map.eachLayer((layer) => {
       if (layer instanceof L.TileLayer) map.removeLayer(layer);
     });
-    L.tileLayer(TILE_LAYERS[tileStyle], { maxZoom: 19, subdomains: "abcd" }).addTo(map);
+    L.tileLayer(TILE_LAYERS[tileStyle], { maxZoom: 20 }).addTo(map);
   }, [tileStyle]);
 
   // Update selected marker style

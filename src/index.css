@@ -339,7 +339,7 @@
   background: hsl(var(--background));
 }
 .leaflet-tile-pane {
-  filter: saturate(0.85) contrast(1.05);
+  filter: none;
 }
 .custom-cluster-icon {
   background: none !important;
