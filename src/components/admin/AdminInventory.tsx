@@ -274,8 +274,42 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
               </div>
               {previewMode ? (
                 <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                  className="rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 overflow-hidden">
-                  {editing.image_url && (
+                  className="rounded-2xl border border-border bg-secondary/50 overflow-hidden">
+                  {(editing.image_urls?.length || 0) > 0 && (
+                    <div className="aspect-video w-full overflow-hidden">
+                      <img src={editing.image_urls![0]} alt="" className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <div className="p-4 flex items-center gap-3">
+                    <span className="text-3xl">{editing.emoji || "🍽️"}</span>
+                    <div className="flex-1"><h4 className="text-base font-bold text-foreground">{editing.name || "Item Name"}</h4><p className="text-sm text-muted-foreground capitalize">{editing.category || "food"}</p><p className="text-lg font-bold text-foreground mt-1 tabular-nums">₹{editing.unit_price || 0}</p></div>
+                    <div className="text-right"><span className={`px-2 py-1 rounded-xl text-[10px] font-semibold ${editing.available ? "bg-emerald-500/10 text-emerald-600" : "bg-secondary text-muted-foreground"}`}>{editing.available ? "Available" : "Unavailable"}</span><p className="text-[11px] text-muted-foreground mt-1 tabular-nums">Stock: {editing.stock || 0}</p></div>
+                  </div>
+                </motion.div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-[60px_1fr] gap-3">
+                    <div><label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Emoji</label><Input value={editing.emoji || ""} onChange={e => setEditing(p => ({ ...p!, emoji: e.target.value }))} className="text-center text-lg rounded-xl" /></div>
+                    <div><label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Name</label><Input value={editing.name || ""} onChange={e => setEditing(p => ({ ...p!, name: e.target.value }))} placeholder="Tribal Thali" className="rounded-xl" /></div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div><label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Category</label><select value={editing.category || "food"} onChange={e => setEditing(p => ({ ...p!, category: e.target.value }))} className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm">{categoryOptions.map(c => <option key={c} value={c}>{c}</option>)}</select></div>
+                    <div><label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Unit Price (₹)</label><Input type="number" value={editing.unit_price || 0} onChange={e => setEditing(p => ({ ...p!, unit_price: Number(e.target.value) }))} className="rounded-xl" /></div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div><label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Stock</label><Input type="number" value={editing.stock || 0} onChange={e => setEditing(p => ({ ...p!, stock: Number(e.target.value) }))} className="rounded-xl" /></div>
+                    <div><label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Low Threshold</label><Input type="number" value={editing.low_stock_threshold || 0} onChange={e => setEditing(p => ({ ...p!, low_stock_threshold: Number(e.target.value) }))} className="rounded-xl" /></div>
+                  </div>
+                  <div className="flex items-center gap-2"><input type="checkbox" checked={editing.available ?? true} onChange={e => setEditing(p => ({ ...p!, available: e.target.checked }))} className="rounded border-input" id="avail" /><label htmlFor="avail" className="text-sm text-foreground">Available for ordering</label></div>
+                  <MultiImageEditor
+                    images={editing.image_urls || []}
+                    onChange={urls => setEditing(p => ({ ...p!, image_urls: urls, image_url: urls[0] || null }))}
+                    storagePath="inventory"
+                    label="Item Images"
+                    maxImages={5}
+                  />
+                </>
+              )
                     <div className="aspect-video w-full overflow-hidden">
                       <img src={editing.image_url} alt="" className="w-full h-full object-cover" />
                     </div>
