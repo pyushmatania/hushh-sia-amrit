@@ -561,7 +561,16 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 120, opacity: 0 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="absolute bottom-6 left-4 right-4 z-[1000]"
+            drag="y"
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={0.4}
+            onDragEnd={(_, info) => {
+              if (info.offset.y > 60 || info.velocity.y > 300) {
+                setSelectedPin(null);
+                clearRoute();
+              }
+            }}
+            className="absolute bottom-6 left-4 right-4 z-[1000] touch-pan-x"
           >
             <div className="relative">
               {/* Close button */}
