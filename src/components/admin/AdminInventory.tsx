@@ -310,12 +310,6 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
                   />
                 </>
               )
-                    <div className="aspect-video w-full overflow-hidden">
-                      <img src={editing.image_url} alt="" className="w-full h-full object-cover" />
-                    </div>
-                  )}
-                  <div className="p-4 flex items-center gap-3">
-                    <span className="text-3xl">{editing.emoji || "🍽️"}</span>
                     <div className="flex-1"><h4 className="text-base font-bold text-zinc-800 dark:text-zinc-100">{editing.name || "Item Name"}</h4><p className="text-sm text-zinc-400 capitalize">{editing.category || "food"}</p><p className="text-lg font-bold text-zinc-800 dark:text-zinc-100 mt-1 tabular-nums">₹{editing.unit_price || 0}</p></div>
                     <div className="text-right"><span className={`px-2 py-1 rounded-xl text-[10px] font-semibold ${editing.available ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600" : "bg-zinc-100 dark:bg-zinc-800 text-zinc-500"}`}>{editing.available ? "Available" : "Unavailable"}</span><p className="text-[11px] text-zinc-400 mt-1 tabular-nums">Stock: {editing.stock || 0}</p></div>
                   </div>
