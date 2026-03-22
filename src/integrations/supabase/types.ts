@@ -504,6 +504,7 @@ export type Database = {
           emoji: string
           gradient: string
           id: string
+          image_url: string | null
           includes: string[]
           name: string
           price: number
@@ -516,6 +517,7 @@ export type Database = {
           emoji?: string
           gradient?: string
           id?: string
+          image_url?: string | null
           includes?: string[]
           name: string
           price?: number
@@ -528,6 +530,7 @@ export type Database = {
           emoji?: string
           gradient?: string
           id?: string
+          image_url?: string | null
           includes?: string[]
           name?: string
           price?: number

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Gift, Search, Plus, Trash2, Pencil, X, Eye, GripVertical, CheckSquare } from "lucide-react";
+import { Gift, Search, Plus, Trash2, Pencil, X, Eye, GripVertical, CheckSquare, Upload } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -18,6 +18,7 @@ interface PackageRow {
   gradient: string;
   sort_order: number;
   active: boolean;
+  image_url: string | null;
 }
 
 const GRADIENT_OPTIONS = [
@@ -80,6 +81,7 @@ export default function AdminExperiencePackages() {
       name: "", emoji: "🎉", price: 0,
       includes: [], gradient: GRADIENT_OPTIONS[0],
       sort_order: packages.length + 1, active: true,
+      image_url: null,
     });
     setIsCreating(true);
     setIncludeInput("");
@@ -111,6 +113,7 @@ export default function AdminExperiencePackages() {
       gradient: editing.gradient || GRADIENT_OPTIONS[0],
       sort_order: editing.sort_order || 0,
       active: editing.active ?? true,
+      image_url: editing.image_url || null,
     };
 
     if (isCreating) {
@@ -251,8 +254,8 @@ export default function AdminExperiencePackages() {
                     {selectedIds.includes(pkg.id) && <span className="text-[10px] font-bold">✓</span>}
                   </button>
                 )}
-                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${pkg.gradient} flex items-center justify-center text-2xl shadow-sm shrink-0`}>
-                  {pkg.emoji}
+                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${pkg.gradient} flex items-center justify-center text-2xl shadow-sm shrink-0 overflow-hidden`}>
+                  {pkg.image_url ? <img src={pkg.image_url} alt="" className="w-full h-full object-cover" /> : pkg.emoji}
                 </div>
                 <div className="flex-1 min-w-0">
                   <h4 className="text-sm font-semibold text-foreground">{pkg.name}</h4>
@@ -336,6 +339,11 @@ export default function AdminExperiencePackages() {
               {previewMode ? (
                 <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
                   className="rounded-xl border border-border bg-background overflow-hidden">
+                  {editing.image_url && (
+                    <div className="aspect-video w-full overflow-hidden">
+                      <img src={editing.image_url} alt="" className="w-full h-full object-cover" />
+                    </div>
+                  )}
                   <div className={`bg-gradient-to-br ${editing.gradient || "from-primary/80 to-primary/40"} p-6 text-center`}>
                     <span className="text-4xl">{editing.emoji || "✨"}</span>
                     <h3 className="text-lg font-bold text-white mt-2">{editing.name || "Package Name"}</h3>
@@ -392,6 +400,42 @@ export default function AdminExperiencePackages() {
                     onChange={e => setEditing(p => ({ ...p!, sort_order: Number(e.target.value) }))}
                   />
                 </div>
+              </div>
+
+              {/* Package Image */}
+              <div>
+                <label className="text-xs text-muted-foreground mb-1.5 block">Package Image</label>
+                {editing.image_url ? (
+                  <div className="relative rounded-xl overflow-hidden border border-border aspect-video group">
+                    <img src={editing.image_url} alt="" className="w-full h-full object-cover" />
+                    <button onClick={() => setEditing(p => ({ ...p!, image_url: null }))}
+                      className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 opacity-0 group-hover:opacity-100 transition">
+                      <X size={12} className="text-white" />
+                    </button>
+                  </div>
+                ) : (
+                  <label className="w-full py-4 rounded-xl border-2 border-dashed border-border text-xs text-muted-foreground font-medium hover:bg-secondary transition flex flex-col items-center justify-center gap-1.5 cursor-pointer">
+                    <Upload size={18} className="text-muted-foreground" />
+                    <span>Upload image</span>
+                    <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      const ext = file.name.split('.').pop();
+                      const path = `packages/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+                      const { error } = await supabase.storage.from("listing-images").upload(path, file);
+                      if (error) return;
+                      const { data: urlData } = supabase.storage.from("listing-images").getPublicUrl(path);
+                      if (urlData?.publicUrl) setEditing(p => ({ ...p!, image_url: urlData.publicUrl }));
+                    }} />
+                  </label>
+                )}
+                {!editing.image_url && (
+                  <div className="mt-2">
+                    <Input placeholder="Or paste image URL..." className="text-xs"
+                      onKeyDown={e => { if (e.key === "Enter" && (e.target as HTMLInputElement).value) { setEditing(p => ({ ...p!, image_url: (e.target as HTMLInputElement).value })); (e.target as HTMLInputElement).value = ""; } }}
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Gradient picker */}
