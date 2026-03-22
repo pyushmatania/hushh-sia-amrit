@@ -4,6 +4,7 @@ import {
   CheckCircle2, Send, ArrowLeft, Phone, MoreVertical, Search,
   Image, Smile, Mic, Check, CheckCheck, Pin, Archive,
   HeadphonesIcon, ShieldCheck, Star, Gift, Megaphone, X, Loader2,
+  MapPin, History, Plane,
 } from "lucide-react";
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useAuth } from "@/hooks/use-auth";
