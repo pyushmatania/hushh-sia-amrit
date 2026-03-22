@@ -1097,19 +1097,87 @@ export default function MessagesScreen() {
               </div>
             )}
 
-            {/* Recent */}
-            {otherChats.length > 0 && (
-              <div>
-                {pinnedChats.length > 0 && (
-                  <p className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground mb-2">Recent</p>
-                )}
+            {/* Current Trip */}
+            {activeTrip.length > 0 && (
+              <div className="mb-4">
+                <div className="flex items-center gap-2 mb-2.5">
+                  <div className="w-5 h-5 rounded-md bg-emerald-500/15 flex items-center justify-center">
+                    <Plane size={10} className="text-emerald-500" />
+                  </div>
+                  <p className="text-[10px] uppercase tracking-wider font-bold text-emerald-500">Current Trip</p>
+                  <div className="flex-1 h-px bg-emerald-500/10" />
+                </div>
+                {/* Trip context banner */}
+                <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+                  className="mb-2.5 px-3 py-2 rounded-xl bg-emerald-500/8 border border-emerald-500/15">
+                  <div className="flex items-center gap-2">
+                    <MapPin size={12} className="text-emerald-500 shrink-0" />
+                    <p className="text-[11px] text-emerald-400 font-medium">{activeTrip[0]?.tripLabel}</p>
+                    <span className="ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400">ACTIVE</span>
+                  </div>
+                </motion.div>
                 <div className="space-y-2">
-                  {otherChats.map((t, i) => (
+                  {activeTrip.map((t, i) => (
                     <ThreadCard key={t.id} thread={t} index={i + pinnedChats.length} onPin={handlePin} onArchive={handleArchive} onClick={() => {
                       if (t.conversation) setActiveConvo(t.conversation);
                       else setActiveMockThread(mockThreads.find(mt => mt.id === t.id) || null);
                     }} />
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* Support */}
+            {supportChats.length > 0 && (
+              <div className="mb-4">
+                <div className="flex items-center gap-2 mb-2.5">
+                  <div className="w-5 h-5 rounded-md bg-primary/15 flex items-center justify-center">
+                    <HeadphonesIcon size={10} className="text-primary" />
+                  </div>
+                  <p className="text-[10px] uppercase tracking-wider font-bold text-primary">Support</p>
+                  <div className="flex-1 h-px bg-primary/10" />
+                </div>
+                <div className="space-y-2">
+                  {supportChats.map((t, i) => (
+                    <ThreadCard key={t.id} thread={t} index={i + pinnedChats.length + activeTrip.length} onPin={handlePin} onArchive={handleArchive} onClick={() => {
+                      if (t.conversation) setActiveConvo(t.conversation);
+                      else setActiveMockThread(mockThreads.find(mt => mt.id === t.id) || null);
+                    }} />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Past Trips */}
+            {pastTrips.length > 0 && (
+              <div className="mb-4">
+                <div className="flex items-center gap-2 mb-2.5">
+                  <div className="w-5 h-5 rounded-md bg-muted-foreground/10 flex items-center justify-center">
+                    <History size={10} className="text-muted-foreground" />
+                  </div>
+                  <p className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground">Past Trips</p>
+                  <div className="flex-1 h-px bg-border" />
+                </div>
+                <div className="space-y-2">
+                  {pastTrips.map((t, i) => {
+                    // Group label for trip
+                    const prevTrip = pastTrips[i - 1];
+                    const showTripLabel = !prevTrip || prevTrip.tripLabel !== t.tripLabel;
+                    return (
+                      <div key={t.id}>
+                        {showTripLabel && (
+                          <div className="flex items-center gap-2 mb-1.5 mt-1">
+                            <Calendar size={10} className="text-muted-foreground/60" />
+                            <p className="text-[10px] text-muted-foreground/60 font-medium">{t.tripLabel}</p>
+                          </div>
+                        )}
+                        <ThreadCard thread={t} index={i + pinnedChats.length + activeTrip.length + supportChats.length} onPin={handlePin} onArchive={handleArchive} onClick={() => {
+                          if (t.conversation) setActiveConvo(t.conversation);
+                          else setActiveMockThread(mockThreads.find(mt => mt.id === t.id) || null);
+                        }} />
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
