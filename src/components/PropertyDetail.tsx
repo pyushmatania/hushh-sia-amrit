@@ -11,7 +11,7 @@ import {
   Shield, Zap, Info, Coffee, Utensils, ParkingCircle,
   CalendarIcon, Monitor, BatteryCharging, VolumeX,
   Armchair, GlassWater, Bell, Truck, Radio, Disc3,
-  Wind, Tag, Check
+  Wind, Tag, Check, BedDouble, Layers
 } from "lucide-react";
 import { useState, useCallback } from "react";
 import { shareProperty } from "@/lib/share";
