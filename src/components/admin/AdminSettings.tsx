@@ -1,20 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Settings, Sun, Moon, Globe, IndianRupee, Clock, Shield, Bell, Palette, Building2, ChevronRight, ToggleLeft, ToggleRight } from "lucide-react";
+import { Settings, Sun, Moon, Globe, IndianRupee, Clock, Shield, Bell, Palette, Building2, ChevronRight, ToggleLeft, ToggleRight, DollarSign, BedDouble, Loader2 } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { Input } from "@/components/ui/input";
+import { useAppConfig, updateAppConfig, loadAppConfig } from "@/hooks/use-app-config";
+import { useToast } from "@/hooks/use-toast";
 
-interface SettingItem {
-  id: string;
-  label: string;
-  description: string;
-  type: "toggle" | "select" | "input";
-  value: any;
-  options?: string[];
+function PricingRow({ item, value, saving, onSave }: { item: { key: string; label: string; description: string; icon: string }; value: number; saving: boolean; onSave: (val: string) => void }) {
+  const [localVal, setLocalVal] = useState(String(value));
+  useEffect(() => { setLocalVal(String(value)); }, [value]);
+  return (
+    <div className="flex items-center justify-between px-4 py-3.5">
+      <div className="flex items-center gap-3 flex-1 mr-4">
+        <span className="text-lg">{item.icon}</span>
+        <div>
+          <p className="text-sm font-medium text-foreground">{item.label}</p>
+          <p className="text-[11px] text-muted-foreground">{item.description}</p>
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        <Input
+          type="number"
+          value={localVal}
+          onChange={e => setLocalVal(e.target.value)}
+          onBlur={() => { if (localVal && localVal !== String(value)) onSave(localVal); }}
+          className="w-24 text-right text-sm rounded-xl h-8"
+        />
+        {saving && <Loader2 size={14} className="animate-spin text-primary" />}
+      </div>
+    </div>
+  );
 }
 
 export default function AdminSettings() {
   const { theme, setTheme, resolvedTheme } = useTheme();
+  const appConfig = useAppConfig();
+  const { toast } = useToast();
+  const [saving, setSaving] = useState<string | null>(null);
 
   const [settings, setSettings] = useState<Record<string, any>>({
     autoConfirmBookings: false,
@@ -36,11 +58,35 @@ export default function AdminSettings() {
     setSettings(prev => ({ ...prev, [key]: value }));
   };
 
+  const saveConfigValue = async (key: string, value: string) => {
+    setSaving(key);
+    await updateAppConfig(key, value);
+    await loadAppConfig();
+    setSaving(null);
+    toast({ title: "Setting saved", description: `${key.replace(/_/g, ' ')} updated` });
+  };
+
+  const pricingItems = [
+    { key: "extra_mattress_price", label: "Extra Mattress Price (₹)", description: "Price per extra mattress per night", icon: "🛏️" },
+    { key: "room_capacity", label: "Guests per Room", description: "Number of guests that fit in one room", icon: "👥" },
+    { key: "platform_fee", label: "Platform Fee (₹)", description: "Fixed platform fee per booking", icon: "💳" },
+    { key: "service_fee_percent", label: "Service Fee (%)", description: "Percentage service fee on bookings", icon: "📊" },
+    { key: "coupon_discount_percent", label: "Coupon Discount (%)", description: "Default coupon discount percentage", icon: "🏷️" },
+    { key: "max_mattresses_per_room", label: "Max Mattresses per Room", description: "Maximum extra mattresses allowed per room", icon: "🛌" },
+  ];
+
   const sections = [
+    {
+      title: "Pricing & Fees",
+      icon: DollarSign,
+      color: "text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10",
+      type: "pricing" as const,
+    },
     {
       title: "General",
       icon: Building2,
       color: "text-indigo-600 bg-indigo-50 dark:bg-indigo-500/10",
+      type: "settings" as const,
       items: [
         { id: "currency", label: "Currency", description: "Display currency for prices", type: "select" as const, options: ["INR", "USD", "EUR", "GBP"] },
         { id: "timezone", label: "Timezone", description: "Default timezone for scheduling", type: "select" as const, options: ["Asia/Kolkata", "Asia/Dubai", "America/New_York", "Europe/London"] },
@@ -50,7 +96,8 @@ export default function AdminSettings() {
     {
       title: "Property Defaults",
       icon: Clock,
-      color: "text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10",
+      color: "text-blue-600 bg-blue-50 dark:bg-blue-500/10",
+      type: "settings" as const,
       items: [
         { id: "defaultSlotDuration", label: "Default Slot (hrs)", description: "Default booking slot duration", type: "input" as const },
         { id: "maxGuestsDefault", label: "Max Guests", description: "Default guest capacity", type: "input" as const },
@@ -62,6 +109,7 @@ export default function AdminSettings() {
       title: "Booking Rules",
       icon: Shield,
       color: "text-violet-600 bg-violet-50 dark:bg-violet-500/10",
+      type: "settings" as const,
       items: [
         { id: "autoConfirmBookings", label: "Auto-confirm Bookings", description: "Automatically confirm new bookings", type: "toggle" as const },
         { id: "requireVerification", label: "Require ID Verification", description: "Require identity verification before check-in", type: "toggle" as const },
@@ -71,6 +119,7 @@ export default function AdminSettings() {
       title: "Notifications",
       icon: Bell,
       color: "text-rose-600 bg-rose-50 dark:bg-rose-500/10",
+      type: "settings" as const,
       items: [
         { id: "notifyNewBooking", label: "New Booking Alerts", description: "Get notified on new bookings", type: "toggle" as const },
         { id: "notifyLowStock", label: "Low Stock Alerts", description: "Alert when inventory is low", type: "toggle" as const },
@@ -81,6 +130,7 @@ export default function AdminSettings() {
       title: "Appearance",
       icon: Palette,
       color: "text-amber-600 bg-amber-50 dark:bg-amber-500/10",
+      type: "settings" as const,
       items: [
         { id: "maintenanceMode", label: "Maintenance Mode", description: "Show maintenance page to guests", type: "toggle" as const },
       ],
@@ -99,7 +149,6 @@ export default function AdminSettings() {
           </h1>
           <p className="text-sm text-muted-foreground mt-1">Configure app preferences and rules</p>
         </div>
-        {/* Theme toggle */}
         <motion.button
           whileTap={{ scale: 0.9, rotate: resolvedTheme === "dark" ? -30 : 30 }}
           onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
@@ -125,47 +174,55 @@ export default function AdminSettings() {
               <span className="text-sm font-semibold text-foreground">{section.title}</span>
             </div>
 
-            <div className="divide-y divide-border/60">
-              {section.items.map(item => (
-                <div key={item.id} className="flex items-center justify-between px-4 py-3.5">
-                  <div className="flex-1 mr-4">
-                    <p className="text-sm font-medium text-foreground">{item.label}</p>
-                    <p className="text-[11px] text-muted-foreground">{item.description}</p>
-                  </div>
+            {section.type === "pricing" ? (
+              <div className="divide-y divide-border/60">
+                {pricingItems.map(item => (
+                  <PricingRow key={item.key} item={item} value={(appConfig as any)[item.key]} saving={saving === item.key} onSave={(val) => saveConfigValue(item.key, val)} />
+                ))}
+              </div>
+            ) : (
+              <div className="divide-y divide-border/60">
+                {(section.items || []).map(item => (
+                  <div key={item.id} className="flex items-center justify-between px-4 py-3.5">
+                    <div className="flex-1 mr-4">
+                      <p className="text-sm font-medium text-foreground">{item.label}</p>
+                      <p className="text-[11px] text-muted-foreground">{item.description}</p>
+                    </div>
 
-                  {item.type === "toggle" && (
-                    <motion.button
-                      whileTap={{ scale: 0.9 }}
-                      onClick={() => updateSetting(item.id, !settings[item.id])}
-                      className={`w-11 h-6 rounded-full flex items-center transition-colors ${settings[item.id] ? "bg-primary" : "bg-muted"}`}
-                    >
-                      <motion.div
-                        animate={{ x: settings[item.id] ? 22 : 2 }}
-                        className="w-5 h-5 rounded-full bg-white shadow-sm"
+                    {item.type === "toggle" && (
+                      <motion.button
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => updateSetting(item.id, !settings[item.id])}
+                        className={`w-11 h-6 rounded-full flex items-center transition-colors ${settings[item.id] ? "bg-primary" : "bg-muted"}`}
+                      >
+                        <motion.div
+                          animate={{ x: settings[item.id] ? 22 : 2 }}
+                          className="w-5 h-5 rounded-full bg-white shadow-sm"
+                        />
+                      </motion.button>
+                    )}
+
+                    {item.type === "select" && (
+                      <select
+                        value={settings[item.id]}
+                        onChange={e => updateSetting(item.id, e.target.value)}
+                        className="text-[11px] bg-muted border border-border rounded-xl px-2.5 py-1.5 text-foreground min-w-[100px]"
+                      >
+                        {item.options?.map(o => <option key={o} value={o}>{o}</option>)}
+                      </select>
+                    )}
+
+                    {item.type === "input" && (
+                      <Input
+                        value={settings[item.id]}
+                        onChange={e => updateSetting(item.id, e.target.value)}
+                        className="w-24 text-right text-sm rounded-xl h-8"
                       />
-                    </motion.button>
-                  )}
-
-                  {item.type === "select" && (
-                    <select
-                      value={settings[item.id]}
-                      onChange={e => updateSetting(item.id, e.target.value)}
-                      className="text-[11px] bg-muted border border-border rounded-xl px-2.5 py-1.5 text-foreground min-w-[100px]"
-                    >
-                      {item.options?.map(o => <option key={o} value={o}>{o}</option>)}
-                    </select>
-                  )}
-
-                  {item.type === "input" && (
-                    <Input
-                      value={settings[item.id]}
-                      onChange={e => updateSetting(item.id, e.target.value)}
-                      className="w-24 text-right text-sm rounded-xl h-8"
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </motion.div>
         ))}
       </div>

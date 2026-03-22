@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Package, Search, Plus, Trash2, Pencil, X, AlertTriangle, Eye, GripVertical, Sparkles, CheckSquare } from "lucide-react";
+import { Package, Search, Plus, Trash2, Pencil, X, AlertTriangle, Eye, GripVertical, Sparkles, CheckSquare, Upload, Image } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -13,6 +13,7 @@ interface InventoryItem {
   id: string; name: string; emoji: string; category: string; unit_price: number;
   stock: number; low_stock_threshold: number; available: boolean;
   property_id: string | null; sort_order: number; created_at: string;
+  image_url: string | null;
 }
 
 const categoryOptions = ["food", "drinks", "decoration", "entertainment", "activity", "comfort", "work", "staff", "decor", "equipment"];
@@ -80,13 +81,13 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
 
   const openCreate = () => {
     const defaultCat = filterCategory === "food-drinks" ? "food" : filterCategory === "addons" ? "decoration" : "food";
-    setEditing({ name: "", emoji: filterCategory === "addons" ? "🎉" : "🍽️", category: defaultCat, unit_price: 0, stock: 100, low_stock_threshold: 10, available: true, property_id: null, sort_order: 0 });
+    setEditing({ name: "", emoji: filterCategory === "addons" ? "🎉" : "🍽️", category: defaultCat, unit_price: 0, stock: 100, low_stock_threshold: 10, available: true, property_id: null, sort_order: 0, image_url: null });
     setIsCreating(true); setPreviewMode(false);
   };
 
   const save = async () => {
     if (!editing?.name) { toast({ title: "Name required", variant: "destructive" }); return; }
-    const payload = { name: editing.name, emoji: editing.emoji || "🍽️", category: editing.category || "food", unit_price: editing.unit_price || 0, stock: editing.stock || 100, low_stock_threshold: editing.low_stock_threshold || 10, available: editing.available ?? true, property_id: editing.property_id || null, sort_order: editing.sort_order || 0 };
+    const payload = { name: editing.name, emoji: editing.emoji || "🍽️", category: editing.category || "food", unit_price: editing.unit_price || 0, stock: editing.stock || 100, low_stock_threshold: editing.low_stock_threshold || 10, available: editing.available ?? true, property_id: editing.property_id || null, sort_order: editing.sort_order || 0, image_url: editing.image_url || null };
     if (isCreating) {
       const { data, error } = await supabase.from("inventory").insert(payload).select().maybeSingle();
       if (error) { toast({ title: "Failed to add", description: error.message, variant: "destructive" }); return; }
@@ -224,8 +225,8 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
                         {selectedIds.includes(item.id) && <span className="text-[10px] font-bold">✓</span>}
                       </button>
                     )}
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-100 to-teal-50 dark:from-emerald-500/15 dark:to-teal-500/10 flex items-center justify-center text-xl shadow-sm shrink-0">
-                      {item.emoji}
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-100 to-teal-50 dark:from-emerald-500/15 dark:to-teal-500/10 flex items-center justify-center text-xl shadow-sm shrink-0 overflow-hidden">
+                      {item.image_url ? <img src={item.image_url} alt="" className="w-full h-full object-cover" /> : item.emoji}
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">{item.name}</h4>
@@ -291,6 +292,42 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
                     <div><label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1.5 block">Low Threshold</label><Input type="number" value={editing.low_stock_threshold || 0} onChange={e => setEditing(p => ({ ...p!, low_stock_threshold: Number(e.target.value) }))} className="rounded-xl bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700" /></div>
                   </div>
                   <div className="flex items-center gap-2"><input type="checkbox" checked={editing.available ?? true} onChange={e => setEditing(p => ({ ...p!, available: e.target.checked }))} className="rounded border-zinc-300" id="avail" /><label htmlFor="avail" className="text-sm text-zinc-700 dark:text-zinc-200">Available for ordering</label></div>
+                  {/* Image section */}
+                  <div>
+                    <label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1.5 block">Item Image</label>
+                    {editing.image_url ? (
+                      <div className="relative rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-700 aspect-video group">
+                        <img src={editing.image_url} alt="" className="w-full h-full object-cover" />
+                        <button onClick={() => setEditing(p => ({ ...p!, image_url: null }))}
+                          className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 opacity-0 group-hover:opacity-100 transition">
+                          <X size={12} className="text-white" />
+                        </button>
+                      </div>
+                    ) : (
+                      <label className="w-full py-4 rounded-xl border-2 border-dashed border-zinc-300 dark:border-zinc-600 text-xs text-zinc-500 font-medium hover:bg-zinc-50 dark:hover:bg-zinc-800 transition flex flex-col items-center justify-center gap-1.5 cursor-pointer">
+                        <Upload size={18} className="text-zinc-400" />
+                        <span>Upload image</span>
+                        <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          const ext = file.name.split('.').pop();
+                          const path = `inventory/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+                          const { supabase } = await import("@/integrations/supabase/client");
+                          const { error } = await supabase.storage.from("listing-images").upload(path, file);
+                          if (error) return;
+                          const { data: urlData } = supabase.storage.from("listing-images").getPublicUrl(path);
+                          if (urlData?.publicUrl) setEditing(p => ({ ...p!, image_url: urlData.publicUrl }));
+                        }} />
+                      </label>
+                    )}
+                    {!editing.image_url && (
+                      <div className="mt-2 flex gap-2">
+                        <Input placeholder="Or paste image URL..." className="flex-1 text-xs rounded-xl bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700"
+                          onKeyDown={e => { if (e.key === "Enter" && (e.target as HTMLInputElement).value) { setEditing(p => ({ ...p!, image_url: (e.target as HTMLInputElement).value })); (e.target as HTMLInputElement).value = ""; } }}
+                        />
+                      </div>
+                    )}
+                  </div>
                 </>
               )}
               <motion.button whileTap={{ scale: 0.97 }} onClick={save}

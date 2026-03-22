@@ -1,4 +1,5 @@
 import { motion, AnimatePresence, useMotionValue, useTransform, animate, PanInfo } from "framer-motion";
+import { useAppConfig } from "@/hooks/use-app-config";
 import {
   ArrowLeft, Share2, Heart, Star, BadgeCheck, MapPin,
   ChevronDown, ChevronUp, Minus, Plus, Droplets, Flame,
@@ -324,8 +325,9 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
   const [roomsCount, setRoomsCount] = useState(1);
   const [extraMattressCount, setExtraMattressCount] = useState(0);
 
-  const ROOM_CAPACITY = 2;
-  const EXTRA_MATTRESS_PRICE = 500;
+  const appConfig = useAppConfig();
+  const ROOM_CAPACITY = appConfig.room_capacity;
+  const EXTRA_MATTRESS_PRICE = appConfig.extra_mattress_price;
   const isStayProp = property.primaryCategory === "stay";
 
   const roomInfo = useMemo(() => {
@@ -1072,9 +1074,9 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
             <span className="text-foreground/80">Base price {property.primaryCategory === "service" ? "(per booking)" : "(per slot)"}</span>
             <span className="text-foreground font-medium">₹{property.basePrice.toLocaleString()}</span>
           </div>
-          <div className="flex justify-between text-sm">
+           <div className="flex justify-between text-sm">
             <span className="text-foreground/80">{property.primaryCategory === "service" ? "Platform fee" : "Service fee"}</span>
-            <span className="text-foreground font-medium">₹{Math.round(property.basePrice * 0.1).toLocaleString()}</span>
+            <span className="text-foreground font-medium">₹{Math.round(property.basePrice * appConfig.service_fee_percent / 100).toLocaleString()}</span>
           </div>
           {property.primaryCategory !== "service" && (
             <div className="flex justify-between text-sm">
