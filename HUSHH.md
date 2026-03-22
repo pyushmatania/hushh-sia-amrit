@@ -250,6 +250,8 @@ The admin panel (`/admin`) is a full-featured operations dashboard for managing 
 | **Exports** | `AdminExports.tsx` | CSV/data export tools |
 | **Achievements** | `AdminAchievements.tsx` | Milestone management, user achievement tracking |
 | **Loyalty & Referrals** | `AdminLoyaltyReferrals.tsx` | Points analytics, referral code performance |
+| **Homepage Manager** | `AdminHomepage.tsx` | 4-tab manager: Sections (visibility/order), Videos (spotlight config), Filters (category pills), Tags (property tag CRUD) |
+| **Settings** | `AdminSettings.tsx` | 3-tab config: General (pricing/fees/support), Branding (name/logo/tagline/social/legal URLs), Advanced (map/spin/notifications) |
 | **Audit Trail** | `AdminAuditLog.tsx` | Full activity log — who did what when (admin-only) |
 
 ### Admin-Specific Features
