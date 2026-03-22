@@ -405,39 +405,14 @@ export default function AdminExperiencePackages() {
                 </div>
               </div>
 
-              {/* Package Image */}
-              <div>
-                <label className="text-xs text-muted-foreground mb-1.5 block">Package Image</label>
-                {editing.image_url ? (
-                  <div className="relative rounded-xl overflow-hidden border border-border aspect-video group">
-                    <img src={editing.image_url} alt="" className="w-full h-full object-cover" />
-                    <button onClick={() => setEditing(p => ({ ...p!, image_url: null }))}
-                      className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 opacity-0 group-hover:opacity-100 transition">
-                      <X size={12} className="text-white" />
-                    </button>
-                  </div>
-                ) : (
-                  <label className="w-full py-4 rounded-xl border-2 border-dashed border-border text-xs text-muted-foreground font-medium hover:bg-secondary transition flex flex-col items-center justify-center gap-1.5 cursor-pointer">
-                    <Upload size={18} className="text-muted-foreground" />
-                    <span>Upload image</span>
-                    <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-                      const ext = file.name.split('.').pop();
-                      const path = `packages/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-                      const { error } = await supabase.storage.from("listing-images").upload(path, file);
-                      if (error) return;
-                      const { data: urlData } = supabase.storage.from("listing-images").getPublicUrl(path);
-                      if (urlData?.publicUrl) setEditing(p => ({ ...p!, image_url: urlData.publicUrl }));
-                    }} />
-                  </label>
-                )}
-                {!editing.image_url && (
-                  <div className="mt-2">
-                    <Input placeholder="Or paste image URL..." className="text-xs"
-                      onKeyDown={e => { if (e.key === "Enter" && (e.target as HTMLInputElement).value) { setEditing(p => ({ ...p!, image_url: (e.target as HTMLInputElement).value })); (e.target as HTMLInputElement).value = ""; } }}
-                    />
-                  </div>
+              {/* Package Images */}
+              <MultiImageEditor
+                images={editing.image_urls || []}
+                onChange={urls => setEditing(p => ({ ...p!, image_urls: urls, image_url: urls[0] || null }))}
+                storagePath="packages"
+                label="Package Images"
+                maxImages={8}
+              />
                 )}
               </div>
 
