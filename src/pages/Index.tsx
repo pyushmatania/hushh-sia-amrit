@@ -80,8 +80,8 @@ export default function Index() {
     setActiveTab("home");
   }, []);
 
-  const handleBook = useCallback((property: Property, slotId: string, guests: number, date: Date, extras?: Property[]) => {
-    setScreen({ type: "builder", property, slotId, guests, date, extras });
+  const handleBook = useCallback((property: Property, slotId: string, guests: number, date: Date, extras?: Property[], roomsCount?: number, extraMattresses?: number) => {
+    setScreen({ type: "builder", property, slotId, guests, date, extras, roomsCount, extraMattresses });
   }, []);
 
   const handleContinue = useCallback(
