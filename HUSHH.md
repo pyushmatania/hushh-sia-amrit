@@ -1,6 +1,6 @@
 # 🏡 HUSHH — Private Experience Marketplace
 
-> **Made in Jeypore ❤️** | v1.18 | Internal Documentation & Blueprint
+> **Made in Jeypore ❤️** | v1.20 | Internal Documentation & Blueprint
 
 Hushh is a premium mobile-first marketplace for booking private experiences, stays, and curated lifestyle services in Jeypore, India. Think Airbnb meets a concierge — but hyper-local, with a focus on curated combos and on-demand add-ons.
 
@@ -119,13 +119,14 @@ Active Trip → Order Food (live ordering sheet) / Add Extras (per-item emoji ic
        ├─▸ AI Assistant — Natural language queries across all data
        ├─▸ Smart Alerts — Automated notification system
        ├─▸ Dynamic Pricing — Demand-based price adjustments
-       ├─▸ Tags — Property tag management
+       ├─▸ Homepage Manager — Sections visibility/ordering, video cards, filter pills, tags
        ├─▸ Users (CRM) — User management (admin-only)
        ├─▸ Calendar — Host calendar view
        ├─▸ Booking Requests — Pending approval queue
        ├─▸ Achievements — Milestone management
        ├─▸ Loyalty & Referrals — Points & referral analytics
        ├─▸ Exports — CSV/data export tools
+       ├─▸ Settings — General (pricing/fees/support), Branding (name/logo/tagline/social/legal), Advanced (map/spin/notifications)
        └─▸ Audit Trail — Full activity log (admin-only)
 ```
 
@@ -135,14 +136,17 @@ Active Trip → Order Food (live ordering sheet) / Add Extras (per-item emoji ic
 
 ### 1. Splash Screen (`SplashScreen.tsx`)
 - Animated brand logo with spring physics, auto-transitions to Home after ~2s
+- **Dynamic branding**: App name and logo pulled from `app_config` (key: `app_name`, `logo_url`)
 
 ### 2. Home / Explore (`HomeScreen.tsx`)
-- **Header**: Profile avatar, location pill, notification bell (unread badge)
+- **Header**: Profile avatar, location pill (dynamic `app_tagline`), notification bell (unread badge)
 - **Rotating Search Bar**: Cycles through placeholder suggestions
 - **Active Trip Card**: Shows current checked-in booking with 1-tap food ordering and trip view
 - **Category Bar**: Horizontal tabs — Home, Stays, Experiences, Services, Curations, Work
-  - Sub-filters per category, smooth scroll on switch (offset 280px on sub-filter)
-- **Content Sections**: Spotlight Carousel, Property Cards (video thumbnails + AccentFrame), Sports Cards, Foodie Carousel, Couple Specials, Service Grid, Curated Pack Listings (vertical cards with autoplay video backgrounds), What's Hot, Events, Blockbuster Banner, Experience Cards
+  - **Dynamic sub-filters** per category from `homepage_filters` config (admin-editable)
+  - Smooth scroll on switch (offset 280px on sub-filter)
+- **Content Sections**: Ordered by `homepage_sections` config (admin can toggle visibility & reorder)
+  - Spotlight Carousel (video URLs + overlay text from `homepage_videos` config), Property Cards, Sports Cards, Foodie Carousel, Couple Specials, Service Grid, Curated Pack Listings, What's Hot, Events, Blockbuster Banner, Experience Cards
 - **Pull-to-refresh** + **Back-to-top button**
 
 ### 3. Property Detail (`PropertyDetail.tsx`)
@@ -181,6 +185,7 @@ Active Trip → Order Food (live ordering sheet) / Add Extras (per-item emoji ic
 
 ### 12. Messages Screen (`MessagesScreen.tsx`)
 - Conversation list, unread badges, chat thread, message input
+- **Dynamic support contacts**: Phone, email, WhatsApp pulled from `app_config`
 
 ### 13. Profile Screen (`ProfileScreen.tsx`)
 - **Hero Card**: Centered avatar with glow + verified badge, name, location, bio, stats (Trips/Reviews/Member)
@@ -191,6 +196,8 @@ Active Trip → Order Food (live ordering sheet) / Add Extras (per-item emoji ic
 - **Two Cards Grid**: Past Trips, Connections
 - **Become a Host** CTA → Host Dashboard
 - **Theme Switcher**: Light/Dark/Auto animated toggle
+- **Social Media Footer**: Dynamic Instagram/Facebook/YouTube/Twitter icons from branding config
+- **Terms & Privacy Sheet**: Dynamic legal links (terms_url, privacy_url, refund_policy_url) from config
 - **Settings Menu**: 10 items with sheets
 - **Version text**: Tap 5× → App Documentation
 
@@ -244,6 +251,8 @@ The admin panel (`/admin`) is a full-featured operations dashboard for managing 
 | **Exports** | `AdminExports.tsx` | CSV/data export tools |
 | **Achievements** | `AdminAchievements.tsx` | Milestone management, user achievement tracking |
 | **Loyalty & Referrals** | `AdminLoyaltyReferrals.tsx` | Points analytics, referral code performance |
+| **Homepage Manager** | `AdminHomepage.tsx` | 4-tab manager: Sections (visibility/order), Videos (spotlight config), Filters (category pills), Tags (property tag CRUD) |
+| **Settings** | `AdminSettings.tsx` | 3-tab config: General (pricing/fees/support), Branding (name/logo/tagline/social/legal URLs), Advanced (map/spin/notifications) |
 | **Audit Trail** | `AdminAuditLog.tsx` | Full activity log — who did what when (admin-only) |
 
 ### Admin-Specific Features
@@ -443,12 +452,16 @@ supabase/
 | `usePrivacyMode` | Privacy toggle + name masking | ✅ localStorage |
 | `useCurations` | Fetch curated packs from DB | ✅ Static fallback |
 | `useUnreadCount` | Unread message count | — |
+| `useAppConfig` | Dynamic app config from DB (pricing, branding, support) | ✅ Defaults |
+| `useHomepageSections` | Section visibility & ordering from DB | ✅ Default sections |
+| `useHomepageFilters` | Dynamic category filter pills from DB | ✅ Default filters |
+| `useVideoCards` | Spotlight video card config from DB | ✅ Default videos |
 
 ---
 
 ## 🗄 Database Schema
 
-### Tables (26 total)
+### Tables (30+ total)
 | Table | Key Columns | Purpose |
 |-------|------------|---------|
 | `profiles` | user_id, display_name, avatar_url, bio, location, loyalty_points, tier | User profiles |
@@ -477,6 +490,10 @@ supabase/
 | `identity_verifications` | user_id, document_type, document_url, status, notes, reviewed_by | ID verification queue |
 | `inventory` | name, emoji, category, unit_price, stock, low_stock_threshold, available, property_id | Stock management |
 | `staff_tasks` | title, description, priority, status, assigned_to, property_id, due_date | Staff task tracking |
+| `app_config` | key, value, label, description, category | Dynamic app configuration (pricing, branding, support, homepage) |
+| `budget_allocations` | category, month, year, allocated, spent, notes | Budget tracking |
+| `expenses` | title, amount, category, vendor, date, payment_method, recurring | Expense management |
+| `experience_packages` | name, emoji, gradient, includes[], price, image_urls[] | Add-on experience packages |
 
 ### Database Functions
 | Function | Purpose |
@@ -606,6 +623,23 @@ React 18 · TypeScript 5.8 · Vite 8 · Tailwind CSS 3.4 · shadcn/ui · CVA · 
 - `host_listings` schema expanded with 12 new columns (property_type, primary_category, lat/lng, highlights, slots JSONB, rules JSONB, host_name, rating, review_count)
 - Coupons and campaigns seeded in database
 - Identity verification enforcement on booking flow
+
+### v1.19 — Dynamic App Configuration System
+- **`app_config` table** — centralized key-value store for all runtime settings
+- **Admin Settings page** — 3-tab interface (General, Branding, Advanced) for managing all config
+- **Admin Homepage Manager** — 4-tab interface (Sections, Videos, Filters, Tags) for controlling user-facing homepage
+- **Dynamic Branding** — `app_name`, `logo_url`, `app_tagline` wired to SplashScreen and HomeScreen header
+- **Dynamic Homepage Sections** — visibility toggles and drag-to-reorder, stored as JSON in `homepage_sections` config
+- **Dynamic Spotlight Videos** — admin edits video URLs and overlay text, wired to SpotlightCarousel via `useVideoCards`
+- **Dynamic Filter Pills** — category filters for Stays/Experiences/Services/Curations editable in admin, wired via `useHomepageFilters`
+- **Dynamic Support Contacts** — `support_phone`, `support_email`, `whatsapp_number` wired to MessagesScreen help section
+- **Tags merged into Homepage Manager** — property tag CRUD consolidated under Homepage → Tags tab
+- 4 new hooks: `useAppConfig`, `useHomepageSections`, `useHomepageFilters`, `useVideoCards`
+
+### v1.20 — Social & Legal Integration
+- **Social Media Links** — Instagram, Facebook, YouTube, Twitter URLs from branding config rendered as icons in ProfileScreen footer
+- **Terms & Privacy Sheet** — dynamic legal links (terms_url, privacy_url, refund_policy_url) accessible from Profile settings
+- Links only render when URLs are configured in admin, graceful empty state otherwise
 
 ---
 
