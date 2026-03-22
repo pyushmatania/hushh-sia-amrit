@@ -83,10 +83,14 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [listView, setListView] = useState(false);
   const [sortBy, setSortBy] = useState<"default" | "price_asc" | "price_desc" | "rating" | "distance">("default");
+  const [routeLoading, setRouteLoading] = useState(false);
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
   const clusterGroupRef = useRef<any>(null);
+  const routeLayerRef = useRef<L.Polyline | null>(null);
+  const userMarkerRef = useRef<L.Marker | null>(null);
 
   const filteredProperties = useMemo(() => {
     return properties.filter((p) => {
