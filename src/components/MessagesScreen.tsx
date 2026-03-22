@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useMessages, type Conversation, type Message } from "@/hooks/use-messages";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow, format, isToday, isYesterday, isSameDay } from "date-fns";
+import { useAppConfig } from "@/hooks/use-app-config";
 
 /* ═══ Types ═══ */
 interface Notification {
@@ -958,6 +959,8 @@ function RealtimeChatView({ conversation, onBack }: { conversation: Conversation
 export default function MessagesScreen() {
   const { user } = useAuth();
   const { conversations, loading } = useMessages();
+  const appConfig = useAppConfig();
+  const brandName = appConfig.app_name || "Hushh";
   const [tab, setTab] = useState<"notifications" | "chats">("chats");
   const [activeConvo, setActiveConvo] = useState<Conversation | null>(null);
   const [activeMockThread, setActiveMockThread] = useState<typeof mockThreads[0] | null>(null);
@@ -966,6 +969,19 @@ export default function MessagesScreen() {
   const [showSearch, setShowSearch] = useState(false);
   const [pinnedIds, setPinnedIds] = useState<Set<string>>(new Set(["c1"]));
   const [archivedIds, setArchivedIds] = useState<Set<string>>(new Set());
+
+  // Dynamic mock threads with brand name
+  const dynamicMockThreads = useMemo(() =>
+    mockThreads.map(t => t.id === "c1" ? { ...t, name: `${brandName} Concierge` } : t),
+    [brandName]
+  );
+
+  const dynamicMockMessages = useMemo(() => ({
+    ...mockMessages,
+    c1: mockMessages.c1.map(m =>
+      m.id === "m3" ? { ...m, text: `I found your booking #${brandName.toUpperCase()}-X7K2. The refund of ₹2,499 has been initiated.` } : m
+    ),
+  }), [brandName]);
 
   const handlePin = useCallback((id: string) => {
     setPinnedIds(prev => {
@@ -983,7 +999,7 @@ export default function MessagesScreen() {
   const unreadNotifCount = notifications.filter((n) => !n.read && !readNotifications.has(n.id)).length;
   const unreadChatCount = user
     ? conversations.reduce((sum, c) => sum + c.unread_count, 0)
-    : mockThreads.reduce((sum, t) => sum + t.unread, 0);
+    : dynamicMockThreads.reduce((sum, t) => sum + t.unread, 0);
 
   const markRead = (id: string) => setReadNotifications((prev) => new Set(prev).add(id));
 
@@ -997,7 +1013,7 @@ export default function MessagesScreen() {
         typing: false, pinned: pinnedIds.has(c.id), conversation: c,
         tripStatus: "active" as TripStatus, tripLabel: "Current Trip",
       }))
-    : mockThreads.map((t) => ({ ...t, pinned: pinnedIds.has(t.id), conversation: null as Conversation | null }));
+    : dynamicMockThreads.map((t) => ({ ...t, pinned: pinnedIds.has(t.id), conversation: null as Conversation | null }));
 
   const visibleChats = chatThreads.filter(t => !archivedIds.has(t.id));
   const filteredChats = searchQuery
@@ -1071,7 +1087,7 @@ export default function MessagesScreen() {
           onClick={() => {
             setTab("chats");
             if (user && conversations.length > 0) setActiveConvo(conversations[0]);
-            else if (!user) setActiveMockThread(mockThreads[0]);
+            else if (!user) setActiveMockThread(dynamicMockThreads[0]);
           }}
           className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-primary text-primary-foreground text-[13px] font-semibold active:scale-[0.97] transition-transform"
           style={{ boxShadow: "0 4px 16px hsl(var(--primary) / 0.25)" }}
@@ -1099,7 +1115,7 @@ export default function MessagesScreen() {
                   {pinnedChats.map((t, i) => (
                     <ThreadCard key={t.id} thread={t} index={i} onPin={handlePin} onArchive={handleArchive} onClick={() => {
                       if (t.conversation) setActiveConvo(t.conversation);
-                      else setActiveMockThread(mockThreads.find(mt => mt.id === t.id) || null);
+                      else setActiveMockThread(dynamicMockThreads.find(mt => mt.id === t.id) || null);
                     }} />
                   ))}
                 </div>
@@ -1129,7 +1145,7 @@ export default function MessagesScreen() {
                   {activeTrip.map((t, i) => (
                     <ThreadCard key={t.id} thread={t} index={i + pinnedChats.length} onPin={handlePin} onArchive={handleArchive} onClick={() => {
                       if (t.conversation) setActiveConvo(t.conversation);
-                      else setActiveMockThread(mockThreads.find(mt => mt.id === t.id) || null);
+                      else setActiveMockThread(dynamicMockThreads.find(mt => mt.id === t.id) || null);
                     }} />
                   ))}
                 </div>
@@ -1150,7 +1166,7 @@ export default function MessagesScreen() {
                   {supportChats.map((t, i) => (
                     <ThreadCard key={t.id} thread={t} index={i + pinnedChats.length + activeTrip.length} onPin={handlePin} onArchive={handleArchive} onClick={() => {
                       if (t.conversation) setActiveConvo(t.conversation);
-                      else setActiveMockThread(mockThreads.find(mt => mt.id === t.id) || null);
+                      else setActiveMockThread(dynamicMockThreads.find(mt => mt.id === t.id) || null);
                     }} />
                   ))}
                 </div>
@@ -1182,7 +1198,7 @@ export default function MessagesScreen() {
                         )}
                         <ThreadCard thread={t} index={i + pinnedChats.length + activeTrip.length + supportChats.length} onPin={handlePin} onArchive={handleArchive} onClick={() => {
                           if (t.conversation) setActiveConvo(t.conversation);
-                          else setActiveMockThread(mockThreads.find(mt => mt.id === t.id) || null);
+                          else setActiveMockThread(dynamicMockThreads.find(mt => mt.id === t.id) || null);
                         }} />
                       </div>
                     );
