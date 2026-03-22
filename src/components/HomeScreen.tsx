@@ -48,6 +48,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
   const { properties, packages, curatedCombos } = usePropertiesData();
   const { packs: experiencePacks } = useCurations();
   const { isSectionVisible, getSortOrder } = useHomepageSections("home");
+  const appConfig = useAppConfig();
   const [refreshKey, setRefreshKey] = useState(0);
   const handleRefresh = useCallback(async () => {
     await new Promise((r) => setTimeout(r, 800));
