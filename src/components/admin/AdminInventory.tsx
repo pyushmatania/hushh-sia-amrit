@@ -263,7 +263,81 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
               className="w-full max-w-md bg-card rounded-2xl border border-border p-5 space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto"
               onClick={e => e.stopPropagation()}>
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold text-zinc-800 dark:text-zinc-100 flex items-center gap-2"><Sparkles size={14} className="text-indigo-500" /> {isCreating ? "Add Item" : "Edit Item"}</h2>
+                <h2 className="text-lg font-bold text-foreground flex items-center gap-2"><Sparkles size={14} className="text-primary" /> {isCreating ? "Add Item" : "Edit Item"}</h2>
+                <div className="flex items-center gap-1">
+                  <button onClick={() => setPreviewMode(!previewMode)}
+                    className={`px-2.5 py-1 rounded-xl text-xs font-medium flex items-center gap-1 transition ${previewMode ? "bg-primary/10 text-primary" : "bg-secondary text-muted-foreground"}`}>
+                    <Eye size={12} /> {previewMode ? "Edit" : "Preview"}
+                  </button>
+                  <button onClick={() => setEditing(null)} className="p-1.5 rounded-xl hover:bg-secondary transition"><X size={16} className="text-muted-foreground" /></button>
+                </div>
+              </div>
+              {previewMode ? (
+                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+                  className="rounded-2xl border border-border bg-secondary/50 overflow-hidden">
+                  {(editing.image_urls?.length || 0) > 0 && (
+                    <div className="aspect-video w-full overflow-hidden">
+                      <img src={editing.image_urls![0]} alt="" className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <div className="p-4 flex items-center gap-3">
+                    <span className="text-3xl">{editing.emoji || "🍽️"}</span>
+                    <div className="flex-1"><h4 className="text-base font-bold text-foreground">{editing.name || "Item Name"}</h4><p className="text-sm text-muted-foreground capitalize">{editing.category || "food"}</p><p className="text-lg font-bold text-foreground mt-1 tabular-nums">₹{editing.unit_price || 0}</p></div>
+                    <div className="text-right"><span className={`px-2 py-1 rounded-xl text-[10px] font-semibold ${editing.available ? "bg-emerald-500/10 text-emerald-600" : "bg-secondary text-muted-foreground"}`}>{editing.available ? "Available" : "Unavailable"}</span><p className="text-[11px] text-muted-foreground mt-1 tabular-nums">Stock: {editing.stock || 0}</p></div>
+                  </div>
+                </motion.div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-[60px_1fr] gap-3">
+                    <div><label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Emoji</label><Input value={editing.emoji || ""} onChange={e => setEditing(p => ({ ...p!, emoji: e.target.value }))} className="text-center text-lg rounded-xl" /></div>
+                    <div><label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Name</label><Input value={editing.name || ""} onChange={e => setEditing(p => ({ ...p!, name: e.target.value }))} placeholder="Tribal Thali" className="rounded-xl" /></div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div><label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Category</label><select value={editing.category || "food"} onChange={e => setEditing(p => ({ ...p!, category: e.target.value }))} className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm">{categoryOptions.map(c => <option key={c} value={c}>{c}</option>)}</select></div>
+                    <div><label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Unit Price (₹)</label><Input type="number" value={editing.unit_price || 0} onChange={e => setEditing(p => ({ ...p!, unit_price: Number(e.target.value) }))} className="rounded-xl" /></div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div><label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Stock</label><Input type="number" value={editing.stock || 0} onChange={e => setEditing(p => ({ ...p!, stock: Number(e.target.value) }))} className="rounded-xl" /></div>
+                    <div><label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Low Threshold</label><Input type="number" value={editing.low_stock_threshold || 0} onChange={e => setEditing(p => ({ ...p!, low_stock_threshold: Number(e.target.value) }))} className="rounded-xl" /></div>
+                  </div>
+                  <div className="flex items-center gap-2"><input type="checkbox" checked={editing.available ?? true} onChange={e => setEditing(p => ({ ...p!, available: e.target.checked }))} className="rounded border-input" id="avail" /><label htmlFor="avail" className="text-sm text-foreground">Available for ordering</label></div>
+                  <MultiImageEditor
+                    images={editing.image_urls || []}
+                    onChange={urls => setEditing(p => ({ ...p!, image_urls: urls, image_url: urls[0] || null }))}
+                    storagePath="inventory"
+                    label="Item Images"
+                    maxImages={5}
+                  />
+                </>
+              )}
+              <motion.button whileTap={{ scale: 0.97 }} onClick={save}
+                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white font-semibold text-sm shadow-md">
+                {isCreating ? "✨ Add Item" : "💾 Save Changes"}
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <BatchOperationsBar
+        selectedIds={selectedIds}
+        totalCount={filtered.length}
+        onSelectAll={() => setSelectedIds(filtered.map(i => i.id))}
+        onDeselectAll={() => setSelectedIds([])}
+        onBulkDelete={bulkDelete}
+        entityName="items"
+      />
+
+      <DeleteConfirmDialog
+        open={!!deleteTarget}
+        title="Delete this item?"
+        description="This inventory item will be permanently removed."
+        onConfirm={confirmDeleteItem}
+        onCancel={() => setDeleteTarget(null)}
+      />
+    </motion.div>
+  );
+}
                 <div className="flex items-center gap-1">
                   <button onClick={() => setPreviewMode(!previewMode)}
                     className={`px-2.5 py-1 rounded-xl text-xs font-medium flex items-center gap-1 transition ${previewMode ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600" : "bg-zinc-100 dark:bg-zinc-800 text-zinc-500"}`}>
