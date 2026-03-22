@@ -60,6 +60,8 @@ type Screen =
   | { type: "createListing"; editListing?: import("@/hooks/use-host-listings").HostListing };
 
 export default function Index() {
+  const appConfig = useAppConfig();
+  const bookingPrefix = (appConfig.app_name || "HUSHH").toUpperCase();
   const { user, loading } = useAuth();
   const [showSplash, setShowSplash] = useState(true);
   const [activeTab, setActiveTab] = useState("home");
