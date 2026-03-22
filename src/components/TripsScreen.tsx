@@ -10,6 +10,7 @@ import LiveOrderingSheet from "./LiveOrderingSheet";
 import IdentityUploadSheet from "./IdentityUploadSheet";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import EmptyState from "./shared/EmptyState";
 
 interface TripsScreenProps {
   bookings: Booking[];
