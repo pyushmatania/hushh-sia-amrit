@@ -68,10 +68,10 @@ const navSections: { title: string; items: { id: AdminPage; label: string; icon:
   {
     title: "Marketing",
     items: [
+      { id: "homepage", label: "Homepage", icon: Home, color: "bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400", activeGlow: "shadow-violet-200/60 dark:shadow-violet-500/20" },
       { id: "campaigns", label: "Campaigns", icon: Megaphone, color: "bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-400", activeGlow: "shadow-red-200/60" },
       { id: "coupons", label: "Coupons", icon: Ticket, color: "bg-purple-100 text-purple-600 dark:bg-purple-500/20 dark:text-purple-400", activeGlow: "shadow-purple-200/60" },
       { id: "curations", label: "Curations", icon: Sparkles, color: "bg-cyan-100 text-cyan-600 dark:bg-cyan-500/20 dark:text-cyan-400", activeGlow: "shadow-cyan-200/60" },
-      { id: "tags", label: "Tags", icon: Tag, color: "bg-stone-100 text-stone-600 dark:bg-stone-500/20 dark:text-stone-400", activeGlow: "shadow-stone-200/60" },
     ]
   },
   {
