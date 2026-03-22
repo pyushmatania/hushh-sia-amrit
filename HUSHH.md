@@ -451,6 +451,10 @@ supabase/
 | `usePrivacyMode` | Privacy toggle + name masking | ✅ localStorage |
 | `useCurations` | Fetch curated packs from DB | ✅ Static fallback |
 | `useUnreadCount` | Unread message count | — |
+| `useAppConfig` | Dynamic app config from DB (pricing, branding, support) | ✅ Defaults |
+| `useHomepageSections` | Section visibility & ordering from DB | ✅ Default sections |
+| `useHomepageFilters` | Dynamic category filter pills from DB | ✅ Default filters |
+| `useVideoCards` | Spotlight video card config from DB | ✅ Default videos |
 
 ---
 
