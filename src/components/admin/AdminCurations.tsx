@@ -27,6 +27,7 @@ interface CurationDraft {
   name: string; emoji: string; tagline: string; price: number;
   original_price: number | null; slot: string; includes: string[];
   tags: string[]; mood: string[]; badge: string; property_id: string; active: boolean;
+  image_urls: string[];
 }
 
 const emptyDraft: CurationDraft = {
