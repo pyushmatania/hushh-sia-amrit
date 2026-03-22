@@ -1087,7 +1087,7 @@ export default function MessagesScreen() {
           onClick={() => {
             setTab("chats");
             if (user && conversations.length > 0) setActiveConvo(conversations[0]);
-            else if (!user) setActiveMockThread(mockThreads[0]);
+            else if (!user) setActiveMockThread(dynamicMockThreads[0]);
           }}
           className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-primary text-primary-foreground text-[13px] font-semibold active:scale-[0.97] transition-transform"
           style={{ boxShadow: "0 4px 16px hsl(var(--primary) / 0.25)" }}
