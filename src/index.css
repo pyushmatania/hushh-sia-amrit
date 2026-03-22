@@ -341,3 +341,13 @@
 .leaflet-tile-pane {
   filter: saturate(0.85) contrast(1.05);
 }
+.custom-cluster-icon {
+  background: none !important;
+  border: none !important;
+}
+.marker-cluster-small, .marker-cluster-medium, .marker-cluster-large {
+  background: none !important;
+}
+.marker-cluster div {
+  background: none !important;
+}
