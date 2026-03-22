@@ -63,6 +63,13 @@ export default function Index() {
   const appConfig = useAppConfig();
   const bookingPrefix = (appConfig.app_name || "HUSHH").toUpperCase();
   const { user, loading } = useAuth();
+
+  // Dynamic page title from admin config
+  useEffect(() => {
+    if (appConfig.app_name) {
+      document.title = `${appConfig.app_name} — ${appConfig.app_tagline || "Premium Experiences"}`;
+    }
+  }, [appConfig.app_name, appConfig.app_tagline]);
   const [showSplash, setShowSplash] = useState(true);
   const [activeTab, setActiveTab] = useState("home");
   const [screen, setScreen] = useState<Screen>({ type: "home" });
