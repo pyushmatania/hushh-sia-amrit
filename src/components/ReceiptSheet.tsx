@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { X, Download, Share2, Receipt, MapPin, Calendar as CalendarIcon, Clock, Users, CreditCard } from "lucide-react";
 import type { Booking } from "@/pages/Index";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
+import { useAppConfig } from "@/hooks/use-app-config";
 import { useRef } from "react";
 import { toast } from "sonner";
 
