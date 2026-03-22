@@ -11,9 +11,9 @@ import {
   Shield, Zap, Info, Coffee, Utensils, ParkingCircle,
   CalendarIcon, Monitor, BatteryCharging, VolumeX,
   Armchair, GlassWater, Bell, Truck, Radio, Disc3,
-  Wind, Tag, Check
+  Wind, Tag, Check, BedDouble, Layers
 } from "lucide-react";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { shareProperty } from "@/lib/share";
 import { useToast } from "@/hooks/use-toast";
 import { hapticMedium, hapticSuccess } from "@/lib/haptics";
@@ -307,7 +307,7 @@ function RelatedPropertyRow({ relatedProperty, added, onToggle, onViewDetails }:
 interface PropertyDetailProps {
   property: Property;
   onBack: () => void;
-  onBook: (property: Property, slotId: string, guests: number, date: Date, extras?: Property[]) => void;
+  onBook: (property: Property, slotId: string, guests: number, date: Date, extras?: Property[], roomsCount?: number, extraMattresses?: number) => void;
   onPropertyTap?: (property: Property) => void;
   isWishlisted?: boolean;
   onToggleWishlist?: (id: string) => void;
@@ -321,6 +321,45 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
   const [expanded, setExpanded] = useState(false);
   const [enhanceOpen, setEnhanceOpen] = useState(false);
   const [addedExtraIds, setAddedExtraIds] = useState<Set<string>>(new Set());
+  const [roomsCount, setRoomsCount] = useState(1);
+  const [extraMattressCount, setExtraMattressCount] = useState(0);
+
+  const ROOM_CAPACITY = 2;
+  const EXTRA_MATTRESS_PRICE = 500;
+  const isStayProp = property.primaryCategory === "stay";
+
+  const roomInfo = useMemo(() => {
+    if (!isStayProp) return null;
+    const totalRooms = Math.max(1, Math.floor((property.capacity || 6) / ROOM_CAPACITY));
+    const maxGuestsForRooms = roomsCount * ROOM_CAPACITY + extraMattressCount;
+    return {
+      totalRooms,
+      maxGuestsForRooms,
+      maxMattresses: roomsCount, // max 1 per room
+      isOverCapacity: roomsCount > totalRooms,
+    };
+  }, [isStayProp, roomsCount, extraMattressCount, property.capacity]);
+
+  // Smart recommendations
+  const smartTip = useMemo(() => {
+    if (!isStayProp || !roomInfo) return null;
+    const maxGuests = roomsCount * ROOM_CAPACITY + extraMattressCount;
+    if (guests > maxGuests) {
+      const neededRooms = Math.ceil(guests / ROOM_CAPACITY);
+      const neededWithMattress = Math.ceil(guests / (ROOM_CAPACITY + 1));
+      if (neededWithMattress <= roomInfo.totalRooms && extraMattressCount < neededWithMattress) {
+        return { type: "mattress" as const, message: `Add ${neededWithMattress - extraMattressCount} mattress to fit ${guests} guests`, action: () => { setExtraMattressCount(neededWithMattress); } };
+      }
+      if (neededRooms <= roomInfo.totalRooms) {
+        return { type: "room" as const, message: `Upgrade to ${neededRooms} rooms for ${guests} guests`, action: () => { setRoomsCount(neededRooms); setExtraMattressCount(0); } };
+      }
+      return { type: "over" as const, message: `Max capacity: ${roomInfo.totalRooms * (ROOM_CAPACITY + 1)} guests with mattresses` };
+    }
+    if (guests === maxGuests && extraMattressCount === 0 && roomsCount < roomInfo.totalRooms) {
+      return null; // perfect fit
+    }
+    return null;
+  }, [isStayProp, guests, roomsCount, extraMattressCount, roomInfo]);
 
   const toggleExtra = useCallback((id: string) => {
     setAddedExtraIds(prev => {
@@ -705,34 +744,161 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
 
         <div className="border-b border-border my-5" />
 
-        {/* Guest selector */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-lg font-semibold text-foreground">Guests</h3>
-            <p className="text-sm text-muted-foreground">Max {property.capacity} people</p>
+        {/* ═══════ ROOM & GUEST SELECTOR ═══════ */}
+        {isStayProp && roomInfo ? (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <BedDouble size={18} className="text-primary" /> Rooms & Guests
+            </h3>
+            <p className="text-xs text-muted-foreground -mt-2">{roomInfo.totalRooms} rooms available · {ROOM_CAPACITY} guests per room</p>
+
+            {/* Rooms stepper */}
+            <div className="flex items-center justify-between rounded-xl bg-secondary/50 px-4 py-3">
+              <div>
+                <p className="text-sm font-medium text-foreground">Rooms</p>
+                <p className="text-[10px] text-muted-foreground">{ROOM_CAPACITY} guests per room</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => { const nr = Math.max(1, roomsCount - 1); setRoomsCount(nr); setExtraMattressCount(Math.min(extraMattressCount, nr)); const maxG = nr * ROOM_CAPACITY + Math.min(extraMattressCount, nr); if (guests > maxG) setGuests(maxG); }}
+                  disabled={roomsCount <= 1}
+                  className="w-8 h-8 rounded-full border border-border flex items-center justify-center disabled:opacity-30 active:scale-90 transition-transform"
+                >
+                  <Minus size={14} className="text-foreground" />
+                </button>
+                <span className="text-lg font-bold text-foreground w-6 text-center">{roomsCount}</span>
+                <button
+                  onClick={() => { const nr = Math.min(roomInfo.totalRooms, roomsCount + 1); setRoomsCount(nr); }}
+                  disabled={roomsCount >= roomInfo.totalRooms}
+                  className="w-8 h-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center disabled:opacity-30 active:scale-90 transition-transform"
+                >
+                  <Plus size={14} className="text-primary" />
+                </button>
+              </div>
+            </div>
+
+            {/* Extra mattress stepper */}
+            <div className="flex items-center justify-between rounded-xl bg-secondary/50 px-4 py-3">
+              <div>
+                <p className="text-sm font-medium text-foreground">Extra Mattress</p>
+                <p className="text-[10px] text-muted-foreground">₹{EXTRA_MATTRESS_PRICE}/night · +1 guest per room</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => { const nm = Math.max(0, extraMattressCount - 1); setExtraMattressCount(nm); const maxG = roomsCount * ROOM_CAPACITY + nm; if (guests > maxG) setGuests(maxG); }}
+                  disabled={extraMattressCount <= 0}
+                  className="w-8 h-8 rounded-full border border-border flex items-center justify-center disabled:opacity-30 active:scale-90 transition-transform"
+                >
+                  <Minus size={14} className="text-foreground" />
+                </button>
+                <span className="text-lg font-bold text-foreground w-6 text-center">{extraMattressCount}</span>
+                <button
+                  onClick={() => setExtraMattressCount(Math.min(roomInfo.maxMattresses, extraMattressCount + 1))}
+                  disabled={extraMattressCount >= roomInfo.maxMattresses}
+                  className="w-8 h-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center disabled:opacity-30 active:scale-90 transition-transform"
+                >
+                  <Plus size={14} className="text-primary" />
+                </button>
+              </div>
+            </div>
+
+            {/* Guest stepper */}
+            <div className="flex items-center justify-between rounded-xl bg-secondary/50 px-4 py-3">
+              <div>
+                <p className="text-sm font-medium text-foreground">Guests</p>
+                <p className="text-[10px] text-muted-foreground">
+                  Max {roomInfo.maxGuestsForRooms} with current setup
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setGuests(Math.max(1, guests - 1))}
+                  disabled={guests <= 1}
+                  className="w-8 h-8 rounded-full border border-border flex items-center justify-center disabled:opacity-30 active:scale-90 transition-transform"
+                >
+                  <Minus size={14} className="text-foreground" />
+                </button>
+                <span className="text-lg font-bold text-foreground w-6 text-center">{guests}</span>
+                <button
+                  onClick={() => setGuests(Math.min(roomInfo.maxGuestsForRooms, guests + 1))}
+                  disabled={guests >= roomInfo.maxGuestsForRooms}
+                  className="w-8 h-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center disabled:opacity-30 active:scale-90 transition-transform"
+                >
+                  <Plus size={14} className="text-primary" />
+                </button>
+              </div>
+            </div>
+
+            {/* Smart recommendation */}
+            {smartTip && (
+              <motion.div
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`rounded-xl px-4 py-3 flex items-center gap-3 ${
+                  smartTip.type === "over" 
+                    ? "bg-destructive/10 border border-destructive/20" 
+                    : "bg-amber-500/10 border border-amber-500/20"
+                }`}
+              >
+                <span className="text-base">{smartTip.type === "over" ? "⚠️" : "💡"}</span>
+                <p className="text-xs text-foreground flex-1">{smartTip.message}</p>
+                {"action" in smartTip && smartTip.action && (
+                  <button
+                    onClick={smartTip.action}
+                    className="text-[10px] font-bold text-primary bg-primary/15 px-3 py-1.5 rounded-full shrink-0"
+                  >
+                    Apply
+                  </button>
+                )}
+              </motion.div>
+            )}
+
+            {/* Summary */}
+            <div className="flex items-center gap-2 text-xs text-muted-foreground px-1">
+              <BedDouble size={12} className="text-primary" />
+              <span>{roomsCount} room{roomsCount > 1 ? "s" : ""}</span>
+              <span className="text-border">·</span>
+              <Users size={12} />
+              <span>{guests} guest{guests > 1 ? "s" : ""}</span>
+              {extraMattressCount > 0 && (
+                <>
+                  <span className="text-border">·</span>
+                  <Layers size={12} className="text-amber-400" />
+                  <span className="text-amber-400 font-medium">{extraMattressCount} mattress (+₹{(extraMattressCount * EXTRA_MATTRESS_PRICE).toLocaleString()})</span>
+                </>
+              )}
+            </div>
           </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setGuests(Math.max(1, guests - 1))}
-              disabled={guests <= 1}
-              className={`w-8 h-8 rounded-full border flex items-center justify-center ${
-                guests <= 1 ? "border-border text-border" : "border-muted-foreground text-foreground"
-              }`}
-            >
-              <Minus size={14} />
-            </button>
-            <span className="text-base font-medium text-foreground w-6 text-center">{guests}</span>
-            <button
-              onClick={() => setGuests(Math.min(property.capacity, guests + 1))}
-              disabled={guests >= property.capacity}
-              className={`w-8 h-8 rounded-full border flex items-center justify-center ${
-                guests >= property.capacity ? "border-border text-border" : "border-muted-foreground text-foreground"
-              }`}
-            >
-              <Plus size={14} />
-            </button>
+        ) : (
+          /* Non-stay: simple guest selector */
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">Guests</h3>
+              <p className="text-sm text-muted-foreground">Max {property.capacity} people</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setGuests(Math.max(1, guests - 1))}
+                disabled={guests <= 1}
+                className={`w-8 h-8 rounded-full border flex items-center justify-center ${
+                  guests <= 1 ? "border-border text-border" : "border-muted-foreground text-foreground"
+                }`}
+              >
+                <Minus size={14} />
+              </button>
+              <span className="text-base font-medium text-foreground w-6 text-center">{guests}</span>
+              <button
+                onClick={() => setGuests(Math.min(property.capacity, guests + 1))}
+                disabled={guests >= property.capacity}
+                className={`w-8 h-8 rounded-full border flex items-center justify-center ${
+                  guests >= property.capacity ? "border-border text-border" : "border-muted-foreground text-foreground"
+                }`}
+              >
+                <Plus size={14} />
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="border-b border-border my-5" />
 
@@ -999,12 +1165,14 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
               <span className="font-semibold text-gradient-warm text-lg">₹{selectedSlotData.price.toLocaleString()}</span>
               <span className="text-muted-foreground text-sm"> / {selectedSlotData.label.toLowerCase()}</span>
               <p className="text-xs text-muted-foreground">
+                {isStayProp && <><BedDouble size={10} className="inline text-primary mr-0.5" />{roomsCount}R · </>}
                 {guests} guests · {format(selectedDate, "d MMM")}
+                {extraMattressCount > 0 && <span className="text-amber-400 font-medium"> · +{extraMattressCount}🛏️</span>}
                 {addedExtras.length > 0 && <span className="text-primary font-medium"> · +{addedExtras.length} extra{addedExtras.length > 1 ? "s" : ""}</span>}
               </p>
             </div>
             <motion.button
-              onClick={() => onBook(property, selectedSlot!, guests, selectedDate, addedExtras.length > 0 ? addedExtras : undefined)}
+              onClick={() => onBook(property, selectedSlot!, guests, selectedDate, addedExtras.length > 0 ? addedExtras : undefined, isStayProp ? roomsCount : undefined, isStayProp ? extraMattressCount : undefined)}
               className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold text-sm glow-primary"
               whileTap={{ scale: 0.93 }}
               transition={{ type: "spring", stiffness: 400 }}

@@ -50,8 +50,8 @@ export interface Booking {
 type Screen =
   | { type: "home" }
   | { type: "detail"; property: Property }
-  | { type: "builder"; property: Property; slotId: string; guests: number; date: Date; extras?: Property[] }
-  | { type: "checkout"; property: Property; slotId: string; guests: number; date: Date; selections: Record<string, number>; total: number; extras?: Property[] }
+  | { type: "builder"; property: Property; slotId: string; guests: number; date: Date; extras?: Property[]; roomsCount?: number; extraMattresses?: number }
+  | { type: "checkout"; property: Property; slotId: string; guests: number; date: Date; selections: Record<string, number>; total: number; extras?: Property[]; roomsCount?: number; extraMattresses?: number }
   | { type: "confirmation"; property: Property; slotId: string; guests: number; date: Date; total: number }
   | { type: "bookingDetail"; booking: Booking }
   | { type: "hostDashboard" }
@@ -80,14 +80,14 @@ export default function Index() {
     setActiveTab("home");
   }, []);
 
-  const handleBook = useCallback((property: Property, slotId: string, guests: number, date: Date, extras?: Property[]) => {
-    setScreen({ type: "builder", property, slotId, guests, date, extras });
+  const handleBook = useCallback((property: Property, slotId: string, guests: number, date: Date, extras?: Property[], roomsCount?: number, extraMattresses?: number) => {
+    setScreen({ type: "builder", property, slotId, guests, date, extras, roomsCount, extraMattresses });
   }, []);
 
   const handleContinue = useCallback(
-    (property: Property, slotId: string, guests: number, date: Date, extras?: Property[]) =>
+    (property: Property, slotId: string, guests: number, date: Date, extras?: Property[], roomsCount?: number, extraMattresses?: number) =>
       (selections: Record<string, number>, total: number) => {
-        setScreen({ type: "checkout", property, slotId, guests, date, selections, total, extras });
+        setScreen({ type: "checkout", property, slotId, guests, date, selections, total, extras, roomsCount, extraMattresses });
       },
     []
   );
@@ -217,7 +217,7 @@ export default function Index() {
             guests={screen.guests}
             date={screen.date}
             onBack={() => setScreen({ type: "detail", property: screen.property })}
-            onContinue={handleContinue(screen.property, screen.slotId, screen.guests, screen.date, screen.extras)}
+            onContinue={handleContinue(screen.property, screen.slotId, screen.guests, screen.date, screen.extras, screen.roomsCount, screen.extraMattresses)}
             extras={screen.extras}
           />
         )}
@@ -230,11 +230,13 @@ export default function Index() {
             date={screen.date}
             selections={screen.selections}
             total={screen.total}
-            onBack={() => setScreen({ type: "builder", property: screen.property, slotId: screen.slotId, guests: screen.guests, date: screen.date, extras: screen.extras })}
+            onBack={() => setScreen({ type: "builder", property: screen.property, slotId: screen.slotId, guests: screen.guests, date: screen.date, extras: screen.extras, roomsCount: screen.roomsCount, extraMattresses: screen.extraMattresses })}
             extras={screen.extras}
             onConfirm={handleCheckoutConfirm(screen.property, screen.slotId, screen.guests, screen.date)}
             isWishlisted={wishlist.includes(screen.property.id)}
             onToggleWishlist={toggleWishlist}
+            roomsCount={screen.roomsCount}
+            extraMattresses={screen.extraMattresses}
           />
         )}
         {screen.type === "confirmation" && (
