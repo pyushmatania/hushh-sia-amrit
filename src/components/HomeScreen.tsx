@@ -16,6 +16,7 @@ import { useCurations } from "@/hooks/use-curations";
 import { useNotifications } from "@/hooks/use-notifications";
 import { useHomepageSections } from "@/hooks/use-homepage-sections";
 import { useAppConfig } from "@/hooks/use-app-config";
+import { useHomepageFilters } from "@/hooks/use-homepage-filters";
 import profileAvatar from "@/assets/profile-avatar.webp";
 
 import RotatingSearchBar from "./home/RotatingSearchBar";
