@@ -1,25 +1,28 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, lazy, Suspense } from "react";
 import { AnimatePresence } from "framer-motion";
 import SplashScreen from "@/components/SplashScreen";
 
 import BottomNav from "@/components/BottomNav";
 import HomeScreen from "@/components/HomeScreen";
-import PropertyDetail from "@/components/PropertyDetail";
-import ExperienceBuilder from "@/components/ExperienceBuilder";
-import CheckoutScreen from "@/components/CheckoutScreen";
-import BookingConfirmation from "@/components/BookingConfirmation";
-import BookingDetailScreen from "@/components/BookingDetailScreen";
-import WishlistScreen from "@/components/WishlistScreen";
-import TripsScreen from "@/components/TripsScreen";
-import ProfileScreen from "@/components/ProfileScreen";
-import MessagesScreen from "@/components/MessagesScreen";
-import SearchScreen from "@/components/SearchScreen";
-import MapViewScreen from "@/components/MapViewScreen";
-import HostDashboard from "@/components/HostDashboard";
-import HostAnalyticsScreen from "@/components/HostAnalyticsScreen";
-import CreateListingScreen from "@/components/CreateListingScreen";
-import NotificationCenter from "@/components/NotificationCenter";
 import NotificationToastProvider from "@/components/NotificationToastProvider";
+import NotificationPermissionBanner from "@/components/NotificationPermissionBanner";
+
+// Lazy-loaded screens (not needed on initial render)
+const PropertyDetail = lazy(() => import("@/components/PropertyDetail"));
+const ExperienceBuilder = lazy(() => import("@/components/ExperienceBuilder"));
+const CheckoutScreen = lazy(() => import("@/components/CheckoutScreen"));
+const BookingConfirmation = lazy(() => import("@/components/BookingConfirmation"));
+const BookingDetailScreen = lazy(() => import("@/components/BookingDetailScreen"));
+const WishlistScreen = lazy(() => import("@/components/WishlistScreen"));
+const TripsScreen = lazy(() => import("@/components/TripsScreen"));
+const ProfileScreen = lazy(() => import("@/components/ProfileScreen"));
+const MessagesScreen = lazy(() => import("@/components/MessagesScreen"));
+const SearchScreen = lazy(() => import("@/components/SearchScreen"));
+const MapViewScreen = lazy(() => import("@/components/MapViewScreen"));
+const HostDashboard = lazy(() => import("@/components/HostDashboard"));
+const HostAnalyticsScreen = lazy(() => import("@/components/HostAnalyticsScreen"));
+const CreateListingScreen = lazy(() => import("@/components/CreateListingScreen"));
+const NotificationCenter = lazy(() => import("@/components/NotificationCenter"));
 import NotificationPermissionBanner from "@/components/NotificationPermissionBanner";
 import { useAuth } from "@/hooks/use-auth";
 import { useWishlists } from "@/hooks/use-wishlists";
