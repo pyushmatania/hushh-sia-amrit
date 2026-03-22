@@ -986,6 +986,7 @@ export default function MessagesScreen() {
         time: formatDistanceToNow(new Date(c.last_message_time), { addSuffix: true }),
         unread: c.unread_count, online: false, verified: false, role: "Host" as string,
         typing: false, pinned: pinnedIds.has(c.id), conversation: c,
+        tripStatus: "active" as TripStatus, tripLabel: "Current Trip",
       }))
     : mockThreads.map((t) => ({ ...t, pinned: pinnedIds.has(t.id), conversation: null as Conversation | null }));
 
@@ -995,7 +996,9 @@ export default function MessagesScreen() {
     : visibleChats;
 
   const pinnedChats = filteredChats.filter(t => t.pinned);
-  const otherChats = filteredChats.filter(t => !t.pinned);
+  const activeTrip = filteredChats.filter(t => !t.pinned && (t.tripStatus === "active" || t.tripStatus === "upcoming"));
+  const pastTrips = filteredChats.filter(t => !t.pinned && t.tripStatus === "past");
+  const supportChats = filteredChats.filter(t => !t.pinned && t.tripStatus === "support");
 
   return (
     <div className="pb-24 min-h-screen" style={{ background: "linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--secondary) / 0.3) 100%)" }}>
