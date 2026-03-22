@@ -47,7 +47,12 @@ const defaults: AppConfig = {
   referral_reward_points: 100,
 };
 
-const stringKeys = new Set(["check_in_time", "check_out_time", "support_phone", "support_email", "whatsapp_number"]);
+const stringKeys = new Set([
+  "check_in_time", "check_out_time", "support_phone", "support_email", "whatsapp_number",
+  "app_name", "app_tagline", "logo_url", "favicon_url",
+  "instagram_url", "facebook_url", "youtube_url", "twitter_url",
+  "terms_url", "privacy_url", "refund_policy_url",
+]);
 
 let cachedConfig: AppConfig | null = null;
 let listeners: Array<() => void> = [];
