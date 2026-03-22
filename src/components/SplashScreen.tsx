@@ -31,6 +31,9 @@ function getTimeGreeting() {
 export default function SplashScreen({ onComplete }: { onComplete: () => void }) {
   const [show, setShow] = useState(true);
   const { greeting, emoji, bg } = getTimeGreeting();
+  const appConfig = useAppConfig();
+  const brandName = appConfig.app_name || "hushh";
+  const tagline = appConfig.app_tagline || "Private experiences await";
 
   // Eagerly preload all 3D icons into browser cache during splash
   useEffect(() => {
