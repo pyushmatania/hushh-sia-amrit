@@ -23,7 +23,6 @@ const HostDashboard = lazy(() => import("@/components/HostDashboard"));
 const HostAnalyticsScreen = lazy(() => import("@/components/HostAnalyticsScreen"));
 const CreateListingScreen = lazy(() => import("@/components/CreateListingScreen"));
 const NotificationCenter = lazy(() => import("@/components/NotificationCenter"));
-import NotificationPermissionBanner from "@/components/NotificationPermissionBanner";
 import { useAuth } from "@/hooks/use-auth";
 import { useWishlists } from "@/hooks/use-wishlists";
 import { useBookings } from "@/hooks/use-bookings";
