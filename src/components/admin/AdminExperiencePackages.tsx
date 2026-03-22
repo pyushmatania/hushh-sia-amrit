@@ -83,7 +83,7 @@ export default function AdminExperiencePackages() {
       name: "", emoji: "🎉", price: 0,
       includes: [], gradient: GRADIENT_OPTIONS[0],
       sort_order: packages.length + 1, active: true,
-      image_url: null,
+      image_url: null, image_urls: [],
     });
     setIsCreating(true);
     setIncludeInput("");
