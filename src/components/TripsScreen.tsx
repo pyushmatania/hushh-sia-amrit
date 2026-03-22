@@ -543,13 +543,14 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
       <IdentityUploadSheet open={idSheetOpen} onClose={() => setIdSheetOpen(false)} />
 
       {filteredBookings.length === 0 ? (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center pt-16 px-5"
-        >
-          <p className="text-sm text-muted-foreground">No {activeFilter} trips</p>
-        </motion.div>
+        <EmptyState
+          icon={MapPin}
+          emoji={activeFilter === "cancelled" ? "🚫" : activeFilter === "completed" ? "✅" : "🗺️"}
+          title={`No ${activeFilter === "all" ? "" : activeFilter + " "}trips`}
+          description={activeFilter === "all" 
+            ? "Your adventures will show up here once you book a property. Start exploring!" 
+            : `You don't have any ${activeFilter} trips right now.`}
+        />
       ) : (
         <div className="px-5 pt-4 space-y-6">
           {filteredBookings.map((trip, i) => (
