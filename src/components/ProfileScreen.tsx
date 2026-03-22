@@ -569,6 +569,36 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
         )}
       </motion.div>
 
+      {/* Social Media Links */}
+      {(appConfig.instagram_url || appConfig.facebook_url || appConfig.youtube_url || appConfig.twitter_url) && (
+        <div className="flex justify-center gap-4 mt-4 mb-2">
+          {appConfig.instagram_url && (
+            <a href={appConfig.instagram_url} target="_blank" rel="noopener noreferrer"
+              className="w-10 h-10 rounded-full bg-secondary/80 border border-border flex items-center justify-center text-muted-foreground hover:text-primary transition-colors">
+              <span className="text-base">📸</span>
+            </a>
+          )}
+          {appConfig.facebook_url && (
+            <a href={appConfig.facebook_url} target="_blank" rel="noopener noreferrer"
+              className="w-10 h-10 rounded-full bg-secondary/80 border border-border flex items-center justify-center text-muted-foreground hover:text-primary transition-colors">
+              <span className="text-base">👤</span>
+            </a>
+          )}
+          {appConfig.youtube_url && (
+            <a href={appConfig.youtube_url} target="_blank" rel="noopener noreferrer"
+              className="w-10 h-10 rounded-full bg-secondary/80 border border-border flex items-center justify-center text-muted-foreground hover:text-primary transition-colors">
+              <span className="text-base">🎬</span>
+            </a>
+          )}
+          {appConfig.twitter_url && (
+            <a href={appConfig.twitter_url} target="_blank" rel="noopener noreferrer"
+              className="w-10 h-10 rounded-full bg-secondary/80 border border-border flex items-center justify-center text-muted-foreground hover:text-primary transition-colors">
+              <span className="text-base">🐦</span>
+            </a>
+          )}
+        </div>
+      )}
+
       {/* Version — tap 5× to reveal docs */}
       <p
         className="text-center text-[11px] text-muted-foreground pb-4 cursor-pointer select-none"
