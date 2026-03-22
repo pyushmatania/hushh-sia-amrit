@@ -165,7 +165,7 @@ export default function Index() {
 
   const showBottomNav = screen.type === "home";
 
-  const lazyFallback = <div className="min-h-screen bg-background" />;
+  const lazyFallback = <ScreenSkeleton />;
 
   return (
     <div className="min-h-screen bg-background">
