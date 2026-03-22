@@ -699,6 +699,62 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
           </div>
         </SheetContent>
       </Sheet>
+
+      {/* Legal Links Sheet */}
+      <Sheet open={showLegal} onOpenChange={setShowLegal}>
+        <SheetContent side="bottom" className="rounded-t-3xl pb-8">
+          <SheetHeader className="pb-4">
+            <SheetTitle className="text-lg font-bold">Terms & Privacy</SheetTitle>
+          </SheetHeader>
+          <div className="space-y-3">
+            {appConfig.terms_url && (
+              <a href={appConfig.terms_url} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-secondary/60 border border-border active:scale-[0.98] transition-transform">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <span className="text-base">📄</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground">Terms & Conditions</p>
+                  <p className="text-xs text-muted-foreground truncate">{appConfig.terms_url}</p>
+                </div>
+                <ChevronRight size={16} className="text-muted-foreground" />
+              </a>
+            )}
+            {appConfig.privacy_url && (
+              <a href={appConfig.privacy_url} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-secondary/60 border border-border active:scale-[0.98] transition-transform">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <span className="text-base">🔐</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground">Privacy Policy</p>
+                  <p className="text-xs text-muted-foreground truncate">{appConfig.privacy_url}</p>
+                </div>
+                <ChevronRight size={16} className="text-muted-foreground" />
+              </a>
+            )}
+            {appConfig.refund_policy_url && (
+              <a href={appConfig.refund_policy_url} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-secondary/60 border border-border active:scale-[0.98] transition-transform">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <span className="text-base">💰</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground">Refund & Cancellation Policy</p>
+                  <p className="text-xs text-muted-foreground truncate">{appConfig.refund_policy_url}</p>
+                </div>
+                <ChevronRight size={16} className="text-muted-foreground" />
+              </a>
+            )}
+            {!appConfig.terms_url && !appConfig.privacy_url && !appConfig.refund_policy_url && (
+              <div className="text-center py-6">
+                <p className="text-sm text-muted-foreground">No legal pages configured yet.</p>
+                <p className="text-xs text-muted-foreground mt-1">Contact the admin to set up legal links.</p>
+              </div>
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
       <AnimatePresence>
         {showPublicProfile && (
           <PublicProfileScreen userId={user?.id || "mock-guest"} onBack={() => setShowPublicProfile(false)} />
