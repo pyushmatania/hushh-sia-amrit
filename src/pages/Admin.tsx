@@ -139,7 +139,8 @@ export default function Admin() {
       case "curations": return <AdminCurations />;
       case "campaigns": return <AdminCampaigns />;
       case "coupons": return <AdminCoupons />;
-      case "tags": return <AdminTags />;
+      case "tags": return <AdminHomepage />;
+      case "homepage": return <AdminHomepage />;
       case "orders": return <AdminOrders />;
       case "exports": return <AdminExports />;
       case "achievements": return <AdminAchievements />;
