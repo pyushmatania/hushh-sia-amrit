@@ -1,9 +1,9 @@
 import { useState, memo, useCallback } from "react";
-import iconHome from "@/assets/icon-home.png";
-import iconStays from "@/assets/icon-stays-new.png";
-import iconExperiences from "@/assets/icon-experiences-new.png";
-import iconServices from "@/assets/icon-services-new.png";
-import iconCurations from "@/assets/icon-curations.png";
+import iconHome from "@/assets/icon-home.webp";
+import iconStays from "@/assets/icon-stays-new.webp";
+import iconExperiences from "@/assets/icon-experiences-new.webp";
+import iconServices from "@/assets/icon-services-new.webp";
+import iconCurations from "@/assets/icon-curations.webp";
 
 interface Category {
   id: string;

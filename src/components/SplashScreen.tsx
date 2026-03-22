@@ -4,15 +4,15 @@ import splashEvening from "@/assets/splash-jeypore-evening.jpg";
 import splashDay from "@/assets/splash-jeypore-day.jpg";
 
 // Preload 3D category icons so they're cached before home screen renders
-import iconHome from "@/assets/icon-home.png";
-import iconStays from "@/assets/icon-stays-new.png";
-import iconExperiences from "@/assets/icon-experiences-new.png";
-import iconServices from "@/assets/icon-services-new.png";
-import iconCurations from "@/assets/icon-curations.png";
-import icon3dPickleball from "@/assets/icon-3d-pickleball.png";
-import icon3dBadminton from "@/assets/icon-3d-badminton.png";
-import icon3dArchery from "@/assets/icon-3d-archery.png";
-import icon3dSwimming from "@/assets/icon-3d-swimming.png";
+import iconHome from "@/assets/icon-home.webp";
+import iconStays from "@/assets/icon-stays-new.webp";
+import iconExperiences from "@/assets/icon-experiences-new.webp";
+import iconServices from "@/assets/icon-services-new.webp";
+import iconCurations from "@/assets/icon-curations.webp";
+import icon3dPickleball from "@/assets/icon-3d-pickleball.webp";
+import icon3dBadminton from "@/assets/icon-3d-badminton.webp";
+import icon3dArchery from "@/assets/icon-3d-archery.webp";
+import icon3dSwimming from "@/assets/icon-3d-swimming.webp";
 
 const preloadIcons = [
   iconHome, iconStays, iconExperiences, iconServices, iconCurations,

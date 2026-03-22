@@ -14,7 +14,7 @@ import CuratedPackListing from "./home/CuratedPackListing";
 import { useState, useMemo, useCallback, useRef } from "react";
 import { useCurations } from "@/hooks/use-curations";
 import { useNotifications } from "@/hooks/use-notifications";
-import profileAvatar from "@/assets/profile-avatar.png";
+import profileAvatar from "@/assets/profile-avatar.webp";
 
 import RotatingSearchBar from "./home/RotatingSearchBar";
 import SectionDivider from "./home/SectionDivider";

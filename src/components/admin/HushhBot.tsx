@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import hushhMascot from "@/assets/hushh-fire-mascot.png";
+import hushhMascot from "@/assets/hushh-fire-mascot.webp";
 
 interface HushhBotProps {
   size?: number;

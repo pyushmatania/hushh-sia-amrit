@@ -105,14 +105,14 @@ function PropertyThumb({ name, imageUrls, size = 40 }: { name: string; imageUrls
 }
 
 /* ─── Character Avatar DP ─── */
-import avatarChar1 from "@/assets/avatar-char-1.png";
-import avatarChar2 from "@/assets/avatar-char-2.png";
-import avatarChar3 from "@/assets/avatar-char-3.png";
-import avatarChar4 from "@/assets/avatar-char-4.png";
-import avatarChar5 from "@/assets/avatar-char-5.png";
-import avatarChar6 from "@/assets/avatar-char-6.png";
-import avatarChar7 from "@/assets/avatar-char-7.png";
-import avatarChar8 from "@/assets/avatar-char-8.png";
+import avatarChar1 from "@/assets/avatar-char-1.webp";
+import avatarChar2 from "@/assets/avatar-char-2.webp";
+import avatarChar3 from "@/assets/avatar-char-3.webp";
+import avatarChar4 from "@/assets/avatar-char-4.webp";
+import avatarChar5 from "@/assets/avatar-char-5.webp";
+import avatarChar6 from "@/assets/avatar-char-6.webp";
+import avatarChar7 from "@/assets/avatar-char-7.webp";
+import avatarChar8 from "@/assets/avatar-char-8.webp";
 
 const characterAvatars = [
   avatarChar1, avatarChar2, avatarChar3, avatarChar4,

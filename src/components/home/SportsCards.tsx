@@ -1,10 +1,10 @@
 import { ChevronRight } from "lucide-react";
 import { type Property } from "@/data/properties";
 
-import icon3dPickleball from "@/assets/icon-3d-pickleball.png";
-import icon3dBadminton from "@/assets/icon-3d-badminton.png";
-import icon3dArchery from "@/assets/icon-3d-archery.png";
-import icon3dSwimming from "@/assets/icon-3d-swimming.png";
+import icon3dPickleball from "@/assets/icon-3d-pickleball.webp";
+import icon3dBadminton from "@/assets/icon-3d-badminton.webp";
+import icon3dArchery from "@/assets/icon-3d-archery.webp";
+import icon3dSwimming from "@/assets/icon-3d-swimming.webp";
 
 interface SportsCardsProps {
   properties: Property[];
