@@ -105,7 +105,7 @@ export default function Index() {
           guests,
           total: finalTotal,
           status: "upcoming" as const,
-          bookingId: `HUSHH-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+          bookingId: `${bookingPrefix}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
           roomsCount: roomsCount ?? null,
           extraMattresses: extraMattresses ?? null,
         };
