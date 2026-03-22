@@ -339,6 +339,11 @@ export default function AdminExperiencePackages() {
               {previewMode ? (
                 <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
                   className="rounded-xl border border-border bg-background overflow-hidden">
+                  {editing.image_url && (
+                    <div className="aspect-video w-full overflow-hidden">
+                      <img src={editing.image_url} alt="" className="w-full h-full object-cover" />
+                    </div>
+                  )}
                   <div className={`bg-gradient-to-br ${editing.gradient || "from-primary/80 to-primary/40"} p-6 text-center`}>
                     <span className="text-4xl">{editing.emoji || "✨"}</span>
                     <h3 className="text-lg font-bold text-white mt-2">{editing.name || "Package Name"}</h3>
