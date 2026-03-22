@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Star, MapPin, Navigation, Layers, Search, SlidersHorizontal, List, Map as MapIcon, ArrowUpDown, Plus, Minus } from "lucide-react";
+import { X, Star, MapPin, Navigation, Layers, Search, SlidersHorizontal, List, Map as MapIcon, ArrowUpDown, Plus, Minus, Share2 } from "lucide-react";
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { properties, type Property } from "@/data/properties";
 import L from "leaflet";
@@ -518,17 +518,31 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
                       ))}
                     </div>
                   )}
-                  <motion.button
-                    whileTap={{ scale: 0.95 }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.open(`https://www.google.com/maps/dir/?api=1&destination=${selectedPin.lat},${selectedPin.lng}`, "_blank");
-                    }}
-                    className="mt-2 w-full flex items-center justify-center gap-1.5 py-2 rounded-xl bg-primary text-primary-foreground text-[12px] font-bold active:scale-[0.97] transition-transform"
-                    style={{ boxShadow: "0 2px 10px hsl(var(--primary) / 0.3)" }}
-                  >
-                    <Navigation size={13} /> Get Directions
-                  </motion.button>
+                  <div className="flex gap-2 mt-2">
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.open(`https://www.google.com/maps/dir/?api=1&destination=${selectedPin.lat},${selectedPin.lng}`, "_blank");
+                      }}
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-primary text-primary-foreground text-[12px] font-bold active:scale-[0.97] transition-transform"
+                      style={{ boxShadow: "0 2px 10px hsl(var(--primary) / 0.3)" }}
+                    >
+                      <Navigation size={13} /> Directions
+                    </motion.button>
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const url = `https://www.google.com/maps?q=${selectedPin.lat},${selectedPin.lng}`;
+                        navigator.clipboard.writeText(url);
+                        import("sonner").then(({ toast }) => toast.success("Location link copied!"));
+                      }}
+                      className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl border border-border bg-secondary text-foreground text-[12px] font-bold active:scale-[0.97] transition-transform"
+                    >
+                      <Share2 size={13} /> Share
+                    </motion.button>
+                  </div>
                 </div>
               </div>
             </div>
