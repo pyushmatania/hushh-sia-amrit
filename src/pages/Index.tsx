@@ -165,8 +165,11 @@ export default function Index() {
 
   const showBottomNav = screen.type === "home";
 
+  const lazyFallback = <div className="min-h-screen bg-background" />;
+
   return (
     <div className="min-h-screen bg-background">
+      <Suspense fallback={lazyFallback}>
       <AnimatePresence mode="wait">
         {screen.type === "home" && activeTab === "home" && (
           <HomeScreen key="home" onPropertyTap={handlePropertyTap} onSearchTap={() => setShowSearch(true)} onMapTap={() => setShowMap(true)} onNotificationTap={() => setShowNotifications(true)} wishlist={wishlist} onToggleWishlist={toggleWishlist} />
