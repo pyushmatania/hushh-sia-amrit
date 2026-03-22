@@ -166,6 +166,7 @@ export default function AdminCurations() {
       price: editing.price, original_price: editing.original_price,
       slot: editing.slot, includes: editing.includes, tags: editing.tags,
       mood: editing.mood, badge: editing.badge || null, property_id: editing.property_id, active: editing.active,
+      image_urls: editing.image_urls || [],
     };
     if (editingId) await supabase.from("curations").update(payload).eq("id", editingId);
     else await supabase.from("curations").insert(payload);
