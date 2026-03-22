@@ -76,26 +76,44 @@ const notifications: Notification[] = [
   },
 ];
 
+type TripStatus = "active" | "upcoming" | "past" | "support";
+
 const mockThreads = [
   {
     id: "c1", name: "Hushh Concierge", avatar: "💎", lastMessage: "Your refund has been processed successfully.",
     time: "Yesterday", unread: 0, online: true, verified: true, role: "Support",
     typing: false, pinned: true,
+    tripStatus: "support" as TripStatus, tripLabel: "24/7 Support",
   },
   {
     id: "c2", name: "Koraput Garden Host", avatar: "🏡", lastMessage: "Welcome! Looking forward to hosting you tomorrow.",
     time: "2 hours ago", unread: 2, online: true, verified: true, role: "Superhost",
     typing: true, pinned: false,
+    tripStatus: "active" as TripStatus, tripLabel: "Mar 18 · Evening Slot",
+  },
+  {
+    id: "c5", name: "Chef Meera", avatar: "👩‍🍳", lastMessage: "The bonfire dinner setup is ready! Come anytime after 7.",
+    time: "1 hour ago", unread: 1, online: true, verified: true, role: "Chef",
+    typing: false, pinned: false,
+    tripStatus: "active" as TripStatus, tripLabel: "Mar 18 · Evening Slot",
   },
   {
     id: "c3", name: "Firefly Villa Host", avatar: "🌿", lastMessage: "Hope you enjoyed your stay! Come back during monsoon 🌧️",
     time: "Mar 10", unread: 0, online: false, verified: false, role: "Host",
     typing: false, pinned: false,
+    tripStatus: "past" as TripStatus, tripLabel: "Mar 8-10 · Weekend Stay",
   },
   {
     id: "c4", name: "Chef Arjun", avatar: "👨‍🍳", lastMessage: "I'll prepare the tribal thali for your group. See you at 7!",
     time: "Mar 8", unread: 0, online: false, verified: true, role: "Service Provider",
     typing: false, pinned: false,
+    tripStatus: "past" as TripStatus, tripLabel: "Mar 8-10 · Weekend Stay",
+  },
+  {
+    id: "c6", name: "Rooftop Lounge Host", avatar: "🌃", lastMessage: "Thanks for visiting! Your review means a lot to us.",
+    time: "Feb 25", unread: 0, online: false, verified: true, role: "Host",
+    typing: false, pinned: false,
+    tripStatus: "past" as TripStatus, tripLabel: "Feb 24-25 · Night Slot",
   },
 ];
 
