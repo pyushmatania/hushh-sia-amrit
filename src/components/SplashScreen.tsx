@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useAppConfig } from "@/hooks/use-app-config";
 import splashEvening from "@/assets/splash-jeypore-evening.webp";
 import splashDay from "@/assets/splash-jeypore-day.webp";
 
@@ -30,6 +31,9 @@ function getTimeGreeting() {
 export default function SplashScreen({ onComplete }: { onComplete: () => void }) {
   const [show, setShow] = useState(true);
   const { greeting, emoji, bg } = getTimeGreeting();
+  const appConfig = useAppConfig();
+  const brandName = appConfig.app_name || "hushh";
+  const tagline = appConfig.app_tagline || "Private experiences await";
 
   // Eagerly preload all 3D icons into browser cache during splash
   useEffect(() => {
@@ -164,17 +168,28 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
               >
                 {/* Logo */}
                 <div className="flex items-center gap-1">
-                  <motion.span
-                    className="text-3xl font-bold text-white tracking-tight"
-                    style={{
-                      textShadow: "0 2px 20px hsla(270, 80%, 65%, 0.5)",
-                    }}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 1.6, type: "spring", stiffness: 150 }}
-                  >
-                    hushh
-                  </motion.span>
+                  {appConfig.logo_url ? (
+                    <motion.img
+                      src={appConfig.logo_url}
+                      alt={brandName}
+                      className="h-10 object-contain"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 1.6, type: "spring", stiffness: 150 }}
+                    />
+                  ) : (
+                    <motion.span
+                      className="text-3xl font-bold text-white tracking-tight"
+                      style={{
+                        textShadow: "0 2px 20px hsla(270, 80%, 65%, 0.5)",
+                      }}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 1.6, type: "spring", stiffness: 150 }}
+                    >
+                      {brandName}
+                    </motion.span>
+                  )}
                   <motion.span
                     className="text-2xl"
                     initial={{ opacity: 0, rotate: -20 }}
@@ -190,7 +205,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                   animate={{ opacity: 1 }}
                   transition={{ delay: 2.0 }}
                 >
-                  Private experiences await
+                  {tagline}
                 </motion.p>
 
                 {/* Pulse ring around logo */}

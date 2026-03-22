@@ -15,6 +15,7 @@ import { useState, useMemo, useCallback, useRef, type ReactNode } from "react";
 import { useCurations } from "@/hooks/use-curations";
 import { useNotifications } from "@/hooks/use-notifications";
 import { useHomepageSections } from "@/hooks/use-homepage-sections";
+import { useAppConfig } from "@/hooks/use-app-config";
 import profileAvatar from "@/assets/profile-avatar.webp";
 
 import RotatingSearchBar from "./home/RotatingSearchBar";
@@ -47,6 +48,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
   const { properties, packages, curatedCombos } = usePropertiesData();
   const { packs: experiencePacks } = useCurations();
   const { isSectionVisible, getSortOrder } = useHomepageSections("home");
+  const appConfig = useAppConfig();
   const [refreshKey, setRefreshKey] = useState(0);
   const handleRefresh = useCallback(async () => {
     await new Promise((r) => setTimeout(r, 800));
