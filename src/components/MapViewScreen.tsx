@@ -4,6 +4,9 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { properties, type Property } from "@/data/properties";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import "leaflet.markercluster";
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
 interface MapViewScreenProps {
   onPropertyTap: (property: Property) => void;
