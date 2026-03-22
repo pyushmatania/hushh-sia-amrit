@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useAppConfig } from "@/hooks/use-app-config";
 import splashEvening from "@/assets/splash-jeypore-evening.webp";
 import splashDay from "@/assets/splash-jeypore-day.webp";
 
