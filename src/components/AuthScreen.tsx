@@ -4,10 +4,13 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
+import { useAppConfig } from "@/hooks/use-app-config";
 import authBg from "@/assets/auth-bg-night.webp";
 
 export default function AuthScreen() {
   const [mode, setMode] = useState<"login" | "signup" | "forgot">("login");
+  const appConfig = useAppConfig();
+  const brandName = appConfig.app_name || "Hushh";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -125,13 +128,13 @@ export default function AuthScreen() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-2 mb-6">
             <Sparkles size={28} className="text-primary" />
-            <h1 className="text-3xl font-bold text-foreground tracking-tight">Hushh</h1>
+            <h1 className="text-3xl font-bold text-foreground tracking-tight">{brandName}</h1>
           </div>
           <h2 className="text-2xl font-bold text-foreground leading-tight">
             {mode === "login" ? "Welcome back" : mode === "signup" ? "Create account" : "Reset password"}
           </h2>
           <p className="text-sm text-muted-foreground mt-2">
-            {mode === "login" ? "Sign in to continue your journey" : mode === "signup" ? "Join Hushh and discover private experiences" : "Enter your email to receive a reset link"}
+            {mode === "login" ? "Sign in to continue your journey" : mode === "signup" ? `Join ${brandName} and discover private experiences` : "Enter your email to receive a reset link"}
           </p>
           {mode === "forgot" && (
             <button onClick={() => { setMode("login"); setError(""); }} className="flex items-center gap-1 text-xs text-primary font-semibold mt-2">

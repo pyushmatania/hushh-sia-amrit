@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { X, Download, Share2, Receipt, MapPin, Calendar as CalendarIcon, Clock, Users, CreditCard } from "lucide-react";
 import type { Booking } from "@/pages/Index";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
+import { useAppConfig } from "@/hooks/use-app-config";
 import { useRef } from "react";
 import { toast } from "sonner";
 
@@ -13,6 +14,8 @@ interface Props {
 
 export default function ReceiptSheet({ open, onClose, booking }: Props) {
   const { properties } = usePropertiesData();
+  const appConfig = useAppConfig();
+  const brandName = appConfig.app_name || "Hushh";
   const property = properties.find(p => p.id === booking.propertyId);
   const receiptRef = useRef<HTMLDivElement>(null);
 
@@ -76,7 +79,7 @@ export default function ReceiptSheet({ open, onClose, booking }: Props) {
                 <span className="text-xl">🧾</span>
               </div>
               <h4 className="text-lg font-bold text-foreground">Payment Receipt</h4>
-              <p className="text-xs text-muted-foreground mt-1">Hushh Experiences</p>
+              <p className="text-xs text-muted-foreground mt-1">{brandName} Experiences</p>
             </div>
 
             {/* Property Info */}
@@ -151,7 +154,7 @@ export default function ReceiptSheet({ open, onClose, booking }: Props) {
                 <p className="text-[10px] text-muted-foreground">Booking ID</p>
                 <p className="text-xs font-mono font-bold text-foreground">{booking.bookingId}</p>
               </div>
-              <p className="text-[10px] text-muted-foreground">Thank you for choosing Hushh ❤️</p>
+              <p className="text-[10px] text-muted-foreground">Thank you for choosing {brandName} ❤️</p>
             </div>
           </div>
         </div>

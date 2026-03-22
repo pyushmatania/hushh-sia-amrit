@@ -7,6 +7,7 @@ import LiveOrderingSheet from "./LiveOrderingSheet";
 import IdentityUploadSheet from "./IdentityUploadSheet";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { useAppConfig } from "@/hooks/use-app-config";
 
 interface BookingConfirmationProps {
   property: Property;
@@ -18,8 +19,10 @@ interface BookingConfirmationProps {
 }
 
 export default function BookingConfirmation({ property, slotId, guests, date, total, onDone }: BookingConfirmationProps) {
+  const appConfig = useAppConfig();
+  const prefix = (appConfig.app_name || "HUSHH").toUpperCase();
   const slot = property.slots.find((s) => s.id === slotId)!;
-  const bookingId = `HUSHH-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+  const bookingId = `${prefix}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
   const [orderingOpen, setOrderingOpen] = useState(false);
   const [idSheetOpen, setIdSheetOpen] = useState(false);
   const [idVerified, setIdVerified] = useState<boolean | null>(null);

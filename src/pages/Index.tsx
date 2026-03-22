@@ -1,5 +1,6 @@
-import { useState, useCallback, lazy, Suspense, startTransition } from "react";
+import { useState, useCallback, useEffect, lazy, Suspense, startTransition } from "react";
 import { AnimatePresence } from "framer-motion";
+import { useAppConfig } from "@/hooks/use-app-config";
 import SplashScreen from "@/components/SplashScreen";
 
 import BottomNav from "@/components/BottomNav";
@@ -59,7 +60,16 @@ type Screen =
   | { type: "createListing"; editListing?: import("@/hooks/use-host-listings").HostListing };
 
 export default function Index() {
+  const appConfig = useAppConfig();
+  const bookingPrefix = (appConfig.app_name || "HUSHH").toUpperCase();
   const { user, loading } = useAuth();
+
+  // Dynamic page title from admin config
+  useEffect(() => {
+    if (appConfig.app_name) {
+      document.title = `${appConfig.app_name} — ${appConfig.app_tagline || "Premium Experiences"}`;
+    }
+  }, [appConfig.app_name, appConfig.app_tagline]);
   const [showSplash, setShowSplash] = useState(true);
   const [activeTab, setActiveTab] = useState("home");
   const [screen, setScreen] = useState<Screen>({ type: "home" });
@@ -102,7 +112,7 @@ export default function Index() {
           guests,
           total: finalTotal,
           status: "upcoming" as const,
-          bookingId: `HUSHH-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+          bookingId: `${bookingPrefix}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
           roomsCount: roomsCount ?? null,
           extraMattresses: extraMattresses ?? null,
         };
