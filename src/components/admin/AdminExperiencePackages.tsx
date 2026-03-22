@@ -254,8 +254,8 @@ export default function AdminExperiencePackages() {
                     {selectedIds.includes(pkg.id) && <span className="text-[10px] font-bold">✓</span>}
                   </button>
                 )}
-                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${pkg.gradient} flex items-center justify-center text-2xl shadow-sm shrink-0`}>
-                  {pkg.emoji}
+                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${pkg.gradient} flex items-center justify-center text-2xl shadow-sm shrink-0 overflow-hidden`}>
+                  {pkg.image_url ? <img src={pkg.image_url} alt="" className="w-full h-full object-cover" /> : pkg.emoji}
                 </div>
                 <div className="flex-1 min-w-0">
                   <h4 className="text-sm font-semibold text-foreground">{pkg.name}</h4>
