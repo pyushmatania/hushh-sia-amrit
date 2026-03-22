@@ -372,9 +372,17 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
           {listView ? <MapIcon size={18} /> : <List size={18} />}
         </motion.button>
         {!listView && (
-          <motion.button whileTap={{ scale: 0.9 }} onClick={recenter} className="w-12 h-12 rounded-full bg-background/80 backdrop-blur-md border border-border flex items-center justify-center shadow-lg">
-            <Navigation size={18} className="text-primary" />
-          </motion.button>
+          <>
+            <motion.button whileTap={{ scale: 0.9 }} onClick={() => mapInstanceRef.current?.zoomIn()} className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-md border border-border flex items-center justify-center shadow-lg">
+              <Plus size={16} className="text-foreground" />
+            </motion.button>
+            <motion.button whileTap={{ scale: 0.9 }} onClick={() => mapInstanceRef.current?.zoomOut()} className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-md border border-border flex items-center justify-center shadow-lg">
+              <Minus size={16} className="text-foreground" />
+            </motion.button>
+            <motion.button whileTap={{ scale: 0.9 }} onClick={recenter} className="w-12 h-12 rounded-full bg-background/80 backdrop-blur-md border border-border flex items-center justify-center shadow-lg">
+              <Navigation size={18} className="text-primary" />
+            </motion.button>
+          </>
         )}
       </div>
 
