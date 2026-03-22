@@ -351,14 +351,86 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
         </span>
       </div>
 
-      {/* Recenter */}
-      <motion.button whileTap={{ scale: 0.9 }} onClick={recenter} className="absolute bottom-32 right-4 z-[1000] w-12 h-12 rounded-full bg-background/80 backdrop-blur-md border border-border flex items-center justify-center shadow-lg">
-        <Navigation size={18} className="text-primary" />
-      </motion.button>
+      {/* Recenter + List toggle */}
+      <div className="absolute bottom-32 right-4 z-[1000] flex flex-col gap-2">
+        <motion.button whileTap={{ scale: 0.9 }} onClick={() => setListView(!listView)} className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg">
+          {listView ? <MapIcon size={18} /> : <List size={18} />}
+        </motion.button>
+        {!listView && (
+          <motion.button whileTap={{ scale: 0.9 }} onClick={recenter} className="w-12 h-12 rounded-full bg-background/80 backdrop-blur-md border border-border flex items-center justify-center shadow-lg">
+            <Navigation size={18} className="text-primary" />
+          </motion.button>
+        )}
+      </div>
 
-      {/* Selected Property Card */}
+      {/* List View */}
       <AnimatePresence>
-        {selectedPin && (
+        {listView && (
+          <motion.div
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", damping: 30, stiffness: 300 }}
+            className="absolute inset-0 top-[max(100px,calc(env(safe-area-inset-top)+90px))] z-[999] bg-background/95 backdrop-blur-xl rounded-t-3xl border-t border-border overflow-hidden"
+          >
+            <div className="flex items-center justify-between px-4 pt-3 pb-2">
+              <h2 className="text-sm font-bold text-foreground">{filteredProperties.length} Results</h2>
+              <button onClick={() => setListView(false)} className="text-xs font-semibold text-primary">Show Map</button>
+            </div>
+            <div className="overflow-y-auto px-4 pb-36" style={{ maxHeight: "calc(100% - 40px)" }}>
+              <div className="space-y-3">
+                {filteredProperties.map((p) => (
+                  <motion.div
+                    key={p.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    onClick={() => { onPropertyTap(p); }}
+                    className="bg-card border border-border rounded-2xl overflow-hidden shadow-md cursor-pointer active:scale-[0.98] transition-transform"
+                  >
+                    <div className="flex gap-3 p-3">
+                      <div className="w-24 h-24 rounded-xl overflow-hidden shrink-0 relative">
+                        <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
+                        {p.verified && (
+                          <div className="absolute top-1 left-1 bg-primary/90 text-primary-foreground text-[7px] font-bold px-1.5 py-0.5 rounded-md">✓</div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0 py-0.5">
+                        <h3 className="text-sm font-bold text-foreground truncate">{p.name}</h3>
+                        <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-1">{p.description}</p>
+                        <div className="flex items-center gap-1 mt-1.5">
+                          <Star size={11} className="fill-primary text-primary" />
+                          <span className="text-[11px] font-bold text-foreground">{p.rating}</span>
+                          <span className="text-[11px] text-muted-foreground">({p.reviewCount})</span>
+                          <span className="text-[9px] text-muted-foreground ml-1 capitalize">{p.primaryCategory}</span>
+                        </div>
+                        <div className="flex items-center justify-between mt-1.5">
+                          <p className="text-sm font-extrabold text-foreground">
+                            ₹{p.basePrice.toLocaleString("en-IN")}
+                            <span className="text-[9px] font-normal text-muted-foreground"> /slot</span>
+                          </p>
+                          {p.slotsLeft > 0 && p.slotsLeft <= 3 && (
+                            <span className="text-[9px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded-full">{p.slotsLeft} left</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+                {filteredProperties.length === 0 && (
+                  <div className="text-center py-12">
+                    <p className="text-3xl mb-2">🔍</p>
+                    <p className="text-sm font-semibold text-muted-foreground">No places match your filters</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Selected Property Card (map view only) */}
+      <AnimatePresence>
+        {selectedPin && !listView && (
           <motion.div
             key={selectedPin.id}
             initial={{ y: 120, opacity: 0 }}
