@@ -32,7 +32,7 @@ function PricingRow({ item, value, saving, onSave }: { item: { key: string; labe
   );
 }
 
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  export default function AdminSettings() {
   const appConfig = useAppConfig();
   const { toast } = useToast();
   const [saving, setSaving] = useState<string | null>(null);
