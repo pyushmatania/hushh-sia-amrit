@@ -253,8 +253,8 @@ export function useBookings() {
               total: Number(b.total),
               status: b.status as Booking["status"],
               bookingId: b.booking_id,
-              roomsCount: (b as any).rooms_count ?? null,
-              extraMattresses: (b as any).extra_mattresses ?? 0,
+              roomsCount: b.rooms_count ?? null,
+              extraMattresses: b.extra_mattresses ?? 0,
             })
           );
           setBookings(sortBookings(mapped));
@@ -303,8 +303,8 @@ export function useBookings() {
             total: Number(data.total),
             status: data.status as Booking["status"],
             bookingId: data.booking_id,
-            roomsCount: (data as any).rooms_count ?? null,
-            extraMattresses: (data as any).extra_mattresses ?? 0,
+            roomsCount: data.rooms_count ?? null,
+            extraMattresses: data.extra_mattresses ?? 0,
           });
           setBookings((prev) => sortBookings([newBooking, ...prev]));
           return newBooking;
