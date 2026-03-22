@@ -95,7 +95,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
     "Walking Tour": (p) => p.propertyType === "Walking Tour" || p.propertyType === "Observatory",
   };
 
-  const curationFilters = ["All", "🔥 Popular", "💑 Romantic", "🎉 Party", "🍗 Foodie", "💻 Work", "🎬 Entertainment", "💸 Budget"];
+  const curationFilters = dynamicFilters.curation || ["All"];
 
   const curationFilterMap: Record<string, (c: typeof curatedCombos[0]) => boolean> = {
     "All": () => true,
