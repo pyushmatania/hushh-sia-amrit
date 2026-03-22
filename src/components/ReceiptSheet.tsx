@@ -14,6 +14,8 @@ interface Props {
 
 export default function ReceiptSheet({ open, onClose, booking }: Props) {
   const { properties } = usePropertiesData();
+  const appConfig = useAppConfig();
+  const brandName = appConfig.app_name || "Hushh";
   const property = properties.find(p => p.id === booking.propertyId);
   const receiptRef = useRef<HTMLDivElement>(null);
 
