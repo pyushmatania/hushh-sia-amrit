@@ -14,6 +14,7 @@ interface InventoryItem {
   stock: number; low_stock_threshold: number; available: boolean;
   property_id: string | null; sort_order: number; created_at: string;
   image_url: string | null;
+  image_urls: string[];
 }
 
 const categoryOptions = ["food", "drinks", "decoration", "entertainment", "activity", "comfort", "work", "staff", "decor", "equipment"];
