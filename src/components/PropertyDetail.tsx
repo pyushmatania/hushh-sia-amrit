@@ -1081,13 +1081,13 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
           {property.primaryCategory !== "service" && (
             <div className="flex justify-between text-sm">
               <span className="text-foreground/80">Cleaning fee</span>
-              <span className="text-foreground font-medium">₹199</span>
+              <span className="text-foreground font-medium">₹{appConfig.cleaning_fee}</span>
             </div>
           )}
           <div className="border-t border-border pt-2 flex justify-between text-sm">
             <span className="text-foreground font-semibold">Estimated total</span>
             <span className="text-gradient-warm font-bold">
-              ₹{(property.basePrice + Math.round(property.basePrice * 0.1) + (property.primaryCategory !== "service" ? 199 : 0)).toLocaleString()}
+              ₹{(property.basePrice + Math.round(property.basePrice * appConfig.service_fee_percent / 100) + (property.primaryCategory !== "service" ? appConfig.cleaning_fee : 0)).toLocaleString()}
             </span>
           </div>
           <p className="text-[11px] text-muted-foreground">* Final price depends on selected slot & guest count</p>
@@ -1104,21 +1104,21 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
             <div className="w-2 h-2 rounded-full bg-primary mt-1.5 shrink-0" />
             <div>
               <p className="text-sm font-medium text-foreground">Free cancellation</p>
-              <p className="text-xs text-muted-foreground">Up to 48 hours before check-in</p>
+              <p className="text-xs text-muted-foreground">Up to {appConfig.free_cancel_hours} hours before check-in</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <div className="w-2 h-2 rounded-full bg-accent mt-1.5 shrink-0" />
             <div>
-              <p className="text-sm font-medium text-foreground">50% refund</p>
-              <p className="text-xs text-muted-foreground">24-48 hours before check-in</p>
+              <p className="text-sm font-medium text-foreground">{appConfig.partial_refund_percent}% refund</p>
+              <p className="text-xs text-muted-foreground">{appConfig.partial_refund_hours}-{appConfig.free_cancel_hours} hours before check-in</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <div className="w-2 h-2 rounded-full bg-destructive mt-1.5 shrink-0" />
             <div>
               <p className="text-sm font-medium text-foreground">No refund</p>
-              <p className="text-xs text-muted-foreground">Less than 24 hours before check-in</p>
+              <p className="text-xs text-muted-foreground">Less than {appConfig.partial_refund_hours} hours before check-in</p>
             </div>
           </div>
         </div>

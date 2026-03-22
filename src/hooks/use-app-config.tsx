@@ -8,6 +8,20 @@ export interface AppConfig {
   service_fee_percent: number;
   coupon_discount_percent: number;
   max_mattresses_per_room: number;
+  cleaning_fee: number;
+  gst_percent: number;
+  free_cancel_hours: number;
+  partial_refund_percent: number;
+  partial_refund_hours: number;
+  min_booking_advance_hours: number;
+  check_in_time: string;
+  check_out_time: string;
+  support_phone: string;
+  support_email: string;
+  whatsapp_number: string;
+  max_guests_per_booking: number;
+  loyalty_points_per_booking: number;
+  referral_reward_points: number;
 }
 
 const defaults: AppConfig = {
@@ -17,7 +31,23 @@ const defaults: AppConfig = {
   service_fee_percent: 10,
   coupon_discount_percent: 10,
   max_mattresses_per_room: 1,
+  cleaning_fee: 199,
+  gst_percent: 18,
+  free_cancel_hours: 48,
+  partial_refund_percent: 50,
+  partial_refund_hours: 24,
+  min_booking_advance_hours: 2,
+  check_in_time: "14:00",
+  check_out_time: "11:00",
+  support_phone: "+91-9876543210",
+  support_email: "help@hushh.in",
+  whatsapp_number: "+919876543210",
+  max_guests_per_booking: 50,
+  loyalty_points_per_booking: 50,
+  referral_reward_points: 100,
 };
+
+const stringKeys = new Set(["check_in_time", "check_out_time", "support_phone", "support_email", "whatsapp_number"]);
 
 let cachedConfig: AppConfig | null = null;
 let listeners: Array<() => void> = [];
@@ -30,7 +60,7 @@ export async function loadAppConfig(): Promise<AppConfig> {
   if (data) {
     for (const row of data as any[]) {
       if (row.key in config) {
-        (config as any)[row.key] = Number(row.value) || (defaults as any)[row.key];
+        (config as any)[row.key] = stringKeys.has(row.key) ? row.value : (Number(row.value) || (defaults as any)[row.key]);
       }
     }
   }
@@ -42,7 +72,7 @@ export async function loadAppConfig(): Promise<AppConfig> {
 export async function updateAppConfig(key: string, value: string) {
   await (supabase as any).from("app_config").update({ value }).eq("key", key);
   if (cachedConfig && key in cachedConfig) {
-    (cachedConfig as any)[key] = Number(value) || value;
+    (cachedConfig as any)[key] = stringKeys.has(key) ? value : (Number(value) || value);
     notify();
   }
 }
