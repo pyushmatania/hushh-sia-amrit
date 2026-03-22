@@ -228,7 +228,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
                       </button>
                     )}
                     <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-100 to-teal-50 dark:from-emerald-500/15 dark:to-teal-500/10 flex items-center justify-center text-xl shadow-sm shrink-0 overflow-hidden">
-                      {item.image_url ? <img src={item.image_url} alt="" className="w-full h-full object-cover" /> : item.emoji}
+                      {(item.image_urls?.length > 0 || item.image_url) ? <img src={item.image_urls?.[0] || item.image_url!} alt="" className="w-full h-full object-cover" /> : item.emoji}
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">{item.name}</h4>
