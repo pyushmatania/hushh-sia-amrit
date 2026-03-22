@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Lock, Eye, EyeOff, ArrowRight, Check, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import authBg from "@/assets/auth-bg-night.jpg";
+import authBg from "@/assets/auth-bg-night.webp";
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");

@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import splashEvening from "@/assets/splash-jeypore-evening.jpg";
-import splashDay from "@/assets/splash-jeypore-day.jpg";
+import splashEvening from "@/assets/splash-jeypore-evening.webp";
+import splashDay from "@/assets/splash-jeypore-day.webp";
 
 // Preload 3D category icons so they're cached before home screen renders
 import iconHome from "@/assets/icon-home.webp";
