@@ -307,7 +307,7 @@ function RelatedPropertyRow({ relatedProperty, added, onToggle, onViewDetails }:
 interface PropertyDetailProps {
   property: Property;
   onBack: () => void;
-  onBook: (property: Property, slotId: string, guests: number, date: Date, extras?: Property[]) => void;
+  onBook: (property: Property, slotId: string, guests: number, date: Date, extras?: Property[], roomsCount?: number, extraMattresses?: number) => void;
   onPropertyTap?: (property: Property) => void;
   isWishlisted?: boolean;
   onToggleWishlist?: (id: string) => void;
@@ -321,6 +321,45 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
   const [expanded, setExpanded] = useState(false);
   const [enhanceOpen, setEnhanceOpen] = useState(false);
   const [addedExtraIds, setAddedExtraIds] = useState<Set<string>>(new Set());
+  const [roomsCount, setRoomsCount] = useState(1);
+  const [extraMattressCount, setExtraMattressCount] = useState(0);
+
+  const ROOM_CAPACITY = 2;
+  const EXTRA_MATTRESS_PRICE = 500;
+  const isStayProp = property.primaryCategory === "stay";
+
+  const roomInfo = useMemo(() => {
+    if (!isStayProp) return null;
+    const totalRooms = Math.max(1, Math.floor((property.capacity || 6) / ROOM_CAPACITY));
+    const maxGuestsForRooms = roomsCount * ROOM_CAPACITY + extraMattressCount;
+    return {
+      totalRooms,
+      maxGuestsForRooms,
+      maxMattresses: roomsCount, // max 1 per room
+      isOverCapacity: roomsCount > totalRooms,
+    };
+  }, [isStayProp, roomsCount, extraMattressCount, property.capacity]);
+
+  // Smart recommendations
+  const smartTip = useMemo(() => {
+    if (!isStayProp || !roomInfo) return null;
+    const maxGuests = roomsCount * ROOM_CAPACITY + extraMattressCount;
+    if (guests > maxGuests) {
+      const neededRooms = Math.ceil(guests / ROOM_CAPACITY);
+      const neededWithMattress = Math.ceil(guests / (ROOM_CAPACITY + 1));
+      if (neededWithMattress <= roomInfo.totalRooms && extraMattressCount < neededWithMattress) {
+        return { type: "mattress" as const, message: `Add ${neededWithMattress - extraMattressCount} mattress to fit ${guests} guests`, action: () => { setExtraMattressCount(neededWithMattress); } };
+      }
+      if (neededRooms <= roomInfo.totalRooms) {
+        return { type: "room" as const, message: `Upgrade to ${neededRooms} rooms for ${guests} guests`, action: () => { setRoomsCount(neededRooms); setExtraMattressCount(0); } };
+      }
+      return { type: "over" as const, message: `Max capacity: ${roomInfo.totalRooms * (ROOM_CAPACITY + 1)} guests with mattresses` };
+    }
+    if (guests === maxGuests && extraMattressCount === 0 && roomsCount < roomInfo.totalRooms) {
+      return null; // perfect fit
+    }
+    return null;
+  }, [isStayProp, guests, roomsCount, extraMattressCount, roomInfo]);
 
   const toggleExtra = useCallback((id: string) => {
     setAddedExtraIds(prev => {
