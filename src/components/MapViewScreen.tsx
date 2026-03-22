@@ -84,13 +84,41 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
 
     mapInstanceRef.current = map;
 
-    // Add markers
+    // Create cluster group
+    const clusterGroup = (L as any).markerClusterGroup({
+      maxClusterRadius: 50,
+      spiderfyOnMaxZoom: true,
+      showCoverageOnHover: false,
+      zoomToBoundsOnClick: true,
+      iconCreateFunction: (cluster: any) => {
+        const count = cluster.getChildCount();
+        const size = count > 10 ? 52 : count > 5 ? 44 : 38;
+        return L.divIcon({
+          html: `<div style="
+            width:${size}px;height:${size}px;border-radius:50%;
+            background:hsl(var(--primary));color:#fff;
+            display:flex;align-items:center;justify-content:center;
+            font-weight:800;font-size:${size > 44 ? 16 : 13}px;
+            box-shadow:0 0 0 4px hsl(var(--primary)/0.25),0 4px 16px rgba(0,0,0,0.4);
+            font-family:inherit;
+          ">${count}</div>`,
+          className: "custom-cluster-icon",
+          iconSize: [size, size],
+          iconAnchor: [size / 2, size / 2],
+        });
+      },
+    });
+
     properties.forEach((p) => {
       const icon = createPhotoIcon(p.images[0], false, p.basePrice);
-      const marker = L.marker([p.lat, p.lng], { icon }).addTo(map);
+      const marker = L.marker([p.lat, p.lng], { icon });
       marker.on("click", () => setSelectedPin((prev) => (prev?.id === p.id ? null : p)));
       markersRef.current.set(p.id, marker);
+      clusterGroup.addLayer(marker);
     });
+
+    map.addLayer(clusterGroup);
+    clusterGroupRef.current = clusterGroup;
 
     return () => {
       map.remove();
