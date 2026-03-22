@@ -1013,7 +1013,7 @@ export default function MessagesScreen() {
         typing: false, pinned: pinnedIds.has(c.id), conversation: c,
         tripStatus: "active" as TripStatus, tripLabel: "Current Trip",
       }))
-    : mockThreads.map((t) => ({ ...t, pinned: pinnedIds.has(t.id), conversation: null as Conversation | null }));
+    : dynamicMockThreads.map((t) => ({ ...t, pinned: pinnedIds.has(t.id), conversation: null as Conversation | null }));
 
   const visibleChats = chatThreads.filter(t => !archivedIds.has(t.id));
   const filteredChats = searchQuery
