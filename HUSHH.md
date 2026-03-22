@@ -489,6 +489,10 @@ supabase/
 | `identity_verifications` | user_id, document_type, document_url, status, notes, reviewed_by | ID verification queue |
 | `inventory` | name, emoji, category, unit_price, stock, low_stock_threshold, available, property_id | Stock management |
 | `staff_tasks` | title, description, priority, status, assigned_to, property_id, due_date | Staff task tracking |
+| `app_config` | key, value, label, description, category | Dynamic app configuration (pricing, branding, support, homepage) |
+| `budget_allocations` | category, month, year, allocated, spent, notes | Budget tracking |
+| `expenses` | title, amount, category, vendor, date, payment_method, recurring | Expense management |
+| `experience_packages` | name, emoji, gradient, includes[], price, image_urls[] | Add-on experience packages |
 
 ### Database Functions
 | Function | Purpose |
