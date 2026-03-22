@@ -141,6 +141,15 @@ const mockMessages: Record<string, Array<{ id: string; text: string; sender: "us
     { id: "m14", text: "Absolutely! I'll prepare the tribal thali for your group. The menu includes badi chura, pakhala, ambil, and more. See you at 7!", sender: "other", time: "Mar 8, 3:15 PM" },
     { id: "m15", text: "Sounds amazing! Can't wait 🍛", sender: "user", time: "Mar 8, 3:16 PM", status: "read", reactions: ["🔥"] },
   ],
+  c5: [
+    { id: "m16", text: "Hi Chef Meera! What's on the menu tonight?", sender: "user", time: "1 hour ago", status: "delivered" },
+    { id: "m17", text: "Tonight we have a special bonfire menu — bamboo chicken, tribal dal, and rice cooked in banana leaf 🔥", sender: "other", time: "1 hour ago" },
+    { id: "m18", text: "The bonfire dinner setup is ready! Come anytime after 7.", sender: "other", time: "1 hour ago" },
+  ],
+  c6: [
+    { id: "m19", text: "Beautiful rooftop setup! Thank you for the amazing evening 🌃", sender: "user", time: "Feb 25, 10:00 PM", status: "read" },
+    { id: "m20", text: "Thanks for visiting! Your review means a lot to us. Hope to see you again soon! ⭐", sender: "other", time: "Feb 25, 10:30 PM", reactions: ["❤️"] },
+  ],
 };
 
 const quickReplies = [
