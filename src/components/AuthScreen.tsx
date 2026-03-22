@@ -8,6 +8,7 @@ import { useAppConfig } from "@/hooks/use-app-config";
 import authBg from "@/assets/auth-bg-night.webp";
 
 export default function AuthScreen() {
+  const [mode, setMode] = useState<"login" | "signup" | "forgot">("login");
   const appConfig = useAppConfig();
   const brandName = appConfig.app_name || "Hushh";
   const [email, setEmail] = useState("");
