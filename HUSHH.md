@@ -460,7 +460,7 @@ supabase/
 
 ## 🗄 Database Schema
 
-### Tables (26 total)
+### Tables (30+ total)
 | Table | Key Columns | Purpose |
 |-------|------------|---------|
 | `profiles` | user_id, display_name, avatar_url, bio, location, loyalty_points, tier | User profiles |
