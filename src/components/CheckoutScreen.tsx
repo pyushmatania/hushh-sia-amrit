@@ -46,8 +46,9 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
   const [checkingConflict, setCheckingConflict] = useState(false);
   const extraMattressCount = propExtraMattresses ?? 0;
 
-  const ROOM_CAPACITY = 2;
-  const EXTRA_MATTRESS_PRICE = 500; // ₹500 per extra mattress
+  const appConfig = useAppConfig();
+  const ROOM_CAPACITY = appConfig.room_capacity;
+  const EXTRA_MATTRESS_PRICE = appConfig.extra_mattress_price;
   const isStay = property.primaryCategory === "stay";
 
   const roomsForConfirm = propRoomsCount ?? null;
