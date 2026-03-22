@@ -1074,9 +1074,9 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
             <span className="text-foreground/80">Base price {property.primaryCategory === "service" ? "(per booking)" : "(per slot)"}</span>
             <span className="text-foreground font-medium">₹{property.basePrice.toLocaleString()}</span>
           </div>
-          <div className="flex justify-between text-sm">
+           <div className="flex justify-between text-sm">
             <span className="text-foreground/80">{property.primaryCategory === "service" ? "Platform fee" : "Service fee"}</span>
-            <span className="text-foreground font-medium">₹{Math.round(property.basePrice * 0.1).toLocaleString()}</span>
+            <span className="text-foreground font-medium">₹{Math.round(property.basePrice * appConfig.service_fee_percent / 100).toLocaleString()}</span>
           </div>
           {property.primaryCategory !== "service" && (
             <div className="flex justify-between text-sm">
