@@ -328,3 +328,16 @@
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+/* Leaflet overrides */
+.custom-photo-marker {
+  background: none !important;
+  border: none !important;
+}
+.leaflet-container {
+  font-family: inherit;
+  background: hsl(var(--background));
+}
+.leaflet-tile-pane {
+  filter: saturate(0.85) contrast(1.05);
+}
