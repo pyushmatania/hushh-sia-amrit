@@ -64,6 +64,7 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
+  const clusterGroupRef = useRef<L.MarkerClusterGroup | null>(null);
 
   // Initialize map
   useEffect(() => {
