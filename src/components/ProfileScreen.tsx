@@ -583,7 +583,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
           }
         }}
       >
-        Hushh v1.0 · Made in Jeypore ❤️
+        {appConfig.app_name || "Hushh"} v1.0 · Made in Jeypore ❤️
       </p>
 
       {/* Sheets */}
