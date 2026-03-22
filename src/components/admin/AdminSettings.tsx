@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Settings, Sun, Moon, Shield, Bell, Palette, Building2, DollarSign, Loader2, CalendarX2, Phone, Award, Clock } from "lucide-react";
+import { Settings, Sun, Moon, Shield, Bell, Palette, DollarSign, Loader2, CalendarX2, Phone, Award, Clock, Globe, MapPin, Gamepad2, BedDouble, MailCheck, Building2 } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { Input } from "@/components/ui/input";
 import { useAppConfig, updateAppConfig, loadAppConfig } from "@/hooks/use-app-config";
@@ -36,6 +36,7 @@ export default function AdminSettings() {
   const appConfig = useAppConfig();
   const { toast } = useToast();
   const [saving, setSaving] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"general" | "branding" | "advanced">("general");
 
   const [toggles, setToggles] = useState<Record<string, boolean>>({
     autoConfirmBookings: false,
@@ -58,7 +59,13 @@ export default function AdminSettings() {
     toast({ title: "Setting saved", description: `${key.replace(/_/g, ' ')} updated` });
   };
 
-  const configSections = [
+  const tabs = [
+    { id: "general" as const, label: "General" },
+    { id: "branding" as const, label: "Branding" },
+    { id: "advanced" as const, label: "Advanced" },
+  ];
+
+  const generalSections = [
     {
       title: "Pricing & Fees",
       icon: DollarSign,
@@ -96,6 +103,16 @@ export default function AdminSettings() {
       ],
     },
     {
+      title: "Booking Extras",
+      icon: BedDouble,
+      color: "text-teal-600 bg-teal-50 dark:bg-teal-500/10",
+      items: [
+        { key: "late_checkout_fee", label: "Late Checkout Fee (₹)", description: "Fee for late checkout requests", icon: "🕐" },
+        { key: "early_checkin_fee", label: "Early Check-in Fee (₹)", description: "Fee for early check-in requests", icon: "🌅" },
+        { key: "damage_deposit", label: "Damage Deposit (₹)", description: "Refundable damage deposit amount", icon: "🔒" },
+      ],
+    },
+    {
       title: "Loyalty & Referrals",
       icon: Award,
       color: "text-amber-600 bg-amber-50 dark:bg-amber-500/10",
@@ -112,6 +129,73 @@ export default function AdminSettings() {
         { key: "support_phone", label: "Support Phone", description: "Customer support phone number", icon: "📞" },
         { key: "support_email", label: "Support Email", description: "Customer support email address", icon: "📧" },
         { key: "whatsapp_number", label: "WhatsApp Number", description: "WhatsApp support number", icon: "💬" },
+      ],
+    },
+  ];
+
+  const brandingSections = [
+    {
+      title: "App Identity",
+      icon: Building2,
+      color: "text-purple-600 bg-purple-50 dark:bg-purple-500/10",
+      items: [
+        { key: "app_name", label: "App Name", description: "Name displayed across the app", icon: "🏠" },
+        { key: "app_tagline", label: "Tagline", description: "Short tagline shown on splash/header", icon: "✏️" },
+        { key: "logo_url", label: "Logo URL", description: "URL to logo image (PNG/SVG)", icon: "🖼️" },
+        { key: "favicon_url", label: "Favicon URL", description: "URL to favicon/app icon", icon: "⭐" },
+      ],
+    },
+    {
+      title: "Social Media Links",
+      icon: Globe,
+      color: "text-pink-600 bg-pink-50 dark:bg-pink-500/10",
+      items: [
+        { key: "instagram_url", label: "Instagram", description: "Instagram profile URL", icon: "📸" },
+        { key: "facebook_url", label: "Facebook", description: "Facebook page URL", icon: "👤" },
+        { key: "youtube_url", label: "YouTube", description: "YouTube channel URL", icon: "🎬" },
+        { key: "twitter_url", label: "Twitter / X", description: "Twitter/X profile URL", icon: "🐦" },
+      ],
+    },
+    {
+      title: "Legal Pages",
+      icon: Shield,
+      color: "text-slate-600 bg-slate-50 dark:bg-slate-500/10",
+      items: [
+        { key: "terms_url", label: "Terms & Conditions URL", description: "Link to T&C page", icon: "📄" },
+        { key: "privacy_url", label: "Privacy Policy URL", description: "Link to privacy policy", icon: "🔐" },
+        { key: "refund_policy_url", label: "Refund Policy URL", description: "Link to refund/cancellation policy", icon: "💰" },
+      ],
+    },
+  ];
+
+  const advancedSections = [
+    {
+      title: "Map Defaults",
+      icon: MapPin,
+      color: "text-green-600 bg-green-50 dark:bg-green-500/10",
+      items: [
+        { key: "map_default_lat", label: "Default Latitude", description: "Map center latitude on load", icon: "🌍" },
+        { key: "map_default_lng", label: "Default Longitude", description: "Map center longitude on load", icon: "🌐" },
+        { key: "map_default_zoom", label: "Default Zoom Level", description: "Map zoom level (1-18)", icon: "🔍" },
+      ],
+    },
+    {
+      title: "Spin Wheel",
+      icon: Gamepad2,
+      color: "text-orange-600 bg-orange-50 dark:bg-orange-500/10",
+      items: [
+        { key: "spin_cooldown_hours", label: "Cooldown (hrs)", description: "Hours between spins per user", icon: "⏱️" },
+        { key: "spin_max_points", label: "Max Points Prize", description: "Maximum points in a single spin", icon: "🎯" },
+        { key: "spin_min_points", label: "Min Points Prize", description: "Minimum points in a single spin", icon: "🎲" },
+      ],
+    },
+    {
+      title: "Notification Timing",
+      icon: MailCheck,
+      color: "text-cyan-600 bg-cyan-50 dark:bg-cyan-500/10",
+      items: [
+        { key: "booking_reminder_hours", label: "Booking Reminder (hrs)", description: "Hours before check-in to send reminder", icon: "🔔" },
+        { key: "review_prompt_hours", label: "Review Prompt (hrs)", description: "Hours after checkout to prompt review", icon: "📝" },
       ],
     },
   ];
@@ -137,7 +221,7 @@ export default function AdminSettings() {
       ],
     },
     {
-      title: "Appearance",
+      title: "System",
       icon: Palette,
       color: "text-amber-600 bg-amber-50 dark:bg-amber-500/10",
       items: [
@@ -145,6 +229,8 @@ export default function AdminSettings() {
       ],
     },
   ];
+
+  const currentSections = activeTab === "general" ? generalSections : activeTab === "branding" ? brandingSections : advancedSections;
 
   return (
     <motion.div className="space-y-5" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
@@ -167,9 +253,21 @@ export default function AdminSettings() {
         </motion.button>
       </div>
 
+      {/* Tab bar */}
+      <div className="flex gap-1 p-1 rounded-xl bg-muted/50 border border-border/60">
+        {tabs.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${activeTab === tab.id ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
       <div className="space-y-4">
-        {/* Config sections (editable values from DB) */}
-        {configSections.map((section, si) => (
+        {currentSections.map((section, si) => (
           <motion.div
             key={section.title}
             initial={{ opacity: 0, y: 12 }}
@@ -197,13 +295,13 @@ export default function AdminSettings() {
           </motion.div>
         ))}
 
-        {/* Toggle sections (local state) */}
-        {toggleSections.map((section, si) => (
+        {/* Toggle sections only on general tab */}
+        {activeTab === "general" && toggleSections.map((section, si) => (
           <motion.div
             key={section.title}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: (configSections.length + si) * 0.04 }}
+            transition={{ delay: (generalSections.length + si) * 0.04 }}
             className="rounded-2xl bg-card border border-border/80 overflow-hidden"
           >
             <div className="flex items-center gap-3 p-4 border-b border-border/60">
