@@ -107,6 +107,20 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
     });
   }, [activeCategory, searchQuery, priceRange, verifiedOnly]);
 
+  const distFromCenter = (p: Property) =>
+    Math.sqrt(Math.pow(p.lat - CENTER[0], 2) + Math.pow(p.lng - CENTER[1], 2));
+
+  const sortedProperties = useMemo(() => {
+    const list = [...filteredProperties];
+    switch (sortBy) {
+      case "price_asc": return list.sort((a, b) => a.basePrice - b.basePrice);
+      case "price_desc": return list.sort((a, b) => b.basePrice - a.basePrice);
+      case "rating": return list.sort((a, b) => b.rating - a.rating);
+      case "distance": return list.sort((a, b) => distFromCenter(a) - distFromCenter(b));
+      default: return list;
+    }
+  }, [filteredProperties, sortBy]);
+
   // Initialize map
   useEffect(() => {
     if (!mapContainerRef.current || mapInstanceRef.current) return;
