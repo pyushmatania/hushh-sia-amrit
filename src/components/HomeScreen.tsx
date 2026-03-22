@@ -78,9 +78,10 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
     }, 50);
   }, []);
 
-  const stayFilters = ["All", "Private Villa", "Pool Villa", "Farmhouse", "Rooftop Space", "Work Pod", "Couple Room", "Open Lawn", "Camping"];
-  const experienceFilters = ["All", "Romantic", "Celebration", "Party", "Adventure", "Cultural", "Sports", "Workshop", "Walking Tour"];
-  const serviceFilters = ["All", "Chef Service", "Decoration", "Transport", "Entertainment"];
+  const dynamicFilters = useHomepageFilters();
+  const stayFilters = dynamicFilters.stay || ["All"];
+  const experienceFilters = dynamicFilters.experience || ["All"];
+  const serviceFilters = dynamicFilters.service || ["All"];
 
   const experienceFilterMap: Record<string, (p: Property) => boolean> = {
     "All": () => true,
