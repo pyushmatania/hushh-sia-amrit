@@ -573,6 +573,10 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
             className="absolute bottom-6 left-4 right-4 z-[1000] touch-pan-x"
           >
             <div className="relative">
+              {/* Drag handle */}
+              <div className="flex justify-center pt-2 pb-1">
+                <div className="w-9 h-1 rounded-full bg-muted-foreground/30" />
+              </div>
               {/* Close button */}
               <motion.button
                 whileTap={{ scale: 0.85 }}
