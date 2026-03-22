@@ -505,6 +505,7 @@ export type Database = {
           gradient: string
           id: string
           image_url: string | null
+          image_urls: string[] | null
           includes: string[]
           name: string
           price: number
@@ -518,6 +519,7 @@ export type Database = {
           gradient?: string
           id?: string
           image_url?: string | null
+          image_urls?: string[] | null
           includes?: string[]
           name: string
           price?: number
@@ -531,6 +533,7 @@ export type Database = {
           gradient?: string
           id?: string
           image_url?: string | null
+          image_urls?: string[] | null
           includes?: string[]
           name?: string
           price?: number
@@ -676,6 +679,7 @@ export type Database = {
           emoji: string
           id: string
           image_url: string | null
+          image_urls: string[] | null
           low_stock_threshold: number
           name: string
           property_id: string | null
@@ -691,6 +695,7 @@ export type Database = {
           emoji?: string
           id?: string
           image_url?: string | null
+          image_urls?: string[] | null
           low_stock_threshold?: number
           name: string
           property_id?: string | null
@@ -706,6 +711,7 @@ export type Database = {
           emoji?: string
           id?: string
           image_url?: string | null
+          image_urls?: string[] | null
           low_stock_threshold?: number
           name?: string
           property_id?: string | null
