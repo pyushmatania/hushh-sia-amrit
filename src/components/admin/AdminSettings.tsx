@@ -6,7 +6,32 @@ import { Input } from "@/components/ui/input";
 import { useAppConfig, updateAppConfig, loadAppConfig } from "@/hooks/use-app-config";
 import { useToast } from "@/hooks/use-toast";
 
-export default function AdminSettings() {
+function PricingRow({ item, value, saving, onSave }: { item: { key: string; label: string; description: string; icon: string }; value: number; saving: boolean; onSave: (val: string) => void }) {
+  const [localVal, setLocalVal] = useState(String(value));
+  useEffect(() => { setLocalVal(String(value)); }, [value]);
+  return (
+    <div className="flex items-center justify-between px-4 py-3.5">
+      <div className="flex items-center gap-3 flex-1 mr-4">
+        <span className="text-lg">{item.icon}</span>
+        <div>
+          <p className="text-sm font-medium text-foreground">{item.label}</p>
+          <p className="text-[11px] text-muted-foreground">{item.description}</p>
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        <Input
+          type="number"
+          value={localVal}
+          onChange={e => setLocalVal(e.target.value)}
+          onBlur={() => { if (localVal && localVal !== String(value)) onSave(localVal); }}
+          className="w-24 text-right text-sm rounded-xl h-8"
+        />
+        {saving && <Loader2 size={14} className="animate-spin text-primary" />}
+      </div>
+    </div>
+  );
+}
+
   const { theme, setTheme, resolvedTheme } = useTheme();
   const appConfig = useAppConfig();
   const { toast } = useToast();
