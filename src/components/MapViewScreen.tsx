@@ -563,6 +563,15 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="absolute bottom-6 left-4 right-4 z-[1000]"
           >
+            <div className="relative">
+              {/* Close button */}
+              <motion.button
+                whileTap={{ scale: 0.85 }}
+                onClick={(e) => { e.stopPropagation(); setSelectedPin(null); clearRoute(); }}
+                className="absolute -top-2 -right-2 z-10 w-7 h-7 rounded-full bg-foreground/80 text-background flex items-center justify-center shadow-lg"
+              >
+                <X size={14} />
+              </motion.button>
             <div onClick={() => onPropertyTap(selectedPin)} className="bg-background/95 backdrop-blur-xl border border-border rounded-2xl overflow-hidden shadow-2xl cursor-pointer active:scale-[0.98] transition-transform">
               <div className="flex gap-3 p-3">
                 <div className="w-28 h-28 rounded-xl overflow-hidden shrink-0 relative">
@@ -633,6 +642,7 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
                   </div>
                 </div>
               </div>
+            </div>
             </div>
           </motion.div>
         )}
