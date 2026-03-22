@@ -55,7 +55,8 @@ export default function Admin() {
     achievements: "Achievements", loyalty: "Loyalty", calendar: "Calendar",
     requests: "Requests", history: "Property History", inventory: "Inventory",
     "staff-mgmt": "Staff Mgmt", budget: "Budget",
-    checkin: "Check-in", reports: "Reports", notifications: "Notifications", settings: "Settings",
+    checkin: "Check-in", reports: "Reports", notifications: "Notifications",
+    settings: "Settings", homepage: "Homepage Manager",
   };
 
   const navigateTo = (target: AdminPage, ctx?: { propertyId?: string; userId?: string; bookingId?: string }) => {
