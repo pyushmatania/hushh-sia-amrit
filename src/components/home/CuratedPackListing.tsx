@@ -100,7 +100,7 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
   const cardRef = useRef<HTMLDivElement>(null);
   const [muted, setMuted] = useState(true);
   const [videoReady, setVideoReady] = useState(false);
-  const [shouldLoad, setShouldLoad] = useState(false);
+  const [shouldLoad, setShouldLoad] = useState(true);
 
   useEffect(() => {
     const card = cardRef.current;

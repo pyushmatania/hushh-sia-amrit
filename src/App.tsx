@@ -1,4 +1,5 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
+import { preloadVideos } from "@/lib/video-preloader";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -17,7 +18,9 @@ const Staff = lazy(() => import("./pages/Staff.tsx"));
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const App = () => {
+  useEffect(() => { preloadVideos(); }, []);
+  return (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
       <AuthProvider>
@@ -42,6 +45,7 @@ const App = () => (
       </AuthProvider>
     </ThemeProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;
