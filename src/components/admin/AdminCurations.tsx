@@ -33,6 +33,7 @@ interface CurationDraft {
 const emptyDraft: CurationDraft = {
   name: "", emoji: "✨", tagline: "", price: 0, original_price: null,
   slot: "", includes: [], tags: [], mood: [], badge: "", property_id: "", active: true,
+  image_urls: [],
 };
 
 interface PropertyInfo { name: string; imageUrls: string[]; location: string; rating: number | null }
