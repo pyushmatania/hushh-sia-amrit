@@ -17,21 +17,21 @@ import { useNotifications } from "@/hooks/use-notifications";
 import profileAvatar from "@/assets/profile-avatar.webp";
 
 import RotatingSearchBar from "./home/RotatingSearchBar";
-import SectionDivider from "./home/SectionDivider";
 import SpotlightCarousel from "./home/SpotlightCarousel";
-import SportsCards from "./home/SportsCards";
 import FoodieCarousel from "./home/FoodieCarousel";
-import CoupleSpecials from "./home/CoupleSpecials";
-import UpcomingEvents from "./home/UpcomingEvents";
-import WhatsHotGrid from "./home/WhatsHotGrid";
-import BlockbusterBanner from "./home/BlockbusterBanner";
-import BackToTopButton from "./home/BackToTopButton";
-import CuratedComboCard from "./home/CuratedComboCard";
-import ExperienceCard from "./home/ExperienceCard";
-import { CurationHeroCard, CurationMiniCard } from "./home/CurationHeroCard";
 import ServiceGrid from "./home/ServiceGrid";
 import CurationGrid from "./home/CurationGrid";
 import ActiveTripCard from "./home/ActiveTripCard";
+
+/* Lightweight section title — replaces deleted SectionDivider component */
+function SectionTitle({ title }: { title: string }) {
+  return (
+    <div className="px-5 pt-6 pb-3">
+      <h2 className="text-xs font-bold tracking-[0.15em] text-muted-foreground uppercase">{title}</h2>
+    </div>
+  );
+}
+
 interface HomeScreenProps {
   onPropertyTap: (property: Property) => void;
   onSearchTap?: () => void;
@@ -60,7 +60,6 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
     contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  // Reset sub-filter when switching categories
   const handleCategoryChange = useCallback((id: string) => {
     setActiveCategory(id);
     setSubFilter("All");
@@ -69,13 +68,11 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
 
   const handleSubFilter = useCallback((filter: string) => {
     setSubFilter(filter);
-    // Scroll just below the category bar area
     setTimeout(() => {
       contentRef.current?.scrollTo({ top: 280, behavior: "smooth" });
     }, 50);
   }, []);
 
-  // Sub-filter definitions mapped to propertyType or tag keywords
   const stayFilters = ["All", "Private Villa", "Pool Villa", "Farmhouse", "Rooftop Space", "Work Pod", "Couple Room", "Open Lawn", "Camping"];
   const experienceFilters = ["All", "Romantic", "Celebration", "Party", "Adventure", "Cultural", "Sports", "Workshop", "Walking Tour"];
   const serviceFilters = ["All", "Chef Service", "Decoration", "Transport", "Entertainment"];
@@ -111,12 +108,9 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
     return filterFn ? curatedCombos.filter(filterFn) : curatedCombos;
   }, [activeCategory, subFilter]);
 
-  // Map a combo to the best matching property for navigation
   const comboToProperty = useCallback((combo: typeof curatedCombos[0]): Property => {
-    // Try matching by image (combo images are property images)
     const byImage = properties.find(p => p.images.some(img => img === combo.image));
     if (byImage) return byImage;
-    // Try matching by tags
     if (combo.tags.some(t => t.includes("Couple"))) return properties.find(p => p.category.includes("couples")) || properties[0];
     if (combo.tags.some(t => t.includes("Party") || t.includes("Birthday"))) return properties.find(p => p.category.includes("party")) || properties[0];
     if (combo.tags.some(t => t.includes("Work"))) return properties.find(p => p.propertyType === "Work Pod") || properties[0];
@@ -125,10 +119,8 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
     return properties[0];
   }, []);
 
-  // Filter by primaryCategory
   const filteredProperties = useMemo(() => {
     let list = activeCategory === "home" ? properties : properties.filter(p => p.primaryCategory === activeCategory);
-
     if (subFilter !== "All") {
       if (activeCategory === "stay" || activeCategory === "service") {
         list = list.filter(p => p.propertyType === subFilter);
@@ -137,19 +129,16 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
         if (filterFn) list = list.filter(filterFn);
       }
     }
-
     return list;
   }, [activeCategory, subFilter]);
 
   const stayProperties = useMemo(() => properties.filter(p => p.primaryCategory === "stay"), [properties]);
   const experienceProperties = useMemo(() => properties.filter(p => p.primaryCategory === "experience"), [properties]);
-  const serviceProperties = useMemo(() => properties.filter(p => p.primaryCategory === "service"), [properties]);
 
   const topRated = useMemo(() => [...filteredProperties].sort((a, b) => b.rating - a.rating).slice(0, 6), [filteredProperties]);
   const trendingNow = useMemo(() => filteredProperties.filter(p => p.slotsLeft > 0 && p.slotsLeft <= 3), [filteredProperties]);
   const budgetPicks = useMemo(() => [...filteredProperties].sort((a, b) => a.basePrice - b.basePrice).slice(0, 4), [filteredProperties]);
 
-  // Filter experience packs by mood and tonight tags
   const filteredPacks = useMemo(() => {
     let packs = experiencePacks;
     if (activeMood) {
@@ -162,7 +151,6 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
     return packs;
   }, [activeMood, activePackFilter]);
 
-  // Handle mood change — also affects main property filtering
   const handleMoodChange = useCallback((mood: "romantic" | "party" | "chill" | "work" | null) => {
     setActiveMood(mood);
     hapticSelection();
@@ -173,7 +161,6 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
     if (property) onPropertyTap(property);
   }, [onPropertyTap]);
 
-  // Filter properties by mood
   const moodFilteredProperties = useMemo(() => {
     if (!activeMood) return filteredProperties;
     const moodMap: Record<string, (p: Property) => boolean> = {
@@ -228,54 +215,28 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
           transition={{ duration: 0.3, ease: "easeOut" }}
         >
 
-          {/* ═══════ HOME TAB — Full Discovery Feed ═══════ */}
+          {/* ═══════ HOME TAB ═══════ */}
           {activeCategory === "home" && (
             <>
-              {/* Active Trip — shows ongoing booking with food ordering */}
               <ActiveTripCard onViewTrip={onPropertyTap} />
 
-              <SectionDivider title="🔥 TONIGHT'S VIBE" />
+              <SectionTitle title="🔥 TONIGHT'S VIBE" />
               <SpotlightCarousel properties={activeMood ? moodFilteredProperties : properties} onPropertyTap={onPropertyTap} category="home" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
 
-              <SectionDivider title="BOOK YOUR EXPERIENCE" />
+              <SectionTitle title="BOOK YOUR EXPERIENCE" />
               <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4">
                 {packages.map((pkg, i) => (
                   <PackageCard key={pkg.id} pkg={pkg} index={i} properties={properties} onPropertyTap={onPropertyTap} />
                 ))}
               </div>
 
-              <LazySection minHeight="300px">
-                <SectionDivider title="PLAY YOUR GAME" />
-                <SportsCards properties={properties} onPropertyTap={onPropertyTap} />
-              </LazySection>
-
               <LazySection minHeight="500px">
-                <SectionDivider title="FOODIE FRONT ROW" />
+                <SectionTitle title="FOODIE FRONT ROW" />
                 <FoodieCarousel properties={properties} onPropertyTap={onPropertyTap} />
               </LazySection>
 
-              <LazySection minHeight="200px">
-                <SectionDivider title="COUPLE SPECIALS 💑" />
-                <CoupleSpecials properties={properties} onPropertyTap={onPropertyTap} />
-              </LazySection>
-
-              <LazySection minHeight="200px">
-                <SectionDivider title="UPCOMING EVENTS" />
-                <UpcomingEvents properties={properties} onPropertyTap={onPropertyTap} />
-              </LazySection>
-
-              <LazySection minHeight="200px">
-                <SectionDivider title="WHAT'S HOT ON HUSHH" />
-                <WhatsHotGrid properties={properties} onPropertyTap={onPropertyTap} />
-              </LazySection>
-
-              <LazySection minHeight="200px">
-                <SectionDivider title="BLOCKBUSTER RELEASE" />
-                <BlockbusterBanner properties={properties} onPropertyTap={onPropertyTap} />
-              </LazySection>
-
               <LazySection minHeight="400px">
-                <SectionDivider title="✨ CURATED PACKS" />
+                <SectionTitle title="✨ CURATED PACKS" />
                 <div className="space-y-5 pb-2">
                   {filteredPacks.slice(0, 4).map((pack, i) => (
                     <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
@@ -288,11 +249,9 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
           {/* ═══════ STAYS TAB ═══════ */}
           {activeCategory === "stay" && (
             <>
-              {/* Spotlight Video Cards for Stays */}
-              <SectionDivider title="🏡 FEATURED STAYS" />
+              <SectionTitle title="🏡 FEATURED STAYS" />
               <SpotlightCarousel properties={stayProperties} onPropertyTap={onPropertyTap} category="stay" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
 
-              {/* Property Type Tags */}
               <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
                 {stayFilters.map(type => (
                   <button
@@ -354,10 +313,9 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
           {/* ═══════ EXPERIENCES TAB ═══════ */}
           {activeCategory === "experience" && (
             <>
-              <SectionDivider title="🎉 TOP EXPERIENCES" />
+              <SectionTitle title="🎉 TOP EXPERIENCES" />
               <SpotlightCarousel properties={experienceProperties} onPropertyTap={onPropertyTap} category="experience" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
 
-              {/* Sub-categories */}
               <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
                 {experienceFilters.map(tag => (
                   <button
@@ -374,29 +332,27 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 ))}
               </div>
 
-              {/* Slots filling up — horizontal scroll with stacked cards */}
               {trendingNow.length > 0 && (
                 <div className="mt-4">
                   <div className="flex items-center justify-between px-5 mb-3">
                     <h2 className="text-lg font-bold text-foreground">⚡ Slots Filling Up</h2>
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 font-semibold animate-pulse">LIVE</span>
                   </div>
-                  <div className="grid grid-cols-2 gap-3 px-5">
+                  <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
                     {trendingNow.slice(0, 4).map((p, i) => (
-                      <ExperienceCard key={p.id} property={p} index={i} onTap={onPropertyTap} variant="stacked" />
+                      <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* All experiences — wide list cards */}
               <div className="mt-6">
                 <div className="flex items-center justify-between px-5 mb-3">
                   <h2 className="text-lg font-bold text-foreground">🔥 All Experiences</h2>
                   <span className="text-xs text-muted-foreground">{filteredProperties.length} found</span>
                 </div>
                 {filteredProperties.map((p, i) => (
-                  <ExperienceCard key={p.id} property={p} index={i} onTap={onPropertyTap} variant="wide" />
+                  <PropertyCard key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
                 ))}
                 {filteredProperties.length === 0 && (
                   <div className="px-5 py-12 text-center">
@@ -409,7 +365,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
             </>
           )}
 
-          {/* ═══════ SERVICES TAB — Minimal Icon Grid ═══════ */}
+          {/* ═══════ SERVICES TAB ═══════ */}
           {activeCategory === "service" && (
             <>
               <div className="px-5 pt-6 pb-1">
@@ -449,7 +405,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
             </>
           )}
 
-          {/* ═══════ CURATIONS TAB — Minimal Emoji-Forward Grid ═══════ */}
+          {/* ═══════ CURATIONS TAB ═══════ */}
           {activeCategory === "curation" && (
             <>
               <div className="px-5 pt-6 pb-2">
@@ -461,7 +417,6 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 </p>
               </div>
 
-              {/* Filter pills */}
               <div className="px-4 pt-2 pb-3 flex gap-2 overflow-x-auto hide-scrollbar">
                 {curationFilters.map(tag => (
                   <button
@@ -488,15 +443,13 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 </div>
               )}
 
-              {/* Curated Packs in Curations tab */}
-              <SectionDivider title="✨ EXPERIENCE PACKS" />
+              <SectionTitle title="✨ EXPERIENCE PACKS" />
               <div className="space-y-5 pb-2">
                 {experiencePacks.map((pack, i) => (
                   <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
                 ))}
               </div>
 
-              {/* Budget highlight */}
               <div className="mx-4 mt-6 p-4 rounded-2xl border border-foreground/10" style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(6,95,70,0.15) 100%)" }}>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-lg">💸</span>
@@ -507,7 +460,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
             </>
           )}
 
-          {/* ═══════ ALL LISTINGS for current tab (skip experience & curation — they have their own layouts) ═══════ */}
+          {/* ═══════ ALL LISTINGS ═══════ */}
           {activeCategory !== "experience" && activeCategory !== "curation" && activeCategory !== "service" && (
             <div className="mt-7">
               <div className="flex items-center justify-between px-5 mb-3">
@@ -534,7 +487,6 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
         </motion.div>
       </AnimatePresence>
 
-      {/* Banner */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -546,7 +498,6 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
       </motion.div>
 
       <div className="h-20" />
-      <BackToTopButton />
     </div>
     </PullToRefresh>
   );
