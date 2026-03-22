@@ -518,6 +518,17 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
                       ))}
                     </div>
                   )}
+                  <motion.button
+                    whileTap={{ scale: 0.95 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(`https://www.google.com/maps/dir/?api=1&destination=${selectedPin.lat},${selectedPin.lng}`, "_blank");
+                    }}
+                    className="mt-2 w-full flex items-center justify-center gap-1.5 py-2 rounded-xl bg-primary text-primary-foreground text-[12px] font-bold active:scale-[0.97] transition-transform"
+                    style={{ boxShadow: "0 2px 10px hsl(var(--primary) / 0.3)" }}
+                  >
+                    <Navigation size={13} /> Get Directions
+                  </motion.button>
                 </div>
               </div>
             </div>
