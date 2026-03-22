@@ -82,6 +82,7 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
   const [showFilters, setShowFilters] = useState(false);
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [listView, setListView] = useState(false);
+  const [sortBy, setSortBy] = useState<"default" | "price_asc" | "price_desc" | "rating" | "distance">("default");
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
