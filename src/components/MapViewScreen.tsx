@@ -600,12 +600,23 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
                       whileTap={{ scale: 0.95 }}
                       onClick={(e) => {
                         e.stopPropagation();
-                        window.open(`https://www.google.com/maps/dir/?api=1&destination=${selectedPin.lat},${selectedPin.lng}`, "_blank");
+                        showRouteToPin(selectedPin);
                       }}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-primary text-primary-foreground text-[12px] font-bold active:scale-[0.97] transition-transform"
+                      disabled={routeLoading}
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-primary text-primary-foreground text-[12px] font-bold active:scale-[0.97] transition-transform disabled:opacity-60"
                       style={{ boxShadow: "0 2px 10px hsl(var(--primary) / 0.3)" }}
                     >
-                      <Navigation size={13} /> Directions
+                      {routeLoading ? <Loader2 size={13} className="animate-spin" /> : <LocateFixed size={13} />} Navigate
+                    </motion.button>
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.open(`https://www.google.com/maps/dir/?api=1&destination=${selectedPin.lat},${selectedPin.lng}`, "_blank");
+                      }}
+                      className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-border bg-secondary text-foreground text-[12px] font-bold active:scale-[0.97] transition-transform"
+                    >
+                      <Navigation size={13} />
                     </motion.button>
                     <motion.button
                       whileTap={{ scale: 0.95 }}
@@ -615,9 +626,9 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
                         navigator.clipboard.writeText(url);
                         import("sonner").then(({ toast }) => toast.success("Location link copied!"));
                       }}
-                      className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl border border-border bg-secondary text-foreground text-[12px] font-bold active:scale-[0.97] transition-transform"
+                      className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-border bg-secondary text-foreground text-[12px] font-bold active:scale-[0.97] transition-transform"
                     >
-                      <Share2 size={13} /> Share
+                      <Share2 size={13} />
                     </motion.button>
                   </div>
                 </div>
