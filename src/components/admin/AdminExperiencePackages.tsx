@@ -413,8 +413,6 @@ export default function AdminExperiencePackages() {
                 label="Package Images"
                 maxImages={8}
               />
-                )}
-              </div>
 
               {/* Gradient picker */}
               <div>
