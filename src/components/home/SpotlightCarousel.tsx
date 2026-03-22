@@ -3,6 +3,7 @@ import { VolumeX, Volume2, Bookmark, Flame, Zap, Sparkles } from "lucide-react";
 import { type Property } from "@/data/properties";
 import { AccentFrame, AccentTag } from "@/components/shared/AccentFrame";
 import OptimizedImage from "@/components/shared/OptimizedImage";
+import { useVideoCards, type VideoCardConfig } from "@/hooks/use-video-cards";
 
 // Home / generic
 import videoBonfire from "@/assets/video-bonfire-night.mp4.asset.json";
@@ -262,8 +263,41 @@ export default function SpotlightCarousel({ properties, onPropertyTap, category 
   const topProperties = properties.slice(0, 6);
   const rafRef = useRef<number>(0);
 
+  const dbVideoCards = useVideoCards(category);
+
   const videos = videosByCategory[category] || videosByCategory.home;
   const overlays = overlaysByCategory[category] || overlaysByCategory.home;
+
+  // Build per-card overrides from DB config
+  const getCardConfig = useCallback((index: number) => {
+    const dbCard = dbVideoCards[index];
+    const fallbackVideo = videos[index % videos.length];
+    const fallbackOverlay = overlays[index % overlays.length];
+    const fallbackAccent = accentStyles[index % accentStyles.length];
+
+    if (dbCard) {
+      // Use DB video_url if set, otherwise fall back to hardcoded
+      const videoUrl = dbCard.video_url?.trim() ? dbCard.video_url : fallbackVideo;
+      const overlayText = dbCard.overlay_text?.trim() ? dbCard.overlay_text : fallbackOverlay;
+      // Build accent from DB tag config
+      const accent: VideoAccent = {
+        color: fallbackAccent.color,
+        tag: {
+          label: dbCard.tag_label || fallbackAccent.tag.label,
+          bg: dbCard.tag_color
+            ? `linear-gradient(135deg, var(--tw-gradient-stops))` // CSS gradient classes won't work in inline style
+            : fallbackAccent.tag.bg,
+          icon: fallbackAccent.tag.icon,
+        },
+      };
+      // If tag_color is a tailwind gradient string like "from-red-500 to-orange-500", keep the default bg style
+      if (dbCard.tag_color && !dbCard.tag_color.startsWith("linear")) {
+        accent.tag.bg = fallbackAccent.tag.bg; // keep fallback gradient for inline style
+      }
+      return { videoUrl, overlayText, accent };
+    }
+    return { videoUrl: fallbackVideo, overlayText: fallbackOverlay, accent: fallbackAccent };
+  }, [dbVideoCards, videos, overlays]);
 
   const dateLabels = useMemo(
     () =>
@@ -292,21 +326,24 @@ export default function SpotlightCarousel({ properties, onPropertyTap, category 
         className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2"
         style={{ scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" }}
       >
-        {topProperties.map((p, i) => (
-          <VideoCard
-            key={p.id}
-            property={p}
-            videoSrc={videos[i % videos.length]}
-            overlayText={overlays[i % overlays.length]}
-            isActive={i === activeIndex}
-            dateLabel={dateLabels[i]}
-            accent={accentStyles[i % accentStyles.length]}
-            onTap={() => onPropertyTap(p)}
-            isSaved={wishlist.includes(p.id)}
-            onToggleSave={onToggleWishlist}
-            isFirst={i === 0}
-          />
-        ))}
+        {topProperties.map((p, i) => {
+          const cfg = getCardConfig(i);
+          return (
+            <VideoCard
+              key={p.id}
+              property={p}
+              videoSrc={cfg.videoUrl}
+              overlayText={cfg.overlayText}
+              isActive={i === activeIndex}
+              dateLabel={dateLabels[i]}
+              accent={cfg.accent}
+              onTap={() => onPropertyTap(p)}
+              isSaved={wishlist.includes(p.id)}
+              onToggleSave={onToggleWishlist}
+              isFirst={i === 0}
+            />
+          );
+        })}
       </div>
       <div className="flex justify-center gap-1.5 mt-3">
         {topProperties.map((_, i) => (
