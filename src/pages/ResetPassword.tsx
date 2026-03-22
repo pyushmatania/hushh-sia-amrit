@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Lock, Eye, EyeOff, ArrowRight, Check, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAppConfig } from "@/hooks/use-app-config";
 import authBg from "@/assets/auth-bg-night.webp";
 
 export default function ResetPassword() {
