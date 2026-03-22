@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Settings, Sun, Moon, Globe, IndianRupee, Clock, Shield, Bell, Palette, Building2, ChevronRight, ToggleLeft, ToggleRight, DollarSign, BedDouble, Loader2 } from "lucide-react";
+import { Settings, Sun, Moon, Shield, Bell, Palette, Building2, DollarSign, Loader2, CalendarX2, Phone, Award, Clock } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { Input } from "@/components/ui/input";
 import { useAppConfig, updateAppConfig, loadAppConfig } from "@/hooks/use-app-config";
 import { useToast } from "@/hooks/use-toast";
 
-function PricingRow({ item, value, saving, onSave }: { item: { key: string; label: string; description: string; icon: string }; value: number; saving: boolean; onSave: (val: string) => void }) {
+function ConfigRow({ item, value, saving, onSave }: { item: { key: string; label: string; description: string; icon: string }; value: string | number; saving: boolean; onSave: (val: string) => void }) {
   const [localVal, setLocalVal] = useState(String(value));
   useEffect(() => { setLocalVal(String(value)); }, [value]);
   return (
@@ -20,11 +20,10 @@ function PricingRow({ item, value, saving, onSave }: { item: { key: string; labe
       </div>
       <div className="flex items-center gap-2">
         <Input
-          type="number"
           value={localVal}
           onChange={e => setLocalVal(e.target.value)}
           onBlur={() => { if (localVal && localVal !== String(value)) onSave(localVal); }}
-          className="w-24 text-right text-sm rounded-xl h-8"
+          className="w-28 text-right text-sm rounded-xl h-8"
         />
         {saving && <Loader2 size={14} className="animate-spin text-primary" />}
       </div>
@@ -38,24 +37,17 @@ export default function AdminSettings() {
   const { toast } = useToast();
   const [saving, setSaving] = useState<string | null>(null);
 
-  const [settings, setSettings] = useState<Record<string, any>>({
+  const [toggles, setToggles] = useState<Record<string, boolean>>({
     autoConfirmBookings: false,
     requireVerification: true,
     notifyNewBooking: true,
     notifyLowStock: true,
     notifyNewOrder: true,
-    currency: "INR",
-    timezone: "Asia/Kolkata",
-    taxRate: "18",
-    defaultSlotDuration: "4",
-    maxGuestsDefault: "20",
-    checkInTime: "14:00",
-    checkOutTime: "11:00",
     maintenanceMode: false,
   });
 
-  const updateSetting = (key: string, value: any) => {
-    setSettings(prev => ({ ...prev, [key]: value }));
+  const updateToggle = (key: string) => {
+    setToggles(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
   const saveConfigValue = async (key: string, value: string) => {
@@ -66,73 +58,90 @@ export default function AdminSettings() {
     toast({ title: "Setting saved", description: `${key.replace(/_/g, ' ')} updated` });
   };
 
-  const pricingItems = [
-    { key: "extra_mattress_price", label: "Extra Mattress Price (₹)", description: "Price per extra mattress per night", icon: "🛏️" },
-    { key: "room_capacity", label: "Guests per Room", description: "Number of guests that fit in one room", icon: "👥" },
-    { key: "platform_fee", label: "Platform Fee (₹)", description: "Fixed platform fee per booking", icon: "💳" },
-    { key: "service_fee_percent", label: "Service Fee (%)", description: "Percentage service fee on bookings", icon: "📊" },
-    { key: "coupon_discount_percent", label: "Coupon Discount (%)", description: "Default coupon discount percentage", icon: "🏷️" },
-    { key: "max_mattresses_per_room", label: "Max Mattresses per Room", description: "Maximum extra mattresses allowed per room", icon: "🛌" },
-  ];
-
-  const sections = [
+  const configSections = [
     {
       title: "Pricing & Fees",
       icon: DollarSign,
       color: "text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10",
-      type: "pricing" as const,
-    },
-    {
-      title: "General",
-      icon: Building2,
-      color: "text-indigo-600 bg-indigo-50 dark:bg-indigo-500/10",
-      type: "settings" as const,
       items: [
-        { id: "currency", label: "Currency", description: "Display currency for prices", type: "select" as const, options: ["INR", "USD", "EUR", "GBP"] },
-        { id: "timezone", label: "Timezone", description: "Default timezone for scheduling", type: "select" as const, options: ["Asia/Kolkata", "Asia/Dubai", "America/New_York", "Europe/London"] },
-        { id: "taxRate", label: "Tax Rate (%)", description: "Applied to all transactions", type: "input" as const },
+        { key: "extra_mattress_price", label: "Extra Mattress Price (₹)", description: "Price per extra mattress per night", icon: "🛏️" },
+        { key: "room_capacity", label: "Guests per Room", description: "Number of guests that fit in one room", icon: "👥" },
+        { key: "platform_fee", label: "Platform Fee (₹)", description: "Fixed platform fee per booking", icon: "💳" },
+        { key: "service_fee_percent", label: "Service Fee (%)", description: "Percentage service fee on bookings", icon: "📊" },
+        { key: "coupon_discount_percent", label: "Coupon Discount (%)", description: "Default coupon discount percentage", icon: "🏷️" },
+        { key: "max_mattresses_per_room", label: "Max Mattresses per Room", description: "Maximum extra mattresses allowed per room", icon: "🛌" },
+        { key: "cleaning_fee", label: "Cleaning Fee (₹)", description: "Cleaning fee charged per booking", icon: "🧹" },
+        { key: "gst_percent", label: "GST (%)", description: "Goods & Services Tax percentage", icon: "🧾" },
       ],
     },
     {
-      title: "Property Defaults",
-      icon: Clock,
-      color: "text-blue-600 bg-blue-50 dark:bg-blue-500/10",
-      type: "settings" as const,
+      title: "Cancellation Policy",
+      icon: CalendarX2,
+      color: "text-rose-600 bg-rose-50 dark:bg-rose-500/10",
       items: [
-        { id: "defaultSlotDuration", label: "Default Slot (hrs)", description: "Default booking slot duration", type: "input" as const },
-        { id: "maxGuestsDefault", label: "Max Guests", description: "Default guest capacity", type: "input" as const },
-        { id: "checkInTime", label: "Check-in Time", description: "Standard check-in time", type: "input" as const },
-        { id: "checkOutTime", label: "Check-out Time", description: "Standard check-out time", type: "input" as const },
+        { key: "free_cancel_hours", label: "Free Cancel Window (hrs)", description: "Hours before check-in for full refund", icon: "✅" },
+        { key: "partial_refund_percent", label: "Partial Refund (%)", description: "Refund percentage for late cancellation", icon: "💸" },
+        { key: "partial_refund_hours", label: "Partial Refund Window (hrs)", description: "Hours before check-in for partial refund", icon: "⏳" },
       ],
     },
     {
       title: "Booking Rules",
+      icon: Clock,
+      color: "text-blue-600 bg-blue-50 dark:bg-blue-500/10",
+      items: [
+        { key: "min_booking_advance_hours", label: "Min Advance Booking (hrs)", description: "Minimum hours in advance to book", icon: "⏰" },
+        { key: "check_in_time", label: "Check-in Time", description: "Standard check-in time for stays", icon: "🔑" },
+        { key: "check_out_time", label: "Check-out Time", description: "Standard check-out time for stays", icon: "🚪" },
+        { key: "max_guests_per_booking", label: "Max Guests per Booking", description: "Maximum guests allowed per single booking", icon: "👨‍👩‍👧‍👦" },
+      ],
+    },
+    {
+      title: "Loyalty & Referrals",
+      icon: Award,
+      color: "text-amber-600 bg-amber-50 dark:bg-amber-500/10",
+      items: [
+        { key: "loyalty_points_per_booking", label: "Points per Booking", description: "Loyalty points awarded per completed booking", icon: "⭐" },
+        { key: "referral_reward_points", label: "Referral Reward Points", description: "Points awarded for successful referral", icon: "🎁" },
+      ],
+    },
+    {
+      title: "Support & Contact",
+      icon: Phone,
+      color: "text-indigo-600 bg-indigo-50 dark:bg-indigo-500/10",
+      items: [
+        { key: "support_phone", label: "Support Phone", description: "Customer support phone number", icon: "📞" },
+        { key: "support_email", label: "Support Email", description: "Customer support email address", icon: "📧" },
+        { key: "whatsapp_number", label: "WhatsApp Number", description: "WhatsApp support number", icon: "💬" },
+      ],
+    },
+  ];
+
+  const toggleSections = [
+    {
+      title: "Booking Automation",
       icon: Shield,
       color: "text-violet-600 bg-violet-50 dark:bg-violet-500/10",
-      type: "settings" as const,
       items: [
-        { id: "autoConfirmBookings", label: "Auto-confirm Bookings", description: "Automatically confirm new bookings", type: "toggle" as const },
-        { id: "requireVerification", label: "Require ID Verification", description: "Require identity verification before check-in", type: "toggle" as const },
+        { id: "autoConfirmBookings", label: "Auto-confirm Bookings", description: "Automatically confirm new bookings" },
+        { id: "requireVerification", label: "Require ID Verification", description: "Require identity verification before check-in" },
       ],
     },
     {
       title: "Notifications",
       icon: Bell,
       color: "text-rose-600 bg-rose-50 dark:bg-rose-500/10",
-      type: "settings" as const,
       items: [
-        { id: "notifyNewBooking", label: "New Booking Alerts", description: "Get notified on new bookings", type: "toggle" as const },
-        { id: "notifyLowStock", label: "Low Stock Alerts", description: "Alert when inventory is low", type: "toggle" as const },
-        { id: "notifyNewOrder", label: "New Order Alerts", description: "Alert on new food orders", type: "toggle" as const },
+        { id: "notifyNewBooking", label: "New Booking Alerts", description: "Get notified on new bookings" },
+        { id: "notifyLowStock", label: "Low Stock Alerts", description: "Alert when inventory is low" },
+        { id: "notifyNewOrder", label: "New Order Alerts", description: "Alert on new food orders" },
       ],
     },
     {
       title: "Appearance",
       icon: Palette,
       color: "text-amber-600 bg-amber-50 dark:bg-amber-500/10",
-      type: "settings" as const,
       items: [
-        { id: "maintenanceMode", label: "Maintenance Mode", description: "Show maintenance page to guests", type: "toggle" as const },
+        { id: "maintenanceMode", label: "Maintenance Mode", description: "Show maintenance page to guests" },
       ],
     },
   ];
@@ -154,17 +163,18 @@ export default function AdminSettings() {
           onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
           className="flex items-center gap-2 px-3 py-2 rounded-xl bg-card border border-border text-xs font-medium text-foreground hover:bg-secondary transition"
         >
-          {resolvedTheme === "dark" ? <><Sun size={14} className="text-amber-400" /> Light Mode</> : <><Moon size={14} className="text-indigo-500" /> Dark Mode</>}
+          {resolvedTheme === "dark" ? <><Sun size={14} className="text-amber-400" /> Light</> : <><Moon size={14} className="text-indigo-500" /> Dark</>}
         </motion.button>
       </div>
 
       <div className="space-y-4">
-        {sections.map((section, si) => (
+        {/* Config sections (editable values from DB) */}
+        {configSections.map((section, si) => (
           <motion.div
             key={section.title}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: si * 0.05 }}
+            transition={{ delay: si * 0.04 }}
             className="rounded-2xl bg-card border border-border/80 overflow-hidden"
           >
             <div className="flex items-center gap-3 p-4 border-b border-border/60">
@@ -173,56 +183,55 @@ export default function AdminSettings() {
               </div>
               <span className="text-sm font-semibold text-foreground">{section.title}</span>
             </div>
+            <div className="divide-y divide-border/60">
+              {section.items.map(item => (
+                <ConfigRow
+                  key={item.key}
+                  item={item}
+                  value={(appConfig as any)[item.key]}
+                  saving={saving === item.key}
+                  onSave={(val) => saveConfigValue(item.key, val)}
+                />
+              ))}
+            </div>
+          </motion.div>
+        ))}
 
-            {section.type === "pricing" ? (
-              <div className="divide-y divide-border/60">
-                {pricingItems.map(item => (
-                  <PricingRow key={item.key} item={item} value={(appConfig as any)[item.key]} saving={saving === item.key} onSave={(val) => saveConfigValue(item.key, val)} />
-                ))}
+        {/* Toggle sections (local state) */}
+        {toggleSections.map((section, si) => (
+          <motion.div
+            key={section.title}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: (configSections.length + si) * 0.04 }}
+            className="rounded-2xl bg-card border border-border/80 overflow-hidden"
+          >
+            <div className="flex items-center gap-3 p-4 border-b border-border/60">
+              <div className={`w-8 h-8 rounded-lg ${section.color} flex items-center justify-center`}>
+                <section.icon size={16} />
               </div>
-            ) : (
-              <div className="divide-y divide-border/60">
-                {(section.items || []).map(item => (
-                  <div key={item.id} className="flex items-center justify-between px-4 py-3.5">
-                    <div className="flex-1 mr-4">
-                      <p className="text-sm font-medium text-foreground">{item.label}</p>
-                      <p className="text-[11px] text-muted-foreground">{item.description}</p>
-                    </div>
-
-                    {item.type === "toggle" && (
-                      <motion.button
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => updateSetting(item.id, !settings[item.id])}
-                        className={`w-11 h-6 rounded-full flex items-center transition-colors ${settings[item.id] ? "bg-primary" : "bg-muted"}`}
-                      >
-                        <motion.div
-                          animate={{ x: settings[item.id] ? 22 : 2 }}
-                          className="w-5 h-5 rounded-full bg-white shadow-sm"
-                        />
-                      </motion.button>
-                    )}
-
-                    {item.type === "select" && (
-                      <select
-                        value={settings[item.id]}
-                        onChange={e => updateSetting(item.id, e.target.value)}
-                        className="text-[11px] bg-muted border border-border rounded-xl px-2.5 py-1.5 text-foreground min-w-[100px]"
-                      >
-                        {item.options?.map(o => <option key={o} value={o}>{o}</option>)}
-                      </select>
-                    )}
-
-                    {item.type === "input" && (
-                      <Input
-                        value={settings[item.id]}
-                        onChange={e => updateSetting(item.id, e.target.value)}
-                        className="w-24 text-right text-sm rounded-xl h-8"
-                      />
-                    )}
+              <span className="text-sm font-semibold text-foreground">{section.title}</span>
+            </div>
+            <div className="divide-y divide-border/60">
+              {section.items.map(item => (
+                <div key={item.id} className="flex items-center justify-between px-4 py-3.5">
+                  <div className="flex-1 mr-4">
+                    <p className="text-sm font-medium text-foreground">{item.label}</p>
+                    <p className="text-[11px] text-muted-foreground">{item.description}</p>
                   </div>
-                ))}
-              </div>
-            )}
+                  <motion.button
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => updateToggle(item.id)}
+                    className={`w-11 h-6 rounded-full flex items-center transition-colors ${toggles[item.id] ? "bg-primary" : "bg-muted"}`}
+                  >
+                    <motion.div
+                      animate={{ x: toggles[item.id] ? 22 : 2 }}
+                      className="w-5 h-5 rounded-full bg-white shadow-sm"
+                    />
+                  </motion.button>
+                </div>
+              ))}
+            </div>
           </motion.div>
         ))}
       </div>
