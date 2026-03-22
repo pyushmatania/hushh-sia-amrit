@@ -20,7 +20,7 @@ export type AdminPage =
   | "coupons" | "orders" | "exports" | "ai" | "alerts" | "audit"
   | "earnings" | "pricing" | "achievements" | "loyalty"
   | "calendar" | "requests" | "history" | "inventory" | "staff-mgmt" | "budget"
-  | "checkin" | "reports" | "notifications" | "settings";
+  | "checkin" | "reports" | "notifications" | "settings" | "homepage";
 
 interface AdminLayoutProps {
   activePage: AdminPage;
