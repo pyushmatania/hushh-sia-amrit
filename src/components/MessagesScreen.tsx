@@ -959,6 +959,8 @@ function RealtimeChatView({ conversation, onBack }: { conversation: Conversation
 export default function MessagesScreen() {
   const { user } = useAuth();
   const { conversations, loading } = useMessages();
+  const appConfig = useAppConfig();
+  const brandName = appConfig.app_name || "Hushh";
   const [tab, setTab] = useState<"notifications" | "chats">("chats");
   const [activeConvo, setActiveConvo] = useState<Conversation | null>(null);
   const [activeMockThread, setActiveMockThread] = useState<typeof mockThreads[0] | null>(null);
@@ -967,6 +969,19 @@ export default function MessagesScreen() {
   const [showSearch, setShowSearch] = useState(false);
   const [pinnedIds, setPinnedIds] = useState<Set<string>>(new Set(["c1"]));
   const [archivedIds, setArchivedIds] = useState<Set<string>>(new Set());
+
+  // Dynamic mock threads with brand name
+  const dynamicMockThreads = useMemo(() =>
+    mockThreads.map(t => t.id === "c1" ? { ...t, name: `${brandName} Concierge` } : t),
+    [brandName]
+  );
+
+  const dynamicMockMessages = useMemo(() => ({
+    ...mockMessages,
+    c1: mockMessages.c1.map(m =>
+      m.id === "m3" ? { ...m, text: `I found your booking #${brandName.toUpperCase()}-X7K2. The refund of ₹2,499 has been initiated.` } : m
+    ),
+  }), [brandName]);
 
   const handlePin = useCallback((id: string) => {
     setPinnedIds(prev => {
