@@ -87,7 +87,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
 
   const save = async () => {
     if (!editing?.name) { toast({ title: "Name required", variant: "destructive" }); return; }
-    const payload = { name: editing.name, emoji: editing.emoji || "🍽️", category: editing.category || "food", unit_price: editing.unit_price || 0, stock: editing.stock || 100, low_stock_threshold: editing.low_stock_threshold || 10, available: editing.available ?? true, property_id: editing.property_id || null, sort_order: editing.sort_order || 0 };
+    const payload = { name: editing.name, emoji: editing.emoji || "🍽️", category: editing.category || "food", unit_price: editing.unit_price || 0, stock: editing.stock || 100, low_stock_threshold: editing.low_stock_threshold || 10, available: editing.available ?? true, property_id: editing.property_id || null, sort_order: editing.sort_order || 0, image_url: editing.image_url || null };
     if (isCreating) {
       const { data, error } = await supabase.from("inventory").insert(payload).select().maybeSingle();
       if (error) { toast({ title: "Failed to add", description: error.message, variant: "destructive" }); return; }
