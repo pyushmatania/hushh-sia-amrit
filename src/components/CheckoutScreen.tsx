@@ -19,6 +19,8 @@ interface CheckoutScreenProps {
   extras?: Property[];
   isWishlisted?: boolean;
   onToggleWishlist?: (propertyId: string) => void;
+  roomsCount?: number;
+  extraMattresses?: number;
 }
 
 const paymentMethods = [
