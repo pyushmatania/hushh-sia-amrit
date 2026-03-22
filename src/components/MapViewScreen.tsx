@@ -643,6 +643,7 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
                 </div>
               </div>
             </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
