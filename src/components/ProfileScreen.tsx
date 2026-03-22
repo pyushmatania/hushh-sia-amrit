@@ -74,6 +74,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
   const [showReferral, setShowReferral] = useState(false);
   const [showPublicProfile, setShowPublicProfile] = useState(false);
   const [showIdentityUpload, setShowIdentityUpload] = useState(false);
+  const [showHelpCentre, setShowHelpCentre] = useState(false);
   const [showDocs, setShowDocs] = useState(false);
   const versionTapCount = useRef(0);
   const versionTapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
