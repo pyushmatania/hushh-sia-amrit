@@ -236,7 +236,7 @@ export default function AdminExperiencePackages() {
             <SwipeableRow
               key={pkg.id}
               showHint={pkg === filtered[0]}
-              onEdit={() => { setEditing({ ...pkg }); setIsCreating(false); setIncludeInput(""); setPreviewMode(false); }}
+              onEdit={() => { setEditing({ ...pkg, image_urls: pkg.image_urls || (pkg.image_url ? [pkg.image_url] : []) }); setIsCreating(false); setIncludeInput(""); setPreviewMode(false); }}
               onDelete={() => deletePackage(pkg.id)}
             >
               <div
