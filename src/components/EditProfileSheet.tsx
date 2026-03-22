@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Camera, Check } from "lucide-react";
 import { useState } from "react";
-import profileAvatar from "@/assets/profile-avatar.png";
+import profileAvatar from "@/assets/profile-avatar.webp";
 
 interface EditProfileSheetProps {
   open: boolean;

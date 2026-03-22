@@ -5,14 +5,14 @@ import type { ExperiencePack } from "@/components/home/CuratedPackCard";
 import { AccentFrame, AccentTag } from "@/components/shared/AccentFrame";
 
 // Pack images (fallback posters)
-import packChillNight from "@/assets/pack-chill-night.jpg";
-import packRomanticNight from "@/assets/pack-romantic-night.jpg";
-import packPartyScene from "@/assets/pack-party-scene.jpg";
-import packBbqBonfire from "@/assets/pack-bbq-bonfire.jpg";
-import packMovieNight from "@/assets/pack-movie-night.jpg";
-import packGameNight from "@/assets/pack-game-night.jpg";
-import packWorkEscape from "@/assets/pack-work-escape.jpg";
-import packTeamWork from "@/assets/pack-team-work.jpg";
+import packChillNight from "@/assets/pack-chill-night.webp";
+import packRomanticNight from "@/assets/pack-romantic-night.webp";
+import packPartyScene from "@/assets/pack-party-scene.webp";
+import packBbqBonfire from "@/assets/pack-bbq-bonfire.webp";
+import packMovieNight from "@/assets/pack-movie-night.webp";
+import packGameNight from "@/assets/pack-game-night.webp";
+import packWorkEscape from "@/assets/pack-work-escape.webp";
+import packTeamWork from "@/assets/pack-team-work.webp";
 
 // Unique generated videos per curation theme
 import videoCurationChill from "@/assets/video-curation-chill.mp4.asset.json";

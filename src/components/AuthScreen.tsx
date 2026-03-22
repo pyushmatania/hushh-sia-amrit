@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
-import authBg from "@/assets/auth-bg-night.jpg";
+import authBg from "@/assets/auth-bg-night.webp";
 
 export default function AuthScreen() {
   const [mode, setMode] = useState<"login" | "signup" | "forgot">("login");
