@@ -151,33 +151,7 @@ export default function AdminSettings() {
             {section.type === "pricing" ? (
               <div className="divide-y divide-border/60">
                 {pricingItems.map(item => (
-                  <div key={item.key} className="flex items-center justify-between px-4 py-3.5">
-                    <div className="flex items-center gap-3 flex-1 mr-4">
-                      <span className="text-lg">{item.icon}</span>
-                      <div>
-                        <p className="text-sm font-medium text-foreground">{item.label}</p>
-                        <p className="text-[11px] text-muted-foreground">{item.description}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Input
-                        type="number"
-                        value={(appConfig as any)[item.key] ?? ""}
-                        onChange={e => {
-                          // Immediate local update handled by loadAppConfig after save
-                        }}
-                        onBlur={e => {
-                          const val = e.target.value;
-                          if (val && String((appConfig as any)[item.key]) !== val) {
-                            saveConfigValue(item.key, val);
-                          }
-                        }}
-                        defaultValue={(appConfig as any)[item.key]}
-                        className="w-24 text-right text-sm rounded-xl h-8"
-                      />
-                      {saving === item.key && <Loader2 size={14} className="animate-spin text-primary" />}
-                    </div>
-                  </div>
+                  <PricingRow key={item.key} item={item} value={(appConfig as any)[item.key]} saving={saving === item.key} onSave={(val) => saveConfigValue(item.key, val)} />
                 ))}
               </div>
             ) : (
