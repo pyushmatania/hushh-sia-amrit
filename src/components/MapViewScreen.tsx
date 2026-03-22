@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Star, MapPin, Navigation, Layers } from "lucide-react";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { X, Star, MapPin, Navigation, Layers, Search, SlidersHorizontal } from "lucide-react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { properties, type Property } from "@/data/properties";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -21,6 +21,21 @@ const TILE_LAYERS = {
   light: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
   satellite: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
 };
+
+const CATEGORIES = [
+  { key: "all", label: "All", emoji: "🗺️" },
+  { key: "stay", label: "Stays", emoji: "🏡" },
+  { key: "experience", label: "Experiences", emoji: "🎭" },
+  { key: "service", label: "Services", emoji: "🛎️" },
+  { key: "curation", label: "Curations", emoji: "✨" },
+];
+
+const PRICE_RANGES = [
+  { key: "all", label: "Any price" },
+  { key: "budget", label: "Under ₹1K", max: 1000 },
+  { key: "mid", label: "₹1K–3K", min: 1000, max: 3000 },
+  { key: "premium", label: "₹3K+", min: 3000 },
+];
 
 function createPhotoIcon(imageUrl: string, isSelected: boolean, price: number) {
   const size = isSelected ? 64 : 48;
@@ -61,10 +76,34 @@ function createPhotoIcon(imageUrl: string, isSelected: boolean, price: number) {
 export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenProps) {
   const [selectedPin, setSelectedPin] = useState<Property | null>(null);
   const [tileStyle, setTileStyle] = useState<keyof typeof TILE_LAYERS>("dark");
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [priceRange, setPriceRange] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+  const [verifiedOnly, setVerifiedOnly] = useState(false);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
   const clusterGroupRef = useRef<any>(null);
+
+  const filteredProperties = useMemo(() => {
+    return properties.filter((p) => {
+      if (activeCategory !== "all" && p.primaryCategory !== activeCategory) return false;
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        if (!p.name.toLowerCase().includes(q) && !p.description.toLowerCase().includes(q) && !p.tags.some((t) => t.toLowerCase().includes(q))) return false;
+      }
+      if (priceRange !== "all") {
+        const range = PRICE_RANGES.find((r) => r.key === priceRange);
+        if (range) {
+          if ("min" in range && p.basePrice < range.min!) return false;
+          if ("max" in range && p.basePrice >= range.max!) return false;
+        }
+      }
+      if (verifiedOnly && !p.verified) return false;
+      return true;
+    });
+  }, [activeCategory, searchQuery, priceRange, verifiedOnly]);
 
   // Initialize map
   useEffect(() => {
@@ -77,15 +116,10 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
       attributionControl: false,
     });
 
-    L.tileLayer(TILE_LAYERS[tileStyle], {
-      maxZoom: 19,
-      subdomains: "abcd",
-    }).addTo(map);
-
+    L.tileLayer(TILE_LAYERS[tileStyle], { maxZoom: 19, subdomains: "abcd" }).addTo(map);
     mapInstanceRef.current = map;
 
-    // Create cluster group
-    const clusterGroup = (L as any).markerClusterGroup({
+    clusterGroupRef.current = (L as any).markerClusterGroup({
       maxClusterRadius: 50,
       spiderfyOnMaxZoom: true,
       showCoverageOnHover: false,
@@ -108,24 +142,39 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
         });
       },
     });
-
-    properties.forEach((p) => {
-      const icon = createPhotoIcon(p.images[0], false, p.basePrice);
-      const marker = L.marker([p.lat, p.lng], { icon });
-      marker.on("click", () => setSelectedPin((prev) => (prev?.id === p.id ? null : p)));
-      markersRef.current.set(p.id, marker);
-      clusterGroup.addLayer(marker);
-    });
-
-    map.addLayer(clusterGroup);
-    clusterGroupRef.current = clusterGroup;
+    map.addLayer(clusterGroupRef.current);
 
     return () => {
       map.remove();
       mapInstanceRef.current = null;
       markersRef.current.clear();
+      clusterGroupRef.current = null;
     };
   }, []);
+
+  // Sync markers with filtered properties
+  useEffect(() => {
+    const cluster = clusterGroupRef.current;
+    if (!cluster) return;
+
+    // Remove old markers
+    cluster.clearLayers();
+    markersRef.current.clear();
+
+    // Add filtered
+    filteredProperties.forEach((p) => {
+      const icon = createPhotoIcon(p.images[0], selectedPin?.id === p.id, p.basePrice);
+      const marker = L.marker([p.lat, p.lng], { icon });
+      marker.on("click", () => setSelectedPin((prev) => (prev?.id === p.id ? null : p)));
+      markersRef.current.set(p.id, marker);
+      cluster.addLayer(marker);
+    });
+
+    // If selected pin is no longer in filtered, deselect
+    if (selectedPin && !filteredProperties.find((p) => p.id === selectedPin.id)) {
+      setSelectedPin(null);
+    }
+  }, [filteredProperties]);
 
   // Update tile layer
   useEffect(() => {
@@ -144,8 +193,7 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
       if (!p) return;
       const isSelected = selectedPin?.id === id;
       marker.setIcon(createPhotoIcon(p.images[0], isSelected, p.basePrice));
-      if (isSelected) marker.setZIndexOffset(1000);
-      else marker.setZIndexOffset(0);
+      marker.setZIndexOffset(isSelected ? 1000 : 0);
     });
 
     if (selectedPin && mapInstanceRef.current) {
@@ -160,63 +208,152 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
 
   const cycleTile = () => {
     const keys = Object.keys(TILE_LAYERS) as (keyof typeof TILE_LAYERS)[];
-    const next = keys[(keys.indexOf(tileStyle) + 1) % keys.length];
-    setTileStyle(next);
+    setTileStyle(keys[(keys.indexOf(tileStyle) + 1) % keys.length]);
   };
 
+  const activeFilterCount = [activeCategory !== "all", priceRange !== "all", verifiedOnly].filter(Boolean).length;
+
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-background"
-    >
-      {/* Leaflet Map */}
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-background">
       <div ref={mapContainerRef} className="absolute inset-0 z-0" />
 
-      {/* Top Bar */}
+      {/* Top Controls */}
       <div className="absolute top-0 left-0 right-0 z-[1000]">
-        <div className="flex items-center justify-between px-4 pt-[max(12px,env(safe-area-inset-top))] pb-3">
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={onClose}
-            className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-md border border-border flex items-center justify-center shadow-lg"
-          >
-            <X size={20} className="text-foreground" />
-          </motion.button>
+        <div className="px-4 pt-[max(12px,env(safe-area-inset-top))] pb-2">
+          {/* Row 1: Close + Search + Actions */}
+          <div className="flex items-center gap-2">
+            <motion.button whileTap={{ scale: 0.9 }} onClick={onClose} className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-md border border-border flex items-center justify-center shadow-lg shrink-0">
+              <X size={20} className="text-foreground" />
+            </motion.button>
 
-          <div className="bg-background/80 backdrop-blur-md border border-border rounded-full px-4 py-2 flex items-center gap-2 shadow-lg">
-            <MapPin size={14} className="text-primary" />
-            <span className="text-sm font-bold text-foreground">{properties.length} places</span>
-          </div>
+            <div className="flex-1 flex items-center gap-2 bg-background/80 backdrop-blur-md border border-border rounded-full px-3 py-2 shadow-lg">
+              <Search size={16} className="text-muted-foreground shrink-0" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search places..."
+                className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery("")} className="text-muted-foreground">
+                  <X size={14} />
+                </button>
+              )}
+            </div>
 
-          <div className="flex flex-col gap-1.5">
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={cycleTile}
-              className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-md border border-border flex items-center justify-center shadow-lg"
-            >
+            <motion.button whileTap={{ scale: 0.9 }} onClick={() => setShowFilters(!showFilters)} className="relative w-10 h-10 rounded-full bg-background/80 backdrop-blur-md border border-border flex items-center justify-center shadow-lg shrink-0">
+              <SlidersHorizontal size={16} className="text-foreground" />
+              {activeFilterCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary text-primary-foreground text-[9px] font-bold flex items-center justify-center">
+                  {activeFilterCount}
+                </span>
+              )}
+            </motion.button>
+
+            <motion.button whileTap={{ scale: 0.9 }} onClick={cycleTile} className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-md border border-border flex items-center justify-center shadow-lg shrink-0">
               <Layers size={16} className="text-foreground" />
             </motion.button>
           </div>
+
+          {/* Row 2: Category pills */}
+          <div className="flex gap-1.5 mt-2 overflow-x-auto no-scrollbar">
+            {CATEGORIES.map((cat) => (
+              <motion.button
+                key={cat.key}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setActiveCategory(cat.key)}
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap border shadow-sm transition-colors ${
+                  activeCategory === cat.key
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-background/80 backdrop-blur-md text-foreground border-border"
+                }`}
+              >
+                <span>{cat.emoji}</span>
+                <span>{cat.label}</span>
+              </motion.button>
+            ))}
+          </div>
+
+          {/* Row 3: Filter panel */}
+          <AnimatePresence>
+            {showFilters && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="overflow-hidden"
+              >
+                <div className="mt-2 bg-background/90 backdrop-blur-xl border border-border rounded-2xl p-3 shadow-xl space-y-3">
+                  {/* Price */}
+                  <div>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5">Price Range</p>
+                    <div className="flex gap-1.5 flex-wrap">
+                      {PRICE_RANGES.map((r) => (
+                        <button
+                          key={r.key}
+                          onClick={() => setPriceRange(r.key)}
+                          className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition-colors ${
+                            priceRange === r.key
+                              ? "bg-primary text-primary-foreground border-primary"
+                              : "bg-secondary text-foreground border-border"
+                          }`}
+                        >
+                          {r.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Verified */}
+                  <div className="flex items-center justify-between">
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Verified only</p>
+                    <button
+                      onClick={() => setVerifiedOnly(!verifiedOnly)}
+                      className={`w-10 h-5 rounded-full relative transition-colors ${verifiedOnly ? "bg-primary" : "bg-secondary"}`}
+                    >
+                      <div className={`w-4 h-4 rounded-full bg-foreground absolute top-0.5 transition-all ${verifiedOnly ? "left-5.5 right-0.5" : "left-0.5"}`}
+                        style={{ left: verifiedOnly ? "22px" : "2px" }}
+                      />
+                    </button>
+                  </div>
+
+                  {/* Reset */}
+                  {activeFilterCount > 0 && (
+                    <button
+                      onClick={() => { setActiveCategory("all"); setPriceRange("all"); setVerifiedOnly(false); }}
+                      className="w-full py-1.5 rounded-xl text-xs font-bold text-primary border border-primary/30 bg-primary/5"
+                    >
+                      Clear all filters
+                    </button>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
-      {/* Recenter Button */}
-      <motion.button
-        whileTap={{ scale: 0.9 }}
-        onClick={recenter}
-        className="absolute bottom-32 right-4 z-[1000] w-12 h-12 rounded-full bg-background/80 backdrop-blur-md border border-border flex items-center justify-center shadow-lg"
-      >
-        <Navigation size={18} className="text-primary" />
-      </motion.button>
+      {/* Results count badge */}
+      <div className="absolute top-[max(110px,calc(env(safe-area-inset-top)+100px))] left-1/2 -translate-x-1/2 z-[1000]">
+        {(activeCategory !== "all" || searchQuery || priceRange !== "all" || verifiedOnly) && (
+          <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-background/80 backdrop-blur-md border border-border rounded-full px-3 py-1 shadow-lg">
+            <span className="text-xs font-bold text-foreground">{filteredProperties.length} of {properties.length} places</span>
+          </motion.div>
+        )}
+      </div>
 
       {/* Tile style label */}
-      <div className="absolute top-[max(56px,calc(env(safe-area-inset-top)+48px))] right-4 z-[1000]">
+      <div className="absolute top-[max(56px,calc(env(safe-area-inset-top)+48px))] right-4 z-[999]">
         <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground bg-background/60 backdrop-blur-sm px-2 py-0.5 rounded-full">
           {tileStyle}
         </span>
       </div>
+
+      {/* Recenter */}
+      <motion.button whileTap={{ scale: 0.9 }} onClick={recenter} className="absolute bottom-32 right-4 z-[1000] w-12 h-12 rounded-full bg-background/80 backdrop-blur-md border border-border flex items-center justify-center shadow-lg">
+        <Navigation size={18} className="text-primary" />
+      </motion.button>
 
       {/* Selected Property Card */}
       <AnimatePresence>
@@ -229,24 +366,19 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="absolute bottom-6 left-4 right-4 z-[1000]"
           >
-            <div
-              onClick={() => onPropertyTap(selectedPin)}
-              className="bg-background/95 backdrop-blur-xl border border-border rounded-2xl overflow-hidden shadow-2xl cursor-pointer active:scale-[0.98] transition-transform"
-            >
+            <div onClick={() => onPropertyTap(selectedPin)} className="bg-background/95 backdrop-blur-xl border border-border rounded-2xl overflow-hidden shadow-2xl cursor-pointer active:scale-[0.98] transition-transform">
               <div className="flex gap-3 p-3">
                 <div className="w-28 h-28 rounded-xl overflow-hidden shrink-0 relative">
                   <img src={selectedPin.images[0]} alt={selectedPin.name} className="w-full h-full object-cover" />
                   {selectedPin.verified && (
-                    <div className="absolute top-1.5 left-1.5 bg-primary/90 text-primary-foreground text-[8px] font-bold px-1.5 py-0.5 rounded-md">
-                      ✓ Verified
-                    </div>
+                    <div className="absolute top-1.5 left-1.5 bg-primary/90 text-primary-foreground text-[8px] font-bold px-1.5 py-0.5 rounded-md">✓ Verified</div>
                   )}
                 </div>
                 <div className="flex-1 min-w-0 py-0.5">
                   <h3 className="text-sm font-bold text-foreground truncate">{selectedPin.name}</h3>
                   <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{selectedPin.description}</p>
                   <div className="flex items-center gap-1 mt-2">
-                    <Star size={12} className="fill-amber-400 text-amber-400" />
+                    <Star size={12} className="fill-primary text-primary" />
                     <span className="text-xs font-bold text-foreground">{selectedPin.rating}</span>
                     <span className="text-xs text-muted-foreground">({selectedPin.reviewCount})</span>
                   </div>
@@ -256,17 +388,13 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
                       <span className="text-[10px] font-normal text-muted-foreground"> /slot</span>
                     </p>
                     {selectedPin.slotsLeft > 0 && selectedPin.slotsLeft <= 3 && (
-                      <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full animate-pulse">
-                        {selectedPin.slotsLeft} left
-                      </span>
+                      <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full animate-pulse">{selectedPin.slotsLeft} left</span>
                     )}
                   </div>
                   {selectedPin.tags.length > 0 && (
                     <div className="flex gap-1 mt-1.5 overflow-hidden">
                       {selectedPin.tags.slice(0, 2).map((tag) => (
-                        <span key={tag} className="text-[9px] font-semibold text-muted-foreground bg-secondary px-1.5 py-0.5 rounded-md truncate">
-                          {tag}
-                        </span>
+                        <span key={tag} className="text-[9px] font-semibold text-muted-foreground bg-secondary px-1.5 py-0.5 rounded-md truncate">{tag}</span>
                       ))}
                     </div>
                   )}
