@@ -16,6 +16,7 @@ import { useCurations } from "@/hooks/use-curations";
 import { useNotifications } from "@/hooks/use-notifications";
 import { useHomepageSections } from "@/hooks/use-homepage-sections";
 import { useAppConfig } from "@/hooks/use-app-config";
+import { useHomepageFilters } from "@/hooks/use-homepage-filters";
 import profileAvatar from "@/assets/profile-avatar.webp";
 
 import RotatingSearchBar from "./home/RotatingSearchBar";
@@ -77,9 +78,10 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
     }, 50);
   }, []);
 
-  const stayFilters = ["All", "Private Villa", "Pool Villa", "Farmhouse", "Rooftop Space", "Work Pod", "Couple Room", "Open Lawn", "Camping"];
-  const experienceFilters = ["All", "Romantic", "Celebration", "Party", "Adventure", "Cultural", "Sports", "Workshop", "Walking Tour"];
-  const serviceFilters = ["All", "Chef Service", "Decoration", "Transport", "Entertainment"];
+  const dynamicFilters = useHomepageFilters();
+  const stayFilters = dynamicFilters.stay || ["All"];
+  const experienceFilters = dynamicFilters.experience || ["All"];
+  const serviceFilters = dynamicFilters.service || ["All"];
 
   const experienceFilterMap: Record<string, (p: Property) => boolean> = {
     "All": () => true,
@@ -93,7 +95,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
     "Walking Tour": (p) => p.propertyType === "Walking Tour" || p.propertyType === "Observatory",
   };
 
-  const curationFilters = ["All", "🔥 Popular", "💑 Romantic", "🎉 Party", "🍗 Foodie", "💻 Work", "🎬 Entertainment", "💸 Budget"];
+  const curationFilters = dynamicFilters.curation || ["All"];
 
   const curationFilterMap: Record<string, (c: typeof curatedCombos[0]) => boolean> = {
     "All": () => true,
