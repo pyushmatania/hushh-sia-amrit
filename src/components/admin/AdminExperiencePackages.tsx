@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Gift, Search, Plus, Trash2, Pencil, X, Eye, GripVertical, CheckSquare, Upload } from "lucide-react";
+import { Gift, Search, Plus, Trash2, Pencil, X, Eye, GripVertical, CheckSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -8,6 +8,7 @@ import { useDragReorder } from "@/hooks/use-drag-reorder";
 import SwipeableRow from "./SwipeableRow";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
 import BatchOperationsBar from "./BatchOperationsBar";
+import MultiImageEditor from "./MultiImageEditor";
 
 interface PackageRow {
   id: string;
@@ -19,6 +20,7 @@ interface PackageRow {
   sort_order: number;
   active: boolean;
   image_url: string | null;
+  image_urls: string[];
 }
 
 const GRADIENT_OPTIONS = [
