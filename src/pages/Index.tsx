@@ -85,9 +85,9 @@ export default function Index() {
   }, []);
 
   const handleContinue = useCallback(
-    (property: Property, slotId: string, guests: number, date: Date, extras?: Property[]) =>
+    (property: Property, slotId: string, guests: number, date: Date, extras?: Property[], roomsCount?: number, extraMattresses?: number) =>
       (selections: Record<string, number>, total: number) => {
-        setScreen({ type: "checkout", property, slotId, guests, date, selections, total, extras });
+        setScreen({ type: "checkout", property, slotId, guests, date, selections, total, extras, roomsCount, extraMattresses });
       },
     []
   );
