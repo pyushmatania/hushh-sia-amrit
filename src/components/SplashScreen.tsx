@@ -209,11 +209,11 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
   useEffect(() => {
     if (!imgReady) return;
     const timers = [
-      setTimeout(() => setPhase(1), 100),     // image revealed instantly
-      setTimeout(() => setPhase(2), 500),     // greeting appears
-      setTimeout(() => setPhase(3), 1200),    // brand name types in
-      setTimeout(() => setPhase(4), 2800),    // begin exit
-      setTimeout(() => { setShow(false); setTimeout(onComplete, 400); }, 3300),
+      setTimeout(() => setPhase(1), 150),     // image revealed
+      setTimeout(() => setPhase(2), 700),     // greeting appears
+      setTimeout(() => setPhase(3), 1800),    // brand name types in
+      setTimeout(() => setPhase(4), 4200),    // begin exit
+      setTimeout(() => { setShow(false); setTimeout(onComplete, 500); }, 4800),
     ];
     return () => timers.forEach(clearTimeout);
   }, [onComplete, imgReady]);
