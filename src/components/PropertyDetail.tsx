@@ -15,6 +15,7 @@ import {
   Wind, Tag, Check, BedDouble, Layers
 } from "lucide-react";
 import { useState, useCallback, useMemo } from "react";
+import { useSlotAvailability } from "@/hooks/use-slot-availability";
 import { shareProperty } from "@/lib/share";
 import { useToast } from "@/hooks/use-toast";
 import { hapticMedium, hapticSuccess } from "@/lib/haptics";
