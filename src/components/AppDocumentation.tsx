@@ -367,7 +367,7 @@ export const changeLog = [
 function generateFullDoc(): string {
   const header = `# 🏡 HUSHH — Private Experience Marketplace
 
-> **Made in Jeypore ❤️** | v1.21 | Internal Documentation & Blueprint
+> **Made in Jeypore ❤️** | v1.22 | Internal Documentation & Blueprint
 
 Hushh is a premium mobile-first marketplace for booking private experiences, stays, and curated lifestyle services in Jeypore, India.
 
