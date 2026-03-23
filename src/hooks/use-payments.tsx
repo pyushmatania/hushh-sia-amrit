@@ -51,15 +51,34 @@ export function usePayments(bookingId?: string) {
   }, [fetchPayments]);
 
   const createPayment = useCallback(
-    async (payment: Omit<Payment, "id" | "created_at" | "updated_at" | "user_id">) => {
+    async (payment: {
+      booking_id?: string | null;
+      amount: number;
+      currency?: string;
+      status?: string;
+      payment_method?: string;
+      gateway?: string;
+      gateway_order_id?: string | null;
+      gateway_payment_id?: string | null;
+      gateway_signature?: string | null;
+      metadata?: Record<string, unknown> | null;
+    }) => {
       if (!user) return null;
 
       const { data } = await supabase
         .from("payments")
         .insert({
-          ...payment,
           user_id: user.id,
-          metadata: (payment.metadata ?? {}) as Record<string, unknown>,
+          amount: payment.amount,
+          booking_id: payment.booking_id ?? null,
+          currency: payment.currency ?? "INR",
+          status: payment.status ?? "pending",
+          payment_method: payment.payment_method ?? "upi",
+          gateway: payment.gateway ?? "razorpay",
+          gateway_order_id: payment.gateway_order_id ?? null,
+          gateway_payment_id: payment.gateway_payment_id ?? null,
+          gateway_signature: payment.gateway_signature ?? null,
+          metadata: payment.metadata ?? {},
         })
         .select()
         .maybeSingle();
