@@ -26,6 +26,23 @@ export default function PullToRefresh({ children, onRefresh, className = "" }: P
     return !!target.closest('[data-no-pull-refresh="true"]');
   }, []);
 
+  const getScrollContainer = useCallback((target: EventTarget | null) => {
+    if (!(target instanceof HTMLElement)) {
+      return containerRef.current;
+    }
+
+    const explicitContainer = target.closest<HTMLElement>('[data-pull-scroll-container="true"]');
+    if (explicitContainer) return explicitContainer;
+
+    const fallbackContainer = containerRef.current?.querySelector<HTMLElement>('[data-pull-scroll-container="true"]');
+    return fallbackContainer ?? containerRef.current;
+  }, []);
+
+  const resetGesture = useCallback(() => {
+    pullDirection.current = "idle";
+    startPoint.current = null;
+  }, []);
+
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     if (refreshing) return;
 
@@ -35,15 +52,15 @@ export default function PullToRefresh({ children, onRefresh, className = "" }: P
       return;
     }
 
-    const el = containerRef.current;
-    if (el && el.scrollTop <= 0) {
+    const scrollContainer = getScrollContainer(e.target);
+
+    if ((scrollContainer?.scrollTop ?? 0) <= 0) {
       startPoint.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
       pullDirection.current = "pending";
       return;
     }
-    pullDirection.current = "idle";
-    startPoint.current = null;
-  }, [refreshing, isInsideNoPullArea]);
+    resetGesture();
+  }, [refreshing, isInsideNoPullArea, getScrollContainer, resetGesture]);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     if (refreshing || !startPoint.current || pullDirection.current === "idle") return;
@@ -72,13 +89,11 @@ export default function PullToRefresh({ children, onRefresh, className = "" }: P
 
   const handleTouchEnd = useCallback(async () => {
     if (pullDirection.current !== "vertical") {
-      pullDirection.current = "idle";
-      startPoint.current = null;
+      resetGesture();
       return;
     }
 
-    pullDirection.current = "idle";
-    startPoint.current = null;
+    resetGesture();
 
     const currentDrag = dragY.get();
     if (currentDrag >= THRESHOLD && !refreshing) {
@@ -88,7 +103,12 @@ export default function PullToRefresh({ children, onRefresh, className = "" }: P
       setRefreshing(false);
     }
     animate(dragY, 0, { type: "spring", stiffness: 300, damping: 25 });
-  }, [dragY, onRefresh, refreshing]);
+  }, [dragY, onRefresh, refreshing, resetGesture]);
+
+  const handleTouchCancel = useCallback(() => {
+    resetGesture();
+    animate(dragY, 0, { type: "spring", stiffness: 300, damping: 25 });
+  }, [dragY, resetGesture]);
 
   return (
     <div className={`relative overflow-hidden ${className}`}>
@@ -110,6 +130,7 @@ export default function PullToRefresh({ children, onRefresh, className = "" }: P
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchCancel}
         className="min-h-screen"
       >
         {children}

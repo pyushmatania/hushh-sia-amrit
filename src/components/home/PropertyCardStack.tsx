@@ -121,10 +121,10 @@ function PaperTexture() {
 /* ── Main component ─────────────────────────────────────── */
 
 export default function PropertyCardStack({ properties, startIndex, onTap, wishlist, onToggleWishlist }: PropertyCardStackProps) {
-  const SWIPE_DISTANCE = 35;
-  const FLICK_DISTANCE = 18;
-  const FLICK_TIME = 250;
-  const TAP_DISTANCE = 10;
+  const SWIPE_DISTANCE = 22;
+  const FLICK_DISTANCE = 12;
+  const FLICK_TIME = 280;
+  const TAP_DISTANCE = 12;
   const TAP_TIME = 280;
 
   const cards = properties.slice(0, 5).length >= 3 ? properties.slice(0, 5) : properties.slice(0, 3);
@@ -134,7 +134,7 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
   const [imgLoaded, setImgLoaded] = useState<Record<number, boolean>>({});
   const [entered, setEntered] = useState(false);
   const [progress, setProgress] = useState(0);
-  const touchRef = useRef<{ x: number; t: number } | null>(null);
+  const touchRef = useRef<{ x: number; y: number; t: number; mode: "pending" | "horizontal" | "vertical" } | null>(null);
   const swipedRef = useRef(false);
   const blockTapUntilRef = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -197,24 +197,54 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
 
   const handleTouchStart = (e: React.TouchEvent) => {
     e.stopPropagation();
-    touchRef.current = { x: e.touches[0].clientX, t: Date.now() };
+    touchRef.current = {
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY,
+      t: Date.now(),
+      mode: "pending",
+    };
     swipedRef.current = false;
     setIsDragging(true);
   };
+
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!touchRef.current) return;
+
     const dx = e.touches[0].clientX - touchRef.current.x;
-    e.stopPropagation();
-    if (Math.abs(dx) > 8) {
-      e.preventDefault();
+    const dy = e.touches[0].clientY - touchRef.current.y;
+
+    if (touchRef.current.mode === "pending") {
+      if (Math.abs(dx) < 5 && Math.abs(dy) < 5) return;
+      touchRef.current.mode = Math.abs(dx) > Math.abs(dy) ? "horizontal" : "vertical";
+
+      if (touchRef.current.mode === "vertical") {
+        setIsDragging(false);
+        setDragX(0);
+        return;
+      }
     }
+
+    if (touchRef.current.mode !== "horizontal") return;
+
+    e.stopPropagation();
+    e.preventDefault();
     setDragX(dx);
   };
+
   const handleTouchEnd = (e: React.TouchEvent) => {
     e.stopPropagation();
     if (!touchRef.current) { setDragX(0); setIsDragging(false); return; }
+
     const dx = e.changedTouches[0].clientX - touchRef.current.x;
     const dt = Date.now() - touchRef.current.t;
+    const mode = touchRef.current.mode;
+
+    if (mode === "vertical") {
+      touchRef.current = null;
+      setDragX(0);
+      setIsDragging(false);
+      return;
+    }
 
     if (Math.abs(dx) > SWIPE_DISTANCE || (Math.abs(dx) > FLICK_DISTANCE && dt < FLICK_TIME)) {
       swipedRef.current = true;
