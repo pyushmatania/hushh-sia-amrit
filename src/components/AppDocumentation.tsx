@@ -345,13 +345,29 @@ export const changeLog = [
       "Easter egg docs updated with PRD, Blueprint, and Wireframe sections",
     ],
   },
+  {
+    version: "1.22",
+    phase: "Schema Hardening & Audit Resolution",
+    items: [
+      "7 new DB tables: payments, refunds, invoices, property_slots, slot_availability, notification_preferences, push_tokens (45 total)",
+      "Payment foundation — Razorpay-ready schema with gateway fields, refund tracking, invoice generation with JSONB line items",
+      "Slot management — dedicated property_slots + slot_availability tables for per-date booking & dynamic pricing",
+      "Booking schema hardened — payment_status + payment_id on bookings, split payment tracking enhanced",
+      "Conversations enhanced — type (direct/support/group), property_id, metadata fields",
+      "Config audit trail — updated_by added to app_config",
+      "FCM readiness — push_tokens table with platform tracking",
+      "Notification preferences — per-type per-channel opt-out table",
+      "Documentation audit — 8 critical issues resolved, 20+ warnings addressed, ER diagram updated, hooks reference expanded",
+      "Realtime enabled for payments and slot_availability tables",
+    ],
+  },
 ];
 
 // Generate the COMPLETE documentation including PRD, Blueprint, Wireframes
 function generateFullDoc(): string {
   const header = `# 🏡 HUSHH — Private Experience Marketplace
 
-> **Made in Jeypore ❤️** | v1.21 | Internal Documentation & Blueprint
+> **Made in Jeypore ❤️** | v1.22 | Internal Documentation & Blueprint
 
 Hushh is a premium mobile-first marketplace for booking private experiences, stays, and curated lifestyle services in Jeypore, India.
 
@@ -515,7 +531,7 @@ Splash → Home → Browse/Search/Map → Property Card → Detail → Select Sl
 
 ## 🏗 Architecture
 
-80+ components, 20+ hooks, 38 database tables, 6 edge functions
+80+ components, 22+ hooks, 45 database tables, 6 edge functions
 
 React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion 12 · React Query · React Router v6 · Lovable Cloud · Recharts · React Hook Form + Zod
 
@@ -548,7 +564,7 @@ React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion
 
 ---
 
-## 🗄 Database Schema (38 Tables)
+## 🗄 Database Schema (45 Tables)
 
 | Table | Key Columns | Purpose |
 |-------|------------|---------|
@@ -857,7 +873,7 @@ CLIENT (Browser)
        │ HTTPS
 LOVABLE CLOUD
   ├── Edge Functions (6): admin-ai, smart-alerts, auto-notifications, property-history-ai, weekly-digest, staff-report
-  ├── PostgreSQL (38 tables · RLS · Triggers · Functions)
+  ├── PostgreSQL (45 tables + RLS + Triggers + Functions)
   ├── Storage (listing-images, identity-docs, booking-photos)
   └── Auth (GoTrue): Email/Password, verification, reset
 \`\`\`
@@ -1177,7 +1193,7 @@ const ARCHITECTURE_CHART = `graph TB
     subgraph CLOUD["LOVABLE CLOUD"]
         direction TB
         EF["Edge Functions x6"]
-        PG["PostgreSQL 38 tables + RLS"]
+        PG["PostgreSQL 45 tables + RLS"]
         ST["Storage images docs photos"]
         AU["Auth GoTrue"]
     end
@@ -1193,14 +1209,20 @@ const ER_CHART = `erDiagram
     users ||--o{ reviews : "writes"
     users ||--o{ conversations : "chats"
     users ||--o{ notifications : "receives"
+    users ||--o{ notification_preferences : "configures"
+    users ||--o{ push_tokens : "registers"
     users ||--o{ loyalty_transactions : "earns"
     users ||--o{ referral_codes : "creates"
     users ||--o{ user_roles : "assigned"
     users ||--o{ user_milestones : "achieves"
     users ||--o{ host_listings : "hosts"
+    users ||--o{ payments : "makes"
     bookings ||--o{ orders : "has"
     bookings ||--o{ booking_splits : "split"
     bookings ||--o{ booking_photos : "has"
+    bookings ||--o{ payments : "paid by"
+    payments ||--o{ refunds : "refunded"
+    payments ||--o{ invoices : "invoiced"
     orders ||--o{ order_items : "contains"
     orders ||--o{ order_notes : "noted"
     conversations ||--o{ messages : "contains"
@@ -1208,6 +1230,8 @@ const ER_CHART = `erDiagram
     referral_codes ||--o{ referral_uses : "used"
     host_listings ||--o{ curations : "packs"
     host_listings ||--o{ inventory : "stocks"
+    host_listings ||--o{ property_slots : "has"
+    property_slots ||--o{ slot_availability : "available"
     property_tags ||--o{ tag_assignments : "assigned"
     staff_members ||--o{ staff_attendance : "tracks"
     staff_members ||--o{ staff_leaves : "requests"
@@ -1365,7 +1389,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
             </div>
             <div>
               <h1 className="text-lg font-bold text-foreground">Hushh Docs</h1>
-              <p className="text-[11px] text-muted-foreground">v1.21 · Internal Blueprint</p>
+              <p className="text-[11px] text-muted-foreground">v1.22 · Internal Blueprint</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -1849,9 +1873,9 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
           <div className="space-y-1 font-mono text-[11px]">
             {[
               ["profiles", "Display name, avatar, bio, location, loyalty pts, tier"],
-              ["bookings", "Slot, date, guests, total, status, rooms, mattresses"],
+              ["bookings", "Slot, date, guests, total, status, rooms, mattresses, payment_status"],
               ["wishlists", "User ↔ property joins"],
-              ["conversations", "Two-participant chat threads"],
+              ["conversations", "Chat threads (direct/support/group) with metadata"],
               ["messages", "Chat messages with read state"],
               ["notifications", "Push-style alerts per user"],
               ["reviews", "Ratings, content, photos, verified flag"],
@@ -1867,7 +1891,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
               ["spin_history", "Daily spin-to-win prize records"],
               ["user_milestones", "Achievement tracking per user"],
               ["user_roles", "RBAC roles (super_admin, ops_manager, host, staff)"],
-              ["app_config", "Key-value runtime settings"],
+              ["app_config", "Key-value runtime settings + updated_by audit"],
               ["inventory", "Stock tracking with low-stock alerts"],
               ["experience_packages", "Bookable add-on packages"],
               ["coupons", "Discount codes with usage limits"],
@@ -1882,10 +1906,17 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
               ["audit_logs", "Action audit trail"],
               ["client_notes", "CRM notes per client"],
               ["booking_photos", "Guest photos per booking"],
-              ["booking_splits", "Split payment tracking"],
+              ["booking_splits", "Split payment tracking + payment_status"],
               ["identity_verifications", "ID document verification queue"],
               ["property_tags", "Custom property tags with colors"],
               ["tag_assignments", "Tag ↔ entity joins"],
+              ["payments", "Payment gateway tracking (Razorpay-ready) — v1.22"],
+              ["refunds", "Refund management with gateway IDs — v1.22"],
+              ["invoices", "Invoice generation with JSONB line items — v1.22"],
+              ["property_slots", "Dedicated slot management per property — v1.22"],
+              ["slot_availability", "Per-date availability + dynamic pricing — v1.22"],
+              ["notification_preferences", "Per-type per-channel opt-out — v1.22"],
+              ["push_tokens", "FCM push notification tokens — v1.22"],
             ].map(([table, desc]) => (
               <p key={table}>
                 <strong className="text-foreground">{table}</strong> — {desc}
@@ -1988,7 +2019,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
         <div className="text-center py-6">
           <p className="text-[11px] text-muted-foreground">
             <Sparkles size={12} className="inline text-primary mr-1" />
-            Hushh v1.21 · Made in Jeypore ❤️
+            Hushh v1.22 · Made in Jeypore ❤️
           </p>
         </div>
       </div>
