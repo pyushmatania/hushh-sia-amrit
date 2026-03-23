@@ -12,6 +12,7 @@ import ScreenSkeleton from "@/components/shared/ScreenSkeleton";
 // Lazy-loaded screens (not needed on initial render)
 const PropertyDetail = lazy(() => import("@/components/PropertyDetail"));
 const ExperienceBuilder = lazy(() => import("@/components/ExperienceBuilder"));
+const ExperienceDetailScreen = lazy(() => import("@/components/ExperienceDetailScreen"));
 const CheckoutScreen = lazy(() => import("@/components/CheckoutScreen"));
 const BookingConfirmation = lazy(() => import("@/components/BookingConfirmation"));
 const BookingDetailScreen = lazy(() => import("@/components/BookingDetailScreen"));
