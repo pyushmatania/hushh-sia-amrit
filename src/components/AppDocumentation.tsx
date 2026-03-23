@@ -561,10 +561,34 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
             <li>Password reset flow</li>
             <li>Real wishlists, bookings, messages, notifications (database)</li>
             <li>Booking: Select slot → Builder → Checkout → Confirm</li>
-            <li>Loyalty: 5 pts per ₹100, tier progression</li>
+            <li>Loyalty: 5 pts per ₹100, tier progression, spin wheel</li>
             <li>Referrals: unique codes, point rewards</li>
             <li>Real-time messaging with unread counts</li>
             <li>Host Dashboard: create/edit listings, analytics</li>
+            <li>Identity verification for bookings</li>
+            <li>Split payment with friends</li>
+            <li>Booking photos and receipts</li>
+            <li>Live food/drink ordering during active stays</li>
+          </ul>
+        </DocSection>
+
+        <DocSection
+          title="Admin Panel"
+          icon={<Zap size={15} className="text-primary" />}
+        >
+          <ul className="list-disc list-inside space-y-1">
+            <li>Command Center — KPI dashboard, live activity feed</li>
+            <li>Full Property CRUD — create, edit, duplicate, delete listings</li>
+            <li>Booking Hub — manage all reservations</li>
+            <li>Client CRM — engagement scores, journey timeline, notes</li>
+            <li>Inventory Management — stock tracking, low-stock alerts</li>
+            <li>Curations, Campaigns, Coupons management</li>
+            <li>Dynamic Homepage — section ordering, video cards, filter pills</li>
+            <li>App Settings — branding, support contacts, social links, legal</li>
+            <li>Staff Management — directory, attendance, leaves, payroll</li>
+            <li>Finance Hub — expenses, budget tracking</li>
+            <li>AI Assistant, Smart Alerts, Audit Trail</li>
+            <li>Role-based access: super_admin, ops_manager, host, staff</li>
           </ul>
         </DocSection>
 
