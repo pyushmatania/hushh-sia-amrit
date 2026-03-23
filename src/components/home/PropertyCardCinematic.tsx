@@ -223,6 +223,8 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
   const holoY = 50 + tilt.x * 4;
 
   const discount = property.discountLabel || (property.basePrice >= 3000 ? "20% OFF" : null);
+  const maskedPrice = "₹X,XXX";
+  const showGestureHints = revealed;
 
   const clearTimers = useCallback(() => {
     if (holdTimerRef.current) { clearTimeout(holdTimerRef.current); holdTimerRef.current = null; }
