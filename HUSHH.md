@@ -1144,7 +1144,7 @@ useHomepageSections → useHomepageFilters → useVideoCards
 │                         │
 │ [📸 Insta][📘 FB][▶ YT]│  ← Social links
 │ Terms · Privacy          │
-│ v1.20                   │  ← 5-tap → easter egg
+│ v1.23                   │  ← 5-tap → easter egg
 ├─────────────────────────┤
 │ 🏠  ❤️  ✈️  💬  👤    │
 └─────────────────────────┘

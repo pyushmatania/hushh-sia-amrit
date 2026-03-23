@@ -1016,7 +1016,7 @@ Tab 5: PROFILE — Hero → Stats → Achievements → Settings
 │ [🏠 Become a Host]     │
 │ [☀️ Light][🌙 Dark]    │  Theme
 │ [📸][📘][▶][🐦]        │  Social
-│ Terms · Privacy · v1.23 │  5-tap easter egg
+│ Terms · Privacy · v1.23 │  Easter egg (5-tap)
 │ 🏠  ❤️  ✈️  💬  👤    │
 └─────────────────────────┘
 \`\`\`
