@@ -230,6 +230,15 @@ export default function Index() {
             onToggleWishlist={toggleWishlist}
           />
         )}
+        {screen.type === "experienceDetail" && (
+          <ExperienceDetailScreen
+            key="experienceDetail"
+            pack={screen.pack}
+            property={screen.property}
+            onBack={() => setScreen({ type: "home" })}
+            onBook={() => setScreen({ type: "detail", property: screen.property })}
+          />
+        )}
         {screen.type === "builder" && (
           <ExperienceBuilder
             key="builder"
