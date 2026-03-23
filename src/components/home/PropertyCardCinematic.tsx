@@ -26,7 +26,7 @@ function getRarity(price: number): string {
   return "common";
 }
 
-function StatBar({ label, value, max, color, animate, icon }: { label: string; value: number; max: number; color: string; animate: boolean; icon?: React.ReactNode }) {
+function StatBar({ label, value, max, color, revealed, icon }: { label: string; value: number; max: number; color: string; revealed: boolean; icon?: React.ReactNode }) {
   const pct = Math.min((value / max) * 100, 100);
   return (
     <div className="flex items-center gap-2">
@@ -36,18 +36,18 @@ function StatBar({ label, value, max, color, animate, icon }: { label: string; v
         <div
           className="h-full rounded-full"
           style={{
-            width: animate ? `${pct}%` : `${pct * 0.3}%`,
+            width: revealed ? `${pct}%` : "22%",
             background: `linear-gradient(90deg, ${color}40, ${color})`,
-            boxShadow: animate ? `0 0 12px ${color}80, 0 0 4px ${color}` : "none",
-            transition: animate ? "width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.5s" : "width 0.3s",
+            boxShadow: revealed ? `0 0 12px ${color}80, 0 0 4px ${color}` : `0 0 5px ${color}25`,
+            transition: "width 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.45s ease",
           }}
         />
       </div>
       <span
         className="text-[8px] font-mono font-black w-5 text-right"
-        style={{ color: animate ? color : `${color}60`, transition: "color 0.5s", textShadow: animate ? `0 0 8px ${color}60` : "none" }}
+        style={{ color: revealed ? color : `${color}60`, transition: "color 0.45s, opacity 0.35s", textShadow: revealed ? `0 0 8px ${color}60` : "none" }}
       >
-        {value}
+        {revealed ? value : "--"}
       </span>
     </div>
   );
