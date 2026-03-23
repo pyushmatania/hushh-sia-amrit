@@ -614,6 +614,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
 
             <FloatingParticles color={rarityInfo.color} active={revealed} />
             <ChargingRing progress={chargeProgress} color={rarityInfo.color} />
+            <RevealFlash active={revealFlash} color={rarityInfo.color} />
 
             {/* ── HOLD text in center (when not revealed, not charging) ── */}
             {!revealed && chargeProgress === 0 && (
