@@ -713,18 +713,26 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
             <ChargingRing progress={chargeProgress} color={rarityInfo.color} />
             <RevealFlash active={revealFlash} color={rarityInfo.color} />
 
-            {/* HOLD prompt */}
+            {/* HOLD prompt — bold, glowing, visible */}
             {!revealed && chargeProgress === 0 && (
               <div className="absolute inset-0 z-30 pointer-events-none flex items-center justify-center">
-                <div className="flex flex-col items-center gap-1" style={{ animation: "pulseGlow 2.5s ease-in-out infinite" }}>
-                  <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{
-                    background: `${rarityInfo.color}12`,
-                    border: `1.5px solid ${rarityInfo.color}30`,
-                    boxShadow: `0 0 25px ${rarityInfo.color}15, inset 0 0 15px ${rarityInfo.color}08`,
+                <div className="flex flex-col items-center gap-2" style={{ animation: "pulseGlow 2s ease-in-out infinite" }}>
+                  <div className="w-[72px] h-[72px] rounded-full flex items-center justify-center" style={{
+                    background: `radial-gradient(circle, ${rarityInfo.color}30 0%, ${rarityInfo.color}08 70%)`,
+                    border: `2px solid ${rarityInfo.color}60`,
+                    boxShadow: `0 0 40px ${rarityInfo.color}40, 0 0 80px ${rarityInfo.color}20, inset 0 0 25px ${rarityInfo.color}15`,
+                    animation: "borderPulse 1.5s ease-in-out infinite",
                   }}>
-                    <Zap size={20} style={{ color: rarityInfo.color, filter: `drop-shadow(0 0 6px ${rarityInfo.color})` }} />
+                    <Zap size={28} style={{ color: rarityInfo.color, filter: `drop-shadow(0 0 12px ${rarityInfo.color}) drop-shadow(0 0 24px ${rarityInfo.color}80)`, animation: "energyPulse 1.2s ease-in-out infinite" }} />
                   </div>
-                  <span className="text-[8px] font-black tracking-[0.4em] uppercase" style={{ color: `${rarityInfo.color}90`, textShadow: `0 0 12px ${rarityInfo.color}50` }}>HOLD TO SCAN</span>
+                  <div className="flex flex-col items-center gap-0.5">
+                    <span className="text-[11px] font-black tracking-[0.35em] uppercase" style={{
+                      color: rarityInfo.color,
+                      textShadow: `0 0 20px ${rarityInfo.color}, 0 0 40px ${rarityInfo.color}60`,
+                      fontFamily: "'Space Grotesk', sans-serif",
+                    }}>HOLD TO SCAN</span>
+                    <span className="text-[7px] font-bold tracking-[0.3em] uppercase text-white/30">Reveal stats & price</span>
+                  </div>
                 </div>
               </div>
             )}
