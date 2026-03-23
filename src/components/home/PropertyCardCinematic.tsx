@@ -407,7 +407,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
       <BlurOverlay active={revealed} onRelease={doRelease} />
 
       <div
-        className="mx-5 relative"
+        className="mx-5 relative overflow-x-clip"
         style={{
           perspective: "1200px",
           userSelect: "none",
@@ -442,10 +442,11 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
           onContextMenu={(e) => e.preventDefault()}
           style={{
             height: revealed ? "380px" : "340px",
-            transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(${revealed ? 1.08 : isActive ? 1.02 : 1})`,
+            transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(${revealed ? 1.03 : isActive ? 1.01 : 1})`,
             transition: revealed ? "transform 0.08s ease-out, height 0.5s cubic-bezier(0.34,1.56,0.64,1)" : "transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.5s ease",
             transformStyle: "preserve-3d",
             cursor: "grab",
+            touchAction: revealed ? "none" : "pan-y",
           }}
         >
           {/* Card frame */}
