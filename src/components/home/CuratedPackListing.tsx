@@ -123,9 +123,20 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
   return (
     <div
       ref={cardRef}
-      className="cursor-pointer px-5 group active:scale-[0.97] transition-transform"
+      className="cursor-pointer px-5 group active:scale-[0.97] transition-transform select-none"
       style={{ animationDelay: `${index * 60}ms` }}
-      onClick={() => { hapticSelection(); onTap(pack); }}
+      onTouchEnd={(e) => {
+        e.stopPropagation();
+        hapticSelection();
+        onTap(pack);
+      }}
+      onClick={(e) => {
+        // Desktop fallback
+        if (!(e.nativeEvent instanceof PointerEvent && (e.nativeEvent as any).pointerType === "touch")) {
+          hapticSelection();
+          onTap(pack);
+        }
+      }}
     >
       {/* Video area — tall like stay listings */}
       <div className="relative" style={{ height: "70vh", maxHeight: "520px" }}>
@@ -158,7 +169,7 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
               playsInline
               preload="auto"
               onCanPlay={() => setVideoReady(true)}
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover pointer-events-none"
               style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.3s" }}
             />
           )}
