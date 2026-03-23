@@ -1671,6 +1671,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
                 <p>UI: useTheme · usePrivacyMode · useUnreadCount</p>
               </div>
             </div>
+            <MermaidDiagram chart={BOOKING_FLOW_CHART} title="Booking Flow" />
           </div>
         </DocSection>
 
