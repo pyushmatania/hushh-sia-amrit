@@ -1665,7 +1665,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
       .replace(/^- (.+)$/gm, '<li>$1</li>')
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/\n\n/g, '<br/><br/>');
-    printWindow.document.write(`<!DOCTYPE html><html><head><title>Hushh Documentation v1.21</title><style>
+    printWindow.document.write(`<!DOCTYPE html><html><head><title>Hushh Documentation v1.23</title><style>
       *{margin:0;padding:0;box-sizing:border-box}
       body{font-family:'Segoe UI',system-ui,sans-serif;padding:40px;color:#1a1a2e;line-height:1.7;font-size:13px;max-width:900px;margin:0 auto}
       h1{font-size:24px;margin:24px 0 12px;color:#7c3aed}
@@ -1675,7 +1675,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
       pre{background:#f5f3ff;padding:12px;border-radius:8px;font-size:11px;white-space:pre-wrap;margin:8px 0}
       .footer{margin-top:40px;text-align:center;color:#888;font-size:11px;border-top:1px solid #ddd;padding-top:16px}
       @media print{body{padding:20px}h2{page-break-before:auto}}
-    </style></head><body><div>${htmlContent}</div><div class="footer">Hushh v1.21 | Made in Jeypore | Generated ${new Date().toLocaleDateString()}</div></body></html>`);
+    </style></head><body><div>${htmlContent}</div><div class="footer">Hushh v1.23 | Made in Jeypore | Generated ${new Date().toLocaleDateString()}</div></body></html>`);
     printWindow.document.close();
     setTimeout(() => printWindow.print(), 500);
   }, []);
