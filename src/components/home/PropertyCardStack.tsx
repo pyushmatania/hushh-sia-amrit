@@ -121,11 +121,11 @@ function PaperTexture() {
 /* ── Main component ─────────────────────────────────────── */
 
 export default function PropertyCardStack({ properties, startIndex, onTap, wishlist, onToggleWishlist }: PropertyCardStackProps) {
-  const SWIPE_DISTANCE = 22;
-  const FLICK_DISTANCE = 12;
-  const FLICK_TIME = 280;
-  const TAP_DISTANCE = 12;
-  const TAP_TIME = 280;
+  const SWIPE_DISTANCE = 18;
+  const FLICK_DISTANCE = 8;
+  const FLICK_TIME = 240;
+  const TAP_DISTANCE = 10;
+  const TAP_TIME = 220;
 
   const cards = properties.slice(0, 5).length >= 3 ? properties.slice(0, 5) : properties.slice(0, 3);
   const [active, setActive] = useState(0);
@@ -219,10 +219,19 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
 
     const dx = e.touches[0].clientX - touchRef.current.x;
     const dy = e.touches[0].clientY - touchRef.current.y;
+    const absX = Math.abs(dx);
+    const absY = Math.abs(dy);
 
     if (touchRef.current.mode === "pending") {
-      if (Math.abs(dx) < 5 && Math.abs(dy) < 5) return;
-      touchRef.current.mode = Math.abs(dx) > Math.abs(dy) ? "horizontal" : "vertical";
+      if (absX < 4 && absY < 4) return;
+
+      if (absX > 8 && absX >= absY * 0.75) {
+        touchRef.current.mode = "horizontal";
+      } else if (absY > 8 && absY > absX * 1.15) {
+        touchRef.current.mode = "vertical";
+      } else {
+        return;
+      }
 
       if (touchRef.current.mode === "vertical") {
         setIsDragging(false);
@@ -263,7 +272,12 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
       return;
     }
 
-    if (Math.abs(dx) <= TAP_DISTANCE && dt <= TAP_TIME && Date.now() >= blockTapUntilRef.current) {
+    if (
+      Math.abs(dx) <= TAP_DISTANCE &&
+      dt <= TAP_TIME &&
+      Date.now() >= blockTapUntilRef.current &&
+      Date.now() >= controlTapBlockUntilRef.current
+    ) {
       blockTapUntilRef.current = Date.now() + 320;
       onTap(cards[active]);
     }
@@ -334,12 +348,13 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
                 height: "340px",
                 left: "50%",
                 marginLeft: "-115px",
-                transition: isDragging ? "none" : "all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                transition: isDragging ? "none" : "all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)",
                 transformStyle: "preserve-3d",
+                willChange: "transform, opacity",
               }}
               onClick={(e) => {
                 e.stopPropagation();
-                if (!isFront || isDragging) return;
+                if (!isFront || isDragging || swipedRef.current) return;
                 if (Date.now() < blockTapUntilRef.current || Date.now() < controlTapBlockUntilRef.current) return;
                 onTap(property);
               }}
@@ -516,6 +531,11 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
             e.stopPropagation();
             blockCardTapBriefly();
           }}
+          onTouchEnd={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            blockCardTapBriefly();
+          }}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -536,6 +556,11 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
         </div>
         <button
           onTouchStart={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            blockCardTapBriefly();
+          }}
+          onTouchEnd={(e) => {
             e.preventDefault();
             e.stopPropagation();
             blockCardTapBriefly();
