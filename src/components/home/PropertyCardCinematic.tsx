@@ -569,14 +569,16 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
                   <div
                     className="px-2 py-0.5 rounded-md text-[8px] font-black tracking-wider"
                     style={{
-                      background: "hsl(160 70% 40% / 0.25)",
-                      color: "hsl(160 70% 65%)",
-                      border: "1px solid hsl(160 70% 40% / 0.3)",
-                      boxShadow: revealed ? "0 0 12px hsl(160 70% 40% / 0.3)" : "none",
-                      transition: "box-shadow 0.5s",
+                      background: "hsl(var(--success) / 0.25)",
+                      color: "hsl(var(--success) / 1)",
+                      border: "1px solid hsl(var(--success) / 0.3)",
+                      boxShadow: revealed ? "0 0 12px hsl(var(--success) / 0.35)" : "none",
+                      transform: revealed ? "translateY(0) scale(1)" : "translateY(1px) scale(0.96)",
+                      opacity: revealed ? 1 : 0.75,
+                      transition: "box-shadow 0.45s, transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s",
                     }}
                   >
-                    {discount}
+                    {revealed ? discount : "X% OFF"}
                   </div>
                 )}
                 <button
