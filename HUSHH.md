@@ -1,6 +1,6 @@
 # 🏡 HUSHH — Private Experience Marketplace
 
-> **Made in Jeypore ❤️** | v1.24 | Internal Documentation & Blueprint
+> **Made in Jeypore ❤️** | v1.25 | Internal Documentation & Blueprint
 
 Hushh is a premium mobile-first marketplace for booking private experiences, stays, and curated lifestyle services in Jeypore, India. Think Airbnb meets a concierge — but hyper-local, with a focus on curated combos and on-demand add-ons.
 
@@ -508,8 +508,12 @@ Every route is wrapped in a `<ErrorBoundary>` component that catches React rende
 | `useVideoCards` | Spotlight video card config from DB | ✅ Default videos |
 | `useDragReorder` | Pointer-based drag-and-drop reordering | — |
 | `useMobile` | Mobile viewport detection | — |
-
-**Planned hooks** (v2.0): `usePayments`, `useSlotAvailability`, `usePushTokens`, `useNotificationPreferences`, `useInvoices`
+| `useOnlineStatus` | Offline/online detection | — |
+| `usePayments` | Payment CRUD (payments table) | — |
+| `useSlotAvailability` | Property slots + per-date availability | — |
+| `useInvoices` | Invoice retrieval by booking | — |
+| `useOrders` | Order CRUD with items, active order tracking | — |
+| `useSearch` | Debounced search across properties & curations | — |
 
 ---
 
@@ -1385,6 +1389,16 @@ standalone: campaigns · coupons · expenses · budget_allocations · app_config
 - **Rate Limiting Documented**: Auth (30/hr), Spin Wheel (1/day/user), Edge Functions (100 req/s), Search (client debounce 300ms)
 - **Video & Asset Strategy Documented**: Lazy loading via IntersectionObserver, CDN-backed Supabase Storage, font preconnect + swap
 - **Architecture Diagram Updated**: ErrorBoundary, OfflineBanner, and useOnlineStatus hook reflected in tree
+
+### v1.25 — v2.0 Hooks
+- **5 new hooks** built for Phase 1 tables:
+  - `usePayments` — Payment CRUD, create payment, get payment by booking, auto-refresh
+  - `useSlotAvailability` — Fetch property slots + per-date availability, remaining capacity calc, dynamic pricing
+  - `useInvoices` — Invoice retrieval by user/booking, PDF URL access
+  - `useOrders` — Order CRUD with nested items, active order tracking, create order with items
+  - `useSearch` — Debounced (300ms) full-text search across host_listings + curations with category filtering
+- **Total hooks**: 27 (up from 22)
+- **Documentation & easter egg UI synced** with all new hooks
 
 ---
 

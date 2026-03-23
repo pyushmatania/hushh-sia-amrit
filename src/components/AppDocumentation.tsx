@@ -389,6 +389,18 @@ export const changeLog = [
       "Architecture updated — ErrorBoundary, OfflineBanner, useOnlineStatus reflected in component tree",
     ],
   },
+  {
+    version: "1.25",
+    phase: "v2.0 Hooks",
+    items: [
+      "usePayments — Payment CRUD, create payment, get by booking, auto-refresh",
+      "useSlotAvailability — Property slots + per-date availability, remaining capacity, dynamic pricing",
+      "useInvoices — Invoice retrieval by user/booking, PDF URL access",
+      "useOrders — Order CRUD with nested items, active order tracking, create with items",
+      "useSearch — Debounced (300ms) full-text search across properties + curations with category filtering",
+      "Total hooks: 27 (up from 22)",
+    ],
+  },
 ];
 
 // Generate the COMPLETE documentation including PRD, Blueprint, Wireframes
@@ -559,7 +571,7 @@ Splash → Home → Browse/Search/Map → Property Card → Detail → Select Sl
 
 ## 🏗 Architecture
 
-80+ components, 22+ hooks, 45 database tables, 6 edge functions
+80+ components, 27 hooks, 45 database tables, 6 edge functions
 
 React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion 12 · React Query · React Router v6 · Lovable Cloud · Recharts · React Hook Form + Zod
 
@@ -606,6 +618,14 @@ React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion
 | useHomepageSections | Section visibility & ordering |
 | useHomepageFilters | Dynamic category filter pills |
 | useVideoCards | Spotlight video card config |
+| useDragReorder | Pointer-based drag-and-drop reordering |
+| useMobile | Mobile viewport detection |
+| useOnlineStatus | Offline/online detection |
+| usePayments | Payment CRUD (payments table) |
+| useSlotAvailability | Property slots + per-date availability |
+| useInvoices | Invoice retrieval by booking |
+| useOrders | Order CRUD with items, active order tracking |
+| useSearch | Debounced search across properties & curations |
 
 ---
 
@@ -2045,6 +2065,8 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
                 <p>        useHomepageFilters · useVideoCards</p>
                 <p>UI: useTheme · usePrivacyMode · useUnreadCount</p>
                 <p>Net: useOnlineStatus</p>
+                <p>v2: usePayments · useSlotAvailability</p>
+                <p>    useInvoices · useOrders · useSearch</p>
               </div>
             </div>
             <div>
