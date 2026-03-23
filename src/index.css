@@ -236,6 +236,12 @@
   will-change: transform, opacity;
 }
 
+/* Auto content-visibility for off-screen cards */
+.card-lazy {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 380px;
+}
+
 /* Haptic press feedback */
 .haptic-press {
   transition: transform 0.1s ease;
