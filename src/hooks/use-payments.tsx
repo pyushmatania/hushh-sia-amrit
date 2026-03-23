@@ -65,21 +65,23 @@ export function usePayments(bookingId?: string) {
     }) => {
       if (!user) return null;
 
+      const insertData: Record<string, unknown> = {
+        user_id: user.id,
+        amount: payment.amount,
+        booking_id: payment.booking_id ?? null,
+        currency: payment.currency ?? "INR",
+        status: payment.status ?? "pending",
+        payment_method: payment.payment_method ?? "upi",
+        gateway: payment.gateway ?? "razorpay",
+        gateway_order_id: payment.gateway_order_id ?? null,
+        gateway_payment_id: payment.gateway_payment_id ?? null,
+        gateway_signature: payment.gateway_signature ?? null,
+        metadata: payment.metadata ?? {},
+      };
+
       const { data } = await supabase
         .from("payments")
-        .insert({
-          user_id: user.id,
-          amount: payment.amount,
-          booking_id: payment.booking_id ?? null,
-          currency: payment.currency ?? "INR",
-          status: payment.status ?? "pending",
-          payment_method: payment.payment_method ?? "upi",
-          gateway: payment.gateway ?? "razorpay",
-          gateway_order_id: payment.gateway_order_id ?? null,
-          gateway_payment_id: payment.gateway_payment_id ?? null,
-          gateway_signature: payment.gateway_signature ?? null,
-          metadata: payment.metadata ?? {},
-        })
+        .insert(insertData as never)
         .select()
         .maybeSingle();
 
