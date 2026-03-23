@@ -28,6 +28,9 @@ function ToggleSwitch({ enabled, onChange }: { enabled: boolean; onChange: (v: b
 }
 
 function NotificationSettings() {
+  const { toast } = useToast();
+  const { isSupported, isSubscribed, isLoading, isiOS, isPWA, permission, subscribe, unsubscribe } = usePushNotifications();
+  const [isSendingTest, setIsSendingTest] = useState(false);
   const [settings, setSettings] = useState({
     bookingUpdates: true,
     promotions: true,
@@ -40,6 +43,29 @@ function NotificationSettings() {
   const toggle = (key: keyof typeof settings) =>
     setSettings((s) => ({ ...s, [key]: !s[key] }));
 
+  const handlePushToggle = async () => {
+    try {
+      if (isSubscribed) { await unsubscribe(); toast({ title: "Push notifications disabled" }); }
+      else { await subscribe(); toast({ title: "Push notifications enabled! 🔔" }); }
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    }
+  };
+
+  const handleTestPush = async () => {
+    setIsSendingTest(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+      await supabase.functions.invoke('send-push-notification', {
+        body: { user_id: user.id, payload: { title: "Test Notification 🔔", body: "Push notifications are working!", url: "/" } }
+      });
+      toast({ title: "Test notification sent!" });
+    } catch (err: any) {
+      toast({ title: "Failed", description: err.message, variant: "destructive" });
+    } finally { setIsSendingTest(false); }
+  };
+
   const items = [
     { key: "bookingUpdates" as const, label: "Booking updates", desc: "Confirmations, cancellations, changes" },
     { key: "promotions" as const, label: "Promotions & deals", desc: "Special offers and discounts" },
@@ -51,12 +77,46 @@ function NotificationSettings() {
 
   return (
     <div className="space-y-1">
+      {/* Push Notification Toggle */}
+      <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="py-4 border-b border-border">
+        <div className="flex items-center justify-between">
+          <div className="flex-1 min-w-0 pr-4">
+            <div className="flex items-center gap-2">
+              <Smartphone size={16} className="text-primary" />
+              <p className="text-sm font-semibold text-foreground">Push Notifications</p>
+            </div>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {!isSupported
+                ? isiOS && !isPWA ? "Install as app first (Share → Add to Home Screen)" : "Not supported in this browser"
+                : permission === 'denied' ? "Blocked — update browser settings"
+                : isSubscribed ? "Enabled — you'll receive real-time alerts" : "Tap to enable real-time push alerts"}
+            </p>
+          </div>
+          {isSupported && permission !== 'denied' && (
+            isLoading ? <Loader2 size={20} className="animate-spin text-primary" /> :
+            <ToggleSwitch enabled={isSubscribed} onChange={handlePushToggle} />
+          )}
+        </div>
+        {isSubscribed && (
+          <motion.button
+            initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
+            whileTap={{ scale: 0.97 }}
+            onClick={handleTestPush}
+            disabled={isSendingTest}
+            className="mt-2 text-xs font-medium text-primary flex items-center gap-1"
+          >
+            {isSendingTest ? <Loader2 size={12} className="animate-spin" /> : <Bell size={12} />}
+            Send test notification
+          </motion.button>
+        )}
+      </motion.div>
+
       {items.map((item, i) => (
         <motion.div
           key={item.key}
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: i * 0.04 }}
+          transition={{ delay: (i + 1) * 0.04 }}
           className="flex items-center justify-between py-4 border-b border-border last:border-0"
         >
           <div className="flex-1 min-w-0 pr-4">
