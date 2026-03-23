@@ -167,9 +167,11 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
   const holdTimerRef = useRef<number | null>(null);
   const chargeIntervalRef = useRef<number | null>(null);
   const holdStartRef = useRef<number>(0);
+  const touchStartXRef = useRef<number>(0);
   const touchStartYRef = useRef<number>(0);
   const isHoldingRef = useRef(false);
   const hasSwipedRef = useRef(false);
+  const holdCancelledRef = useRef(false);
   const didRevealRef = useRef(false);
 
   const cardRef = useRef<HTMLDivElement>(null);
@@ -211,20 +213,21 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
     clearTimers();
   }, [clearTimers]);
 
-  // Touch handlers
+  // Touch handlers — do NOT preventDefault on start so scrolling works
   const onTouchStart = useCallback((e: React.TouchEvent) => {
-    e.preventDefault(); // prevent text selection
     const touch = e.touches[0];
+    touchStartXRef.current = touch.clientX;
     touchStartYRef.current = touch.clientY;
     holdStartRef.current = Date.now();
     isHoldingRef.current = true;
     hasSwipedRef.current = false;
     didRevealRef.current = false;
+    holdCancelledRef.current = false;
     setIsActive(true);
 
-    // Start charging animation
     const startTime = Date.now();
     chargeIntervalRef.current = window.setInterval(() => {
+      if (holdCancelledRef.current) return;
       const elapsed = Date.now() - startTime;
       const p = Math.min(elapsed / HOLD_DURATION, 1);
       setChargeProgress(p);
@@ -232,7 +235,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
     }, 16);
 
     holdTimerRef.current = window.setTimeout(() => {
-      if (isHoldingRef.current) {
+      if (isHoldingRef.current && !holdCancelledRef.current) {
         doReveal();
       }
     }, HOLD_DURATION);
@@ -241,8 +244,22 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
   const onTouchMoveHandler = useCallback((e: React.TouchEvent) => {
     const touch = e.touches[0];
 
-    // Tilt effect while holding
-    if (cardRef.current && isHoldingRef.current) {
+    // If not yet revealed, check if user is scrolling — cancel hold
+    if (!didRevealRef.current) {
+      const dx = Math.abs(touch.clientX - touchStartXRef.current);
+      const dy = Math.abs(touch.clientY - touchStartYRef.current);
+      if (dx > 10 || dy > 10) {
+        holdCancelledRef.current = true;
+        isHoldingRef.current = false;
+        clearTimers();
+        setChargeProgress(0);
+        setIsActive(false);
+        return;
+      }
+    }
+
+    // Tilt effect while revealed
+    if (cardRef.current && didRevealRef.current) {
       const rect = cardRef.current.getBoundingClientRect();
       const x = ((touch.clientX - rect.left) / rect.width - 0.5) * 2;
       const y = ((touch.clientY - rect.top) / rect.height - 0.5) * 2;
@@ -250,6 +267,9 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
     }
 
     if (!didRevealRef.current) return;
+
+    // Once revealed, prevent scrolling so swipe gestures work
+    e.preventDefault();
 
     const deltaY = touchStartYRef.current - touch.clientY;
 
@@ -352,7 +372,6 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
         userSelect: "none",
         WebkitUserSelect: "none",
         WebkitTouchCallout: "none",
-        touchAction: "none",
       } as React.CSSProperties}
     >
       <LightRays color={rarityInfo.color} active={revealed} />
