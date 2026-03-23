@@ -584,7 +584,7 @@ React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion
 | Table | Key Columns | Purpose |
 |-------|------------|---------|
 | profiles | user_id, display_name, avatar_url, loyalty_points, tier | User profiles |
-| bookings | user_id, property_id, date, slot, guests, total, status | Booking records |
+| bookings | user_id, property_id, date, slot, guests, total, status, payment_status, payment_id | Booking records |
 | wishlists | user_id, property_id | Saved properties |
 | conversations | participant_1, participant_2, type, property_id, metadata | Chat threads (direct/support/group) |
 | messages | conversation_id, sender_id, content, read | Chat messages |
