@@ -372,33 +372,12 @@ function AnimatedLogo({ brandName, tagline, textColor, accentColor, logoUrl }: {
         <div className="flex items-center gap-0.5">
           {letters.map((letter, i) => (
             <motion.span
-              key={i}
-              className="text-4xl font-black tracking-tight"
-              style={{
-                color: textColor,
-                textShadow: `0 2px 15px ${accentColor}44`,
-                display: "inline-block",
-              }}
-              initial={{ y: 30, opacity: 0, rotateX: -90 }}
-              animate={{ y: 0, opacity: 1, rotateX: 0 }}
-              transition={{
-                delay: 1.8 + i * 0.08,
-                type: "spring",
-                stiffness: 300,
-                damping: 15,
-              }}
-            />
-          ))}
-          {/* Render letters via children to avoid empty spans */}
-          {letters.map((letter, i) => (
-            <motion.span
               key={`l-${i}`}
               className="text-4xl font-black tracking-tight"
               style={{
                 color: textColor,
                 textShadow: `0 2px 15px ${accentColor}44`,
                 display: "inline-block",
-                position: "absolute",
               }}
               initial={{ y: 30, opacity: 0, rotateX: -90 }}
               animate={{ y: 0, opacity: 1, rotateX: 0 }}
