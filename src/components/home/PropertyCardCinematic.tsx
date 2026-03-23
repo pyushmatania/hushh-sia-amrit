@@ -834,15 +834,16 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
       <ChargingBlurOverlay active={isCharging} intensity={chargeProgress} />
 
       <div
-        className="mx-5 relative overflow-x-clip"
+        className="mx-5 relative"
         data-no-pull-refresh="true"
         style={{
           userSelect: "none",
           WebkitUserSelect: "none",
           WebkitTouchCallout: "none",
           zIndex: revealed ? 9999 : isCharging ? 9998 : "auto",
-          paddingBottom: (revealed || isCharging) ? "60px" : "0",
-          transition: "padding-bottom 0.4s ease",
+          paddingBottom: (revealed || isCharging) ? "220px" : "0",
+          transition: "padding-bottom 0.5s ease",
+          overflow: "visible",
         } as React.CSSProperties}
       >
         <LightRays color={rarityInfo.color} active={revealed || isCharging} />
