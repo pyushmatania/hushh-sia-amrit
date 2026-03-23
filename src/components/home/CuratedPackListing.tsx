@@ -192,6 +192,8 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
 
           {/* Mute toggle */}
           <button
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => { e.stopPropagation(); e.preventDefault(); setMuted(!muted); }}
             onClick={(e) => { e.stopPropagation(); setMuted(!muted); }}
             className="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center z-10"
             style={{ background: "hsl(var(--foreground) / 0.36)", backdropFilter: "blur(8px)" }}
