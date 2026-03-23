@@ -29,23 +29,18 @@ export default function BottomNav({ active, onChange, messageBadge = 0 }: Bottom
 
   return (
     <div
-      className="fixed left-2 right-2 z-40"
+      className="fixed left-0 right-0 z-40"
       style={{
-        bottom: "max(10px, calc(env(safe-area-inset-bottom, 0px) + 4px))",
+        bottom: "0px",
       }}
     >
       <motion.div
         initial={{ y: 30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 300, damping: 28, delay: 0.1 }}
-        className="relative overflow-hidden"
         style={{
-          borderRadius: "22px",
-          background: "hsl(var(--card) / 0.85)",
-          backdropFilter: "blur(24px) saturate(1.6)",
-          WebkitBackdropFilter: "blur(24px) saturate(1.6)",
-          border: "1px solid hsl(var(--border) / 0.25)",
-          boxShadow: "0 8px 32px hsl(var(--foreground) / 0.12), 0 2px 8px hsl(var(--foreground) / 0.06), inset 0 1px 0 hsl(0 0% 100% / 0.04)",
+          background: "hsl(var(--card))",
+          borderTop: "1px solid hsl(var(--border) / 0.3)",
         }}
       >
         {/* Subtle top highlight */}
