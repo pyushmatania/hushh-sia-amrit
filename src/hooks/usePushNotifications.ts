@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
-const VAPID_PUBLIC_KEY = 'BOZAnbOohkjHyyrTWPRRvQT7FYgNccEd_odHdTLUDmz9vLNvNkznlQCnvNUc7DBEgxR80WBcYhnctqLgafZmXJ4';
+const VAPID_PUBLIC_KEY = 'BG1pTfhyjNsScfEnyuW_YVgxhhkFPajS-KOrhkLRVs_u6e5LaPGt_itjHfTTeKBD82B_gBd9e4qvM8J4Msmmw_E';
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array<ArrayBuffer> {
   const normalized = base64String.trim();
@@ -11,6 +11,45 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array<ArrayBuffer> {
   const outputArray = new Uint8Array(rawData.length) as Uint8Array<ArrayBuffer>;
   for (let i = 0; i < rawData.length; ++i) outputArray[i] = rawData.charCodeAt(i);
   return outputArray;
+}
+
+async function subscribeWithCompatibility(
+  registration: ServiceWorkerRegistration,
+  appServerKey: Uint8Array<ArrayBuffer>,
+) {
+  try {
+    return await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: appServerKey as BufferSource,
+    });
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : String(error);
+
+    // Safari fallback: retry using a plain ArrayBuffer payload.
+    if (msg.includes('applicationServerKey') || msg.includes('P-256')) {
+      const keyBuffer = appServerKey.buffer.slice(
+        appServerKey.byteOffset,
+        appServerKey.byteOffset + appServerKey.byteLength,
+      );
+
+      return await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: keyBuffer,
+      });
+    }
+
+    // Some browsers keep a stale subscription with another VAPID key.
+    if (msg.includes('different application server key')) {
+      const existing = await registration.pushManager.getSubscription();
+      if (existing) await existing.unsubscribe();
+      return await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: appServerKey as BufferSource,
+      });
+    }
+
+    throw error;
+  }
 }
 
 export function usePushNotifications() {
@@ -60,10 +99,7 @@ export function usePushNotifications() {
         throw new Error('Invalid VAPID public key format');
       }
 
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: appServerKey as BufferSource,
-      });
+      const subscription = await subscribeWithCompatibility(registration, appServerKey);
 
       const p256dhKey = subscription.getKey('p256dh');
       const authKey = subscription.getKey('auth');
