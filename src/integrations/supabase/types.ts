@@ -22,6 +22,7 @@ export type Database = {
           key: string
           label: string
           updated_at: string
+          updated_by: string | null
           value: string
         }
         Insert: {
@@ -31,6 +32,7 @@ export type Database = {
           key: string
           label?: string
           updated_at?: string
+          updated_by?: string | null
           value: string
         }
         Update: {
@@ -40,6 +42,7 @@ export type Database = {
           key?: string
           label?: string
           updated_at?: string
+          updated_by?: string | null
           value?: string
         }
         Relationships: []
@@ -111,6 +114,10 @@ export type Database = {
           friend_name: string
           id: string
           paid_at: string | null
+          paid_at_actual: string | null
+          payment_id: string | null
+          payment_link_url: string | null
+          payment_status: string
           status: string
         }
         Insert: {
@@ -122,6 +129,10 @@ export type Database = {
           friend_name?: string
           id?: string
           paid_at?: string | null
+          paid_at_actual?: string | null
+          payment_id?: string | null
+          payment_link_url?: string | null
+          payment_status?: string
           status?: string
         }
         Update: {
@@ -133,9 +144,21 @@ export type Database = {
           friend_name?: string
           id?: string
           paid_at?: string | null
+          paid_at_actual?: string | null
+          payment_id?: string | null
+          payment_link_url?: string | null
+          payment_status?: string
           status?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "booking_splits_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       bookings: {
         Row: {
@@ -145,6 +168,8 @@ export type Database = {
           extra_mattresses: number | null
           guests: number
           id: string
+          payment_id: string | null
+          payment_status: string
           property_id: string
           rooms_count: number | null
           slot: string
@@ -160,6 +185,8 @@ export type Database = {
           extra_mattresses?: number | null
           guests: number
           id?: string
+          payment_id?: string | null
+          payment_status?: string
           property_id: string
           rooms_count?: number | null
           slot: string
@@ -175,6 +202,8 @@ export type Database = {
           extra_mattresses?: number | null
           guests?: number
           id?: string
+          payment_id?: string | null
+          payment_status?: string
           property_id?: string
           rooms_count?: number | null
           slot?: string
@@ -183,7 +212,15 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "bookings_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       budget_allocations: {
         Row: {
@@ -315,22 +352,31 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          metadata: Json | null
           participant_1: string
           participant_2: string
+          property_id: string | null
+          type: string
           updated_at: string
         }
         Insert: {
           created_at?: string
           id?: string
+          metadata?: Json | null
           participant_1: string
           participant_2: string
+          property_id?: string | null
+          type?: string
           updated_at?: string
         }
         Update: {
           created_at?: string
           id?: string
+          metadata?: Json | null
           participant_1?: string
           participant_2?: string
+          property_id?: string | null
+          type?: string
           updated_at?: string
         }
         Relationships: []
@@ -725,6 +771,60 @@ export type Database = {
         }
         Relationships: []
       }
+      invoices: {
+        Row: {
+          amount: number
+          booking_id: string | null
+          created_at: string
+          id: string
+          invoice_number: string
+          line_items: Json | null
+          payment_id: string | null
+          pdf_url: string | null
+          tax_amount: number
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          booking_id?: string | null
+          created_at?: string
+          id?: string
+          invoice_number?: string
+          line_items?: Json | null
+          payment_id?: string | null
+          pdf_url?: string | null
+          tax_amount?: number
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          booking_id?: string | null
+          created_at?: string
+          id?: string
+          invoice_number?: string
+          line_items?: Json | null
+          payment_id?: string | null
+          pdf_url?: string | null
+          tax_amount?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       loyalty_transactions: {
         Row: {
           created_at: string
@@ -792,6 +892,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notification_preferences: {
+        Row: {
+          channel: string
+          created_at: string
+          enabled: boolean
+          id: string
+          notification_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          channel?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          notification_type?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          notification_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       notifications: {
         Row: {
@@ -944,6 +1074,65 @@ export type Database = {
         }
         Relationships: []
       }
+      payments: {
+        Row: {
+          amount: number
+          booking_id: string | null
+          created_at: string
+          currency: string
+          gateway: string
+          gateway_order_id: string | null
+          gateway_payment_id: string | null
+          gateway_signature: string | null
+          id: string
+          metadata: Json | null
+          payment_method: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          booking_id?: string | null
+          created_at?: string
+          currency?: string
+          gateway?: string
+          gateway_order_id?: string | null
+          gateway_payment_id?: string | null
+          gateway_signature?: string | null
+          id?: string
+          metadata?: Json | null
+          payment_method?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          booking_id?: string | null
+          created_at?: string
+          currency?: string
+          gateway?: string
+          gateway_order_id?: string | null
+          gateway_payment_id?: string | null
+          gateway_signature?: string | null
+          id?: string
+          metadata?: Json | null
+          payment_method?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -983,6 +1172,53 @@ export type Database = {
         }
         Relationships: []
       }
+      property_slots: {
+        Row: {
+          base_price: number
+          blocked_reason: string | null
+          capacity: number
+          created_at: string
+          end_time: string
+          id: string
+          is_blocked: boolean
+          label: string
+          property_id: string
+          start_time: string
+        }
+        Insert: {
+          base_price?: number
+          blocked_reason?: string | null
+          capacity?: number
+          created_at?: string
+          end_time?: string
+          id?: string
+          is_blocked?: boolean
+          label?: string
+          property_id: string
+          start_time?: string
+        }
+        Update: {
+          base_price?: number
+          blocked_reason?: string | null
+          capacity?: number
+          created_at?: string
+          end_time?: string
+          id?: string
+          is_blocked?: boolean
+          label?: string
+          property_id?: string
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_slots_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "host_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       property_tags: {
         Row: {
           color: string
@@ -1004,6 +1240,36 @@ export type Database = {
           icon?: string
           id?: string
           name?: string
+        }
+        Relationships: []
+      }
+      push_tokens: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          platform: string
+          token: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          platform?: string
+          token: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          platform?: string
+          token?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -1065,6 +1331,57 @@ export type Database = {
             columns: ["code_id"]
             isOneToOne: false
             referencedRelation: "referral_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      refunds: {
+        Row: {
+          amount: number
+          booking_id: string | null
+          created_at: string
+          gateway_refund_id: string | null
+          id: string
+          initiated_by: string | null
+          payment_id: string
+          reason: string
+          status: string
+        }
+        Insert: {
+          amount?: number
+          booking_id?: string | null
+          created_at?: string
+          gateway_refund_id?: string | null
+          id?: string
+          initiated_by?: string | null
+          payment_id: string
+          reason?: string
+          status?: string
+        }
+        Update: {
+          amount?: number
+          booking_id?: string | null
+          created_at?: string
+          gateway_refund_id?: string | null
+          id?: string
+          initiated_by?: string | null
+          payment_id?: string
+          reason?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "refunds_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
             referencedColumns: ["id"]
           },
         ]
@@ -1144,6 +1461,44 @@ export type Database = {
             columns: ["booking_id"]
             isOneToOne: false
             referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      slot_availability: {
+        Row: {
+          booked_count: number
+          created_at: string
+          date: string
+          id: string
+          is_available: boolean
+          price_override: number | null
+          slot_id: string
+        }
+        Insert: {
+          booked_count?: number
+          created_at?: string
+          date: string
+          id?: string
+          is_available?: boolean
+          price_override?: number | null
+          slot_id: string
+        }
+        Update: {
+          booked_count?: number
+          created_at?: string
+          date?: string
+          id?: string
+          is_available?: boolean
+          price_override?: number | null
+          slot_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "slot_availability_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "property_slots"
             referencedColumns: ["id"]
           },
         ]
