@@ -389,6 +389,18 @@ export const changeLog = [
       "Architecture updated — ErrorBoundary, OfflineBanner, useOnlineStatus reflected in component tree",
     ],
   },
+  {
+    version: "1.25",
+    phase: "v2.0 Hooks",
+    items: [
+      "usePayments — Payment CRUD, create payment, get by booking, auto-refresh",
+      "useSlotAvailability — Property slots + per-date availability, remaining capacity, dynamic pricing",
+      "useInvoices — Invoice retrieval by user/booking, PDF URL access",
+      "useOrders — Order CRUD with nested items, active order tracking, create with items",
+      "useSearch — Debounced (300ms) full-text search across properties + curations with category filtering",
+      "Total hooks: 27 (up from 22)",
+    ],
+  },
 ];
 
 // Generate the COMPLETE documentation including PRD, Blueprint, Wireframes
