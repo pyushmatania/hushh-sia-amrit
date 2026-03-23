@@ -2145,6 +2145,199 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
                 <p>└─────────────────────────┘</p>
               </div>
             </div>
+            {/* New wireframes — Phase 3 */}
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Experience Builder</p>
+              <div className="font-mono text-[10px] p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                <p>┌─────────────────────┐</p>
+                <p>│ ← Experience Builder│</p>
+                <p>│ 🍽Food│🎨Decor│🎵DJ │</p>
+                <p>│ Running: ₹1,200     │</p>
+                <p>├─────────────────────┤</p>
+                <p>│ 🍕 Pizza     ₹350   │</p>
+                <p>│         [- 1 +]     │</p>
+                <p>│ 🍔 Burger    ₹250   │</p>
+                <p>│         [- 0 +]     │</p>
+                <p>│ 🍺 Beer      ₹200   │</p>
+                <p>│         [- 2 +]     │</p>
+                <p>│ ── Decor ──         │</p>
+                <p>│ 🕯 Candles   ₹500   │</p>
+                <p>│         [- 1 +]     │</p>
+                <p>│ ── Entertainment ── │</p>
+                <p>│ 🎸 DJ+Lights ₹2,000 │</p>
+                <p>│         [- 0 +]     │</p>
+                <p>│ ── Transport ──     │</p>
+                <p>│ 🚗 Pickup    ₹800   │</p>
+                <p>│         [- 0 +]     │</p>
+                <p>│ ╔══4 items ₹1,550══╗│</p>
+                <p>│ ║  [Continue →]    ║│</p>
+                <p>│ ╚═════════════════╝│</p>
+                <p>└─────────────────────┘</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Checkout Screen</p>
+              <div className="font-mono text-[10px] p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                <p>┌─────────────────────┐</p>
+                <p>│ ← Checkout          │</p>
+                <p>│ 📸 Villa Sunset     │</p>
+                <p>│ Mar 25·Eve·4 Guests │</p>
+                <p>│ ── Breakdown ──     │</p>
+                <p>│ Base Slot    ₹2,500 │</p>
+                <p>│ Extra Room   ₹1,000 │</p>
+                <p>│ 🍕 Pizza ×1   ₹350 │</p>
+                <p>│ 🕯 Candles     ₹500 │</p>
+                <p>│ 🍺 Beer ×2    ₹400 │</p>
+                <p>│ ─────────────       │</p>
+                <p>│ Subtotal     ₹5,050 │</p>
+                <p>│ GST 18%        ₹909 │</p>
+                <p>│ 🎟 [Coupon___] [Go] │</p>
+                <p>│ Discount      -₹500 │</p>
+                <p>│ ╔══TOTAL ₹5,459═══╗│</p>
+                <p>│ ║ [Confirm Book →]║│</p>
+                <p>│ ╚═════════════════╝│</p>
+                <p>│ ⚠️ 1 conflict found │</p>
+                <p>└─────────────────────┘</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Live Ordering Sheet</p>
+              <div className="font-mono text-[10px] p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                <p>┌─────────────────────┐</p>
+                <p>│ ══╸  ╺══            │</p>
+                <p>│ 🍽 Order Food   [×] │</p>
+                <p>│ Villa · Active Trip │</p>
+                <p>│ [All][🍕][🍺][🍿]  │</p>
+                <p>├─────────────────────┤</p>
+                <p>│ 🍕 Margherita  ₹350 │</p>
+                <p>│     [Add to Cart]   │</p>
+                <p>│ 🍔 Burger      ₹250 │</p>
+                <p>│     [- 1 +]         │</p>
+                <p>│ 🍺 Craft IPA   ₹200 │</p>
+                <p>│     [Add to Cart]   │</p>
+                <p>│ ╔══🛒 2·₹500══════╗│</p>
+                <p>│ ║  [Place Order →] ║│</p>
+                <p>│ ╚═════════════════╝│</p>
+                <p>│ ── History ──       │</p>
+                <p>│ #ORD-001 ₹750 ✅   │</p>
+                <p>│ #ORD-002 ₹350 🔄   │</p>
+                <p>└─────────────────────┘</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Search Screen</p>
+              <div className="font-mono text-[10px] p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                <p>┌─────────────────────┐</p>
+                <p>│ [🔍 Search____] [×] │</p>
+                <p>│ [🏠All][🏡Stay][🎭] │</p>
+                <p>│ [✨Cur][🛎Svc][💼]  │</p>
+                <p>│ ── Recent ──        │</p>
+                <p>│ 🕐 "farmhouse"      │</p>
+                <p>│ 🕐 "pool party"     │</p>
+                <p>│ ── Results (3) ──   │</p>
+                <p>│ ┌─────┐ ┌─────┐    │</p>
+                <p>│ │Villa│ │Farm │    │</p>
+                <p>│ │₹2.5K│ │₹1.8K│    │</p>
+                <p>│ └─────┘ └─────┘    │</p>
+                <p>│ 😴 No results?      │</p>
+                <p>│ "Try another term"  │</p>
+                <p>│ 🏠 ❤️ ✈️ 💬 👤    │</p>
+                <p>└─────────────────────┘</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Map View</p>
+              <div className="font-mono text-[10px] p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                <p>┌─────────────────────┐</p>
+                <p>│ ← Map View  [List📋]│</p>
+                <p>│ ┌─ JEYPORE MAP ───┐ │</p>
+                <p>│ │  📍Villa        │ │</p>
+                <p>│ │      📍Farm     │ │</p>
+                <p>│ │ 📍Pod      📍Rf │ │</p>
+                <p>│ │     📍Pool      │ │</p>
+                <p>│ └────────────────┘  │</p>
+                <p>│ ┌══ Preview ══════┐ │</p>
+                <p>│ │📸 Villa Sunset  │ │</p>
+                <p>│ │⭐4.8 · ₹2,500  │ │</p>
+                <p>│ │[View Details →] │ │</p>
+                <p>│ └════════════════┘  │</p>
+                <p>│ 🏠 ❤️ ✈️ 💬 👤    │</p>
+                <p>└─────────────────────┘</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Loyalty & Spin Wheel</p>
+              <div className="font-mono text-[10px] p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                <p>┌─────────────────────┐</p>
+                <p>│ ← Loyalty    1,240pt│</p>
+                <p>│ ╔═══ 🥇 GOLD ═════╗│</p>
+                <p>│ ║ 1,240/2,000 pts  ║│</p>
+                <p>│ ║ ████████░░ 62%   ║│</p>
+                <p>│ ║ Next: Platinum   ║│</p>
+                <p>│ ╚═════════════════╝│</p>
+                <p>│ ── Daily Spin ──    │</p>
+                <p>│  ╱50╲100╲25╲       │</p>
+                <p>│ │200│ 75│150│       │</p>
+                <p>│  ╲10╱───╱───╱       │</p>
+                <p>│   [🎰 SPIN!]       │</p>
+                <p>│ ── History ──       │</p>
+                <p>│ +50 🎫 Booking      │</p>
+                <p>│ +25 🎰 Spin         │</p>
+                <p>│ -100 🎁 Redeemed    │</p>
+                <p>│ ── Milestones ──    │</p>
+                <p>│ 🌟 First Book ✅    │</p>
+                <p>│ ⭐ 5★ Reviewer ✅   │</p>
+                <p>│ 🎉 Party (3/5)     │</p>
+                <p>│ 🏠 ❤️ ✈️ 💬 👤    │</p>
+                <p>└─────────────────────┘</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Auth / Onboarding</p>
+              <div className="font-mono text-[10px] p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                <p>┌─────────────────────┐</p>
+                <p>│       🤫 HUSHH      │</p>
+                <p>│ "Private experiences │</p>
+                <p>│  curated for you"   │</p>
+                <p>│ ┌─────────────────┐ │</p>
+                <p>│ │📧 [Email______] │ │</p>
+                <p>│ │🔒 [Password___] │ │</p>
+                <p>│ │  [Sign In →]    │ │</p>
+                <p>│ │    ── or ──     │ │</p>
+                <p>│ │ [Create Account]│ │</p>
+                <p>│ │ [Forgot Pass?]  │ │</p>
+                <p>│ └─────────────────┘ │</p>
+                <p>│ [Continue as Guest] │</p>
+                <p>│ ── Sign Up ──       │</p>
+                <p>│ 👤[Name] 📧[Email]  │</p>
+                <p>│ 🔒[Pass] 🔒[Confirm]│</p>
+                <p>│ [Create Account →]  │</p>
+                <p>│ ✉️ Verify your email│</p>
+                <p>└─────────────────────┘</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Notifications Screen</p>
+              <div className="font-mono text-[10px] p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                <p>┌─────────────────────┐</p>
+                <p>│ ← Notifications [Clr]│</p>
+                <p>│ [All][Book][Order]   │</p>
+                <p>│ [Reviews][System]    │</p>
+                <p>│ ── Today ──          │</p>
+                <p>│ 🎫 Booking Confirmed│</p>
+                <p>│ HUSHH-UP0025  2m [●]│</p>
+                <p>│ 🍽 Order Ready       │</p>
+                <p>│ #ORD-01 ready  1h   │</p>
+                <p>│ ── Yesterday ──      │</p>
+                <p>│ ⭐ New 5★ Review     │</p>
+                <p>│ from Priya · 1d     │</p>
+                <p>│ 🎰 Won 50 pts! · 1d │</p>
+                <p>│ ── Empty State ──    │</p>
+                <p>│ 🔔 "All caught up!" │</p>
+                <p>│ 🏠 ❤️ ✈️ 💬 👤    │</p>
+                <p>└─────────────────────┘</p>
+              </div>
+            </div>
             <MermaidDiagram chart={ER_CHART} title="Entity Relationships (ER)" />
           </div>
         </DocSection>
