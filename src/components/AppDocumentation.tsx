@@ -2092,7 +2092,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
                 <p>│ [Become a Host]   │</p>
                 <p>│ [☀️][🌙] Theme   │</p>
                 <p>│ [📸][📘][▶][🐦] │</p>
-                <p>│ Terms · v1.21     │</p>
+                <p>│ Terms · v1.23     │</p>
                 <p>│ 🏠 ❤️ ✈️ 💬 👤  │</p>
                 <p>└───────────────────┘</p>
               </div>
