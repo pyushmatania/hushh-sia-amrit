@@ -1304,6 +1304,19 @@ standalone: campaigns · coupons · expenses · budget_allocations · app_config
 - **Wireframes** — ASCII wireframes for all screens: home, booking flow, admin panel, profile, screen hierarchy, ER diagram
 - **Easter Egg Docs Updated** — PRD, Blueprint, and Wireframe sections added to in-app documentation
 
+### v1.22 — Schema Hardening & Audit Resolution
+- **7 new database tables**: `payments`, `refunds`, `invoices`, `property_slots`, `slot_availability`, `notification_preferences`, `push_tokens` — total now 45 tables
+- **Payment foundation**: `payments` table with Razorpay fields (gateway_order_id, gateway_payment_id, gateway_signature), `refunds` table with status tracking, `invoices` table with JSONB line_items
+- **Slot management**: `property_slots` table replaces JSONB-only slots in host_listings, `slot_availability` tracks per-date booking counts and dynamic price overrides
+- **Booking schema hardened**: `payment_status` + `payment_id` added to `bookings` table
+- **Split payments**: `payment_status`, `payment_id`, `payment_link_url` added to `booking_splits`
+- **Conversations enhanced**: `type` (direct/support/group), `property_id`, `metadata` fields added
+- **Config audit trail**: `updated_by` added to `app_config`
+- **FCM readiness**: `push_tokens` table with platform tracking (web/ios/android)
+- **Notification granularity**: `notification_preferences` table for per-type per-channel opt-out
+- **Documentation audit**: All 8 critical items resolved, 20+ warnings addressed, ER diagram updated, hooks reference expanded, clarifications added for naming conventions and feature boundaries
+- **Realtime enabled**: `payments` and `slot_availability` tables added to supabase_realtime publication
+
 ---
 
 ## 📐 Conventions & Guidelines
