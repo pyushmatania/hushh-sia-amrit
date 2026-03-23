@@ -225,17 +225,19 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
     if (touchRef.current.mode === "pending") {
       if (absX < 4 && absY < 4) return;
 
-      if (absX > 8 && absX >= absY * 0.75) {
-        touchRef.current.mode = "horizontal";
-      } else if (absY > 8 && absY > absX * 1.15) {
+      // Treat diagonal movement as horizontal swipe (more forgiving)
+      // Only treat as vertical if Y is clearly dominant (>2x horizontal)
+      if (absY > 10 && absY > absX * 2.5) {
         touchRef.current.mode = "vertical";
-      } else {
+        setIsDragging(false);
+        setDragX(0);
         return;
       }
 
-      if (touchRef.current.mode === "vertical") {
-        setIsDragging(false);
-        setDragX(0);
+      // Any horizontal component at all → treat as swipe
+      if (absX >= 6 || (absX >= 4 && absX >= absY * 0.4)) {
+        touchRef.current.mode = "horizontal";
+      } else {
         return;
       }
     }
