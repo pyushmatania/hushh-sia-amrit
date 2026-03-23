@@ -257,6 +257,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
     hasSwipedRef.current = false;
     didRevealRef.current = false;
     holdCancelledRef.current = false;
+    setTilt({ x: 0, y: 0 });
     setIsActive(true);
 
     const startTime = Date.now();
@@ -277,33 +278,27 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
 
   const onTouchMoveHandler = useCallback((e: React.TouchEvent) => {
     const touch = e.touches[0];
+    const deltaX = touch.clientX - touchStartXRef.current;
+    const deltaY = touchStartYRef.current - touch.clientY;
 
     if (!didRevealRef.current) {
-      const dx = Math.abs(touch.clientX - touchStartXRef.current);
-      const dy = Math.abs(touch.clientY - touchStartYRef.current);
-      if (dx > 10 || dy > 10) {
+      if (Math.abs(deltaX) > 14 || Math.abs(deltaY) > 14) {
         holdCancelledRef.current = true;
         isHoldingRef.current = false;
         clearTimers();
         setChargeProgress(0);
         setIsActive(false);
-        return;
       }
+      return;
     }
 
-    if (cardRef.current && didRevealRef.current) {
-      const rect = cardRef.current.getBoundingClientRect();
-      const x = ((touch.clientX - rect.left) / rect.width - 0.5) * 2;
-      const y = ((touch.clientY - rect.top) / rect.height - 0.5) * 2;
-      setTilt({ x: y * -18, y: x * 18 });
-    }
-
-    if (!didRevealRef.current) return;
     e.preventDefault();
 
-    const deltaY = touchStartYRef.current - touch.clientY;
+    if (Math.abs(deltaX) > 64 && Math.abs(deltaX) > Math.abs(deltaY)) {
+      return;
+    }
 
-    if (deltaY > 60 && !hasSwipedRef.current) {
+    if (deltaY > 70 && !hasSwipedRef.current) {
       hasSwipedRef.current = true;
       hapticMedium();
       doRelease();
@@ -311,7 +306,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
       return;
     }
 
-    if (deltaY < -60 && !hasSwipedRef.current) {
+    if (deltaY < -70 && !hasSwipedRef.current) {
       hasSwipedRef.current = true;
       hapticLight();
       doRelease();
@@ -326,14 +321,14 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
       setChargeProgress(0);
       setIsActive(false);
       setTilt({ x: 0, y: 0 });
-      // No tap action — disabled
       return;
     }
 
     if (!hasSwipedRef.current) {
-      // Keep revealed — user can tap overlay or swipe to dismiss
+      hapticLight();
+      doRelease();
     }
-  }, [clearTimers]);
+  }, [clearTimers, doRelease]);
 
   // Mouse hold (desktop)
   const onMouseDown = useCallback(() => {
@@ -342,6 +337,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
     hasSwipedRef.current = false;
     didRevealRef.current = false;
     holdCancelledRef.current = false;
+    setTilt({ x: 0, y: 0 });
     setIsActive(true);
 
     const startTime = Date.now();
@@ -358,32 +354,52 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
   const onMouseUp = useCallback(() => {
     clearTimers();
     isHoldingRef.current = false;
-    if (!didRevealRef.current) {
-      setChargeProgress(0);
-      setIsActive(false);
-      setTilt({ x: 0, y: 0 });
-      // No tap action — disabled
+
+    if (didRevealRef.current) {
+      doRelease();
+      return;
     }
-  }, [clearTimers]);
+
+    setChargeProgress(0);
+    setIsActive(false);
+    setTilt({ x: 0, y: 0 });
+  }, [clearTimers, doRelease]);
 
   const onMouseMoveHandler = useCallback((e: React.MouseEvent) => {
-    if (!cardRef.current) return;
+    if (!cardRef.current || isHoldingRef.current || revealed) return;
     const rect = cardRef.current.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
     const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
     setTilt({ x: y * -18, y: x * 18 });
-  }, []);
+  }, [revealed]);
 
   const onMouseLeave = useCallback(() => {
     clearTimers();
     isHoldingRef.current = false;
-    if (didRevealRef.current) return; // keep revealed
+    if (didRevealRef.current) return;
     setIsActive(false);
     setTilt({ x: 0, y: 0 });
     setChargeProgress(0);
   }, [clearTimers]);
 
   useEffect(() => () => clearTimers(), [clearTimers]);
+
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const { body } = document;
+    const prevOverflow = body.style.overflow;
+    const prevTouchAction = body.style.touchAction;
+
+    if (revealed) {
+      body.style.overflow = "hidden";
+      body.style.touchAction = "none";
+    }
+
+    return () => {
+      body.style.overflow = prevOverflow;
+      body.style.touchAction = prevTouchAction;
+    };
+  }, [revealed]);
 
   return (
     <>
