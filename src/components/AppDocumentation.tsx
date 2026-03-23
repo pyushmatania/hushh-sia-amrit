@@ -1701,7 +1701,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
             </div>
             <div>
               <h1 className="text-lg font-bold text-foreground">Hushh Docs</h1>
-              <p className="text-[11px] text-muted-foreground">v1.22 · Internal Blueprint</p>
+              <p className="text-[11px] text-muted-foreground">v1.23 · Internal Blueprint</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
