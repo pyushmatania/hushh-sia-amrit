@@ -108,19 +108,24 @@ export default function PropertyCardPolaroid({ property, index, onTap, isWishlis
           <span className="text-sm">{sticker}</span>
         </div>
 
-        {/* Side tape strip */}
+        {/* Side tape strip with texture */}
         <div
-          className="absolute -left-3 top-1/3 z-20"
+          className="absolute -left-3 top-1/3 z-20 overflow-hidden"
           style={{
             width: "18px",
             height: "50px",
             background: tapeGrad,
             borderRadius: "2px",
             transform: "rotate(-8deg)",
-            opacity: 0.7,
+            opacity: 0.65,
             boxShadow: "0 1px 4px hsl(var(--foreground) / 0.1)",
           }}
-        />
+        >
+          <div className="absolute inset-0" style={{
+            backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)' opacity='0.4'/%3E%3C/svg%3E\")",
+            mixBlendMode: "overlay",
+          }} />
+        </div>
 
         {/* Photo area */}
         <div className="relative aspect-[4/3] overflow-hidden" style={{ borderRadius: "3px" }}>
