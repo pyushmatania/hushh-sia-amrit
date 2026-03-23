@@ -21,8 +21,20 @@ export default function PullToRefresh({ children, onRefresh, className = "" }: P
   const spinnerScale = useTransform(dragY, [0, THRESHOLD], [0.5, 1]);
   const spinnerRotate = useTransform(dragY, [0, THRESHOLD * 2], [0, 360]);
 
+  const isInsideNoPullArea = useCallback((target: EventTarget | null) => {
+    if (!(target instanceof HTMLElement)) return false;
+    return !!target.closest('[data-no-pull-refresh="true"]');
+  }, []);
+
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     if (refreshing) return;
+
+    if (isInsideNoPullArea(e.target)) {
+      pullDirection.current = "idle";
+      startPoint.current = null;
+      return;
+    }
+
     const el = containerRef.current;
     if (el && el.scrollTop <= 0) {
       startPoint.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
@@ -31,7 +43,7 @@ export default function PullToRefresh({ children, onRefresh, className = "" }: P
     }
     pullDirection.current = "idle";
     startPoint.current = null;
-  }, [refreshing]);
+  }, [refreshing, isInsideNoPullArea]);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     if (refreshing || !startPoint.current || pullDirection.current === "idle") return;
