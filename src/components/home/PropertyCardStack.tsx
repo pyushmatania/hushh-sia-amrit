@@ -293,6 +293,7 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
   const frontProp = cards[active];
   const catKey = Array.isArray(frontProp.category) ? frontProp.category[0] : frontProp.category;
   const accentColor = categoryColors[catKey] || categoryColors.default;
+  const sectionLabel = frontProp.primaryCategory === "stay" ? "Stay Cards" : "Experience Cards";
 
   return (
     <div
@@ -304,7 +305,7 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
       {/* Section label */}
       <div className="flex items-center gap-2 px-5 mb-3">
         <Plane size={14} style={{ color: accentColor, transform: "rotate(-45deg)" }} />
-        <span className="text-[13px] font-bold text-foreground tracking-wide">Experience Passes</span>
+        <span className="text-[13px] font-bold text-foreground tracking-wide">{sectionLabel}</span>
         <div className="flex-1 h-px" style={{ background: `linear-gradient(to right, ${accentColor}60, transparent)` }} />
       </div>
 
