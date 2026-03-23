@@ -384,6 +384,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 </div>
               )}
 
+              <LazySection minHeight="400px" rootMargin="300px">
               <div className="mt-6">
                 <div className="flex items-center justify-between px-5 mb-3">
                   <h2 className="text-lg font-bold text-foreground">🔥 All Experiences</h2>
@@ -403,6 +404,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                   </div>
                 )}
               </div>
+              </LazySection>
             </>
           )}
 
