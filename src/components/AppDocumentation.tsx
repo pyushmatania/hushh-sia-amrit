@@ -563,6 +563,23 @@ Splash → Home → Browse/Search/Map → Property Card → Detail → Select Sl
 
 React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion 12 · React Query · React Router v6 · Lovable Cloud · Recharts · React Hook Form + Zod
 
+### 🛡️ Resilience & Error Handling
+
+**Error Boundaries**: Every route wrapped in ErrorBoundary — global fallback + per-route crash recovery with "Try Again" UI.
+
+| Boundary | Scope | Fallback |
+|---|---|---|
+| Global | Entire BrowserRouter | "App crashed unexpectedly" |
+| Home | Index page | "Failed to load home" |
+| Admin | Admin panel | "Admin panel error" |
+| Staff | Staff dashboard | "Staff panel error" |
+
+**Offline Detection**: useOnlineStatus hook + OfflineBanner — animated top bar when device goes offline.
+
+**Query Retry**: Queries retry 2× (exponential backoff 1s→4s, max 10s). Mutations retry 1×. Stale time 30s.
+
+**Rate Limiting**: Auth 30/hr per IP, Spin Wheel 1/day/user, Edge Functions 100 req/s, Search 300ms debounce.
+
 ---
 
 ## 🪝 Hooks Reference
