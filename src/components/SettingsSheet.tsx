@@ -62,16 +62,22 @@ function NotificationSettings() {
     setIsSendingTest(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
 
       toast({ title: "Sending 3 test notifications...", description: "At 5s, 10s, and 15s intervals" });
 
       for (const notif of testNotifications) {
         setTimeout(async () => {
           try {
-            await supabase.functions.invoke('send-push-notification', {
-              body: { user_id: user.id, payload: { title: notif.title, body: notif.body, url: notif.url } }
-            });
+            if (user) {
+              await supabase.functions.invoke('send-push-notification', {
+                body: { user_id: user.id, payload: { title: notif.title, body: notif.body, url: notif.url } }
+              });
+            } else {
+              // Guest mode — use browser Notification API directly
+              if (Notification.permission === 'granted') {
+                new Notification(notif.title, { body: notif.body, icon: '/favicon.ico' });
+              }
+            }
           } catch (e) { console.error('[Push Test]', e); }
         }, notif.delay);
       }
