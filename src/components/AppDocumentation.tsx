@@ -564,7 +564,7 @@ React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion
 
 ---
 
-## 🗄 Database Schema (38 Tables)
+## 🗄 Database Schema (45 Tables)
 
 | Table | Key Columns | Purpose |
 |-------|------------|---------|
