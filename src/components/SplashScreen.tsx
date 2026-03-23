@@ -35,6 +35,7 @@ function getTimeConfig() {
     hasShootingStars: false,
     particleColor: "hsla(45, 90%, 70%, 0.5)",
     glowColor: "hsla(40, 100%, 65%, 0.3)",
+    ambientSound: "/audio/birds-morning.wav",
   };
   if (hour >= 12 && hour < 17) return {
     greeting: "Good Afternoon",
@@ -45,6 +46,7 @@ function getTimeConfig() {
     hasShootingStars: false,
     particleColor: "hsla(45, 80%, 75%, 0.4)",
     glowColor: "hsla(45, 90%, 60%, 0.25)",
+    ambientSound: "/audio/birds-morning.wav",
   };
   if (hour >= 17 && hour < 21) return {
     greeting: "Good Evening",
@@ -55,6 +57,7 @@ function getTimeConfig() {
     hasShootingStars: true,
     particleColor: "hsla(35, 100%, 65%, 0.7)",
     glowColor: "hsla(20, 100%, 55%, 0.3)",
+    ambientSound: "/audio/crickets-night.wav",
   };
   return {
     greeting: "Good Night",
@@ -65,6 +68,7 @@ function getTimeConfig() {
     hasShootingStars: true,
     particleColor: "hsla(55, 90%, 70%, 0.8)",
     glowColor: "hsla(45, 80%, 70%, 0.25)",
+    ambientSound: "/audio/crickets-night.wav",
   };
 }
 
@@ -143,6 +147,34 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
   useEffect(() => {
     preloadIcons.forEach((src) => { const img = new Image(); img.src = src; });
   }, []);
+
+  // Ambient sound — fade in gently, fade out before exit
+  useEffect(() => {
+    const audio = new Audio(config.ambientSound);
+    audio.loop = true;
+    audio.volume = 0;
+    const fadeIn = () => {
+      audio.play().catch(() => {});
+      let vol = 0;
+      const id = setInterval(() => {
+        vol = Math.min(vol + 0.02, 0.25);
+        audio.volume = vol;
+        if (vol >= 0.25) clearInterval(id);
+      }, 60);
+    };
+    // Start after a short delay so it feels natural
+    const t = setTimeout(fadeIn, 600);
+    return () => {
+      clearTimeout(t);
+      // Fade out
+      let vol = audio.volume;
+      const id = setInterval(() => {
+        vol = Math.max(vol - 0.05, 0);
+        audio.volume = vol;
+        if (vol <= 0) { clearInterval(id); audio.pause(); }
+      }, 40);
+    };
+  }, [config.ambientSound]);
 
   // Phased timeline
   useEffect(() => {
