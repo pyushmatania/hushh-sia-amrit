@@ -162,9 +162,8 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
             <div className="mt-auto px-6 pb-12">
               <motion.div
                 className="flex flex-col items-center"
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 1, y: 0 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.4 }}
               >
                 {/* Logo */}
                 <div className="flex items-center gap-1">
