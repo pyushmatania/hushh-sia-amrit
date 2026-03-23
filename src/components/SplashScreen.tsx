@@ -172,9 +172,8 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                       src={appConfig.logo_url}
                       alt={brandName}
                       className="h-10 object-contain"
-                      initial={{ opacity: 0, scale: 0.8 }}
+                      initial={{ opacity: 1, scale: 1 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 1.6, type: "spring", stiffness: 150 }}
                     />
                   ) : (
                     <motion.span
