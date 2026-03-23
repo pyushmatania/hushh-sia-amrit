@@ -218,7 +218,7 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
     <div
       ref={containerRef}
       className="relative overflow-visible"
-      style={{ height: "480px", touchAction: "pan-y", perspective: "1200px", perspectiveOrigin: "50% 40%" }}
+      style={{ height: "480px", touchAction: "none", perspective: "1200px", perspectiveOrigin: "50% 40%" }}
     >
       {/* Section label */}
       <div className="flex items-center gap-2 px-5 mb-3">
