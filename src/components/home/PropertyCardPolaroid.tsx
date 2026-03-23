@@ -56,23 +56,33 @@ export default function PropertyCardPolaroid({ property, index, onTap, isWishlis
         animationDelay: `${index * 60}ms`,
       }}
     >
-      {/* Top branded washi tape */}
+      {/* Top branded washi tape with texture */}
       <div
-        className="mx-auto relative z-10 flex items-center justify-center gap-1"
+        className="mx-auto relative z-10 flex items-center justify-center gap-1 overflow-hidden"
         style={{
-          width: "100px",
-          height: "22px",
+          width: "110px",
+          height: "24px",
           background: tapeGrad,
-          borderRadius: "3px",
-          transform: `rotate(${-tilt * 0.4}deg) translateY(11px)`,
+          borderRadius: "2px",
+          transform: `rotate(${-tilt * 0.4}deg) translateY(12px)`,
           boxShadow: "0 2px 8px hsl(var(--foreground) / 0.15)",
+          opacity: 0.85,
         }}
       >
-        <Sparkles size={9} className="text-white/90" />
-        <span className="text-[7px] font-black text-white/95 tracking-[0.15em] uppercase">
+        {/* Tape texture overlay — fibrous/frosted look */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23t)' opacity='0.35'/%3E%3C/svg%3E\")",
+          mixBlendMode: "overlay",
+          opacity: 0.6,
+        }} />
+        {/* Frosted edge lines */}
+        <div className="absolute inset-x-0 top-0 h-px" style={{ background: "hsl(0 0% 100% / 0.35)" }} />
+        <div className="absolute inset-x-0 bottom-0 h-px" style={{ background: "hsl(0 0% 0% / 0.15)" }} />
+        <Sparkles size={8} className="text-white/80 relative z-10" />
+        <span className="text-[7px] font-black text-white/90 tracking-[0.15em] uppercase relative z-10">
           hushh
         </span>
-        <Sparkles size={9} className="text-white/90" />
+        <Sparkles size={8} className="text-white/80 relative z-10" />
       </div>
 
       {/* Photo card body */}
