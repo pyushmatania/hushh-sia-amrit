@@ -35,6 +35,7 @@ import { useNotifications } from "@/hooks/use-notifications";
 import { useLoyalty } from "@/hooks/use-loyalty";
 import { useToast } from "@/hooks/use-toast";
 import { properties, type Property } from "@/data/properties";
+import type { ExperiencePack } from "@/components/home/CuratedPackCard";
 
 export interface Booking {
   id: string;
