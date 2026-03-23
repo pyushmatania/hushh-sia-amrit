@@ -26,28 +26,75 @@ function getRarity(price: number): string {
   return "common";
 }
 
-function StatBar({ label, value, max, color, revealed, icon }: { label: string; value: number; max: number; color: string; revealed: boolean; icon?: React.ReactNode }) {
+/* Animated counter hook — counts from 0 to target */
+function useCountUp(target: number, active: boolean, duration = 800, delay = 0): number {
+  const [val, setVal] = useState(0);
+  const rafRef = useRef<number>(0);
+  useEffect(() => {
+    if (!active) { setVal(0); return; }
+    let start: number | null = null;
+    const animate = (ts: number) => {
+      if (start === null) start = ts;
+      const elapsed = ts - start - delay;
+      if (elapsed < 0) { rafRef.current = requestAnimationFrame(animate); return; }
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setVal(Math.round(eased * target));
+      if (progress < 1) rafRef.current = requestAnimationFrame(animate);
+    };
+    rafRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [active, target, duration, delay]);
+  return val;
+}
+
+function StatBar({ label, value, max, color, revealed, icon, delay = 0 }: { label: string; value: number; max: number; color: string; revealed: boolean; icon?: React.ReactNode; delay?: number }) {
   const pct = Math.min((value / max) * 100, 100);
+  const displayVal = useCountUp(value, revealed, 700, delay);
+  const [barActive, setBarActive] = useState(false);
+
+  useEffect(() => {
+    if (!revealed) { setBarActive(false); return; }
+    const t = setTimeout(() => setBarActive(true), delay);
+    return () => clearTimeout(t);
+  }, [revealed, delay]);
+
   return (
-    <div className="flex items-center gap-2">
-      {icon && <span className="w-3 flex-shrink-0">{icon}</span>}
+    <div className="flex items-center gap-2" style={{ opacity: barActive || !revealed ? 1 : 0.5, transition: "opacity 0.3s" }}>
+      {icon && <span className="w-3 flex-shrink-0" style={{ filter: barActive ? `drop-shadow(0 0 6px ${color})` : "none", transition: "filter 0.4s" }}>{icon}</span>}
       <span className="text-[7px] font-black uppercase tracking-[0.15em] w-8 flex-shrink-0" style={{ color: `${color}cc` }}>{label}</span>
-      <div className="flex-1 h-[4px] rounded-full overflow-hidden" style={{ background: "hsl(0 0% 100% / 0.06)" }}>
+      <div className="flex-1 h-[5px] rounded-full overflow-hidden relative" style={{ background: "hsl(0 0% 100% / 0.06)" }}>
         <div
-          className="h-full rounded-full"
+          className="h-full rounded-full relative"
           style={{
-            width: revealed ? `${pct}%` : "22%",
+            width: barActive ? `${pct}%` : "15%",
             background: `linear-gradient(90deg, ${color}40, ${color})`,
-            boxShadow: revealed ? `0 0 12px ${color}80, 0 0 4px ${color}` : `0 0 5px ${color}25`,
-            transition: "width 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.45s ease",
+            boxShadow: barActive ? `0 0 16px ${color}90, 0 0 6px ${color}` : `0 0 4px ${color}15`,
+            transition: `width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}ms, box-shadow 0.5s ease ${delay}ms`,
           }}
         />
+        {/* Energy tip glow */}
+        {barActive && (
+          <div
+            className="absolute top-0 h-full w-3 rounded-full"
+            style={{
+              right: `${100 - pct}%`,
+              background: `radial-gradient(circle, ${color} 0%, transparent 70%)`,
+              filter: `blur(3px)`,
+              animation: "energyPulse 1.2s ease-in-out infinite",
+            }}
+          />
+        )}
       </div>
       <span
-        className="text-[8px] font-mono font-black w-5 text-right"
-        style={{ color: revealed ? color : `${color}60`, transition: "color 0.45s, opacity 0.35s", textShadow: revealed ? `0 0 8px ${color}60` : "none" }}
+        className="text-[9px] font-mono font-black w-6 text-right tabular-nums"
+        style={{
+          color: barActive ? color : `${color}50`,
+          transition: `color 0.4s ease ${delay}ms`,
+          textShadow: barActive ? `0 0 10px ${color}80, 0 0 20px ${color}40` : "none",
+        }}
       >
-        {revealed ? value : "--"}
+        {revealed ? displayVal : "--"}
       </span>
     </div>
   );
@@ -169,7 +216,50 @@ function ChargingRing({ progress, color }: { progress: number; color: string }) 
   );
 }
 
-/* Fullscreen blur overlay when card is revealed */
+/* Price counter with slot-machine style counting animation */
+function PriceCounter({ price, revealed, color }: { price: number; revealed: boolean; color: string }) {
+  const displayPrice = useCountUp(price, revealed, 900, 100);
+  return (
+    <span
+      className="absolute left-0 top-0 text-[20px] font-black text-white tabular-nums"
+      style={{
+        textShadow: revealed ? `0 0 20px ${color}70, 0 0 40px ${color}30` : "none",
+        transform: revealed ? "translateY(0px) scale(1)" : "translateY(8px) scale(0.85)",
+        opacity: revealed ? 1 : 0,
+        transition: "transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease",
+      }}
+    >
+      ₹{displayPrice.toLocaleString()}
+    </span>
+  );
+}
+
+/* Energy burst flash on reveal */
+function RevealFlash({ active, color }: { active: boolean; color: string }) {
+  if (!active) return null;
+  return (
+    <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden rounded-[20px]">
+      <div
+        style={{
+          position: "absolute",
+          inset: "-50%",
+          background: `radial-gradient(circle at 50% 50%, ${color}60 0%, ${color}20 30%, transparent 60%)`,
+          animation: "revealBurst 0.6s ease-out forwards",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: `linear-gradient(180deg, ${color}15 0%, transparent 50%)`,
+          animation: "revealFlash 0.4s ease-out forwards",
+        }}
+      />
+    </div>
+  );
+}
+
+
 function BlurOverlay({ active, onRelease }: { active: boolean; onRelease: () => void }) {
   if (!active) return null;
   return (
@@ -231,11 +321,15 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
     if (chargeIntervalRef.current) { clearInterval(chargeIntervalRef.current); chargeIntervalRef.current = null; }
   }, []);
 
+  const [revealFlash, setRevealFlash] = useState(false);
+
   const doReveal = useCallback(() => {
     setRevealed(true);
     setChargeProgress(1);
     didRevealRef.current = true;
+    setRevealFlash(true);
     hapticHeavy();
+    setTimeout(() => setRevealFlash(false), 600);
   }, []);
 
   const doRelease = useCallback(() => {
@@ -520,6 +614,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
 
             <FloatingParticles color={rarityInfo.color} active={revealed} />
             <ChargingRing progress={chargeProgress} color={rarityInfo.color} />
+            <RevealFlash active={revealFlash} color={rarityInfo.color} />
 
             {/* ── HOLD text in center (when not revealed, not charging) ── */}
             {!revealed && chargeProgress === 0 && (
@@ -627,38 +722,36 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
                 </span>
               </div>
 
-              {/* Price — masked before hold, reveals after hold */}
+              {/* Price — counting counter reveal */}
               <div className="flex items-center gap-2 mt-2">
-                <Zap size={13} style={{ color: rarityInfo.color, filter: `drop-shadow(0 0 4px ${rarityInfo.color})` }} />
+                <Zap
+                  size={13}
+                  style={{
+                    color: rarityInfo.color,
+                    filter: `drop-shadow(0 0 ${revealed ? "8px" : "4px"} ${rarityInfo.color})`,
+                    animation: revealed ? "energyPulse 1s ease-in-out infinite" : "none",
+                    transition: "filter 0.5s",
+                  }}
+                />
                 <div className="relative h-7 min-w-[106px]">
                   <span
-                    className="absolute left-0 top-0 text-[20px] font-black text-white"
+                    className="absolute left-0 top-0 text-[20px] font-black text-white tabular-nums"
                     style={{
                       textShadow: `0 0 14px ${rarityInfo.color}40`,
-                      transform: revealed ? "translateY(-6px) scale(0.9)" : "translateY(0px) scale(1)",
+                      transform: revealed ? "translateY(-8px) scale(0.8) rotateX(40deg)" : "translateY(0px) scale(1)",
                       opacity: revealed ? 0 : 1,
-                      transition: "all 0.4s cubic-bezier(0.34,1.56,0.64,1)",
+                      transition: "all 0.35s cubic-bezier(0.34,1.56,0.64,1)",
                     }}
                   >
                     {maskedPrice}
                   </span>
-                  <span
-                    className="absolute left-0 top-0 text-[20px] font-black text-white"
-                    style={{
-                      textShadow: `0 0 14px ${rarityInfo.color}50`,
-                      transform: revealed ? "translateY(0px) scale(1)" : "translateY(6px) scale(0.9)",
-                      opacity: revealed ? 1 : 0,
-                      transition: "all 0.45s cubic-bezier(0.34,1.56,0.64,1)",
-                    }}
-                  >
-                    ₹{property.basePrice.toLocaleString()}
-                  </span>
+                  <PriceCounter price={property.basePrice} revealed={revealed} color={rarityInfo.color} />
                 </div>
                 <span className="text-[10px] text-white/35 ml-0.5">/session</span>
                 <XpRing level={totalPower} color={rarityInfo.color} revealed={revealed} />
               </div>
 
-              {/* Stats — always visible, values reveal only after hold */}
+              {/* Stats — always visible, values count up after hold with staggered delays */}
               <div
                 style={{
                   maxHeight: "130px",
@@ -668,10 +761,10 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
                 }}
               >
                 <div className="mt-3 space-y-1.5 pt-2" style={{ borderTop: `1px solid ${rarityInfo.color}20` }}>
-                  <StatBar label="PWR" value={stats.power} max={99} color={rarityInfo.color} revealed={revealed} icon={<Zap size={9} style={{ color: rarityInfo.color }} />} />
-                  <StatBar label="VIBE" value={stats.vibe} max={99} color="hsl(45 100% 55%)" revealed={revealed} icon={<Star size={9} style={{ color: "hsl(45 100% 55%)" }} />} />
-                  <StatBar label="SIZE" value={stats.capacity} max={99} color="hsl(var(--success))" revealed={revealed} icon={<Users size={9} style={{ color: "hsl(var(--success))" }} />} />
-                  <StatBar label="HYPE" value={stats.demand} max={99} color="hsl(var(--destructive))" revealed={revealed} icon={<Flame size={9} style={{ color: "hsl(var(--destructive))" }} />} />
+                  <StatBar label="PWR" value={stats.power} max={99} color={rarityInfo.color} revealed={revealed} delay={0} icon={<Zap size={9} style={{ color: rarityInfo.color }} />} />
+                  <StatBar label="VIBE" value={stats.vibe} max={99} color="hsl(45 100% 55%)" revealed={revealed} delay={120} icon={<Star size={9} style={{ color: "hsl(45 100% 55%)" }} />} />
+                  <StatBar label="SIZE" value={stats.capacity} max={99} color="hsl(var(--success))" revealed={revealed} delay={240} icon={<Users size={9} style={{ color: "hsl(var(--success))" }} />} />
+                  <StatBar label="HYPE" value={stats.demand} max={99} color="hsl(var(--destructive))" revealed={revealed} delay={360} icon={<Flame size={9} style={{ color: "hsl(var(--destructive))" }} />} />
                 </div>
               </div>
 
