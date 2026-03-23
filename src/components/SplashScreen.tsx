@@ -470,10 +470,24 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
             <>
               <ShootingStar delay={1.2} />
               <ShootingStar delay={2.4} />
+              <ShootingStar delay={3.6} />
             </>
           )}
 
-          {/* ─── Layer 5: Content ─── */}
+          {/* ─── Layer 4b: Sun rays (morning) ─── */}
+          {config.hasBirds && phase >= 1 && <SunRays />}
+
+          {/* ─── Layer 4c: Flying birds (morning/afternoon) ─── */}
+          {config.hasBirds && phase >= 1 && <FlyingBirds />}
+
+          {/* ─── Layer 4d: Drifting clouds (morning/afternoon) ─── */}
+          {config.hasClouds && phase >= 1 && <DriftingClouds />}
+
+          {/* ─── Layer 4e: Floating lanterns (evening/night) ─── */}
+          {config.hasLanterns && phase >= 1 && <FloatingLanterns />}
+
+          {/* ─── Layer 4f: Twinkling stars (evening/night) ─── */}
+          {config.hasTwinkle && phase >= 1 && <TwinklingStars />}
           <div className="absolute inset-0 flex flex-col z-10">
 
             {/* Top — Greeting area */}
