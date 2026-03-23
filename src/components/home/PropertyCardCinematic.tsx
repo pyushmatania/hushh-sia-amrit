@@ -264,6 +264,47 @@ function HudReadout({ active, color, intensity }: { active: boolean; color: stri
   );
 }
 
+function PrismaticEnergyRails({ active, intensity }: { active: boolean; intensity: number }) {
+  if (!active) return null;
+  return (
+    <div
+      className="absolute inset-0 pointer-events-none z-[12] rounded-[20px] overflow-hidden"
+      style={{ opacity: 0.35 + intensity * 0.45, transition: "opacity 0.2s" }}
+    >
+      <div
+        className="absolute left-5 right-5 top-[26%] h-px"
+        style={{
+          background: "linear-gradient(90deg, transparent, hsl(var(--primary) / 0.95), hsl(var(--gold) / 0.95), hsl(var(--success) / 0.95), transparent)",
+          boxShadow: "0 0 10px hsl(var(--primary) / 0.7), 0 0 18px hsl(var(--gold) / 0.5)",
+          animation: "energyPulse 1.1s ease-in-out infinite",
+        }}
+      />
+      <div
+        className="absolute left-7 right-7 bottom-[22%] h-px"
+        style={{
+          background: "linear-gradient(90deg, transparent, hsl(var(--success) / 0.95), hsl(var(--accent) / 0.95), hsl(var(--primary) / 0.95), transparent)",
+          boxShadow: "0 0 10px hsl(var(--success) / 0.7), 0 0 16px hsl(var(--accent) / 0.45)",
+          animation: "energyPulse 1.4s ease-in-out infinite",
+        }}
+      />
+      <div
+        className="absolute top-10 bottom-12 left-[18%] w-px"
+        style={{
+          background: "linear-gradient(180deg, transparent, hsl(var(--primary) / 0.8), hsl(var(--accent) / 0.8), transparent)",
+          boxShadow: "0 0 8px hsl(var(--primary) / 0.65)",
+        }}
+      />
+      <div
+        className="absolute top-8 bottom-14 right-[18%] w-px"
+        style={{
+          background: "linear-gradient(180deg, transparent, hsl(var(--gold) / 0.85), hsl(var(--success) / 0.85), transparent)",
+          boxShadow: "0 0 8px hsl(var(--gold) / 0.65)",
+        }}
+      />
+    </div>
+  );
+}
+
 function ChargingRing({ progress, color }: { progress: number; color: string }) {
   const r = 28;
   const circ = 2 * Math.PI * r;
@@ -393,12 +434,12 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
   const RarityIcon = rarityInfo.icon;
 
   const stats = {
-    power: Math.min(Math.round(property.basePrice / 100), 99),
-    vibe: Math.min(Math.round(property.rating * 20), 99),
-    capacity: Math.min(property.capacity * 3, 99),
-    demand: property.slotsLeft <= 3 ? 95 : property.slotsLeft <= 5 ? 70 : 40,
+    value: Math.max(22, Math.min(Math.round(120 - property.basePrice / 65), 99)),
+    rating: Math.min(Math.round(property.rating * 20), 99),
+    group: Math.min(property.capacity * 3, 99),
+    availability: property.slotsLeft <= 2 ? 20 : property.slotsLeft <= 5 ? 45 : 82,
   };
-  const totalPower = Math.round((stats.power + stats.vibe + stats.capacity + stats.demand) / 4);
+  const totalScore = Math.round((stats.value + stats.rating + stats.group + stats.availability) / 4);
 
   const isCharging = chargeProgress > 0 && !revealed;
   const discount = property.discountLabel || (property.basePrice >= 3000 ? "20% OFF" : null);
@@ -431,6 +472,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
 
   const onTouchStart = useCallback((e: React.TouchEvent) => {
     e.stopPropagation();
+    clearTimers();
     const touch = e.touches[0];
     touchStartXRef.current = touch.clientX;
     touchStartYRef.current = touch.clientY;
@@ -439,6 +481,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
     hasSwipedRef.current = false;
     didRevealRef.current = false;
     holdCancelledRef.current = false;
+    setChargeProgress(0);
     setIsActive(true);
 
     const startTime = Date.now();
@@ -453,7 +496,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
     holdTimerRef.current = window.setTimeout(() => {
       if (isHoldingRef.current && !holdCancelledRef.current) doReveal();
     }, HOLD_DURATION);
-  }, [doReveal]);
+  }, [clearTimers, doReveal]);
 
   const onTouchMoveHandler = useCallback((e: React.TouchEvent) => {
     e.stopPropagation();
@@ -512,12 +555,25 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
     }
   }, [clearTimers, doRelease, onTap, property]);
 
+  const onTouchCancelHandler = useCallback(() => {
+    holdCancelledRef.current = true;
+    isHoldingRef.current = false;
+    hasSwipedRef.current = false;
+    didRevealRef.current = false;
+    clearTimers();
+    setChargeProgress(0);
+    setIsActive(false);
+    setRevealed(false);
+  }, [clearTimers]);
+
   const onMouseDown = useCallback(() => {
+    clearTimers();
     holdStartRef.current = Date.now();
     isHoldingRef.current = true;
     hasSwipedRef.current = false;
     didRevealRef.current = false;
     holdCancelledRef.current = false;
+    setChargeProgress(0);
     setIsActive(true);
     const startTime = Date.now();
     chargeIntervalRef.current = window.setInterval(() => {
@@ -526,7 +582,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
     holdTimerRef.current = window.setTimeout(() => {
       if (isHoldingRef.current) doReveal();
     }, HOLD_DURATION);
-  }, [doReveal]);
+  }, [clearTimers, doReveal]);
 
   const onMouseUp = useCallback(() => {
     clearTimers();
@@ -551,7 +607,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
     const { body } = document;
     const prevOverflow = body.style.overflow;
     const prevTouchAction = body.style.touchAction;
-    if (revealed || isCharging) {
+    if (revealed) {
       body.style.overflow = "hidden";
       body.style.touchAction = "none";
     }
@@ -559,7 +615,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
       body.style.overflow = prevOverflow;
       body.style.touchAction = prevTouchAction;
     };
-  }, [revealed, isCharging]);
+  }, [revealed]);
 
   return (
     <>
@@ -594,6 +650,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMoveHandler}
           onTouchEnd={onTouchEndHandler}
+          onTouchCancel={onTouchCancelHandler}
           onMouseDown={onMouseDown}
           onMouseUp={onMouseUp}
           onMouseLeave={onMouseLeave}
@@ -628,7 +685,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
 
             {/* Holographic sheen */}
             <div className="absolute inset-0 pointer-events-none z-10 mix-blend-color-dodge" style={{
-              background: `radial-gradient(circle at 50% 50%, hsl(0 100% 60% / 0.12) 0%, transparent 25%), radial-gradient(circle at 60% 40%, hsl(120 100% 50% / 0.1) 0%, transparent 30%), radial-gradient(circle at 35% 65%, hsl(240 100% 60% / 0.12) 0%, transparent 25%)`,
+              background: "radial-gradient(circle at 20% 30%, hsl(var(--primary) / 0.18) 0%, transparent 26%), radial-gradient(circle at 80% 26%, hsl(var(--gold) / 0.16) 0%, transparent 32%), radial-gradient(circle at 48% 72%, hsl(var(--success) / 0.16) 0%, transparent 30%), radial-gradient(circle at 68% 58%, hsl(var(--accent) / 0.14) 0%, transparent 28%)",
               opacity: revealed ? 1 : isCharging ? chargeProgress * 0.7 : 0,
               transition: "opacity 0.3s",
             }} />
@@ -639,6 +696,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
             {/* Sci-fi overlays */}
             <HexGridOverlay active={revealed || isCharging} color={rarityInfo.color} intensity={revealed ? 1 : chargeProgress} />
             <CircuitLines active={revealed || isCharging} color={rarityInfo.color} intensity={revealed ? 1 : chargeProgress} />
+            <PrismaticEnergyRails active={revealed || isCharging} intensity={revealed ? 1 : chargeProgress} />
             <HudScanLine active={isCharging || revealed} color={rarityInfo.color} speed={revealed ? 2.5 : 1.2} />
             <GlitchBorder active={revealed || isCharging} color={rarityInfo.color} />
             <HudReadout active={isCharging || revealed} color={rarityInfo.color} intensity={revealed ? 1 : chargeProgress} />
@@ -734,16 +792,16 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
                   <PriceCounter price={property.basePrice} revealed={revealed} color={rarityInfo.color} isCharging={isCharging} />
                 </div>
                 <span className="text-[10px] text-white/35 ml-0.5">/session</span>
-                <XpRing level={totalPower} color={rarityInfo.color} revealed={revealed || isCharging} />
+                <XpRing level={totalScore} color={rarityInfo.color} revealed={revealed || isCharging} />
               </div>
 
               {/* Stats */}
               <div style={{ maxHeight: "130px", opacity: 1, overflow: "hidden" }}>
                 <div className="mt-3 space-y-1.5 pt-2" style={{ borderTop: `1px solid ${rarityInfo.color}20` }}>
-                  <StatBar label="PWR" value={stats.power} max={99} color={rarityInfo.color} revealed={revealed} isCharging={isCharging} delay={0} icon={<Zap size={9} style={{ color: rarityInfo.color }} />} />
-                  <StatBar label="VIBE" value={stats.vibe} max={99} color="hsl(45 100% 55%)" revealed={revealed} isCharging={isCharging} delay={60} icon={<Star size={9} style={{ color: "hsl(45 100% 55%)" }} />} />
-                  <StatBar label="SIZE" value={stats.capacity} max={99} color="hsl(var(--success))" revealed={revealed} isCharging={isCharging} delay={120} icon={<Users size={9} style={{ color: "hsl(var(--success))" }} />} />
-                  <StatBar label="HYPE" value={stats.demand} max={99} color="hsl(var(--destructive))" revealed={revealed} isCharging={isCharging} delay={180} icon={<Flame size={9} style={{ color: "hsl(var(--destructive))" }} />} />
+                  <StatBar label="VALUE" value={stats.value} max={99} color="hsl(var(--primary))" revealed={revealed} isCharging={isCharging} delay={0} icon={<Sparkles size={9} style={{ color: "hsl(var(--primary))" }} />} />
+                  <StatBar label="RATING" value={stats.rating} max={99} color="hsl(var(--gold))" revealed={revealed} isCharging={isCharging} delay={60} icon={<Star size={9} style={{ color: "hsl(var(--gold))" }} />} />
+                  <StatBar label="GROUP" value={stats.group} max={99} color="hsl(var(--success))" revealed={revealed} isCharging={isCharging} delay={120} icon={<Users size={9} style={{ color: "hsl(var(--success))" }} />} />
+                  <StatBar label="AVAIL" value={stats.availability} max={99} color="hsl(var(--accent))" revealed={revealed} isCharging={isCharging} delay={180} icon={<Zap size={9} style={{ color: "hsl(var(--accent))" }} />} />
                 </div>
               </div>
 
