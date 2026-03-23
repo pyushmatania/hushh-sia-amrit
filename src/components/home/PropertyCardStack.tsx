@@ -28,8 +28,8 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
   const swipedRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const goNext = useCallback(() => setActive(i => Math.min(i + 1, cards.length - 1)), [cards.length]);
-  const goPrev = useCallback(() => setActive(i => Math.max(i - 1, 0)), []);
+  const goNext = useCallback(() => setActive(i => (i + 1) % cards.length), [cards.length]);
+  const goPrev = useCallback(() => setActive(i => (i - 1 + cards.length) % cards.length), [cards.length]);
 
   // Auto-rotate every 3s when visible & not dragging
   useEffect(() => {
