@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useAppConfig } from "@/hooks/use-app-config";
 
 // Time-of-day splash backgrounds
@@ -137,56 +137,86 @@ function ShootingStar({ delay }: { delay: number }) {
 export default function SplashScreen({ onComplete }: { onComplete: () => void }) {
   const [show, setShow] = useState(true);
   const [phase, setPhase] = useState(0);
+  const [imgReady, setImgReady] = useState(false);
   const config = useMemo(getTimeConfig, []);
   const appConfig = useAppConfig();
   const brandName = appConfig.app_name || "hushh";
   const tagline = appConfig.app_tagline || "Private experiences await";
   const letters = useMemo(() => brandName.split(""), [brandName]);
 
-  // Preload icons during splash
+  // Preload splash bg image ASAP with high priority
+  useEffect(() => {
+    const img = new Image();
+    img.fetchPriority = "high" as any;
+    img.onload = () => setImgReady(true);
+    img.onerror = () => setImgReady(true); // proceed even on error
+    img.src = config.bg;
+  }, [config.bg]);
+
+  // Preload category icons during splash
   useEffect(() => {
     preloadIcons.forEach((src) => { const img = new Image(); img.src = src; });
   }, []);
 
-  // Ambient sound — fade in gently, fade out before exit
+  // Ambient sound — triggered on first user interaction to bypass autoplay policy
   useEffect(() => {
-    const audio = new Audio(config.ambientSound);
-    audio.loop = true;
-    audio.volume = 0;
-    const fadeIn = () => {
+    let audio: HTMLAudioElement | null = null;
+    let fadeInId: ReturnType<typeof setInterval>;
+    let started = false;
+
+    const startAudio = () => {
+      if (started) return;
+      started = true;
+      audio = new Audio(config.ambientSound);
+      audio.loop = true;
+      audio.volume = 0;
       audio.play().catch(() => {});
       let vol = 0;
-      const id = setInterval(() => {
+      fadeInId = setInterval(() => {
         vol = Math.min(vol + 0.02, 0.25);
-        audio.volume = vol;
-        if (vol >= 0.25) clearInterval(id);
+        if (audio) audio.volume = vol;
+        if (vol >= 0.25) clearInterval(fadeInId);
       }, 60);
     };
-    // Start after a short delay so it feels natural
-    const t = setTimeout(fadeIn, 600);
+
+    // Try autoplay first
+    const autoTimer = setTimeout(() => {
+      startAudio();
+    }, 400);
+
+    // Also listen for user interaction as fallback
+    const interactionHandler = () => startAudio();
+    document.addEventListener("touchstart", interactionHandler, { once: true, passive: true });
+    document.addEventListener("click", interactionHandler, { once: true });
+
     return () => {
-      clearTimeout(t);
-      // Fade out
-      let vol = audio.volume;
-      const id = setInterval(() => {
-        vol = Math.max(vol - 0.05, 0);
-        audio.volume = vol;
-        if (vol <= 0) { clearInterval(id); audio.pause(); }
-      }, 40);
+      clearTimeout(autoTimer);
+      clearInterval(fadeInId);
+      document.removeEventListener("touchstart", interactionHandler);
+      document.removeEventListener("click", interactionHandler);
+      if (audio) {
+        let vol = audio.volume;
+        const id = setInterval(() => {
+          vol = Math.max(vol - 0.05, 0);
+          if (audio) audio.volume = vol;
+          if (vol <= 0) { clearInterval(id); audio?.pause(); }
+        }, 40);
+      }
     };
   }, [config.ambientSound]);
 
-  // Phased timeline
+  // Start phase timeline only when image is ready
   useEffect(() => {
+    if (!imgReady) return;
     const timers = [
-      setTimeout(() => setPhase(1), 300),    // image revealed
-      setTimeout(() => setPhase(2), 800),    // greeting appears
-      setTimeout(() => setPhase(3), 1600),   // brand name types in
-      setTimeout(() => setPhase(4), 3200),   // begin exit
-      setTimeout(() => { setShow(false); setTimeout(onComplete, 500); }, 3800),
+      setTimeout(() => setPhase(1), 100),     // image revealed instantly
+      setTimeout(() => setPhase(2), 500),     // greeting appears
+      setTimeout(() => setPhase(3), 1200),    // brand name types in
+      setTimeout(() => setPhase(4), 2800),    // begin exit
+      setTimeout(() => { setShow(false); setTimeout(onComplete, 400); }, 3300),
     ];
     return () => timers.forEach(clearTimeout);
-  }, [onComplete]);
+  }, [onComplete, imgReady]);
 
   return (
     <AnimatePresence>
@@ -194,23 +224,26 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
         <motion.div
           className="fixed inset-0 z-50 overflow-hidden"
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.4 }}
         >
-          {/* ─── Layer 0: Background image with cinematic zoom ─── */}
+          {/* ─── Layer 0: Background image — instant display ─── */}
           <motion.div
             className="absolute inset-0"
-            initial={{ scale: 1.15, opacity: 0 }}
+            initial={{ scale: 1.12, opacity: imgReady ? 1 : 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 4, ease: "easeOut" }}
+            transition={{ duration: 3.5, ease: "easeOut" }}
           >
             <img
               src={config.bg}
               alt=""
               className="w-full h-full object-cover"
+              fetchPriority="high"
+              decoding="sync"
+              style={{ willChange: "transform" }}
             />
           </motion.div>
 
-          {/* ─── Layer 1: Gradient overlay for text readability ─── */}
+          {/* ─── Layer 1: Gradient overlay ─── */}
           <div className="absolute inset-0 pointer-events-none" style={{ background: config.overlay }} />
 
           {/* ─── Layer 2: Ambient warm glow pulse ─── */}
@@ -231,8 +264,8 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
           {/* ─── Layer 4: Shooting stars (evening/night) ─── */}
           {config.hasShootingStars && phase >= 1 && (
             <>
-              <ShootingStar delay={1.5} />
-              <ShootingStar delay={2.8} />
+              <ShootingStar delay={1.2} />
+              <ShootingStar delay={2.4} />
             </>
           )}
 
@@ -246,7 +279,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                 className="text-[11px] font-semibold tracking-[0.2em] uppercase text-white/50"
                 initial={{ opacity: 0, y: -15 }}
                 animate={phase >= 2 ? { opacity: 1, y: 0 } : { opacity: 0, y: -15 }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.4 }}
               >
                 {new Date().toLocaleDateString("en-US", {
                   weekday: "long",
@@ -258,10 +291,13 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
               {/* Greeting */}
               <motion.h1
                 className="text-[32px] font-extrabold text-white text-center mt-2 leading-tight"
-                style={{ textShadow: "0 2px 20px hsla(0,0%,0%,0.5)" }}
+                style={{
+                  textShadow: "0 2px 20px hsla(0,0%,0%,0.5)",
+                  fontFamily: "'Playfair Display', serif",
+                }}
                 initial={{ opacity: 0, y: 25, scale: 0.9 }}
                 animate={phase >= 2 ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 25, scale: 0.9 }}
-                transition={{ delay: 0.15, type: "spring", stiffness: 120, damping: 14 }}
+                transition={{ delay: 0.1, type: "spring", stiffness: 120, damping: 14 }}
               >
                 {config.greeting} {config.emoji}
               </motion.h1>
@@ -277,7 +313,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                 }}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={phase >= 2 ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
-                transition={{ delay: 0.4, type: "spring", stiffness: 200 }}
+                transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 <span className="text-[10px] font-medium text-white/70 tracking-wide">Jeypore, Odisha</span>
@@ -298,22 +334,25 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                   transition={{ type: "spring", stiffness: 200, damping: 12 }}
                 />
               ) : (
-                <div className="flex items-center">
+                <div className="flex items-center" style={{ perspective: "800px" }}>
                   {letters.map((letter, i) => (
                     <motion.span
                       key={i}
-                      className="text-[38px] font-black text-white inline-block"
+                      className="text-[46px] text-white inline-block"
                       style={{
-                        textShadow: "0 2px 25px hsla(270, 80%, 65%, 0.4), 0 4px 40px hsla(0,0%,0%,0.5)",
-                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontFamily: "'Playfair Display', serif",
+                        fontWeight: 900,
+                        fontStyle: "italic",
+                        textShadow: "0 0 30px hsla(270, 80%, 65%, 0.6), 0 0 60px hsla(270, 80%, 65%, 0.3), 0 4px 40px hsla(0,0%,0%,0.5)",
+                        WebkitTextStroke: "0.5px hsla(0,0%,100%,0.15)",
                       }}
-                      initial={{ y: 40, opacity: 0, rotateX: -90, scale: 0.5 }}
-                      animate={phase >= 3 ? { y: 0, opacity: 1, rotateX: 0, scale: 1 } : { y: 40, opacity: 0, rotateX: -90, scale: 0.5 }}
+                      initial={{ y: 50, opacity: 0, rotateY: -120, scale: 0.3 }}
+                      animate={phase >= 3 ? { y: 0, opacity: 1, rotateY: 0, scale: 1 } : { y: 50, opacity: 0, rotateY: -120, scale: 0.3 }}
                       transition={{
-                        delay: i * 0.07,
+                        delay: i * 0.08,
                         type: "spring",
-                        stiffness: 350,
-                        damping: 18,
+                        stiffness: 300,
+                        damping: 16,
                       }}
                     >
                       {letter}
@@ -322,10 +361,10 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
                   {/* Shush emoji */}
                   <motion.span
-                    className="text-[30px] ml-1 inline-block"
+                    className="text-[34px] ml-1.5 inline-block"
                     initial={{ scale: 0, rotate: -40 }}
-                    animate={phase >= 3 ? { scale: [0, 1.4, 1], rotate: [-40, 8, 0] } : { scale: 0 }}
-                    transition={{ delay: letters.length * 0.07 + 0.1, duration: 0.5, ease: "easeOut" }}
+                    animate={phase >= 3 ? { scale: [0, 1.5, 1], rotate: [-40, 10, 0] } : { scale: 0 }}
+                    transition={{ delay: letters.length * 0.08 + 0.1, duration: 0.5, ease: "easeOut" }}
                   >
                     🤫
                   </motion.span>
@@ -334,14 +373,17 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
               {/* Tagline — typed reveal */}
               <motion.div
-                className="overflow-hidden mt-2"
+                className="overflow-hidden mt-2.5"
                 initial={{ width: 0 }}
                 animate={phase >= 3 ? { width: "auto" } : { width: 0 }}
-                transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
+                transition={{ delay: 0.5, duration: 0.7, ease: "easeOut" }}
               >
                 <p
                   className="text-[10px] tracking-[0.25em] uppercase font-semibold text-white/45 whitespace-nowrap"
-                  style={{ textShadow: "0 1px 8px hsla(0,0%,0%,0.4)" }}
+                  style={{
+                    textShadow: "0 1px 8px hsla(0,0%,0%,0.4)",
+                    fontFamily: "'DM Sans', sans-serif",
+                  }}
                 >
                   {tagline}
                 </p>
@@ -356,7 +398,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                 }}
                 initial={{ width: 0, opacity: 0 }}
                 animate={phase >= 3 ? { width: 100, opacity: 1 } : { width: 0, opacity: 0 }}
-                transition={{ delay: 0.9, duration: 0.6, ease: "easeOut" }}
+                transition={{ delay: 0.8, duration: 0.5, ease: "easeOut" }}
               />
 
               {/* Pulse rings */}
@@ -367,14 +409,14 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                     style={{ borderColor: "hsla(0,0%,100%,0.08)", bottom: 40 }}
                     initial={{ scale: 0.3, opacity: 0 }}
                     animate={{ scale: [0.3, 2.5], opacity: [0.4, 0] }}
-                    transition={{ delay: 1.2, duration: 2, ease: "easeOut" }}
+                    transition={{ delay: 1, duration: 1.8, ease: "easeOut" }}
                   />
                   <motion.div
                     className="absolute w-24 h-24 rounded-full border pointer-events-none"
                     style={{ borderColor: "hsla(270,80%,65%,0.06)", bottom: 40 }}
                     initial={{ scale: 0.3, opacity: 0 }}
                     animate={{ scale: [0.3, 3], opacity: [0.3, 0] }}
-                    transition={{ delay: 1.6, duration: 2, ease: "easeOut" }}
+                    transition={{ delay: 1.4, duration: 1.8, ease: "easeOut" }}
                   />
                 </>
               )}
@@ -388,7 +430,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
               style={{ background: "hsl(var(--background))" }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.4 }}
             />
           )}
         </motion.div>
