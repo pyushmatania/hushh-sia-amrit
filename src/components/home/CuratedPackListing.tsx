@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { Clock, ArrowRight, Sparkles, VolumeX, Volume2 } from "lucide-react";
 import { hapticSelection } from "@/lib/haptics";
 import type { ExperiencePack } from "@/components/home/CuratedPackCard";
@@ -101,6 +101,28 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
   const [muted, setMuted] = useState(true);
   const [videoReady, setVideoReady] = useState(false);
   const [shouldLoad, setShouldLoad] = useState(true);
+  const touchRef = useRef<{ x: number; y: number; t: number } | null>(null);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    touchRef.current = { x: touch.clientX, y: touch.clientY, t: Date.now() };
+  }, []);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (!touchRef.current) return;
+    const touch = e.changedTouches[0];
+    const dx = Math.abs(touch.clientX - touchRef.current.x);
+    const dy = Math.abs(touch.clientY - touchRef.current.y);
+    const dt = Date.now() - touchRef.current.t;
+    touchRef.current = null;
+    // Only fire tap if finger barely moved and was quick
+    if (dx < 15 && dy < 15 && dt < 400) {
+      e.preventDefault();
+      e.stopPropagation();
+      hapticSelection();
+      onTap(pack);
+    }
+  }, [onTap, pack]);
 
   useEffect(() => {
     const card = cardRef.current;
@@ -123,8 +145,10 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
   return (
     <div
       ref={cardRef}
-      className="cursor-pointer px-5 group active:scale-[0.97] transition-transform"
+      className="cursor-pointer px-5 group active:scale-[0.97] transition-transform select-none"
       style={{ animationDelay: `${index * 60}ms` }}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
       onClick={() => { hapticSelection(); onTap(pack); }}
     >
       {/* Video area — tall like stay listings */}
@@ -158,7 +182,7 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
               playsInline
               preload="auto"
               onCanPlay={() => setVideoReady(true)}
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover pointer-events-none"
               style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.3s" }}
             />
           )}
@@ -168,6 +192,8 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
 
           {/* Mute toggle */}
           <button
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => { e.stopPropagation(); e.preventDefault(); setMuted(!muted); }}
             onClick={(e) => { e.stopPropagation(); setMuted(!muted); }}
             className="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center z-10"
             style={{ background: "hsl(var(--foreground) / 0.36)", backdropFilter: "blur(8px)" }}
