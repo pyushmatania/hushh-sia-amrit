@@ -1297,6 +1297,14 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
             </motion.button>
             <motion.button
               whileTap={{ scale: 0.85 }}
+              onClick={handleExportPDF}
+              className="h-9 px-3 rounded-full bg-primary/10 border border-primary/20 flex items-center gap-1.5 text-xs font-medium text-primary"
+            >
+              <Download size={14} />
+              PDF
+            </motion.button>
+            <motion.button
+              whileTap={{ scale: 0.85 }}
               onClick={onClose}
               className="w-9 h-9 rounded-full bg-muted flex items-center justify-center"
             >
