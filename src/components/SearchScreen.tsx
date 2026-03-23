@@ -140,7 +140,7 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
               autoFocus
             />
             {query && (
-              <button onClick={() => setQuery("")}>
+              <button onClick={() => handleQueryChange("")}>
                 <X size={16} className="text-muted-foreground" />
               </button>
             )}
