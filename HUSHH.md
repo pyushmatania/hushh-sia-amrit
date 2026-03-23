@@ -464,13 +464,13 @@ supabase/
 
 ## 🗄 Database Schema
 
-### Tables (30+ total)
+### Tables (45 total)
 | Table | Key Columns | Purpose |
 |-------|------------|---------|
 | `profiles` | user_id, display_name, avatar_url, bio, location, loyalty_points, tier | User profiles |
-| `bookings` | user_id, property_id, booking_id, date, slot, guests, total, status | Booking records |
+| `bookings` | user_id, property_id, booking_id, date, slot, guests, total, status, **payment_status**, **payment_id** | Booking records |
 | `wishlists` | user_id, property_id | Saved properties |
-| `conversations` | participant_1, participant_2 | Chat threads |
+| `conversations` | participant_1, participant_2, **type**, **property_id**, **metadata** | Chat threads (direct/support/group) |
 | `messages` | conversation_id, sender_id, content, read | Chat messages |
 | `notifications` | user_id, title, body, type, icon, read, action_url | Alerts |
 | `reviews` | user_id, property_id, rating, content, photo_urls, verified | Property reviews |
@@ -478,25 +478,40 @@ supabase/
 | `loyalty_transactions` | user_id, title, points, type, icon | Point ledger |
 | `referral_codes` | user_id, code, uses, reward_points | Referral codes |
 | `referral_uses` | code_id, referrer_user_id, referred_user_id, credited | Usage tracking |
-| `host_listings` | user_id, name, category, base_price, capacity, amenities, tags, image_urls, status, property_type, primary_category, lat, lng, highlights, slots (JSONB), rules (JSONB), host_name, rating, review_count, discount_label, entry_instructions | Property listings (fully database-driven) |
-| `curations` | name, tagline, emoji, slot, includes[], tags[], mood[], price, original_price, gradient, badge, property_id, active, sort_order | Curated experience packs |
-| `orders` | user_id, property_id, booking_id, total, status, assigned_to, assigned_name | In-stay food/drink orders |
-| `order_items` | order_id, item_name, item_emoji, quantity, unit_price | Individual order line items |
+| `host_listings` | user_id, name, category, base_price, capacity, amenities, tags, image_urls, status, slots (JSONB), rules (JSONB), lat, lng | Property listings |
+| `curations` | name, tagline, emoji, slot, includes[], tags[], mood[], price, property_id | Curated experience packs |
+| `orders` | user_id, property_id, booking_id, total, status, assigned_to | In-stay food/drink orders |
+| `order_items` | order_id, item_name, item_emoji, quantity, unit_price | Order line items |
+| `order_notes` | order_id, content, author_name, author_role, user_id | Staff notes on orders |
 | `spin_history` | user_id, points_won, prize_label, prize_emoji, spun_at | Daily spin wheel results |
 | `user_milestones` | user_id, milestone_id, achieved_at | Achievement tracking |
 | `user_roles` | user_id, role (app_role enum) | RBAC — super_admin, ops_manager, host, staff |
 | `audit_logs` | user_id, entity_type, entity_id, action, details (JSONB) | Activity audit trail |
-| `campaigns` | title, type, discount_type, discount_value, target_properties[], target_audience[], active | Marketing campaigns |
-| `coupons` | code, discount_type, discount_value, min_order, max_uses, uses, expires_at, user_specific_id | Discount codes |
+| `campaigns` | title, type, discount_type, discount_value, target_properties[], target_audience[] | Marketing campaigns |
+| `coupons` | code, discount_type, discount_value, min_order, max_uses, expires_at | Discount codes |
 | `property_tags` | name, icon, color | Tag definitions |
 | `tag_assignments` | tag_id, target_id, target_type | Tag-to-entity mappings |
-| `identity_verifications` | user_id, document_type, document_url, status, notes, reviewed_by | ID verification queue |
-| `inventory` | name, emoji, category, unit_price, stock, low_stock_threshold, available, property_id | Stock management |
-| `staff_tasks` | title, description, priority, status, assigned_to, property_id, due_date | Staff task tracking |
-| `app_config` | key, value, label, description, category | Dynamic app configuration (pricing, branding, support, homepage) |
+| `identity_verifications` | user_id, document_type, document_url, status, notes | ID verification queue |
+| `inventory` | name, emoji, category, unit_price, stock, low_stock_threshold, property_id | Stock management |
+| `staff_tasks` | title, description, priority, status, assigned_to, property_id | Staff task tracking |
+| `app_config` | key, value, label, description, category, **updated_by** | Dynamic app configuration |
 | `budget_allocations` | category, month, year, allocated, spent, notes | Budget tracking |
 | `expenses` | title, amount, category, vendor, date, payment_method, recurring | Expense management |
 | `experience_packages` | name, emoji, gradient, includes[], price, image_urls[] | Add-on experience packages |
+| `staff_members` | name, role, department, salary, status, user_id | Staff directory |
+| `staff_attendance` | staff_id, date, check_in, check_out, hours_worked | Attendance tracking |
+| `staff_leaves` | staff_id, leave_type, start_date, end_date, status | Leave requests |
+| `staff_salary_payments` | staff_id, amount, month, year, status | Payroll |
+| `client_notes` | client_user_id, content, author_name, author_id, note_type | CRM notes |
+| `booking_photos` | booking_id, photo_url, caption, user_id | Guest photos |
+| `booking_splits` | booking_id, friend_name, friend_email, amount, status, **payment_status**, **payment_id**, **payment_link_url** | Split payment tracking |
+| **`payments`** | booking_id, user_id, amount, currency, status, payment_method, gateway, gateway_order_id, gateway_payment_id | **Payment tracking (v1.22)** |
+| **`refunds`** | payment_id, booking_id, amount, reason, status, gateway_refund_id, initiated_by | **Refund management (v1.22)** |
+| **`invoices`** | booking_id, payment_id, user_id, invoice_number, amount, tax_amount, line_items (JSONB), pdf_url | **Invoice generation (v1.22)** |
+| **`property_slots`** | property_id (FK host_listings), label, start_time, end_time, base_price, capacity, is_blocked | **Dedicated slot management (v1.22)** |
+| **`slot_availability`** | slot_id (FK property_slots), date, booked_count, is_available, price_override | **Per-date availability + dynamic pricing (v1.22)** |
+| **`notification_preferences`** | user_id, notification_type, channel (push/email/sms), enabled | **Granular notification opt-out (v1.22)** |
+| **`push_tokens`** | user_id, token, platform (web/ios/android), active | **FCM push notification tokens (v1.22)** |
 
 ### Database Functions
 | Function | Purpose |
@@ -510,6 +525,15 @@ supabase/
 | Enum | Values |
 |------|--------|
 | `app_role` | `super_admin`, `ops_manager`, `host`, `staff` |
+
+### Clarifications (from v1.22 Audit)
+- **`host_listings` vs "Properties"**: The table is named `host_listings` but is referred to as "Properties" throughout the UI and admin panel
+- **`curations` vs `experience_packages`**: Curations are homepage discovery packs (e.g., "Date Night Deluxe"). Experience packages are add-on bundles within the Experience Builder during booking
+- **`has_role()` default**: Returns FALSE when no entry exists — new users without roles are treated as regular authenticated users
+- **"Work" category**: A cross-pillar filter/tag, not a standalone pillar. "Home" is the default unfiltered view
+- **Spin Wheel guest mode**: Uses localStorage for mock spins. Authenticated spins are DB-enforced (1/day)
+- **Booking Requests**: Accessible as a tab within the Bookings admin page, not a separate page
+- **Finance Hub**: Revenue + Expenses + Budgets consolidated under Earnings in the admin sidebar
 
 ---
 
