@@ -167,9 +167,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
   const holdTimerRef = useRef<number | null>(null);
   const chargeIntervalRef = useRef<number | null>(null);
   const holdStartRef = useRef<number>(0);
-  const touchStartYRef = useRef<number>(0);
-  const isHoldingRef = useRef(false);
-  const hasSwipedRef = useRef(false);
+  const touchStartXRef = useRef<number>(0);
   const didRevealRef = useRef(false);
 
   const cardRef = useRef<HTMLDivElement>(null);
