@@ -542,7 +542,6 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
     if (!didRevealRef.current) {
       setChargeProgress(0);
       setIsActive(false);
-      setTilt({ x: 0, y: 0 });
       return;
     }
 
