@@ -1873,9 +1873,9 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
           <div className="space-y-1 font-mono text-[11px]">
             {[
               ["profiles", "Display name, avatar, bio, location, loyalty pts, tier"],
-              ["bookings", "Slot, date, guests, total, status, rooms, mattresses"],
+              ["bookings", "Slot, date, guests, total, status, rooms, mattresses, payment_status"],
               ["wishlists", "User ↔ property joins"],
-              ["conversations", "Two-participant chat threads"],
+              ["conversations", "Chat threads (direct/support/group) with metadata"],
               ["messages", "Chat messages with read state"],
               ["notifications", "Push-style alerts per user"],
               ["reviews", "Ratings, content, photos, verified flag"],
@@ -1891,7 +1891,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
               ["spin_history", "Daily spin-to-win prize records"],
               ["user_milestones", "Achievement tracking per user"],
               ["user_roles", "RBAC roles (super_admin, ops_manager, host, staff)"],
-              ["app_config", "Key-value runtime settings"],
+              ["app_config", "Key-value runtime settings + updated_by audit"],
               ["inventory", "Stock tracking with low-stock alerts"],
               ["experience_packages", "Bookable add-on packages"],
               ["coupons", "Discount codes with usage limits"],
@@ -1906,10 +1906,17 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
               ["audit_logs", "Action audit trail"],
               ["client_notes", "CRM notes per client"],
               ["booking_photos", "Guest photos per booking"],
-              ["booking_splits", "Split payment tracking"],
+              ["booking_splits", "Split payment tracking + payment_status"],
               ["identity_verifications", "ID document verification queue"],
               ["property_tags", "Custom property tags with colors"],
               ["tag_assignments", "Tag ↔ entity joins"],
+              ["payments", "Payment gateway tracking (Razorpay-ready) — v1.22"],
+              ["refunds", "Refund management with gateway IDs — v1.22"],
+              ["invoices", "Invoice generation with JSONB line items — v1.22"],
+              ["property_slots", "Dedicated slot management per property — v1.22"],
+              ["slot_availability", "Per-date availability + dynamic pricing — v1.22"],
+              ["notification_preferences", "Per-type per-channel opt-out — v1.22"],
+              ["push_tokens", "FCM push notification tokens — v1.22"],
             ].map(([table, desc]) => (
               <p key={table}>
                 <strong className="text-foreground">{table}</strong> — {desc}
