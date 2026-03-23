@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronDown, ChevronRight, BookOpen, Layers, MapPin, Users, Palette, Database, History, Sparkles, Shield, Zap, Copy, Check, FileText } from "lucide-react";
+import { X, ChevronDown, ChevronRight, BookOpen, Layers, MapPin, Users, Palette, Database, History, Sparkles, Shield, Zap, Copy, Check, FileText, Target, Layout, PenTool, TrendingUp, AlertTriangle, Clock, Server } from "lucide-react";
 import { useState, useCallback } from "react";
 
 interface AppDocumentationProps {
@@ -314,13 +314,23 @@ export const changeLog = [
       "Network dependency tree flattened — fonts loaded via HTML preload pattern",
     ],
   },
+  {
+    version: "1.21",
+    phase: "Product Planning & Documentation",
+    items: [
+      "Product Requirements Document (PRD) — full PRD with personas, KPIs, priority matrix, risks, roadmap",
+      "App Blueprint — system architecture, data flow, module dependencies, state management, security layers",
+      "Wireframes — screen layout map, booking flow, admin panel, home screen, profile, ER diagram",
+      "Easter egg docs updated with PRD, Blueprint, and Wireframe sections",
+    ],
+  },
 ];
 
 // Generate the full HUSHH.md content from the changeLog + app info
 function generateFullDoc(): string {
   const header = `# 🏡 HUSHH — Private Experience Marketplace
 
-> **Made in Jeypore ❤️** | v1.20 | Internal Documentation & Blueprint
+> **Made in Jeypore ❤️** | v1.21 | Internal Documentation & Blueprint
 
 Hushh is a premium mobile-first marketplace for booking private experiences, stays, and curated lifestyle services in Jeypore, India.
 
@@ -461,7 +471,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
             </div>
             <div>
               <h1 className="text-lg font-bold text-foreground">Hushh Docs</h1>
-              <p className="text-[11px] text-muted-foreground">v1.20 · Internal Blueprint</p>
+              <p className="text-[11px] text-muted-foreground">v1.21 · Internal Blueprint</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -590,6 +600,209 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
             <li>AI Assistant, Smart Alerts, Audit Trail</li>
             <li>Role-based access: super_admin, ops_manager, host, staff</li>
           </ul>
+        </DocSection>
+
+        {/* PRD Section */}
+        <DocSection
+          title="Product Requirements (PRD)"
+          icon={<Target size={15} className="text-primary" />}
+        >
+          <div className="space-y-3">
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Problem Statement</p>
+              <p>No unified platform in tier-2/3 cities for discovering private venues. Customers rely on WhatsApp groups and phone calls. Hosts manage bookings with notebooks.</p>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">User Personas</p>
+              <div className="space-y-1.5">
+                <p><strong className="text-foreground">Priya (26)</strong> — Plans anniversary dinners. Needs curations, reviews, split payments.</p>
+                <p><strong className="text-foreground">Rahul (24)</strong> — Spontaneous friend hangouts. Needs tonight tags, quick checkout.</p>
+                <p><strong className="text-foreground">Sunita (42)</strong> — Farmhouse owner. Needs simple dashboard, calendar, staff tools.</p>
+                <p><strong className="text-foreground">Vikram (35)</strong> — HR manager booking team outings. Needs builder, bulk booking, receipts.</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Success Metrics</p>
+              <div className="space-y-0.5 font-mono text-[11px]">
+                <p>MAU: 5,000+ · Conversion: 8-12%</p>
+                <p>AOV: ₹3,500+ · Repeat: 40%+</p>
+                <p>Properties: 50+ · NPS: 60+</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Priority Matrix</p>
+              <div className="space-y-0.5 text-[11px]">
+                <p><span className="text-green-400">P0 ✅</span> Discovery, booking, auth, admin CRUD</p>
+                <p><span className="text-green-400">P1 ✅</span> Experience builder, curations, ordering, loyalty, CRM</p>
+                <p><span className="text-yellow-400">P2 🔜</span> Payments (Razorpay), push notifications, multi-language, AI recs</p>
+                <p><span className="text-muted-foreground">P3 📋</span> Native apps, multi-city, vendor marketplace</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Roadmap</p>
+              <div className="space-y-0.5 text-[11px]">
+                <p>v1.x (Done) — Core UI, backend, admin, SEO</p>
+                <p>v2.0 (Planned) — Razorpay/UPI, invoicing</p>
+                <p>v2.1 (Planned) — Push notifs, referral 2.0, AI recs</p>
+                <p>v3.0 (Planned) — Multi-city, vendor marketplace, native apps</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Risks & Mitigations</p>
+              <div className="space-y-0.5 text-[11px]">
+                <p>⚠️ Low host adoption → Zero listing fees, hands-on onboarding</p>
+                <p>⚠️ Seasonal demand → Work-from-resort push, corporate packages</p>
+                <p>⚠️ Payment fraud → UPI verification, booking limits</p>
+                <p>⚠️ OTA competition → Hyper-local focus, curated packs</p>
+              </div>
+            </div>
+          </div>
+        </DocSection>
+
+        {/* Blueprint Section */}
+        <DocSection
+          title="App Blueprint"
+          icon={<Server size={15} className="text-primary" />}
+        >
+          <div className="space-y-3">
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">System Architecture</p>
+              <div className="font-mono text-[10px] space-y-0.5 p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                <p>CLIENT (Browser)</p>
+                <p className="pl-2">├ React Router · React Query · Framer Motion</p>
+                <p className="pl-2">└ Supabase JS Client (Auth · Realtime · Storage)</p>
+                <p className="pl-4">│ HTTPS</p>
+                <p>LOVABLE CLOUD</p>
+                <p className="pl-2">├ Edge Functions (6): admin-ai, smart-alerts...</p>
+                <p className="pl-2">├ PostgreSQL (38 tables · RLS · Triggers)</p>
+                <p className="pl-2">├ Storage (listing-images, identity-docs)</p>
+                <p className="pl-2">└ Auth (GoTrue): Email/Password, verification</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Data Flow</p>
+              <div className="space-y-0.5 text-[11px]">
+                <p><strong className="text-foreground">Guest</strong> → Mock Data (localStorage + static)</p>
+                <p><strong className="text-foreground">Auth User</strong> → Supabase Queries (React Query)</p>
+                <p><strong className="text-foreground">Admin</strong> → Admin Panel (22 pages + sidebar)</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">State Management</p>
+              <div className="space-y-0.5 text-[11px]">
+                <p><strong className="text-foreground">Global</strong> — AuthProvider, ThemeProvider, PrivacyMode, Properties, QueryClient</p>
+                <p><strong className="text-foreground">Local</strong> — Screen state machine, component useState, localStorage fallbacks</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Module Map</p>
+              <div className="font-mono text-[10px] space-y-0.5 p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                <p>App.tsx</p>
+                <p className="pl-2">├ Index.tsx (SPA shell + 15 screens)</p>
+                <p className="pl-4">├ HomeScreen (10+ sub-components)</p>
+                <p className="pl-4">├ PropertyDetail → Builder → Checkout</p>
+                <p className="pl-4">├ Trips → BookingDetail → LiveOrdering</p>
+                <p className="pl-4">└ Profile → Loyalty, Referrals, Host</p>
+                <p className="pl-2">├ Admin.tsx (22 pages + sidebar)</p>
+                <p className="pl-2">└ Staff.tsx (orders, tasks, checkin)</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Security Layers</p>
+              <div className="space-y-0.5 text-[11px]">
+                <p>1️⃣ Auth — email/password, JWT, email verification</p>
+                <p>2️⃣ RBAC — user_roles table, has_role() function</p>
+                <p>3️⃣ RLS — every table, per-user data isolation</p>
+                <p>4️⃣ App — no secrets in client, edge functions for ops</p>
+              </div>
+            </div>
+          </div>
+        </DocSection>
+
+        {/* Wireframes Section */}
+        <DocSection
+          title="Wireframes"
+          icon={<PenTool size={15} className="text-primary" />}
+        >
+          <div className="space-y-3">
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Screen Hierarchy (5 Tabs)</p>
+              <div className="font-mono text-[10px] space-y-0.5 p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                <p>Tab 1: EXPLORE</p>
+                <p className="pl-2">Search → ActiveTrip → Categories → Spotlight</p>
+                <p className="pl-2">→ Properties → Sports → Foodie → Packs</p>
+                <p>Tab 2: WISHLISTS — 2-col grid</p>
+                <p>Tab 3: TRIPS — Filter tabs → Cards → Detail</p>
+                <p>Tab 4: MESSAGES — Conversations → Chat</p>
+                <p>Tab 5: PROFILE — Hero → Stats → Achievements</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Booking Flow</p>
+              <div className="font-mono text-[10px] p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                <p>┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐</p>
+                <p>│DETAIL  │→│BUILDER │→│CHECKOUT│→│CONFIRM │</p>
+                <p>│Gallery │ │Food tab│ │Summary │ │🎊      │</p>
+                <p>│Slots   │ │Decor   │ │Add-ons │ │HUSHH-XX│</p>
+                <p>│Date    │ │DJ tab  │ │Coupon  │ │+50 pts │</p>
+                <p>│Guests  │ │[-] [+] │ │Total   │ │        │</p>
+                <p>│Reviews │ │Running │ │        │ │[View   │</p>
+                <p>│[Book→] │ │[Next→] │ │[Pay →] │ │ Trips] │</p>
+                <p>└────────┘ └────────┘ └────────┘ └────────┘</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Home Screen</p>
+              <div className="font-mono text-[10px] p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                <p>┌───────────────────┐</p>
+                <p>│ [👤] Jeypore [🔔] │</p>
+                <p>│ [🔍 Search...]    │</p>
+                <p>│ ┌─ Active Trip ─┐ │</p>
+                <p>│ │ 🟢 Villa Eve  │ │</p>
+                <p>│ └───────────────┘ │</p>
+                <p>│ 🏠 🎭 ✨ 🛎 📦   │</p>
+                <p>│ ╔═══ VIDEO ═════╗ │</p>
+                <p>│ ╚═══════════════╝ │</p>
+                <p>│ [Card] [Card]     │</p>
+                <p>│ [🏸][🎯][🏊]     │</p>
+                <p>│ ┌═ Pack Card ═══┐ │</p>
+                <p>│ │ [Book Now]    │ │</p>
+                <p>│ └═══════════════┘ │</p>
+                <p>│ 🏠 ❤️ ✈️ 💬 👤  │</p>
+                <p>└───────────────────┘</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Admin Panel</p>
+              <div className="font-mono text-[10px] p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                <p>┌────────┬─────────────────┐</p>
+                <p>│SIDEBAR │ COMMAND CENTER   │</p>
+                <p>│ 🏠Home │ ┌──┐┌──┐┌──┐   │</p>
+                <p>│ 🤖AI   │ │₹K││28││4★│   │</p>
+                <p>│ 🔔Alert│ └──┘└──┘└──┘   │</p>
+                <p>│ 🏠Prop │ ┌─────┐┌─────┐ │</p>
+                <p>│ 📦Inv  │ │Feed ││Pend.│ │</p>
+                <p>│ 👥Users│ └─────┘└─────┘ │</p>
+                <p>│ (+14)  │                 │</p>
+                <p>└────────┴─────────────────┘</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Entity Relationships</p>
+              <div className="font-mono text-[10px] p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                <p>users ─┬─ profiles (1:1)</p>
+                <p>       ├─ bookings → orders → items</p>
+                <p>       ├─ wishlists → host_listings</p>
+                <p>       ├─ reviews → responses</p>
+                <p>       ├─ conversations → messages</p>
+                <p>       ├─ notifications · loyalty</p>
+                <p>       ├─ referrals · user_roles</p>
+                <p>       └─ identity_verifications</p>
+                <p>listings ── curations · inventory</p>
+                <p>staff ── attendance · leaves · pay</p>
+              </div>
+            </div>
+          </div>
         </DocSection>
 
         <DocSection
@@ -752,7 +965,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
         <div className="text-center py-6">
           <p className="text-[11px] text-muted-foreground">
             <Sparkles size={12} className="inline text-primary mr-1" />
-            Hushh v1.20 · Made in Jeypore ❤️
+            Hushh v1.21 · Made in Jeypore ❤️
           </p>
         </div>
       </div>
