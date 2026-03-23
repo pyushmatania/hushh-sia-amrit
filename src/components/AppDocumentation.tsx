@@ -1527,20 +1527,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
           icon={<Server size={15} className="text-primary" />}
         >
           <div className="space-y-3">
-            <div>
-              <p className="font-bold text-foreground text-xs mb-1">System Architecture</p>
-              <div className="font-mono text-[10px] space-y-0.5 p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
-                <p>CLIENT (Browser)</p>
-                <p className="pl-2">├ React Router · React Query · Framer Motion</p>
-                <p className="pl-2">└ Supabase JS Client (Auth · Realtime · Storage)</p>
-                <p className="pl-4">│ HTTPS</p>
-                <p>LOVABLE CLOUD</p>
-                <p className="pl-2">├ Edge Functions (6): admin-ai, smart-alerts...</p>
-                <p className="pl-2">├ PostgreSQL (38 tables · RLS · Triggers)</p>
-                <p className="pl-2">├ Storage (listing-images, identity-docs, photos)</p>
-                <p className="pl-2">└ Auth (GoTrue): Email/Password, verification</p>
-              </div>
-            </div>
+            <MermaidDiagram chart={ARCHITECTURE_CHART} title="System Architecture" />
             <div>
               <p className="font-bold text-foreground text-xs mb-1">Data Flow</p>
               <div className="space-y-0.5 text-[11px]">
