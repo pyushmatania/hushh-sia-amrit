@@ -376,6 +376,19 @@ export const changeLog = [
       "Documentation and easter egg UI synced with all 16 wireframes (8 user + 8 admin)",
     ],
   },
+  {
+    version: "1.24",
+    phase: "Resilience & Performance",
+    items: [
+      "React Error Boundaries — global + per-route crash recovery with 'Try Again' UI",
+      "Offline Detection — useOnlineStatus hook + animated OfflineBanner when device goes offline",
+      "Query Retry Strategy — React Query configured: 2× retry with exponential backoff (1s→4s), 30s stale time",
+      "Mutation Retry — single retry on failed mutations for resilience",
+      "Rate Limiting Documented — Auth (30/hr), Spin Wheel (1/day), Edge Functions (100/s), Search (300ms debounce)",
+      "Video & Asset Strategy — lazy loading via IntersectionObserver, CDN-backed storage, font preconnect",
+      "Architecture updated — ErrorBoundary, OfflineBanner, useOnlineStatus reflected in component tree",
+    ],
+  },
 ];
 
 // Generate the COMPLETE documentation including PRD, Blueprint, Wireframes
