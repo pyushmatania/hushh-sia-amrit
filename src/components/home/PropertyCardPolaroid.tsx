@@ -40,20 +40,40 @@ const stickerEmojis = ["📌", "⭐", "🔥", "💜", "✈️", "🎯"];
 
 export default function PropertyCardPolaroid({ property, index, onTap, isWishlisted = false, onToggleWishlist }: PropertyCardPolaroidProps) {
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [parallax, setParallax] = useState({ y: 40, opacity: 0, scale: 0.92 });
+  const cardRef = useRef<HTMLDivElement>(null);
   const tilt = tilts[index % tilts.length];
   const tapeGrad = tapeGradients[index % tapeGradients.length];
   const caption = captions[index % captions.length];
   const sticker = stickerEmojis[index % stickerEmojis.length];
 
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const ratio = entry.intersectionRatio;
+        const y = (1 - ratio) * 40;
+        const scale = 0.92 + ratio * 0.08;
+        setParallax({ y, opacity: Math.min(ratio * 1.5, 1), scale });
+      },
+      { threshold: Array.from({ length: 20 }, (_, i) => i / 19) }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div
-      className="mx-auto cursor-pointer active:scale-[0.94] transition-transform"
+      ref={cardRef}
+      className="mx-auto cursor-pointer active:scale-[0.94]"
       onClick={() => onTap(property)}
       style={{
         width: "78%",
         maxWidth: "310px",
-        transform: `rotate(${tilt}deg)`,
-        animationDelay: `${index * 60}ms`,
+        transform: `rotate(${tilt}deg) translateY(${parallax.y}px) scale(${parallax.scale})`,
+        opacity: parallax.opacity,
+        transition: "transform 0.15s ease-out, opacity 0.2s ease-out",
       }}
     >
       {/* Top branded washi tape with texture */}
