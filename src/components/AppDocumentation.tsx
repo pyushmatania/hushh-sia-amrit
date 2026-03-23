@@ -1,6 +1,27 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronDown, ChevronRight, BookOpen, Layers, MapPin, Users, Palette, Database, History, Sparkles, Shield, Zap, Copy, Check, FileText, Target, Layout, PenTool, TrendingUp, AlertTriangle, Clock, Server } from "lucide-react";
-import { useState, useCallback } from "react";
+import { X, ChevronDown, ChevronRight, BookOpen, Layers, MapPin, Users, Palette, Database, History, Sparkles, Shield, Zap, Copy, Check, FileText, Target, Layout, PenTool, TrendingUp, AlertTriangle, Clock, Server, Download } from "lucide-react";
+import { useState, useCallback, useRef } from "react";
+
+// Mermaid diagram rendered via iframe
+function MermaidDiagram({ chart, title }: { chart: string; title: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const escaped = chart.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const html = `<!DOCTYPE html><html><head><script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"><\/script><style>body{margin:0;padding:12px;background:#0c0b1d;display:flex;justify-content:center;overflow:auto;}svg{max-width:100%;height:auto;}</style></head><body><pre class="mermaid">${escaped}</pre><script>mermaid.initialize({startOnLoad:true,theme:'dark',themeVariables:{primaryColor:'#7c3aed',primaryTextColor:'#e2e8f0',primaryBorderColor:'#7c3aed',lineColor:'#a78bfa',secondaryColor:'#1e1b4b',tertiaryColor:'#312e81',background:'#0c0b1d',mainBkg:'#1e1b4b',nodeBorder:'#7c3aed',clusterBkg:'#1e1b4b33',clusterBorder:'#7c3aed55',titleColor:'#e2e8f0',edgeLabelBackground:'#1e1b4b',fontSize:'11px'}});<\/script></body></html>`;
+
+  return (
+    <div className="space-y-1">
+      <div className="flex items-center justify-between">
+        <p className="font-bold text-foreground text-xs">{title}</p>
+        <button onClick={() => setExpanded(!expanded)} className="text-[10px] text-primary font-medium">
+          {expanded ? "Collapse" : "Expand"}
+        </button>
+      </div>
+      <div className="rounded-lg overflow-hidden transition-all duration-300" style={{ height: expanded ? "500px" : "280px", border: "1px solid hsl(var(--border))" }}>
+        <iframe srcDoc={html} className="w-full h-full border-0" sandbox="allow-scripts" title={title} />
+      </div>
+    </div>
+  );
+}
 
 interface AppDocumentationProps {
   open: boolean;
@@ -1138,9 +1159,64 @@ standalone: campaigns · coupons · expenses · budget_allocations · app_config
   return header + changes + footer;
 }
 
+// Mermaid chart data
+const ARCHITECTURE_CHART = `graph TB
+    subgraph CLIENT["CLIENT Browser"]
+        direction TB
+        RR["React Router v6"]
+        RQ["React Query"]
+        FM["Framer Motion"]
+        SC["Supabase JS Client"]
+    end
+    subgraph SCREENS["App Screens"]
+        direction LR
+        USER["User App 15 screens"]
+        ADMIN["Admin Panel 22 pages"]
+        STAFF["Staff Portal 4 pages"]
+    end
+    subgraph CLOUD["LOVABLE CLOUD"]
+        direction TB
+        EF["Edge Functions x6"]
+        PG["PostgreSQL 38 tables + RLS"]
+        ST["Storage images docs photos"]
+        AU["Auth GoTrue"]
+    end
+    SCREENS --> CLIENT
+    CLIENT -->|"HTTPS + JWT"| CLOUD
+    EF --> PG
+    AU --> PG`;
+
+const ER_CHART = `erDiagram
+    users ||--|| profiles : "1-to-1"
+    users ||--o{ bookings : "has many"
+    users ||--o{ wishlists : "saves"
+    users ||--o{ reviews : "writes"
+    users ||--o{ conversations : "chats"
+    users ||--o{ notifications : "receives"
+    users ||--o{ loyalty_transactions : "earns"
+    users ||--o{ referral_codes : "creates"
+    users ||--o{ user_roles : "assigned"
+    users ||--o{ user_milestones : "achieves"
+    users ||--o{ host_listings : "hosts"
+    bookings ||--o{ orders : "has"
+    bookings ||--o{ booking_splits : "split"
+    bookings ||--o{ booking_photos : "has"
+    orders ||--o{ order_items : "contains"
+    orders ||--o{ order_notes : "noted"
+    conversations ||--o{ messages : "contains"
+    reviews ||--o{ review_responses : "responded"
+    referral_codes ||--o{ referral_uses : "used"
+    host_listings ||--o{ curations : "packs"
+    host_listings ||--o{ inventory : "stocks"
+    property_tags ||--o{ tag_assignments : "assigned"
+    staff_members ||--o{ staff_attendance : "tracks"
+    staff_members ||--o{ staff_leaves : "requests"
+    staff_members ||--o{ staff_salary_payments : "paid"`;
+
 export default function AppDocumentation({ open, onClose }: AppDocumentationProps) {
   const [copied, setCopied] = useState(false);
   const [showRawDoc, setShowRawDoc] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const handleCopyDoc = useCallback(async () => {
     try {
@@ -1148,7 +1224,6 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Fallback: select all in a textarea
       const ta = document.createElement("textarea");
       ta.value = generateFullDoc();
       document.body.appendChild(ta);
@@ -1158,6 +1233,33 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
+  }, []);
+
+  const handleExportPDF = useCallback(() => {
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+    const docText = generateFullDoc();
+    const htmlContent = docText
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+      .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+      .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+      .replace(/^- (.+)$/gm, '<li>$1</li>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n\n/g, '<br/><br/>');
+    printWindow.document.write(`<!DOCTYPE html><html><head><title>Hushh Documentation v1.21</title><style>
+      *{margin:0;padding:0;box-sizing:border-box}
+      body{font-family:'Segoe UI',system-ui,sans-serif;padding:40px;color:#1a1a2e;line-height:1.7;font-size:13px;max-width:900px;margin:0 auto}
+      h1{font-size:24px;margin:24px 0 12px;color:#7c3aed}
+      h2{font-size:18px;margin:28px 0 8px;color:#1a1a2e;border-bottom:2px solid #7c3aed;padding-bottom:4px}
+      h3{font-size:14px;margin:16px 0 4px;color:#4c1d95}
+      li{margin:2px 0;margin-left:20px}
+      pre{background:#f5f3ff;padding:12px;border-radius:8px;font-size:11px;white-space:pre-wrap;margin:8px 0}
+      .footer{margin-top:40px;text-align:center;color:#888;font-size:11px;border-top:1px solid #ddd;padding-top:16px}
+      @media print{body{padding:20px}h2{page-break-before:auto}}
+    </style></head><body><div>${htmlContent}</div><div class="footer">Hushh v1.21 | Made in Jeypore | Generated ${new Date().toLocaleDateString()}</div></body></html>`);
+    printWindow.document.close();
+    setTimeout(() => printWindow.print(), 500);
   }, []);
 
   if (!open) return null;
@@ -1192,6 +1294,14 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
             >
               {copied ? <Check size={14} /> : <Copy size={14} />}
               {copied ? "Copied!" : "Copy"}
+            </motion.button>
+            <motion.button
+              whileTap={{ scale: 0.85 }}
+              onClick={handleExportPDF}
+              className="h-9 px-3 rounded-full bg-primary/10 border border-primary/20 flex items-center gap-1.5 text-xs font-medium text-primary"
+            >
+              <Download size={14} />
+              PDF
             </motion.button>
             <motion.button
               whileTap={{ scale: 0.85 }}
@@ -1417,20 +1527,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
           icon={<Server size={15} className="text-primary" />}
         >
           <div className="space-y-3">
-            <div>
-              <p className="font-bold text-foreground text-xs mb-1">System Architecture</p>
-              <div className="font-mono text-[10px] space-y-0.5 p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
-                <p>CLIENT (Browser)</p>
-                <p className="pl-2">├ React Router · React Query · Framer Motion</p>
-                <p className="pl-2">└ Supabase JS Client (Auth · Realtime · Storage)</p>
-                <p className="pl-4">│ HTTPS</p>
-                <p>LOVABLE CLOUD</p>
-                <p className="pl-2">├ Edge Functions (6): admin-ai, smart-alerts...</p>
-                <p className="pl-2">├ PostgreSQL (38 tables · RLS · Triggers)</p>
-                <p className="pl-2">├ Storage (listing-images, identity-docs, photos)</p>
-                <p className="pl-2">└ Auth (GoTrue): Email/Password, verification</p>
-              </div>
-            </div>
+            <MermaidDiagram chart={ARCHITECTURE_CHART} title="System Architecture" />
             <div>
               <p className="font-bold text-foreground text-xs mb-1">Data Flow</p>
               <div className="space-y-0.5 text-[11px]">
@@ -1642,26 +1739,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
                 <p>└─────────────────────────┘</p>
               </div>
             </div>
-            <div>
-              <p className="font-bold text-foreground text-xs mb-1">Entity Relationships (ER)</p>
-              <div className="font-mono text-[10px] p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
-                <p>users ─┬─ profiles (1:1)</p>
-                <p>       ├─ bookings → orders → items</p>
-                <p>       ├─ wishlists → host_listings</p>
-                <p>       ├─ reviews → responses</p>
-                <p>       ├─ conversations → messages</p>
-                <p>       ├─ notifications · loyalty</p>
-                <p>       ├─ referrals · user_roles</p>
-                <p>       ├─ milestones · identity</p>
-                <p>       └─ booking_photos · splits</p>
-                <p>listings ── curations · inventory</p>
-                <p>         ── tags (via tag_assignments)</p>
-                <p>staff ── attendance · leaves · pay</p>
-                <p>standalone: campaigns · coupons</p>
-                <p>  expenses · budget · app_config</p>
-                <p>  audit_logs · client_notes</p>
-              </div>
-            </div>
+            <MermaidDiagram chart={ER_CHART} title="Entity Relationships (ER)" />
           </div>
         </DocSection>
 
