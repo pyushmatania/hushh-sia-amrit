@@ -384,9 +384,12 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                   <h2 className="text-lg font-bold text-foreground">🔥 All Experiences</h2>
                   <span className="text-xs text-muted-foreground">{filteredProperties.length} found</span>
                 </div>
-                {filteredProperties.map((p, i) => (
-                  <PropertyCard key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
-                ))}
+                <MixedListingFeed
+                  properties={filteredProperties}
+                  onPropertyTap={onPropertyTap}
+                  wishlist={wishlist}
+                  onToggleWishlist={onToggleWishlist}
+                />
                 {filteredProperties.length === 0 && (
                   <div className="px-5 py-12 text-center">
                     <p className="text-3xl mb-2">🔍</p>
