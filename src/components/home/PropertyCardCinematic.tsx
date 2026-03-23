@@ -555,7 +555,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
 
       const isTap = !holdCancelledRef.current && pressDuration <= TAP_MAX_DURATION && moveX <= TAP_MAX_MOVE && moveY <= TAP_MAX_MOVE;
       if (isTap) {
-        hapticSelection();
+        hapticLight();
         onTap(property);
       }
       return;
