@@ -620,7 +620,14 @@ React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion
 | staff_salary_payments | staff_id, amount, month, year, status | Payroll |
 | client_notes | client_user_id, content, author_name, note_type | CRM notes |
 | booking_photos | booking_id, photo_url, caption | Guest photos |
-| booking_splits | booking_id, friend_name, friend_email, amount, status | Split payments |
+| booking_splits | booking_id, friend_name, friend_email, amount, status, payment_status, payment_id | Split payments |
+| **payments** | booking_id, user_id, amount, currency, status, gateway, gateway_order_id | **Payment tracking (v1.22)** |
+| **refunds** | payment_id, booking_id, amount, reason, status, gateway_refund_id | **Refund management (v1.22)** |
+| **invoices** | booking_id, payment_id, user_id, invoice_number, amount, line_items JSONB | **Invoice generation (v1.22)** |
+| **property_slots** | property_id, label, start_time, end_time, base_price, capacity | **Slot management (v1.22)** |
+| **slot_availability** | slot_id, date, booked_count, is_available, price_override | **Per-date availability (v1.22)** |
+| **notification_preferences** | user_id, notification_type, channel, enabled | **Notification opt-out (v1.22)** |
+| **push_tokens** | user_id, token, platform, active | **FCM push tokens (v1.22)** |
 
 ### Database Functions
 | Function | Purpose |
