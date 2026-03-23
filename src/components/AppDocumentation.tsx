@@ -932,12 +932,14 @@ LOVABLE CLOUD
 
 ### Data Flow
 - Guest → Mock Data (localStorage + static)
-- Auth User → Supabase Queries (React Query with cache)
+- Auth User → Supabase Queries (React Query with cache, 2× retry, 30s stale)
 - Admin → Admin Panel (22 pages + sidebar)
+- Offline → OfflineBanner shown, cached data available, mutations fail gracefully
 
 ### State Management
 - Global: AuthProvider, ThemeProvider, PrivacyModeProvider, PropertiesProvider, QueryClient
 - Local: Screen state machine (Index.tsx), component useState, localStorage fallbacks
+- Online Status: useOnlineStatus hook (navigator.onLine + event listeners)
 
 ### Module Map
 \`\`\`
