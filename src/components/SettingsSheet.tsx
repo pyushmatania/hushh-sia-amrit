@@ -1,7 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronLeft, Bell, Shield, Globe, Accessibility, Moon, EyeOff } from "lucide-react";
+import { X, ChevronLeft, Bell, Shield, Globe, Accessibility, Moon, EyeOff, Loader2, Smartphone } from "lucide-react";
 import { useState } from "react";
 import { usePrivacyMode } from "@/hooks/use-privacy-mode";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SettingsSheetProps {
   open: boolean;
