@@ -200,7 +200,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                   className="text-xs text-white/40 tracking-[0.2em] uppercase mt-1.5"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 2.0 }}
+                  transition={{ delay: 0.8 }}
                 >
                   {tagline}
                 </motion.p>
