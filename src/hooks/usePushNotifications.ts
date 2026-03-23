@@ -54,9 +54,10 @@ export function usePushNotifications() {
       const registration = await navigator.serviceWorker.register('/sw-push.js', { scope: '/' });
       await navigator.serviceWorker.ready;
 
+      const appServerKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY).buffer as ArrayBuffer,
+        applicationServerKey: appServerKey,
       });
 
       const p256dhKey = subscription.getKey('p256dh');
