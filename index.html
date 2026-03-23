@@ -26,7 +26,12 @@
 </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Inline initial paint for fast FCP — replaced by React -->
+      <div id="init-splash" style="position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;background:#0a0a0a">
+        <span style="font-size:2rem;font-weight:700;color:#fff;letter-spacing:-0.02em">Hushh 🤫</span>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
