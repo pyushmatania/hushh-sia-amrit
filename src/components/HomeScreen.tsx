@@ -38,6 +38,7 @@ function SectionTitle({ title }: { title: string }) {
 
 interface HomeScreenProps {
   onPropertyTap: (property: Property) => void;
+  onExperienceTap?: (pack: ExperiencePack) => void;
   onSearchTap?: () => void;
   onMapTap?: () => void;
   onNotificationTap?: () => void;
@@ -45,7 +46,7 @@ interface HomeScreenProps {
   onToggleWishlist?: (id: string) => void;
 }
 
-export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNotificationTap, wishlist = [], onToggleWishlist }: HomeScreenProps) {
+export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap, onMapTap, onNotificationTap, wishlist = [], onToggleWishlist }: HomeScreenProps) {
   const { unreadCount: notifCount } = useNotifications();
   const { properties, packages, curatedCombos } = usePropertiesData();
   const { packs: experiencePacks } = useCurations();
