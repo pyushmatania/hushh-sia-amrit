@@ -20,9 +20,9 @@ interface BottomNavProps {
 export default function BottomNav({ active, onChange, messageBadge = 0 }: BottomNavProps) {
   const handleTabPress = useCallback((tabId: string) => {
     if (tabId === active) {
-      hapticImpact("light");
+      hapticLight();
     } else {
-      hapticImpact("medium");
+      hapticMedium();
     }
     onChange(tabId);
   }, [active, onChange]);
