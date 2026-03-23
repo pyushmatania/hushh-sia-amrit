@@ -121,6 +121,12 @@ function PaperTexture() {
 /* ── Main component ─────────────────────────────────────── */
 
 export default function PropertyCardStack({ properties, startIndex, onTap, wishlist, onToggleWishlist }: PropertyCardStackProps) {
+  const SWIPE_DISTANCE = 35;
+  const FLICK_DISTANCE = 18;
+  const FLICK_TIME = 250;
+  const TAP_DISTANCE = 10;
+  const TAP_TIME = 280;
+
   const cards = properties.slice(0, 5).length >= 3 ? properties.slice(0, 5) : properties.slice(0, 3);
   const [active, setActive] = useState(0);
   const [dragX, setDragX] = useState(0);
@@ -185,18 +191,55 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
       transform: `translateX(${xOffset}px) translateZ(${zShift}px) rotateY(${rotateY}deg) scale(${scale})`,
       opacity: isFront ? 1 : Math.max(0.4, 0.75 - absDiff * 0.2),
       filter: isFront ? "brightness(1) saturate(1.1)" : "brightness(0.5) saturate(0.7)",
-      pointerEvents: "auto",
+      pointerEvents: isFront ? "auto" : "none",
     };
   };
 
-  const handleTouchStart = (e: React.TouchEvent) => { touchRef.current = { x: e.touches[0].clientX, t: Date.now() }; swipedRef.current = false; setIsDragging(true); };
-  const handleTouchMove = (e: React.TouchEvent) => { if (!touchRef.current) return; const dx = e.touches[0].clientX - touchRef.current.x; if (Math.abs(dx) > 8) { e.preventDefault(); e.stopPropagation(); } setDragX(dx); };
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.stopPropagation();
+    touchRef.current = { x: e.touches[0].clientX, t: Date.now() };
+    swipedRef.current = false;
+    setIsDragging(true);
+  };
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!touchRef.current) return;
+    const dx = e.touches[0].clientX - touchRef.current.x;
+    e.stopPropagation();
+    if (Math.abs(dx) > 8) {
+      e.preventDefault();
+    }
+    setDragX(dx);
+  };
   const handleTouchEnd = (e: React.TouchEvent) => {
+    e.stopPropagation();
     if (!touchRef.current) { setDragX(0); setIsDragging(false); return; }
     const dx = e.changedTouches[0].clientX - touchRef.current.x;
     const dt = Date.now() - touchRef.current.t;
-    if (Math.abs(dx) > 35 || (Math.abs(dx) > 18 && dt < 250)) { swipedRef.current = true; blockTapUntilRef.current = Date.now() + 280; dx < 0 ? goNext() : goPrev(); }
-    touchRef.current = null; setDragX(0); setIsDragging(false);
+
+    if (Math.abs(dx) > SWIPE_DISTANCE || (Math.abs(dx) > FLICK_DISTANCE && dt < FLICK_TIME)) {
+      swipedRef.current = true;
+      blockTapUntilRef.current = Date.now() + 320;
+      dx < 0 ? goNext() : goPrev();
+      touchRef.current = null;
+      setDragX(0);
+      setIsDragging(false);
+      return;
+    }
+
+    if (Math.abs(dx) <= TAP_DISTANCE && dt <= TAP_TIME && Date.now() >= blockTapUntilRef.current) {
+      blockTapUntilRef.current = Date.now() + 320;
+      onTap(cards[active]);
+    }
+
+    touchRef.current = null;
+    setDragX(0);
+    setIsDragging(false);
+  };
+
+  const handleTouchCancel = () => {
+    touchRef.current = null;
+    setDragX(0);
+    setIsDragging(false);
   };
 
   const mouseRef = useRef<{ x: number; t: number } | null>(null);
@@ -218,6 +261,7 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
     <div
       ref={containerRef}
       className="relative overflow-visible"
+      data-no-pull-refresh="true"
       style={{ height: "480px", touchAction: "pan-y pinch-zoom", perspective: "1200px", perspectiveOrigin: "50% 40%" }}
     >
       {/* Section label */}
@@ -259,6 +303,7 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
               onTouchStart={isFront ? handleTouchStart : undefined}
               onTouchMove={isFront ? handleTouchMove : undefined}
               onTouchEnd={isFront ? handleTouchEnd : undefined}
+              onTouchCancel={isFront ? handleTouchCancel : undefined}
             >
               {/* Main ticket body */}
               <div
