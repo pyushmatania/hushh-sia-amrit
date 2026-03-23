@@ -1,5 +1,5 @@
 import { Heart, Star, Camera, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import type { Property } from "@/data/properties";
 import OptimizedImage from "@/components/shared/OptimizedImage";
 
