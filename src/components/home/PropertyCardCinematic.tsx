@@ -678,38 +678,36 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
                 </span>
               </div>
 
-              {/* Price — masked before hold, reveals after hold */}
+              {/* Price — counting counter reveal */}
               <div className="flex items-center gap-2 mt-2">
-                <Zap size={13} style={{ color: rarityInfo.color, filter: `drop-shadow(0 0 4px ${rarityInfo.color})` }} />
+                <Zap
+                  size={13}
+                  style={{
+                    color: rarityInfo.color,
+                    filter: `drop-shadow(0 0 ${revealed ? "8px" : "4px"} ${rarityInfo.color})`,
+                    animation: revealed ? "energyPulse 1s ease-in-out infinite" : "none",
+                    transition: "filter 0.5s",
+                  }}
+                />
                 <div className="relative h-7 min-w-[106px]">
                   <span
-                    className="absolute left-0 top-0 text-[20px] font-black text-white"
+                    className="absolute left-0 top-0 text-[20px] font-black text-white tabular-nums"
                     style={{
                       textShadow: `0 0 14px ${rarityInfo.color}40`,
-                      transform: revealed ? "translateY(-6px) scale(0.9)" : "translateY(0px) scale(1)",
+                      transform: revealed ? "translateY(-8px) scale(0.8) rotateX(40deg)" : "translateY(0px) scale(1)",
                       opacity: revealed ? 0 : 1,
-                      transition: "all 0.4s cubic-bezier(0.34,1.56,0.64,1)",
+                      transition: "all 0.35s cubic-bezier(0.34,1.56,0.64,1)",
                     }}
                   >
                     {maskedPrice}
                   </span>
-                  <span
-                    className="absolute left-0 top-0 text-[20px] font-black text-white"
-                    style={{
-                      textShadow: `0 0 14px ${rarityInfo.color}50`,
-                      transform: revealed ? "translateY(0px) scale(1)" : "translateY(6px) scale(0.9)",
-                      opacity: revealed ? 1 : 0,
-                      transition: "all 0.45s cubic-bezier(0.34,1.56,0.64,1)",
-                    }}
-                  >
-                    ₹{property.basePrice.toLocaleString()}
-                  </span>
+                  <PriceCounter price={property.basePrice} revealed={revealed} color={rarityInfo.color} />
                 </div>
                 <span className="text-[10px] text-white/35 ml-0.5">/session</span>
                 <XpRing level={totalPower} color={rarityInfo.color} revealed={revealed} />
               </div>
 
-              {/* Stats — always visible, values reveal only after hold */}
+              {/* Stats — always visible, values count up after hold with staggered delays */}
               <div
                 style={{
                   maxHeight: "130px",
@@ -719,10 +717,10 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
                 }}
               >
                 <div className="mt-3 space-y-1.5 pt-2" style={{ borderTop: `1px solid ${rarityInfo.color}20` }}>
-                  <StatBar label="PWR" value={stats.power} max={99} color={rarityInfo.color} revealed={revealed} icon={<Zap size={9} style={{ color: rarityInfo.color }} />} />
-                  <StatBar label="VIBE" value={stats.vibe} max={99} color="hsl(45 100% 55%)" revealed={revealed} icon={<Star size={9} style={{ color: "hsl(45 100% 55%)" }} />} />
-                  <StatBar label="SIZE" value={stats.capacity} max={99} color="hsl(var(--success))" revealed={revealed} icon={<Users size={9} style={{ color: "hsl(var(--success))" }} />} />
-                  <StatBar label="HYPE" value={stats.demand} max={99} color="hsl(var(--destructive))" revealed={revealed} icon={<Flame size={9} style={{ color: "hsl(var(--destructive))" }} />} />
+                  <StatBar label="PWR" value={stats.power} max={99} color={rarityInfo.color} revealed={revealed} delay={0} icon={<Zap size={9} style={{ color: rarityInfo.color }} />} />
+                  <StatBar label="VIBE" value={stats.vibe} max={99} color="hsl(45 100% 55%)" revealed={revealed} delay={120} icon={<Star size={9} style={{ color: "hsl(45 100% 55%)" }} />} />
+                  <StatBar label="SIZE" value={stats.capacity} max={99} color="hsl(var(--success))" revealed={revealed} delay={240} icon={<Users size={9} style={{ color: "hsl(var(--success))" }} />} />
+                  <StatBar label="HYPE" value={stats.demand} max={99} color="hsl(var(--destructive))" revealed={revealed} delay={360} icon={<Flame size={9} style={{ color: "hsl(var(--destructive))" }} />} />
                 </div>
               </div>
 
