@@ -56,23 +56,33 @@ export default function PropertyCardPolaroid({ property, index, onTap, isWishlis
         animationDelay: `${index * 60}ms`,
       }}
     >
-      {/* Top branded washi tape */}
+      {/* Top branded washi tape with texture */}
       <div
-        className="mx-auto relative z-10 flex items-center justify-center gap-1"
+        className="mx-auto relative z-10 flex items-center justify-center gap-1 overflow-hidden"
         style={{
-          width: "100px",
-          height: "22px",
+          width: "110px",
+          height: "24px",
           background: tapeGrad,
-          borderRadius: "3px",
-          transform: `rotate(${-tilt * 0.4}deg) translateY(11px)`,
+          borderRadius: "2px",
+          transform: `rotate(${-tilt * 0.4}deg) translateY(12px)`,
           boxShadow: "0 2px 8px hsl(var(--foreground) / 0.15)",
+          opacity: 0.85,
         }}
       >
-        <Sparkles size={9} className="text-white/90" />
-        <span className="text-[7px] font-black text-white/95 tracking-[0.15em] uppercase">
+        {/* Tape texture overlay — fibrous/frosted look */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23t)' opacity='0.35'/%3E%3C/svg%3E\")",
+          mixBlendMode: "overlay",
+          opacity: 0.6,
+        }} />
+        {/* Frosted edge lines */}
+        <div className="absolute inset-x-0 top-0 h-px" style={{ background: "hsl(0 0% 100% / 0.35)" }} />
+        <div className="absolute inset-x-0 bottom-0 h-px" style={{ background: "hsl(0 0% 0% / 0.15)" }} />
+        <Sparkles size={8} className="text-white/80 relative z-10" />
+        <span className="text-[7px] font-black text-white/90 tracking-[0.15em] uppercase relative z-10">
           hushh
         </span>
-        <Sparkles size={9} className="text-white/90" />
+        <Sparkles size={8} className="text-white/80 relative z-10" />
       </div>
 
       {/* Photo card body */}
@@ -98,19 +108,24 @@ export default function PropertyCardPolaroid({ property, index, onTap, isWishlis
           <span className="text-sm">{sticker}</span>
         </div>
 
-        {/* Side tape strip */}
+        {/* Side tape strip with texture */}
         <div
-          className="absolute -left-3 top-1/3 z-20"
+          className="absolute -left-3 top-1/3 z-20 overflow-hidden"
           style={{
             width: "18px",
             height: "50px",
             background: tapeGrad,
             borderRadius: "2px",
             transform: "rotate(-8deg)",
-            opacity: 0.7,
+            opacity: 0.65,
             boxShadow: "0 1px 4px hsl(var(--foreground) / 0.1)",
           }}
-        />
+        >
+          <div className="absolute inset-0" style={{
+            backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)' opacity='0.4'/%3E%3C/svg%3E\")",
+            mixBlendMode: "overlay",
+          }} />
+        </div>
 
         {/* Photo area */}
         <div className="relative aspect-[4/3] overflow-hidden" style={{ borderRadius: "3px" }}>
@@ -200,20 +215,22 @@ export default function PropertyCardPolaroid({ property, index, onTap, isWishlis
           </div>
         </div>
 
-        {/* Postage stamp corner */}
+        {/* Bottom-right accent tape */}
         <div
-          className="absolute -bottom-2 -right-2 z-20 flex flex-col items-center justify-center"
+          className="absolute -bottom-1 -right-2 z-20 overflow-hidden"
           style={{
-            width: "36px",
-            height: "42px",
+            width: "55px",
+            height: "16px",
             background: tapeGrad,
-            borderRadius: "3px",
-            boxShadow: "0 2px 8px hsl(var(--foreground) / 0.12)",
-            border: "3px dashed hsl(var(--card) / 0.6)",
+            borderRadius: "2px",
+            transform: "rotate(12deg)",
+            opacity: 0.55,
           }}
         >
-          <span className="text-[7px] font-black text-white/90 leading-none">H</span>
-          <span className="text-[5px] text-white/70 font-bold mt-0.5">₹{Math.round(property.basePrice / 100)}</span>
+          <div className="absolute inset-0" style={{
+            backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23b)' opacity='0.4'/%3E%3C/svg%3E\")",
+            mixBlendMode: "overlay",
+          }} />
         </div>
       </div>
     </div>
