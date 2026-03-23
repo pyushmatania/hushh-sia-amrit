@@ -533,6 +533,668 @@ React 18 · TypeScript 5.8 · Vite 8 · Tailwind CSS 3.4 · shadcn/ui · CVA · 
 
 ---
 
+## 📋 Product Requirements Document (PRD)
+
+### 1. Product Overview
+
+**Product Name**: Hushh
+**Tagline**: "Your Private Getaway"
+**Version**: 1.20
+**Platform**: Mobile-first Progressive Web App (PWA)
+**Market**: Jeypore, Odisha, India (expanding to tier-2/3 cities)
+
+### 2. Problem Statement
+
+In tier-2/3 cities, there's no unified platform for discovering and booking private experiences. Customers rely on word-of-mouth, WhatsApp groups, and fragmented phone calls to find venues for celebrations, getaways, or workspace. Property owners lack tools to manage bookings, pricing, and guest communication professionally.
+
+### 3. Solution
+
+A marketplace connecting experience seekers with private venue owners, offering:
+- **One-tap discovery** of curated stays, experiences, and services
+- **Bundled experience packs** (curations) that eliminate decision fatigue
+- **Real-time operations** for hosts (inventory, orders, staff management)
+- **Gamified loyalty** to drive repeat bookings
+
+### 4. Success Metrics (KPIs)
+
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| Monthly Active Users (MAU) | 5,000+ | Auth sessions |
+| Booking Conversion Rate | 8-12% | Bookings / Detail Views |
+| Average Order Value (AOV) | ₹3,500+ | Revenue / Bookings |
+| Repeat Booking Rate | 40%+ | Users with 2+ bookings |
+| Host Onboarding | 50+ properties | Active listings |
+| NPS Score | 60+ | Quarterly survey |
+| App Rating | 4.5+ | Store reviews |
+
+### 5. User Personas
+
+#### Persona 1: Priya (The Planner)
+- **Age**: 26 | **Role**: Marketing Executive
+- **Goal**: Plan a memorable anniversary dinner
+- **Pain**: Can't find unique venues beyond restaurants
+- **Behavior**: Researches options 3-4 days ahead, budget-conscious but willing to splurge for quality
+- **Feature needs**: Curations, reviews, split payments, photos
+
+#### Persona 2: Rahul (The Spontaneous One)
+- **Age**: 24 | **Role**: Software Developer
+- **Goal**: Find a chill spot for tonight with friends
+- **Pain**: Last-minute planning always falls apart
+- **Behavior**: Decides same-day, values speed over perfection
+- **Feature needs**: Tonight tags, active trip ordering, quick checkout
+
+#### Persona 3: Sunita (The Host)
+- **Age**: 42 | **Role**: Farmhouse Owner
+- **Goal**: Monetize her property during weekdays
+- **Pain**: Manages bookings via phone calls and notebooks
+- **Behavior**: Not tech-savvy, needs simple tools
+- **Feature needs**: Dashboard, calendar, inventory, staff management
+
+#### Persona 4: Vikram (The Corporate Booker)
+- **Age**: 35 | **Role**: HR Manager
+- **Goal**: Book team outing venue with activities
+- **Pain**: Coordinating venue + food + activities separately is exhausting
+- **Behavior**: Books 2-4 weeks ahead, needs invoices and receipts
+- **Feature needs**: Experience builder, bulk booking, receipts, curations
+
+### 6. Feature Priority Matrix
+
+| Priority | Feature | Status | Impact | Effort |
+|----------|---------|--------|--------|--------|
+| P0 (Must) | Property discovery & booking flow | ✅ Done | High | High |
+| P0 (Must) | Authentication & user profiles | ✅ Done | High | Medium |
+| P0 (Must) | Admin property CRUD | ✅ Done | High | High |
+| P1 (Should) | Experience Builder (add-ons) | ✅ Done | High | Medium |
+| P1 (Should) | Curated experience packs | ✅ Done | High | Medium |
+| P1 (Should) | Live in-stay ordering | ✅ Done | Medium | Medium |
+| P1 (Should) | Loyalty & gamification | ✅ Done | Medium | Medium |
+| P1 (Should) | Admin CRM & analytics | ✅ Done | Medium | High |
+| P2 (Nice) | Payment gateway integration | 🔜 Planned | High | Medium |
+| P2 (Nice) | Push notifications (FCM) | 🔜 Planned | Medium | Medium |
+| P2 (Nice) | Multi-language support | 🔜 Planned | Medium | Low |
+| P2 (Nice) | AI-powered recommendations | 🔜 Planned | Medium | High |
+| P3 (Later) | Native mobile apps (iOS/Android) | 📋 Backlog | High | Very High |
+| P3 (Later) | Multi-city expansion | 📋 Backlog | Very High | Very High |
+| P3 (Later) | Vendor marketplace | 📋 Backlog | High | High |
+
+### 7. Non-Functional Requirements
+
+| Requirement | Specification |
+|-------------|--------------|
+| Performance | FCP < 1.5s, LCP < 2.5s, TTI < 3.5s |
+| Availability | 99.5% uptime |
+| Security | RLS on all tables, RBAC, email verification |
+| Scalability | Serverless edge functions, CDN-delivered assets |
+| Accessibility | WCAG 2.1 AA compliance target |
+| Browser Support | Chrome 90+, Safari 15+, Firefox 90+, Edge 90+ |
+| Data Privacy | User data encrypted at rest, HTTPS enforced |
+
+### 8. Release Roadmap
+
+| Phase | Version | Timeline | Key Deliverables |
+|-------|---------|----------|-----------------|
+| Foundation | v1.0–1.3 | Complete | Core UI, booking flow, profiles |
+| Backend | v1.4–1.6 | Complete | Auth, DB, real-time, host tools |
+| Polish | v1.7–1.10 | Complete | Design system, feed, guest mode, docs |
+| Monetization | v1.11–1.13 | Complete | Curations, ordering, gamification |
+| Operations | v1.14–1.20 | Complete | Admin panel, CRM, CRUD, config, SEO |
+| Payments | v2.0 | Planned | Razorpay/UPI integration, invoicing |
+| Growth | v2.1 | Planned | Push notifications, referral 2.0, AI recs |
+| Scale | v3.0 | Planned | Multi-city, vendor marketplace, native apps |
+
+### 9. Risks & Mitigations
+
+| Risk | Impact | Probability | Mitigation |
+|------|--------|-------------|------------|
+| Low host adoption | High | Medium | Hands-on onboarding, zero listing fees initially |
+| Payment fraud | High | Low | UPI verification, booking limits, admin review |
+| Seasonal demand | Medium | High | Work-from-resort push, weekday pricing, corporate packages |
+| Data loss | Critical | Low | Automated backups, RLS, audit logs |
+| Competition from OTAs | Medium | Medium | Hyper-local focus, curated packs, personal touch |
+
+---
+
+## 🗺 App Blueprint
+
+### System Architecture Diagram
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    CLIENT (Browser)                      │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌─────────┐│
+│  │  React   │  │ React    │  │ Framer   │  │Tailwind ││
+│  │  Router  │  │ Query    │  │ Motion   │  │   CSS   ││
+│  └────┬─────┘  └────┬─────┘  └──────────┘  └─────────┘│
+│       │              │                                   │
+│  ┌────▼──────────────▼─────────────────────────────────┐│
+│  │              SUPABASE JS CLIENT                      ││
+│  │   Auth · Realtime · Storage · PostgREST · Functions ││
+│  └────────────────────┬────────────────────────────────┘│
+└───────────────────────┼─────────────────────────────────┘
+                        │ HTTPS
+┌───────────────────────▼─────────────────────────────────┐
+│                  LOVABLE CLOUD                           │
+│  ┌─────────────────────────────────────────────────────┐│
+│  │                EDGE FUNCTIONS                        ││
+│  │  admin-ai · smart-alerts · auto-notifications       ││
+│  │  property-history-ai · weekly-digest · staff-report ││
+│  └────────────────────┬────────────────────────────────┘│
+│  ┌────────────────────▼────────────────────────────────┐│
+│  │              POSTGRESQL DATABASE                     ││
+│  │  38 tables · RLS policies · Triggers · Functions    ││
+│  └────────────────────┬────────────────────────────────┘│
+│  ┌────────────────────▼────────────────────────────────┐│
+│  │              STORAGE BUCKETS                         ││
+│  │  listing-images · identity-docs · booking-photos    ││
+│  └─────────────────────────────────────────────────────┘│
+│  ┌─────────────────────────────────────────────────────┐│
+│  │           AUTHENTICATION (GoTrue)                    ││
+│  │  Email/Password · Email Verification · Reset        ││
+│  └─────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────┘
+```
+
+### Data Flow Architecture
+
+```
+┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+│   GUEST      │     │ AUTHENTICATED│     │    ADMIN      │
+│   USER       │     │    USER      │     │   / HOST      │
+└──────┬───────┘     └──────┬───────┘     └──────┬────────┘
+       │                    │                     │
+       ▼                    ▼                     ▼
+┌──────────────────────────────────────────────────────────┐
+│                    APP SHELL (Index.tsx)                  │
+│  Screen State Machine: home → detail → checkout → trips  │
+└──────┬───────────────────┬──────────────────────┬────────┘
+       │                   │                      │
+       ▼                   ▼                      ▼
+┌─────────────┐  ┌────────────────┐  ┌────────────────────┐
+│ MOCK DATA   │  │ SUPABASE       │  │ ADMIN PANEL        │
+│ (localStorage│  │ QUERIES        │  │ (/admin route)     │
+│  + static)  │  │ (React Query)  │  │ 22 pages + sidebar │
+└─────────────┘  └────────────────┘  └────────────────────┘
+```
+
+### Module Dependency Map
+
+```
+                          App.tsx
+                            │
+               ┌────────────┼────────────────┐
+               ▼            ▼                ▼
+          Index.tsx     Admin.tsx        Staff.tsx
+               │            │                │
+    ┌──────────┼──────┐     │          ┌─────┼─────┐
+    ▼          ▼      ▼     ▼          ▼     ▼     ▼
+  Home    PropertyD  Trips  AdminLayout StaffOrders
+  Screen  Detail    Screen  (22 pages)  StaffTasks
+    │                  │                StaffCheckin
+    ├─SpotlightCarousel│
+    ├─CategoryBar      ├─BookingDetail
+    ├─ServiceGrid      │  └─LiveOrdering
+    ├─CurationGrid     │  └─OrderNotes
+    ├─FoodieCarousel   │
+    ├─ActiveTripCard   ├─TripsScreen
+    └─CuratedPackList  └─OrderHistory
+
+SHARED HOOKS:
+useAuth → useBookings → useWishlists → useMessages
+useNotifications → useLoyalty → useReferrals → useReviews
+useAdmin → useHostListings → useAppConfig
+useHomepageSections → useHomepageFilters → useVideoCards
+```
+
+### State Management Architecture
+
+```
+┌─────────────────────────────────────────┐
+│            GLOBAL STATE                  │
+│                                          │
+│  AuthProvider (React Context)            │
+│    └─ user, session, signIn, signOut     │
+│                                          │
+│  ThemeProvider (React Context)           │
+│    └─ theme: light | dark | auto         │
+│                                          │
+│  PrivacyModeProvider (Context)           │
+│    └─ privacyMode, maskName()            │
+│                                          │
+│  PropertiesProvider (Context)            │
+│    └─ dbProperties, categories           │
+│                                          │
+│  QueryClient (React Query)              │
+│    └─ Server state cache + refetch       │
+└─────────────────────────────────────────┘
+
+┌─────────────────────────────────────────┐
+│            LOCAL STATE                   │
+│                                          │
+│  Index.tsx (Screen State Machine)        │
+│    └─ screen, selectedProperty, cart     │
+│                                          │
+│  Component-level useState               │
+│    └─ UI toggles, form fields, modals   │
+│                                          │
+│  localStorage (Guest Fallback)           │
+│    └─ mock wishlists, trips, privacy     │
+└─────────────────────────────────────────┘
+```
+
+### API & Edge Function Architecture
+
+```
+┌────────────────────────────────────────────────────────┐
+│                  EDGE FUNCTIONS                         │
+│                                                         │
+│  POST /admin-ai                                        │
+│    ├─ Input: { query: string }                         │
+│    ├─ Process: AI model interprets natural language     │
+│    └─ Output: { answer, data[], suggestions[] }        │
+│                                                         │
+│  POST /smart-alerts                                    │
+│    ├─ Trigger: Cron or manual                          │
+│    ├─ Check: Low stock, overdue tasks, anomalies       │
+│    └─ Output: Creates notifications for admin          │
+│                                                         │
+│  POST /auto-notifications                              │
+│    ├─ Trigger: Database webhook                        │
+│    ├─ Events: Booking created, status changed          │
+│    └─ Output: User notification + optional email       │
+│                                                         │
+│  POST /property-history-ai                             │
+│    ├─ Input: { query, property_id? }                   │
+│    ├─ Search: Booking + order history with AI          │
+│    └─ Output: { results[], summary }                   │
+│                                                         │
+│  POST /weekly-digest                                   │
+│    ├─ Trigger: Weekly cron                             │
+│    ├─ Aggregate: Bookings, revenue, top properties     │
+│    └─ Output: Email digest to admin                    │
+│                                                         │
+│  POST /staff-report                                    │
+│    ├─ Input: { staff_id, period }                      │
+│    └─ Output: Attendance, tasks, performance summary   │
+└────────────────────────────────────────────────────────┘
+```
+
+### Security Architecture
+
+```
+┌────────────────────────────────────────────────────────┐
+│                  SECURITY LAYERS                        │
+│                                                         │
+│  Layer 1: AUTHENTICATION (GoTrue)                      │
+│    ├─ Email/Password with email verification           │
+│    ├─ Password reset via magic link                    │
+│    └─ JWT tokens with auto-refresh                     │
+│                                                         │
+│  Layer 2: AUTHORIZATION (RBAC)                         │
+│    ├─ user_roles table (separate from profiles)        │
+│    ├─ has_role() security definer function              │
+│    └─ Roles: super_admin, ops_manager, host, staff     │
+│                                                         │
+│  Layer 3: ROW-LEVEL SECURITY (RLS)                     │
+│    ├─ Every table has RLS enabled                      │
+│    ├─ Users read/write only their own data             │
+│    ├─ Public READ on listings, curations               │
+│    └─ Admin tables: require has_role() check           │
+│                                                         │
+│  Layer 4: APPLICATION SECURITY                         │
+│    ├─ No secrets in client code                        │
+│    ├─ Publishable keys only in .env                    │
+│    ├─ Edge functions for sensitive operations           │
+│    └─ Identity verification for booking flow           │
+└────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 📐 Wireframes
+
+### Screen Layout Map
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                  APP SCREEN HIERARCHY                    │
+│                                                         │
+│  ┌──── Bottom Tab 1: EXPLORE ──────────────────────┐   │
+│  │  HomeScreen                                      │   │
+│  │  ├── RotatingSearchBar (top)                     │   │
+│  │  ├── ActiveTripCard (if checked-in)              │   │
+│  │  ├── CategoryBar (sticky, scrollable)            │   │
+│  │  ├── SpotlightCarousel (video cards)             │   │
+│  │  ├── PropertyCards (vertical scroll)             │   │
+│  │  ├── SportsCards (horizontal)                    │   │
+│  │  ├── FoodieCarousel (horizontal)                 │   │
+│  │  ├── CoupleSpecials (grid)                       │   │
+│  │  ├── ServiceGrid (2-col)                         │   │
+│  │  ├── CuratedPackListing (tall video cards)       │   │
+│  │  ├── WhatsHot + Events + Blockbuster             │   │
+│  │  └── ExperienceCards (bottom)                    │   │
+│  └──────────────────────────────────────────────────┘   │
+│                                                         │
+│  ┌──── Bottom Tab 2: WISHLISTS ────────────────────┐   │
+│  │  WishlistScreen                                  │   │
+│  │  └── 2-column grid of PropertyCardSmall          │   │
+│  └──────────────────────────────────────────────────┘   │
+│                                                         │
+│  ┌──── Bottom Tab 3: TRIPS ────────────────────────┐   │
+│  │  TripsScreen                                     │   │
+│  │  ├── Filter Tabs (All/Active/Upcoming/Past/Cancelled)│
+│  │  ├── Identity Verification Banner (if needed)    │   │
+│  │  └── Booking Cards (status badges, CTAs)         │   │
+│  │      └── BookingDetailScreen                     │   │
+│  │          ├── Property info + status banner        │   │
+│  │          ├── LiveOrderingSheet (active trips)     │   │
+│  │          ├── OrderHistory                         │   │
+│  │          └── Cancel / Rebook actions              │   │
+│  └──────────────────────────────────────────────────┘   │
+│                                                         │
+│  ┌──── Bottom Tab 4: MESSAGES ─────────────────────┐   │
+│  │  MessagesScreen                                  │   │
+│  │  ├── Conversation List (avatar + last message)   │   │
+│  │  ├── Chat Thread (real-time)                     │   │
+│  │  └── Help Section (dynamic contacts)             │   │
+│  └──────────────────────────────────────────────────┘   │
+│                                                         │
+│  ┌──── Bottom Tab 5: PROFILE ──────────────────────┐   │
+│  │  ProfileScreen                                   │   │
+│  │  ├── Hero Card (avatar + glow + stats)           │   │
+│  │  ├── Membership Badge (tier + points)            │   │
+│  │  ├── Quick Stats (3 cards)                       │   │
+│  │  ├── Achievements (horizontal scroll)            │   │
+│  │  ├── Recent Activity (last 3 bookings)           │   │
+│  │  ├── Grid Cards (Past Trips / Connections)       │   │
+│  │  ├── Become a Host CTA                           │   │
+│  │  ├── Theme Switcher                              │   │
+│  │  ├── Social Links Footer                         │   │
+│  │  ├── Terms & Privacy                             │   │
+│  │  └── Version Text (5-tap → Docs Easter Egg)     │   │
+│  └──────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Booking Flow Wireframe
+
+```
+┌───────────────────┐    ┌───────────────────┐    ┌───────────────────┐
+│   PROPERTY DETAIL │    │ EXPERIENCE BUILDER│    │   CHECKOUT        │
+│                   │    │                   │    │                   │
+│ ┌───────────────┐ │    │ ┌───────────────┐ │    │ ┌───────────────┐ │
+│ │  Image Gallery│ │    │ │ Category Tabs │ │    │ │ Booking       │ │
+│ │  (swipeable)  │ │    │ │ Food|Decor|DJ │ │    │ │ Summary       │ │
+│ └───────────────┘ │    │ └───────────────┘ │    │ │ ┌───────────┐ │ │
+│                   │    │                   │    │ │ │Property   │ │ │
+│ ┌───────────────┐ │    │ ┌───────────────┐ │    │ │ │Date + Slot│ │ │
+│ │ Name + Rating │ │    │ │ Add-on Item   │ │    │ │ │Guests     │ │ │
+│ │ Location      │ │    │ │ [emoji] Name  │ │    │ │ └───────────┘ │ │
+│ │ Tags          │ │    │ │   ₹XXX  [-][+]│ │    │ └───────────────┘ │
+│ └───────────────┘ │    │ ├───────────────┤ │    │                   │
+│                   │    │ │ Add-on Item   │ │    │ ┌───────────────┐ │
+│ ┌───────────────┐ │    │ │ [emoji] Name  │ │    │ │ Add-on Items  │ │
+│ │ Slot Picker   │ │    │ │   ₹XXX  [-][+]│ │    │ │ (line items)  │ │
+│ │ ○ Morning     │ │    │ └───────────────┘ │    │ └───────────────┘ │
+│ │ ● Evening     │ │    │                   │    │                   │
+│ │ ○ Night       │ │    │ ┌───────────────┐ │    │ ┌───────────────┐ │
+│ │ ○ Full Day    │ │    │ │ Suggested     │ │    │ │ Coupon Input  │ │
+│ └───────────────┘ │    │ │ "Also add..."│ │    │ │ [__________]  │ │
+│                   │    │ └───────────────┘ │    │ └───────────────┘ │
+│ ┌───────────────┐ │    │                   │    │                   │
+│ │ Date + Guests │ │    │ ════════════════  │    │ ┌───────────────┐ │
+│ │ [📅] [- 4 +] │ │    │ Running Total:   │    │ │ Price         │ │
+│ └───────────────┘ │    │ ₹X,XXX           │    │ │ Breakdown     │ │
+│                   │    │                   │    │ │ Base: ₹XXXX   │ │
+│ ┌───────────────┐ │    │ ┌───────────────┐ │    │ │ Add-ons: ₹XXX│ │
+│ │ Reviews       │ │    │ │  [Continue →] │ │    │ │ Discount: -₹X│ │
+│ │ ★★★★☆ (4.2)  │ │    │ └───────────────┘ │    │ │ ─────────────│ │
+│ └───────────────┘ │    └───────────────────┘    │ │ Total: ₹XXXX │ │
+│                   │                              │ └───────────────┘ │
+│ ═══════════════   │                              │                   │
+│ ┌───────────────┐ │    ┌───────────────────┐    │ ┌───────────────┐ │
+│ │ [Book ₹XXXX] │ │───▶│   CONFIRMATION    │◀───│ │[Confirm Book] │ │
+│ └───────────────┘ │    │                   │    │ └───────────────┘ │
+└───────────────────┘    │  🎊 Confetti!     │    └───────────────────┘
+                         │                   │
+                         │  ✅ HUSHH-XXXXXX  │
+                         │  +50 Loyalty Pts   │
+                         │                   │
+                         │  [View Trips]     │
+                         └───────────────────┘
+```
+
+### Admin Panel Wireframe
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  ADMIN PANEL                                            [⌘K]   │
+├─────────┬───────────────────────────────────────────────────────┤
+│         │                                                       │
+│ SIDEBAR │          MAIN CONTENT AREA                            │
+│         │                                                       │
+│ ┌─────┐ │  ┌─────────────────────────────────────────────────┐ │
+│ │ 🏠  │ │  │ COMMAND CENTER                                  │ │
+│ │Home │ │  │                                                  │ │
+│ ├─────┤ │  │  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐          │ │
+│ │ 🤖  │ │  │  │ ₹42K │ │  28  │ │  12  │ │ 4.8★ │          │ │
+│ │AI   │ │  │  │Rev.  │ │Books │ │Active│ │Rating│          │ │
+│ ├─────┤ │  │  └──────┘ └──────┘ └──────┘ └──────┘          │ │
+│ │ 🔔  │ │  │                                                  │ │
+│ │Alert│ │  │  ┌─────────────────┐ ┌─────────────────┐       │ │
+│ ├─────┤ │  │  │ LIVE ACTIVITY   │ │ PENDING ITEMS   │       │ │
+│ │ 💰  │ │  │  │ ● New booking   │ │ □ 3 bookings    │       │ │
+│ │Price│ │  │  │ ● Food order    │ │ □ 2 reviews     │       │ │
+│ ├─────┤ │  │  │ ● Review posted │ │ □ 1 verification│       │ │
+│ │ 📅  │ │  │  └─────────────────┘ └─────────────────┘       │ │
+│ │Cal  │ │  └─────────────────────────────────────────────────┘ │
+│ ├─────┤ │                                                       │
+│ │ 📋  │ │  ┌─────────────────────────────────────────────────┐ │
+│ │Req  │ │  │ PROPERTIES                              [+ New] │ │
+│ ├─────┤ │  │                                                  │ │
+│ │ 🏠  │ │  │  ┌──────────┐ ┌──────────┐ ┌──────────┐       │ │
+│ │Prop │ │  │  │ Villa    │ │Farmhouse │ │ Work Pod │       │ │
+│ ├─────┤ │  │  │ ₹2,500   │ │ ₹1,800   │ │ ₹999     │       │ │
+│ │ 📦  │ │  │  │ [Edit]   │ │ [Edit]   │ │ [Edit]   │       │ │
+│ │Inv  │ │  │  └──────────┘ └──────────┘ └──────────┘       │ │
+│ ├─────┤ │  └─────────────────────────────────────────────────┘ │
+│ │ 👥  │ │                                                       │
+│ │Users│ │  ┌─────────────────────────────────────────────────┐ │
+│ ├─────┤ │  │ INVENTORY                         [Low Stock ⚠]│ │
+│ │ ...  │ │  │                                                  │ │
+│ │(+14 │ │  │  Category: [All ▼]  Search: [________]          │ │
+│ │more)│ │  │                                                  │ │
+│ └─────┘ │  │  ┌──────┬──────┬──────┬──────┬──────┐          │ │
+│         │  │  │Item  │Price │Stock │Status│Action│          │ │
+│         │  │  ├──────┼──────┼──────┼──────┼──────┤          │ │
+│         │  │  │🍔Burger│₹250│  8   │ ✅  │ Edit │          │ │
+│         │  │  │🍕Pizza │₹350│  3⚠ │ ✅  │ Edit │          │ │
+│         │  │  │🍺Beer  │₹200│  24  │ ✅  │ Edit │          │ │
+│         │  │  └──────┴──────┴──────┴──────┴──────┘          │ │
+│         │  └─────────────────────────────────────────────────┘ │
+└─────────┴───────────────────────────────────────────────────────┘
+```
+
+### Home Screen Wireframe (Mobile)
+
+```
+┌─────────────────────────┐
+│ [👤]  Jeypore  [🔔·3]  │  ← Header: avatar, location, notifications
+├─────────────────────────┤
+│ [🔍 Search farmhouses...]│  ← Rotating placeholder
+├─────────────────────────┤
+│ ┌─────────────────────┐ │
+│ │ 🟢 Active Trip      │ │  ← Shows only when checked-in
+│ │ Villa Sunset · Eve   │ │
+│ │ [🍽 Order] [View →] │ │
+│ └─────────────────────┘ │
+├─────────────────────────┤
+│ 🏠 Stays 🎭 Exp ✨ Cur │  ← Category bar (scrollable)
+│  ───                    │
+├─────────────────────────┤
+│ ╔═════════════════════╗ │
+│ ║   SPOTLIGHT VIDEO   ║ │  ← Autoplay video card
+│ ║   "Bonfire Night"   ║ │
+│ ║   ₹2,999            ║ │
+│ ╚═════════════════════╝ │
+│                         │
+│ ┌──────┐ ┌──────┐      │
+│ │ 🏡   │ │ 🌿   │      │  ← Property cards (2-col grid)
+│ │Villa │ │Farm  │      │
+│ │₹2.5K │ │₹1.8K │      │
+│ │★4.8  │ │★4.5  │      │
+│ └──────┘ └──────┘      │
+│                         │
+│ ── Sports ──            │
+│ [🏸][🎯][🏊][🏓]       │  ← Horizontal sport icons
+│                         │
+│ ── Foodie Picks ──      │
+│ [🍽 Thali][🕯 Candle]  │  ← Horizontal video cards
+│                         │
+│ ── Curated Packs ──     │
+│ ┌─────────────────────┐ │
+│ │ VIDEO BG            │ │  ← Tall vertical pack cards
+│ │ "Date Night Deluxe" │ │
+│ │ ₹3,999  (was ₹5,200)│ │
+│ │ [Book Now]          │ │
+│ └─────────────────────┘ │
+│                         │
+├─────────────────────────┤
+│ 🏠  ❤️  ✈️  💬  👤    │  ← Bottom navigation
+│ Home Wish Trip Msg Prof │
+└─────────────────────────┘
+```
+
+### Profile Screen Wireframe
+
+```
+┌─────────────────────────┐
+│         Profile          │
+├─────────────────────────┤
+│                         │
+│      ┌──────────┐       │
+│      │  Avatar  │       │  ← Glow effect behind
+│      │  (with   │       │
+│      │  badge)  │       │
+│      └──────────┘       │
+│     Priya Sharma         │
+│     📍 Jeypore           │
+│     "Adventure seeker"   │
+│                         │
+│  ┌─────┬─────┬────────┐ │
+│  │  12 │  8  │ 2 yrs  │ │  ← Stats row
+│  │Trips│Revws│Member  │ │
+│  └─────┴─────┴────────┘ │
+│                         │
+│ ┌─────────────────────┐ │
+│ │ 🥇 Gold Member      │ │  ← Membership badge
+│ │ 1,240 pts · 3% back │ │
+│ └─────────────────────┘ │
+│                         │
+│ Quick Stats             │
+│ ┌──────┬──────┬──────┐  │
+│ │  12  │   5  │₹42K  │  │
+│ │Books │Saved │Spent │  │
+│ └──────┴──────┴──────┘  │
+│                         │
+│ Achievements            │
+│ [🌟Early][⭐5Star]→    │  ← Horizontal scroll
+│                         │
+│ Recent Activity         │
+│ ┌─────────────────────┐ │
+│ │ Villa Sunset · ₹3.2K│ │
+│ │ Farmhouse · ₹1.8K   │ │
+│ │ Pool Party · ₹4.5K  │ │
+│ └─────────────────────┘ │
+│                         │
+│ ┌──────────┬──────────┐ │
+│ │Past Trips│Connections│ │
+│ └──────────┴──────────┘ │
+│                         │
+│ [🏠 Become a Host]     │
+│                         │
+│ [☀️ Light][🌙 Dark]    │  ← Theme toggle
+│                         │
+│ [📸 Insta][📘 FB][▶ YT]│  ← Social links
+│ Terms · Privacy          │
+│ v1.20                   │  ← 5-tap → easter egg
+├─────────────────────────┤
+│ 🏠  ❤️  ✈️  💬  👤    │
+└─────────────────────────┘
+```
+
+### Database Entity Relationship Diagram
+
+```
+┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+│  auth.users  │     │   profiles   │     │  user_roles  │
+│              │◄────│  user_id FK  │     │  user_id     │
+│  id (PK)     │     │  display_name│     │  role (enum) │
+│  email       │     │  avatar_url  │     └──────────────┘
+└──────┬───────┘     │  loyalty_pts │
+       │             │  tier        │     ┌──────────────┐
+       │             └──────────────┘     │  wishlists   │
+       │                                  │  user_id     │
+       │     ┌──────────────┐            │  property_id │
+       ├────▶│   bookings   │            └──────────────┘
+       │     │  user_id     │
+       │     │  property_id │────────┐   ┌──────────────┐
+       │     │  date, slot  │        │   │host_listings │
+       │     │  guests,total│        └──▶│  id (PK)     │
+       │     │  status      │            │  user_id     │
+       │     └──────┬───────┘            │  name, price │
+       │            │                    │  category    │
+       │            │                    │  amenities[] │
+       │     ┌──────▼───────┐            │  image_urls[]│
+       │     │   orders     │            │  slots JSONB │
+       │     │  booking_id  │            │  status      │
+       │     │  property_id │            └──────────────┘
+       │     │  total,status│
+       │     └──────┬───────┘            ┌──────────────┐
+       │            │                    │  curations   │
+       │     ┌──────▼───────┐            │  name, price │
+       │     │ order_items  │            │  includes[]  │
+       │     │  order_id FK │            │  mood[], tags│
+       │     │  item_name   │            │  property_id │
+       │     │  qty, price  │            └──────────────┘
+       │     └──────────────┘
+       │                                 ┌──────────────┐
+       │     ┌──────────────┐            │  inventory   │
+       ├────▶│   reviews    │            │  name, stock │
+       │     │  user_id     │            │  category    │
+       │     │  property_id │            │  unit_price  │
+       │     │  rating      │            │  property_id │
+       │     │  content     │            └──────────────┘
+       │     └──────────────┘
+       │                                 ┌──────────────┐
+       │     ┌──────────────┐            │  campaigns   │
+       ├────▶│conversations │            │  title, type │
+       │     │participant_1 │            │  discount    │
+       │     │participant_2 │            │  targets[]   │
+       │     └──────┬───────┘            └──────────────┘
+       │            │
+       │     ┌──────▼───────┐            ┌──────────────┐
+       │     │  messages    │            │   coupons    │
+       │     │conversation_id            │  code        │
+       │     │sender_id     │            │  discount    │
+       │     │content, read │            │  max_uses    │
+       │     └──────────────┘            └──────────────┘
+       │
+       │     ┌──────────────┐            ┌──────────────┐
+       ├────▶│notifications │            │staff_members │
+       │     │  user_id     │            │  name, role  │
+       │     │  title, body │            │  department  │
+       │     │  type, read  │            │  salary      │
+       │     └──────────────┘            └──────────────┘
+       │
+       │     ┌──────────────┐
+       └────▶│loyalty_trans │
+             │  user_id     │
+             │  points, type│
+             └──────────────┘
+```
+
+---
+
 ## 📋 Change History
 
 > **Convention**: Every change MUST be logged here AND in `src/components/AppDocumentation.tsx` (`changeLog` array).
