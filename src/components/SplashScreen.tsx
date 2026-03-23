@@ -162,9 +162,8 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
             <div className="mt-auto px-6 pb-12">
               <motion.div
                 className="flex flex-col items-center"
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 1, y: 0 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.4 }}
               >
                 {/* Logo */}
                 <div className="flex items-center gap-1">
@@ -173,9 +172,8 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                       src={appConfig.logo_url}
                       alt={brandName}
                       className="h-10 object-contain"
-                      initial={{ opacity: 0, scale: 0.8 }}
+                      initial={{ opacity: 1, scale: 1 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 1.6, type: "spring", stiffness: 150 }}
                     />
                   ) : (
                     <motion.span
@@ -192,9 +190,8 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                   )}
                   <motion.span
                     className="text-2xl"
-                    initial={{ opacity: 0, rotate: -20 }}
+                    initial={{ opacity: 1, rotate: 0 }}
                     animate={{ opacity: 1, rotate: 0 }}
-                    transition={{ delay: 1.8 }}
                   >
                     🤫
                   </motion.span>
@@ -203,7 +200,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                   className="text-xs text-white/40 tracking-[0.2em] uppercase mt-1.5"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 2.0 }}
+                  transition={{ delay: 0.8 }}
                 >
                   {tagline}
                 </motion.p>
