@@ -1212,8 +1212,90 @@ const ER_CHART = `erDiagram
     staff_members ||--o{ staff_attendance : "tracks"
     staff_members ||--o{ staff_leaves : "requests"
     staff_members ||--o{ staff_salary_payments : "paid"`;
+const BOOKING_FLOW_CHART = `graph LR
+    A["Browse / Search"] --> B["Property Detail"]
+    B --> C{"Select Slot + Date + Guests"}
+    C --> D["Experience Builder"]
+    D --> E["Food Tab"]
+    D --> F["Decor Tab"]
+    D --> G["Entertainment Tab"]
+    D --> H["Transport Tab"]
+    D --> I["Checkout"]
+    I --> J{"Apply Coupon?"}
+    J -->|Yes| K["Validate Coupon"]
+    K --> L["Price Summary"]
+    J -->|No| L
+    L --> M{"Conflict Check"}
+    M -->|Clear| N["Confirm Booking"]
+    M -->|Overlap| O["Show Warning"]
+    O --> C
+    N --> P["Confetti + Booking ID"]
+    P --> Q["Award Loyalty Points"]
+    Q --> R["View Trips"]`;
 
-export default function AppDocumentation({ open, onClose }: AppDocumentationProps) {
+const USER_JOURNEY_CHART = `graph TB
+    SPLASH["Splash Screen"] --> HOME["Home / Explore"]
+    HOME --> SEARCH["Search"]
+    HOME --> MAP["Map View"]
+    HOME --> PROPERTY["Property Detail"]
+    HOME --> ACTIVE["Active Trip Card"]
+    PROPERTY --> BOOK["Book Now"]
+    BOOK --> BUILDER["Experience Builder"]
+    BUILDER --> CHECKOUT["Checkout"]
+    CHECKOUT --> CONFIRM["Booking Confirmed"]
+    CONFIRM --> TRIPS["Trips Screen"]
+    ACTIVE --> ORDER["Live Food Ordering"]
+    ACTIVE --> TRIPS
+    HOME --> WISH["Wishlists"]
+    WISH --> PROPERTY
+    TRIPS --> DETAIL["Booking Detail"]
+    DETAIL --> CANCEL["Cancel / Rebook"]
+    DETAIL --> ORDER
+    DETAIL --> PHOTOS["Booking Photos"]
+    DETAIL --> SPLIT["Split Payment"]
+    HOME --> MSG["Messages"]
+    MSG --> CHAT["Chat Thread"]
+    HOME --> PROFILE["Profile"]
+    PROFILE --> LOYALTY["Loyalty + Spin"]
+    PROFILE --> REFERRAL["Referrals"]
+    PROFILE --> HOST["Host Dashboard"]
+    HOST --> CREATE["Create Listing"]
+    HOST --> ANALYTICS["Host Analytics"]
+    PROFILE --> SETTINGS["Settings"]
+    PROFILE --> DOCS["Easter Egg Docs"]`;
+
+const ADMIN_JOURNEY_CHART = `graph TB
+    LOGIN["Admin Login"] --> CMD["Command Center"]
+    CMD --> PROP["Properties CRUD"]
+    CMD --> BOOK["Bookings"]
+    CMD --> INV["Inventory"]
+    CMD --> CRM["Client CRM"]
+    CMD --> ORD["Live Orders"]
+    CMD --> AI["AI Assistant"]
+    CMD --> ALERT["Smart Alerts"]
+    PROP --> EDIT["Edit Property"]
+    PROP --> DUP["Duplicate"]
+    PROP --> HIST["Property History"]
+    CRM --> NOTES["Client Notes"]
+    CRM --> TIMELINE["Journey Timeline"]
+    CRM --> SCORE["Engagement Score"]
+    CMD --> FIN["Finance Hub"]
+    FIN --> EARN["Earnings"]
+    FIN --> EXP["Expenses"]
+    FIN --> BUDGET["Budget"]
+    CMD --> STAFF["Staff Management"]
+    STAFF --> ATTEND["Attendance"]
+    STAFF --> LEAVE["Leaves"]
+    STAFF --> PAY["Payroll"]
+    CMD --> MKT["Marketing"]
+    MKT --> CAMP["Campaigns"]
+    MKT --> COUP["Coupons"]
+    MKT --> PRICE["Dynamic Pricing"]
+    CMD --> HOMEPAGE["Homepage Manager"]
+    CMD --> SETTINGS["Settings"]
+    CMD --> AUDIT["Audit Trail"]`;
+
+
   const [copied, setCopied] = useState(false);
   const [showRawDoc, setShowRawDoc] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
