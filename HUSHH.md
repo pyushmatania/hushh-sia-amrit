@@ -459,6 +459,10 @@ supabase/
 | `useHomepageSections` | Section visibility & ordering from DB | ✅ Default sections |
 | `useHomepageFilters` | Dynamic category filter pills from DB | ✅ Default filters |
 | `useVideoCards` | Spotlight video card config from DB | ✅ Default videos |
+| `useDragReorder` | Pointer-based drag-and-drop reordering | — |
+| `useMobile` | Mobile viewport detection | — |
+
+**Planned hooks** (v2.0): `usePayments`, `useSlotAvailability`, `usePushTokens`, `useNotificationPreferences`, `useInvoices`
 
 ---
 
