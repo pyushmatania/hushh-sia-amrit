@@ -153,9 +153,11 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
     img.src = config.bg;
   }, [config.bg]);
 
-  // Preload category icons during splash
+  // Preload category icons + homepage videos during splash
   useEffect(() => {
     preloadIcons.forEach((src) => { const img = new Image(); img.src = src; });
+    // Preload homepage videos during splash idle time
+    import("@/lib/video-preloader").then(({ preloadVideos }) => preloadVideos());
   }, []);
 
   // Ambient sound — triggered on first user interaction to bypass autoplay policy
