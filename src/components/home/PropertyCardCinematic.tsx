@@ -216,7 +216,50 @@ function ChargingRing({ progress, color }: { progress: number; color: string }) 
   );
 }
 
-/* Fullscreen blur overlay when card is revealed */
+/* Price counter with slot-machine style counting animation */
+function PriceCounter({ price, revealed, color }: { price: number; revealed: boolean; color: string }) {
+  const displayPrice = useCountUp(price, revealed, 900, 100);
+  return (
+    <span
+      className="absolute left-0 top-0 text-[20px] font-black text-white tabular-nums"
+      style={{
+        textShadow: revealed ? `0 0 20px ${color}70, 0 0 40px ${color}30` : "none",
+        transform: revealed ? "translateY(0px) scale(1)" : "translateY(8px) scale(0.85)",
+        opacity: revealed ? 1 : 0,
+        transition: "transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease",
+      }}
+    >
+      ₹{displayPrice.toLocaleString()}
+    </span>
+  );
+}
+
+/* Energy burst flash on reveal */
+function RevealFlash({ active, color }: { active: boolean; color: string }) {
+  if (!active) return null;
+  return (
+    <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden rounded-[20px]">
+      <div
+        style={{
+          position: "absolute",
+          inset: "-50%",
+          background: `radial-gradient(circle at 50% 50%, ${color}60 0%, ${color}20 30%, transparent 60%)`,
+          animation: "revealBurst 0.6s ease-out forwards",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: `linear-gradient(180deg, ${color}15 0%, transparent 50%)`,
+          animation: "revealFlash 0.4s ease-out forwards",
+        }}
+      />
+    </div>
+  );
+}
+
+
 function BlurOverlay({ active, onRelease }: { active: boolean; onRelease: () => void }) {
   if (!active) return null;
   return (
