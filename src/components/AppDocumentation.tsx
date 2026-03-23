@@ -234,6 +234,86 @@ export const changeLog = [
       "All trip data wired to DB via useBookings hook with localStorage guest fallback",
     ],
   },
+  {
+    version: "1.14",
+    phase: "Loyalty & Rewards Redesign",
+    items: [
+      "Gamified Loyalty Screen with tabbed interface",
+      "Enhanced Spin Wheel with sound effects",
+    ],
+  },
+  {
+    version: "1.15",
+    phase: "Add-on Icons & Curated Listings",
+    items: [
+      "Per-item emoji icons, curated pack video backgrounds",
+    ],
+  },
+  {
+    version: "1.16",
+    phase: "Admin Panel Foundation",
+    items: [
+      "Admin layout with collapsible sidebar (22 nav items)",
+      "Command Palette (⌘K) with fuzzy search",
+      "Command Center dashboard with KPI cards, live activity feed",
+      "Role-based access control via user_roles table and has_role() function",
+      "Admin pages: Properties, Bookings, Users, Analytics, Curations, Campaigns, Coupons, Tags, Orders, Exports, AI Assistant, Smart Alerts, Audit Trail, Earnings, Dynamic Pricing, Achievements, Loyalty & Referrals",
+      "Floating Checklist widget",
+      "Edge functions: admin-ai, auto-notifications, smart-alerts, weekly-digest, property-history-ai",
+    ],
+  },
+  {
+    version: "1.17",
+    phase: "Admin CRM & Property History",
+    items: [
+      "Client Directory (CRM 2.0) — engagement scoring, journey timeline, stay/order/review aggregation",
+      "Property History — calendar-based stay tracking, chronological timeline, AI-powered search",
+      "AI search in Command Center, Client Directory, and Property History",
+      "Live Orders widget (Zomato-style), Live Pending tracker",
+      "Booking Heatmap visualization",
+      "Weekly Digest preview, Auto-Actions panel",
+      "Identity verification review queue in admin",
+    ],
+  },
+  {
+    version: "1.18",
+    phase: "Database-Driven CRUD & Inventory",
+    items: [
+      "Properties fully database-driven — all 28+ properties migrated to host_listings table",
+      "Full Property CRUD — admin can edit name, pricing, images, tags, amenities, slots, rules, status",
+      "Inventory Management — food/drink/activity stock tracking with low-stock alerts",
+      "host_listings schema expanded with 12 new columns",
+      "Coupons and campaigns seeded in database",
+      "Identity verification enforcement on booking flow",
+    ],
+  },
+  {
+    version: "1.19",
+    phase: "Dynamic App Configuration",
+    items: [
+      "app_config table — centralized key-value store for all runtime settings",
+      "Admin Settings page — 3-tab interface (General, Branding, Advanced)",
+      "Admin Homepage Manager — 4-tab interface (Sections, Videos, Filters, Tags)",
+      "Dynamic Branding — app_name, logo_url, app_tagline wired to SplashScreen and HomeScreen",
+      "Dynamic Homepage Sections — visibility toggles and drag-to-reorder",
+      "Dynamic Spotlight Videos — admin edits video URLs and overlay text",
+      "Dynamic Filter Pills — category filters editable in admin",
+      "Dynamic Support Contacts — support_phone, support_email, whatsapp_number wired to Messages",
+      "Tags merged into Homepage Manager",
+      "4 new hooks: useAppConfig, useHomepageSections, useHomepageFilters, useVideoCards",
+    ],
+  },
+  {
+    version: "1.20",
+    phase: "Social, Legal & Performance",
+    items: [
+      "Social Media Links — Instagram, Facebook, YouTube, Twitter in ProfileScreen footer",
+      "Terms & Privacy Sheet — dynamic legal links from branding config",
+      "SEO & Performance — non-render-blocking fonts, preconnect hints, lazy-loaded routes",
+      "All images converted to WebP format for optimal loading",
+      "Network dependency tree flattened — fonts loaded via HTML preload pattern",
+    ],
+  },
 ];
 
 // Generate the full HUSHH.md content from the changeLog + app info
