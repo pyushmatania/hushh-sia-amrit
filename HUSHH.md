@@ -1408,6 +1408,12 @@ standalone: campaigns · coupons · expenses · budget_allocations · app_config
 - **Staff profile linking** — Components check `staff_members.user_id` to link auth users to staff profiles
 - **StaffLayout updated** — 7-tab scrollable bottom nav (Orders, Check-In, Tasks, Clock, Leave, Pay, Stock)
 
+### v1.27 — Wire Hooks into UI
+- **SearchScreen** wired to `useSearch` — DB-powered search across `host_listings` and `curations` with debounced queries, displayed alongside local mock results
+- **LiveOrderingSheet** enhanced — Awards loyalty points on order placement via `award_loyalty_points` RPC
+- **PropertyDetail** wired to `useSlotAvailability` — Shows real-time "X spots left" from `property_slots` + `slot_availability` tables when date is selected
+- **3 hooks now active in UI**: useSearch, useOrders (via LiveOrderingSheet), useSlotAvailability (via PropertyDetail)
+
 ---
 
 ## 📐 Conventions & Guidelines
