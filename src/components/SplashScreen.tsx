@@ -183,9 +183,9 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                       style={{
                         textShadow: "0 2px 20px hsla(270, 80%, 65%, 0.5)",
                       }}
-                      initial={{ opacity: 0, scale: 0.8 }}
+                      initial={{ opacity: 1, scale: 0.85 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 1.6, type: "spring", stiffness: 150 }}
+                      transition={{ delay: 0.2, type: "spring", stiffness: 150 }}
                     >
                       {brandName}
                     </motion.span>
