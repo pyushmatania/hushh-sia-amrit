@@ -873,7 +873,7 @@ CLIENT (Browser)
        │ HTTPS
 LOVABLE CLOUD
   ├── Edge Functions (6): admin-ai, smart-alerts, auto-notifications, property-history-ai, weekly-digest, staff-report
-  ├── PostgreSQL (38 tables · RLS · Triggers · Functions)
+  ├── PostgreSQL (45 tables + RLS + Triggers + Functions)
   ├── Storage (listing-images, identity-docs, booking-photos)
   └── Auth (GoTrue): Email/Password, verification, reset
 \`\`\`
