@@ -361,6 +361,21 @@ export const changeLog = [
       "Realtime enabled for payments and slot_availability tables",
     ],
   },
+  {
+    version: "1.23",
+    phase: "Complete Wireframes & Onboarding",
+    items: [
+      "8 new wireframes: Experience Builder, Checkout, Live Ordering, Search, Map View, Loyalty & Spin, Auth/Onboarding, Notifications",
+      "Wireframes now cover all revenue-critical screens (Experience Builder, Checkout, Live Ordering)",
+      "Auth/Onboarding wireframe with sign-in, sign-up, guest mode, and email verification flows",
+      "Search wireframe with category chips, recent searches, results grid, and empty state",
+      "Map View wireframe with pin markers, preview card overlay, and list toggle",
+      "Loyalty wireframe with tier card, spin wheel, transaction history, and milestones",
+      "Notifications wireframe with filter tabs, read/unread states, grouped by day, empty state",
+      "Updated ER diagram with full payment flow relationships (payments → refunds → invoices)",
+      "Documentation and easter egg UI synced with all 16 wireframes (8 user + 8 admin)",
+    ],
+  },
 ];
 
 // Generate the COMPLETE documentation including PRD, Blueprint, Wireframes
