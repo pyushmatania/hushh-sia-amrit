@@ -179,7 +179,7 @@ export default function Index() {
   const lazyFallback = <ScreenSkeleton />;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <Suspense fallback={lazyFallback}>
       <AnimatePresence mode="wait">
         {screen.type === "home" && activeTab === "home" && (
