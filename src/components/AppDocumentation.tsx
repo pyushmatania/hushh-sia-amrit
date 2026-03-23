@@ -2524,7 +2524,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
         <div className="text-center py-6">
           <p className="text-[11px] text-muted-foreground">
             <Sparkles size={12} className="inline text-primary mr-1" />
-            Hushh v1.22 · Made in Jeypore ❤️
+            Hushh v1.23 · Made in Jeypore ❤️
           </p>
         </div>
       </div>
