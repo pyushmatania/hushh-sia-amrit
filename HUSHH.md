@@ -1377,6 +1377,15 @@ standalone: campaigns · coupons · expenses · budget_allocations · app_config
 - **ER diagram updated** with complete payment flow relationships (payments → refunds → invoices)
 - **Total wireframes**: 16 (8 user app + 8 admin app) — all revenue-critical screens now documented
 
+### v1.24 — Resilience & Performance
+- **React Error Boundaries**: Global + per-route ErrorBoundary components catch render crashes with "Try Again" recovery UI
+- **Offline Detection**: `useOnlineStatus` hook + `OfflineBanner` component — animated top bar appears when device goes offline
+- **Query Retry Config**: React Query configured with exponential backoff (2 retries, 1s→4s), 30s stale time, no refetch-on-focus
+- **Mutation Retry**: Single retry for failed mutations
+- **Rate Limiting Documented**: Auth (30/hr), Spin Wheel (1/day/user), Edge Functions (100 req/s), Search (client debounce 300ms)
+- **Video & Asset Strategy Documented**: Lazy loading via IntersectionObserver, CDN-backed Supabase Storage, font preconnect + swap
+- **Architecture Diagram Updated**: ErrorBoundary, OfflineBanner, and useOnlineStatus hook reflected in tree
+
 ---
 
 ## 📐 Conventions & Guidelines
