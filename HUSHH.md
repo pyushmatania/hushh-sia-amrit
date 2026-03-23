@@ -567,7 +567,7 @@ React 18 · TypeScript 5.8 · Vite 8 · Tailwind CSS 3.4 · shadcn/ui · CVA · 
 
 **Product Name**: Hushh
 **Tagline**: "Your Private Getaway"
-**Version**: 1.20
+**Version**: 1.23
 **Platform**: Mobile-first Progressive Web App (PWA)
 **Market**: Jeypore, Odisha, India (expanding to tier-2/3 cities)
 
