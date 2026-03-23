@@ -41,6 +41,7 @@ const sortLabels: Record<SortOption, string> = {
 
 export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenProps) {
   const [query, setQuery] = useState("");
+  const { query: dbQuery, setQuery: setDbQuery, results: dbResults, loading: dbLoading } = useSearch();
   const [showFilters, setShowFilters] = useState(false);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
   const [guestCount, setGuestCount] = useState(0);
@@ -50,6 +51,11 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [sortBy, setSortBy] = useState<SortOption>("relevance");
   const [showSort, setShowSort] = useState(false);
+
+  const handleQueryChange = useCallback((val: string) => {
+    setQuery(val);
+    setDbQuery(val);
+  }, [setDbQuery]);
 
   const toggleAmenity = useCallback((a: string) => {
     setSelectedAmenities((prev) =>
