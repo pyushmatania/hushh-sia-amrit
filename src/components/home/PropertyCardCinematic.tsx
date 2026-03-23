@@ -791,12 +791,6 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
           transition: "padding-bottom 0.4s ease",
         } as React.CSSProperties}
       >
-          userSelect: "none",
-          WebkitUserSelect: "none",
-          WebkitTouchCallout: "none",
-          zIndex: revealed ? 9999 : isCharging ? 9998 : "auto",
-        } as React.CSSProperties}
-      >
         <LightRays color={rarityInfo.color} active={revealed || isCharging} />
 
         {/* Ambient glow */}
