@@ -326,7 +326,7 @@ export const changeLog = [
   },
 ];
 
-// Generate the full HUSHH.md content from the changeLog + app info
+// Generate the COMPLETE documentation including PRD, Blueprint, Wireframes
 function generateFullDoc(): string {
   const header = `# 🏡 HUSHH — Private Experience Marketplace
 
@@ -351,42 +351,135 @@ Strategic focus: **"Work-from-resort"** for weekday monetization.
 
 ## 🎯 Target Audience
 
-- Young couples — date nights, anniversaries, weekend getaways
-- Friend groups — house parties, game nights, celebrations
-- Remote workers — weekday work sessions, Work Pods, Quiet Rooms
-- Families — birthday parties, family gatherings
-- Corporate — team retreats, offsites
-- Hosts — property owners monetizing spaces
+| Segment | Use Case | Key Features |
+|---------|----------|-------------|
+| Young couples | Date nights, anniversaries | Couple Specials, romantic venues |
+| Friend groups | House parties, game nights | Group bookings, experience builder |
+| Remote workers | Weekday work sessions | Work Pods, Quiet Rooms, Wi-Fi |
+| Families | Birthday parties, gatherings | Birthday halls, catering, decor |
+| Corporate | Team retreats, offsites | Package deals, analytics, bulk booking |
+| Hosts | Monetizing spaces | Dashboard, analytics, listing management |
+| Admins | Operations managers | Full CRM, CRUD, analytics, AI assistant |
 
 ---
 
 ## 🗺 User Flow
 
-Splash → Home (Explore) → Category Bar → Property Card → Detail → Book → Experience Builder → Checkout → Confirmation
+### Primary Flow (Booking)
+Splash → Home → Browse/Search/Map → Property Card → Detail → Select Slot + Date + Guests → Book Now → Experience Builder (add-ons) → Checkout (coupon, summary) → Confirm (confetti + loyalty pts) → View Trips
 
-Bottom Nav: Explore | Wishlists | Trips | Messages | Profile
+### Secondary Flows
+- Wishlists Tab → Grid of saved properties → Detail → Book
+- Trips Tab → Active/Upcoming/Past/Cancelled → Detail → Cancel/Rebook/Order Food
+- Messages Tab → Conversation list → Chat thread (real-time)
+- Profile Tab → Loyalty, Referrals, Host Dashboard, Settings, Theme
+- Active Trip → Order Food (live ordering) / Add Extras
 
-Profile → Loyalty, Referrals, Host Dashboard, Settings, Theme, Auth
+### Admin Flow
+/admin → Auth → Admin Layout (sidebar + ⌘K) → 22 pages: Command Center, Properties CRUD, Inventory, Bookings, Client CRM, Property History, Live Orders, Curations, Campaigns, Coupons, Analytics, Earnings, AI Assistant, Smart Alerts, Dynamic Pricing, Homepage Manager, Users CRM, Calendar, Achievements, Loyalty & Referrals, Exports, Settings, Audit Trail
 
 ---
 
-## ✨ Features
+## 📱 Screen-by-Screen Documentation
 
-### Guest Mode (no login)
-- Full property browsing with video thumbnails & accent frames
-- Mock wishlists, trips, messages, notifications, loyalty (320 pts / Gold)
-- Mock public profiles for all reviewers
-- Search, map view, theme switching, pull-to-refresh, haptic feedback
+### 1. Splash Screen — Animated brand logo, auto-transitions to Home (~2s), dynamic branding from app_config
+### 2. Home / Explore — Search bar, Active Trip, Category Bar, Spotlight Carousel, Property Cards, Sports, Foodie, Couples, Services, Curations, Events
+### 3. Property Detail — Gallery, info, slot picker, guest counter, date picker, reviews, sticky book bar
+### 4. Experience Builder — Add-on categories (Food, Decor, Entertainment, Transport), qty selectors, running total
+### 5. Checkout — Booking summary, add-ons, coupon, price breakdown, confirm CTA
+### 6. Booking Confirmation — Confetti, booking ID, loyalty points badge
+### 7. Search — Full-screen, real-time filtering, category chips
+### 8. Map View — Pin markers, tap → preview → detail
+### 9. Wishlists — Grid of saved properties
+### 10. Trips — Tabs (Active/Upcoming/Past/Cancelled), identity verification, booking cards
+### 11. Booking Detail — Status banner, property card, Order Food, Add Extras, Cancel/Rebook
+### 12. Messages — Conversation list, chat thread, dynamic support contacts
+### 13. Profile — Hero card, membership badge, stats, achievements, recent activity, host CTA, theme, social links, terms
+### 14. Public Profile — User info, stats, achievements
+### 15-24. Supporting — Edit Profile, Settings, Loyalty, Referral, Notifications, Host Dashboard, Create Listing, Host Analytics, Auth, App Docs
 
-### Authenticated
-- Email/password auth with email verification & password reset
-- Real wishlists, bookings, messages, notifications, loyalty (database-backed)
-- Booking flow: Slot → Builder → Checkout → Confirm (earn 5 pts/₹100)
-- Referral system, real-time messaging, notification center
+---
 
-### Host Features
-- Dashboard with listing management, create/edit/delete/toggle
-- Host analytics with charts
+## 🛡️ Admin Panel (22 Pages)
+
+| Page | Description |
+|------|-------------|
+| Command Center | KPI dashboard, live activity feed, pending items |
+| AI Assistant | Natural language queries across all data |
+| Smart Alerts | Low stock, overdue tasks, booking anomalies |
+| Dynamic Pricing | Demand-based pricing rules |
+| Calendar | Monthly view with booking overlays |
+| Booking Requests | Pending approval queue |
+| Properties | Full CRUD — name, pricing, images, tags, amenities, slots, rules, status |
+| Bookings | All bookings, status management |
+| Live Orders | Real-time food/service order tracking |
+| Inventory | Stock levels, low-stock alerts, pricing, availability |
+| Client Directory | CRM 2.0 — engagement scoring (0-100), journey timeline |
+| Property History | Calendar-based stay tracking, AI search |
+| Users CRM | User management (admin-only) |
+| Analytics | Charts, trends, revenue breakdowns |
+| Earnings | Revenue tracking, payout summaries |
+| Curations | Curated pack CRUD |
+| Campaigns | Marketing campaign studio |
+| Coupons | Discount code engine |
+| Homepage Manager | Sections, Videos, Filters, Tags |
+| Settings | General, Branding, Advanced |
+| Exports | CSV/data export tools |
+| Audit Trail | Full activity log (admin-only) |
+
+### Admin Features
+- Command Palette (⌘K) — fuzzy search across 17 commands
+- AI-Powered Search — natural language queries via edge functions
+- Client Engagement Scoring — automated 0-100 score
+- Role-based access: super_admin, ops_manager, host, staff
+
+### Edge Functions
+| Function | Purpose |
+|----------|---------|
+| admin-ai | Natural language admin queries |
+| auto-notifications | Automated notification triggers |
+| property-history-ai | AI search over property stay history |
+| smart-alerts | Automated alert generation |
+| weekly-digest | Weekly summary email |
+| staff-report | Staff attendance & performance |
+
+---
+
+## ✨ Features — Guest Mode
+
+| Feature | Mock Behavior |
+|---------|--------------|
+| Property browsing | Full catalog with video thumbnails |
+| Wishlists | 5 demo properties, session-persistent |
+| Trips | 12 demo bookings across all statuses |
+| Messages | Mock conversations |
+| Notifications | 4 sample notifications |
+| Loyalty | 320 pts, Gold tier, mock transactions |
+| Profile | "Guest Explorer" with mock stats |
+| Search & Map | Full functionality |
+
+---
+
+## 🔐 Features — Authenticated
+
+| Feature | Database Table | Details |
+|---------|---------------|---------|
+| Auth | auth.users | Email/password, verification, reset |
+| Profile | profiles | Display name, avatar, bio, loyalty pts, tier |
+| Identity Verification | identity_verifications | Aadhaar/PAN upload, admin review |
+| Wishlists | wishlists | Real-time sync |
+| Bookings | bookings | Full CRUD, status management |
+| Messages | conversations + messages | Real-time chat, unread counts |
+| Notifications | notifications | Read/unread, action URLs |
+| Reviews | reviews + review_responses | Ratings, photos, host responses |
+| Loyalty | loyalty_transactions | 5 pts/₹100, tier progression |
+| Referrals | referral_codes + referral_uses | Unique codes, rewards |
+| Curations | curations | 8 experience packs |
+| Orders | orders + order_items | Live ordering |
+| Spin Wheel | spin_history | Daily spin, 1/day enforced |
+| Milestones | user_milestones | Achievement tracking |
+| Split Payment | booking_splits | Split with friends |
+| Booking Photos | booking_photos | Guest photos per booking |
 
 ---
 
@@ -394,22 +487,602 @@ Profile → Loyalty, Referrals, Host Dashboard, Settings, Theme, Auth
 
 **Fonts**: Space Grotesk (primary), Playfair Display (editorial), Plus Jakarta Sans, DM Sans
 **Colors**: Deep navy base (260 20% 6%), vibrant purple primary (270 80% 65%)
-**Effects**: Glassmorphism, ambient glows, AccentFrame (L-shaped corners), AccentTag (clip-path)
+**Effects**: Glassmorphism, ambient glows, AccentFrame, AccentTag, gradient borders
 **Animation**: Framer Motion springs, staggered reveals, haptic feedback
 
 ---
 
 ## 🏗 Architecture
 
-React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion 12 · React Query · React Router v6 · Lovable Cloud · Recharts · React Hook Form + Zod
+80+ components, 20+ hooks, 38 database tables, 6 edge functions
 
-80+ components, 20+ hooks, 30+ database tables
+React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion 12 · React Query · React Router v6 · Lovable Cloud · Recharts · React Hook Form + Zod
 
 ---
 
-## 🗄 Database Tables
+## 🪝 Hooks Reference
 
-profiles, bookings, wishlists, conversations, messages, notifications, reviews, review_responses, loyalty_transactions, referral_codes, referral_uses, host_listings, curations, orders, order_items, spin_history, user_milestones, user_roles, app_config, inventory, experience_packages, booking_photos, booking_splits, coupons, campaigns, expenses, budget_allocations, staff_members, staff_tasks, staff_attendance, staff_leaves, staff_salary_payments, audit_logs, client_notes, order_notes, identity_verifications, property_tags, tag_assignments
+| Hook | Purpose |
+|------|---------|
+| useAuth | Auth context |
+| useAdmin | Role-based admin access |
+| useBookings | Booking CRUD |
+| useWishlists | Wishlist management |
+| useMessages | Chat conversations |
+| useNotifications | Notifications (mock fallback) |
+| useLoyalty | Points, tier, transactions (mock fallback) |
+| useReferrals | Referral codes |
+| useReviews | Reviews + responses |
+| useHostListings | Host listing CRUD |
+| useHostAnalytics | Analytics data |
+| useImageUpload | Storage upload |
+| useTheme | Theme management |
+| usePrivacyMode | Privacy toggle |
+| useCurations | Curated packs (static fallback) |
+| useUnreadCount | Unread message count |
+| useAppConfig | Dynamic app config (defaults fallback) |
+| useHomepageSections | Section visibility & ordering |
+| useHomepageFilters | Dynamic category filter pills |
+| useVideoCards | Spotlight video card config |
+
+---
+
+## 🗄 Database Schema (38 Tables)
+
+| Table | Key Columns | Purpose |
+|-------|------------|---------|
+| profiles | user_id, display_name, avatar_url, loyalty_points, tier | User profiles |
+| bookings | user_id, property_id, date, slot, guests, total, status | Booking records |
+| wishlists | user_id, property_id | Saved properties |
+| conversations | participant_1, participant_2 | Chat threads |
+| messages | conversation_id, sender_id, content, read | Chat messages |
+| notifications | user_id, title, body, type, read | Alerts |
+| reviews | user_id, property_id, rating, content, photo_urls | Reviews |
+| review_responses | review_id, host_id, content | Host replies |
+| loyalty_transactions | user_id, title, points, type | Point ledger |
+| referral_codes | user_id, code, uses, reward_points | Referral codes |
+| referral_uses | code_id, referrer_user_id, referred_user_id | Usage tracking |
+| host_listings | user_id, name, category, base_price, capacity, amenities, tags, image_urls, slots (JSONB), rules (JSONB), status | Property listings |
+| curations | name, tagline, emoji, slot, includes[], tags[], mood[], price, property_id | Experience packs |
+| orders | user_id, property_id, booking_id, total, status | In-stay orders |
+| order_items | order_id, item_name, item_emoji, quantity, unit_price | Order line items |
+| order_notes | order_id, content, author_name, author_role | Staff notes on orders |
+| spin_history | user_id, points_won, prize_label | Daily spin results |
+| user_milestones | user_id, milestone_id | Achievement tracking |
+| user_roles | user_id, role (enum) | RBAC |
+| audit_logs | user_id, entity_type, action, details (JSONB) | Activity audit |
+| campaigns | title, type, discount_type, target_properties[], target_audience[] | Marketing |
+| coupons | code, discount_type, discount_value, max_uses, expires_at | Discount codes |
+| property_tags | name, icon, color | Tag definitions |
+| tag_assignments | tag_id, target_id, target_type | Tag mappings |
+| identity_verifications | user_id, document_type, document_url, status | ID verification |
+| inventory | name, emoji, category, unit_price, stock, low_stock_threshold | Stock mgmt |
+| experience_packages | name, emoji, gradient, includes[], price | Add-on packages |
+| app_config | key, value, label, category | Runtime settings |
+| budget_allocations | category, month, year, allocated, spent | Budget tracking |
+| expenses | title, amount, category, vendor, date | Expense mgmt |
+| staff_members | name, role, department, salary, status | Staff directory |
+| staff_tasks | title, description, priority, status, assigned_to | Task tracking |
+| staff_attendance | staff_id, date, check_in, check_out, hours_worked | Attendance |
+| staff_leaves | staff_id, leave_type, start_date, end_date, status | Leave requests |
+| staff_salary_payments | staff_id, amount, month, year, status | Payroll |
+| client_notes | client_user_id, content, author_name, note_type | CRM notes |
+| booking_photos | booking_id, photo_url, caption | Guest photos |
+| booking_splits | booking_id, friend_name, friend_email, amount, status | Split payments |
+
+### Database Functions
+| Function | Purpose |
+|----------|---------|
+| award_loyalty_points(user_id, points, title) | Add points + transaction |
+| redeem_loyalty_points(user_id, points, title) | Deduct points if sufficient |
+| create_notification(user_id, title, body, type) | Insert notification |
+| has_role(user_id, role) | Check role (security definer) |
+
+### Enums
+| Enum | Values |
+|------|--------|
+| app_role | super_admin, ops_manager, host, staff |
+
+---
+
+## 🔒 Security & RLS
+
+- All tables have Row-Level Security enabled
+- Users can only read/write their own data
+- Public READ on listings, curations
+- Admin access via has_role() security definer function
+- User roles in dedicated user_roles table
+- No secrets in client code; edge functions for sensitive ops
+- 4-layer security: Auth → RBAC → RLS → Application
+
+---
+
+## 📋 Product Requirements Document (PRD)
+
+### 1. Product Overview
+**Product Name**: Hushh | **Tagline**: "Your Private Getaway" | **Platform**: Mobile-first PWA | **Market**: Jeypore, Odisha → tier-2/3 cities
+
+### 2. Problem Statement
+No unified platform in tier-2/3 cities for discovering private venues. Customers rely on WhatsApp groups and phone calls. Property owners manage bookings with notebooks. No bundled experience discovery.
+
+### 3. Solution
+A marketplace connecting experience seekers with private venue owners:
+- One-tap discovery of curated stays, experiences, and services
+- Bundled experience packs (curations) eliminating decision fatigue
+- Real-time operations for hosts (inventory, orders, staff management)
+- Gamified loyalty to drive repeat bookings
+
+### 4. Success Metrics (KPIs)
+| Metric | Target |
+|--------|--------|
+| Monthly Active Users (MAU) | 5,000+ |
+| Booking Conversion Rate | 8-12% |
+| Average Order Value (AOV) | ₹3,500+ |
+| Repeat Booking Rate | 40%+ |
+| Host Onboarding | 50+ properties |
+| NPS Score | 60+ |
+| App Rating | 4.5+ |
+
+### 5. User Personas
+
+**Persona 1: Priya (The Planner)** — Age 26, Marketing Executive
+- Goal: Plan memorable anniversary dinners
+- Pain: Can't find unique venues beyond restaurants
+- Behavior: Researches 3-4 days ahead, budget-conscious but splurges for quality
+- Needs: Curations, reviews, split payments, photos
+
+**Persona 2: Rahul (The Spontaneous One)** — Age 24, Software Developer
+- Goal: Find a chill spot tonight with friends
+- Pain: Last-minute planning always falls apart
+- Behavior: Decides same-day, values speed over perfection
+- Needs: Tonight tags, active trip ordering, quick checkout
+
+**Persona 3: Sunita (The Host)** — Age 42, Farmhouse Owner
+- Goal: Monetize her property during weekdays
+- Pain: Manages bookings via phone calls and notebooks
+- Behavior: Not tech-savvy, needs simple tools
+- Needs: Dashboard, calendar, inventory, staff management
+
+**Persona 4: Vikram (The Corporate Booker)** — Age 35, HR Manager
+- Goal: Book team outing venue with activities
+- Pain: Coordinating venue + food + activities separately is exhausting
+- Behavior: Books 2-4 weeks ahead, needs invoices and receipts
+- Needs: Experience builder, bulk booking, receipts, curations
+
+### 6. Feature Priority Matrix
+
+| Priority | Feature | Status | Impact | Effort |
+|----------|---------|--------|--------|--------|
+| P0 (Must) | Property discovery & booking | ✅ Done | High | High |
+| P0 (Must) | Authentication & profiles | ✅ Done | High | Medium |
+| P0 (Must) | Admin property CRUD | ✅ Done | High | High |
+| P1 (Should) | Experience Builder | ✅ Done | High | Medium |
+| P1 (Should) | Curated experience packs | ✅ Done | High | Medium |
+| P1 (Should) | Live in-stay ordering | ✅ Done | Medium | Medium |
+| P1 (Should) | Loyalty & gamification | ✅ Done | Medium | Medium |
+| P1 (Should) | Admin CRM & analytics | ✅ Done | Medium | High |
+| P2 (Nice) | Payment gateway (Razorpay) | 🔜 Planned | High | Medium |
+| P2 (Nice) | Push notifications (FCM) | 🔜 Planned | Medium | Medium |
+| P2 (Nice) | Multi-language support | 🔜 Planned | Medium | Low |
+| P2 (Nice) | AI-powered recommendations | 🔜 Planned | Medium | High |
+| P3 (Later) | Native mobile apps | 📋 Backlog | High | Very High |
+| P3 (Later) | Multi-city expansion | 📋 Backlog | Very High | Very High |
+| P3 (Later) | Vendor marketplace | 📋 Backlog | High | High |
+
+### 7. Non-Functional Requirements
+| Requirement | Specification |
+|-------------|--------------|
+| Performance | FCP < 1.5s, LCP < 2.5s, TTI < 3.5s |
+| Availability | 99.5% uptime |
+| Security | RLS on all tables, RBAC, email verification |
+| Scalability | Serverless edge functions, CDN-delivered assets |
+| Accessibility | WCAG 2.1 AA compliance target |
+| Browser Support | Chrome 90+, Safari 15+, Firefox 90+, Edge 90+ |
+
+### 8. Release Roadmap
+| Phase | Version | Status | Key Deliverables |
+|-------|---------|--------|-----------------|
+| Foundation | v1.0–1.3 | ✅ Complete | Core UI, booking flow, profiles |
+| Backend | v1.4–1.6 | ✅ Complete | Auth, DB, real-time, host tools |
+| Polish | v1.7–1.10 | ✅ Complete | Design system, feed, guest mode, docs |
+| Monetization | v1.11–1.13 | ✅ Complete | Curations, ordering, gamification |
+| Operations | v1.14–1.20 | ✅ Complete | Admin panel, CRM, CRUD, config, SEO |
+| Payments | v2.0 | 🔜 Planned | Razorpay/UPI integration, invoicing |
+| Growth | v2.1 | 🔜 Planned | Push notifications, referral 2.0, AI recs |
+| Scale | v3.0 | 📋 Backlog | Multi-city, vendor marketplace, native apps |
+
+### 9. Risks & Mitigations
+| Risk | Impact | Mitigation |
+|------|--------|------------|
+| Low host adoption | High | Hands-on onboarding, zero listing fees |
+| Payment fraud | High | UPI verification, booking limits, admin review |
+| Seasonal demand | Medium | Work-from-resort push, weekday pricing, corporate packages |
+| Data loss | Critical | Automated backups, RLS, audit logs |
+| OTA competition | Medium | Hyper-local focus, curated packs, personal touch |
+
+### 10. User App — Detailed Feature Specification
+
+#### 10.1 Discovery & Browse
+- Rotating search bar with contextual placeholders
+- 6 primary categories: Home, Stays, Experiences, Services, Curations, Work
+- Dynamic sub-filters per category (admin-configurable)
+- Spotlight video carousel with autoplay
+- Property cards with video thumbnails, ratings, pricing, AccentFrame
+- Sports activity cards (horizontal scroll)
+- Foodie carousel (video cards)
+- Couple specials grid
+- Curated pack listings (tall video cards with savings badges)
+
+#### 10.2 Booking Flow
+- Step 1: Property Detail — gallery, info, reviews, slot picker (Morning/Afternoon/Evening/Night/Full Day), guest counter, date picker
+- Step 2: Experience Builder — 4 category tabs (Food, Decor, Entertainment, Transport), per-item emoji icons, quantity selectors, smart nudges ("People also added..."), running total
+- Step 3: Checkout — booking summary, add-on line items, coupon input with validation, price breakdown (base + add-ons - discount = total)
+- Step 4: Confirmation — confetti animation, booking ID (HUSHH-XXXXXX), loyalty points earned (5 pts/₹100)
+
+#### 10.3 Trip Management
+- 5 filter tabs: All, Active, Upcoming, Past, Cancelled
+- Active trips: green pulse indicator, "Order Food" CTA, "Add Extras" button
+- LiveOrderingSheet: Swiggy-style menu with 20+ items, category filters, cart, veg/non-veg indicators, prep times
+- Cancel with confirmation dialog, rebook flow
+- Order history with expandable item details
+- Identity verification prompt for unverified users
+
+#### 10.4 Social & Communication
+- Real-time messaging with unread counts
+- Review system with star ratings, photo reviews, host responses
+- Public profile viewing (works with mock profiles for guests)
+- Share property via Web Share API / clipboard fallback
+- WhatsApp and Twitter share URLs
+
+#### 10.5 Loyalty & Gamification
+- Earn 5 points per ₹100 spent
+- Tier progression: Bronze (0) → Silver (200) → Gold (500) → Platinum (1000)
+- Spin Wheel: daily spin with weighted prizes (5-100 pts), sound effects, framer-motion animation
+- 6 achievement milestones: First Booking, Explorer, Regular, Reviewer, Social Butterfly, VIP
+- Referral system: unique codes, 100 pts reward for both parties
+
+#### 10.6 Profile & Settings
+- Hero card with ambient glow, verified badge, stats row
+- Membership badge with tier and cashback percentage
+- Quick stats: Bookings, Wishlisted, Total Spent
+- Achievements: horizontal scroll gradient cards
+- Recent activity: last 3 bookings
+- Settings: notifications, security, language, accessibility, privacy mode
+- Theme: Light/Dark/Auto animated toggle
+- Social media footer (dynamic from config)
+- Terms & Privacy with dynamic legal links
+
+### 11. Admin App — Detailed Feature Specification
+
+#### 11.1 Command Center (Dashboard)
+- 4 KPI cards: Revenue, Bookings, Active Guests, Average Rating
+- Live Activity Feed: real-time stream of bookings, orders, reviews
+- Pending Items Widget: actionable counts (bookings to confirm, reviews to respond, verifications)
+- Quick Navigation: icon grid to all admin sections
+
+#### 11.2 Property Management (Full CRUD)
+- List view with search, category filter, status filter
+- Create/Edit form: name, description, full_description, location, lat/lng, base_price, capacity, category, property_type, primary_category, tags[], amenities[], highlights[], image_urls[], slots (JSONB time windows), rules (JSONB house rules), entry_instructions, host_name, discount_label
+- Status management: Published / Draft / Paused
+- Actions: Duplicate, Delete (with confirmation), Toggle Status
+- Multi-image editor with drag-to-reorder
+
+#### 11.3 Inventory Management
+- Categories: Food, Drinks, Activities, Equipment, Supplies
+- Per-item fields: name, emoji, unit_price, stock, low_stock_threshold, available toggle, property assignment
+- Low-stock alerts (amber when stock ≤ threshold)
+- Bulk operations: enable/disable, price update
+
+#### 11.4 Booking Hub
+- All bookings across all users with filters (date range, status, property)
+- Status flow: pending → confirmed → active → completed / cancelled
+- Booking detail: guest info, property, slot, add-ons, total, notes
+- Heatmap visualization of booking density
+
+#### 11.5 Client Directory (CRM 2.0)
+- Profile cards with engagement score (0-100)
+- Score formula: booking frequency + order count + review count + loyalty points
+- Segments: VIP (80+), Frequent (50+), Returning (20+), New (<20)
+- Journey timeline: chronological view of all interactions
+- Aggregation from 9+ tables: bookings, orders, reviews, loyalty, wishlists, messages, referrals, milestones, identity
+- Client notes with pinning and type categorization
+- AI-powered search: "Show me VIP clients", "Who booked most in March?"
+
+#### 11.6 Property History
+- Calendar view with color-coded booking density per property
+- Chronological timeline of all stays at a property
+- AI search: "Who stayed in Villa last Sunday?", "How many bonfires this month?"
+- Drill-down to client profile from any stay record
+
+#### 11.7 Finance Hub
+- Revenue dashboard with daily/weekly/monthly views
+- Expense tracking with categories, vendors, payment methods
+- Budget allocations by category and month
+- Recurring expense management
+- Receipt upload and storage
+
+#### 11.8 Staff Management
+- Staff directory: name, role, department, salary, joining date, status
+- Attendance tracking: check-in/out, hours worked, overtime
+- Leave management: request → approve/reject flow with reason
+- Payroll: monthly salary payments with bonus/deductions tracking
+- Task assignment with priority levels and due dates
+
+#### 11.9 Marketing Tools
+- Campaign Studio: flash deals, seasonal offers, percentage/flat discounts, target audiences/properties
+- Coupon Engine: unique codes, percentage/flat discount, min order, max uses, expiry, user-specific
+- Dynamic Pricing: demand-based rules, peak/off-peak multipliers
+
+#### 11.10 Homepage Manager
+- Sections Tab: toggle visibility and drag-to-reorder all homepage sections
+- Videos Tab: edit spotlight video URLs, overlay text, property links
+- Filters Tab: manage category filter pills per category
+- Tags Tab: CRUD for property tags with icons and colors
+
+#### 11.11 Settings
+- General: base pricing, service fees, min guests, max guests, support phone, email, WhatsApp
+- Branding: app name, logo URL, tagline, social media links (Instagram, Facebook, YouTube, Twitter), legal URLs (terms, privacy, refund policy)
+- Advanced: map center coordinates, spin wheel config, notification preferences
+
+---
+
+## 🗺 App Blueprint
+
+### System Architecture
+\`\`\`
+CLIENT (Browser)
+  ├── React Router · React Query · Framer Motion
+  └── Supabase JS Client (Auth · Realtime · Storage)
+       │ HTTPS
+LOVABLE CLOUD
+  ├── Edge Functions (6): admin-ai, smart-alerts, auto-notifications, property-history-ai, weekly-digest, staff-report
+  ├── PostgreSQL (38 tables · RLS · Triggers · Functions)
+  ├── Storage (listing-images, identity-docs, booking-photos)
+  └── Auth (GoTrue): Email/Password, verification, reset
+\`\`\`
+
+### Data Flow
+- Guest → Mock Data (localStorage + static)
+- Auth User → Supabase Queries (React Query with cache)
+- Admin → Admin Panel (22 pages + sidebar)
+
+### State Management
+- Global: AuthProvider, ThemeProvider, PrivacyModeProvider, PropertiesProvider, QueryClient
+- Local: Screen state machine (Index.tsx), component useState, localStorage fallbacks
+
+### Module Map
+\`\`\`
+App.tsx
+  ├── Index.tsx (SPA shell + 15 screens)
+  │   ├── HomeScreen (10+ sub-components)
+  │   ├── PropertyDetail → Builder → Checkout → Confirmation
+  │   ├── Trips → BookingDetail → LiveOrdering
+  │   └── Profile → Loyalty, Referrals, Host Dashboard
+  ├── Admin.tsx (22 pages + sidebar)
+  └── Staff.tsx (orders, tasks, checkin)
+\`\`\`
+
+### Security Layers
+1. Auth — email/password, JWT, email verification
+2. RBAC — user_roles table, has_role() function
+3. RLS — every table, per-user data isolation
+4. App — no secrets in client, edge functions for ops
+
+### API & Edge Functions
+- POST /admin-ai → AI interprets natural language → {answer, data[], suggestions[]}
+- POST /smart-alerts → Check low stock, overdue tasks → Creates admin notifications
+- POST /auto-notifications → Database webhook → User notification + optional email
+- POST /property-history-ai → AI search booking + order history → {results[], summary}
+- POST /weekly-digest → Aggregate weekly data → Email digest to admin
+- POST /staff-report → Staff attendance & performance → Summary report
+
+---
+
+## 📐 Wireframes
+
+### User App — Screen Hierarchy (5 Tabs)
+\`\`\`
+Tab 1: EXPLORE
+  Search → ActiveTrip → Categories → Spotlight
+  → Properties → Sports → Foodie → Packs
+
+Tab 2: WISHLISTS — 2-col grid of saved properties
+
+Tab 3: TRIPS — Filter tabs → Cards → Detail → Order/Cancel
+
+Tab 4: MESSAGES — Conversations → Chat thread
+
+Tab 5: PROFILE — Hero → Stats → Achievements → Settings
+\`\`\`
+
+### User App — Home Screen (Mobile)
+\`\`\`
+┌─────────────────────────┐
+│ [👤]  Jeypore  [🔔·3]  │  Header
+│ [🔍 Search farmhouses...]│  Rotating placeholder
+│ ┌─────────────────────┐ │
+│ │ 🟢 Active Trip      │ │  Only when checked-in
+│ │ Villa · Eve · [Order]│ │
+│ └─────────────────────┘ │
+│ 🏠 Stays 🎭 Exp ✨ Cur │  Category bar
+│ ╔═══ VIDEO SPOTLIGHT ═╗ │  Autoplay
+│ ╚═════════════════════╝ │
+│ ┌──────┐ ┌──────┐      │  Property cards
+│ │Villa │ │Farm  │      │
+│ │₹2.5K │ │₹1.8K │      │
+│ └──────┘ └──────┘      │
+│ [🏸][🎯][🏊][🏓]       │  Sports
+│ [🍽 Thali][🕯 Candle]  │  Foodie
+│ ┌═══ Pack Card ═══════┐ │  Curations
+│ │ "Date Night" ₹3,999 │ │
+│ │ [Book Now]          │ │
+│ └═════════════════════┘ │
+│ 🏠  ❤️  ✈️  💬  👤    │  Bottom nav
+└─────────────────────────┘
+\`\`\`
+
+### User App — Booking Flow
+\`\`\`
+┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐
+│ DETAIL  │→│ BUILDER │→│CHECKOUT │→│ CONFIRM │
+│ Gallery │  │ Food tab│  │ Summary │  │ 🎊      │
+│ Slots   │  │ Decor   │  │ Add-ons │  │HUSHH-XX │
+│ Date    │  │ DJ tab  │  │ Coupon  │  │ +50 pts │
+│ Guests  │  │ [-] [+] │  │ Total   │  │         │
+│ Reviews │  │ Running │  │         │  │ [View   │
+│ [Book→] │  │ [Next→] │  │ [Pay→]  │  │  Trips] │
+└─────────┘  └─────────┘  └─────────┘  └─────────┘
+\`\`\`
+
+### User App — Profile Screen
+\`\`\`
+┌─────────────────────────┐
+│         Profile          │
+│      ┌──────────┐       │
+│      │  Avatar  │       │  Glow effect
+│      │ (badge)  │       │
+│      └──────────┘       │
+│     Priya Sharma         │
+│     📍 Jeypore           │
+│  ┌─────┬─────┬────────┐ │
+│  │ 12  │  8  │ 2 yrs  │ │  Stats
+│  │Trips│Revws│Member  │ │
+│  └─────┴─────┴────────┘ │
+│ ┌─ 🥇 Gold · 1,240 pts ┐│  Membership
+│ ┌──────┬──────┬──────┐  │  Quick stats
+│ │Books │Saved │Spent │  │
+│ [🌟Early][⭐5Star]→    │  Achievements
+│ ┌─ Recent Activity ────┐│
+│ │Villa · ₹3.2K         ││
+│ [🏠 Become a Host]     │
+│ [☀️ Light][🌙 Dark]    │  Theme
+│ [📸][📘][▶][🐦]        │  Social
+│ Terms · Privacy · v1.21 │  5-tap easter egg
+│ 🏠  ❤️  ✈️  💬  👤    │
+└─────────────────────────┘
+\`\`\`
+
+### Admin App — Panel Layout
+\`\`\`
+┌─────────┬───────────────────────────────────────────┐
+│ SIDEBAR │          MAIN CONTENT AREA                 │
+│ ┌─────┐ │  COMMAND CENTER                            │
+│ │ 🏠  │ │  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐    │
+│ │Home │ │  │ ₹42K │ │  28  │ │  12  │ │ 4.8★ │    │
+│ │ 🤖  │ │  │Rev.  │ │Books │ │Active│ │Rating│    │
+│ │AI   │ │  └──────┘ └──────┘ └──────┘ └──────┘    │
+│ │ 🔔  │ │  ┌─ Live Feed ──┐ ┌─ Pending ──────┐    │
+│ │Alert│ │  │ ● New booking│ │ □ 3 bookings   │    │
+│ │ 🏠  │ │  │ ● Food order │ │ □ 2 reviews    │    │
+│ │Prop │ │  │ ● Review     │ │ □ 1 verification│   │
+│ │ 📦  │ │  └──────────────┘ └────────────────┘    │
+│ │Inv  │ │                                          │
+│ │ 👥  │ │  PROPERTIES                      [+ New] │
+│ │Users│ │  ┌──────────┐ ┌──────────┐ ┌──────────┐ │
+│ │ 📊  │ │  │ Villa    │ │Farmhouse │ │ Work Pod │ │
+│ │Stats│ │  │ ₹2,500   │ │ ₹1,800   │ │ ₹999     │ │
+│ │ (+) │ │  │ [Edit]   │ │ [Edit]   │ │ [Edit]   │ │
+│ │more │ │  └──────────┘ └──────────┘ └──────────┘ │
+│ └─────┘ │                                          │
+└─────────┴──────────────────────────────────────────┘
+\`\`\`
+
+### Admin App — Property CRUD Form
+\`\`\`
+┌─────────────────────────────────────────────┐
+│ Edit Property                        [Save] │
+├─────────────────────────────────────────────┤
+│ Name: [Villa Sunset Evening________]        │
+│ Location: [Jeypore, Odisha_________]        │
+│ Category: [Stays ▼]  Type: [Villa ▼]       │
+│ Price: [₹ 2,500___]  Capacity: [- 20 +]   │
+│ Status: ○ Published ● Draft ○ Paused       │
+│                                             │
+│ Images: [📷][📷][📷][📷] [+ Add]          │
+│                                             │
+│ Tags: [🏷 Romantic] [🏷 Pool] [+ Add]     │
+│ Amenities: [WiFi] [AC] [Pool] [+ Add]     │
+│                                             │
+│ Slots (JSONB):                             │
+│ ┌──────────┬──────┬──────┬────────┐        │
+│ │ Slot     │ From │  To  │ Price  │        │
+│ │ Morning  │ 9AM  │ 12PM │ ₹1,500 │        │
+│ │ Evening  │ 5PM  │ 10PM │ ₹2,500 │        │
+│ │ Night    │10PM  │ 8AM  │ ₹3,000 │        │
+│ └──────────┴──────┴──────┴────────┘        │
+│                                             │
+│ Rules: [No smoking] [No pets] [+ Add]      │
+│ Entry Instructions: [Gate code: 1234__]    │
+│ Description: [__________________________]  │
+│                                             │
+│ [Delete Property]  [Duplicate]  [Save →]   │
+└─────────────────────────────────────────────┘
+\`\`\`
+
+### Admin App — Client CRM Detail
+\`\`\`
+┌─────────────────────────────────────────────┐
+│ Client: Priya Sharma           Score: 85/100│
+│ Segment: VIP                    [Add Note]  │
+├─────────────────────────────────────────────┤
+│ Summary                                     │
+│ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐       │
+│ │  12  │ │  8   │ │ ₹42K │ │ Gold │       │
+│ │Stays │ │Orders│ │Spent │ │ Tier │       │
+│ └──────┘ └──────┘ └──────┘ └──────┘       │
+│                                             │
+│ Journey Timeline                            │
+│ ● Mar 15 — Booked Villa Sunset (₹3,200)    │
+│ ● Mar 15 — Ordered: 2x Maggie, 1x Chai    │
+│ ● Mar 16 — Left 5★ review                  │
+│ ● Feb 28 — Booked Farmhouse (₹1,800)       │
+│ ● Feb 28 — Used coupon HUSHH10             │
+│ ● Jan 15 — First booking (milestone)       │
+│                                             │
+│ Notes                                       │
+│ 📌 "Prefers evening slots, vegetarian"     │
+│ 📝 "Anniversary next month — suggest pack" │
+└─────────────────────────────────────────────┘
+\`\`\`
+
+### Admin App — Inventory Management
+\`\`\`
+┌─────────────────────────────────────────────┐
+│ Inventory                    [Low Stock ⚠] │
+│ Category: [All ▼]  Search: [_____________] │
+├─────────────────────────────────────────────┤
+│ ┌──────┬────────┬──────┬──────┬──────────┐ │
+│ │ Item │ Price  │Stock │Status│  Action   │ │
+│ ├──────┼────────┼──────┼──────┼──────────┤ │
+│ │🍔Burg│ ₹250  │   8  │  ✅  │ [Edit]   │ │
+│ │🍕Pizza│₹350  │   3⚠│  ✅  │ [Edit]   │ │
+│ │🍺Beer│ ₹200  │  24  │  ✅  │ [Edit]   │ │
+│ │🎸DJ  │₹2,000 │   2  │  ✅  │ [Edit]   │ │
+│ │🕯Decor│₹500  │   1⚠│  ⛔  │ [Edit]   │ │
+│ └──────┴────────┴──────┴──────┴──────────┘ │
+└─────────────────────────────────────────────┘
+\`\`\`
+
+### Database ER Diagram
+\`\`\`
+auth.users ─┬─ profiles (1:1)
+            ├─ bookings → orders → order_items
+            ├─ wishlists → host_listings
+            ├─ reviews → review_responses
+            ├─ conversations → messages
+            ├─ notifications
+            ├─ loyalty_transactions
+            ├─ referral_codes → referral_uses
+            ├─ user_roles
+            ├─ user_milestones
+            ├─ identity_verifications
+            ├─ booking_photos
+            └─ booking_splits
+
+host_listings ── curations · inventory · property_tags (via tag_assignments)
+staff_members ── staff_attendance · staff_leaves · staff_salary_payments
+standalone: campaigns · coupons · expenses · budget_allocations · app_config · audit_logs · client_notes · experience_packages · order_notes · staff_tasks
+\`\`\`
 
 ---
 
@@ -423,7 +1096,44 @@ profiles, bookings, wishlists, conversations, messages, notifications, reviews, 
     )
     .join("\n\n");
 
-  const footer = `\n\n---\n\n## 🥚 Easter Eggs\n\nTap version text 5× on Profile tab → Full in-app documentation\n\n---\n\n📄 **License**: Private — All rights reserved.\n`;
+  const footer = `\n\n---
+
+## 📐 Conventions & Guidelines
+
+### Adding Features
+1. Implement the feature
+2. Add changelog entry to HUSHH.md under the appropriate version
+3. Add entry to src/components/AppDocumentation.tsx changeLog array
+4. Document new screens in Screen-by-Screen section
+
+### Code Style
+- Semantic design tokens only — never raw colors
+- All colors in HSL
+- Framer Motion for animations
+- Refactor components >400 lines
+- Mock fallbacks in hooks for guest mode
+
+### File Naming
+- Components: PascalCase.tsx | Hooks: use-kebab.tsx | Data: kebab.ts | Lib: kebab.ts
+
+### Admin Development
+- All admin components in src/components/admin/
+- Admin page type must be added to AdminPage union in AdminLayout.tsx
+- New pages must be added to: AdminLayout nav items, CommandPalette commands, Admin.tsx switch/case
+- Always use useAdmin() hook for role checks — never client-side storage
+
+---
+
+## 🥚 Easter Eggs
+
+| Trigger | Location | Result |
+|---------|----------|--------|
+| Tap version text 5× within 2s | Profile tab, bottom | Full in-app documentation overlay |
+
+---
+
+📄 **License**: Private — All rights reserved.
+`;
 
   return header + changes + footer;
 }
