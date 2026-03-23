@@ -3,11 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- TODO: Set the document title to the name of your application -->
     <title>Hushh Jeypore — Premium Experiences</title>
     <meta name="description" content="Order curated private experiences at premium resorts in Jeypore. Bonfire nights, pool parties, romantic dates — keep it hushh 🤫">
     <meta name="author" content="Hushh Jeypore" />
-    
+
+    <!-- Preconnect to critical origins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://flwzxhlquhhvonbkrrxt.supabase.co" />
+
     
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d80410a3-6415-4adb-a2b1-81fcb563b127/id-preview-fecff8d7--335dfa9e-e50c-4ce8-b34c-a697f11333f3.lovable.app-1773811531255.png">
@@ -22,7 +26,12 @@
 </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Inline initial paint for fast FCP — replaced by React -->
+      <div id="init-splash" style="position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;background:#0a0a0a">
+        <span style="font-size:2rem;font-weight:700;color:#fff;letter-spacing:-0.02em">Hushh 🤫</span>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
