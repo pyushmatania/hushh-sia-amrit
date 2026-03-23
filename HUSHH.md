@@ -1306,6 +1306,12 @@ useHomepageSections → useHomepageFilters → useVideoCards
 - **Terms & Privacy Sheet** — dynamic legal links (terms_url, privacy_url, refund_policy_url) accessible from Profile settings
 - Links only render when URLs are configured in admin, graceful empty state otherwise
 
+### v1.21 — Product Planning & Documentation
+- **Product Requirements Document (PRD)** — full PRD with personas, KPIs, priority matrix, risks, roadmap added to HUSHH.md
+- **App Blueprint** — system architecture diagrams, data flow, module dependencies, state management, security layers, API architecture
+- **Wireframes** — ASCII wireframes for all screens: home, booking flow, admin panel, profile, screen hierarchy, ER diagram
+- **Easter Egg Docs Updated** — PRD, Blueprint, and Wireframe sections added to in-app documentation
+
 ---
 
 ## 📐 Conventions & Guidelines
