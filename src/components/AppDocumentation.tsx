@@ -1295,8 +1295,8 @@ const ADMIN_JOURNEY_CHART = `graph TB
     CMD --> SETTINGS["Settings"]
     CMD --> AUDIT["Audit Trail"]`;
 
-
-  export default function AppDocumentation({ open, onClose }: AppDocumentationProps) {
+export default function AppDocumentation({ open, onClose }: AppDocumentationProps) {
+  const [copied, setCopied] = useState(false);
   const [showRawDoc, setShowRawDoc] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
