@@ -12,6 +12,7 @@ import ScreenSkeleton from "@/components/shared/ScreenSkeleton";
 // Lazy-loaded screens (not needed on initial render)
 const PropertyDetail = lazy(() => import("@/components/PropertyDetail"));
 const ExperienceBuilder = lazy(() => import("@/components/ExperienceBuilder"));
+const ExperienceDetailScreen = lazy(() => import("@/components/ExperienceDetailScreen"));
 const CheckoutScreen = lazy(() => import("@/components/CheckoutScreen"));
 const BookingConfirmation = lazy(() => import("@/components/BookingConfirmation"));
 const BookingDetailScreen = lazy(() => import("@/components/BookingDetailScreen"));
@@ -34,6 +35,7 @@ import { useNotifications } from "@/hooks/use-notifications";
 import { useLoyalty } from "@/hooks/use-loyalty";
 import { useToast } from "@/hooks/use-toast";
 import { properties, type Property } from "@/data/properties";
+import type { ExperiencePack } from "@/components/home/CuratedPackCard";
 
 export interface Booking {
   id: string;
@@ -51,6 +53,7 @@ export interface Booking {
 type Screen =
   | { type: "home" }
   | { type: "detail"; property: Property }
+  | { type: "experienceDetail"; pack: ExperiencePack; property: Property }
   | { type: "builder"; property: Property; slotId: string; guests: number; date: Date; extras?: Property[]; roomsCount?: number; extraMattresses?: number }
   | { type: "checkout"; property: Property; slotId: string; guests: number; date: Date; selections: Record<string, number>; total: number; extras?: Property[]; roomsCount?: number; extraMattresses?: number }
   | { type: "confirmation"; property: Property; slotId: string; guests: number; date: Date; total: number }
@@ -88,6 +91,14 @@ export default function Index() {
     setShowSearch(false);
     setScreen({ type: "detail", property });
     setActiveTab("home");
+  }, []);
+
+  const handleExperienceTap = useCallback((pack: ExperiencePack) => {
+    const property = properties.find(p => p.id === pack.propertyId);
+    if (property) {
+      setScreen({ type: "experienceDetail", pack, property });
+      setActiveTab("home");
+    }
   }, []);
 
   const handleBook = useCallback((property: Property, slotId: string, guests: number, date: Date, extras?: Property[], roomsCount?: number, extraMattresses?: number) => {
@@ -183,7 +194,7 @@ export default function Index() {
       <Suspense fallback={lazyFallback}>
       <AnimatePresence mode="wait">
         {screen.type === "home" && activeTab === "home" && (
-          <HomeScreen key="home" onPropertyTap={handlePropertyTap} onSearchTap={() => setShowSearch(true)} onMapTap={() => startTransition(() => setShowMap(true))} onNotificationTap={() => setShowNotifications(true)} wishlist={wishlist} onToggleWishlist={toggleWishlist} />
+          <HomeScreen key="home" onPropertyTap={handlePropertyTap} onExperienceTap={handleExperienceTap} onSearchTap={() => setShowSearch(true)} onMapTap={() => startTransition(() => setShowMap(true))} onNotificationTap={() => setShowNotifications(true)} wishlist={wishlist} onToggleWishlist={toggleWishlist} />
         )}
         {screen.type === "home" && activeTab === "wishlists" && (
           <WishlistScreen
@@ -217,6 +228,15 @@ export default function Index() {
             onPropertyTap={handlePropertyTap}
             isWishlisted={wishlist.includes(screen.property.id)}
             onToggleWishlist={toggleWishlist}
+          />
+        )}
+        {screen.type === "experienceDetail" && (
+          <ExperienceDetailScreen
+            key="experienceDetail"
+            pack={screen.pack}
+            property={screen.property}
+            onBack={() => setScreen({ type: "home" })}
+            onBook={() => setScreen({ type: "detail", property: screen.property })}
           />
         )}
         {screen.type === "builder" && (
