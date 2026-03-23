@@ -26,28 +26,75 @@ function getRarity(price: number): string {
   return "common";
 }
 
-function StatBar({ label, value, max, color, revealed, icon }: { label: string; value: number; max: number; color: string; revealed: boolean; icon?: React.ReactNode }) {
+/* Animated counter hook — counts from 0 to target */
+function useCountUp(target: number, active: boolean, duration = 800, delay = 0): number {
+  const [val, setVal] = useState(0);
+  const rafRef = useRef<number>(0);
+  useEffect(() => {
+    if (!active) { setVal(0); return; }
+    let start: number | null = null;
+    const animate = (ts: number) => {
+      if (start === null) start = ts;
+      const elapsed = ts - start - delay;
+      if (elapsed < 0) { rafRef.current = requestAnimationFrame(animate); return; }
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setVal(Math.round(eased * target));
+      if (progress < 1) rafRef.current = requestAnimationFrame(animate);
+    };
+    rafRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [active, target, duration, delay]);
+  return val;
+}
+
+function StatBar({ label, value, max, color, revealed, icon, delay = 0 }: { label: string; value: number; max: number; color: string; revealed: boolean; icon?: React.ReactNode; delay?: number }) {
   const pct = Math.min((value / max) * 100, 100);
+  const displayVal = useCountUp(value, revealed, 700, delay);
+  const [barActive, setBarActive] = useState(false);
+
+  useEffect(() => {
+    if (!revealed) { setBarActive(false); return; }
+    const t = setTimeout(() => setBarActive(true), delay);
+    return () => clearTimeout(t);
+  }, [revealed, delay]);
+
   return (
-    <div className="flex items-center gap-2">
-      {icon && <span className="w-3 flex-shrink-0">{icon}</span>}
+    <div className="flex items-center gap-2" style={{ opacity: barActive || !revealed ? 1 : 0.5, transition: "opacity 0.3s" }}>
+      {icon && <span className="w-3 flex-shrink-0" style={{ filter: barActive ? `drop-shadow(0 0 6px ${color})` : "none", transition: "filter 0.4s" }}>{icon}</span>}
       <span className="text-[7px] font-black uppercase tracking-[0.15em] w-8 flex-shrink-0" style={{ color: `${color}cc` }}>{label}</span>
-      <div className="flex-1 h-[4px] rounded-full overflow-hidden" style={{ background: "hsl(0 0% 100% / 0.06)" }}>
+      <div className="flex-1 h-[5px] rounded-full overflow-hidden relative" style={{ background: "hsl(0 0% 100% / 0.06)" }}>
         <div
-          className="h-full rounded-full"
+          className="h-full rounded-full relative"
           style={{
-            width: revealed ? `${pct}%` : "22%",
+            width: barActive ? `${pct}%` : "15%",
             background: `linear-gradient(90deg, ${color}40, ${color})`,
-            boxShadow: revealed ? `0 0 12px ${color}80, 0 0 4px ${color}` : `0 0 5px ${color}25`,
-            transition: "width 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.45s ease",
+            boxShadow: barActive ? `0 0 16px ${color}90, 0 0 6px ${color}` : `0 0 4px ${color}15`,
+            transition: `width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}ms, box-shadow 0.5s ease ${delay}ms`,
           }}
         />
+        {/* Energy tip glow */}
+        {barActive && (
+          <div
+            className="absolute top-0 h-full w-3 rounded-full"
+            style={{
+              right: `${100 - pct}%`,
+              background: `radial-gradient(circle, ${color} 0%, transparent 70%)`,
+              filter: `blur(3px)`,
+              animation: "energyPulse 1.2s ease-in-out infinite",
+            }}
+          />
+        )}
       </div>
       <span
-        className="text-[8px] font-mono font-black w-5 text-right"
-        style={{ color: revealed ? color : `${color}60`, transition: "color 0.45s, opacity 0.35s", textShadow: revealed ? `0 0 8px ${color}60` : "none" }}
+        className="text-[9px] font-mono font-black w-6 text-right tabular-nums"
+        style={{
+          color: barActive ? color : `${color}50`,
+          transition: `color 0.4s ease ${delay}ms`,
+          textShadow: barActive ? `0 0 10px ${color}80, 0 0 20px ${color}40` : "none",
+        }}
       >
-        {revealed ? value : "--"}
+        {revealed ? displayVal : "--"}
       </span>
     </div>
   );
