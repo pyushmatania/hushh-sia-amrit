@@ -60,24 +60,42 @@ function StatBar({ label, value, max, color, revealed, isCharging, icon, delay =
     return () => clearTimeout(t);
   }, [active, delay]);
 
+  /* Bar is always visible with a dim base fill; hold reveals the full colorful bar */
+  const baseFillPct = 15;
+
   return (
-    <div className="flex items-center gap-2" style={{ opacity: barActive || !revealed ? 1 : 0.5, transition: "opacity 0.3s" }}>
-      {icon && <span className="w-3 flex-shrink-0" style={{ filter: barActive ? `drop-shadow(0 0 6px ${color})` : "none", transition: "filter 0.4s" }}>{icon}</span>}
-      <span className="text-[7px] font-black uppercase tracking-[0.15em] w-8 flex-shrink-0" style={{ color: `${color}cc` }}>{label}</span>
-      <div className="flex-1 h-[5px] rounded-full overflow-hidden relative" style={{ background: "hsl(0 0% 100% / 0.06)" }}>
+    <div className="flex items-center gap-2" style={{ opacity: 1 }}>
+      {icon && <span className="w-3.5 flex-shrink-0" style={{ filter: barActive ? `drop-shadow(0 0 6px ${color})` : `drop-shadow(0 0 2px ${color}50)`, transition: "filter 0.4s" }}>{icon}</span>}
+      <span className="text-[8px] font-black uppercase tracking-[0.15em] w-9 flex-shrink-0" style={{ color: barActive ? color : `${color}99`, transition: "color 0.3s", textShadow: barActive ? `0 0 6px ${color}60` : "none" }}>{label}</span>
+      <div className="flex-1 h-[6px] rounded-full overflow-hidden relative" style={{ background: `linear-gradient(90deg, ${color}12, ${color}08)`, border: `1px solid ${color}15` }}>
+        {/* Base dim fill — always visible */}
+        <div
+          className="absolute inset-y-0 left-0 rounded-full"
+          style={{
+            width: `${baseFillPct}%`,
+            background: `linear-gradient(90deg, ${color}25, ${color}15)`,
+            opacity: barActive ? 0 : 1,
+            transition: "opacity 0.3s",
+          }}
+        />
+        {/* Active colorful fill — expands on hold */}
         <div
           className="h-full rounded-full relative"
           style={{
-            width: barActive ? `${pct}%` : "15%",
-            background: `linear-gradient(90deg, ${color}40, ${color})`,
-            boxShadow: barActive ? `0 0 16px ${color}90, 0 0 6px ${color}` : `0 0 4px ${color}15`,
-            transition: `width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}ms, box-shadow 0.5s ease ${delay}ms`,
+            width: barActive ? `${pct}%` : `${baseFillPct}%`,
+            background: barActive
+              ? `linear-gradient(90deg, ${color}60, ${color}cc, ${color})`
+              : `linear-gradient(90deg, ${color}30, ${color}20)`,
+            boxShadow: barActive
+              ? `0 0 20px ${color}90, 0 0 8px ${color}, inset 0 1px 0 hsl(0 0% 100% / 0.25)`
+              : `0 0 4px ${color}10`,
+            transition: `width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}ms, background 0.4s ease ${delay}ms, box-shadow 0.5s ease ${delay}ms`,
           }}
         />
         {/* Energy tip glow */}
         {barActive && (
           <div
-            className="absolute top-0 h-full w-3 rounded-full"
+            className="absolute top-0 h-full w-4 rounded-full"
             style={{
               right: `${100 - pct}%`,
               background: `radial-gradient(circle, ${color} 0%, transparent 70%)`,
@@ -86,13 +104,23 @@ function StatBar({ label, value, max, color, revealed, isCharging, icon, delay =
             }}
           />
         )}
+        {/* Shimmer sweep when bar is activating */}
+        {barActive && (
+          <div
+            className="absolute inset-0 rounded-full"
+            style={{
+              background: `linear-gradient(90deg, transparent 0%, hsl(0 0% 100% / 0.3) 50%, transparent 100%)`,
+              animation: "shimmer 1.5s ease-out 1",
+            }}
+          />
+        )}
       </div>
       <span
-        className="text-[9px] font-mono font-black w-6 text-right tabular-nums"
+        className="text-[10px] font-mono font-black w-6 text-right tabular-nums"
         style={{
-          color: barActive ? color : `${color}50`,
+          color: barActive ? color : `${color}40`,
           transition: `color 0.4s ease ${delay}ms`,
-          textShadow: barActive ? `0 0 10px ${color}80, 0 0 20px ${color}40` : "none",
+          textShadow: barActive ? `0 0 12px ${color}80, 0 0 24px ${color}40` : "none",
         }}
       >
         {active ? displayVal : "--"}
@@ -190,64 +218,67 @@ function SmokeEffect({ color, active }: { color: string; active: boolean }) {
   );
 }
 
-/* Mystical rune-circle platform beneath the card */
+/* Massive 3D mystical platform beneath the card — fills space below */
 function PlatformGlow({ color, active, intensity }: { color: string; active: boolean; intensity: number }) {
-  const runeSymbols = ["᛭", "ᚱ", "ᚦ", "ᛏ", "ᛟ", "ᚢ", "ᛉ", "ᚠ", "ᛗ", "ᚨ", "ᛊ", "ᚹ"];
+  const runeSymbols = ["᛭", "ᚱ", "ᚦ", "ᛏ", "ᛟ", "ᚢ", "ᛉ", "ᚠ", "ᛗ", "ᚨ", "ᛊ", "ᚹ", "ᚷ", "ᛃ", "ᛚ", "ᛝ"];
 
   return (
     <div
       className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
       style={{
-        bottom: "-55px",
-        width: "110%",
-        height: "110px",
-        perspective: "400px",
-        opacity: active ? 1 : 0.05,
-        transition: "opacity 0.5s ease",
+        bottom: "-220px",
+        width: "160%",
+        height: "300px",
+        perspective: "600px",
+        opacity: active ? 1 : 0,
+        transition: "opacity 0.6s ease",
       }}
     >
-      {/* 3D tilted platform container */}
+      {/* 3D tilted platform */}
       <div
         style={{
           width: "100%",
           height: "100%",
-          transform: "rotateX(65deg)",
-          transformOrigin: "center top",
+          transform: "rotateX(70deg)",
+          transformOrigin: "center 15%",
           position: "relative",
         }}
       >
-        {/* Outer glow pool */}
+        {/* Deep ambient pool */}
         <div
           className="absolute inset-0 rounded-full"
           style={{
-            background: `radial-gradient(ellipse at 50% 50%, ${color}50 0%, ${color}30 30%, ${color}10 55%, transparent 75%)`,
-            opacity: 0.4 + intensity * 0.6,
-            filter: `blur(${8 + intensity * 8}px)`,
+            background: `radial-gradient(ellipse at 50% 40%, ${color}60 0%, ${color}35 25%, ${color}15 45%, ${color}08 65%, transparent 85%)`,
+            opacity: 0.5 + intensity * 0.5,
+            filter: `blur(${6 + intensity * 10}px)`,
             transition: "opacity 0.3s, filter 0.3s",
           }}
         />
 
-        {/* Outer ring */}
-        <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full" style={{ animation: active ? "spinSlow 12s linear infinite" : "none" }}>
-          <circle cx="100" cy="100" r="90" fill="none" stroke={color} strokeWidth="1.5"
-            strokeDasharray="8 4" opacity={0.3 + intensity * 0.5} style={{ filter: `drop-shadow(0 0 4px ${color})`, transition: "opacity 0.4s" }} />
-          <circle cx="100" cy="100" r="78" fill="none" stroke={color} strokeWidth="0.8"
-            opacity={0.2 + intensity * 0.4} style={{ filter: `drop-shadow(0 0 3px ${color})` }} />
+        {/* Outer ring — thick with glow */}
+        <svg viewBox="0 0 300 300" className="absolute inset-0 w-full h-full" style={{ animation: active ? "spinSlow 10s linear infinite" : "none" }}>
+          <circle cx="150" cy="150" r="140" fill="none" stroke={color} strokeWidth="2.5"
+            strokeDasharray="12 6" opacity={0.35 + intensity * 0.5}
+            style={{ filter: `drop-shadow(0 0 8px ${color})`, transition: "opacity 0.4s" }} />
+          <circle cx="150" cy="150" r="130" fill="none" stroke={color} strokeWidth="1"
+            opacity={0.2 + intensity * 0.35} style={{ filter: `drop-shadow(0 0 4px ${color})` }} />
+          <circle cx="150" cy="150" r="120" fill="none" stroke={color} strokeWidth="0.6"
+            strokeDasharray="4 8" opacity={0.15 + intensity * 0.3} />
         </svg>
 
-        {/* Rune ring — counter-rotating */}
-        <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full" style={{ animation: active ? "spinSlow 20s linear infinite reverse" : "none" }}>
+        {/* Rune ring — 16 runes, counter-rotating */}
+        <svg viewBox="0 0 300 300" className="absolute inset-0 w-full h-full" style={{ animation: active ? "spinSlow 18s linear infinite reverse" : "none" }}>
           {runeSymbols.map((rune, i) => {
             const angle = (i / runeSymbols.length) * 360;
             const rad = (angle * Math.PI) / 180;
-            const cx = 100 + 83 * Math.cos(rad);
-            const cy = 100 + 83 * Math.sin(rad);
+            const cx = 150 + 125 * Math.cos(rad);
+            const cy = 150 + 125 * Math.sin(rad);
             return (
               <text
                 key={i} x={cx} y={cy} textAnchor="middle" dominantBaseline="central"
-                fontSize="8" fill={color}
-                opacity={0.3 + intensity * 0.6}
-                style={{ filter: intensity > 0.5 ? `drop-shadow(0 0 3px ${color})` : "none", transition: "opacity 0.3s" }}
+                fontSize="11" fill={color} fontWeight="bold"
+                opacity={0.25 + intensity * 0.65}
+                style={{ filter: intensity > 0.4 ? `drop-shadow(0 0 5px ${color})` : "none", transition: "opacity 0.3s" }}
               >
                 {rune}
               </text>
@@ -255,59 +286,43 @@ function PlatformGlow({ color, active, intensity }: { color: string; active: boo
           })}
         </svg>
 
-        {/* Inner sacred geometry */}
-        <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full" style={{ animation: active ? "spinSlow 15s linear infinite" : "none" }}>
-          {/* Hexagram */}
-          <polygon
-            points="100,40 145,75 145,125 100,160 55,125 55,75"
-            fill="none" stroke={color} strokeWidth="0.7"
-            opacity={0.15 + intensity * 0.45}
-            style={{ filter: `drop-shadow(0 0 6px ${color})`, transition: "opacity 0.4s" }}
-          />
-          <polygon
-            points="100,50 138,80 138,120 100,150 62,120 62,80"
-            fill="none" stroke={color} strokeWidth="0.5"
-            opacity={0.1 + intensity * 0.3}
-          />
-          {/* Cross lines */}
-          {[0, 60, 120].map((angle) => {
+        {/* Sacred geometry — two nested hexagrams */}
+        <svg viewBox="0 0 300 300" className="absolute inset-0 w-full h-full" style={{ animation: active ? "spinSlow 25s linear infinite" : "none" }}>
+          <polygon points="150,50 233,100 233,200 150,250 67,200 67,100" fill="none" stroke={color} strokeWidth="1" opacity={0.15 + intensity * 0.4} style={{ filter: `drop-shadow(0 0 8px ${color})` }} />
+          <polygon points="150,70 218,110 218,190 150,230 82,190 82,110" fill="none" stroke={color} strokeWidth="0.7" opacity={0.1 + intensity * 0.3} />
+          {/* Star overlay */}
+          <polygon points="150,60 187,97 230,150 187,203 150,240 113,203 70,150 113,97" fill="none" stroke={color} strokeWidth="0.5" opacity={0.08 + intensity * 0.2} style={{ animation: active ? "spinSlow 30s linear infinite reverse" : "none" }} />
+          {/* Radial lines */}
+          {[0, 30, 60, 90, 120, 150].map((angle) => {
             const rad = (angle * Math.PI) / 180;
-            const x1 = 100 + 65 * Math.cos(rad);
-            const y1 = 100 + 65 * Math.sin(rad);
-            const x2 = 100 - 65 * Math.cos(rad);
-            const y2 = 100 - 65 * Math.sin(rad);
-            return <line key={angle} x1={x1} y1={y1} x2={x2} y2={y2} stroke={color} strokeWidth="0.4" opacity={0.1 + intensity * 0.25} />;
+            return <line key={angle} x1={150 + 100 * Math.cos(rad)} y1={150 + 100 * Math.sin(rad)} x2={150 - 100 * Math.cos(rad)} y2={150 - 100 * Math.sin(rad)} stroke={color} strokeWidth="0.3" opacity={0.08 + intensity * 0.18} />;
           })}
         </svg>
 
-        {/* Inner rings */}
-        <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full">
-          <circle cx="100" cy="100" r="55" fill="none" stroke={color} strokeWidth="1"
-            strokeDasharray="3 6" opacity={0.2 + intensity * 0.5}
-            style={{ filter: `drop-shadow(0 0 5px ${color})`, animation: active ? "spinSlow 8s linear infinite reverse" : "none" }} />
-          <circle cx="100" cy="100" r="30" fill="none" stroke={color} strokeWidth="1.5"
-            opacity={0.25 + intensity * 0.6}
-            style={{ filter: `drop-shadow(0 0 8px ${color})` }} />
-          {/* Core glow */}
-          <circle cx="100" cy="100" r="18"
-            fill={`url(#platformCoreGlow)`}
-            opacity={0.3 + intensity * 0.7}
-            style={{ filter: `blur(2px)` }}
-          />
-          <defs>
-            <radialGradient id="platformCoreGlow">
-              <stop offset="0%" stopColor={color} stopOpacity="0.8" />
-              <stop offset="60%" stopColor={color} stopOpacity="0.2" />
-              <stop offset="100%" stopColor={color} stopOpacity="0" />
-            </radialGradient>
-          </defs>
+        {/* Middle ring */}
+        <svg viewBox="0 0 300 300" className="absolute inset-0 w-full h-full">
+          <circle cx="150" cy="150" r="85" fill="none" stroke={color} strokeWidth="1.5"
+            strokeDasharray="5 8" opacity={0.2 + intensity * 0.5}
+            style={{ filter: `drop-shadow(0 0 6px ${color})`, animation: active ? "spinSlow 7s linear infinite reverse" : "none" }} />
         </svg>
 
-        {/* Pulsing energy nodes on ring */}
-        {active && [0, 45, 90, 135, 180, 225, 270, 315].map((angle) => {
+        {/* Inner rings and core */}
+        <svg viewBox="0 0 300 300" className="absolute inset-0 w-full h-full">
+          <circle cx="150" cy="150" r="55" fill="none" stroke={color} strokeWidth="2"
+            opacity={0.3 + intensity * 0.6} style={{ filter: `drop-shadow(0 0 10px ${color})` }} />
+          <circle cx="150" cy="150" r="35" fill="none" stroke={color} strokeWidth="1"
+            strokeDasharray="3 5" opacity={0.25 + intensity * 0.5}
+            style={{ animation: active ? "spinSlow 5s linear infinite" : "none" }} />
+          {/* Core energy */}
+          <circle cx="150" cy="150" r="25" fill={color} opacity={0.1 + intensity * 0.25} style={{ filter: `blur(8px)` }} />
+          <circle cx="150" cy="150" r="12" fill={color} opacity={0.2 + intensity * 0.5} style={{ filter: `blur(3px)`, animation: active ? "energyPulse 1.5s ease-in-out infinite" : "none" }} />
+        </svg>
+
+        {/* Energy nodes on outer ring */}
+        {active && [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((angle) => {
           const rad = (angle * Math.PI) / 180;
-          const cx = 50 + 44 * Math.cos(rad);
-          const cy = 50 + 44 * Math.sin(rad);
+          const cx = 50 + 46 * Math.cos(rad);
+          const cy = 50 + 46 * Math.sin(rad);
           return (
             <div
               key={angle}
@@ -315,12 +330,36 @@ function PlatformGlow({ color, active, intensity }: { color: string; active: boo
               style={{
                 left: `${cx}%`,
                 top: `${cy}%`,
-                width: "4px",
-                height: "4px",
+                width: "5px",
+                height: "5px",
                 background: color,
-                boxShadow: `0 0 8px ${color}, 0 0 16px ${color}80`,
-                opacity: 0.4 + intensity * 0.6,
-                animation: `energyPulse ${1 + (angle % 3) * 0.3}s ease-in-out infinite ${angle * 0.02}s`,
+                boxShadow: `0 0 10px ${color}, 0 0 20px ${color}80, 0 0 30px ${color}40`,
+                opacity: 0.3 + intensity * 0.7,
+                animation: `energyPulse ${1 + (angle % 4) * 0.25}s ease-in-out infinite ${angle * 0.015}s`,
+                transform: "translate(-50%, -50%)",
+              }}
+            />
+          );
+        })}
+
+        {/* Inner energy nodes */}
+        {active && intensity > 0.3 && [0, 72, 144, 216, 288].map((angle) => {
+          const rad = (angle * Math.PI) / 180;
+          const cx = 50 + 28 * Math.cos(rad);
+          const cy = 50 + 28 * Math.sin(rad);
+          return (
+            <div
+              key={`inner-${angle}`}
+              className="absolute rounded-full"
+              style={{
+                left: `${cx}%`,
+                top: `${cy}%`,
+                width: "3px",
+                height: "3px",
+                background: "hsl(0 0% 100%)",
+                boxShadow: `0 0 6px ${color}, 0 0 12px ${color}`,
+                opacity: intensity * 0.8,
+                animation: `energyPulse ${0.8 + (angle % 3) * 0.2}s ease-in-out infinite`,
                 transform: "translate(-50%, -50%)",
               }}
             />
@@ -328,39 +367,54 @@ function PlatformGlow({ color, active, intensity }: { color: string; active: boo
         })}
       </div>
 
-      {/* Upward spotlight beams */}
-      {active && intensity > 0.3 && (
-        <div className="absolute inset-0 pointer-events-none" style={{ bottom: "20px" }}>
-          {[-30, -10, 10, 30].map((offsetDeg, i) => (
+      {/* Spotlight beams rising from platform */}
+      {active && (
+        <div className="absolute inset-0 pointer-events-none" style={{ top: "-60px" }}>
+          {[-35, -18, -5, 5, 18, 35].map((offsetDeg, i) => (
             <div
               key={i}
-              className="absolute bottom-0 left-1/2"
+              className="absolute left-1/2"
               style={{
-                width: "3px",
-                height: `${30 + intensity * 40}px`,
-                background: `linear-gradient(to top, ${color}60, ${color}10, transparent)`,
+                bottom: "40%",
+                width: `${3 + (i % 2) * 2}px`,
+                height: `${60 + intensity * 120}px`,
+                background: `linear-gradient(to top, ${color}${Math.round(40 + intensity * 40).toString(16).padStart(2, '0')}, ${color}15, transparent)`,
                 transform: `translateX(-50%) rotate(${offsetDeg}deg)`,
                 transformOrigin: "bottom center",
-                opacity: 0.3 + intensity * 0.5,
-                filter: `blur(${2 + i}px)`,
-                animation: `borderPulse ${1.5 + i * 0.3}s ease-in-out infinite`,
+                opacity: 0.25 + intensity * 0.55,
+                filter: `blur(${2 + (i % 3)}px)`,
+                animation: `borderPulse ${1.2 + i * 0.25}s ease-in-out infinite ${i * 0.15}s`,
               }}
             />
           ))}
+          {/* Central thick beam */}
+          <div
+            className="absolute left-1/2"
+            style={{
+              bottom: "40%",
+              width: "8px",
+              height: `${40 + intensity * 100}px`,
+              background: `linear-gradient(to top, ${color}50, ${color}20, transparent)`,
+              transform: "translateX(-50%)",
+              opacity: intensity * 0.6,
+              filter: "blur(6px)",
+              animation: "energyPulse 2s ease-in-out infinite",
+            }}
+          />
         </div>
       )}
 
-      {/* Flat reflection glow */}
+      {/* Wide floor reflection */}
       <div
         className="absolute left-1/2 -translate-x-1/2 rounded-full"
         style={{
-          bottom: "0",
-          width: "80%",
-          height: "20px",
-          background: `radial-gradient(ellipse, ${color}40 0%, transparent 70%)`,
-          opacity: active ? 0.2 + intensity * 0.5 : 0,
-          filter: "blur(12px)",
-          transition: "opacity 0.3s",
+          top: "35%",
+          width: "90%",
+          height: "30%",
+          background: `radial-gradient(ellipse, ${color}35 0%, ${color}15 40%, transparent 70%)`,
+          opacity: active ? 0.3 + intensity * 0.6 : 0,
+          filter: "blur(20px)",
+          transition: "opacity 0.4s",
         }}
       />
     </div>
@@ -780,15 +834,16 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
       <ChargingBlurOverlay active={isCharging} intensity={chargeProgress} />
 
       <div
-        className="mx-5 relative overflow-x-clip"
+        className="mx-5 relative"
         data-no-pull-refresh="true"
         style={{
           userSelect: "none",
           WebkitUserSelect: "none",
           WebkitTouchCallout: "none",
           zIndex: revealed ? 9999 : isCharging ? 9998 : "auto",
-          paddingBottom: (revealed || isCharging) ? "60px" : "0",
-          transition: "padding-bottom 0.4s ease",
+          paddingBottom: (revealed || isCharging) ? "220px" : "0",
+          transition: "padding-bottom 0.5s ease",
+          overflow: "visible",
         } as React.CSSProperties}
       >
         <LightRays color={rarityInfo.color} active={revealed || isCharging} />
