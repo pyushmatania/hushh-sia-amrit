@@ -60,24 +60,42 @@ function StatBar({ label, value, max, color, revealed, isCharging, icon, delay =
     return () => clearTimeout(t);
   }, [active, delay]);
 
+  /* Bar is always visible with a dim base fill; hold reveals the full colorful bar */
+  const baseFillPct = 15;
+
   return (
-    <div className="flex items-center gap-2" style={{ opacity: barActive || !revealed ? 1 : 0.5, transition: "opacity 0.3s" }}>
-      {icon && <span className="w-3 flex-shrink-0" style={{ filter: barActive ? `drop-shadow(0 0 6px ${color})` : "none", transition: "filter 0.4s" }}>{icon}</span>}
-      <span className="text-[7px] font-black uppercase tracking-[0.15em] w-8 flex-shrink-0" style={{ color: `${color}cc` }}>{label}</span>
-      <div className="flex-1 h-[5px] rounded-full overflow-hidden relative" style={{ background: "hsl(0 0% 100% / 0.06)" }}>
+    <div className="flex items-center gap-2" style={{ opacity: 1 }}>
+      {icon && <span className="w-3.5 flex-shrink-0" style={{ filter: barActive ? `drop-shadow(0 0 6px ${color})` : `drop-shadow(0 0 2px ${color}50)`, transition: "filter 0.4s" }}>{icon}</span>}
+      <span className="text-[8px] font-black uppercase tracking-[0.15em] w-9 flex-shrink-0" style={{ color: barActive ? color : `${color}99`, transition: "color 0.3s", textShadow: barActive ? `0 0 6px ${color}60` : "none" }}>{label}</span>
+      <div className="flex-1 h-[6px] rounded-full overflow-hidden relative" style={{ background: `linear-gradient(90deg, ${color}12, ${color}08)`, border: `1px solid ${color}15` }}>
+        {/* Base dim fill — always visible */}
+        <div
+          className="absolute inset-y-0 left-0 rounded-full"
+          style={{
+            width: `${baseFillPct}%`,
+            background: `linear-gradient(90deg, ${color}25, ${color}15)`,
+            opacity: barActive ? 0 : 1,
+            transition: "opacity 0.3s",
+          }}
+        />
+        {/* Active colorful fill — expands on hold */}
         <div
           className="h-full rounded-full relative"
           style={{
-            width: barActive ? `${pct}%` : "15%",
-            background: `linear-gradient(90deg, ${color}40, ${color})`,
-            boxShadow: barActive ? `0 0 16px ${color}90, 0 0 6px ${color}` : `0 0 4px ${color}15`,
-            transition: `width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}ms, box-shadow 0.5s ease ${delay}ms`,
+            width: barActive ? `${pct}%` : `${baseFillPct}%`,
+            background: barActive
+              ? `linear-gradient(90deg, ${color}60, ${color}cc, ${color})`
+              : `linear-gradient(90deg, ${color}30, ${color}20)`,
+            boxShadow: barActive
+              ? `0 0 20px ${color}90, 0 0 8px ${color}, inset 0 1px 0 hsl(0 0% 100% / 0.25)`
+              : `0 0 4px ${color}10`,
+            transition: `width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}ms, background 0.4s ease ${delay}ms, box-shadow 0.5s ease ${delay}ms`,
           }}
         />
         {/* Energy tip glow */}
         {barActive && (
           <div
-            className="absolute top-0 h-full w-3 rounded-full"
+            className="absolute top-0 h-full w-4 rounded-full"
             style={{
               right: `${100 - pct}%`,
               background: `radial-gradient(circle, ${color} 0%, transparent 70%)`,
@@ -86,13 +104,23 @@ function StatBar({ label, value, max, color, revealed, isCharging, icon, delay =
             }}
           />
         )}
+        {/* Shimmer sweep when bar is activating */}
+        {barActive && (
+          <div
+            className="absolute inset-0 rounded-full"
+            style={{
+              background: `linear-gradient(90deg, transparent 0%, hsl(0 0% 100% / 0.3) 50%, transparent 100%)`,
+              animation: "shimmer 1.5s ease-out 1",
+            }}
+          />
+        )}
       </div>
       <span
-        className="text-[9px] font-mono font-black w-6 text-right tabular-nums"
+        className="text-[10px] font-mono font-black w-6 text-right tabular-nums"
         style={{
-          color: barActive ? color : `${color}50`,
+          color: barActive ? color : `${color}40`,
           transition: `color 0.4s ease ${delay}ms`,
-          textShadow: barActive ? `0 0 10px ${color}80, 0 0 20px ${color}40` : "none",
+          textShadow: barActive ? `0 0 12px ${color}80, 0 0 24px ${color}40` : "none",
         }}
       >
         {active ? displayVal : "--"}
