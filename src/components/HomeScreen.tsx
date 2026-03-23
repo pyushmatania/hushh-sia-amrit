@@ -6,6 +6,7 @@ import PullToRefresh from "./PullToRefresh";
 import CategoryBar from "./CategoryBar";
 import PropertyCard from "./PropertyCard";
 import PropertyCardSmall from "./PropertyCardSmall";
+import MixedListingFeed from "./home/MixedListingFeed";
 import PackageCard from "./PackageCard";
 import { type Property } from "@/data/properties";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
