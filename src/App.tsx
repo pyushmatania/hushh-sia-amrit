@@ -9,7 +9,7 @@ import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider } from "@/hooks/use-auth";
 import { PrivacyModeProvider } from "@/hooks/use-privacy-mode";
 import { PropertiesProvider } from "@/contexts/PropertiesContext";
-import Index from "./pages/Index.tsx";
+const Index = lazy(() => import("./pages/Index.tsx"));
 import ResetPassword from "./pages/ResetPassword.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
