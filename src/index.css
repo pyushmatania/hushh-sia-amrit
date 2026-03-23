@@ -107,6 +107,15 @@
   * {
     @apply border-border;
   }
+
+  html,
+  body,
+  #root {
+    max-width: 100%;
+    overflow-x: hidden;
+    overscroll-behavior-x: none;
+  }
+
   body {
     @apply bg-background text-foreground;
     font-family: 'Space Grotesk', 'DM Sans', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;

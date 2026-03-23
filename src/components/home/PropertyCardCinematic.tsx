@@ -26,7 +26,7 @@ function getRarity(price: number): string {
   return "common";
 }
 
-function StatBar({ label, value, max, color, animate, icon }: { label: string; value: number; max: number; color: string; animate: boolean; icon?: React.ReactNode }) {
+function StatBar({ label, value, max, color, revealed, icon }: { label: string; value: number; max: number; color: string; revealed: boolean; icon?: React.ReactNode }) {
   const pct = Math.min((value / max) * 100, 100);
   return (
     <div className="flex items-center gap-2">
@@ -36,18 +36,18 @@ function StatBar({ label, value, max, color, animate, icon }: { label: string; v
         <div
           className="h-full rounded-full"
           style={{
-            width: animate ? `${pct}%` : `${pct * 0.3}%`,
+            width: revealed ? `${pct}%` : "22%",
             background: `linear-gradient(90deg, ${color}40, ${color})`,
-            boxShadow: animate ? `0 0 12px ${color}80, 0 0 4px ${color}` : "none",
-            transition: animate ? "width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.5s" : "width 0.3s",
+            boxShadow: revealed ? `0 0 12px ${color}80, 0 0 4px ${color}` : `0 0 5px ${color}25`,
+            transition: "width 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.45s ease",
           }}
         />
       </div>
       <span
         className="text-[8px] font-mono font-black w-5 text-right"
-        style={{ color: animate ? color : `${color}60`, transition: "color 0.5s", textShadow: animate ? `0 0 8px ${color}60` : "none" }}
+        style={{ color: revealed ? color : `${color}60`, transition: "color 0.45s, opacity 0.35s", textShadow: revealed ? `0 0 8px ${color}60` : "none" }}
       >
-        {value}
+        {revealed ? value : "--"}
       </span>
     </div>
   );
@@ -223,6 +223,8 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
   const holoY = 50 + tilt.x * 4;
 
   const discount = property.discountLabel || (property.basePrice >= 3000 ? "20% OFF" : null);
+  const maskedPrice = "₹X,XXX";
+  const showGestureHints = revealed;
 
   const clearTimers = useCallback(() => {
     if (holdTimerRef.current) { clearTimeout(holdTimerRef.current); holdTimerRef.current = null; }
@@ -255,6 +257,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
     hasSwipedRef.current = false;
     didRevealRef.current = false;
     holdCancelledRef.current = false;
+    setTilt({ x: 0, y: 0 });
     setIsActive(true);
 
     const startTime = Date.now();
@@ -275,33 +278,27 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
 
   const onTouchMoveHandler = useCallback((e: React.TouchEvent) => {
     const touch = e.touches[0];
+    const deltaX = touch.clientX - touchStartXRef.current;
+    const deltaY = touchStartYRef.current - touch.clientY;
 
     if (!didRevealRef.current) {
-      const dx = Math.abs(touch.clientX - touchStartXRef.current);
-      const dy = Math.abs(touch.clientY - touchStartYRef.current);
-      if (dx > 10 || dy > 10) {
+      if (Math.abs(deltaX) > 14 || Math.abs(deltaY) > 14) {
         holdCancelledRef.current = true;
         isHoldingRef.current = false;
         clearTimers();
         setChargeProgress(0);
         setIsActive(false);
-        return;
       }
+      return;
     }
 
-    if (cardRef.current && didRevealRef.current) {
-      const rect = cardRef.current.getBoundingClientRect();
-      const x = ((touch.clientX - rect.left) / rect.width - 0.5) * 2;
-      const y = ((touch.clientY - rect.top) / rect.height - 0.5) * 2;
-      setTilt({ x: y * -18, y: x * 18 });
-    }
-
-    if (!didRevealRef.current) return;
     e.preventDefault();
 
-    const deltaY = touchStartYRef.current - touch.clientY;
+    if (Math.abs(deltaX) > 64 && Math.abs(deltaX) > Math.abs(deltaY)) {
+      return;
+    }
 
-    if (deltaY > 60 && !hasSwipedRef.current) {
+    if (deltaY > 70 && !hasSwipedRef.current) {
       hasSwipedRef.current = true;
       hapticMedium();
       doRelease();
@@ -309,7 +306,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
       return;
     }
 
-    if (deltaY < -60 && !hasSwipedRef.current) {
+    if (deltaY < -70 && !hasSwipedRef.current) {
       hasSwipedRef.current = true;
       hapticLight();
       doRelease();
@@ -324,14 +321,14 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
       setChargeProgress(0);
       setIsActive(false);
       setTilt({ x: 0, y: 0 });
-      // No tap action — disabled
       return;
     }
 
     if (!hasSwipedRef.current) {
-      // Keep revealed — user can tap overlay or swipe to dismiss
+      hapticLight();
+      doRelease();
     }
-  }, [clearTimers]);
+  }, [clearTimers, doRelease]);
 
   // Mouse hold (desktop)
   const onMouseDown = useCallback(() => {
@@ -340,6 +337,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
     hasSwipedRef.current = false;
     didRevealRef.current = false;
     holdCancelledRef.current = false;
+    setTilt({ x: 0, y: 0 });
     setIsActive(true);
 
     const startTime = Date.now();
@@ -356,26 +354,29 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
   const onMouseUp = useCallback(() => {
     clearTimers();
     isHoldingRef.current = false;
-    if (!didRevealRef.current) {
-      setChargeProgress(0);
-      setIsActive(false);
-      setTilt({ x: 0, y: 0 });
-      // No tap action — disabled
+
+    if (didRevealRef.current) {
+      doRelease();
+      return;
     }
-  }, [clearTimers]);
+
+    setChargeProgress(0);
+    setIsActive(false);
+    setTilt({ x: 0, y: 0 });
+  }, [clearTimers, doRelease]);
 
   const onMouseMoveHandler = useCallback((e: React.MouseEvent) => {
-    if (!cardRef.current) return;
+    if (!cardRef.current || isHoldingRef.current || revealed) return;
     const rect = cardRef.current.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
     const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
     setTilt({ x: y * -18, y: x * 18 });
-  }, []);
+  }, [revealed]);
 
   const onMouseLeave = useCallback(() => {
     clearTimers();
     isHoldingRef.current = false;
-    if (didRevealRef.current) return; // keep revealed
+    if (didRevealRef.current) return;
     setIsActive(false);
     setTilt({ x: 0, y: 0 });
     setChargeProgress(0);
@@ -383,13 +384,30 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
 
   useEffect(() => () => clearTimers(), [clearTimers]);
 
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const { body } = document;
+    const prevOverflow = body.style.overflow;
+    const prevTouchAction = body.style.touchAction;
+
+    if (revealed) {
+      body.style.overflow = "hidden";
+      body.style.touchAction = "none";
+    }
+
+    return () => {
+      body.style.overflow = prevOverflow;
+      body.style.touchAction = prevTouchAction;
+    };
+  }, [revealed]);
+
   return (
     <>
       {/* Blur overlay when revealed */}
       <BlurOverlay active={revealed} onRelease={doRelease} />
 
       <div
-        className="mx-5 relative"
+        className="mx-5 relative overflow-x-clip"
         style={{
           perspective: "1200px",
           userSelect: "none",
@@ -424,10 +442,11 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
           onContextMenu={(e) => e.preventDefault()}
           style={{
             height: revealed ? "380px" : "340px",
-            transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(${revealed ? 1.08 : isActive ? 1.02 : 1})`,
+            transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(${revealed ? 1.03 : isActive ? 1.01 : 1})`,
             transition: revealed ? "transform 0.08s ease-out, height 0.5s cubic-bezier(0.34,1.56,0.64,1)" : "transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.5s ease",
             transformStyle: "preserve-3d",
             cursor: "grab",
+            touchAction: revealed ? "none" : "pan-y",
           }}
         >
           {/* Card frame */}
@@ -550,14 +569,16 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
                   <div
                     className="px-2 py-0.5 rounded-md text-[8px] font-black tracking-wider"
                     style={{
-                      background: "hsl(160 70% 40% / 0.25)",
-                      color: "hsl(160 70% 65%)",
-                      border: "1px solid hsl(160 70% 40% / 0.3)",
-                      boxShadow: revealed ? "0 0 12px hsl(160 70% 40% / 0.3)" : "none",
-                      transition: "box-shadow 0.5s",
+                      background: "hsl(var(--success) / 0.25)",
+                      color: "hsl(var(--success) / 1)",
+                      border: "1px solid hsl(var(--success) / 0.3)",
+                      boxShadow: revealed ? "0 0 12px hsl(var(--success) / 0.35)" : "none",
+                      transform: revealed ? "translateY(0) scale(1)" : "translateY(1px) scale(0.96)",
+                      opacity: revealed ? 1 : 0.75,
+                      transition: "box-shadow 0.45s, transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s",
                     }}
                   >
-                    {discount}
+                    {revealed ? discount : "X% OFF"}
                   </div>
                 )}
                 <button
@@ -606,33 +627,56 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
                 </span>
               </div>
 
-              {/* Price — always visible */}
+              {/* Price — masked before hold, reveals after hold */}
               <div className="flex items-center gap-2 mt-2">
                 <Zap size={13} style={{ color: rarityInfo.color, filter: `drop-shadow(0 0 4px ${rarityInfo.color})` }} />
-                <span className="text-[20px] font-black text-white" style={{ textShadow: `0 0 14px ${rarityInfo.color}40` }}>₹{property.basePrice.toLocaleString()}</span>
+                <div className="relative h-7 min-w-[106px]">
+                  <span
+                    className="absolute left-0 top-0 text-[20px] font-black text-white"
+                    style={{
+                      textShadow: `0 0 14px ${rarityInfo.color}40`,
+                      transform: revealed ? "translateY(-6px) scale(0.9)" : "translateY(0px) scale(1)",
+                      opacity: revealed ? 0 : 1,
+                      transition: "all 0.4s cubic-bezier(0.34,1.56,0.64,1)",
+                    }}
+                  >
+                    {maskedPrice}
+                  </span>
+                  <span
+                    className="absolute left-0 top-0 text-[20px] font-black text-white"
+                    style={{
+                      textShadow: `0 0 14px ${rarityInfo.color}50`,
+                      transform: revealed ? "translateY(0px) scale(1)" : "translateY(6px) scale(0.9)",
+                      opacity: revealed ? 1 : 0,
+                      transition: "all 0.45s cubic-bezier(0.34,1.56,0.64,1)",
+                    }}
+                  >
+                    ₹{property.basePrice.toLocaleString()}
+                  </span>
+                </div>
                 <span className="text-[10px] text-white/35 ml-0.5">/session</span>
                 <XpRing level={totalPower} color={rarityInfo.color} revealed={revealed} />
               </div>
 
-              {/* Stats — animated on reveal */}
+              {/* Stats — always visible, values reveal only after hold */}
               <div
                 style={{
-                  maxHeight: revealed ? "130px" : "0px",
-                  opacity: revealed ? 1 : 0,
+                  maxHeight: "130px",
+                  opacity: 1,
                   overflow: "hidden",
-                  transition: "max-height 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease 0.1s",
+                  transition: "opacity 0.4s ease",
                 }}
               >
                 <div className="mt-3 space-y-1.5 pt-2" style={{ borderTop: `1px solid ${rarityInfo.color}20` }}>
-                  <StatBar label="PWR" value={stats.power} max={99} color={rarityInfo.color} animate={revealed} icon={<Zap size={9} style={{ color: rarityInfo.color }} />} />
-                  <StatBar label="VIBE" value={stats.vibe} max={99} color="hsl(45 100% 55%)" animate={revealed} icon={<Star size={9} style={{ color: "hsl(45 100% 55%)" }} />} />
-                  <StatBar label="SIZE" value={stats.capacity} max={99} color="hsl(160 70% 50%)" animate={revealed} icon={<Users size={9} style={{ color: "hsl(160 70% 50%)" }} />} />
-                  <StatBar label="HYPE" value={stats.demand} max={99} color="hsl(0 80% 60%)" animate={revealed} icon={<Flame size={9} style={{ color: "hsl(0 80% 60%)" }} />} />
+                  <StatBar label="PWR" value={stats.power} max={99} color={rarityInfo.color} revealed={revealed} icon={<Zap size={9} style={{ color: rarityInfo.color }} />} />
+                  <StatBar label="VIBE" value={stats.vibe} max={99} color="hsl(45 100% 55%)" revealed={revealed} icon={<Star size={9} style={{ color: "hsl(45 100% 55%)" }} />} />
+                  <StatBar label="SIZE" value={stats.capacity} max={99} color="hsl(var(--success))" revealed={revealed} icon={<Users size={9} style={{ color: "hsl(var(--success))" }} />} />
+                  <StatBar label="HYPE" value={stats.demand} max={99} color="hsl(var(--destructive))" revealed={revealed} icon={<Flame size={9} style={{ color: "hsl(var(--destructive))" }} />} />
                 </div>
               </div>
 
               {/* Swipe hints during reveal */}
-              {revealed && (
+              {showGestureHints && (
                 <div
                   className="flex items-center justify-center gap-6 mt-3 pt-2"
                   style={{
