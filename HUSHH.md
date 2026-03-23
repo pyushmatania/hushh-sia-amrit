@@ -1,6 +1,6 @@
 # 🏡 HUSHH — Private Experience Marketplace
 
-> **Made in Jeypore ❤️** | v1.22 | Internal Documentation & Blueprint
+> **Made in Jeypore ❤️** | v1.23 | Internal Documentation & Blueprint
 
 Hushh is a premium mobile-first marketplace for booking private experiences, stays, and curated lifestyle services in Jeypore, India. Think Airbnb meets a concierge — but hyper-local, with a focus on curated combos and on-demand add-ons.
 
@@ -1316,6 +1316,19 @@ standalone: campaigns · coupons · expenses · budget_allocations · app_config
 - **Notification granularity**: `notification_preferences` table for per-type per-channel opt-out
 - **Documentation audit**: All 8 critical items resolved, 20+ warnings addressed, ER diagram updated, hooks reference expanded, clarifications added for naming conventions and feature boundaries
 - **Realtime enabled**: `payments` and `slot_availability` tables added to supabase_realtime publication
+
+### v1.23 — Complete Wireframes & Onboarding
+- **8 new wireframes** added to documentation and easter egg UI:
+  - **Experience Builder** — category tabs (Food/Decor/DJ/Transport), item cards with qty selectors, running total bar
+  - **Checkout Screen** — property summary, price breakdown, coupon input, GST, conflict warning, confirm CTA
+  - **Live Ordering Sheet** — category chips, menu items, add-to-cart, cart bar, order history
+  - **Search Screen** — auto-focus input, category chips, recent searches, results grid, empty state
+  - **Map View** — Leaflet map with pin markers, preview card on tap, list toggle
+  - **Loyalty & Spin Wheel** — tier card with progress bar, spin wheel graphic, transaction history, milestones
+  - **Auth / Onboarding** — sign-in, sign-up, guest mode, email verification flow
+  - **Notifications Screen** — filter tabs, read/unread states, grouped by day, empty state
+- **ER diagram updated** with complete payment flow relationships (payments → refunds → invoices)
+- **Total wireframes**: 16 (8 user app + 8 admin app) — all revenue-critical screens now documented
 
 ---
 
