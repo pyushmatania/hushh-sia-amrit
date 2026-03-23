@@ -66,7 +66,9 @@ export default function ExperienceDetailScreen({ pack, property, onBack, onBook 
 
   const handleShare = useCallback(() => {
     hapticLight();
-    share({ title: `${pack.name} — Hushh Experience`, text: `${pack.tagline}\n₹${pack.price}` });
+    if (navigator.share) {
+      navigator.share({ title: `${pack.name} — Hushh Experience`, text: `${pack.tagline}\n₹${pack.price}` }).catch(() => {});
+    }
   }, [pack]);
 
   const handleLike = useCallback(() => {
