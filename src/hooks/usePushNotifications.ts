@@ -109,13 +109,16 @@ export function usePushNotifications() {
       const auth = btoa(String.fromCharCode(...new Uint8Array(authKey)));
 
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
 
-      const { error } = await supabase
-        .from('push_subscriptions' as any)
-        .upsert({ user_id: user.id, endpoint: subscription.endpoint, p256dh, auth }, { onConflict: 'user_id,endpoint' });
-
-      if (error) throw error;
+      if (user) {
+        const { error } = await supabase
+          .from('push_subscriptions' as any)
+          .upsert({ user_id: user.id, endpoint: subscription.endpoint, p256dh, auth }, { onConflict: 'user_id,endpoint' });
+        if (error) throw error;
+      } else {
+        // Guest mode — store locally, will sync on login
+        localStorage.setItem('hushh_push_sub', JSON.stringify({ endpoint: subscription.endpoint, p256dh, auth }));
+      }
       setIsSubscribed(true);
     } finally { setIsLoading(false); }
   }, [isSupported]);
