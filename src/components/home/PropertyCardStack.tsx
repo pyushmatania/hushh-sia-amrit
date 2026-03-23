@@ -190,7 +190,7 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
   };
 
   const handleTouchStart = (e: React.TouchEvent) => { touchRef.current = { x: e.touches[0].clientX, t: Date.now() }; swipedRef.current = false; setIsDragging(true); };
-  const handleTouchMove = (e: React.TouchEvent) => { if (!touchRef.current) return; setDragX(e.touches[0].clientX - touchRef.current.x); };
+  const handleTouchMove = (e: React.TouchEvent) => { if (!touchRef.current) return; const dx = e.touches[0].clientX - touchRef.current.x; if (Math.abs(dx) > 8) { e.preventDefault(); e.stopPropagation(); } setDragX(dx); };
   const handleTouchEnd = (e: React.TouchEvent) => {
     if (!touchRef.current) { setDragX(0); setIsDragging(false); return; }
     const dx = e.changedTouches[0].clientX - touchRef.current.x;
