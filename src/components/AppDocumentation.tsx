@@ -1693,6 +1693,8 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
                 <p>Tab 5: PROFILE — Hero → Stats → Achievements</p>
               </div>
             </div>
+            <MermaidDiagram chart={USER_JOURNEY_CHART} title="User App Journey Map" />
+            <MermaidDiagram chart={ADMIN_JOURNEY_CHART} title="Admin Panel Journey Map" />
             <div>
               <p className="font-bold text-foreground text-xs mb-1">Home Screen (Mobile)</p>
               <div className="font-mono text-[10px] p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
