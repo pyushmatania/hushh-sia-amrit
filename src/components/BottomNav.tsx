@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Heart, MapPin, MessageCircle, User } from "lucide-react";
-import { hapticSelection, hapticImpact } from "@/lib/haptics";
+import { hapticSelection, hapticLight, hapticMedium } from "@/lib/haptics";
 import { useCallback } from "react";
 
 const tabs = [
