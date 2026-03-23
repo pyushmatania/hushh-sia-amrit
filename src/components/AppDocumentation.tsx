@@ -2044,6 +2044,17 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
                 <p>Config: useAppConfig · useHomepageSections</p>
                 <p>        useHomepageFilters · useVideoCards</p>
                 <p>UI: useTheme · usePrivacyMode · useUnreadCount</p>
+                <p>Net: useOnlineStatus</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">🛡️ Resilience</p>
+              <div className="font-mono text-[10px] space-y-0.5 p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                <p><strong className="text-foreground">Error Boundaries</strong> — Global + per-route crash recovery</p>
+                <p><strong className="text-foreground">Offline Banner</strong> — Animated top bar when navigator.onLine = false</p>
+                <p><strong className="text-foreground">Query Retry</strong> — 2× exponential backoff (1s→4s), 30s stale</p>
+                <p><strong className="text-foreground">Mutation Retry</strong> — 1× retry on failure</p>
+                <p><strong className="text-foreground">Rate Limits</strong> — Auth 30/hr · Spin 1/day · Edge 100/s</p>
               </div>
             </div>
             <MermaidDiagram chart={BOOKING_FLOW_CHART} title="Booking Flow" />
