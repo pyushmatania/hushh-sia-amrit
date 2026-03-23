@@ -399,7 +399,7 @@ React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion
 
 ## 🗄 Database Tables
 
-profiles, bookings, wishlists, conversations, messages, notifications, reviews, review_responses, loyalty_transactions, referral_codes, referral_uses, host_listings, curations, orders, order_items, spin_history, user_milestones
+profiles, bookings, wishlists, conversations, messages, notifications, reviews, review_responses, loyalty_transactions, referral_codes, referral_uses, host_listings, curations, orders, order_items, spin_history, user_milestones, user_roles, app_config, inventory, experience_packages, booking_photos, booking_splits, coupons, campaigns, expenses, budget_allocations, staff_members, staff_tasks, staff_attendance, staff_leaves, staff_salary_payments, audit_logs, client_notes, order_notes, identity_verifications, property_tags, tag_assignments
 
 ---
 
