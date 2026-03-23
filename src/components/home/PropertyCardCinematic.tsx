@@ -782,18 +782,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
                   }}
                 />
                 <div className="relative h-7 min-w-[106px]">
-                  <span
-                    className="absolute left-0 top-0 text-[20px] font-black text-white tabular-nums"
-                    style={{
-                      textShadow: `0 0 14px ${rarityInfo.color}40`,
-                      transform: revealed ? "translateY(-8px) scale(0.8) rotateX(40deg)" : "translateY(0px) scale(1)",
-                      opacity: revealed ? 0 : 1,
-                      transition: "all 0.35s cubic-bezier(0.34,1.56,0.64,1)",
-                    }}
-                  >
-                    {maskedPrice}
-                  </span>
-                  <PriceCounter price={property.basePrice} revealed={revealed} color={rarityInfo.color} />
+                  <PriceCounter price={property.basePrice} revealed={revealed} color={rarityInfo.color} isCharging={chargeProgress > 0 && !revealed} />
                 </div>
                 <span className="text-[10px] text-white/35 ml-0.5">/session</span>
                 <XpRing level={totalPower} color={rarityInfo.color} revealed={revealed} />
