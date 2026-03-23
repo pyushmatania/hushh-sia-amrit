@@ -5,6 +5,9 @@ import StaffOrders from "@/components/staff/StaffOrders";
 import StaffCheckin from "@/components/staff/StaffCheckin";
 import StaffTasks from "@/components/staff/StaffTasks";
 import StaffInventory from "@/components/staff/StaffInventory";
+import StaffAttendance from "@/components/staff/StaffAttendance";
+import StaffLeaves from "@/components/staff/StaffLeaves";
+import StaffSalary from "@/components/staff/StaffSalary";
 import AuthScreen from "@/components/AuthScreen";
 import { Loader2 } from "lucide-react";
 
@@ -28,6 +31,9 @@ export default function Staff() {
       case "checkin": return <StaffCheckin />;
       case "tasks": return <StaffTasks />;
       case "inventory": return <StaffInventory />;
+      case "attendance": return <StaffAttendance />;
+      case "leaves": return <StaffLeaves />;
+      case "salary": return <StaffSalary />;
       default: return <StaffOrders />;
     }
   };
