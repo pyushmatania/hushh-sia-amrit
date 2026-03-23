@@ -1319,51 +1319,93 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
         >
           <div className="space-y-3">
             <div>
-              <p className="font-bold text-foreground text-xs mb-1">Problem Statement</p>
-              <p>No unified platform in tier-2/3 cities for discovering private venues. Customers rely on WhatsApp groups and phone calls. Hosts manage bookings with notebooks.</p>
+              <p className="font-bold text-foreground text-xs mb-1">1. Product Overview</p>
+              <p><strong className="text-foreground">Hushh</strong> · "Your Private Getaway" · Mobile-first PWA · Jeypore → tier-2/3 cities</p>
             </div>
             <div>
-              <p className="font-bold text-foreground text-xs mb-1">User Personas</p>
-              <div className="space-y-1.5">
-                <p><strong className="text-foreground">Priya (26)</strong> — Plans anniversary dinners. Needs curations, reviews, split payments.</p>
-                <p><strong className="text-foreground">Rahul (24)</strong> — Spontaneous friend hangouts. Needs tonight tags, quick checkout.</p>
-                <p><strong className="text-foreground">Sunita (42)</strong> — Farmhouse owner. Needs simple dashboard, calendar, staff tools.</p>
-                <p><strong className="text-foreground">Vikram (35)</strong> — HR manager booking team outings. Needs builder, bulk booking, receipts.</p>
+              <p className="font-bold text-foreground text-xs mb-1">2. Problem Statement</p>
+              <p>No unified platform in tier-2/3 cities for private venues. Customers rely on WhatsApp and phone calls. Hosts use notebooks.</p>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">3. User Personas</p>
+              <div className="space-y-2">
+                {[
+                  { name: "Priya (26) — The Planner", desc: "Marketing Exec · Anniversary dinners · Researches 3-4 days ahead", pain: "Can't find unique venues beyond restaurants", needs: "Curations, reviews, split payments, photos" },
+                  { name: "Rahul (24) — The Spontaneous One", desc: "Software Dev · Chill spot tonight · Same-day decisions", pain: "Last-minute planning falls apart", needs: "Tonight tags, active ordering, quick checkout" },
+                  { name: "Sunita (42) — The Host", desc: "Farmhouse Owner · Monetize weekdays · Not tech-savvy", pain: "Manages via phone calls and notebooks", needs: "Dashboard, calendar, inventory, staff mgmt" },
+                  { name: "Vikram (35) — The Corporate Booker", desc: "HR Manager · Team outings · Books 2-4 weeks ahead", pain: "Coordinating venue + food + activities separately", needs: "Experience builder, bulk booking, receipts" },
+                ].map((p) => (
+                  <div key={p.name} className="p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                    <p className="font-bold text-foreground text-[11px]">{p.name}</p>
+                    <p className="text-[10px]">{p.desc}</p>
+                    <p className="text-[10px]">Pain: {p.pain}</p>
+                    <p className="text-[10px]">Needs: {p.needs}</p>
+                  </div>
+                ))}
               </div>
             </div>
             <div>
-              <p className="font-bold text-foreground text-xs mb-1">Success Metrics</p>
+              <p className="font-bold text-foreground text-xs mb-1">4. Success Metrics</p>
               <div className="space-y-0.5 font-mono text-[11px]">
-                <p>MAU: 5,000+ · Conversion: 8-12%</p>
-                <p>AOV: ₹3,500+ · Repeat: 40%+</p>
-                <p>Properties: 50+ · NPS: 60+</p>
+                <p>MAU: 5,000+ · Conversion: 8-12% · AOV: ₹3,500+</p>
+                <p>Repeat: 40%+ · Properties: 50+ · NPS: 60+ · Rating: 4.5+</p>
               </div>
             </div>
             <div>
-              <p className="font-bold text-foreground text-xs mb-1">Priority Matrix</p>
+              <p className="font-bold text-foreground text-xs mb-1">5. Priority Matrix</p>
               <div className="space-y-0.5 text-[11px]">
                 <p><span className="text-green-400">P0 ✅</span> Discovery, booking, auth, admin CRUD</p>
-                <p><span className="text-green-400">P1 ✅</span> Experience builder, curations, ordering, loyalty, CRM</p>
-                <p><span className="text-yellow-400">P2 🔜</span> Payments (Razorpay), push notifications, multi-language, AI recs</p>
+                <p><span className="text-green-400">P1 ✅</span> Builder, curations, ordering, loyalty, CRM</p>
+                <p><span className="text-yellow-400">P2 🔜</span> Razorpay, push notifs, multi-lang, AI recs</p>
                 <p><span className="text-muted-foreground">P3 📋</span> Native apps, multi-city, vendor marketplace</p>
               </div>
             </div>
             <div>
-              <p className="font-bold text-foreground text-xs mb-1">Roadmap</p>
+              <p className="font-bold text-foreground text-xs mb-1">6. Non-Functional Requirements</p>
               <div className="space-y-0.5 text-[11px]">
-                <p>v1.x (Done) — Core UI, backend, admin, SEO</p>
-                <p>v2.0 (Planned) — Razorpay/UPI, invoicing</p>
-                <p>v2.1 (Planned) — Push notifs, referral 2.0, AI recs</p>
-                <p>v3.0 (Planned) — Multi-city, vendor marketplace, native apps</p>
+                <p>FCP {"<"} 1.5s · LCP {"<"} 2.5s · TTI {"<"} 3.5s · 99.5% uptime</p>
+                <p>RLS + RBAC · WCAG 2.1 AA · Chrome/Safari/Firefox 90+</p>
               </div>
             </div>
             <div>
-              <p className="font-bold text-foreground text-xs mb-1">Risks & Mitigations</p>
+              <p className="font-bold text-foreground text-xs mb-1">7. Roadmap</p>
               <div className="space-y-0.5 text-[11px]">
-                <p>⚠️ Low host adoption → Zero listing fees, hands-on onboarding</p>
-                <p>⚠️ Seasonal demand → Work-from-resort push, corporate packages</p>
+                <p><span className="text-green-400">✅</span> v1.x — Core UI, backend, admin, CRM, CRUD, config, SEO</p>
+                <p><span className="text-yellow-400">🔜</span> v2.0 — Razorpay/UPI, invoicing</p>
+                <p><span className="text-yellow-400">🔜</span> v2.1 — Push notifs, referral 2.0, AI recs</p>
+                <p><span className="text-muted-foreground">📋</span> v3.0 — Multi-city, vendor marketplace, native apps</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">8. Risks & Mitigations</p>
+              <div className="space-y-0.5 text-[11px]">
+                <p>⚠️ Low host adoption → Zero fees, hands-on onboarding</p>
+                <p>⚠️ Seasonal demand → Work-from-resort, corporate packages</p>
                 <p>⚠️ Payment fraud → UPI verification, booking limits</p>
-                <p>⚠️ OTA competition → Hyper-local focus, curated packs</p>
+                <p>⚠️ OTA competition → Hyper-local, curated packs</p>
+                <p>⚠️ Data loss → Backups, RLS, audit logs</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">9. User App — Feature Spec</p>
+              <div className="space-y-1.5 text-[11px]">
+                <p><strong className="text-foreground">Discovery</strong>: Rotating search, 6 categories, sub-filters, spotlight videos, property cards, sports/foodie/couple/curation carousels</p>
+                <p><strong className="text-foreground">Booking</strong>: Detail → Builder (4 tabs, nudges) → Checkout (coupon) → Confirm (confetti, ID, +pts)</p>
+                <p><strong className="text-foreground">Trips</strong>: 5 tabs, active ordering (Swiggy-style), cancel/rebook, order history, identity verification</p>
+                <p><strong className="text-foreground">Social</strong>: Real-time messaging, reviews with photos, public profiles, Web Share API</p>
+                <p><strong className="text-foreground">Loyalty</strong>: 5 pts/₹100, 4 tiers, daily spin, 6 milestones, referrals</p>
+                <p><strong className="text-foreground">Profile</strong>: Hero card, membership, stats, achievements, settings, theme, social, terms</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">10. Admin App — Feature Spec</p>
+              <div className="space-y-1.5 text-[11px]">
+                <p><strong className="text-foreground">Dashboard</strong>: 4 KPI cards, live feed, pending items, quick nav</p>
+                <p><strong className="text-foreground">Properties</strong>: Full CRUD (name, pricing, images, tags, slots JSONB, rules, status, dup, delete)</p>
+                <p><strong className="text-foreground">Inventory</strong>: 5 categories, stock tracking, low-stock alerts</p>
+                <p><strong className="text-foreground">Bookings</strong>: Status flow, heatmap · <strong className="text-foreground">CRM</strong>: Score 0-100, segments, timeline, AI search</p>
+                <p><strong className="text-foreground">Finance</strong>: Revenue, expenses, budgets · <strong className="text-foreground">Staff</strong>: Directory, attendance, leaves, payroll</p>
+                <p><strong className="text-foreground">Marketing</strong>: Campaigns, coupons, pricing · <strong className="text-foreground">Settings</strong>: Branding, support, legal</p>
               </div>
             </div>
           </div>
@@ -1385,7 +1427,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
                 <p>LOVABLE CLOUD</p>
                 <p className="pl-2">├ Edge Functions (6): admin-ai, smart-alerts...</p>
                 <p className="pl-2">├ PostgreSQL (38 tables · RLS · Triggers)</p>
-                <p className="pl-2">├ Storage (listing-images, identity-docs)</p>
+                <p className="pl-2">├ Storage (listing-images, identity-docs, photos)</p>
                 <p className="pl-2">└ Auth (GoTrue): Email/Password, verification</p>
               </div>
             </div>
@@ -1393,7 +1435,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
               <p className="font-bold text-foreground text-xs mb-1">Data Flow</p>
               <div className="space-y-0.5 text-[11px]">
                 <p><strong className="text-foreground">Guest</strong> → Mock Data (localStorage + static)</p>
-                <p><strong className="text-foreground">Auth User</strong> → Supabase Queries (React Query)</p>
+                <p><strong className="text-foreground">Auth User</strong> → Supabase Queries (React Query cache)</p>
                 <p><strong className="text-foreground">Admin</strong> → Admin Panel (22 pages + sidebar)</p>
               </div>
             </div>
@@ -1426,6 +1468,30 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
                 <p>4️⃣ App — no secrets in client, edge functions for ops</p>
               </div>
             </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Edge Functions API</p>
+              <div className="space-y-1 text-[11px]">
+                <p><strong className="text-foreground">POST /admin-ai</strong> — AI queries → answer, data, suggestions</p>
+                <p><strong className="text-foreground">POST /smart-alerts</strong> — Low stock, overdue → notifications</p>
+                <p><strong className="text-foreground">POST /auto-notifications</strong> — DB webhook → user alerts</p>
+                <p><strong className="text-foreground">POST /property-history-ai</strong> — AI search → results</p>
+                <p><strong className="text-foreground">POST /weekly-digest</strong> — Weekly data → email digest</p>
+                <p><strong className="text-foreground">POST /staff-report</strong> — Attendance → summary</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Hooks Architecture (20+)</p>
+              <div className="font-mono text-[10px] space-y-0.5 p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                <p>Auth: useAuth · Admin: useAdmin</p>
+                <p>Data: useBookings · useWishlists · useMessages</p>
+                <p>      useNotifications · useLoyalty · useReferrals</p>
+                <p>      useReviews · useCurations</p>
+                <p>Host: useHostListings · useHostAnalytics</p>
+                <p>Config: useAppConfig · useHomepageSections</p>
+                <p>        useHomepageFilters · useVideoCards</p>
+                <p>UI: useTheme · usePrivacyMode · useUnreadCount</p>
+              </div>
+            </div>
           </div>
         </DocSection>
 
@@ -1448,6 +1514,29 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
               </div>
             </div>
             <div>
+              <p className="font-bold text-foreground text-xs mb-1">Home Screen (Mobile)</p>
+              <div className="font-mono text-[10px] p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                <p>┌───────────────────┐</p>
+                <p>│ [👤] Jeypore [🔔] │</p>
+                <p>│ [🔍 Search...]    │</p>
+                <p>│ ┌─ Active Trip ─┐ │</p>
+                <p>│ │ 🟢 Villa Eve  │ │</p>
+                <p>│ │ [Order][View] │ │</p>
+                <p>│ └───────────────┘ │</p>
+                <p>│ 🏠 🎭 ✨ 🛎 📦   │</p>
+                <p>│ ╔═══ VIDEO ═════╗ │</p>
+                <p>│ ╚═══════════════╝ │</p>
+                <p>│ [Card] [Card]     │</p>
+                <p>│ [🏸][🎯][🏊]     │</p>
+                <p>│ [🍽 Thali][🕯]   │</p>
+                <p>│ ┌═ Pack ════════┐ │</p>
+                <p>│ │ ₹3,999 [Book] │ │</p>
+                <p>│ └═══════════════┘ │</p>
+                <p>│ 🏠 ❤️ ✈️ 💬 👤  │</p>
+                <p>└───────────────────┘</p>
+              </div>
+            </div>
+            <div>
               <p className="font-bold text-foreground text-xs mb-1">Booking Flow</p>
               <div className="font-mono text-[10px] p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
                 <p>┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐</p>
@@ -1462,28 +1551,29 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
               </div>
             </div>
             <div>
-              <p className="font-bold text-foreground text-xs mb-1">Home Screen</p>
+              <p className="font-bold text-foreground text-xs mb-1">Profile Screen</p>
               <div className="font-mono text-[10px] p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
                 <p>┌───────────────────┐</p>
-                <p>│ [👤] Jeypore [🔔] │</p>
-                <p>│ [🔍 Search...]    │</p>
-                <p>│ ┌─ Active Trip ─┐ │</p>
-                <p>│ │ 🟢 Villa Eve  │ │</p>
-                <p>│ └───────────────┘ │</p>
-                <p>│ 🏠 🎭 ✨ 🛎 📦   │</p>
-                <p>│ ╔═══ VIDEO ═════╗ │</p>
-                <p>│ ╚═══════════════╝ │</p>
-                <p>│ [Card] [Card]     │</p>
-                <p>│ [🏸][🎯][🏊]     │</p>
-                <p>│ ┌═ Pack Card ═══┐ │</p>
-                <p>│ │ [Book Now]    │ │</p>
-                <p>│ └═══════════════┘ │</p>
+                <p>│     [Avatar]      │</p>
+                <p>│   Priya Sharma    │</p>
+                <p>│   📍 Jeypore      │</p>
+                <p>│ ┌────┬────┬─────┐ │</p>
+                <p>│ │ 12 │ 8  │2 yr │ │</p>
+                <p>│ │Trip│Revw│Membr│ │</p>
+                <p>│ └────┴────┴─────┘ │</p>
+                <p>│ 🥇 Gold · 1,240pt │</p>
+                <p>│ [🌟][⭐][🎉]→    │</p>
+                <p>│ Recent: Villa...  │</p>
+                <p>│ [Become a Host]   │</p>
+                <p>│ [☀️][🌙] Theme   │</p>
+                <p>│ [📸][📘][▶][🐦] │</p>
+                <p>│ Terms · v1.21     │</p>
                 <p>│ 🏠 ❤️ ✈️ 💬 👤  │</p>
                 <p>└───────────────────┘</p>
               </div>
             </div>
             <div>
-              <p className="font-bold text-foreground text-xs mb-1">Admin Panel</p>
+              <p className="font-bold text-foreground text-xs mb-1">Admin Panel Layout</p>
               <div className="font-mono text-[10px] p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
                 <p>┌────────┬─────────────────┐</p>
                 <p>│SIDEBAR │ COMMAND CENTER   │</p>
@@ -1493,12 +1583,67 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
                 <p>│ 🏠Prop │ ┌─────┐┌─────┐ │</p>
                 <p>│ 📦Inv  │ │Feed ││Pend.│ │</p>
                 <p>│ 👥Users│ └─────┘└─────┘ │</p>
+                <p>│ 📊Stats│                 │</p>
                 <p>│ (+14)  │                 │</p>
                 <p>└────────┴─────────────────┘</p>
               </div>
             </div>
             <div>
-              <p className="font-bold text-foreground text-xs mb-1">Entity Relationships</p>
+              <p className="font-bold text-foreground text-xs mb-1">Admin — Property CRUD</p>
+              <div className="font-mono text-[10px] p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                <p>┌─────────────────────────┐</p>
+                <p>│ Edit Property     [Save]│</p>
+                <p>│ Name: [Villa____]       │</p>
+                <p>│ Location: [Jeypore]     │</p>
+                <p>│ Cat: [Stays▼] ₹[2,500]  │</p>
+                <p>│ Capacity: [- 20 +]      │</p>
+                <p>│ Status: ○Pub ●Draft     │</p>
+                <p>│ Images: [📷][📷][+Add]  │</p>
+                <p>│ Tags: [Romantic][Pool]   │</p>
+                <p>│ Slots: Morn ₹1.5K       │</p>
+                <p>│        Eve  ₹2.5K       │</p>
+                <p>│        Night ₹3K        │</p>
+                <p>│ Rules: [No smoking]     │</p>
+                <p>│ [Delete] [Dup] [Save→]  │</p>
+                <p>└─────────────────────────┘</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Admin — Client CRM</p>
+              <div className="font-mono text-[10px] p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                <p>┌─────────────────────────┐</p>
+                <p>│ Priya Sharma    85/100  │</p>
+                <p>│ Segment: VIP  [AddNote] │</p>
+                <p>│ ┌────┬────┬────┬─────┐  │</p>
+                <p>│ │ 12 │ 8  │₹42K│Gold │  │</p>
+                <p>│ │Stay│Ordr│Spnt│Tier │  │</p>
+                <p>│ └────┴────┴────┴─────┘  │</p>
+                <p>│ ● Mar15 Villa ₹3,200    │</p>
+                <p>│ ● Mar15 Ordered Maggie  │</p>
+                <p>│ ● Mar16 Left 5★ review  │</p>
+                <p>│ 📌 Prefers eve, veg     │</p>
+                <p>│ 📝 Anniversary next mo  │</p>
+                <p>└─────────────────────────┘</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Admin — Inventory</p>
+              <div className="font-mono text-[10px] p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                <p>┌─────────────────────────┐</p>
+                <p>│ Inventory  [LowStock⚠] │</p>
+                <p>│ [All▼] [Search___]      │</p>
+                <p>│ ┌────┬─────┬───┬──┬───┐ │</p>
+                <p>│ │Item│Price│Stk│St│Act│ │</p>
+                <p>│ │🍔  │₹250 │ 8 │✅│Edt│ │</p>
+                <p>│ │🍕  │₹350 │ 3⚠│✅│Edt│ │</p>
+                <p>│ │🍺  │₹200 │24 │✅│Edt│ │</p>
+                <p>│ │🕯  │₹500 │ 1⚠│⛔│Edt│ │</p>
+                <p>│ └────┴─────┴───┴──┴───┘ │</p>
+                <p>└─────────────────────────┘</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">Entity Relationships (ER)</p>
               <div className="font-mono text-[10px] p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
                 <p>users ─┬─ profiles (1:1)</p>
                 <p>       ├─ bookings → orders → items</p>
@@ -1507,9 +1652,14 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
                 <p>       ├─ conversations → messages</p>
                 <p>       ├─ notifications · loyalty</p>
                 <p>       ├─ referrals · user_roles</p>
-                <p>       └─ identity_verifications</p>
+                <p>       ├─ milestones · identity</p>
+                <p>       └─ booking_photos · splits</p>
                 <p>listings ── curations · inventory</p>
+                <p>         ── tags (via tag_assignments)</p>
                 <p>staff ── attendance · leaves · pay</p>
+                <p>standalone: campaigns · coupons</p>
+                <p>  expenses · budget · app_config</p>
+                <p>  audit_logs · client_notes</p>
               </div>
             </div>
           </div>
