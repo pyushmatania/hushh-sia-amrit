@@ -314,6 +314,16 @@ export const changeLog = [
       "Network dependency tree flattened — fonts loaded via HTML preload pattern",
     ],
   },
+  {
+    version: "1.21",
+    phase: "Product Planning & Documentation",
+    items: [
+      "Product Requirements Document (PRD) — full PRD with personas, KPIs, priority matrix, risks, roadmap",
+      "App Blueprint — system architecture, data flow, module dependencies, state management, security layers",
+      "Wireframes — screen layout map, booking flow, admin panel, home screen, profile, ER diagram",
+      "Easter egg docs updated with PRD, Blueprint, and Wireframe sections",
+    ],
+  },
 ];
 
 // Generate the full HUSHH.md content from the changeLog + app info
