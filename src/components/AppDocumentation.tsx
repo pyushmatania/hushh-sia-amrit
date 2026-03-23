@@ -618,6 +618,14 @@ React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion
 | useHomepageSections | Section visibility & ordering |
 | useHomepageFilters | Dynamic category filter pills |
 | useVideoCards | Spotlight video card config |
+| useDragReorder | Pointer-based drag-and-drop reordering |
+| useMobile | Mobile viewport detection |
+| useOnlineStatus | Offline/online detection |
+| usePayments | Payment CRUD (payments table) |
+| useSlotAvailability | Property slots + per-date availability |
+| useInvoices | Invoice retrieval by booking |
+| useOrders | Order CRUD with items, active order tracking |
+| useSearch | Debounced search across properties & curations |
 
 ---
 
