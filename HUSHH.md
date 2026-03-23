@@ -1,6 +1,6 @@
 # 🏡 HUSHH — Private Experience Marketplace
 
-> **Made in Jeypore ❤️** | v1.23 | Internal Documentation & Blueprint
+> **Made in Jeypore ❤️** | v1.24 | Internal Documentation & Blueprint
 
 Hushh is a premium mobile-first marketplace for booking private experiences, stays, and curated lifestyle services in Jeypore, India. Think Airbnb meets a concierge — but hyper-local, with a focus on curated combos and on-demand add-ons.
 
@@ -397,6 +397,8 @@ Everything works without login using mock data:
 ```
 src/
 ├── App.tsx                    # Router (/, /admin, /staff, /reset-password, 404)
+│                              # ErrorBoundary wraps each route + global fallback
+│                              # OfflineBanner auto-shows when navigator.onLine = false
 ├── pages/
 │   ├── Index.tsx              # SPA shell — screen state machine + bottom nav
 │   ├── Admin.tsx              # Admin panel entry — auth gate + page router
@@ -415,12 +417,18 @@ src/
 │   │   └── ... (20+ more)
 │   ├── home/                  # 15 feed sub-components
 │   ├── staff/                 # Staff dashboard components
-│   ├── shared/AccentFrame.tsx # Reusable corner accent
+│   ├── shared/
+│   │   ├── AccentFrame.tsx    # Reusable corner accent
+│   │   ├── ErrorBoundary.tsx  # React class error boundary with "Try Again"
+│   │   ├── OfflineBanner.tsx  # Animated offline detection banner
+│   │   └── ...
 │   └── ui/                    # 40+ shadcn/ui primitives
 ├── data/
 │   ├── properties.ts          # Mock property/package/combo data (migrating to DB)
 │   └── mock-users.ts          # Mock profiles, notifications, loyalty
-├── hooks/                     # 16 custom hooks (auth, data, UI, admin)
+├── hooks/
+│   ├── use-online-status.tsx  # navigator.onLine + event listeners
+│   └── ... (16+ custom hooks: auth, data, UI, admin)
 ├── lib/                       # Utilities (animations, haptics, share, cn)
 └── integrations/              # Supabase client + Lovable
 supabase/
@@ -432,6 +440,45 @@ supabase/
 │   └── weekly-digest/         # Weekly summary emails
 └── config.toml                # Supabase project config
 ```
+
+### 🛡️ Resilience & Error Handling
+
+#### Error Boundaries
+Every route is wrapped in a `<ErrorBoundary>` component that catches React render crashes and shows a recovery UI with "Try Again" button. A global ErrorBoundary wraps the entire router as a last-resort fallback.
+
+| Boundary Level | Scope | Fallback Title |
+|---|---|---|
+| Global | Entire app (wraps `<BrowserRouter>`) | "App crashed unexpectedly" |
+| Home Route | Index page and all sub-screens | "Failed to load home" |
+| Admin Route | Admin panel | "Admin panel error" |
+| Staff Route | Staff dashboard | "Staff panel error" |
+
+#### Offline Detection
+- `useOnlineStatus()` hook tracks `navigator.onLine` + `online`/`offline` window events
+- `<OfflineBanner>` renders a fixed top bar with animated entrance/exit when offline
+- App remains functional for cached data; new mutations will fail gracefully with toast errors
+
+#### Query Retry Strategy (React Query)
+- **Queries**: Retry 2× with exponential backoff (1s → 2s → 4s, max 10s)
+- **Mutations**: Retry 1× on failure
+- **Stale time**: 30 seconds (prevents unnecessary refetches)
+- **Window refocus**: Disabled (prevents data thrashing on tab switch)
+
+#### Rate Limiting Awareness
+| Surface | Mechanism | Limit |
+|---|---|---|
+| Auth attempts | Supabase GoTrue built-in | 30/hour per IP |
+| Spin Wheel | DB trigger: 1 spin per user per day | 1/day/user |
+| Edge Functions | Supabase default rate limit | 100 req/s |
+| Search queries | Client-side debounce (300ms) | N/A |
+| Order submissions | Optimistic lock via status check | 1 active order/booking |
+
+#### Video & Asset Strategy
+- Homepage video cards use `.mp4.asset.json` references resolved at build time
+- Videos are lazy-loaded via `IntersectionObserver` (preloadVideos utility)
+- Images served through Supabase Storage public buckets (CDN-backed)
+- Listing images: `listing-images` bucket | Review photos: `review-images` bucket
+- Font loading: `<link rel="preconnect">` + `display=swap` for non-blocking render
 
 ---
 
@@ -1144,7 +1191,7 @@ useHomepageSections → useHomepageFilters → useVideoCards
 │                         │
 │ [📸 Insta][📘 FB][▶ YT]│  ← Social links
 │ Terms · Privacy          │
-│ v1.23                   │  ← 5-tap → easter egg
+│ v1.24                   │  ← 5-tap → easter egg
 ├─────────────────────────┤
 │ 🏠  ❤️  ✈️  💬  👤    │
 └─────────────────────────┘
@@ -1329,6 +1376,15 @@ standalone: campaigns · coupons · expenses · budget_allocations · app_config
   - **Notifications Screen** — filter tabs, read/unread states, grouped by day, empty state
 - **ER diagram updated** with complete payment flow relationships (payments → refunds → invoices)
 - **Total wireframes**: 16 (8 user app + 8 admin app) — all revenue-critical screens now documented
+
+### v1.24 — Resilience & Performance
+- **React Error Boundaries**: Global + per-route ErrorBoundary components catch render crashes with "Try Again" recovery UI
+- **Offline Detection**: `useOnlineStatus` hook + `OfflineBanner` component — animated top bar appears when device goes offline
+- **Query Retry Config**: React Query configured with exponential backoff (2 retries, 1s→4s), 30s stale time, no refetch-on-focus
+- **Mutation Retry**: Single retry for failed mutations
+- **Rate Limiting Documented**: Auth (30/hr), Spin Wheel (1/day/user), Edge Functions (100 req/s), Search (client debounce 300ms)
+- **Video & Asset Strategy Documented**: Lazy loading via IntersectionObserver, CDN-backed Supabase Storage, font preconnect + swap
+- **Architecture Diagram Updated**: ErrorBoundary, OfflineBanner, and useOnlineStatus hook reflected in tree
 
 ---
 

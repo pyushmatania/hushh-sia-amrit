@@ -9,6 +9,9 @@ import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider } from "@/hooks/use-auth";
 import { PrivacyModeProvider } from "@/hooks/use-privacy-mode";
 import { PropertiesProvider } from "@/contexts/PropertiesContext";
+import ErrorBoundary from "@/components/shared/ErrorBoundary";
+import OfflineBanner from "@/components/shared/OfflineBanner";
+
 const Index = lazy(() => import("./pages/Index.tsx"));
 import ResetPassword from "./pages/ResetPassword.tsx";
 import NotFound from "./pages/NotFound.tsx";
@@ -16,7 +19,25 @@ import NotFound from "./pages/NotFound.tsx";
 const Admin = lazy(() => import("./pages/Admin.tsx"));
 const Staff = lazy(() => import("./pages/Staff.tsx"));
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 2,
+      retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 10000),
+      staleTime: 30_000,
+      refetchOnWindowFocus: false,
+    },
+    mutations: {
+      retry: 1,
+    },
+  },
+});
+
+const LoadingSpinner = () => (
+  <div className="h-screen flex items-center justify-center bg-background">
+    <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" />
+  </div>
+);
 
 const App = () => {
   useEffect(() => { preloadVideos(); }, []);
@@ -27,18 +48,21 @@ const App = () => {
         <PrivacyModeProvider>
         <PropertiesProvider>
         <TooltipProvider>
+          <OfflineBanner />
           <Toaster />
           <Sonner />
+          <ErrorBoundary fallbackTitle="App crashed unexpectedly">
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Suspense fallback={null}><Index /></Suspense>} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/admin" element={<Suspense fallback={<div className="h-screen flex items-center justify-center bg-background"><div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" /></div>}><Admin /></Suspense>} />
-              <Route path="/staff" element={<Suspense fallback={<div className="h-screen flex items-center justify-center bg-background"><div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" /></div>}><Staff /></Suspense>} />
+              <Route path="/" element={<Suspense fallback={null}><ErrorBoundary fallbackTitle="Failed to load home"><Index /></ErrorBoundary></Suspense>} />
+              <Route path="/reset-password" element={<ErrorBoundary><ResetPassword /></ErrorBoundary>} />
+              <Route path="/admin" element={<Suspense fallback={<LoadingSpinner />}><ErrorBoundary fallbackTitle="Admin panel error"><Admin /></ErrorBoundary></Suspense>} />
+              <Route path="/staff" element={<Suspense fallback={<LoadingSpinner />}><ErrorBoundary fallbackTitle="Staff panel error"><Staff /></ErrorBoundary></Suspense>} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
+          </ErrorBoundary>
         </TooltipProvider>
         </PropertiesProvider>
         </PrivacyModeProvider>

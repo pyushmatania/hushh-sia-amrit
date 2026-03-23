@@ -376,6 +376,19 @@ export const changeLog = [
       "Documentation and easter egg UI synced with all 16 wireframes (8 user + 8 admin)",
     ],
   },
+  {
+    version: "1.24",
+    phase: "Resilience & Performance",
+    items: [
+      "React Error Boundaries — global + per-route crash recovery with 'Try Again' UI",
+      "Offline Detection — useOnlineStatus hook + animated OfflineBanner when device goes offline",
+      "Query Retry Strategy — React Query configured: 2× retry with exponential backoff (1s→4s), 30s stale time",
+      "Mutation Retry — single retry on failed mutations for resilience",
+      "Rate Limiting Documented — Auth (30/hr), Spin Wheel (1/day), Edge Functions (100/s), Search (300ms debounce)",
+      "Video & Asset Strategy — lazy loading via IntersectionObserver, CDN-backed storage, font preconnect",
+      "Architecture updated — ErrorBoundary, OfflineBanner, useOnlineStatus reflected in component tree",
+    ],
+  },
 ];
 
 // Generate the COMPLETE documentation including PRD, Blueprint, Wireframes
@@ -549,6 +562,23 @@ Splash → Home → Browse/Search/Map → Property Card → Detail → Select Sl
 80+ components, 22+ hooks, 45 database tables, 6 edge functions
 
 React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion 12 · React Query · React Router v6 · Lovable Cloud · Recharts · React Hook Form + Zod
+
+### 🛡️ Resilience & Error Handling
+
+**Error Boundaries**: Every route wrapped in ErrorBoundary — global fallback + per-route crash recovery with "Try Again" UI.
+
+| Boundary | Scope | Fallback |
+|---|---|---|
+| Global | Entire BrowserRouter | "App crashed unexpectedly" |
+| Home | Index page | "Failed to load home" |
+| Admin | Admin panel | "Admin panel error" |
+| Staff | Staff dashboard | "Staff panel error" |
+
+**Offline Detection**: useOnlineStatus hook + OfflineBanner — animated top bar when device goes offline.
+
+**Query Retry**: Queries retry 2× (exponential backoff 1s→4s, max 10s). Mutations retry 1×. Stale time 30s.
+
+**Rate Limiting**: Auth 30/hr per IP, Spin Wheel 1/day/user, Edge Functions 100 req/s, Search 300ms debounce.
 
 ---
 
@@ -902,12 +932,14 @@ LOVABLE CLOUD
 
 ### Data Flow
 - Guest → Mock Data (localStorage + static)
-- Auth User → Supabase Queries (React Query with cache)
+- Auth User → Supabase Queries (React Query with cache, 2× retry, 30s stale)
 - Admin → Admin Panel (22 pages + sidebar)
+- Offline → OfflineBanner shown, cached data available, mutations fail gracefully
 
 ### State Management
 - Global: AuthProvider, ThemeProvider, PrivacyModeProvider, PropertiesProvider, QueryClient
 - Local: Screen state machine (Index.tsx), component useState, localStorage fallbacks
+- Online Status: useOnlineStatus hook (navigator.onLine + event listeners)
 
 ### Module Map
 \`\`\`
@@ -2012,6 +2044,17 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
                 <p>Config: useAppConfig · useHomepageSections</p>
                 <p>        useHomepageFilters · useVideoCards</p>
                 <p>UI: useTheme · usePrivacyMode · useUnreadCount</p>
+                <p>Net: useOnlineStatus</p>
+              </div>
+            </div>
+            <div>
+              <p className="font-bold text-foreground text-xs mb-1">🛡️ Resilience</p>
+              <div className="font-mono text-[10px] space-y-0.5 p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                <p><strong className="text-foreground">Error Boundaries</strong> — Global + per-route crash recovery</p>
+                <p><strong className="text-foreground">Offline Banner</strong> — Animated top bar when navigator.onLine = false</p>
+                <p><strong className="text-foreground">Query Retry</strong> — 2× exponential backoff (1s→4s), 30s stale</p>
+                <p><strong className="text-foreground">Mutation Retry</strong> — 1× retry on failure</p>
+                <p><strong className="text-foreground">Rate Limits</strong> — Auth 30/hr · Spin 1/day · Edge 100/s</p>
               </div>
             </div>
             <MermaidDiagram chart={BOOKING_FLOW_CHART} title="Booking Flow" />
