@@ -337,7 +337,12 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
                 transition: isDragging ? "none" : "all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)",
                 transformStyle: "preserve-3d",
               }}
-              onClick={() => { if (Date.now() < blockTapUntilRef.current) return; onTap(property); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (!isFront || isDragging) return;
+                if (Date.now() < blockTapUntilRef.current || Date.now() < controlTapBlockUntilRef.current) return;
+                onTap(property);
+              }}
               onTouchStart={isFront ? handleTouchStart : undefined}
               onTouchMove={isFront ? handleTouchMove : undefined}
               onTouchEnd={isFront ? handleTouchEnd : undefined}
