@@ -14,3 +14,9 @@ verify_jwt = false
 
 [functions.property-history-ai]
 verify_jwt = false
+
+[functions.send-push-notification]
+verify_jwt = false
+
+[functions.staff-report]
+verify_jwt = false
