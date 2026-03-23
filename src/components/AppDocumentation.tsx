@@ -345,6 +345,22 @@ export const changeLog = [
       "Easter egg docs updated with PRD, Blueprint, and Wireframe sections",
     ],
   },
+  {
+    version: "1.22",
+    phase: "Schema Hardening & Audit Resolution",
+    items: [
+      "7 new DB tables: payments, refunds, invoices, property_slots, slot_availability, notification_preferences, push_tokens (45 total)",
+      "Payment foundation — Razorpay-ready schema with gateway fields, refund tracking, invoice generation with JSONB line items",
+      "Slot management — dedicated property_slots + slot_availability tables for per-date booking & dynamic pricing",
+      "Booking schema hardened — payment_status + payment_id on bookings, split payment tracking enhanced",
+      "Conversations enhanced — type (direct/support/group), property_id, metadata fields",
+      "Config audit trail — updated_by added to app_config",
+      "FCM readiness — push_tokens table with platform tracking",
+      "Notification preferences — per-type per-channel opt-out table",
+      "Documentation audit — 8 critical issues resolved, 20+ warnings addressed, ER diagram updated, hooks reference expanded",
+      "Realtime enabled for payments and slot_availability tables",
+    ],
+  },
 ];
 
 // Generate the COMPLETE documentation including PRD, Blueprint, Wireframes
