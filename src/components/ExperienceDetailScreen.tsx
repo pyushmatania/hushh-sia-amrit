@@ -5,7 +5,7 @@ import { hapticLight, hapticMedium, hapticSelection } from "@/lib/haptics";
 import type { ExperiencePack } from "@/components/home/CuratedPackCard";
 import type { Property } from "@/data/properties";
 import OptimizedImage from "@/components/shared/OptimizedImage";
-import { share } from "@/lib/share";
+
 
 /* Gallery images mapped to moods */
 const moodGallery: Record<string, string[]> = {
