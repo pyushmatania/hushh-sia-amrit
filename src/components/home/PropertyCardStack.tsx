@@ -137,6 +137,7 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
   const touchRef = useRef<{ x: number; y: number; t: number; mode: "pending" | "horizontal" | "vertical" } | null>(null);
   const swipedRef = useRef(false);
   const blockTapUntilRef = useRef(0);
+  const controlTapBlockUntilRef = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<number>(0);
   const rafRef = useRef<number>(0);
@@ -144,6 +145,12 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
 
   const goNext = useCallback(() => { setActive(i => (i + 1) % cards.length); setProgress(0); progressRef.current = 0; }, [cards.length]);
   const goPrev = useCallback(() => { setActive(i => (i - 1 + cards.length) % cards.length); setProgress(0); progressRef.current = 0; }, [cards.length]);
+
+  const blockCardTapBriefly = useCallback((ms = 420) => {
+    const until = Date.now() + ms;
+    blockTapUntilRef.current = until;
+    controlTapBlockUntilRef.current = until;
+  }, []);
 
   useEffect(() => {
     if (!entered || isDragging) return;
@@ -286,6 +293,7 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
   const frontProp = cards[active];
   const catKey = Array.isArray(frontProp.category) ? frontProp.category[0] : frontProp.category;
   const accentColor = categoryColors[catKey] || categoryColors.default;
+  const sectionLabel = frontProp.primaryCategory === "stay" ? "Stay Cards" : "Experience Cards";
 
   return (
     <div
@@ -297,7 +305,7 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
       {/* Section label */}
       <div className="flex items-center gap-2 px-5 mb-3">
         <Plane size={14} style={{ color: accentColor, transform: "rotate(-45deg)" }} />
-        <span className="text-[13px] font-bold text-foreground tracking-wide">Experience Passes</span>
+        <span className="text-[13px] font-bold text-foreground tracking-wide">{sectionLabel}</span>
         <div className="flex-1 h-px" style={{ background: `linear-gradient(to right, ${accentColor}60, transparent)` }} />
       </div>
 
@@ -329,7 +337,12 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
                 transition: isDragging ? "none" : "all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)",
                 transformStyle: "preserve-3d",
               }}
-              onClick={() => { if (Date.now() < blockTapUntilRef.current) return; onTap(property); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (!isFront || isDragging) return;
+                if (Date.now() < blockTapUntilRef.current || Date.now() < controlTapBlockUntilRef.current) return;
+                onTap(property);
+              }}
               onTouchStart={isFront ? handleTouchStart : undefined}
               onTouchMove={isFront ? handleTouchMove : undefined}
               onTouchEnd={isFront ? handleTouchEnd : undefined}
@@ -496,8 +509,21 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
       </div>
 
       {/* Navigation dots */}
-      <div className="flex items-center justify-center gap-2.5 mt-3">
-        <button onClick={(e) => { e.stopPropagation(); goPrev(); }} className="w-7 h-7 rounded-full flex items-center justify-center active:scale-90 transition-transform bg-muted/60 backdrop-blur-sm">
+      <div className="relative z-40 flex items-center justify-center gap-2.5 mt-3" style={{ touchAction: "manipulation" }}>
+        <button
+          onTouchStart={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            blockCardTapBriefly();
+          }}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            blockCardTapBriefly();
+            goPrev();
+          }}
+          className="w-7 h-7 rounded-full flex items-center justify-center active:scale-90 transition-transform bg-muted/60 backdrop-blur-sm"
+        >
           <ChevronLeft size={13} className="text-foreground" />
         </button>
         <div className="flex gap-1.5 items-center">
@@ -508,7 +534,20 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
             </div>
           ))}
         </div>
-        <button onClick={(e) => { e.stopPropagation(); goNext(); }} className="w-7 h-7 rounded-full flex items-center justify-center active:scale-90 transition-transform bg-muted/60 backdrop-blur-sm">
+        <button
+          onTouchStart={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            blockCardTapBriefly();
+          }}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            blockCardTapBriefly();
+            goNext();
+          }}
+          className="w-7 h-7 rounded-full flex items-center justify-center active:scale-90 transition-transform bg-muted/60 backdrop-blur-sm"
+        >
           <ChevronRight size={13} className="text-foreground" />
         </button>
       </div>
