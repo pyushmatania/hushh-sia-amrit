@@ -1159,9 +1159,64 @@ standalone: campaigns · coupons · expenses · budget_allocations · app_config
   return header + changes + footer;
 }
 
+// Mermaid chart data
+const ARCHITECTURE_CHART = `graph TB
+    subgraph CLIENT["CLIENT Browser"]
+        direction TB
+        RR["React Router v6"]
+        RQ["React Query"]
+        FM["Framer Motion"]
+        SC["Supabase JS Client"]
+    end
+    subgraph SCREENS["App Screens"]
+        direction LR
+        USER["User App 15 screens"]
+        ADMIN["Admin Panel 22 pages"]
+        STAFF["Staff Portal 4 pages"]
+    end
+    subgraph CLOUD["LOVABLE CLOUD"]
+        direction TB
+        EF["Edge Functions x6"]
+        PG["PostgreSQL 38 tables + RLS"]
+        ST["Storage images docs photos"]
+        AU["Auth GoTrue"]
+    end
+    SCREENS --> CLIENT
+    CLIENT -->|"HTTPS + JWT"| CLOUD
+    EF --> PG
+    AU --> PG`;
+
+const ER_CHART = `erDiagram
+    users ||--|| profiles : "1-to-1"
+    users ||--o{ bookings : "has many"
+    users ||--o{ wishlists : "saves"
+    users ||--o{ reviews : "writes"
+    users ||--o{ conversations : "chats"
+    users ||--o{ notifications : "receives"
+    users ||--o{ loyalty_transactions : "earns"
+    users ||--o{ referral_codes : "creates"
+    users ||--o{ user_roles : "assigned"
+    users ||--o{ user_milestones : "achieves"
+    users ||--o{ host_listings : "hosts"
+    bookings ||--o{ orders : "has"
+    bookings ||--o{ booking_splits : "split"
+    bookings ||--o{ booking_photos : "has"
+    orders ||--o{ order_items : "contains"
+    orders ||--o{ order_notes : "noted"
+    conversations ||--o{ messages : "contains"
+    reviews ||--o{ review_responses : "responded"
+    referral_codes ||--o{ referral_uses : "used"
+    host_listings ||--o{ curations : "packs"
+    host_listings ||--o{ inventory : "stocks"
+    property_tags ||--o{ tag_assignments : "assigned"
+    staff_members ||--o{ staff_attendance : "tracks"
+    staff_members ||--o{ staff_leaves : "requests"
+    staff_members ||--o{ staff_salary_payments : "paid"`;
+
 export default function AppDocumentation({ open, onClose }: AppDocumentationProps) {
   const [copied, setCopied] = useState(false);
   const [showRawDoc, setShowRawDoc] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const handleCopyDoc = useCallback(async () => {
     try {
@@ -1169,7 +1224,6 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Fallback: select all in a textarea
       const ta = document.createElement("textarea");
       ta.value = generateFullDoc();
       document.body.appendChild(ta);
@@ -1179,6 +1233,33 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
+  }, []);
+
+  const handleExportPDF = useCallback(() => {
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+    const docText = generateFullDoc();
+    const htmlContent = docText
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+      .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+      .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+      .replace(/^- (.+)$/gm, '<li>$1</li>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n\n/g, '<br/><br/>');
+    printWindow.document.write(`<!DOCTYPE html><html><head><title>Hushh Documentation v1.21</title><style>
+      *{margin:0;padding:0;box-sizing:border-box}
+      body{font-family:'Segoe UI',system-ui,sans-serif;padding:40px;color:#1a1a2e;line-height:1.7;font-size:13px;max-width:900px;margin:0 auto}
+      h1{font-size:24px;margin:24px 0 12px;color:#7c3aed}
+      h2{font-size:18px;margin:28px 0 8px;color:#1a1a2e;border-bottom:2px solid #7c3aed;padding-bottom:4px}
+      h3{font-size:14px;margin:16px 0 4px;color:#4c1d95}
+      li{margin:2px 0;margin-left:20px}
+      pre{background:#f5f3ff;padding:12px;border-radius:8px;font-size:11px;white-space:pre-wrap;margin:8px 0}
+      .footer{margin-top:40px;text-align:center;color:#888;font-size:11px;border-top:1px solid #ddd;padding-top:16px}
+      @media print{body{padding:20px}h2{page-break-before:auto}}
+    </style></head><body><div>${htmlContent}</div><div class="footer">Hushh v1.21 | Made in Jeypore | Generated ${new Date().toLocaleDateString()}</div></body></html>`);
+    printWindow.document.close();
+    setTimeout(() => printWindow.print(), 500);
   }, []);
 
   if (!open) return null;
