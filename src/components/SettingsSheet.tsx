@@ -52,18 +52,35 @@ function NotificationSettings() {
     }
   };
 
+  const testNotifications = [
+    { delay: 5000, title: "🎉 Booking Confirmed!", body: "Your reservation at Koraput Coffee Trail is confirmed for tomorrow at 10 AM.", url: "/trips" },
+    { delay: 10000, title: "🔥 Flash Deal!", body: "50% off on Tribal Thali Experience — only 3 spots left! Book now.", url: "/" },
+    { delay: 15000, title: "💬 New Message", body: "Your host Priya sent you a message about your upcoming stay.", url: "/messages" },
+  ];
+
   const handleTestPush = async () => {
     setIsSendingTest(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
-      await supabase.functions.invoke('send-push-notification', {
-        body: { user_id: user.id, payload: { title: "Test Notification 🔔", body: "Push notifications are working!", url: "/" } }
-      });
-      toast({ title: "Test notification sent!" });
+
+      toast({ title: "Sending 3 test notifications...", description: "At 5s, 10s, and 15s intervals" });
+
+      for (const notif of testNotifications) {
+        setTimeout(async () => {
+          try {
+            await supabase.functions.invoke('send-push-notification', {
+              body: { user_id: user.id, payload: { title: notif.title, body: notif.body, url: notif.url } }
+            });
+          } catch (e) { console.error('[Push Test]', e); }
+        }, notif.delay);
+      }
+
+      setTimeout(() => setIsSendingTest(false), 16000);
     } catch (err: any) {
       toast({ title: "Failed", description: err.message, variant: "destructive" });
-    } finally { setIsSendingTest(false); }
+      setIsSendingTest(false);
+    }
   };
 
   const items = [
