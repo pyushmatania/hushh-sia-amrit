@@ -508,8 +508,12 @@ Every route is wrapped in a `<ErrorBoundary>` component that catches React rende
 | `useVideoCards` | Spotlight video card config from DB | ✅ Default videos |
 | `useDragReorder` | Pointer-based drag-and-drop reordering | — |
 | `useMobile` | Mobile viewport detection | — |
-
-**Planned hooks** (v2.0): `usePayments`, `useSlotAvailability`, `usePushTokens`, `useNotificationPreferences`, `useInvoices`
+| `useOnlineStatus` | Offline/online detection | — |
+| `usePayments` | Payment CRUD (payments table) | — |
+| `useSlotAvailability` | Property slots + per-date availability | — |
+| `useInvoices` | Invoice retrieval by booking | — |
+| `useOrders` | Order CRUD with items, active order tracking | — |
+| `useSearch` | Debounced search across properties & curations | — |
 
 ---
 
