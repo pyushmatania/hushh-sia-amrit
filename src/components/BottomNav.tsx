@@ -43,13 +43,8 @@ export default function BottomNav({ active, onChange, messageBadge = 0 }: Bottom
           borderTop: "1px solid hsl(var(--border) / 0.3)",
         }}
       >
-        {/* Subtle top highlight */}
-        <div
-          className="absolute top-0 inset-x-0 h-px pointer-events-none"
-          style={{ background: "linear-gradient(90deg, transparent 10%, hsl(0 0% 100% / 0.08) 50%, transparent 90%)" }}
-        />
 
-        <div className="flex items-center justify-around py-2 px-1">
+        <div className="flex items-center justify-around pt-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom))] px-1">
           {tabs.map((tab) => {
             const isActive = active === tab.id;
             return (
