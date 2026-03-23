@@ -1739,26 +1739,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
                 <p>└─────────────────────────┘</p>
               </div>
             </div>
-            <div>
-              <p className="font-bold text-foreground text-xs mb-1">Entity Relationships (ER)</p>
-              <div className="font-mono text-[10px] p-2 rounded-lg" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
-                <p>users ─┬─ profiles (1:1)</p>
-                <p>       ├─ bookings → orders → items</p>
-                <p>       ├─ wishlists → host_listings</p>
-                <p>       ├─ reviews → responses</p>
-                <p>       ├─ conversations → messages</p>
-                <p>       ├─ notifications · loyalty</p>
-                <p>       ├─ referrals · user_roles</p>
-                <p>       ├─ milestones · identity</p>
-                <p>       └─ booking_photos · splits</p>
-                <p>listings ── curations · inventory</p>
-                <p>         ── tags (via tag_assignments)</p>
-                <p>staff ── attendance · leaves · pay</p>
-                <p>standalone: campaigns · coupons</p>
-                <p>  expenses · budget · app_config</p>
-                <p>  audit_logs · client_notes</p>
-              </div>
-            </div>
+            <MermaidDiagram chart={ER_CHART} title="Entity Relationships (ER)" />
           </div>
         </DocSection>
 
