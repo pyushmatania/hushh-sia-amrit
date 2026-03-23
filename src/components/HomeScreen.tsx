@@ -181,7 +181,7 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
-    <div ref={contentRef} key={refreshKey} className="pb-24 min-h-screen overflow-y-auto" style={{ background: "linear-gradient(180deg, #0C0B1D 0%, #111028 100%)" }}>
+    <div ref={contentRef} key={refreshKey} className="pb-24 min-h-screen overflow-y-auto overflow-x-hidden" style={{ background: "linear-gradient(180deg, #0C0B1D 0%, #111028 100%)", overscrollBehaviorX: "none" }}>
 
       {/* Header */}
       <div className="px-5 pt-5 pb-2 flex items-center justify-between">
