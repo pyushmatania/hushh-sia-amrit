@@ -393,7 +393,7 @@ Profile → Loyalty, Referrals, Host Dashboard, Settings, Theme, Auth
 
 React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion 12 · React Query · React Router v6 · Lovable Cloud · Recharts · React Hook Form + Zod
 
-40+ components, 15 hooks, 16 database tables
+80+ components, 20+ hooks, 30+ database tables
 
 ---
 
