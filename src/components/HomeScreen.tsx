@@ -165,9 +165,13 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
   }, []);
 
   const handlePackTap = useCallback((pack: ExperiencePack) => {
-    const property = properties.find(p => p.id === pack.propertyId);
-    if (property) onPropertyTap(property);
-  }, [onPropertyTap]);
+    if (onExperienceTap) {
+      onExperienceTap(pack);
+    } else {
+      const property = properties.find(p => p.id === pack.propertyId);
+      if (property) onPropertyTap(property);
+    }
+  }, [onPropertyTap, onExperienceTap]);
 
   const moodFilteredProperties = useMemo(() => {
     if (!activeMood) return filteredProperties;
