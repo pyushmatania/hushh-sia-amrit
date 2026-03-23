@@ -406,6 +406,8 @@ function ChargingBlurOverlay({ active, intensity }: { active: boolean; intensity
 }
 
 const HOLD_DURATION = 600;
+const TAP_MAX_DURATION = 220;
+const TAP_MAX_MOVE = 10;
 
 export default function PropertyCardCinematic({ property, index, onTap, isWishlisted = false, onToggleWishlist }: PropertyCardCinematicProps) {
   const [imgLoaded, setImgLoaded] = useState(false);
@@ -472,6 +474,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
   }, [clearTimers]);
 
   const onTouchStart = useCallback((e: React.TouchEvent) => {
+    e.stopPropagation();
     const touch = e.touches[0];
     touchStartXRef.current = touch.clientX;
     touchStartYRef.current = touch.clientY;
@@ -499,6 +502,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
   }, [doReveal]);
 
   const onTouchMoveHandler = useCallback((e: React.TouchEvent) => {
+    e.stopPropagation();
     const touch = e.touches[0];
     const deltaX = touch.clientX - touchStartXRef.current;
     const deltaY = touchStartYRef.current - touch.clientY;
@@ -535,13 +539,25 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
     }
   }, [property, onTap, doRelease, clearTimers]);
 
-  const onTouchEndHandler = useCallback(() => {
+  const onTouchEndHandler = useCallback((e: React.TouchEvent) => {
+    e.stopPropagation();
+    const touch = e.changedTouches[0];
+    const moveX = Math.abs(touch.clientX - touchStartXRef.current);
+    const moveY = Math.abs(touch.clientY - touchStartYRef.current);
+    const pressDuration = Date.now() - holdStartRef.current;
+
     clearTimers();
     isHoldingRef.current = false;
 
     if (!didRevealRef.current) {
       setChargeProgress(0);
       setIsActive(false);
+
+      const isTap = !holdCancelledRef.current && pressDuration <= TAP_MAX_DURATION && moveX <= TAP_MAX_MOVE && moveY <= TAP_MAX_MOVE;
+      if (isTap) {
+        hapticSelection();
+        onTap(property);
+      }
       return;
     }
 
@@ -549,7 +565,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
       hapticLight();
       doRelease();
     }
-  }, [clearTimers, doRelease]);
+  }, [clearTimers, doRelease, onTap, property]);
 
   // Mouse hold (desktop)
   const onMouseDown = useCallback(() => {
@@ -620,6 +636,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
 
       <div
         className="mx-5 relative overflow-x-clip"
+        data-no-pull-refresh="true"
         style={{
           userSelect: "none",
           WebkitUserSelect: "none",
