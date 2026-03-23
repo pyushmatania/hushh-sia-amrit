@@ -57,7 +57,7 @@ export function usePushNotifications() {
       const appServerKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: appServerKey,
+        applicationServerKey: appServerKey.buffer.slice(appServerKey.byteOffset, appServerKey.byteOffset + appServerKey.byteLength) as ArrayBuffer,
       });
 
       const p256dhKey = subscription.getKey('p256dh');
