@@ -3,11 +3,12 @@ import { supabase } from '@/integrations/supabase/client';
 
 const VAPID_PUBLIC_KEY = 'BOZAnbOohkjHyyrTWPRRvQT7FYgNccEd_odHdTLUDmz9vLNvNkznlQCnvNUc7DBEgxR80WBcYhnctqLgafZmXJ4';
 
-function urlBase64ToUint8Array(base64String: string): Uint8Array {
-  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+function urlBase64ToUint8Array(base64String: string): Uint8Array<ArrayBuffer> {
+  const normalized = base64String.trim();
+  const padding = '='.repeat((4 - (normalized.length % 4)) % 4);
+  const base64 = (normalized + padding).replace(/-/g, '+').replace(/_/g, '/');
   const rawData = window.atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
+  const outputArray = new Uint8Array(rawData.length) as Uint8Array<ArrayBuffer>;
   for (let i = 0; i < rawData.length; ++i) outputArray[i] = rawData.charCodeAt(i);
   return outputArray;
 }
@@ -55,9 +56,13 @@ export function usePushNotifications() {
       await navigator.serviceWorker.ready;
 
       const appServerKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
+      if (appServerKey.length !== 65 || appServerKey[0] !== 0x04) {
+        throw new Error('Invalid VAPID public key format');
+      }
+
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: appServerKey.buffer.slice(appServerKey.byteOffset, appServerKey.byteOffset + appServerKey.byteLength) as ArrayBuffer,
+        applicationServerKey: appServerKey as BufferSource,
       });
 
       const p256dhKey = subscription.getKey('p256dh');
