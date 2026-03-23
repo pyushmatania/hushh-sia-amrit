@@ -1,6 +1,27 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronDown, ChevronRight, BookOpen, Layers, MapPin, Users, Palette, Database, History, Sparkles, Shield, Zap, Copy, Check, FileText, Target, Layout, PenTool, TrendingUp, AlertTriangle, Clock, Server } from "lucide-react";
-import { useState, useCallback } from "react";
+import { X, ChevronDown, ChevronRight, BookOpen, Layers, MapPin, Users, Palette, Database, History, Sparkles, Shield, Zap, Copy, Check, FileText, Target, Layout, PenTool, TrendingUp, AlertTriangle, Clock, Server, Download } from "lucide-react";
+import { useState, useCallback, useRef } from "react";
+
+// Mermaid diagram rendered via iframe
+function MermaidDiagram({ chart, title }: { chart: string; title: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const escaped = chart.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const html = `<!DOCTYPE html><html><head><script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"><\/script><style>body{margin:0;padding:12px;background:#0c0b1d;display:flex;justify-content:center;overflow:auto;}svg{max-width:100%;height:auto;}</style></head><body><pre class="mermaid">${escaped}</pre><script>mermaid.initialize({startOnLoad:true,theme:'dark',themeVariables:{primaryColor:'#7c3aed',primaryTextColor:'#e2e8f0',primaryBorderColor:'#7c3aed',lineColor:'#a78bfa',secondaryColor:'#1e1b4b',tertiaryColor:'#312e81',background:'#0c0b1d',mainBkg:'#1e1b4b',nodeBorder:'#7c3aed',clusterBkg:'#1e1b4b33',clusterBorder:'#7c3aed55',titleColor:'#e2e8f0',edgeLabelBackground:'#1e1b4b',fontSize:'11px'}});<\/script></body></html>`;
+
+  return (
+    <div className="space-y-1">
+      <div className="flex items-center justify-between">
+        <p className="font-bold text-foreground text-xs">{title}</p>
+        <button onClick={() => setExpanded(!expanded)} className="text-[10px] text-primary font-medium">
+          {expanded ? "Collapse" : "Expand"}
+        </button>
+      </div>
+      <div className="rounded-lg overflow-hidden transition-all duration-300" style={{ height: expanded ? "500px" : "280px", border: "1px solid hsl(var(--border))" }}>
+        <iframe srcDoc={html} className="w-full h-full border-0" sandbox="allow-scripts" title={title} />
+      </div>
+    </div>
+  );
+}
 
 interface AppDocumentationProps {
   open: boolean;
