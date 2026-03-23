@@ -70,7 +70,7 @@ export function usePushNotifications() {
       if (!user) throw new Error('User not authenticated');
 
       const { error } = await supabase
-        .from('push_subscriptions')
+        .from('push_subscriptions' as any)
         .upsert({ user_id: user.id, endpoint: subscription.endpoint, p256dh, auth }, { onConflict: 'user_id,endpoint' });
 
       if (error) throw error;
