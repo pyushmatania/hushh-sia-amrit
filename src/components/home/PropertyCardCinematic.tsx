@@ -48,16 +48,17 @@ function useCountUp(target: number, active: boolean, duration = 800, delay = 0):
   return val;
 }
 
-function StatBar({ label, value, max, color, revealed, icon, delay = 0 }: { label: string; value: number; max: number; color: string; revealed: boolean; icon?: React.ReactNode; delay?: number }) {
+function StatBar({ label, value, max, color, revealed, isCharging, icon, delay = 0 }: { label: string; value: number; max: number; color: string; revealed: boolean; isCharging?: boolean; icon?: React.ReactNode; delay?: number }) {
   const pct = Math.min((value / max) * 100, 100);
-  const displayVal = useCountUp(value, revealed, 700, delay);
+  const active = revealed || !!isCharging;
+  const displayVal = useCountUp(value, active, 700, delay);
   const [barActive, setBarActive] = useState(false);
 
   useEffect(() => {
-    if (!revealed) { setBarActive(false); return; }
+    if (!active) { setBarActive(false); return; }
     const t = setTimeout(() => setBarActive(true), delay);
     return () => clearTimeout(t);
-  }, [revealed, delay]);
+  }, [active, delay]);
 
   return (
     <div className="flex items-center gap-2" style={{ opacity: barActive || !revealed ? 1 : 0.5, transition: "opacity 0.3s" }}>
@@ -94,7 +95,7 @@ function StatBar({ label, value, max, color, revealed, icon, delay = 0 }: { labe
           textShadow: barActive ? `0 0 10px ${color}80, 0 0 20px ${color}40` : "none",
         }}
       >
-        {revealed ? displayVal : "--"}
+        {active ? displayVal : "--"}
       </span>
     </div>
   );
@@ -128,12 +129,12 @@ function XpRing({ level, color, revealed }: { level: number; color: string; reve
 }
 
 function FloatingParticles({ color, active }: { color: string; active: boolean }) {
-  const particles = Array.from({ length: 16 }, (_, i) => ({
+  const particles = Array.from({ length: 24 }, (_, i) => ({
     id: i,
-    left: `${5 + (i * 6) % 90}%`,
+    left: `${3 + (i * 4) % 94}%`,
     delay: `${i * 0.2}s`,
-    duration: `${1.5 + (i % 4) * 0.5}s`,
-    size: 2 + (i % 4),
+    duration: `${1.2 + (i % 5) * 0.4}s`,
+    size: 1.5 + (i % 5),
   }));
 
   return (
@@ -157,17 +158,81 @@ function FloatingParticles({ color, active }: { color: string; active: boolean }
   );
 }
 
+/* Smoke/mist effect */
+function SmokeEffect({ color, active }: { color: string; active: boolean }) {
+  return (
+    <div className="absolute inset-0 pointer-events-none z-[5] overflow-hidden rounded-[20px]" style={{ opacity: active ? 1 : 0, transition: "opacity 0.6s" }}>
+      <div
+        className="absolute -bottom-[20%] -left-[10%] w-[120%] h-[60%]"
+        style={{
+          background: `radial-gradient(ellipse at 50% 100%, ${color}30 0%, ${color}15 30%, transparent 70%)`,
+          filter: "blur(20px)",
+          animation: active ? "smokeRise 3s ease-in-out infinite" : "none",
+        }}
+      />
+      <div
+        className="absolute -bottom-[15%] -right-[5%] w-[80%] h-[50%]"
+        style={{
+          background: `radial-gradient(ellipse at 60% 100%, ${color}20 0%, transparent 60%)`,
+          filter: "blur(25px)",
+          animation: active ? "smokeRise 4s ease-in-out infinite 0.5s" : "none",
+        }}
+      />
+      <div
+        className="absolute -bottom-[10%] left-[10%] w-[60%] h-[40%]"
+        style={{
+          background: `radial-gradient(ellipse at 40% 100%, hsl(0 0% 100% / 0.06) 0%, transparent 60%)`,
+          filter: "blur(18px)",
+          animation: active ? "smokeRise 3.5s ease-in-out infinite 1s" : "none",
+        }}
+      />
+    </div>
+  );
+}
+
+/* Platform glow beneath the card */
+function PlatformGlow({ color, active, intensity }: { color: string; active: boolean; intensity: number }) {
+  return (
+    <>
+      <div
+        className="absolute left-1/2 -translate-x-1/2 pointer-events-none rounded-full"
+        style={{
+          bottom: "-20px",
+          width: "90%",
+          height: "40px",
+          background: `radial-gradient(ellipse at 50% 50%, ${color} 0%, ${color}80 25%, transparent 70%)`,
+          opacity: active ? 0.3 + intensity * 0.4 : 0.04,
+          filter: "blur(16px)",
+          transition: "opacity 0.4s ease",
+        }}
+      />
+      <div
+        className="absolute left-1/2 -translate-x-1/2 pointer-events-none rounded-full"
+        style={{
+          bottom: "-35px",
+          width: "120%",
+          height: "60px",
+          background: `radial-gradient(ellipse at 50% 30%, ${color}50 0%, transparent 70%)`,
+          opacity: active ? 0.15 + intensity * 0.3 : 0,
+          filter: "blur(30px)",
+          transition: "opacity 0.4s ease",
+        }}
+      />
+    </>
+  );
+}
+
 function LightRays({ color, active }: { color: string; active: boolean }) {
   return (
-    <div className="absolute inset-0 pointer-events-none z-0" style={{ opacity: active ? 0.7 : 0, transition: "opacity 0.8s ease" }}>
+    <div className="absolute inset-0 pointer-events-none z-0" style={{ opacity: active ? 0.9 : 0, transition: "opacity 0.6s ease" }}>
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-        style={{ width: "160%", height: "160%", background: `radial-gradient(ellipse at center, ${color}25 0%, ${color}0a 35%, transparent 70%)`, animation: "pulseGlow 2.5s ease-in-out infinite" }}
+        style={{ width: "200%", height: "200%", background: `radial-gradient(ellipse at center, ${color}30 0%, ${color}12 30%, transparent 65%)`, animation: "pulseGlow 2s ease-in-out infinite" }}
       />
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
         style={{
-          width: "140%", height: "140%", borderRadius: "50%", animation: "spinSlow 10s linear infinite",
+          width: "180%", height: "180%", borderRadius: "50%", animation: "spinSlow 8s linear infinite",
           background: `conic-gradient(from 0deg, transparent 0deg, ${color}12 30deg, transparent 60deg, transparent 90deg, ${color}0a 120deg, transparent 150deg, transparent 180deg, ${color}12 210deg, transparent 240deg, transparent 270deg, ${color}0a 300deg, transparent 330deg, transparent 360deg)`,
         }}
       />
@@ -315,10 +380,26 @@ function BlurOverlay({ active, onRelease }: { active: boolean; onRelease: () => 
       className="fixed inset-0 z-[9998]"
       onClick={onRelease}
       style={{
-        background: "hsl(0 0% 0% / 0.7)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
+        background: "hsl(0 0% 0% / 0.85)",
+        backdropFilter: "blur(24px) saturate(0.5)",
+        WebkitBackdropFilter: "blur(24px) saturate(0.5)",
         animation: "fade-in 0.3s ease-out",
+      }}
+    />
+  );
+}
+
+/* Charging blur overlay — lighter version shown during hold before reveal */
+function ChargingBlurOverlay({ active, intensity }: { active: boolean; intensity: number }) {
+  if (!active) return null;
+  return (
+    <div
+      className="fixed inset-0 z-[9997] pointer-events-none"
+      style={{
+        background: `hsl(0 0% 0% / ${0.3 + intensity * 0.35})`,
+        backdropFilter: `blur(${Math.round(intensity * 16)}px)`,
+        WebkitBackdropFilter: `blur(${Math.round(intensity * 16)}px)`,
+        transition: "background 0.15s, backdrop-filter 0.15s",
       }}
     />
   );
@@ -328,7 +409,6 @@ const HOLD_DURATION = 600;
 
 export default function PropertyCardCinematic({ property, index, onTap, isWishlisted = false, onToggleWishlist }: PropertyCardCinematicProps) {
   const [imgLoaded, setImgLoaded] = useState(false);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [isActive, setIsActive] = useState(false);
 
   const [revealed, setRevealed] = useState(false);
@@ -357,8 +437,10 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
   };
   const totalPower = Math.round((stats.power + stats.vibe + stats.capacity + stats.demand) / 4);
 
-  const holoX = 50 + tilt.y * 4;
-  const holoY = 50 + tilt.x * 4;
+  const isCharging = chargeProgress > 0 && !revealed;
+
+  const holoX = 50;
+  const holoY = 50;
 
   const discount = property.discountLabel || (property.basePrice >= 3000 ? "20% OFF" : null);
   const maskedPrice = "₹X,XXX";
@@ -384,7 +466,6 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
     setRevealed(false);
     setChargeProgress(0);
     setIsActive(false);
-    setTilt({ x: 0, y: 0 });
     isHoldingRef.current = false;
     didRevealRef.current = false;
     clearTimers();
@@ -399,7 +480,6 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
     hasSwipedRef.current = false;
     didRevealRef.current = false;
     holdCancelledRef.current = false;
-    setTilt({ x: 0, y: 0 });
     setIsActive(true);
 
     const startTime = Date.now();
@@ -462,7 +542,6 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
     if (!didRevealRef.current) {
       setChargeProgress(0);
       setIsActive(false);
-      setTilt({ x: 0, y: 0 });
       return;
     }
 
@@ -479,7 +558,6 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
     hasSwipedRef.current = false;
     didRevealRef.current = false;
     holdCancelledRef.current = false;
-    setTilt({ x: 0, y: 0 });
     setIsActive(true);
 
     const startTime = Date.now();
@@ -504,23 +582,13 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
 
     setChargeProgress(0);
     setIsActive(false);
-    setTilt({ x: 0, y: 0 });
   }, [clearTimers, doRelease]);
-
-  const onMouseMoveHandler = useCallback((e: React.MouseEvent) => {
-    if (!cardRef.current || isHoldingRef.current || revealed) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-    setTilt({ x: y * -18, y: x * 18 });
-  }, [revealed]);
 
   const onMouseLeave = useCallback(() => {
     clearTimers();
     isHoldingRef.current = false;
     if (didRevealRef.current) return;
     setIsActive(false);
-    setTilt({ x: 0, y: 0 });
     setChargeProgress(0);
   }, [clearTimers]);
 
@@ -532,7 +600,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
     const prevOverflow = body.style.overflow;
     const prevTouchAction = body.style.touchAction;
 
-    if (revealed) {
+    if (revealed || isCharging) {
       body.style.overflow = "hidden";
       body.style.touchAction = "none";
     }
@@ -541,33 +609,34 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
       body.style.overflow = prevOverflow;
       body.style.touchAction = prevTouchAction;
     };
-  }, [revealed]);
+  }, [revealed, isCharging]);
 
   return (
     <>
       {/* Blur overlay when revealed */}
       <BlurOverlay active={revealed} onRelease={doRelease} />
+      {/* Progressive blur during charge */}
+      <ChargingBlurOverlay active={isCharging} intensity={chargeProgress} />
 
       <div
         className="mx-5 relative overflow-x-clip"
         style={{
-          perspective: "1200px",
           userSelect: "none",
           WebkitUserSelect: "none",
           WebkitTouchCallout: "none",
-          zIndex: revealed ? 9999 : "auto",
+          zIndex: revealed ? 9999 : isCharging ? 9998 : "auto",
         } as React.CSSProperties}
       >
-        <LightRays color={rarityInfo.color} active={revealed} />
+        <LightRays color={rarityInfo.color} active={revealed || isCharging} />
 
         {/* Ambient glow */}
         <div
-          className="absolute inset-0 -m-10 pointer-events-none z-0 rounded-[40px]"
+          className="absolute inset-0 -m-14 pointer-events-none z-0 rounded-[40px]"
           style={{
-            background: `radial-gradient(ellipse at 50% 60%, ${rarityInfo.glow} 0%, transparent 70%)`,
-            opacity: revealed ? 0.8 : isActive ? 0.25 : 0.08,
-            transition: "opacity 0.6s ease",
-            filter: "blur(24px)",
+            background: `radial-gradient(ellipse at 50% 60%, ${rarityInfo.glow} 0%, ${rarityInfo.color}20 40%, transparent 70%)`,
+            opacity: revealed ? 1 : isCharging ? 0.3 + chargeProgress * 0.5 : isActive ? 0.15 : 0.06,
+            transition: "opacity 0.3s ease",
+            filter: "blur(30px)",
           }}
         />
 
@@ -579,14 +648,14 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
           onTouchEnd={onTouchEndHandler}
           onMouseDown={onMouseDown}
           onMouseUp={onMouseUp}
-          onMouseMove={onMouseMoveHandler}
           onMouseLeave={onMouseLeave}
           onContextMenu={(e) => e.preventDefault()}
           style={{
-            height: revealed ? "380px" : "340px",
-            transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(${revealed ? 1.03 : isActive ? 1.01 : 1})`,
-            transition: revealed ? "transform 0.08s ease-out, height 0.5s cubic-bezier(0.34,1.56,0.64,1)" : "transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.5s ease",
-            transformStyle: "preserve-3d",
+            height: revealed ? "390px" : "340px",
+            transform: `scale(${revealed ? 1.04 : isCharging ? 1.01 + chargeProgress * 0.02 : 1})`,
+            transition: revealed
+              ? "transform 0.4s cubic-bezier(0.34,1.56,0.64,1), height 0.5s cubic-bezier(0.34,1.56,0.64,1)"
+              : "transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.5s ease",
             cursor: "grab",
             touchAction: revealed ? "none" : "pan-y",
           }}
@@ -596,11 +665,13 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
             className="absolute inset-0 overflow-hidden"
             style={{
               borderRadius: "20px",
-              border: `2px solid ${revealed ? rarityInfo.color + "aa" : rarityInfo.color + "25"}`,
+              border: `2px solid ${revealed ? rarityInfo.color + "cc" : isCharging ? rarityInfo.color + "60" : rarityInfo.color + "25"}`,
               boxShadow: revealed
-                ? `0 40px 100px ${rarityInfo.glow}, 0 0 0 1px ${rarityInfo.color}60, 0 0 100px ${rarityInfo.color}40, ${tilt.y * 2}px ${-tilt.x * 2}px 60px ${rarityInfo.glow}`
-                : `0 12px 40px hsl(var(--foreground) / 0.15), 0 0 0 1px ${rarityInfo.color}15`,
-              transition: "border-color 0.5s, box-shadow 0.5s",
+                ? `0 0 80px ${rarityInfo.glow}, 0 0 0 1px ${rarityInfo.color}80, 0 30px 80px ${rarityInfo.color}50, 0 0 120px ${rarityInfo.color}30`
+                : isCharging
+                  ? `0 0 ${20 + chargeProgress * 40}px ${rarityInfo.color}${Math.round(20 + chargeProgress * 40).toString(16).padStart(2, '0')}, 0 0 0 1px ${rarityInfo.color}30, 0 20px 60px hsl(var(--foreground) / 0.2)`
+                  : `0 12px 40px hsl(var(--foreground) / 0.15), 0 0 0 1px ${rarityInfo.color}15`,
+              transition: "border-color 0.3s, box-shadow 0.3s",
             }}
           >
             {/* Background image */}
@@ -629,7 +700,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
                   radial-gradient(circle at ${holoX - 15}% ${holoY + 15}%, hsl(240 100% 60% / 0.12) 0%, transparent 25%),
                   radial-gradient(circle at ${holoX - 5}% ${holoY + 5}%, ${rarityInfo.color}15 0%, transparent 35%)
                 `,
-                opacity: revealed ? 1 : 0,
+                opacity: revealed ? 1 : isCharging ? chargeProgress * 0.6 : 0,
                 transition: "opacity 0.5s",
               }}
             />
@@ -638,16 +709,17 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
             <div
               className="absolute inset-0 pointer-events-none z-10"
               style={{
-                background: `linear-gradient(${105 + tilt.y * 3}deg, transparent 30%, hsl(0 0% 100% / ${revealed ? 0.12 : 0}) 50%, transparent 70%)`,
+                background: `linear-gradient(105deg, transparent 30%, hsl(0 0% 100% / ${revealed ? 0.15 : isCharging ? chargeProgress * 0.08 : 0}) 50%, transparent 70%)`,
               }}
             />
 
             {/* Scan-lines during reveal */}
-            {revealed && (
+            {(revealed || isCharging) && (
               <div className="absolute inset-0 pointer-events-none z-10" style={{ background: "repeating-linear-gradient(0deg, transparent 0px, transparent 3px, hsl(0 0% 100% / 0.015) 3px, hsl(0 0% 100% / 0.015) 4px)" }} />
             )}
 
-            <EdgeGlow color={rarityInfo.color} active={revealed} />
+            <EdgeGlow color={rarityInfo.color} active={revealed || isCharging} />
+            <SmokeEffect color={rarityInfo.color} active={revealed || isCharging} />
 
             {/* Dark overlay */}
             <div
@@ -660,7 +732,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
               }}
             />
 
-            <FloatingParticles color={rarityInfo.color} active={revealed} />
+            <FloatingParticles color={rarityInfo.color} active={revealed || isCharging} />
             <ChargingRing progress={chargeProgress} color={rarityInfo.color} />
             <RevealFlash active={revealFlash} color={rarityInfo.color} />
 
@@ -696,8 +768,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
                   background: `${rarityInfo.color}18`,
                   border: `1px solid ${rarityInfo.color}35`,
                   backdropFilter: "blur(12px)",
-                  transform: `translateZ(25px) translate(${tilt.y * 1.5}px, ${tilt.x * 1.5}px)`,
-                  boxShadow: revealed ? `0 0 25px ${rarityInfo.glow}, 0 0 50px ${rarityInfo.color}15` : `0 0 8px ${rarityInfo.color}10`,
+                  boxShadow: revealed || isCharging ? `0 0 25px ${rarityInfo.glow}, 0 0 50px ${rarityInfo.color}15` : `0 0 8px ${rarityInfo.color}10`,
                   transition: "box-shadow 0.5s",
                 }}
               >
@@ -707,7 +778,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
                 </span>
               </div>
 
-              <div className="flex items-center gap-2" style={{ transform: `translateZ(20px) translate(${tilt.y}px, ${tilt.x}px)` }}>
+              <div className="flex items-center gap-2">
                 {discount && (
                   <div
                     className="px-2 py-0.5 rounded-md text-[8px] font-black tracking-wider"
@@ -715,13 +786,13 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
                       background: "hsl(var(--success) / 0.25)",
                       color: "hsl(var(--success) / 1)",
                       border: "1px solid hsl(var(--success) / 0.3)",
-                      boxShadow: revealed ? "0 0 12px hsl(var(--success) / 0.35)" : "none",
-                      transform: revealed ? "translateY(0) scale(1)" : "translateY(1px) scale(0.96)",
-                      opacity: revealed ? 1 : 0.75,
+                      boxShadow: (revealed || isCharging) ? "0 0 12px hsl(var(--success) / 0.35)" : "none",
+                      transform: (revealed || isCharging) ? "translateY(0) scale(1)" : "translateY(1px) scale(0.96)",
+                      opacity: (revealed || isCharging) ? 1 : 0.75,
                       transition: "box-shadow 0.45s, transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s",
                     }}
                   >
-                    {revealed ? discount : "X% OFF"}
+                    {(revealed || isCharging) ? discount : "X% OFF"}
                   </div>
                 )}
                 <button
@@ -741,7 +812,6 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
             {/* ── Bottom content — always visible ── */}
             <div
               className="absolute bottom-0 left-0 right-0 p-4 z-20"
-              style={{ transform: `translateZ(18px) translate(${tilt.y * 1.2}px, ${tilt.x * 1.2}px)` }}
             >
               {/* Rating + Hot badge */}
               <div className="flex items-center gap-1.5 mb-1">
@@ -776,16 +846,16 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
                   size={13}
                   style={{
                     color: rarityInfo.color,
-                    filter: `drop-shadow(0 0 ${revealed ? "8px" : "4px"} ${rarityInfo.color})`,
-                    animation: revealed ? "energyPulse 1s ease-in-out infinite" : "none",
+                    filter: `drop-shadow(0 0 ${(revealed || isCharging) ? "8px" : "4px"} ${rarityInfo.color})`,
+                    animation: (revealed || isCharging) ? "energyPulse 1s ease-in-out infinite" : "none",
                     transition: "filter 0.5s",
                   }}
                 />
                 <div className="relative h-7 min-w-[106px]">
-                  <PriceCounter price={property.basePrice} revealed={revealed} color={rarityInfo.color} isCharging={chargeProgress > 0 && !revealed} />
+                  <PriceCounter price={property.basePrice} revealed={revealed} color={rarityInfo.color} isCharging={isCharging} />
                 </div>
                 <span className="text-[10px] text-white/35 ml-0.5">/session</span>
-                <XpRing level={totalPower} color={rarityInfo.color} revealed={revealed} />
+                <XpRing level={totalPower} color={rarityInfo.color} revealed={revealed || isCharging} />
               </div>
 
               {/* Stats — always visible, values count up after hold with staggered delays */}
@@ -798,10 +868,10 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
                 }}
               >
                 <div className="mt-3 space-y-1.5 pt-2" style={{ borderTop: `1px solid ${rarityInfo.color}20` }}>
-                  <StatBar label="PWR" value={stats.power} max={99} color={rarityInfo.color} revealed={revealed} delay={0} icon={<Zap size={9} style={{ color: rarityInfo.color }} />} />
-                  <StatBar label="VIBE" value={stats.vibe} max={99} color="hsl(45 100% 55%)" revealed={revealed} delay={120} icon={<Star size={9} style={{ color: "hsl(45 100% 55%)" }} />} />
-                  <StatBar label="SIZE" value={stats.capacity} max={99} color="hsl(var(--success))" revealed={revealed} delay={240} icon={<Users size={9} style={{ color: "hsl(var(--success))" }} />} />
-                  <StatBar label="HYPE" value={stats.demand} max={99} color="hsl(var(--destructive))" revealed={revealed} delay={360} icon={<Flame size={9} style={{ color: "hsl(var(--destructive))" }} />} />
+                  <StatBar label="PWR" value={stats.power} max={99} color={rarityInfo.color} revealed={revealed} isCharging={isCharging} delay={0} icon={<Zap size={9} style={{ color: rarityInfo.color }} />} />
+                  <StatBar label="VIBE" value={stats.vibe} max={99} color="hsl(45 100% 55%)" revealed={revealed} isCharging={isCharging} delay={80} icon={<Star size={9} style={{ color: "hsl(45 100% 55%)" }} />} />
+                  <StatBar label="SIZE" value={stats.capacity} max={99} color="hsl(var(--success))" revealed={revealed} isCharging={isCharging} delay={160} icon={<Users size={9} style={{ color: "hsl(var(--success))" }} />} />
+                  <StatBar label="HYPE" value={stats.demand} max={99} color="hsl(var(--destructive))" revealed={revealed} isCharging={isCharging} delay={240} icon={<Flame size={9} style={{ color: "hsl(var(--destructive))" }} />} />
                 </div>
               </div>
 
@@ -837,12 +907,12 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
                   style={{
                     [v]: "6px",
                     [h]: "6px",
-                    borderColor: revealed ? `${rarityInfo.color}90` : `${rarityInfo.color}25`,
+                    borderColor: revealed ? `${rarityInfo.color}90` : isCharging ? `${rarityInfo.color}50` : `${rarityInfo.color}25`,
                     [`border${v === "top" ? "Top" : "Bottom"}Width`]: "1.5px",
                     [`border${h === "left" ? "Left" : "Right"}Width`]: "1.5px",
                     borderStyle: "solid",
                     borderRadius: corner === "top-left" ? "8px 0 0 0" : corner === "top-right" ? "0 8px 0 0" : corner === "bottom-left" ? "0 0 0 8px" : "0 0 8px 0",
-                    boxShadow: revealed ? `0 0 15px ${rarityInfo.color}50` : "none",
+                    boxShadow: (revealed || isCharging) ? `0 0 15px ${rarityInfo.color}50` : "none",
                     transition: "border-color 0.5s, box-shadow 0.5s",
                   }}
                 />
@@ -850,15 +920,8 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
             })}
           </div>
 
-          {/* Bottom ambient glow */}
-          <div
-            className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-4/5 h-14 rounded-full pointer-events-none blur-2xl"
-            style={{
-              background: rarityInfo.color,
-              opacity: revealed ? 0.5 : 0.06,
-              transition: "opacity 0.5s ease",
-            }}
-          />
+          {/* Platform glow beneath card */}
+          <PlatformGlow color={rarityInfo.color} active={revealed || isCharging} intensity={revealed ? 1 : chargeProgress} />
         </div>
       </div>
     </>
