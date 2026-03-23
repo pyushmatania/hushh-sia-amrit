@@ -398,6 +398,13 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
   const nightCount = dateRange?.from && dateRange?.to ? differenceInDays(dateRange.to, dateRange.from) : 0;
   const isStay = property.primaryCategory === "stay";
 
+  // Wire DB slot availability when date is selected
+  const dateStr = selectedDate ? selectedDate.toISOString().split("T")[0] : undefined;
+  const { slots: dbSlots, getSlotAvailability: getDbSlotAvail } = useSlotAvailability(
+    property.id,
+    dateStr
+  );
+
   return (
     <motion.div
       initial={{ opacity: 0, x: 40 }}
