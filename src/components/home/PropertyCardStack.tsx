@@ -509,8 +509,21 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
       </div>
 
       {/* Navigation dots */}
-      <div className="flex items-center justify-center gap-2.5 mt-3">
-        <button onClick={(e) => { e.stopPropagation(); goPrev(); }} className="w-7 h-7 rounded-full flex items-center justify-center active:scale-90 transition-transform bg-muted/60 backdrop-blur-sm">
+      <div className="relative z-40 flex items-center justify-center gap-2.5 mt-3" style={{ touchAction: "manipulation" }}>
+        <button
+          onTouchStart={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            blockCardTapBriefly();
+          }}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            blockCardTapBriefly();
+            goPrev();
+          }}
+          className="w-7 h-7 rounded-full flex items-center justify-center active:scale-90 transition-transform bg-muted/60 backdrop-blur-sm"
+        >
           <ChevronLeft size={13} className="text-foreground" />
         </button>
         <div className="flex gap-1.5 items-center">
@@ -521,7 +534,20 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
             </div>
           ))}
         </div>
-        <button onClick={(e) => { e.stopPropagation(); goNext(); }} className="w-7 h-7 rounded-full flex items-center justify-center active:scale-90 transition-transform bg-muted/60 backdrop-blur-sm">
+        <button
+          onTouchStart={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            blockCardTapBriefly();
+          }}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            blockCardTapBriefly();
+            goNext();
+          }}
+          className="w-7 h-7 rounded-full flex items-center justify-center active:scale-90 transition-transform bg-muted/60 backdrop-blur-sm"
+        >
           <ChevronRight size={13} className="text-foreground" />
         </button>
       </div>
