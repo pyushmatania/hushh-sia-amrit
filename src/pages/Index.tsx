@@ -93,6 +93,14 @@ export default function Index() {
     setActiveTab("home");
   }, []);
 
+  const handleExperienceTap = useCallback((pack: ExperiencePack) => {
+    const property = properties.find(p => p.id === pack.propertyId);
+    if (property) {
+      setScreen({ type: "experienceDetail", pack, property });
+      setActiveTab("home");
+    }
+  }, []);
+
   const handleBook = useCallback((property: Property, slotId: string, guests: number, date: Date, extras?: Property[], roomsCount?: number, extraMattresses?: number) => {
     setScreen({ type: "builder", property, slotId, guests, date, extras, roomsCount, extraMattresses });
   }, []);
