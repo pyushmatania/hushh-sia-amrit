@@ -1193,7 +1193,7 @@ const ARCHITECTURE_CHART = `graph TB
     subgraph CLOUD["LOVABLE CLOUD"]
         direction TB
         EF["Edge Functions x6"]
-        PG["PostgreSQL 38 tables + RLS"]
+        PG["PostgreSQL 45 tables + RLS"]
         ST["Storage images docs photos"]
         AU["Auth GoTrue"]
     end
