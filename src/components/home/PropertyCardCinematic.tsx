@@ -278,11 +278,15 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
     if (chargeIntervalRef.current) { clearInterval(chargeIntervalRef.current); chargeIntervalRef.current = null; }
   }, []);
 
+  const [revealFlash, setRevealFlash] = useState(false);
+
   const doReveal = useCallback(() => {
     setRevealed(true);
     setChargeProgress(1);
     didRevealRef.current = true;
+    setRevealFlash(true);
     hapticHeavy();
+    setTimeout(() => setRevealFlash(false), 600);
   }, []);
 
   const doRelease = useCallback(() => {
