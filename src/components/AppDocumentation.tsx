@@ -1100,23 +1100,320 @@ Tab 5: PROFILE — Hero → Stats → Achievements → Settings
 └─────────────────────────────────────────────┘
 \`\`\`
 
+### User App — Experience Builder
+\`\`\`
+┌─────────────────────────┐
+│ ← Experience Builder    │
+│ ┌─────────────────────┐ │
+│ │🍽 Food│🎨Decor│🎵DJ │ │  Category tabs
+│ └─────────────────────┘ │
+│ Running Total: ₹1,200   │  Sticky header
+├─────────────────────────┤
+│ ┌───────────────────┐   │
+│ │ 🍕 Pizza Margherita│   │
+│ │ ₹350   [- 1 +]   │   │  Item card
+│ └───────────────────┘   │
+│ ┌───────────────────┐   │
+│ │ 🍔 Veg Burger     │   │
+│ │ ₹250   [- 0 +]   │   │
+│ └───────────────────┘   │
+│ ┌───────────────────┐   │
+│ │ 🍺 Craft Beer     │   │
+│ │ ₹200   [- 2 +]   │   │
+│ └───────────────────┘   │
+│ ─── Decor ───           │
+│ ┌───────────────────┐   │
+│ │ 🕯 Candle Setup   │   │
+│ │ ₹500   [- 1 +]   │   │
+│ └───────────────────┘   │
+│ ─── Entertainment ───   │
+│ ┌───────────────────┐   │
+│ │ 🎸 DJ + Lights    │   │
+│ │ ₹2,000 [- 0 +]   │   │
+│ └───────────────────┘   │
+│ ─── Transport ───       │
+│ ┌───────────────────┐   │
+│ │ 🚗 Pickup & Drop  │   │
+│ │ ₹800   [- 0 +]   │   │
+│ └───────────────────┘   │
+│                         │
+│ ┌═══════════════════┐   │
+│ │ 4 items · ₹1,550  │   │  Running total bar
+│ │   [Continue →]    │   │
+│ └═══════════════════┘   │
+└─────────────────────────┘
+\`\`\`
+
+### User App — Checkout Screen
+\`\`\`
+┌─────────────────────────┐
+│ ← Checkout              │
+├─────────────────────────┤
+│ ┌─────────────────────┐ │
+│ │ 📸 Villa Sunset     │ │  Property card
+│ │ Mar 25 · Evening    │ │
+│ │ 4 Guests · 2 Rooms  │ │
+│ └─────────────────────┘ │
+│                         │
+│ ── Price Breakdown ──   │
+│ Base (Evening Slot) ₹2,500│
+│ Extra Room        ₹1,000│
+│ Extra Mattress      ₹300│
+│ ── Add-ons ──           │
+│ 🍕 Pizza ×1        ₹350│
+│ 🕯 Candles ×1      ₹500│
+│ 🍺 Beer ×2         ₹400│
+│ ─────────────────       │
+│ Subtotal          ₹5,050│
+│ GST (18%)           ₹909│
+│ ─────────────────       │
+│                         │
+│ ┌─────────────────────┐ │
+│ │ 🎟 [Enter Coupon___]│ │  Coupon input
+│ │      [Apply]        │ │
+│ └─────────────────────┘ │
+│ Discount          -₹500 │
+│                         │
+│ ╔═════════════════════╗ │
+│ ║ TOTAL       ₹5,459  ║ │  Bold total
+│ ║  [Confirm Booking →]║ │
+│ ╚═════════════════════╝ │
+│                         │
+│ ⚠️ Conflict: 1 existing │  Optional warning
+│    booking on this date │
+└─────────────────────────┘
+\`\`\`
+
+### User App — Live Ordering Sheet
+\`\`\`
+┌─────────────────────────┐
+│ ══╸  ╺══                │  Drag handle
+│ 🍽 Order Food     [×]   │
+│ Active Trip · Villa Eve │
+├─────────────────────────┤
+│ [All][🍕Food][🍺Drinks] │  Category chips
+│ [🍿Snacks][🍨Desserts]  │
+├─────────────────────────┤
+│ ┌───────────────────┐   │
+│ │ 🍕 Margherita     │   │
+│ │ ₹350  ⭐4.5      │   │
+│ │ [Add to Cart]     │   │
+│ └───────────────────┘   │
+│ ┌───────────────────┐   │
+│ │ 🍔 Smash Burger   │   │
+│ │ ₹250  ⭐4.8      │   │
+│ │ [- 1 +]           │   │  Already in cart
+│ └───────────────────┘   │
+│ ┌───────────────────┐   │
+│ │ 🍺 Craft IPA      │   │
+│ │ ₹200  ⭐4.2      │   │
+│ │ [Add to Cart]     │   │
+│ └───────────────────┘   │
+│                         │
+│ ╔═════════════════════╗ │
+│ ║ 🛒 2 items · ₹500  ║ │  Cart bar
+│ ║   [Place Order →]  ║ │
+│ ╚═════════════════════╝ │
+│                         │
+│ ── Order History ──     │
+│ #ORD-001 · ₹750 · ✅   │  Previous orders
+│ #ORD-002 · ₹350 · 🔄   │  In progress
+└─────────────────────────┘
+\`\`\`
+
+### User App — Search Screen
+\`\`\`
+┌─────────────────────────┐
+│ [🔍 Search_________] [×]│  Auto-focus input
+├─────────────────────────┤
+│ [🏠All][🏡Stay][🎭Exp] │  Category chips
+│ [✨Cur][🛎Svc][💼Work]  │
+├─────────────────────────┤
+│ Recent Searches         │
+│ 🕐 "farmhouse"         │
+│ 🕐 "candlelight dinner"│
+│ 🕐 "pool party"        │
+├─────────────────────────┤
+│ ── Results (3) ──       │  Real-time filter
+│ ┌──────┐ ┌──────┐      │
+│ │Villa │ │Farm  │      │  Property cards
+│ │₹2.5K │ │₹1.8K │      │
+│ │⭐4.8 │ │⭐4.6 │      │
+│ └──────┘ └──────┘      │
+│ ┌──────┐               │
+│ │Work  │               │
+│ │₹999  │               │
+│ │⭐4.9 │               │
+│ └──────┘               │
+│                         │
+│ ── No results? ──       │  Empty state
+│ 😴 "Try a different     │
+│     search term"        │
+│ 🏠  ❤️  ✈️  💬  👤    │
+└─────────────────────────┘
+\`\`\`
+
+### User App — Map View
+\`\`\`
+┌─────────────────────────┐
+│ ← Map View    [List 📋]│
+├─────────────────────────┤
+│                         │
+│   ┌─ JEYPORE MAP ─────┐│  Leaflet map
+│   │                    ││
+│   │    📍Villa         ││  Pin markers
+│   │         📍Farm     ││
+│   │  📍WorkPod         ││
+│   │              📍Roof││
+│   │    📍Pool          ││
+│   │                    ││
+│   └────────────────────┘│
+│                         │
+│ ┌═══════════════════════┐│  Preview card
+│ │ 📸  Villa Sunset Eve  ││  (on pin tap)
+│ │ ⭐4.8 · ₹2,500/slot  ││
+│ │ 📍 2.3 km away       ││
+│ │ [View Details →]      ││
+│ └═══════════════════════┘│
+│ 🏠  ❤️  ✈️  💬  👤    │
+└─────────────────────────┘
+\`\`\`
+
+### User App — Loyalty & Spin Wheel
+\`\`\`
+┌─────────────────────────┐
+│ ← Loyalty       ₹1,240 │  Points balance
+├─────────────────────────┤
+│ ╔═════════════════════╗ │
+│ ║ 🥇 GOLD MEMBER     ║ │  Tier card
+│ ║ 1,240 / 2,000 pts  ║ │
+│ ║ ████████░░░░ 62%    ║ │  Progress bar
+│ ║ Next: Platinum      ║ │
+│ ╚═════════════════════╝ │
+│                         │
+│ ── Daily Spin ──        │
+│ ┌───────────────────┐   │
+│ │    ╱ 50 ╲         │   │
+│ │   / 100 ╲ 25      │   │  Spin wheel
+│ │  │ 200 │ 10       │   │
+│ │   ╲ 75 ╱ 150      │   │
+│ │    ╲__╱           │   │
+│ │   [🎰 SPIN!]     │   │
+│ └───────────────────┘   │
+│                         │
+│ ── Transaction History ─│
+│ +50  🎫 Booking pts     │
+│ +25  🎰 Daily spin      │
+│ -100 🎁 Redeemed coupon │
+│ +10  ⭐ Review bonus    │
+│                         │
+│ ── Milestones ──        │
+│ 🌟 First Booking ✅     │
+│ ⭐ 5-Star Reviewer ✅   │
+│ 🎉 Party Animal (3/5)  │
+│ 🏠  ❤️  ✈️  💬  👤    │
+└─────────────────────────┘
+\`\`\`
+
+### User App — Auth / Onboarding
+\`\`\`
+┌─────────────────────────┐
+│                         │
+│         🤫 HUSHH        │  Logo animation
+│                         │
+│  ── Welcome ──          │
+│  "Private experiences,  │
+│   curated for you"      │
+│                         │
+│ ┌─────────────────────┐ │
+│ │ 📧 [Email_________] │ │
+│ │ 🔒 [Password______] │ │
+│ │                     │ │
+│ │   [Sign In →]       │ │  Primary CTA
+│ │                     │ │
+│ │   ── or ──          │ │
+│ │                     │ │
+│ │   [Create Account]  │ │  Secondary
+│ │                     │ │
+│ │ [Forgot Password?]  │ │
+│ └─────────────────────┘ │
+│                         │
+│   [Continue as Guest →] │  Skip auth
+│                         │
+│ ── Sign Up Variant ──   │
+│ ┌─────────────────────┐ │
+│ │ 👤 [Full Name_____] │ │
+│ │ 📧 [Email_________] │ │
+│ │ 🔒 [Password______] │ │
+│ │ 🔒 [Confirm_______] │ │
+│ │   [Create Account →]│ │
+│ │ ✉️ Verify your email │ │
+│ └─────────────────────┘ │
+└─────────────────────────┘
+\`\`\`
+
+### User App — Notifications Screen
+\`\`\`
+┌─────────────────────────┐
+│ ← Notifications [Clear] │
+├─────────────────────────┤
+│ [All][Bookings][Orders] │  Filter tabs
+│ [Reviews][System]       │
+├─────────────────────────┤
+│ ── Today ──             │
+│ ┌───────────────────┐   │
+│ │🎫 Booking Confirmed│   │
+│ │ HUSHH-UP0025 for  │   │  Unread (bold)
+│ │ Mar 25 · 2m ago   │   │
+│ │               [●] │   │  Blue dot
+│ └───────────────────┘   │
+│ ┌───────────────────┐   │
+│ │🍽 Order Ready      │   │
+│ │ Your order #ORD-01│   │  Read (muted)
+│ │ is ready · 1h ago │   │
+│ └───────────────────┘   │
+│                         │
+│ ── Yesterday ──         │
+│ ┌───────────────────┐   │
+│ │⭐ New Review       │   │
+│ │ Priya left a 5★   │   │
+│ │ review · 1d ago   │   │
+│ └───────────────────┘   │
+│ ┌───────────────────┐   │
+│ │🎰 Spin & Win!     │   │
+│ │ You won 50 pts!   │   │
+│ │ · 1d ago          │   │
+│ └───────────────────┘   │
+│                         │
+│ ── Empty State ──       │
+│ 🔔 "All caught up!     │
+│    No new notifications"│
+│ 🏠  ❤️  ✈️  💬  👤    │
+└─────────────────────────┘
+\`\`\`
+
 ### Database ER Diagram
 \`\`\`
 auth.users ─┬─ profiles (1:1)
-            ├─ bookings → orders → order_items
+            ├─ bookings → payments → refunds
+            │         → invoices
+            │         → orders → order_items
+            │         → booking_splits
+            │         → booking_photos
             ├─ wishlists → host_listings
             ├─ reviews → review_responses
             ├─ conversations → messages
             ├─ notifications
+            ├─ notification_preferences
+            ├─ push_tokens
             ├─ loyalty_transactions
             ├─ referral_codes → referral_uses
             ├─ user_roles
             ├─ user_milestones
-            ├─ identity_verifications
-            ├─ booking_photos
-            └─ booking_splits
+            └─ identity_verifications
 
 host_listings ── curations · inventory · property_tags (via tag_assignments)
+             └─ property_slots → slot_availability
 staff_members ── staff_attendance · staff_leaves · staff_salary_payments
 standalone: campaigns · coupons · expenses · budget_allocations · app_config · audit_logs · client_notes · experience_packages · order_notes · staff_tasks
 \`\`\`
