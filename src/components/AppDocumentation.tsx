@@ -531,7 +531,7 @@ Splash → Home → Browse/Search/Map → Property Card → Detail → Select Sl
 
 ## 🏗 Architecture
 
-80+ components, 20+ hooks, 38 database tables, 6 edge functions
+80+ components, 22+ hooks, 45 database tables, 6 edge functions
 
 React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion 12 · React Query · React Router v6 · Lovable Cloud · Recharts · React Hook Form + Zod
 
