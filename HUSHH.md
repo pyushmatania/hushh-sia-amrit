@@ -1400,6 +1400,14 @@ standalone: campaigns · coupons · expenses · budget_allocations · app_config
 - **Total hooks**: 27 (up from 22)
 - **Documentation & easter egg UI synced** with all new hooks
 
+### v1.26 — Staff Portal Enhancement
+- **3 new staff portal tabs**: Attendance, Leave, Salary (total: 7 tabs)
+- **StaffAttendance** — Self check-in/check-out with time tracking, hours worked calculation, overtime detection, 14-day history
+- **StaffLeaves** — Leave request form (Casual/Sick/Earned/Emergency), quota progress bars, approval status tracking, rejection notes
+- **StaffSalary** — Monthly salary summary with base/bonus/deductions breakdown, net pay calculation, payment history, total earnings
+- **Staff profile linking** — Components check `staff_members.user_id` to link auth users to staff profiles
+- **StaffLayout updated** — 7-tab scrollable bottom nav (Orders, Check-In, Tasks, Clock, Leave, Pay, Stock)
+
 ---
 
 ## 📐 Conventions & Guidelines
