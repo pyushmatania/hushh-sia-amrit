@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, X, SlidersHorizontal, MapPin, Users, Calendar as CalendarIcon,
-  Star, BadgeCheck, ChevronDown, ArrowUpDown, Minus, Plus, Sparkles
+  Star, BadgeCheck, ChevronDown, ArrowUpDown, Minus, Plus, Sparkles, Loader2
 } from "lucide-react";
 import { useState, useMemo, useCallback } from "react";
 import { format } from "date-fns";
@@ -9,6 +9,7 @@ import { properties, type Property } from "@/data/properties";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { useSearch, type SearchResult } from "@/hooks/use-search";
 
 interface SearchScreenProps {
   onPropertyTap: (property: Property) => void;
