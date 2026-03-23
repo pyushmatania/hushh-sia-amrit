@@ -2057,6 +2057,8 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
                 <p>        useHomepageFilters · useVideoCards</p>
                 <p>UI: useTheme · usePrivacyMode · useUnreadCount</p>
                 <p>Net: useOnlineStatus</p>
+                <p>v2: usePayments · useSlotAvailability</p>
+                <p>    useInvoices · useOrders · useSearch</p>
               </div>
             </div>
             <div>
