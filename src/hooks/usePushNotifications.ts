@@ -3,61 +3,26 @@ import { supabase } from '@/integrations/supabase/client';
 
 const VAPID_PUBLIC_KEY = 'BOZAnbOohkjHyyrTWPRRvQT7FYgNccEd_odHdTLUDmz9vLNvNkznlQCnvNUc7DBEgxR80WBcYhnctqLgafZmXJ4';
 
-function urlBase64ToUint8Array(base64String: string): Uint8Array {
-  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+function urlBase64ToUint8Array(base64String: string): Uint8Array<ArrayBuffer> {
+  const normalized = base64String.trim();
+  const padding = '='.repeat((4 - (normalized.length % 4)) % 4);
+  const base64 = (normalized + padding).replace(/-/g, '+').replace(/_/g, '/');
   const rawData = window.atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
+  const outputArray = new Uint8Array(rawData.length) as Uint8Array<ArrayBuffer>;
   for (let i = 0; i < rawData.length; ++i) outputArray[i] = rawData.charCodeAt(i);
   return outputArray;
 }
-
-export function usePushNotifications() {
-  const [isSupported, setIsSupported] = useState(false);
-  const [isSubscribed, setIsSubscribed] = useState(false);
-  const [permission, setPermission] = useState<NotificationPermission>('default');
-  const [isLoading, setIsLoading] = useState(false);
-  const [isiOS, setIsiOS] = useState(false);
-  const [isPWA, setIsPWA] = useState(false);
-
-  useEffect(() => {
-    const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
-    setIsiOS(isIOSDevice);
-    const isPWAMode = window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone === true;
-    setIsPWA(isPWAMode);
-
-    const supported = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
-    setIsSupported(isIOSDevice && !isPWAMode ? false : supported);
-
-    if ('Notification' in window) setPermission(Notification.permission);
-    checkSubscription();
-  }, []);
-
-  const checkSubscription = async () => {
-    try {
-      if (!('serviceWorker' in navigator)) return;
-      const reg = await navigator.serviceWorker.getRegistration('/sw-push.js');
-      if (!reg) { setIsSubscribed(false); return; }
-      const sub = await reg.pushManager.getSubscription();
-      setIsSubscribed(!!sub);
-    } catch { setIsSubscribed(false); }
-  };
-
-  const subscribe = useCallback(async () => {
-    if (!isSupported) throw new Error('Push notifications are not supported');
-    setIsLoading(true);
-    try {
-      const perm = await Notification.requestPermission();
-      setPermission(perm);
-      if (perm !== 'granted') throw new Error('Notification permission denied');
-
-      const registration = await navigator.serviceWorker.register('/sw-push.js', { scope: '/' });
+...
       await navigator.serviceWorker.ready;
 
       const appServerKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
+      if (appServerKey.length !== 65 || appServerKey[0] !== 0x04) {
+        throw new Error('Invalid VAPID public key format');
+      }
+
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: appServerKey.buffer.slice(appServerKey.byteOffset, appServerKey.byteOffset + appServerKey.byteLength) as ArrayBuffer,
+        applicationServerKey: appServerKey as BufferSource,
       });
 
       const p256dhKey = subscription.getKey('p256dh');
