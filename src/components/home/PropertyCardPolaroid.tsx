@@ -215,20 +215,22 @@ export default function PropertyCardPolaroid({ property, index, onTap, isWishlis
           </div>
         </div>
 
-        {/* Postage stamp corner */}
+        {/* Bottom-right accent tape */}
         <div
-          className="absolute -bottom-2 -right-2 z-20 flex flex-col items-center justify-center"
+          className="absolute -bottom-1 -right-2 z-20 overflow-hidden"
           style={{
-            width: "36px",
-            height: "42px",
+            width: "55px",
+            height: "16px",
             background: tapeGrad,
-            borderRadius: "3px",
-            boxShadow: "0 2px 8px hsl(var(--foreground) / 0.12)",
-            border: "3px dashed hsl(var(--card) / 0.6)",
+            borderRadius: "2px",
+            transform: "rotate(12deg)",
+            opacity: 0.55,
           }}
         >
-          <span className="text-[7px] font-black text-white/90 leading-none">H</span>
-          <span className="text-[5px] text-white/70 font-bold mt-0.5">₹{Math.round(property.basePrice / 100)}</span>
+          <div className="absolute inset-0" style={{
+            backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23b)' opacity='0.4'/%3E%3C/svg%3E\")",
+            mixBlendMode: "overlay",
+          }} />
         </div>
       </div>
     </div>
