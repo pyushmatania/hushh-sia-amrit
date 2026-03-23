@@ -234,13 +234,93 @@ export const changeLog = [
       "All trip data wired to DB via useBookings hook with localStorage guest fallback",
     ],
   },
+  {
+    version: "1.14",
+    phase: "Loyalty & Rewards Redesign",
+    items: [
+      "Gamified Loyalty Screen with tabbed interface",
+      "Enhanced Spin Wheel with sound effects",
+    ],
+  },
+  {
+    version: "1.15",
+    phase: "Add-on Icons & Curated Listings",
+    items: [
+      "Per-item emoji icons, curated pack video backgrounds",
+    ],
+  },
+  {
+    version: "1.16",
+    phase: "Admin Panel Foundation",
+    items: [
+      "Admin layout with collapsible sidebar (22 nav items)",
+      "Command Palette (⌘K) with fuzzy search",
+      "Command Center dashboard with KPI cards, live activity feed",
+      "Role-based access control via user_roles table and has_role() function",
+      "Admin pages: Properties, Bookings, Users, Analytics, Curations, Campaigns, Coupons, Tags, Orders, Exports, AI Assistant, Smart Alerts, Audit Trail, Earnings, Dynamic Pricing, Achievements, Loyalty & Referrals",
+      "Floating Checklist widget",
+      "Edge functions: admin-ai, auto-notifications, smart-alerts, weekly-digest, property-history-ai",
+    ],
+  },
+  {
+    version: "1.17",
+    phase: "Admin CRM & Property History",
+    items: [
+      "Client Directory (CRM 2.0) — engagement scoring, journey timeline, stay/order/review aggregation",
+      "Property History — calendar-based stay tracking, chronological timeline, AI-powered search",
+      "AI search in Command Center, Client Directory, and Property History",
+      "Live Orders widget (Zomato-style), Live Pending tracker",
+      "Booking Heatmap visualization",
+      "Weekly Digest preview, Auto-Actions panel",
+      "Identity verification review queue in admin",
+    ],
+  },
+  {
+    version: "1.18",
+    phase: "Database-Driven CRUD & Inventory",
+    items: [
+      "Properties fully database-driven — all 28+ properties migrated to host_listings table",
+      "Full Property CRUD — admin can edit name, pricing, images, tags, amenities, slots, rules, status",
+      "Inventory Management — food/drink/activity stock tracking with low-stock alerts",
+      "host_listings schema expanded with 12 new columns",
+      "Coupons and campaigns seeded in database",
+      "Identity verification enforcement on booking flow",
+    ],
+  },
+  {
+    version: "1.19",
+    phase: "Dynamic App Configuration",
+    items: [
+      "app_config table — centralized key-value store for all runtime settings",
+      "Admin Settings page — 3-tab interface (General, Branding, Advanced)",
+      "Admin Homepage Manager — 4-tab interface (Sections, Videos, Filters, Tags)",
+      "Dynamic Branding — app_name, logo_url, app_tagline wired to SplashScreen and HomeScreen",
+      "Dynamic Homepage Sections — visibility toggles and drag-to-reorder",
+      "Dynamic Spotlight Videos — admin edits video URLs and overlay text",
+      "Dynamic Filter Pills — category filters editable in admin",
+      "Dynamic Support Contacts — support_phone, support_email, whatsapp_number wired to Messages",
+      "Tags merged into Homepage Manager",
+      "4 new hooks: useAppConfig, useHomepageSections, useHomepageFilters, useVideoCards",
+    ],
+  },
+  {
+    version: "1.20",
+    phase: "Social, Legal & Performance",
+    items: [
+      "Social Media Links — Instagram, Facebook, YouTube, Twitter in ProfileScreen footer",
+      "Terms & Privacy Sheet — dynamic legal links from branding config",
+      "SEO & Performance — non-render-blocking fonts, preconnect hints, lazy-loaded routes",
+      "All images converted to WebP format for optimal loading",
+      "Network dependency tree flattened — fonts loaded via HTML preload pattern",
+    ],
+  },
 ];
 
 // Generate the full HUSHH.md content from the changeLog + app info
 function generateFullDoc(): string {
   const header = `# 🏡 HUSHH — Private Experience Marketplace
 
-> **Made in Jeypore ❤️** | v1.0 | Internal Documentation & Blueprint
+> **Made in Jeypore ❤️** | v1.20 | Internal Documentation & Blueprint
 
 Hushh is a premium mobile-first marketplace for booking private experiences, stays, and curated lifestyle services in Jeypore, India.
 
@@ -313,13 +393,13 @@ Profile → Loyalty, Referrals, Host Dashboard, Settings, Theme, Auth
 
 React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion 12 · React Query · React Router v6 · Lovable Cloud · Recharts · React Hook Form + Zod
 
-40+ components, 15 hooks, 16 database tables
+80+ components, 20+ hooks, 30+ database tables
 
 ---
 
 ## 🗄 Database Tables
 
-profiles, bookings, wishlists, conversations, messages, notifications, reviews, review_responses, loyalty_transactions, referral_codes, referral_uses, host_listings, curations, orders, order_items, spin_history, user_milestones
+profiles, bookings, wishlists, conversations, messages, notifications, reviews, review_responses, loyalty_transactions, referral_codes, referral_uses, host_listings, curations, orders, order_items, spin_history, user_milestones, user_roles, app_config, inventory, experience_packages, booking_photos, booking_splits, coupons, campaigns, expenses, budget_allocations, staff_members, staff_tasks, staff_attendance, staff_leaves, staff_salary_payments, audit_logs, client_notes, order_notes, identity_verifications, property_tags, tag_assignments
 
 ---
 
@@ -381,7 +461,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
             </div>
             <div>
               <h1 className="text-lg font-bold text-foreground">Hushh Docs</h1>
-              <p className="text-[11px] text-muted-foreground">v1.0 · Internal Blueprint</p>
+              <p className="text-[11px] text-muted-foreground">v1.20 · Internal Blueprint</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -481,10 +561,34 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
             <li>Password reset flow</li>
             <li>Real wishlists, bookings, messages, notifications (database)</li>
             <li>Booking: Select slot → Builder → Checkout → Confirm</li>
-            <li>Loyalty: 5 pts per ₹100, tier progression</li>
+            <li>Loyalty: 5 pts per ₹100, tier progression, spin wheel</li>
             <li>Referrals: unique codes, point rewards</li>
             <li>Real-time messaging with unread counts</li>
             <li>Host Dashboard: create/edit listings, analytics</li>
+            <li>Identity verification for bookings</li>
+            <li>Split payment with friends</li>
+            <li>Booking photos and receipts</li>
+            <li>Live food/drink ordering during active stays</li>
+          </ul>
+        </DocSection>
+
+        <DocSection
+          title="Admin Panel"
+          icon={<Zap size={15} className="text-primary" />}
+        >
+          <ul className="list-disc list-inside space-y-1">
+            <li>Command Center — KPI dashboard, live activity feed</li>
+            <li>Full Property CRUD — create, edit, duplicate, delete listings</li>
+            <li>Booking Hub — manage all reservations</li>
+            <li>Client CRM — engagement scores, journey timeline, notes</li>
+            <li>Inventory Management — stock tracking, low-stock alerts</li>
+            <li>Curations, Campaigns, Coupons management</li>
+            <li>Dynamic Homepage — section ordering, video cards, filter pills</li>
+            <li>App Settings — branding, support contacts, social links, legal</li>
+            <li>Staff Management — directory, attendance, leaves, payroll</li>
+            <li>Finance Hub — expenses, budget tracking</li>
+            <li>AI Assistant, Smart Alerts, Audit Trail</li>
+            <li>Role-based access: super_admin, ops_manager, host, staff</li>
           </ul>
         </DocSection>
 
@@ -509,7 +613,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
           <div className="space-y-1 font-mono text-[11px]">
             {[
               ["profiles", "Display name, avatar, bio, location, loyalty pts, tier"],
-              ["bookings", "Slot, date, guests, total, status"],
+              ["bookings", "Slot, date, guests, total, status, rooms, mattresses"],
               ["wishlists", "User ↔ property joins"],
               ["conversations", "Two-participant chat threads"],
               ["messages", "Chat messages with read state"],
@@ -519,7 +623,33 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
               ["loyalty_transactions", "Point earn/redeem ledger"],
               ["referral_codes", "User referral codes"],
               ["referral_uses", "Code usage tracking"],
-              ["host_listings", "User-created venue listings"],
+              ["host_listings", "Full property CRUD with slots, rules, lat/lng"],
+              ["curations", "Pre-built experience packs with mood tags"],
+              ["orders", "In-stay service orders per booking"],
+              ["order_items", "Line items with emoji, qty, price"],
+              ["order_notes", "Staff/admin notes on orders"],
+              ["spin_history", "Daily spin-to-win prize records"],
+              ["user_milestones", "Achievement tracking per user"],
+              ["user_roles", "RBAC roles (super_admin, ops_manager, host, staff)"],
+              ["app_config", "Key-value runtime settings"],
+              ["inventory", "Stock tracking with low-stock alerts"],
+              ["experience_packages", "Bookable add-on packages"],
+              ["coupons", "Discount codes with usage limits"],
+              ["campaigns", "Marketing campaigns with targeting"],
+              ["expenses", "Expense tracking with categories"],
+              ["budget_allocations", "Monthly budget by category"],
+              ["staff_members", "Staff directory with salary, dept"],
+              ["staff_tasks", "Task assignment and tracking"],
+              ["staff_attendance", "Check-in/out with overtime"],
+              ["staff_leaves", "Leave requests with approval flow"],
+              ["staff_salary_payments", "Payroll records"],
+              ["audit_logs", "Action audit trail"],
+              ["client_notes", "CRM notes per client"],
+              ["booking_photos", "Guest photos per booking"],
+              ["booking_splits", "Split payment tracking"],
+              ["identity_verifications", "ID document verification queue"],
+              ["property_tags", "Custom property tags with colors"],
+              ["tag_assignments", "Tag ↔ entity joins"],
             ].map(([table, desc]) => (
               <p key={table}>
                 <strong className="text-foreground">{table}</strong> — {desc}
@@ -622,7 +752,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
         <div className="text-center py-6">
           <p className="text-[11px] text-muted-foreground">
             <Sparkles size={12} className="inline text-primary mr-1" />
-            Hushh v1.0 · Made in Jeypore ❤️
+            Hushh v1.20 · Made in Jeypore ❤️
           </p>
         </div>
       </div>
