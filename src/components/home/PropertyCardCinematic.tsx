@@ -216,20 +216,68 @@ function ChargingRing({ progress, color }: { progress: number; color: string }) 
   );
 }
 
-/* Price counter with slot-machine style counting animation */
-function PriceCounter({ price, revealed, color }: { price: number; revealed: boolean; color: string }) {
-  const displayPrice = useCountUp(price, revealed, 900, 100);
+/* Scrambling counter — shows random digits while holding, then settles to real price on reveal */
+function useScramblePrice(price: number, isCharging: boolean, revealed: boolean): string {
+  const [display, setDisplay] = useState("X,XXX");
+  const rafRef = useRef<number>(0);
+  const priceStr = price.toLocaleString();
+
+  useEffect(() => {
+    if (revealed) {
+      // Count up to real price
+      const duration = 900;
+      let start: number | null = null;
+      const animate = (ts: number) => {
+        if (start === null) start = ts;
+        const progress = Math.min((ts - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const val = Math.round(eased * price);
+        setDisplay(val.toLocaleString());
+        if (progress < 1) rafRef.current = requestAnimationFrame(animate);
+      };
+      rafRef.current = requestAnimationFrame(animate);
+      return () => cancelAnimationFrame(rafRef.current);
+    }
+    if (isCharging) {
+      // Scramble random digits at 60fps
+      const digits = priceStr.length;
+      const scramble = () => {
+        let s = "";
+        for (let i = 0; i < digits; i++) {
+          if (priceStr[i] === ",") { s += ","; continue; }
+          s += Math.floor(Math.random() * 10).toString();
+        }
+        setDisplay(s);
+        rafRef.current = requestAnimationFrame(scramble);
+      };
+      rafRef.current = requestAnimationFrame(scramble);
+      return () => cancelAnimationFrame(rafRef.current);
+    }
+    setDisplay("X,XXX");
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [isCharging, revealed, price, priceStr]);
+
+  return display;
+}
+
+function PriceCounter({ price, revealed, color, isCharging }: { price: number; revealed: boolean; color: string; isCharging: boolean }) {
+  const displayPrice = useScramblePrice(price, isCharging, revealed);
+  const isAnimating = isCharging || revealed;
+
   return (
     <span
       className="absolute left-0 top-0 text-[20px] font-black text-white tabular-nums"
       style={{
-        textShadow: revealed ? `0 0 20px ${color}70, 0 0 40px ${color}30` : "none",
-        transform: revealed ? "translateY(0px) scale(1)" : "translateY(8px) scale(0.85)",
-        opacity: revealed ? 1 : 0,
-        transition: "transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease",
+        textShadow: isAnimating
+          ? `0 0 20px ${color}70, 0 0 40px ${color}30`
+          : `0 0 14px ${color}40`,
+        transform: "translateY(0px) scale(1)",
+        opacity: 1,
+        transition: "text-shadow 0.3s ease",
+        letterSpacing: isCharging && !revealed ? "0.04em" : "0",
       }}
     >
-      ₹{displayPrice.toLocaleString()}
+      ₹{displayPrice}
     </span>
   );
 }
