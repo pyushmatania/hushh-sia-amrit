@@ -25,8 +25,11 @@ Hushh is a premium mobile-first marketplace for booking private experiences, sta
 13. [Database Schema](#-database-schema)
 14. [Security & RLS](#-security--rls)
 15. [Tech Stack](#-tech-stack)
-16. [Change History](#-change-history)
-17. [Conventions & Guidelines](#-conventions--guidelines)
+16. [Product Requirements Document (PRD)](#-product-requirements-document-prd)
+17. [App Blueprint](#-app-blueprint)
+18. [Wireframes](#-wireframes)
+19. [Change History](#-change-history)
+20. [Conventions & Guidelines](#-conventions--guidelines)
 18. [Easter Eggs](#-easter-eggs)
 
 ---
