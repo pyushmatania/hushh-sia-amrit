@@ -584,9 +584,9 @@ React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion
 | Table | Key Columns | Purpose |
 |-------|------------|---------|
 | profiles | user_id, display_name, avatar_url, loyalty_points, tier | User profiles |
-| bookings | user_id, property_id, date, slot, guests, total, status | Booking records |
+| bookings | user_id, property_id, date, slot, guests, total, status, payment_status, payment_id | Booking records |
 | wishlists | user_id, property_id | Saved properties |
-| conversations | participant_1, participant_2 | Chat threads |
+| conversations | participant_1, participant_2, type, property_id, metadata | Chat threads (direct/support/group) |
 | messages | conversation_id, sender_id, content, read | Chat messages |
 | notifications | user_id, title, body, type, read | Alerts |
 | reviews | user_id, property_id, rating, content, photo_urls | Reviews |
@@ -620,7 +620,14 @@ React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion
 | staff_salary_payments | staff_id, amount, month, year, status | Payroll |
 | client_notes | client_user_id, content, author_name, note_type | CRM notes |
 | booking_photos | booking_id, photo_url, caption | Guest photos |
-| booking_splits | booking_id, friend_name, friend_email, amount, status | Split payments |
+| booking_splits | booking_id, friend_name, friend_email, amount, status, payment_status, payment_id | Split payments |
+| **payments** | booking_id, user_id, amount, currency, status, gateway, gateway_order_id | **Payment tracking (v1.22)** |
+| **refunds** | payment_id, booking_id, amount, reason, status, gateway_refund_id | **Refund management (v1.22)** |
+| **invoices** | booking_id, payment_id, user_id, invoice_number, amount, line_items JSONB | **Invoice generation (v1.22)** |
+| **property_slots** | property_id, label, start_time, end_time, base_price, capacity | **Slot management (v1.22)** |
+| **slot_availability** | slot_id, date, booked_count, is_available, price_override | **Per-date availability (v1.22)** |
+| **notification_preferences** | user_id, notification_type, channel, enabled | **Notification opt-out (v1.22)** |
+| **push_tokens** | user_id, token, platform, active | **FCM push tokens (v1.22)** |
 
 ### Database Functions
 | Function | Purpose |
@@ -1009,7 +1016,7 @@ Tab 5: PROFILE — Hero → Stats → Achievements → Settings
 │ [🏠 Become a Host]     │
 │ [☀️ Light][🌙 Dark]    │  Theme
 │ [📸][📘][▶][🐦]        │  Social
-│ Terms · Privacy · v1.23 │  5-tap easter egg
+│ Terms · Privacy · v1.23 │  Easter egg (5-tap)
 │ 🏠  ❤️  ✈️  💬  👤    │
 └─────────────────────────┘
 \`\`\`
@@ -1665,7 +1672,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
       .replace(/^- (.+)$/gm, '<li>$1</li>')
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/\n\n/g, '<br/><br/>');
-    printWindow.document.write(`<!DOCTYPE html><html><head><title>Hushh Documentation v1.21</title><style>
+    printWindow.document.write(`<!DOCTYPE html><html><head><title>Hushh Documentation v1.23</title><style>
       *{margin:0;padding:0;box-sizing:border-box}
       body{font-family:'Segoe UI',system-ui,sans-serif;padding:40px;color:#1a1a2e;line-height:1.7;font-size:13px;max-width:900px;margin:0 auto}
       h1{font-size:24px;margin:24px 0 12px;color:#7c3aed}
@@ -1675,7 +1682,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
       pre{background:#f5f3ff;padding:12px;border-radius:8px;font-size:11px;white-space:pre-wrap;margin:8px 0}
       .footer{margin-top:40px;text-align:center;color:#888;font-size:11px;border-top:1px solid #ddd;padding-top:16px}
       @media print{body{padding:20px}h2{page-break-before:auto}}
-    </style></head><body><div>${htmlContent}</div><div class="footer">Hushh v1.21 | Made in Jeypore | Generated ${new Date().toLocaleDateString()}</div></body></html>`);
+    </style></head><body><div>${htmlContent}</div><div class="footer">Hushh v1.23 | Made in Jeypore | Generated ${new Date().toLocaleDateString()}</div></body></html>`);
     printWindow.document.close();
     setTimeout(() => printWindow.print(), 500);
   }, []);
@@ -2085,7 +2092,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
                 <p>│ [Become a Host]   │</p>
                 <p>│ [☀️][🌙] Theme   │</p>
                 <p>│ [📸][📘][▶][🐦] │</p>
-                <p>│ Terms · v1.21     │</p>
+                <p>│ Terms · v1.23     │</p>
                 <p>│ 🏠 ❤️ ✈️ 💬 👤  │</p>
                 <p>└───────────────────┘</p>
               </div>

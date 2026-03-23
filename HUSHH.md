@@ -567,7 +567,7 @@ React 18 · TypeScript 5.8 · Vite 8 · Tailwind CSS 3.4 · shadcn/ui · CVA · 
 
 **Product Name**: Hushh
 **Tagline**: "Your Private Getaway"
-**Version**: 1.20
+**Version**: 1.23
 **Platform**: Mobile-first Progressive Web App (PWA)
 **Market**: Jeypore, Odisha, India (expanding to tier-2/3 cities)
 
@@ -709,7 +709,7 @@ A marketplace connecting experience seekers with private venue owners, offering:
 │  └────────────────────┬────────────────────────────────┘│
 │  ┌────────────────────▼────────────────────────────────┐│
 │  │              POSTGRESQL DATABASE                     ││
-│  │  38 tables · RLS policies · Triggers · Functions    ││
+│  │  45 tables · RLS policies · Triggers · Functions    ││
 │  └────────────────────┬────────────────────────────────┘│
 │  ┌────────────────────▼────────────────────────────────┐│
 │  │              STORAGE BUCKETS                         ││
@@ -1144,7 +1144,7 @@ useHomepageSections → useHomepageFilters → useVideoCards
 │                         │
 │ [📸 Insta][📘 FB][▶ YT]│  ← Social links
 │ Terms · Privacy          │
-│ v1.20                   │  ← 5-tap → easter egg
+│ v1.23                   │  ← 5-tap → easter egg
 ├─────────────────────────┤
 │ 🏠  ❤️  ✈️  💬  👤    │
 └─────────────────────────┘
