@@ -137,6 +137,7 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
   const touchRef = useRef<{ x: number; y: number; t: number; mode: "pending" | "horizontal" | "vertical" } | null>(null);
   const swipedRef = useRef(false);
   const blockTapUntilRef = useRef(0);
+  const controlTapBlockUntilRef = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<number>(0);
   const rafRef = useRef<number>(0);
@@ -144,6 +145,12 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
 
   const goNext = useCallback(() => { setActive(i => (i + 1) % cards.length); setProgress(0); progressRef.current = 0; }, [cards.length]);
   const goPrev = useCallback(() => { setActive(i => (i - 1 + cards.length) % cards.length); setProgress(0); progressRef.current = 0; }, [cards.length]);
+
+  const blockCardTapBriefly = useCallback((ms = 420) => {
+    const until = Date.now() + ms;
+    blockTapUntilRef.current = until;
+    controlTapBlockUntilRef.current = until;
+  }, []);
 
   useEffect(() => {
     if (!entered || isDragging) return;
