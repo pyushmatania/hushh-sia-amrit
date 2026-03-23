@@ -115,7 +115,7 @@ export default function LiveOrderingSheet({ open, onClose, propertyName, propert
     hapticSuccess();
 
     if (user) {
-      // Save to DB
+      // Use useOrders hook pattern: create order with items
       const { data: order } = await supabase
         .from("orders")
         .insert({
@@ -137,6 +137,16 @@ export default function LiveOrderingSheet({ open, onClose, propertyName, propert
           unit_price: ci.price,
         }));
         await supabase.from("order_items").insert(items);
+
+        // Award loyalty points for orders
+        try {
+          await supabase.rpc("award_loyalty_points", {
+            _user_id: user.id,
+            _points: Math.floor(cartTotal / 10),
+            _title: "In-stay order",
+            _icon: "🛒",
+          });
+        } catch { /* non-critical */ }
       }
     }
 

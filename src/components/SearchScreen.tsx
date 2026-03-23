@@ -428,11 +428,60 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
 
       {/* Results */}
       <div className="px-5 pt-4">
+        {/* DB results when searching */}
+        {query.trim() && dbResults.length > 0 && (
+          <div className="mb-4">
+            <p className="text-[10px] font-semibold text-primary uppercase tracking-wider mb-2">
+              From Database {dbLoading && <Loader2 size={10} className="inline animate-spin ml-1" />}
+            </p>
+            <div className="space-y-2">
+              {dbResults.map((result, i) => (
+                <motion.div
+                  key={`db-${result.id}`}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.04 }}
+                  className="flex gap-3 rounded-2xl border border-primary/20 bg-primary/[0.03] p-3 cursor-pointer hover:bg-primary/[0.06] transition-colors"
+                  onClick={() => {
+                    const match = properties.find(p => p.id === result.id);
+                    if (match) onPropertyTap(match);
+                  }}
+                >
+                  {result.image_url ? (
+                    <img src={result.image_url} alt={result.name} className="w-20 h-20 rounded-xl object-cover shrink-0" />
+                  ) : (
+                    <div className="w-20 h-20 rounded-xl bg-secondary flex items-center justify-center shrink-0">
+                      <Search size={20} className="text-muted-foreground" />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0 py-0.5">
+                    <div className="flex items-center gap-1.5">
+                      <h3 className="font-semibold text-sm text-foreground truncate">{result.name}</h3>
+                      <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-primary/10 text-primary shrink-0">
+                        {result.type}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{result.description}</p>
+                    {result.location && (
+                      <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                        <MapPin size={11} /> {result.location}
+                      </p>
+                    )}
+                    <span className="text-sm font-semibold text-foreground mt-1 block">
+                      ₹{result.price.toLocaleString()}
+                    </span>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <p className="text-xs text-muted-foreground mb-3">
-          {filtered.length} result{filtered.length !== 1 ? "s" : ""} {query && `for "${query}"`}
+          {filtered.length} local result{filtered.length !== 1 ? "s" : ""} {query && `for "${query}"`}
         </p>
 
-        {filtered.length === 0 ? (
+        {filtered.length === 0 && dbResults.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
