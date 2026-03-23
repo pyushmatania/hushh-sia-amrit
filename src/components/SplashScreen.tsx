@@ -419,7 +419,7 @@ function AnimatedLogo({ brandName, tagline, textColor, accentColor, logoUrl }: {
       <motion.span
         className="text-3xl"
         initial={{ scale: 0, rotate: -30 }}
-        animate={{ scale: [0, 1.3, 1], rotate: [−30, 10, 0] }}
+        animate={{ scale: [0, 1.3, 1], rotate: [-30, 10, 0] }}
         transition={{ delay: 2.4, duration: 0.6, ease: "easeOut" }}
       >
         🤫
