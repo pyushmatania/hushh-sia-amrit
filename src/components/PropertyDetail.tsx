@@ -15,6 +15,7 @@ import {
   Wind, Tag, Check, BedDouble, Layers
 } from "lucide-react";
 import { useState, useCallback, useMemo } from "react";
+import { useSlotAvailability } from "@/hooks/use-slot-availability";
 import { shareProperty } from "@/lib/share";
 import { useToast } from "@/hooks/use-toast";
 import { hapticMedium, hapticSuccess } from "@/lib/haptics";
@@ -397,6 +398,13 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
   const nightCount = dateRange?.from && dateRange?.to ? differenceInDays(dateRange.to, dateRange.from) : 0;
   const isStay = property.primaryCategory === "stay";
 
+  // Wire DB slot availability when date is selected
+  const dateStr = selectedDate ? selectedDate.toISOString().split("T")[0] : undefined;
+  const { slots: dbSlots, getSlotAvailability: getDbSlotAvail } = useSlotAvailability(
+    property.id,
+    dateStr
+  );
+
   return (
     <motion.div
       initial={{ opacity: 0, x: 40 }}
@@ -724,6 +732,21 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
                           👀 {slot.viewersNow} people viewing
                         </p>
                       )}
+                      {/* DB availability overlay */}
+                      {(() => {
+                        const dbAvail = dbSlots.length > 0
+                          ? dbSlots.find(ds => ds.label.toLowerCase() === slot.label.toLowerCase())
+                          : null;
+                        const avail = dbAvail ? getDbSlotAvail(dbAvail.id) : null;
+                        if (avail && avail.remainingCapacity > 0 && avail.remainingCapacity <= 5) {
+                          return (
+                            <p className="text-[9px] text-destructive font-medium mt-0.5">
+                              {avail.remainingCapacity} spot{avail.remainingCapacity !== 1 ? "s" : ""} left
+                            </p>
+                          );
+                        }
+                        return null;
+                      })()}
                       <div className="mt-1.5 flex items-baseline gap-1.5">
                         {slot.available ? (
                           <>

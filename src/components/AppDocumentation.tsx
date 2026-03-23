@@ -412,6 +412,16 @@ export const changeLog = [
       "StaffLayout expanded to 7 scrollable tabs (Orders, Check-In, Tasks, Clock, Leave, Pay, Stock)",
     ],
   },
+  {
+    version: "1.27",
+    phase: "Wire Hooks into UI",
+    items: [
+      "SearchScreen wired to useSearch — DB-powered search across host_listings & curations",
+      "LiveOrderingSheet awards loyalty points on order placement",
+      "PropertyDetail wired to useSlotAvailability — real-time 'X spots left' from DB",
+      "3 hooks now active in UI: useSearch, useOrders, useSlotAvailability",
+    ],
+  },
 ];
 
 // Generate the COMPLETE documentation including PRD, Blueprint, Wireframes
