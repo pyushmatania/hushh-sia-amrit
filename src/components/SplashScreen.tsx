@@ -149,6 +149,192 @@ function ShootingStar({ delay }: { delay: number }) {
   );
 }
 
+/* ── Flying Birds (morning/afternoon) ── */
+function FlyingBirds() {
+  const birds = useMemo(() => [
+    { id: 0, startX: -10, startY: 18, delay: 0.5, dur: 4, scale: 0.7 },
+    { id: 1, startX: -15, startY: 22, delay: 0.8, dur: 4.5, scale: 0.5 },
+    { id: 2, startX: -8, startY: 15, delay: 1.5, dur: 3.8, scale: 0.6 },
+    { id: 3, startX: -20, startY: 25, delay: 2.2, dur: 5, scale: 0.4 },
+    { id: 4, startX: -12, startY: 12, delay: 2.8, dur: 4.2, scale: 0.55 },
+  ], []);
+
+  return (
+    <>
+      {birds.map((b) => (
+        <motion.div
+          key={b.id}
+          className="absolute pointer-events-none"
+          style={{ left: `${b.startX}%`, top: `${b.startY}%`, transform: `scale(${b.scale})` }}
+          initial={{ x: 0, y: 0, opacity: 0 }}
+          animate={{ x: [0, 500], y: [0, -30 - b.id * 8, -15, -40 - b.id * 5], opacity: [0, 1, 1, 0.8, 0] }}
+          transition={{ delay: b.delay, duration: b.dur, ease: "easeInOut" }}
+        >
+          <svg width="28" height="12" viewBox="0 0 28 12" fill="none">
+            <motion.path
+              d="M14 6 C10 2, 5 0, 0 3"
+              stroke="hsla(0,0%,15%,0.5)"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              fill="none"
+              animate={{ d: ["M14 6 C10 2, 5 0, 0 3", "M14 6 C10 5, 5 6, 0 5", "M14 6 C10 2, 5 0, 0 3"] }}
+              transition={{ duration: 0.4, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.path
+              d="M14 6 C18 2, 23 0, 28 3"
+              stroke="hsla(0,0%,15%,0.5)"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              fill="none"
+              animate={{ d: ["M14 6 C18 2, 23 0, 28 3", "M14 6 C18 5, 23 6, 28 5", "M14 6 C18 2, 23 0, 28 3"] }}
+              transition={{ duration: 0.4, repeat: Infinity, ease: "easeInOut" }}
+            />
+          </svg>
+        </motion.div>
+      ))}
+    </>
+  );
+}
+
+/* ── Drifting Clouds (morning/afternoon) ── */
+function DriftingClouds() {
+  const clouds = useMemo(() => [
+    { id: 0, y: 8, w: 120, h: 35, delay: 0, dur: 12, opacity: 0.15 },
+    { id: 1, y: 16, w: 90, h: 28, delay: 2, dur: 15, opacity: 0.1 },
+    { id: 2, y: 5, w: 140, h: 40, delay: 4, dur: 18, opacity: 0.08 },
+  ], []);
+
+  return (
+    <>
+      {clouds.map((c) => (
+        <motion.div
+          key={c.id}
+          className="absolute pointer-events-none"
+          style={{
+            top: `${c.y}%`,
+            width: c.w,
+            height: c.h,
+            borderRadius: "50%",
+            background: `hsla(0,0%,100%,${c.opacity})`,
+            filter: "blur(18px)",
+          }}
+          initial={{ x: -c.w, opacity: 0 }}
+          animate={{ x: [-c.w, 500], opacity: [0, c.opacity, c.opacity, 0] }}
+          transition={{ delay: c.delay, duration: c.dur, ease: "linear", repeat: Infinity }}
+        />
+      ))}
+    </>
+  );
+}
+
+/* ── Floating Lanterns (evening/night) ── */
+function FloatingLanterns() {
+  const lanterns = useMemo(() => [
+    { id: 0, x: 20, startY: 85, delay: 0.5, dur: 6, size: 10 },
+    { id: 1, x: 55, startY: 80, delay: 1.2, dur: 7, size: 8 },
+    { id: 2, x: 75, startY: 88, delay: 2, dur: 5.5, size: 12 },
+    { id: 3, x: 35, startY: 82, delay: 2.8, dur: 6.5, size: 9 },
+    { id: 4, x: 85, startY: 90, delay: 3.5, dur: 7.5, size: 7 },
+  ], []);
+
+  return (
+    <>
+      {lanterns.map((l) => (
+        <motion.div
+          key={l.id}
+          className="absolute pointer-events-none"
+          style={{ left: `${l.x}%`, top: `${l.startY}%` }}
+          initial={{ y: 0, opacity: 0, scale: 0.5 }}
+          animate={{
+            y: [0, -120, -250, -400],
+            x: [0, (l.id % 2 === 0 ? 15 : -15), (l.id % 2 === 0 ? 8 : -8), 0],
+            opacity: [0, 0.9, 0.7, 0],
+            scale: [0.5, 1, 0.9, 0.6],
+          }}
+          transition={{ delay: l.delay, duration: l.dur, ease: "easeOut" }}
+        >
+          <div style={{
+            width: l.size,
+            height: l.size * 1.3,
+            borderRadius: "45% 45% 35% 35%",
+            background: "linear-gradient(180deg, hsla(35, 100%, 70%, 0.9), hsla(25, 100%, 55%, 0.7))",
+            boxShadow: `0 0 ${l.size * 2}px ${l.size}px hsla(35, 100%, 60%, 0.4), 0 0 ${l.size * 4}px hsla(35, 100%, 50%, 0.2)`,
+          }} />
+          <motion.div
+            className="absolute rounded-full"
+            style={{
+              width: l.size * 0.4,
+              height: l.size * 0.4,
+              top: "30%",
+              left: "30%",
+              background: "hsla(45, 100%, 85%, 0.9)",
+              boxShadow: "0 0 6px 3px hsla(45, 100%, 80%, 0.6)",
+            }}
+            animate={{ opacity: [0.6, 1, 0.6], scale: [0.8, 1.1, 0.8] }}
+            transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </motion.div>
+      ))}
+    </>
+  );
+}
+
+/* ── Twinkling Stars (evening/night) ── */
+function TwinklingStars() {
+  const stars = useMemo(() =>
+    Array.from({ length: 20 }, (_, i) => ({
+      id: i,
+      x: `${5 + (i * 17 + 7) % 90}%`,
+      y: `${3 + (i * 13 + 3) % 35}%`,
+      size: 1 + (i % 3) * 0.5,
+      dur: 1.5 + (i % 5) * 0.6,
+      del: (i * 0.3) % 3,
+    })),
+  []);
+
+  return (
+    <>
+      {stars.map((s) => (
+        <motion.div
+          key={s.id}
+          className="absolute rounded-full pointer-events-none"
+          style={{
+            width: s.size,
+            height: s.size,
+            left: s.x,
+            top: s.y,
+            background: "white",
+            boxShadow: `0 0 ${s.size * 2}px ${s.size}px hsla(0,0%,100%,0.5)`,
+          }}
+          animate={{ opacity: [0.2, 1, 0.2], scale: [0.8, 1.3, 0.8] }}
+          transition={{ duration: s.dur, repeat: Infinity, delay: s.del, ease: "easeInOut" }}
+        />
+      ))}
+    </>
+  );
+}
+
+/* ── Sun Rays (morning) ── */
+function SunRays() {
+  return (
+    <motion.div
+      className="absolute pointer-events-none"
+      style={{
+        top: "8%",
+        right: "-10%",
+        width: 300,
+        height: 300,
+        background: "conic-gradient(from 200deg, transparent 0deg, hsla(45, 100%, 80%, 0.08) 15deg, transparent 30deg, hsla(45, 100%, 80%, 0.06) 45deg, transparent 60deg, hsla(45, 100%, 80%, 0.1) 75deg, transparent 90deg, hsla(45, 100%, 80%, 0.05) 120deg, transparent 150deg)",
+        borderRadius: "50%",
+        filter: "blur(8px)",
+      }}
+      initial={{ rotate: 0, opacity: 0, scale: 0.5 }}
+      animate={{ rotate: 25, opacity: 1, scale: 1.2 }}
+      transition={{ duration: 5, ease: "easeOut" }}
+    />
+  );
+}
+
 /* ═══════════════ MAIN SPLASH ═══════════════ */
 export default function SplashScreen({ onComplete }: { onComplete: () => void }) {
   const [show, setShow] = useState(true);
