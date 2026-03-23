@@ -149,7 +149,8 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
   };
 
   const frontProp = cards[active];
-  const accentColor = categoryColors[frontProp.category] || categoryColors.default;
+  const catKey = Array.isArray(frontProp.category) ? frontProp.category[0] : frontProp.category;
+  const accentColor = categoryColors[catKey] || categoryColors.default;
 
   return (
     <div
