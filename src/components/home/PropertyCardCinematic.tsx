@@ -372,7 +372,6 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
         userSelect: "none",
         WebkitUserSelect: "none",
         WebkitTouchCallout: "none",
-        touchAction: "none",
       } as React.CSSProperties}
     >
       <LightRays color={rarityInfo.color} active={revealed} />
