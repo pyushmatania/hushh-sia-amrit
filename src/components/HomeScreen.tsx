@@ -503,11 +503,12 @@ export default function HomeScreen({ onPropertyTap, onSearchTap, onMapTap, onNot
                 <span className="text-xs text-muted-foreground">{(activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties).length} found</span>
               </div>
               {(activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties).length > 0 ? (
-                <div className="space-y-5">
-                  {(activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties).map((p, i) => (
-                    <PropertyCard key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
-                  ))}
-                </div>
+                <MixedListingFeed
+                  properties={activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties}
+                  onPropertyTap={onPropertyTap}
+                  wishlist={wishlist}
+                  onToggleWishlist={onToggleWishlist}
+                />
               ) : (
                 <div className="px-5 py-12 text-center">
                   <p className="text-4xl mb-3">🔍</p>
