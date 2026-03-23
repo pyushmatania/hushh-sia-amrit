@@ -709,7 +709,7 @@ A marketplace connecting experience seekers with private venue owners, offering:
 │  └────────────────────┬────────────────────────────────┘│
 │  ┌────────────────────▼────────────────────────────────┐│
 │  │              POSTGRESQL DATABASE                     ││
-│  │  38 tables · RLS policies · Triggers · Functions    ││
+│  │  45 tables · RLS policies · Triggers · Functions    ││
 │  └────────────────────┬────────────────────────────────┘│
 │  ┌────────────────────▼────────────────────────────────┐│
 │  │              STORAGE BUCKETS                         ││
