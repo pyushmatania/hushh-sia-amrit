@@ -503,28 +503,30 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
 
           {/* ═══════ ALL LISTINGS ═══════ */}
           {activeCategory !== "experience" && activeCategory !== "curation" && activeCategory !== "service" && (activeCategory !== "home" || isSectionVisible("all_listings")) && (
-            <div className="mt-7">
-              <div className="flex items-center justify-between px-5 mb-3">
-                <h2 className="text-lg font-bold text-foreground">
-                  {activeCategory === "home" ? (activeMood ? `${activeMood.charAt(0).toUpperCase() + activeMood.slice(1)} Vibes` : "All Listings") : `All ${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)}s`}
-                </h2>
-                <span className="text-xs text-muted-foreground">{(activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties).length} found</span>
-              </div>
-              {(activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties).length > 0 ? (
-                <MixedListingFeed
-                  properties={activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties}
-                  onPropertyTap={onPropertyTap}
-                  wishlist={wishlist}
-                  onToggleWishlist={onToggleWishlist}
-                />
-              ) : (
-                <div className="px-5 py-12 text-center">
-                  <p className="text-4xl mb-3">🔍</p>
-                  <p className="text-foreground font-semibold">No listings in this category yet</p>
-                  <p className="text-sm text-muted-foreground mt-1">Check back soon!</p>
+            <LazySection minHeight="400px" rootMargin="300px">
+              <div className="mt-7">
+                <div className="flex items-center justify-between px-5 mb-3">
+                  <h2 className="text-lg font-bold text-foreground">
+                    {activeCategory === "home" ? (activeMood ? `${activeMood.charAt(0).toUpperCase() + activeMood.slice(1)} Vibes` : "All Listings") : `All ${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)}s`}
+                  </h2>
+                  <span className="text-xs text-muted-foreground">{(activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties).length} found</span>
                 </div>
-              )}
-            </div>
+                {(activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties).length > 0 ? (
+                  <MixedListingFeed
+                    properties={activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties}
+                    onPropertyTap={onPropertyTap}
+                    wishlist={wishlist}
+                    onToggleWishlist={onToggleWishlist}
+                  />
+                ) : (
+                  <div className="px-5 py-12 text-center">
+                    <p className="text-4xl mb-3">🔍</p>
+                    <p className="text-foreground font-semibold">No listings in this category yet</p>
+                    <p className="text-sm text-muted-foreground mt-1">Check back soon!</p>
+                  </div>
+                )}
+              </div>
+            </LazySection>
           )}
         </motion.div>
       </AnimatePresence>
