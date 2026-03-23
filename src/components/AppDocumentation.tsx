@@ -401,6 +401,17 @@ export const changeLog = [
       "Total hooks: 27 (up from 22)",
     ],
   },
+  {
+    version: "1.26",
+    phase: "Staff Portal Enhancement",
+    items: [
+      "StaffAttendance — Self check-in/out with hours & overtime tracking, 14-day history",
+      "StaffLeaves — Leave requests (Casual/Sick/Earned/Emergency), quota progress bars, approval tracking",
+      "StaffSalary — Monthly salary view with base/bonus/deductions, net pay, payment history",
+      "Staff profile linking via staff_members.user_id",
+      "StaffLayout expanded to 7 scrollable tabs (Orders, Check-In, Tasks, Clock, Leave, Pay, Stock)",
+    ],
+  },
 ];
 
 // Generate the COMPLETE documentation including PRD, Blueprint, Wireframes
