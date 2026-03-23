@@ -1153,72 +1153,36 @@ useHomepageSections → useHomepageFilters → useVideoCards
 ### Database Entity Relationship Diagram
 
 ```
-┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│  auth.users  │     │   profiles   │     │  user_roles  │
-│              │◄────│  user_id FK  │     │  user_id     │
-│  id (PK)     │     │  display_name│     │  role (enum) │
-│  email       │     │  avatar_url  │     └──────────────┘
-└──────┬───────┘     │  loyalty_pts │
-       │             │  tier        │     ┌──────────────┐
-       │             └──────────────┘     │  wishlists   │
-       │                                  │  user_id     │
-       │     ┌──────────────┐            │  property_id │
-       ├────▶│   bookings   │            └──────────────┘
-       │     │  user_id     │
-       │     │  property_id │────────┐   ┌──────────────┐
-       │     │  date, slot  │        │   │host_listings │
-       │     │  guests,total│        └──▶│  id (PK)     │
-       │     │  status      │            │  user_id     │
-       │     └──────┬───────┘            │  name, price │
-       │            │                    │  category    │
-       │            │                    │  amenities[] │
-       │     ┌──────▼───────┐            │  image_urls[]│
-       │     │   orders     │            │  slots JSONB │
-       │     │  booking_id  │            │  status      │
-       │     │  property_id │            └──────────────┘
-       │     │  total,status│
-       │     └──────┬───────┘            ┌──────────────┐
-       │            │                    │  curations   │
-       │     ┌──────▼───────┐            │  name, price │
-       │     │ order_items  │            │  includes[]  │
-       │     │  order_id FK │            │  mood[], tags│
-       │     │  item_name   │            │  property_id │
-       │     │  qty, price  │            └──────────────┘
-       │     └──────────────┘
-       │                                 ┌──────────────┐
-       │     ┌──────────────┐            │  inventory   │
-       ├────▶│   reviews    │            │  name, stock │
-       │     │  user_id     │            │  category    │
-       │     │  property_id │            │  unit_price  │
-       │     │  rating      │            │  property_id │
-       │     │  content     │            └──────────────┘
-       │     └──────────────┘
-       │                                 ┌──────────────┐
-       │     ┌──────────────┐            │  campaigns   │
-       ├────▶│conversations │            │  title, type │
-       │     │participant_1 │            │  discount    │
-       │     │participant_2 │            │  targets[]   │
-       │     └──────┬───────┘            └──────────────┘
-       │            │
-       │     ┌──────▼───────┐            ┌──────────────┐
-       │     │  messages    │            │   coupons    │
-       │     │conversation_id            │  code        │
-       │     │sender_id     │            │  discount    │
-       │     │content, read │            │  max_uses    │
-       │     └──────────────┘            └──────────────┘
-       │
-       │     ┌──────────────┐            ┌──────────────┐
-       ├────▶│notifications │            │staff_members │
-       │     │  user_id     │            │  name, role  │
-       │     │  title, body │            │  department  │
-       │     │  type, read  │            │  salary      │
-       │     └──────────────┘            └──────────────┘
-       │
-       │     ┌──────────────┐
-       └────▶│loyalty_trans │
-             │  user_id     │
-             │  points, type│
-             └──────────────┘
+auth.users ─┬─ profiles (1:1)
+            ├─ bookings ─┬─ orders → order_items
+            │            │         → order_notes
+            │            ├─ booking_splits ──→ payments
+            │            ├─ booking_photos
+            │            └─ payments → refunds
+            │                       → invoices
+            ├─ wishlists → host_listings
+            ├─ reviews → review_responses
+            ├─ conversations → messages
+            ├─ notifications
+            ├─ notification_preferences
+            ├─ push_tokens
+            ├─ loyalty_transactions
+            ├─ referral_codes → referral_uses
+            ├─ user_roles
+            ├─ user_milestones
+            ├─ identity_verifications
+            └─ spin_history
+
+host_listings ─┬─ curations
+               ├─ inventory
+               ├─ property_slots → slot_availability
+               └─ property_tags (via tag_assignments)
+
+staff_members ─┬─ staff_attendance
+               ├─ staff_leaves
+               └─ staff_salary_payments
+
+standalone: campaigns · coupons · expenses · budget_allocations · app_config · audit_logs · client_notes · experience_packages · staff_tasks
 ```
 
 ---
