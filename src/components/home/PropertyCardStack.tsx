@@ -229,7 +229,7 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
                 className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-full flex items-center gap-1"
                 style={{ background: `${accentColor}cc`, backdropFilter: "blur(8px)" }}
               >
-                <span className="text-[8px] font-black text-white uppercase tracking-widest">{property.category}</span>
+                <span className="text-[8px] font-black text-white uppercase tracking-widest">{Array.isArray(property.category) ? property.category[0] : property.category}</span>
               </div>
 
               {/* Heart */}
