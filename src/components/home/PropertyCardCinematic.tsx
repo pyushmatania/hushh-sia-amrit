@@ -627,33 +627,56 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
                 </span>
               </div>
 
-              {/* Price — always visible */}
+              {/* Price — masked before hold, reveals after hold */}
               <div className="flex items-center gap-2 mt-2">
                 <Zap size={13} style={{ color: rarityInfo.color, filter: `drop-shadow(0 0 4px ${rarityInfo.color})` }} />
-                <span className="text-[20px] font-black text-white" style={{ textShadow: `0 0 14px ${rarityInfo.color}40` }}>₹{property.basePrice.toLocaleString()}</span>
+                <div className="relative h-7 min-w-[106px]">
+                  <span
+                    className="absolute left-0 top-0 text-[20px] font-black text-white"
+                    style={{
+                      textShadow: `0 0 14px ${rarityInfo.color}40`,
+                      transform: revealed ? "translateY(-6px) scale(0.9)" : "translateY(0px) scale(1)",
+                      opacity: revealed ? 0 : 1,
+                      transition: "all 0.4s cubic-bezier(0.34,1.56,0.64,1)",
+                    }}
+                  >
+                    {maskedPrice}
+                  </span>
+                  <span
+                    className="absolute left-0 top-0 text-[20px] font-black text-white"
+                    style={{
+                      textShadow: `0 0 14px ${rarityInfo.color}50`,
+                      transform: revealed ? "translateY(0px) scale(1)" : "translateY(6px) scale(0.9)",
+                      opacity: revealed ? 1 : 0,
+                      transition: "all 0.45s cubic-bezier(0.34,1.56,0.64,1)",
+                    }}
+                  >
+                    ₹{property.basePrice.toLocaleString()}
+                  </span>
+                </div>
                 <span className="text-[10px] text-white/35 ml-0.5">/session</span>
                 <XpRing level={totalPower} color={rarityInfo.color} revealed={revealed} />
               </div>
 
-              {/* Stats — animated on reveal */}
+              {/* Stats — always visible, values reveal only after hold */}
               <div
                 style={{
-                  maxHeight: revealed ? "130px" : "0px",
-                  opacity: revealed ? 1 : 0,
+                  maxHeight: "130px",
+                  opacity: 1,
                   overflow: "hidden",
-                  transition: "max-height 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease 0.1s",
+                  transition: "opacity 0.4s ease",
                 }}
               >
                 <div className="mt-3 space-y-1.5 pt-2" style={{ borderTop: `1px solid ${rarityInfo.color}20` }}>
-                  <StatBar label="PWR" value={stats.power} max={99} color={rarityInfo.color} animate={revealed} icon={<Zap size={9} style={{ color: rarityInfo.color }} />} />
-                  <StatBar label="VIBE" value={stats.vibe} max={99} color="hsl(45 100% 55%)" animate={revealed} icon={<Star size={9} style={{ color: "hsl(45 100% 55%)" }} />} />
-                  <StatBar label="SIZE" value={stats.capacity} max={99} color="hsl(160 70% 50%)" animate={revealed} icon={<Users size={9} style={{ color: "hsl(160 70% 50%)" }} />} />
-                  <StatBar label="HYPE" value={stats.demand} max={99} color="hsl(0 80% 60%)" animate={revealed} icon={<Flame size={9} style={{ color: "hsl(0 80% 60%)" }} />} />
+                  <StatBar label="PWR" value={stats.power} max={99} color={rarityInfo.color} revealed={revealed} icon={<Zap size={9} style={{ color: rarityInfo.color }} />} />
+                  <StatBar label="VIBE" value={stats.vibe} max={99} color="hsl(45 100% 55%)" revealed={revealed} icon={<Star size={9} style={{ color: "hsl(45 100% 55%)" }} />} />
+                  <StatBar label="SIZE" value={stats.capacity} max={99} color="hsl(var(--success))" revealed={revealed} icon={<Users size={9} style={{ color: "hsl(var(--success))" }} />} />
+                  <StatBar label="HYPE" value={stats.demand} max={99} color="hsl(var(--destructive))" revealed={revealed} icon={<Flame size={9} style={{ color: "hsl(var(--destructive))" }} />} />
                 </div>
               </div>
 
               {/* Swipe hints during reveal */}
-              {revealed && (
+              {showGestureHints && (
                 <div
                   className="flex items-center justify-center gap-6 mt-3 pt-2"
                   style={{
