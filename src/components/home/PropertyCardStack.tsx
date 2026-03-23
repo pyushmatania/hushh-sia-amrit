@@ -28,6 +28,7 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
   const [progress, setProgress] = useState(0);
   const touchRef = useRef<{ x: number; t: number } | null>(null);
   const swipedRef = useRef(false);
+  const blockTapUntilRef = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<number>(0);
   const rafRef = useRef<number>(0);
@@ -97,7 +98,7 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
       transform: `translateX(${xOffset}px) translateZ(${zShift}px) rotateY(${rotateY}deg) scale(${scale})`,
       opacity: isFront ? 1 : Math.max(0.4, 0.75 - absDiff * 0.2),
       filter: isFront ? "brightness(1) saturate(1.1)" : `brightness(0.5) saturate(0.7)`,
-      pointerEvents: isFront ? "auto" : "none",
+      pointerEvents: "auto",
     };
   };
 
@@ -117,6 +118,7 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
     const dt = Date.now() - touchRef.current.t;
     if (Math.abs(dx) > 35 || (Math.abs(dx) > 18 && dt < 250)) {
       swipedRef.current = true;
+      blockTapUntilRef.current = Date.now() + 280;
       dx < 0 ? goNext() : goPrev();
     }
     touchRef.current = null;
@@ -141,6 +143,7 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
     const dt = Date.now() - mouseRef.current.t;
     if (Math.abs(dx) > 35 || (Math.abs(dx) > 18 && dt < 250)) {
       swipedRef.current = true;
+      blockTapUntilRef.current = Date.now() + 280;
       dx < 0 ? goNext() : goPrev();
     }
     mouseRef.current = null;
@@ -195,7 +198,10 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
                   : "0 8px 24px hsl(var(--foreground) / 0.12), 0 0 0 1px hsl(var(--border) / 0.1)",
                 transformStyle: "preserve-3d",
               }}
-              onClick={() => { if (isFront) { if (swipedRef.current) { swipedRef.current = false; return; } onTap(property); } }}
+              onClick={() => {
+                if (Date.now() < blockTapUntilRef.current) return;
+                onTap(property);
+              }}
               onTouchStart={isFront ? handleTouchStart : undefined}
               onTouchMove={isFront ? handleTouchMove : undefined}
               onTouchEnd={isFront ? handleTouchEnd : undefined}
