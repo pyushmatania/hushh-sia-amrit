@@ -134,7 +134,7 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
             <input
               type="text"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => handleQueryChange(e.target.value)}
               placeholder="Search villas, venues, experiences..."
               className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
               autoFocus
