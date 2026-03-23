@@ -195,7 +195,7 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
                   : "0 8px 24px hsl(var(--foreground) / 0.12), 0 0 0 1px hsl(var(--border) / 0.1)",
                 transformStyle: "preserve-3d",
               }}
-              onClick={() => { if (isFront && !swipedRef.current) onTap(property); }}
+              onClick={() => { if (isFront) { if (swipedRef.current) { swipedRef.current = false; return; } onTap(property); } }}
               onTouchStart={isFront ? handleTouchStart : undefined}
               onTouchMove={isFront ? handleTouchMove : undefined}
               onTouchEnd={isFront ? handleTouchEnd : undefined}
