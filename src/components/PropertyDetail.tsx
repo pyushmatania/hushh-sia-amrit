@@ -732,6 +732,21 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
                           👀 {slot.viewersNow} people viewing
                         </p>
                       )}
+                      {/* DB availability overlay */}
+                      {(() => {
+                        const dbAvail = dbSlots.length > 0
+                          ? dbSlots.find(ds => ds.label.toLowerCase() === slot.label.toLowerCase())
+                          : null;
+                        const avail = dbAvail ? getDbSlotAvail(dbAvail.id) : null;
+                        if (avail && avail.remainingCapacity > 0 && avail.remainingCapacity <= 5) {
+                          return (
+                            <p className="text-[9px] text-destructive font-medium mt-0.5">
+                              {avail.remainingCapacity} spot{avail.remainingCapacity !== 1 ? "s" : ""} left
+                            </p>
+                          );
+                        }
+                        return null;
+                      })()}
                       <div className="mt-1.5 flex items-baseline gap-1.5">
                         {slot.available ? (
                           <>
