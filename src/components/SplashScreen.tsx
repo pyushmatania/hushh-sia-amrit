@@ -250,11 +250,11 @@ function FloatingLanterns() {
           transition={{ delay: l.delay, duration: l.dur, ease: "easeOut" }}
         >
           <div style={{
-            width: l.size,
-            height: l.size * 1.3,
-            borderRadius: "45% 45% 35% 35%",
-            background: "linear-gradient(180deg, hsla(35, 100%, 70%, 0.9), hsla(25, 100%, 55%, 0.7))",
-            boxShadow: `0 0 ${l.size * 2}px ${l.size}px hsla(35, 100%, 60%, 0.4), 0 0 ${l.size * 4}px hsla(35, 100%, 50%, 0.2)`,
+            width: l.size * 0.6,
+            height: l.size * 0.8,
+            borderRadius: "50%",
+            background: "radial-gradient(circle, hsla(45, 100%, 85%, 0.7) 0%, hsla(35, 100%, 60%, 0.3) 50%, transparent 100%)",
+            boxShadow: `0 0 ${l.size}px ${l.size * 0.4}px hsla(35, 100%, 60%, 0.15)`,
           }} />
           <motion.div
             className="absolute rounded-full"
