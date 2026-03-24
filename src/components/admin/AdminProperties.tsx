@@ -195,6 +195,8 @@ export default function AdminProperties() {
   const openEdit = (listing: Listing) => {
     setEditingListing({ ...listing });
     setIsCreating(false);
+    // Auto-expand media gallery if property has images, otherwise basic info
+    setExpandedSection((listing.image_urls?.length > 0) ? "images" : "basic");
     setExpandedSection("images");
     setPreviewMode(false);
   };
