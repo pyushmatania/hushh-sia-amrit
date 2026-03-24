@@ -705,9 +705,11 @@ export default function MessagesScreen() {
         </button>
       </motion.div>
 
+      {/* Desktop: wrap chats in a container */}
+      <div className="md:px-8 lg:px-16 xl:px-24 2xl:px-32">
       <AnimatePresence mode="wait">
         {tab === "chats" && (
-          <motion.div key="chats" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="px-5">
+          <motion.div key="chats" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="px-5 md:px-0">
 
             {pinnedChats.length > 0 && (
               <div className="mb-5">
