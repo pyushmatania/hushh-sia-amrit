@@ -226,11 +226,11 @@ function DriftingClouds() {
 /* ── Floating Lanterns (evening/night) ── */
 function FloatingLanterns() {
   const lanterns = useMemo(() => [
-    { id: 0, x: 20, startY: 85, delay: 0.5, dur: 6, size: 10 },
-    { id: 1, x: 55, startY: 80, delay: 1.2, dur: 7, size: 8 },
-    { id: 2, x: 75, startY: 88, delay: 2, dur: 5.5, size: 12 },
-    { id: 3, x: 35, startY: 82, delay: 2.8, dur: 6.5, size: 9 },
-    { id: 4, x: 85, startY: 90, delay: 3.5, dur: 7.5, size: 7 },
+    { id: 0, x: 25, startY: 78, delay: 0.5, dur: 4, size: 5 },
+    { id: 1, x: 50, startY: 75, delay: 1.2, dur: 4.5, size: 4 },
+    { id: 2, x: 70, startY: 80, delay: 2, dur: 3.5, size: 6 },
+    { id: 3, x: 40, startY: 76, delay: 2.8, dur: 4, size: 4 },
+    { id: 4, x: 82, startY: 82, delay: 3.5, dur: 5, size: 5 },
   ], []);
 
   return (
@@ -242,10 +242,10 @@ function FloatingLanterns() {
           style={{ left: `${l.x}%`, top: `${l.startY}%` }}
           initial={{ y: 0, opacity: 0, scale: 0.5 }}
           animate={{
-            y: [0, -120, -250, -400],
-            x: [0, (l.id % 2 === 0 ? 15 : -15), (l.id % 2 === 0 ? 8 : -8), 0],
-            opacity: [0, 0.9, 0.7, 0],
-            scale: [0.5, 1, 0.9, 0.6],
+            y: [0, -30, -60, -90],
+            x: [0, (l.id % 2 === 0 ? 8 : -8), (l.id % 2 === 0 ? 4 : -4), 0],
+            opacity: [0, 0.7, 0.5, 0],
+            scale: [0.5, 1, 0.8, 0.4],
           }}
           transition={{ delay: l.delay, duration: l.dur, ease: "easeOut" }}
         >
