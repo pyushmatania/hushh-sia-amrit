@@ -611,7 +611,6 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                     key={i}
                     className="inline-block"
                     style={{
-                      fontSize: "11px",
                       letterSpacing: "0.22em",
                       textTransform: "uppercase",
                       fontWeight: 600,
