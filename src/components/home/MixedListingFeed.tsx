@@ -351,7 +351,6 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
   /* ─── Desktop: 3-row grid with Show More ─── */
   const COLS = 4;
   const ROWS_INITIAL = 3;
-  const [desktopShowAll, setDesktopShowAll] = useState(false);
 
   if (!isMobile) {
     const desktopVisible = desktopShowAll ? properties : properties.slice(0, COLS * ROWS_INITIAL);
