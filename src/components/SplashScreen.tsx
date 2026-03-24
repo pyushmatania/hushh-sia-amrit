@@ -39,7 +39,6 @@ function getTimeConfig() {
     hasTwinkle: false,
     particleColor: "hsla(45, 90%, 70%, 0.5)",
     glowColor: "hsla(40, 100%, 65%, 0.3)",
-    ambientSound: "/audio/birds-morning.wav",
   };
   if (hour >= 12 && hour < 17) return {
     greeting: "Good Afternoon",
@@ -54,7 +53,6 @@ function getTimeConfig() {
     hasTwinkle: false,
     particleColor: "hsla(45, 80%, 75%, 0.4)",
     glowColor: "hsla(45, 90%, 60%, 0.25)",
-    ambientSound: "/audio/birds-morning.wav",
   };
   if (hour >= 17 && hour < 21) return {
     greeting: "Good Evening",
@@ -69,7 +67,6 @@ function getTimeConfig() {
     hasTwinkle: true,
     particleColor: "hsla(35, 100%, 65%, 0.7)",
     glowColor: "hsla(20, 100%, 55%, 0.3)",
-    ambientSound: "/audio/crickets-night.wav",
   };
   return {
     greeting: "Good Night",
@@ -84,7 +81,6 @@ function getTimeConfig() {
     hasTwinkle: true,
     particleColor: "hsla(55, 90%, 70%, 0.8)",
     glowColor: "hsla(45, 80%, 70%, 0.25)",
-    ambientSound: "/audio/crickets-night.wav",
   };
 }
 
@@ -314,7 +310,7 @@ function TwinklingStars() {
   );
 }
 
-/* ── Sun Rays (morning) ── */
+/* ── Sun Rays (morning) — subtle, no flash ── */
 function SunRays() {
   return (
     <motion.div
@@ -322,15 +318,15 @@ function SunRays() {
       style={{
         top: "8%",
         right: "-10%",
-        width: 300,
-        height: 300,
-        background: "conic-gradient(from 200deg, transparent 0deg, hsla(45, 100%, 80%, 0.08) 15deg, transparent 30deg, hsla(45, 100%, 80%, 0.06) 45deg, transparent 60deg, hsla(45, 100%, 80%, 0.1) 75deg, transparent 90deg, hsla(45, 100%, 80%, 0.05) 120deg, transparent 150deg)",
+        width: 200,
+        height: 200,
+        background: "radial-gradient(ellipse, hsla(45, 80%, 75%, 0.06) 0%, transparent 70%)",
         borderRadius: "50%",
-        filter: "blur(8px)",
+        filter: "blur(12px)",
       }}
-      initial={{ rotate: 0, opacity: 0, scale: 0.5 }}
-      animate={{ rotate: 25, opacity: 1, scale: 1.2 }}
-      transition={{ duration: 5, ease: "easeOut" }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 0.6 }}
+      transition={{ duration: 2, ease: "easeOut" }}
     />
   );
 }
@@ -362,52 +358,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
     import("@/lib/video-preloader").then(({ preloadVideos }) => preloadVideos());
   }, []);
 
-  // Ambient sound — triggered on first user interaction to bypass autoplay policy
-  useEffect(() => {
-    let audio: HTMLAudioElement | null = null;
-    let fadeInId: ReturnType<typeof setInterval>;
-    let started = false;
-
-    const startAudio = () => {
-      if (started) return;
-      started = true;
-      audio = new Audio(config.ambientSound);
-      audio.loop = true;
-      audio.volume = 0;
-      audio.play().catch(() => {});
-      let vol = 0;
-      fadeInId = setInterval(() => {
-        vol = Math.min(vol + 0.02, 0.25);
-        if (audio) audio.volume = vol;
-        if (vol >= 0.25) clearInterval(fadeInId);
-      }, 60);
-    };
-
-    // Try autoplay first
-    const autoTimer = setTimeout(() => {
-      startAudio();
-    }, 400);
-
-    // Also listen for user interaction as fallback
-    const interactionHandler = () => startAudio();
-    document.addEventListener("touchstart", interactionHandler, { once: true, passive: true });
-    document.addEventListener("click", interactionHandler, { once: true });
-
-    return () => {
-      clearTimeout(autoTimer);
-      clearInterval(fadeInId);
-      document.removeEventListener("touchstart", interactionHandler);
-      document.removeEventListener("click", interactionHandler);
-      if (audio) {
-        let vol = audio.volume;
-        const id = setInterval(() => {
-          vol = Math.max(vol - 0.05, 0);
-          if (audio) audio.volume = vol;
-          if (vol <= 0) { clearInterval(id); audio?.pause(); }
-        }, 40);
-      }
-    };
-  }, [config.ambientSound]);
+  // Ambient sound removed
 
   // Start phase timeline only when image is ready
   useEffect(() => {
