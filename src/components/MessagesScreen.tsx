@@ -1,7 +1,7 @@
 import { motion, AnimatePresence, useMotionValue, animate } from "framer-motion";
 import {
   MessageCircle, Bell, ChevronRight, Send, ArrowLeft, Phone, MoreVertical, Search,
-  Image, Smile, Mic, Check, CheckCheck, Pin, Archive,
+  Image, Smile, Mic, Check, CheckCheck, Pin, Archive, ArchiveRestore,
   HeadphonesIcon, ShieldCheck, X, Loader2,
   MapPin, History, Calendar,
 } from "lucide-react";
@@ -194,19 +194,39 @@ function ThreadCard({ thread, index, onClick, onPin, onArchive }: {
 }) {
   const [swipeState, setSwipeState] = useState<"idle" | "pin" | "archive">("idle");
   const [dismissed, setDismissed] = useState(false);
-  const SWIPE_THRESHOLD = 60;
+  const SWIPE_THRESHOLD = 55;
   const dragX = useMotionValue(0);
   const isDragging = useRef(false);
+  const dragStartX = useRef(0);
 
-  const handleDragStart = () => { isDragging.current = true; };
+  const handleDragStart = (_: any, info: { point: { x: number } }) => {
+    isDragging.current = false;
+    dragStartX.current = info.point.x;
+  };
 
   const handleDragEnd = (_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
-    const swipedFar = Math.abs(info.offset.x) > SWIPE_THRESHOLD || Math.abs(info.velocity.x) > 500;
-    if (swipedFar && info.offset.x > 0) onPin?.(thread.id);
-    else if (swipedFar && info.offset.x < 0) { setDismissed(true); setTimeout(() => onArchive?.(thread.id), 300); }
+    const totalDrag = Math.abs(info.offset.x);
+    const fast = Math.abs(info.velocity.x) > 400;
+    const triggered = totalDrag > SWIPE_THRESHOLD || fast;
+
+    if (triggered && info.offset.x > 0) {
+      // Pin/Unpin
+      animate(dragX, 0, { type: "spring", stiffness: 500, damping: 35 });
+      onPin?.(thread.id);
+    } else if (triggered && info.offset.x < 0) {
+      // Archive — slide fully off then collapse
+      animate(dragX, -400, { type: "spring", stiffness: 300, damping: 30 });
+      setDismissed(true);
+      setTimeout(() => onArchive?.(thread.id), 350);
+    } else {
+      // Snap back
+      animate(dragX, 0, { type: "spring", stiffness: 500, damping: 35 });
+    }
     setSwipeState("idle");
-    if (!(swipedFar && info.offset.x < 0)) animate(dragX, 0, { type: "spring", stiffness: 500, damping: 35 });
-    setTimeout(() => { isDragging.current = false; }, 50);
+
+    // Only mark as dragged if moved more than 8px (prevents tap-vs-drag conflict)
+    if (totalDrag > 8) isDragging.current = true;
+    setTimeout(() => { isDragging.current = false; }, 80);
   };
 
   const handleTap = () => { if (!isDragging.current) onClick(); };
@@ -222,21 +242,30 @@ function ThreadCard({ thread, index, onClick, onPin, onArchive }: {
       transition={{ delay: 0.02 + index * 0.03, duration: 0.3 }}
       className="relative rounded-2xl overflow-hidden"
     >
-      {/* Swipe backgrounds */}
-      <div className="absolute inset-0 flex">
-        <div className={`flex items-center justify-center w-1/2 ${swipeState === "pin" ? "bg-amber-500" : "bg-amber-500/60"}`}>
-          <Pin size={18} className="text-white rotate-45" />
+      {/* Swipe reveal backgrounds */}
+      <div className="absolute inset-0 flex pointer-events-none">
+        <div className={`flex items-center pl-5 w-1/2 transition-colors duration-150 ${swipeState === "pin" ? "bg-amber-500" : "bg-amber-500/50"}`}>
+          <div className="flex flex-col items-center gap-0.5">
+            <Pin size={16} className="text-white rotate-45" />
+            <span className="text-[9px] text-white/90 font-semibold">{thread.pinned ? "Unpin" : "Pin"}</span>
+          </div>
         </div>
-        <div className={`flex items-center justify-center w-1/2 ${swipeState === "archive" ? "bg-destructive" : "bg-destructive/60"}`}>
-          <Archive size={18} className="text-white" />
+        <div className={`flex items-center justify-end pr-5 w-1/2 transition-colors duration-150 ${swipeState === "archive" ? "bg-destructive" : "bg-destructive/50"}`}>
+          <div className="flex flex-col items-center gap-0.5">
+            <Archive size={16} className="text-white" />
+            <span className="text-[9px] text-white/90 font-semibold">Archive</span>
+          </div>
         </div>
       </div>
 
       {/* Card */}
       <motion.div
-        drag="x" dragConstraints={{ left: -120, right: 120 }} dragElastic={0.12} dragMomentum={false}
+        drag="x"
+        dragConstraints={{ left: -140, right: 140 }}
+        dragElastic={0.08}
+        dragMomentum={false}
         dragDirectionLock
-        style={{ x: dragX }}
+        style={{ x: dragX, touchAction: "pan-y" }}
         onDragStart={handleDragStart}
         onDrag={(_, info) => {
           if (info.offset.x > SWIPE_THRESHOLD) setSwipeState("pin");
@@ -246,7 +275,6 @@ function ThreadCard({ thread, index, onClick, onPin, onArchive }: {
         onDragEnd={handleDragEnd}
         onClick={handleTap}
         className="relative z-10 bg-card rounded-2xl cursor-pointer border border-border/50 hover:border-border transition-colors"
-        whileTap={{ scale: 0.985 }}
       >
         <div className="px-4 py-3.5">
           <div className="flex gap-3 items-center">
@@ -604,11 +632,13 @@ export default function MessagesScreen() {
   const [showSearch, setShowSearch] = useState(false);
   const [pinnedIds, setPinnedIds] = useState<Set<string>>(new Set(["c1"]));
   const [archivedIds, setArchivedIds] = useState<Set<string>>(new Set());
+  const [showArchived, setShowArchived] = useState(false);
 
   const dynamicMockThreads = useMemo(() => mockThreads.map(t => t.id === "c1" ? { ...t, name: `${brandName} Concierge` } : t), [brandName]);
 
   const handlePin = useCallback((id: string) => { setPinnedIds(prev => { const next = new Set(prev); if (next.has(id)) next.delete(id); else next.add(id); return next; }); }, []);
   const handleArchive = useCallback((id: string) => { setArchivedIds(prev => new Set(prev).add(id)); }, []);
+  const handleUnarchive = useCallback((id: string) => { setArchivedIds(prev => { const next = new Set(prev); next.delete(id); return next; }); }, []);
 
   const unreadNotifCount = notifications.filter(n => !n.read && !readNotifications.has(n.id)).length;
   const unreadChatCount = user ? conversations.reduce((s, c) => s + c.unread_count, 0) : dynamicMockThreads.reduce((s, t) => s + t.unread, 0);
@@ -619,6 +649,7 @@ export default function MessagesScreen() {
     : dynamicMockThreads.map(t => ({ ...t, pinned: pinnedIds.has(t.id), conversation: null as Conversation | null }));
 
   const visibleChats = chatThreads.filter(t => !archivedIds.has(t.id));
+  const archivedChats = chatThreads.filter(t => archivedIds.has(t.id));
   const filteredChats = searchQuery ? visibleChats.filter(t => t.name.toLowerCase().includes(searchQuery.toLowerCase()) || t.lastMessage.toLowerCase().includes(searchQuery.toLowerCase())) : visibleChats;
   const pinnedChats = filteredChats.filter(t => t.pinned);
   const activeTrip = filteredChats.filter(t => !t.pinned && (t.tripStatus === "active" || t.tripStatus === "upcoming"));
@@ -753,7 +784,73 @@ export default function MessagesScreen() {
               </div>
             )}
 
-            {filteredChats.length === 0 && !loading && (
+            {/* Archived button */}
+            {archivedChats.length > 0 && !showArchived && (
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                onClick={() => setShowArchived(true)}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-card border border-border/50 active:scale-[0.98] transition-transform mb-4"
+              >
+                <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
+                  <Archive size={16} className="text-muted-foreground" />
+                </div>
+                <div className="flex-1 text-left">
+                  <p className="text-[13px] font-medium text-foreground">Archived</p>
+                  <p className="text-[11px] text-muted-foreground">{archivedChats.length} conversation{archivedChats.length !== 1 ? "s" : ""}</p>
+                </div>
+                <ChevronRight size={16} className="text-muted-foreground" />
+              </motion.button>
+            )}
+
+            {/* Archived messages view (inline) */}
+            <AnimatePresence>
+              {showArchived && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="overflow-hidden mb-5"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <SectionLabel icon={Archive} label="Archived" />
+                    <button onClick={() => setShowArchived(false)} className="text-[10px] font-semibold text-primary px-2 py-1 rounded-full" style={{ background: "hsl(var(--primary) / 0.1)" }}>
+                      Hide
+                    </button>
+                  </div>
+                  <div className="space-y-2">
+                    {archivedChats.map((t, i) => (
+                      <motion.div
+                        key={t.id}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.03 }}
+                        className="relative rounded-2xl bg-card border border-border/50 overflow-hidden"
+                      >
+                        <div className="px-4 py-3.5 flex gap-3 items-center">
+                          <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-xl opacity-60">
+                            {t.avatar}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-[14px] font-medium text-foreground/70 truncate">{t.name}</h4>
+                            <p className="text-[12px] text-muted-foreground truncate mt-0.5">{t.lastMessage}</p>
+                          </div>
+                          <button
+                            onClick={() => handleUnarchive(t.id)}
+                            className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-[11px] font-semibold active:scale-95 transition-transform"
+                          >
+                            <ArchiveRestore size={12} />
+                            Unarchive
+                          </button>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {filteredChats.length === 0 && archivedChats.length === 0 && !loading && (
               <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-20">
                 <div className="w-16 h-16 rounded-full bg-secondary/50 mx-auto mb-4 flex items-center justify-center">
                   <MessageCircle size={28} className="text-muted-foreground/30" />
