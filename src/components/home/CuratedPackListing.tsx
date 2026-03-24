@@ -123,7 +123,7 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
   return (
     <div
       ref={cardRef}
-      className="cursor-pointer px-5 group active:scale-[0.97] transition-transform select-none"
+      className="cursor-pointer px-5 md:px-0 group active:scale-[0.97] transition-transform select-none"
       style={{ animationDelay: `${index * 60}ms` }}
       onClick={() => { hapticSelection(); onTap(pack); }}
     >
