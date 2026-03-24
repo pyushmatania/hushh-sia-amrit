@@ -32,9 +32,9 @@ interface FoodieCarouselProps {
 }
 
 const FoodieVideoCard = memo(function FoodieVideoCard({
-  property, videoSrc, overlayText, isActive, onTap, accent,
+  property, videoSrc, overlayText, isActive, onTap, accent, isFirst,
 }: {
-  property: Property; videoSrc: string; overlayText: string; isActive: boolean; onTap: () => void; accent: FoodieAccent;
+  property: Property; videoSrc: string; overlayText: string; isActive: boolean; onTap: () => void; accent: FoodieAccent; isFirst?: boolean;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -49,17 +49,26 @@ const FoodieVideoCard = memo(function FoodieVideoCard({
       ([entry]) => {
         const vis = entry.isIntersecting;
         setIsVisible(vis);
-        if (vis) {
-          videoRef.current?.play().catch(() => {});
-        } else {
+        if (!vis) {
           videoRef.current?.pause();
         }
       },
-      { threshold: 0.1, rootMargin: "50px" }
+      { threshold: 0.1, rootMargin: "20px" }
     );
     observer.observe(card);
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (!isVisible || !videoRef.current) return;
+
+    if (isActive) {
+      videoRef.current.play().catch(() => {});
+      return;
+    }
+
+    videoRef.current.pause();
+  }, [isVisible, isActive]);
 
   return (
     <div
@@ -89,9 +98,9 @@ const FoodieVideoCard = memo(function FoodieVideoCard({
               muted={muted}
               loop
               playsInline
-              preload="metadata"
+              preload={isFirst ? "auto" : "none"}
               onCanPlay={() => setVideoReady(true)}
-              className="absolute inset-0 w-full h-full object-cover z-[1]"
+              className="absolute inset-0 w-full h-full object-cover z-[1] pointer-events-none"
               style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.4s", filter: "blur(0.6px)" }}
             />
           )}
@@ -150,9 +159,9 @@ export default function FoodieCarousel({ properties, onPropertyTap }: FoodieCaro
 
   return (
     <div>
-      <div ref={scrollRef} onScroll={handleScroll} className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2" style={{ scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" }}>
+      <div ref={scrollRef} onScroll={handleScroll} data-no-pull-refresh="true" className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2" style={{ scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch", touchAction: "pan-x", overscrollBehaviorX: "contain" }}>
         {items.map((p, i) => (
-          <FoodieVideoCard key={p.id} property={p} videoSrc={foodieVideos[i % foodieVideos.length]} overlayText={foodieOverlays[i % foodieOverlays.length]} isActive={i === activeIndex} accent={foodieAccents[i % foodieAccents.length]} onTap={() => onPropertyTap(p)} />
+          <FoodieVideoCard key={p.id} property={p} videoSrc={foodieVideos[i % foodieVideos.length]} overlayText={foodieOverlays[i % foodieOverlays.length]} isActive={i === activeIndex} accent={foodieAccents[i % foodieAccents.length]} onTap={() => onPropertyTap(p)} isFirst={i === 0} />
         ))}
       </div>
     </div>
