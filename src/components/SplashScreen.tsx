@@ -20,6 +20,12 @@ import splash2Day from "@/assets/splash2-day-v2.jpg";
 import splash2Dusk from "@/assets/splash2-dusk-v2.jpg";
 import splash2Night from "@/assets/splash2-night-v2.jpg";
 
+// Desktop landscape — Variant 2
+import splash2DawnDesktop from "@/assets/splash2-dawn-v2-desktop.jpg";
+import splash2DayDesktop from "@/assets/splash2-day-v2-desktop.jpg";
+import splash2DuskDesktop from "@/assets/splash2-dusk-v2-desktop.jpg";
+import splash2NightDesktop from "@/assets/splash2-night-v2-desktop.jpg";
+
 // Preload 3D category icons during splash
 import iconHome from "@/assets/icon-home.webp";
 import iconStays from "@/assets/icon-stays-new.webp";
@@ -45,7 +51,7 @@ function getTimeConfig(variant: string = "1") {
   if (hour >= 5 && hour < 12) return {
     greeting: "Good Morning",
     emoji: "☀️",
-    bg: isV2 ? splash2Dawn : (isDesktop ? splashMorningDesktop : splashMorning),
+    bg: isV2 ? (isDesktop ? splash2DawnDesktop : splash2Dawn) : (isDesktop ? splashMorningDesktop : splashMorning),
     overlay: "linear-gradient(180deg, hsla(0,0%,0%,0.35) 0%, hsla(0,0%,0%,0.1) 40%, hsla(0,0%,0%,0.5) 100%)",
     hasFireflies: false,
     hasShootingStars: false,
@@ -66,7 +72,7 @@ function getTimeConfig(variant: string = "1") {
   if (hour >= 12 && hour < 17) return {
     greeting: "Good Afternoon",
     emoji: "🌤️",
-    bg: isV2 ? splash2Day : (isDesktop ? splashAfternoonDesktop : splashAfternoon),
+    bg: isV2 ? (isDesktop ? splash2DayDesktop : splash2Day) : (isDesktop ? splashAfternoonDesktop : splashAfternoon),
     overlay: "linear-gradient(180deg, hsla(0,0%,0%,0.3) 0%, hsla(0,0%,0%,0.05) 40%, hsla(0,0%,0%,0.45) 100%)",
     hasFireflies: false,
     hasShootingStars: false,
@@ -87,7 +93,7 @@ function getTimeConfig(variant: string = "1") {
   if (hour >= 17 && hour < 21) return {
     greeting: "Good Evening",
     emoji: "🌅",
-    bg: isV2 ? splash2Dusk : (isDesktop ? splashEveningDesktop : splashEvening),
+    bg: isV2 ? (isDesktop ? splash2DuskDesktop : splash2Dusk) : (isDesktop ? splashEveningDesktop : splashEvening),
     overlay: "linear-gradient(180deg, hsla(0,0%,0%,0.3) 0%, hsla(0,0%,0%,0.1) 35%, hsla(0,0%,0%,0.5) 100%)",
     hasFireflies: true,
     hasShootingStars: true,
@@ -108,7 +114,7 @@ function getTimeConfig(variant: string = "1") {
   return {
     greeting: "Good Night",
     emoji: "🌙",
-    bg: isV2 ? splash2Night : (isDesktop ? splashNightDesktop : splashNight),
+    bg: isV2 ? (isDesktop ? splash2NightDesktop : splash2Night) : (isDesktop ? splashNightDesktop : splashNight),
     overlay: "linear-gradient(180deg, hsla(0,0%,0%,0.2) 0%, hsla(0,0%,0%,0.05) 40%, hsla(0,0%,0%,0.55) 100%)",
     hasFireflies: true,
     hasShootingStars: true,
