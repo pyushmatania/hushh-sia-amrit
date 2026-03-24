@@ -584,24 +584,8 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                     ))}
                   </div>
 
-                  {/* Animated shimmer sweep across name */}
-                  {phase >= 3 && (
-                    <motion.div
-                      className="absolute pointer-events-none"
-                      style={{
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        background: "linear-gradient(105deg, transparent 30%, hsla(0,0%,100%,0.25) 45%, hsla(270,80%,80%,0.3) 50%, hsla(0,0%,100%,0.25) 55%, transparent 70%)",
-                        backgroundSize: "300% 100%",
-                        mixBlendMode: "overlay",
-                      }}
-                      initial={{ backgroundPosition: "200% 0" }}
-                      animate={{ backgroundPosition: ["-100% 0", "200% 0"] }}
-                      transition={{ delay: 0.8, duration: 1.5, ease: "easeInOut" }}
-                    />
-                  )}
+
+
                 </div>
               )}
 
@@ -663,33 +647,8 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                 ))}
               </div>
 
-              {/* Glowing accent underline with shimmer */}
-              <motion.div
-                className="mt-3 relative rounded-full overflow-hidden"
-                style={{ height: 2.5 }}
-                initial={{ width: 0, opacity: 0 }}
-                animate={phase >= 3 ? { width: 120, opacity: 1 } : { width: 0, opacity: 0 }}
-                transition={{ delay: 1, duration: 0.6, ease: "easeOut" }}
-              >
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    background: "linear-gradient(90deg, transparent, hsla(270,80%,70%,0.9), hsla(320,80%,65%,1), hsla(270,80%,70%,0.9), transparent)",
-                    boxShadow: "0 0 12px 2px hsla(270,80%,65%,0.5)",
-                  }}
-                />
-                {/* Shimmer traveling dot */}
-                <motion.div
-                  className="absolute h-full rounded-full"
-                  style={{
-                    width: 20,
-                    background: "hsla(0,0%,100%,0.6)",
-                    filter: "blur(3px)",
-                  }}
-                  animate={{ x: [-20, 140] }}
-                  transition={{ delay: 1.3, duration: 0.8, ease: "easeInOut", repeat: 1, repeatDelay: 0.5 }}
-                />
-              </motion.div>
+
+
 
               {/* Pulse rings — more dramatic */}
               {phase >= 3 && (
