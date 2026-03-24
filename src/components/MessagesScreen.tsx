@@ -660,12 +660,13 @@ export default function MessagesScreen() {
     <div className="pb-24 min-h-screen bg-background md:h-[calc(100vh-4rem)] md:overflow-y-auto">
       {/* Header */}
       <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-8 pb-4">
+        <div className="md:max-w-3xl md:mx-auto">
         <div className="flex items-center justify-between mb-5">
           <motion.h1 initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} className="text-[26px] md:text-3xl lg:text-4xl font-bold text-foreground tracking-tight">
             Messages
           </motion.h1>
           <motion.button initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} onClick={() => setShowSearch(!showSearch)}
-            className="w-9 h-9 rounded-full bg-secondary/60 flex items-center justify-center active:scale-90 transition-transform">
+            className="w-9 h-9 rounded-full bg-secondary/60 flex items-center justify-center active:scale-90 transition-transform md:cursor-pointer md:hover:bg-muted/50">
             {showSearch ? <X size={16} className="text-foreground" /> : <Search size={16} className="text-foreground" />}
           </motion.button>
         </div>
@@ -689,6 +690,7 @@ export default function MessagesScreen() {
           <Tab active={tab === "chats"} label="Chats" count={unreadChatCount} onClick={() => setTab("chats")} />
           <Tab active={tab === "notifications"} label="Updates" count={unreadNotifCount} onClick={() => setTab("notifications")} />
         </motion.div>
+        </div>
       </div>
 
       {/* Concierge CTA */}
