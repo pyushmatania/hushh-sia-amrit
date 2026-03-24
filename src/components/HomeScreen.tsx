@@ -403,6 +403,16 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               )}
 
               <LazySection minHeight="400px" rootMargin="300px">
+              {isMobile ? (
+                <MobilePropertyGrid
+                  properties={filteredProperties}
+                  onPropertyTap={onPropertyTap}
+                  wishlist={wishlist}
+                  onToggleWishlist={onToggleWishlist}
+                  rows={2}
+                  title="🔥 All Experiences"
+                />
+              ) : (
               <div className="mt-6">
                 <div className="flex items-center justify-between px-5 mb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:mb-6">
                   <h2 className="text-lg font-bold text-foreground md:text-xl lg:text-2xl">🔥 All Experiences</h2>
@@ -422,6 +432,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                   </div>
                 )}
               </div>
+              )}
               </LazySection>
               </>
               )}
