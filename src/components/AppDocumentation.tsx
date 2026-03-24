@@ -1747,11 +1747,68 @@ ${tables.map(([t, d]) => `<tr><td style="font-family:monospace;color:#7c3aed;fon
 │ [Book→] │ │ [Next→] │ │ [Pay→]  │ │ [Trips] │
 └─────────┘ └─────────┘ └─────────┘ └─────────┘</div>
 
+<h2>📱 Mobile & Responsive Blueprint</h2>
+<h3>Distribution</h3>
+<table><tr><th>Channel</th><th>Technology</th><th>Details</th></tr>
+<tr><td>PWA</td><td>VitePWA + Workbox</td><td>autoUpdate, standalone, portrait, installable from browser</td></tr>
+<tr><td>Android APK</td><td>Capacitor 8</td><td>WebView loads live URL, instant updates without rebuild</td></tr>
+<tr><td>CI/CD</td><td>GitHub Actions</td><td>Auto-build debug APK on push to main, Java 21, Gradle 8.14</td></tr>
+</table>
+
+<h3>Viewport & Layout</h3>
+<table><tr><th>Rule</th><th>Value</th><th>Purpose</th></tr>
+<tr><td>Design target</td><td>390×844px</td><td>iPhone 14/15 logical, tested 360px–428px</td></tr>
+<tr><td>overflow-x</td><td>hidden on html/body/#root</td><td>Prevent horizontal drift from 3D transforms</td></tr>
+<tr><td>overscroll-behavior-x</td><td>none</td><td>Disable rubber-band horizontal scroll</td></tr>
+<tr><td>Layout</td><td>Single column stack</td><td>All primary screens, 2-col grids for cards</td></tr>
+<tr><td>Modals</td><td>Bottom sheets (Vaul)</td><td>Natural thumb reach zone</td></tr>
+</table>
+
+<h3>Touch & Interaction</h3>
+<table><tr><th>Feature</th><th>Implementation</th></tr>
+<tr><td>Touch targets</td><td>44px minimum, bottom nav 48px zones</td></tr>
+<tr><td>Haptics</td><td>navigator.vibrate on booking, spin, toggle</td></tr>
+<tr><td>Animations</td><td>Framer Motion springs (stiffness 300, damping 30), whileTap scale 0.95</td></tr>
+<tr><td>Gestures</td><td>Swipe messages, pull-to-refresh, scroll-snap carousels</td></tr>
+</table>
+
+<h3>Aspect Ratios</h3>
+<table><tr><th>Element</th><th>Ratio</th></tr>
+<tr><td>Property cards</td><td>16:10, object-cover, lazy</td></tr>
+<tr><td>Spotlight video</td><td>16:9, autoplay muted loop</td></tr>
+<tr><td>Gallery carousel</td><td>4:3, swipe with dots</td></tr>
+<tr><td>Avatars</td><td>1:1, rounded-full</td></tr>
+</table>
+
+<h3>Theme System</h3>
+<p>HSL CSS variables in :root (dark) and .light class. Semantic tokens only — no hardcoded colors. glass/glow/shadow utilities adapt per theme. 0.4s transition on switch.</p>
+
+<h3>Performance</h3>
+<table><tr><th>Optimization</th><th>Details</th></tr>
+<tr><td>Service Worker</td><td>NetworkFirst API, CacheFirst static, 10MB limit</td></tr>
+<tr><td>Fonts</td><td>preload + non-render-blocking, 4 Google Fonts</td></tr>
+<tr><td>Lazy Loading</td><td>LazySection (IntersectionObserver), OptimizedImage</td></tr>
+<tr><td>Inline Splash</td><td>HTML-inline for instant FCP, replaced by React</td></tr>
+<tr><td>React Query</td><td>30s stale, 2× retry, exponential backoff</td></tr>
+</table>
+
+<h3>AI Prompts for Web/Desktop Conversion</h3>
+<ol style="font-size:10px;line-height:1.8;">
+<li>Convert single-column to multi-panel: sidebar nav + main content + detail panel</li>
+<li>Replace BottomNav with persistent left sidebar, add breadcrumbs</li>
+<li>Scale grids: 2→3→4 columns, add hover states replacing tap</li>
+<li>Bottom sheets → centered Dialogs on desktop, keep sheets on mobile</li>
+<li>Card lists → data tables with sorting/filtering/pagination</li>
+<li>Split-pane: messages list+chat, property gallery+info</li>
+<li>Scale typography: titles 3xl, headers xl, body sm, px-8, max-w-7xl</li>
+<li>Add hover:scale-105, keyboard shortcuts, cursor:pointer</li>
+</ol>
+
 <h2>📋 Change History</h2>
 ${changelog}
 
 <div class="footer">
-<p>🏡 Hushh v1.27 · Private Experience Marketplace · Made in Jeypore ❤️</p>
+<p>🏡 Hushh v1.28 · Private Experience Marketplace · Made in Jeypore ❤️</p>
 <p>80+ Components · 27 Hooks · 45 Tables · 6 Edge Functions · 15 Screens · 22 Admin Pages</p>
 <p>Generated ${new Date().toLocaleDateString()}</p>
 </div>
