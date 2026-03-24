@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, useCallback, useMemo, memo } from "react";
-import { VolumeX, Volume2, Bookmark, Flame, Zap, Sparkles } from "lucide-react";
+import { VolumeX, Volume2, Bookmark, Flame, Zap, Sparkles, Star, ArrowRight, Clock } from "lucide-react";
 import { type Property } from "@/data/properties";
 import { AccentFrame, AccentTag } from "@/components/shared/AccentFrame";
 import OptimizedImage from "@/components/shared/OptimizedImage";
@@ -28,7 +28,6 @@ import videoChefCooking from "@/assets/video-chef-cooking.mp4.asset.json";
 import videoDecorSetup from "@/assets/video-decor-setup.mp4.asset.json";
 import videoRideService from "@/assets/video-ride-service.mp4.asset.json";
 
-// Category-specific video pools
 const videosByCategory: Record<string, string[]> = {
   home: [videoBonfire.url, videoPool.url, videoBbq.url, videoDj.url, videoRooftop.url, videoPickleball.url],
   stay: [videoVillaNight.url, videoFarmhouseDinner.url, videoPool.url, videoCoupleRetreat.url, videoWorkPod.url, videoBonfire.url],
@@ -87,9 +86,7 @@ const VideoCard = memo(function VideoCard({
       ([entry]) => {
         const vis = entry.isIntersecting;
         setIsVisible(vis);
-        if (!vis) {
-          videoRef.current?.pause();
-        }
+        if (!vis) videoRef.current?.pause();
       },
       { threshold: 0.1, rootMargin: "20px" }
     );
@@ -100,14 +97,11 @@ const VideoCard = memo(function VideoCard({
   useEffect(() => {
     const v = videoRef.current;
     if (!v || !isVisible) return;
-
     if (isActive) {
-      // Force load + play for first card
       if (isFirst && v.readyState < 2) v.load();
       v.play().catch(() => {});
       return;
     }
-
     v.pause();
   }, [isVisible, isActive, isFirst]);
 
@@ -116,71 +110,36 @@ const VideoCard = memo(function VideoCard({
       ref={cardRef}
       className="shrink-0 cursor-pointer"
       style={{
-        width: "85vw",
-        maxWidth: "380px",
-        scrollSnapAlign: "center",
-        opacity: isActive ? 1 : 0.7,
-        transform: isActive ? "scale(1)" : "scale(0.95)",
+        width: "85vw", maxWidth: "380px", scrollSnapAlign: "center",
+        opacity: isActive ? 1 : 0.7, transform: isActive ? "scale(1)" : "scale(0.95)",
         transition: "opacity 0.3s, transform 0.3s",
       }}
       onClick={onTap}
     >
       <div className="relative" style={{ height: "70vh", maxHeight: "580px" }}>
         <AccentFrame color={accent.color} radius="20px" glowAlpha={0.08} />
-        <div
-          className="relative w-full h-full overflow-hidden rounded-[20px]"
-          style={{ border: "1px solid hsl(var(--border) / 0.24)" }}
-        >
-          {/* Background poster — always visible */}
-          <OptimizedImage
-            src={property.images[0]}
-            alt={property.name}
-            fill
-            className="object-cover"
-            sizes="(max-width: 640px) 85vw, 380px"
-            priority={isFirst}
-          />
-          {/* Shimmer while video loads */}
+        <div className="relative w-full h-full overflow-hidden rounded-[20px]" style={{ border: "1px solid hsl(var(--border) / 0.24)" }}>
+          <OptimizedImage src={property.images[0]} alt={property.name} fill className="object-cover" sizes="(max-width: 640px) 85vw, 380px" priority={isFirst} />
           {!videoReady && <div className="absolute inset-0 z-[2] pointer-events-none video-buffer-shimmer" />}
-
-          {/* Video — only load when visible */}
           {isVisible && (
-            <video
-              ref={videoRef}
-              src={videoSrc}
-              muted={muted}
-              loop
-              playsInline
-              preload={isFirst ? "auto" : "none"}
-              onCanPlay={() => setVideoReady(true)}
+            <video ref={videoRef} src={videoSrc} muted={muted} loop playsInline preload={isFirst ? "auto" : "none"} onCanPlay={() => setVideoReady(true)}
               className="absolute inset-0 w-full h-full object-cover z-[1] pointer-events-none"
               style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.4s", filter: "blur(0.6px)" }}
             />
           )}
-
-          {/* Tag + mute button — ALWAYS visible */}
           <AccentTag tag={accent.tag} className="absolute top-4 left-4 z-10" />
-          <button
-            onClick={(e) => { e.stopPropagation(); setMuted(!muted); }}
+          <button onClick={(e) => { e.stopPropagation(); setMuted(!muted); }}
             className="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md z-10"
             style={{ background: "hsl(var(--foreground) / 0.36)" }}
           >
             {muted ? <VolumeX size={18} className="text-white" /> : <Volume2 size={18} className="text-white" />}
           </button>
-
-          {/* Overlay text — ALWAYS visible */}
           <div className="absolute inset-0 flex items-end pointer-events-none z-[5]" style={{ paddingBottom: "38%" }}>
-            <p
-              className="text-[26px] font-black italic text-white/90 leading-[1.15] px-5"
+            <p className="text-[26px] font-black italic text-white/90 leading-[1.15] px-5"
               style={{ fontFamily: "'Playfair Display', serif", textShadow: "0 2px 8px rgba(0,0,0,0.8), 0 4px 24px rgba(0,0,0,0.5)" }}
-            >
-              {overlayText}
-            </p>
+            >{overlayText}</p>
           </div>
-
-          {/* Bottom details — ALWAYS visible */}
-          <div
-            className="absolute bottom-0 left-0 right-0 p-5 z-[5]"
+          <div className="absolute bottom-0 left-0 right-0 p-5 z-[5]"
             style={{ background: "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.7) 45%, rgba(0,0,0,0.25) 70%, transparent 100%)" }}
           >
             <div className="flex items-end justify-between">
@@ -189,8 +148,7 @@ const VideoCard = memo(function VideoCard({
                 <h3 className="text-[22px] font-extrabold text-white leading-tight line-clamp-2" style={{ textShadow: "0 1px 6px rgba(0,0,0,0.5)" }}>{property.name}</h3>
                 <p className="text-[13px] text-white/75 font-medium mt-1">{property.location}</p>
               </div>
-              <button
-                onClick={(e) => { e.stopPropagation(); onToggleSave?.(property.id); }}
+              <button onClick={(e) => { e.stopPropagation(); onToggleSave?.(property.id); }}
                 className="w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md ml-3 shrink-0 active:scale-110 transition-transform"
                 style={{ background: "hsl(var(--foreground) / 0.36)" }}
               >
@@ -207,11 +165,11 @@ const VideoCard = memo(function VideoCard({
 export default function SpotlightCarousel({ properties, onPropertyTap, category = "home", wishlist = [], onToggleWishlist }: SpotlightCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [hoveredDesktop, setHoveredDesktop] = useState<number | null>(null);
   const topProperties = properties.slice(0, 6);
   const rafRef = useRef<number>(0);
 
   const dbVideoCards = useVideoCards(category);
-
   const videos = videosByCategory[category] || videosByCategory.home;
   const overlays = overlaysByCategory[category] || overlaysByCategory.home;
 
@@ -238,11 +196,10 @@ export default function SpotlightCarousel({ properties, onPropertyTap, category 
   }, [dbVideoCards, videos, overlays]);
 
   const dateLabels = useMemo(
-    () =>
-      topProperties.map((_, i) => {
-        const d = new Date(Date.now() + (i + 1) * 86400000);
-        return d.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" }) + ", 7:00 PM";
-      }),
+    () => topProperties.map((_, i) => {
+      const d = new Date(Date.now() + (i + 1) * 86400000);
+      return d.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" }) + ", 7:00 PM";
+    }),
     [topProperties.length]
   );
 
@@ -260,62 +217,78 @@ export default function SpotlightCarousel({ properties, onPropertyTap, category 
     <div>
       {/* Mobile: horizontal scroll carousel */}
       <div
-        ref={scrollRef}
-        onScroll={handleScroll}
-        data-no-pull-refresh="true"
+        ref={scrollRef} onScroll={handleScroll} data-no-pull-refresh="true"
         className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2 md:hidden"
         style={{ scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch", touchAction: "pan-x pan-y", overscrollBehaviorX: "contain" }}
       >
         {topProperties.map((p, i) => {
           const cfg = getCardConfig(i);
           return (
-            <VideoCard
-              key={p.id}
-              property={p}
-              videoSrc={cfg.videoUrl}
-              overlayText={cfg.overlayText}
-              isActive={i === activeIndex}
-              dateLabel={dateLabels[i]}
-              accent={cfg.accent}
-              onTap={() => onPropertyTap(p)}
-              isSaved={wishlist.includes(p.id)}
-              onToggleSave={onToggleWishlist}
-              isFirst={i === 0}
+            <VideoCard key={p.id} property={p} videoSrc={cfg.videoUrl} overlayText={cfg.overlayText}
+              isActive={i === activeIndex} dateLabel={dateLabels[i]} accent={cfg.accent}
+              onTap={() => onPropertyTap(p)} isSaved={wishlist.includes(p.id)} onToggleSave={onToggleWishlist} isFirst={i === 0}
             />
           );
         })}
       </div>
-      {/* Mobile dots */}
       <div className="flex justify-center gap-1.5 mt-3 md:hidden">
         {topProperties.map((_, i) => (
-          <div
-            key={i}
-            className={`h-1.5 rounded-full transition-all duration-300 ${i === activeIndex ? "w-6 bg-primary" : "w-1.5 bg-foreground/20"}`}
-          />
+          <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === activeIndex ? "w-6 bg-primary" : "w-1.5 bg-foreground/20"}`} />
         ))}
       </div>
 
-      {/* Desktop: Bento grid layout */}
-      <div className="hidden md:grid md:grid-cols-5 md:gap-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
-        {topProperties.slice(0, 3).map((p, i) => {
+      {/* Desktop: Interactive mosaic with hover effects */}
+      <div className="hidden md:grid md:grid-cols-6 md:gap-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32" style={{ height: 420 }}>
+        {topProperties.slice(0, 4).map((p, i) => {
           const cfg = getCardConfig(i);
-          const isLarge = i === 0;
+          const isHovered = hoveredDesktop === i;
+          // Layout: first card 3 cols, others fill remaining
+          const colSpan = i === 0 ? "col-span-3 row-span-2" : i === 1 ? "col-span-3" : "col-span-1";
+          const minH = i === 0 ? 420 : i === 1 ? 205 : 205;
+          const cheapest = Math.min(...p.slots.filter(s => s.available).map(s => s.price));
+          
           return (
             <div
               key={p.id}
-              className={`relative overflow-hidden rounded-2xl cursor-pointer group ${isLarge ? "col-span-3 row-span-2" : "col-span-2"}`}
-              style={{ height: isLarge ? undefined : i === 1 ? undefined : undefined, minHeight: isLarge ? 420 : 205 }}
+              className={`relative overflow-hidden rounded-2xl cursor-pointer group ${colSpan}`}
+              style={{ minHeight: minH }}
               onClick={() => onPropertyTap(p)}
+              onMouseEnter={() => setHoveredDesktop(i)}
+              onMouseLeave={() => setHoveredDesktop(null)}
             >
-              <img src={p.images[0]} alt={p.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+              <img src={p.images[0]} alt={p.name}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700"
+                style={{ transform: isHovered ? "scale(1.08)" : "scale(1)" }}
+              />
+              <div className="absolute inset-0 transition-all duration-500"
+                style={{ background: isHovered 
+                  ? "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.1) 100%)"
+                  : "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 40%, transparent 100%)"
+                }}
+              />
+              
               <AccentTag tag={cfg.accent.tag} className="absolute top-4 left-4 z-10" />
-              <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
-                <p className="text-sm font-bold text-primary mb-1">{dateLabels[i]}</p>
-                <h3 className={`font-extrabold text-white leading-tight ${isLarge ? "text-2xl lg:text-3xl" : "text-lg"}`} style={{ textShadow: "0 1px 6px rgba(0,0,0,0.5)" }}>
-                  {p.name}
-                </h3>
+              
+              {/* Reveal content on hover */}
+              <div className="absolute bottom-0 left-0 right-0 p-5 z-10 transition-transform duration-500"
+                style={{ transform: isHovered ? "translateY(0)" : "translateY(12px)" }}
+              >
+                <p className="text-xs font-bold text-primary mb-1">{dateLabels[i]}</p>
+                <h3 className={`font-extrabold text-white leading-tight ${i === 0 ? "text-2xl lg:text-3xl" : "text-lg"}`}
+                  style={{ textShadow: "0 1px 6px rgba(0,0,0,0.5)" }}
+                >{p.name}</h3>
                 <p className="text-sm text-white/75 font-medium mt-1">{p.location}</p>
+                
+                {/* Extra info on hover */}
+                <div className="overflow-hidden transition-all duration-500" style={{ maxHeight: isHovered ? 60 : 0, opacity: isHovered ? 1 : 0 }}>
+                  <div className="flex items-center gap-3 mt-2 pt-1">
+                    <div className="flex items-center gap-1"><Star size={12} className="fill-amber-400 text-amber-400" /><span className="text-sm font-bold text-white">{p.rating}</span></div>
+                    <span className="text-xs text-white/50">{p.slots.filter(s => s.available).length} slots</span>
+                    <div className="ml-auto flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold" style={{ background: "hsl(var(--primary))", color: "hsl(var(--primary-foreground))" }}>
+                      ₹{cheapest.toLocaleString()}+ <ArrowRight size={11} />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           );
