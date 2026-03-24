@@ -7,6 +7,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
+import { useToast } from "@/hooks/use-toast";
 
 interface MultiImageEditorProps {
   images: string[];
@@ -25,6 +26,7 @@ export default function MultiImageEditor({
   maxImages = 10,
   dimensionTip = "Recommended: 1200×800px (3:2 ratio), JPG/WebP, under 2MB",
 }: MultiImageEditorProps) {
+  const { toast } = useToast();
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -36,27 +38,71 @@ export default function MultiImageEditor({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const replaceInputRef = useRef<HTMLInputElement>(null);
 
+  const buildStoragePath = useCallback(async (ext?: string) => {
+    const safeExt = (ext || "jpg").toLowerCase();
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
+    if (error || !user) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to upload images.",
+        variant: "destructive",
+      });
+      return null;
+    }
+
+    return `${user.id}/${storagePath}/${Date.now()}-${Math.random().toString(36).slice(2)}.${safeExt}`;
+  }, [storagePath, toast]);
+
   const handleUpload = async (files: FileList) => {
     setUploading(true);
     const newUrls: string[] = [];
     const totalFiles = files.length;
     let completed = 0;
+    let failed = 0;
 
     for (const file of Array.from(files)) {
       const ext = file.name.split(".").pop();
-      const path = `${storagePath}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const { error } = await supabase.storage.from("listing-images").upload(path, file);
-      if (error) { completed++; continue; }
+      const path = await buildStoragePath(ext);
+      if (!path) {
+        failed++;
+        completed++;
+        continue;
+      }
+
+      const { error } = await supabase.storage
+        .from("listing-images")
+        .upload(path, file, { cacheControl: "3600", upsert: false });
+
+      if (error) {
+        failed++;
+        completed++;
+        continue;
+      }
+
       const { data: urlData } = supabase.storage.from("listing-images").getPublicUrl(path);
       if (urlData?.publicUrl) newUrls.push(urlData.publicUrl);
       completed++;
       setUploadProgress(Math.round((completed / totalFiles) * 100));
     }
+
     if (newUrls.length > 0) {
       const updated = [...images, ...newUrls].slice(0, maxImages);
       onChange(updated);
       setActiveIndex(images.length);
     }
+
+    if (failed > 0) {
+      toast({
+        title: "Some images could not upload",
+        description: `${failed} of ${totalFiles} uploads failed.`,
+        variant: "destructive",
+      });
+    }
+
     setUploading(false);
     setUploadProgress(0);
   };
@@ -64,8 +110,17 @@ export default function MultiImageEditor({
   const handleReplace = async (file: File, index: number) => {
     setUploading(true);
     const ext = file.name.split(".").pop();
-    const path = `${storagePath}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-    const { error } = await supabase.storage.from("listing-images").upload(path, file);
+    const path = await buildStoragePath(ext);
+    if (!path) {
+      setUploading(false);
+      setReplaceIndex(null);
+      return;
+    }
+
+    const { error } = await supabase.storage
+      .from("listing-images")
+      .upload(path, file, { cacheControl: "3600", upsert: false });
+
     if (!error) {
       const { data: urlData } = supabase.storage.from("listing-images").getPublicUrl(path);
       if (urlData?.publicUrl) {
@@ -73,7 +128,14 @@ export default function MultiImageEditor({
         updated[index] = urlData.publicUrl;
         onChange(updated);
       }
+    } else {
+      toast({
+        title: "Replace failed",
+        description: error.message,
+        variant: "destructive",
+      });
     }
+
     setUploading(false);
     setReplaceIndex(null);
   };

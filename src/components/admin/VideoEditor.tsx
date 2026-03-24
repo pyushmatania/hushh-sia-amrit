@@ -2,6 +2,7 @@ import { useState } from "react";
 import { X, Upload, Video, Info, Play } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface VideoEditorProps {
   videoUrl: string | null;
@@ -18,17 +19,45 @@ export default function VideoEditor({
   label = "Video",
   dimensionTip = "Recommended: 1080×1920px (9:16 vertical), MP4, under 15MB, 5-15 seconds",
 }: VideoEditorProps) {
+  const { toast } = useToast();
   const [uploading, setUploading] = useState(false);
 
   const handleUpload = async (file: File) => {
     setUploading(true);
-    const ext = file.name.split(".").pop();
-    const path = `${storagePath}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-    const { error } = await supabase.storage.from("listing-images").upload(path, file);
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to upload videos.",
+        variant: "destructive",
+      });
+      setUploading(false);
+      return;
+    }
+
+    const ext = file.name.split(".").pop()?.toLowerCase() || "mp4";
+    const path = `${user.id}/${storagePath}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error } = await supabase.storage
+      .from("listing-images")
+      .upload(path, file, { cacheControl: "3600", upsert: false });
+
     if (!error) {
       const { data: urlData } = supabase.storage.from("listing-images").getPublicUrl(path);
-      if (urlData?.publicUrl) onChange(urlData.publicUrl);
+      if (urlData?.publicUrl) {
+        onChange(urlData.publicUrl);
+      }
+    } else {
+      toast({
+        title: "Video upload failed",
+        description: error.message,
+        variant: "destructive",
+      });
     }
+
     setUploading(false);
   };
 

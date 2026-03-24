@@ -78,8 +78,13 @@ export default function AdminCatalog() {
   useEffect(() => {
     fetchStats();
     const handler = () => fetchStats();
+    const openCurationsHandler = () => setActiveTab("curations");
     window.addEventListener("hushh:listings-updated", handler);
-    return () => window.removeEventListener("hushh:listings-updated", handler);
+    window.addEventListener("hushh:open-curations", openCurationsHandler);
+    return () => {
+      window.removeEventListener("hushh:listings-updated", handler);
+      window.removeEventListener("hushh:open-curations", openCurationsHandler);
+    };
   }, []);
 
   const quickStats = [
