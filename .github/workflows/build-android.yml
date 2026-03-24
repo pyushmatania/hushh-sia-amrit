@@ -58,14 +58,16 @@ jobs:
         run: |
           ICONS_DIR="android/app/src/main/res"
           
-          # Generate launcher icons from app-icon.png
+          # Generate launcher icons from PWA icon (latest branding)
+          ICON_SRC="public/pwa-icon-512.png"
+          if [ ! -f "$ICON_SRC" ]; then ICON_SRC="public/app-icon.png"; fi
           for size_dir in mdpi:48 hdpi:72 xhdpi:96 xxhdpi:144 xxxhdpi:192; do
             dir=$(echo $size_dir | cut -d: -f1)
             size=$(echo $size_dir | cut -d: -f2)
             mkdir -p "$ICONS_DIR/mipmap-$dir"
-            convert public/app-icon.png -resize ${size}x${size} "$ICONS_DIR/mipmap-$dir/ic_launcher.png"
-            convert public/app-icon.png -resize ${size}x${size} "$ICONS_DIR/mipmap-$dir/ic_launcher_round.png"
-            convert public/app-icon.png -resize ${size}x${size} "$ICONS_DIR/mipmap-$dir/ic_launcher_foreground.png"
+            convert "$ICON_SRC" -resize ${size}x${size} "$ICONS_DIR/mipmap-$dir/ic_launcher.png"
+            convert "$ICON_SRC" -resize ${size}x${size} "$ICONS_DIR/mipmap-$dir/ic_launcher_round.png"
+            convert "$ICON_SRC" -resize ${size}x${size} "$ICONS_DIR/mipmap-$dir/ic_launcher_foreground.png"
           done
           
           # Create a solid dark splash screen (no Capacitor logo)
