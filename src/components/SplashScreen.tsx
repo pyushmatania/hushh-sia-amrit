@@ -429,10 +429,10 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
           <div className="absolute inset-0 flex flex-col z-10">
 
             {/* Top — Greeting area */}
-            <div className="flex-1 flex flex-col justify-center items-center px-8 pt-16">
+            <div className="flex-1 flex flex-col justify-center items-center px-8 pt-16 md:pt-24 lg:pt-32">
               {/* Date */}
               <motion.p
-                className="text-[11px] font-semibold tracking-[0.2em] uppercase text-white/50"
+                className="text-[11px] md:text-sm lg:text-base font-semibold tracking-[0.2em] uppercase text-white/50"
                 initial={{ opacity: 0, y: -15 }}
                 animate={phase >= 2 ? { opacity: 1, y: 0 } : { opacity: 0, y: -15 }}
                 transition={{ duration: 0.4 }}
@@ -446,7 +446,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
               {/* Greeting */}
               <motion.h1
-                className="text-[32px] font-extrabold text-white text-center mt-2 leading-tight"
+                className="text-[32px] md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-white text-center mt-2 md:mt-4 leading-tight"
                 style={{
                   textShadow: "0 2px 20px hsla(0,0%,0%,0.5)",
                   fontFamily: "'Playfair Display', serif",
@@ -471,13 +471,13 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                 animate={phase >= 2 ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
                 transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-[10px] font-medium text-white/70 tracking-wide">Jeypore, Odisha</span>
+                <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-[10px] md:text-xs lg:text-sm font-medium text-white/70 tracking-wide">Jeypore, Odisha</span>
               </motion.div>
             </div>
 
             {/* Bottom — Brand area */}
-            <div className="pb-14 flex flex-col items-center px-8 relative">
+            <div className="pb-14 md:pb-24 lg:pb-32 flex flex-col items-center px-8 relative">
 
               {/* Background glow behind brand */}
               {phase >= 3 && (
@@ -514,9 +514,8 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                     {letters.map((letter, i) => (
                       <motion.span
                         key={i}
-                        className="inline-block relative"
+                        className="inline-block relative text-[56px] md:text-[80px] lg:text-[100px] xl:text-[120px]"
                         style={{
-                          fontSize: "56px",
                           lineHeight: 1,
                           color: "transparent",
                           backgroundImage: "linear-gradient(180deg, hsla(0,0%,100%,1) 0%, hsla(0,0%,100%,0.85) 50%, hsla(270,80%,85%,0.9) 100%)",
@@ -542,7 +541,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
                     {/* Shush emoji with bounce */}
                     <motion.span
-                      className="text-[38px] ml-2 inline-block"
+                      className="text-[38px] md:text-[54px] lg:text-[68px] xl:text-[80px] ml-2 md:ml-4 inline-block"
                       initial={{ scale: 0, rotate: -60, y: 20 }}
                       animate={phase >= 3 ? { scale: [0, 1.6, 0.9, 1.15, 1], rotate: [-60, 15, -5, 0], y: [20, -8, 2, 0] } : { scale: 0 }}
                       transition={{ delay: letters.length * 0.1 + 0.15, duration: 0.7, ease: "easeOut" }}
@@ -578,7 +577,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
               {/* Decorative divider */}
               <motion.div
-                className="flex items-center gap-3 mt-4"
+                className="flex items-center gap-3 md:gap-5 mt-4 md:mt-6"
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={phase >= 3 ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }}
                 transition={{ delay: 0.5, duration: 0.4, ease: "easeOut" }}
@@ -606,13 +605,12 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
               </motion.div>
 
               {/* Tagline — character-by-character reveal with stagger */}
-              <div className="mt-2 flex items-center justify-center gap-[1.5px] overflow-hidden">
+              <div className="mt-2 md:mt-4 flex items-center justify-center gap-[1.5px] md:gap-[2.5px] overflow-hidden">
                 {tagline.split("").map((char, i) => (
                   <motion.span
                     key={i}
-                    className="inline-block"
+                    className="inline-block text-[11px] md:text-sm lg:text-base"
                     style={{
-                      fontSize: "11px",
                       letterSpacing: "0.22em",
                       textTransform: "uppercase",
                       fontWeight: 600,
