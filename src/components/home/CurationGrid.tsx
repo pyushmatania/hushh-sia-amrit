@@ -294,7 +294,6 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
             <div className="grid grid-cols-4 gap-5">
               {romantic.slice(0, 4).map((c, i) => <DesktopCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
             </div>
-            </div>
           )}
         </>
       )}
