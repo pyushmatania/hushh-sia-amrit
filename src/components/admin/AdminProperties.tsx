@@ -302,7 +302,11 @@ export default function AdminProperties() {
             </div>
             Properties
           </h1>
-          <p className="text-xs text-muted-foreground mt-0.5 ml-[46px]">{stats.total} total · {stats.published} live · Swipe rows or drag ⠿ to reorder</p>
+          <p className="text-xs text-muted-foreground mt-0.5 ml-[46px]">
+            {stats.total} total · {stats.published} live
+            {categoryFilter !== "all" && ` · ${filtered.length} ${categoryFilter}`}
+            {" · Swipe rows or drag ⠿ to reorder"}
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <motion.button
