@@ -6,7 +6,7 @@ interface LazySectionProps {
   minHeight?: string;
 }
 
-export default function LazySection({ children, rootMargin = "200px", minHeight = "200px" }: LazySectionProps) {
+export default function LazySection({ children, rootMargin = "100px", minHeight = "200px" }: LazySectionProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -27,7 +27,7 @@ export default function LazySection({ children, rootMargin = "200px", minHeight 
   }, [rootMargin]);
 
   return (
-    <div ref={ref} style={visible ? undefined : { minHeight }}>
+    <div ref={ref} style={visible ? { contentVisibility: "auto" as any, containIntrinsicSize: `auto ${minHeight}` } : { minHeight, contentVisibility: "auto" as any, containIntrinsicSize: `auto ${minHeight}` }}>
       {visible ? children : null}
     </div>
   );
