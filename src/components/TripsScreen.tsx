@@ -167,19 +167,14 @@ function TiltCard({
         className="relative rounded-3xl overflow-hidden cursor-pointer transition-shadow duration-300"
         whileHover={{ y: -4 }}
       >
-        {/* Multi-layer depth shadow */}
-        <div className="absolute -inset-[1px] rounded-3xl pointer-events-none" style={{
-          boxShadow: `0 2px 4px hsla(0,0%,0%,0.3), 0 8px 16px hsla(0,0%,0%,0.25), 0 16px 32px hsla(0,0%,0%,0.2), 0 24px 48px -8px hsla(270,60%,50%,0.15), inset 0 1px 0 hsla(0,0%,100%,0.08)`,
-        }} />
+        {/* Multi-layer depth shadow — light-mode-aware */}
+        <div className="absolute -inset-[1px] rounded-3xl pointer-events-none shadow-[0_2px_8px_hsla(260,20%,20%,0.08),0_8px_24px_hsla(260,20%,20%,0.10),0_16px_40px_hsla(270,60%,50%,0.08)] dark:shadow-[0_2px_4px_hsla(0,0%,0%,0.3),0_8px_16px_hsla(0,0%,0%,0.25),0_16px_32px_hsla(0,0%,0%,0.2),0_24px_48px_-8px_hsla(270,60%,50%,0.15)]" />
 
-        <div className="relative bg-card rounded-3xl overflow-hidden border border-border/40" style={{
-          boxShadow: `inset 0 1px 0 hsla(0,0%,100%,0.06), inset 0 -1px 0 hsla(0,0%,0%,0.2)`,
-        }}>
+        <div className="relative bg-card rounded-3xl overflow-hidden border border-border">
           {/* Background image */}
           <div className="relative h-[220px] overflow-hidden">
             <motion.img src={property.images[0]} alt={property.name} className="w-full h-[260px] object-cover" style={{ y: imgY }} />
-            <div className="absolute inset-0 bg-gradient-to-t from-card via-card/80 to-transparent" />
-            <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-card via-card/60 to-transparent" />
 
             <motion.div className="absolute inset-0 pointer-events-none" style={{
               background: `radial-gradient(ellipse at 30% 20%, hsla(270, 80%, 75%, 0.2) 0%, transparent 50%)`,
@@ -209,11 +204,7 @@ function TiltCard({
 
           {/* Card content */}
           <div className="relative px-5 pb-5 -mt-8" style={{ transform: "translateZ(20px)" }}>
-            <div className="rounded-2xl p-4 space-y-3 border border-border/40" style={{
-              background: "hsl(var(--card) / 0.85)",
-              backdropFilter: "blur(20px) saturate(1.4)",
-              boxShadow: `0 4px 16px hsl(var(--foreground) / 0.08), inset 0 1px 0 hsl(var(--foreground) / 0.04)`,
-            }}>
+            <div className="rounded-2xl p-4 space-y-3 border border-border bg-card">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <h3 className="font-bold text-base text-foreground truncate">{property.name}</h3>
@@ -227,22 +218,22 @@ function TiltCard({
               </div>
 
               <div className="flex flex-wrap gap-2">
-                <span className="flex items-center gap-1.5 bg-secondary/80 rounded-lg px-2.5 py-1.5 text-xs text-foreground" style={{ boxShadow: "inset 0 1px 0 hsla(0,0%,100%,0.04), 0 1px 2px hsla(0,0%,0%,0.15)" }}>
+                <span className="flex items-center gap-1.5 bg-secondary rounded-lg px-2.5 py-1.5 text-xs text-foreground">
                   <CalendarIcon size={12} className="text-primary" /> {booking.date}
                 </span>
-                <span className="flex items-center gap-1.5 bg-secondary/80 rounded-lg px-2.5 py-1.5 text-xs text-foreground" style={{ boxShadow: "inset 0 1px 0 hsla(0,0%,100%,0.04), 0 1px 2px hsla(0,0%,0%,0.15)" }}>
+                <span className="flex items-center gap-1.5 bg-secondary rounded-lg px-2.5 py-1.5 text-xs text-foreground">
                   <Clock size={12} className="text-primary" /> {booking.slot}
                 </span>
-                <span className="flex items-center gap-1.5 bg-secondary/80 rounded-lg px-2.5 py-1.5 text-xs text-foreground" style={{ boxShadow: "inset 0 1px 0 hsla(0,0%,100%,0.04), 0 1px 2px hsla(0,0%,0%,0.15)" }}>
+                <span className="flex items-center gap-1.5 bg-secondary rounded-lg px-2.5 py-1.5 text-xs text-foreground">
                   <Users size={12} className="text-primary" /> {booking.guests}
                 </span>
                 {booking.roomsCount && booking.roomsCount > 0 && (
-                  <span className="flex items-center gap-1.5 bg-secondary/80 rounded-lg px-2.5 py-1.5 text-xs text-foreground" style={{ boxShadow: "inset 0 1px 0 hsla(0,0%,100%,0.04), 0 1px 2px hsla(0,0%,0%,0.15)" }}>
+                  <span className="flex items-center gap-1.5 bg-secondary rounded-lg px-2.5 py-1.5 text-xs text-foreground">
                     🛏️ {booking.roomsCount} {booking.roomsCount === 1 ? "room" : "rooms"}
                   </span>
                 )}
                 {booking.extraMattresses && booking.extraMattresses > 0 && (
-                  <span className="flex items-center gap-1.5 bg-primary/10 rounded-lg px-2.5 py-1.5 text-xs text-primary font-medium" style={{ boxShadow: "inset 0 1px 0 hsla(0,0%,100%,0.04), 0 1px 2px hsla(0,0%,0%,0.15)" }}>
+                  <span className="flex items-center gap-1.5 bg-primary/10 rounded-lg px-2.5 py-1.5 text-xs text-primary font-medium">
                     🛏️ +{booking.extraMattresses} mattress
                   </span>
                 )}
@@ -280,12 +271,7 @@ function TiltCard({
             </div>
           </div>
 
-          <div className="absolute bottom-0 left-2 right-2 h-[6px] rounded-b-3xl pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent, hsla(0,0%,0%,0.25))" }} />
         </div>
-
-        <div className="absolute inset-0 rounded-3xl pointer-events-none border border-white/[0.06]" />
-        <div className="absolute top-2 bottom-2 -left-[1px] w-[2px] pointer-events-none rounded-l-3xl" style={{ background: "linear-gradient(to right, hsla(0,0%,0%,0.3), transparent)" }} />
-        <div className="absolute top-2 bottom-2 -right-[1px] w-[2px] pointer-events-none rounded-r-3xl" style={{ background: "linear-gradient(to left, hsla(0,0%,0%,0.3), transparent)" }} />
       </motion.div>
     </motion.div>
   );
