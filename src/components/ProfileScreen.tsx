@@ -163,7 +163,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1, type: "spring", stiffness: 200, damping: 22 }}
-        className="mx-5 mt-5 rounded-[28px] overflow-hidden relative"
+        className="mx-5 md:mx-0 mt-5 rounded-[28px] overflow-hidden relative md:max-w-2xl"
         style={{
           background: "linear-gradient(145deg, hsl(var(--primary) / 0.12) 0%, hsl(var(--primary) / 0.04) 50%, hsl(var(--background)) 100%)",
           border: "1px solid hsl(var(--primary) / 0.15)",
