@@ -208,7 +208,7 @@ export default function AdminTelegram() {
           : eventType;
 
         const { error: notifyErr } = await supabase.functions.invoke("telegram-notify", {
-          body: { event_type: actualEventType, data: eventData },
+          body: { event_type: actualEventType, data: eventData, use_admin_chat: true },
         });
         if (notifyErr) throw notifyErr;
       }

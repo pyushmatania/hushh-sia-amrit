@@ -37,9 +37,28 @@ Deno.serve(async (req) => {
       });
     }
 
-    const adminChatId = state.admin_chat_id;
+    let adminChatId = state.admin_chat_id;
+
+    // Fallback: auto-detect latest chat from polled messages
     if (!adminChatId) {
-      return new Response(JSON.stringify({ error: "No admin_chat_id configured" }), {
+      const { data: latestMessage } = await supabase
+        .from("telegram_messages")
+        .select("chat_id")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (latestMessage?.chat_id) {
+        adminChatId = String(latestMessage.chat_id);
+        await supabase
+          .from("telegram_bot_state")
+          .update({ admin_chat_id: adminChatId })
+          .eq("id", 1);
+      }
+    }
+
+    if (!adminChatId) {
+      return new Response(JSON.stringify({ error: "No admin_chat_id configured", hint: "Send a message to the bot and run Poll once, or set Admin Chat ID in config." }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
