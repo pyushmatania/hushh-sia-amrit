@@ -237,7 +237,12 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
   const [desktopShowAll, setDesktopShowAll] = useState(false);
+  const overflowScrollRef = useRef<HTMLDivElement>(null);
+  const [overflowCanLeft, setOverflowCanLeft] = useState(false);
+  const [overflowCanRight, setOverflowCanRight] = useState(false);
   const CARDS_PER_PAGE = 4;
+  const COLS = 4;
+  const ROWS_INITIAL = 3;
 
   useEffect(() => { setVisibleCount(INITIAL_BATCH); }, [properties]);
 
@@ -272,6 +277,30 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
     const cardWidth = el.querySelector("[data-listing-card]")?.getBoundingClientRect().width || 300;
     const scrollAmount = (cardWidth + 24) * CARDS_PER_PAGE;
     el.scrollBy({ left: dir === "right" ? scrollAmount : -scrollAmount, behavior: "smooth" });
+  }, []);
+
+  const updateOverflowArrows = useCallback(() => {
+    const el = overflowScrollRef.current;
+    if (!el) return;
+    setOverflowCanLeft(el.scrollLeft > 10);
+    setOverflowCanRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10);
+  }, []);
+
+  useEffect(() => {
+    const el = overflowScrollRef.current;
+    if (!el || isMobile || desktopShowAll) return;
+    updateOverflowArrows();
+    el.addEventListener("scroll", updateOverflowArrows, { passive: true });
+    const ro = new ResizeObserver(updateOverflowArrows);
+    ro.observe(el);
+    return () => { el.removeEventListener("scroll", updateOverflowArrows); ro.disconnect(); };
+  }, [updateOverflowArrows, isMobile, desktopShowAll, properties]);
+
+  const scrollOverflow = useCallback((dir: "left" | "right") => {
+    const el = overflowScrollRef.current;
+    if (!el) return;
+    const cardW = el.querySelector("[data-overflow-card]")?.getBoundingClientRect().width || 260;
+    el.scrollBy({ left: dir === "left" ? -cardW * 2 : cardW * 2, behavior: "smooth" });
   }, []);
 
   // Mobile: creative mixed feed elements
@@ -348,72 +377,107 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
 
   if (properties.length === 0) return null;
 
-  /* ─── Desktop: 3-row grid with Show More ─── */
-  const COLS = 4;
-  const ROWS_INITIAL = 3;
+  /* ─── Desktop: 3-row grid + swipeable overflow row + Show More ─── */
 
   if (!isMobile) {
-    const desktopVisible = desktopShowAll ? properties : properties.slice(0, COLS * ROWS_INITIAL);
+    const gridItems = properties.slice(0, COLS * ROWS_INITIAL);
+    const overflowItems = properties.slice(COLS * ROWS_INITIAL);
+    const allVisible = desktopShowAll ? properties : gridItems;
+
+    const renderCard = (p: Property) => {
+      const isWL = wishlist.includes(p.id);
+      const cheapest = Math.min(...p.slots.filter(s => s.available).map(s => s.price));
+      return (
+        <div
+          key={p.id}
+          className="cursor-pointer group"
+          onClick={() => onPropertyTap(p)}
+        >
+          <div className="relative aspect-[4/3] rounded-xl overflow-hidden">
+            <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
+            {onToggleWishlist && (
+              <button onClick={(e) => { e.stopPropagation(); onToggleWishlist(p.id); }} className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center">
+                <Heart size={20} className={isWL ? "fill-primary text-primary" : "fill-foreground/30 text-white"} strokeWidth={isWL ? 0 : 2} />
+              </button>
+            )}
+            {p.images.length > 1 && (
+              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+                {p.images.slice(0, 5).map((_, di) => (
+                  <div key={di} className={`w-1.5 h-1.5 rounded-full ${di === 0 ? "bg-white" : "bg-white/50"}`} />
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="mt-3">
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-semibold text-foreground leading-tight line-clamp-1 flex-1">{p.name}</h4>
+              <div className="flex items-center gap-1 ml-2 shrink-0">
+                <Star size={12} className="fill-foreground text-foreground" />
+                <span className="text-sm text-foreground">{p.rating}</span>
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground mt-0.5 line-clamp-1">{p.location}</p>
+            <p className="text-sm text-foreground mt-1">
+              <span className="font-semibold">₹{cheapest.toLocaleString()}</span>
+              <span className="text-muted-foreground"> per slot</span>
+            </p>
+          </div>
+        </div>
+      );
+    };
+
     return (
       <div className="md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+        {/* Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-8">
-          {desktopVisible.map((p) => {
-            const isWL = wishlist.includes(p.id);
-            const cheapest = Math.min(...p.slots.filter(s => s.available).map(s => s.price));
-            return (
-              <div
-                key={p.id}
-                className="cursor-pointer group"
-                onClick={() => onPropertyTap(p)}
-              >
-                <div className="relative aspect-[4/3] rounded-xl overflow-hidden">
-                  <img
-                    src={p.images[0]}
-                    alt={p.name}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-                  />
-                  {onToggleWishlist && (
-                    <button
-                      onClick={(e) => { e.stopPropagation(); onToggleWishlist(p.id); }}
-                      className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center"
-                    >
-                      <Heart size={20} className={isWL ? "fill-primary text-primary" : "fill-foreground/30 text-white"} strokeWidth={isWL ? 0 : 2} />
-                    </button>
-                  )}
-                  {p.images.length > 1 && (
-                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
-                      {p.images.slice(0, 5).map((_, di) => (
-                        <div key={di} className={`w-1.5 h-1.5 rounded-full ${di === 0 ? "bg-white" : "bg-white/50"}`} />
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <div className="mt-3">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-semibold text-foreground leading-tight line-clamp-1 flex-1">{p.name}</h4>
-                    <div className="flex items-center gap-1 ml-2 shrink-0">
-                      <Star size={12} className="fill-foreground text-foreground" />
-                      <span className="text-sm text-foreground">{p.rating}</span>
-                    </div>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-0.5 line-clamp-1">{p.location}</p>
-                  <p className="text-sm text-foreground mt-1">
-                    <span className="font-semibold">₹{cheapest.toLocaleString()}</span>
-                    <span className="text-muted-foreground"> per slot</span>
-                  </p>
-                </div>
-              </div>
-            );
-          })}
+          {allVisible.map(renderCard)}
         </div>
 
-        {!desktopShowAll && properties.length > COLS * ROWS_INITIAL && (
+        {/* Swipeable overflow row — only when not showing all & there are overflow items */}
+        {!desktopShowAll && overflowItems.length > 0 && (
+          <div className="relative mt-8">
+            {overflowCanLeft && (
+              <button
+                onClick={() => scrollOverflow("left")}
+                className="absolute -left-5 top-1/3 -translate-y-1/2 z-20 w-9 h-9 rounded-full flex items-center justify-center border border-border/40 shadow-md hover:scale-110 transition-all cursor-pointer"
+                style={{ background: "hsl(var(--background))", color: "hsl(var(--foreground))" }}
+              >
+                <ChevronLeft size={18} />
+              </button>
+            )}
+            {overflowCanRight && (
+              <button
+                onClick={() => scrollOverflow("right")}
+                className="absolute -right-5 top-1/3 -translate-y-1/2 z-20 w-9 h-9 rounded-full flex items-center justify-center border border-border/40 shadow-md hover:scale-110 transition-all cursor-pointer"
+                style={{ background: "hsl(var(--background))", color: "hsl(var(--foreground))" }}
+              >
+                <ChevronRight size={18} />
+              </button>
+            )}
+            <div
+              ref={overflowScrollRef}
+              className="flex gap-6 overflow-x-auto hide-scrollbar pb-2"
+              style={{ scrollSnapType: "x mandatory" }}
+            >
+              {overflowItems.map((p) => (
+                <div key={p.id} data-overflow-card className="shrink-0" style={{ width: "calc((100% - 72px) / 4)", minWidth: 220, scrollSnapAlign: "start" }}>
+                  {renderCard(p)}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Show more / Show less */}
+        {properties.length > COLS * ROWS_INITIAL && (
           <div className="flex justify-center mt-8">
             <button
-              onClick={() => setDesktopShowAll(true)}
+              onClick={() => setDesktopShowAll(prev => !prev)}
               className="px-8 py-3 rounded-full border border-border text-sm font-semibold text-foreground hover:bg-accent transition-colors"
             >
-              Show more ({properties.length - COLS * ROWS_INITIAL} more)
+              {desktopShowAll
+                ? "Show less"
+                : `Show more (${overflowItems.length} more)`}
             </button>
           </div>
         )}
