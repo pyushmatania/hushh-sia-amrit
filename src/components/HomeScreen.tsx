@@ -600,16 +600,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 <p className="text-xs text-muted-foreground md:text-sm">Work & Chill, Day Escape, Game Night — perfect for weekdays!</p>
               </div>
 
-              {isMobile && (
-                <MobilePropertyGrid
-                  properties={properties}
-                  onPropertyTap={onPropertyTap}
-                  wishlist={wishlist}
-                  onToggleWishlist={onToggleWishlist}
-                  rows={2}
-                  title="All Curations & Listings"
-                />
-              )}
+              
               </>
               )}
             </>
