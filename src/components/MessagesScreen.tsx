@@ -333,19 +333,21 @@ function ThreadCard({ thread, index, onClick, onPin, onArchive }: {
   const constraintsRef = useRef<HTMLDivElement>(null);
 
   const SWIPE_THRESHOLD = 80;
+  const dragX = useMotionValue(0);
 
   const handleDragEnd = (_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
-    const swipedFar = Math.abs(info.offset.x) > SWIPE_THRESHOLD || Math.abs(info.velocity.x) > 500;
+    const swipedFar = Math.abs(info.offset.x) > SWIPE_THRESHOLD || Math.abs(info.velocity.x) > 600;
     if (swipedFar && info.offset.x > 0) {
-      // Swiped right → pin/unpin
       onPin?.(thread.id);
-      setSwipeState("idle");
     } else if (swipedFar && info.offset.x < 0) {
-      // Swiped left → archive
       setDismissed(true);
       setTimeout(() => onArchive?.(thread.id), 300);
     }
     setSwipeState("idle");
+    // Always snap back to center unless archived
+    if (!(swipedFar && info.offset.x < 0)) {
+      animate(dragX, 0, { type: "spring", stiffness: 500, damping: 35 });
+    }
   };
 
   if (dismissed) {
