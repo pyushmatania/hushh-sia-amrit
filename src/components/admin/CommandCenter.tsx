@@ -762,7 +762,7 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
       </AnimatePresence>
 
       {/* Stat Cards — clean minimal */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 lg:gap-4">
         {statCards.map((card, i) => (
           <motion.div key={card.label}
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06, duration: 0.4 }}
