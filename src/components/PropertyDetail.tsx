@@ -522,7 +522,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
           )}
         </div>
 
-        <h1 className="text-2xl font-semibold text-foreground md:text-3xl lg:text-4xl">{property.name}</h1>
+        <h1 className="text-2xl font-semibold text-foreground md:hidden">{property.name}</h1>
         <div className="flex items-center gap-2 mt-1.5 text-sm text-muted-foreground flex-wrap">
           <span className="flex items-center gap-1 text-foreground font-medium">
             <Star size={14} className="fill-foreground" /> {property.rating}
