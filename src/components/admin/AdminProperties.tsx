@@ -732,7 +732,7 @@ export default function AdminProperties() {
                 </EditSection>
 
                 {/* Media Gallery */}
-                <EditSection title="Media Gallery" icon={<Camera size={16} />} id="images" expanded={expandedSection} onToggle={setExpandedSection} badge={`${(editingListing.image_urls || []).length} photos`}>
+                <EditSection title="Media Gallery" icon={<Camera size={16} />} id="images" expanded={expandedSection} onToggle={setExpandedSection} badge={`${(editingListing.image_urls || []).length} photos`} collapsedImages={editingListing.image_urls || []}>
                   <MultiImageEditor
                     images={editingListing.image_urls || []}
                     onChange={urls => setEditingListing(p => ({ ...p!, image_urls: urls }))}
