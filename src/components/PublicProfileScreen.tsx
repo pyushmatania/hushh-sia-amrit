@@ -193,7 +193,7 @@ export default function PublicProfileScreen({ userId, onBack, onMessage }: Publi
           </motion.div>
 
           {/* Stats */}
-          <motion.div variants={staggerItem} className="px-5 grid grid-cols-3 gap-3 mb-6">
+          <motion.div variants={staggerItem} className="px-5 grid grid-cols-3 gap-3 mb-6 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:max-w-2xl md:mx-auto md:gap-4">
             {[
               { icon: Calendar, value: bookingCount.toString(), label: "Trips" },
               { icon: Star, value: reviews.length.toString(), label: "Reviews" },
