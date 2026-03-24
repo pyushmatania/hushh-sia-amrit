@@ -276,6 +276,10 @@ export default function Index() {
             onPropertyTap={handlePropertyTap}
             isWishlisted={wishlist.includes(screen.property.id)}
             onToggleWishlist={toggleWishlist}
+            onHostChat={(hostName) => {
+              setScreen({ type: "home" });
+              setActiveTab("messages");
+            }}
           />
         )}
         {screen.type === "experienceDetail" && (
