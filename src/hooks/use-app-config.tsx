@@ -106,6 +106,7 @@ const stringKeys = new Set([
   "app_name", "app_tagline", "logo_url", "favicon_url",
   "instagram_url", "facebook_url", "youtube_url", "twitter_url",
   "terms_url", "privacy_url", "refund_policy_url",
+  "splash_variant",
 ]);
 
 let cachedConfig: AppConfig | null = null;
