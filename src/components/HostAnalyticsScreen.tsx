@@ -66,7 +66,7 @@ export default function HostAnalyticsScreen({ onBack }: HostAnalyticsScreenProps
       </div>
 
       {/* Summary Stats */}
-      <div className="px-5 grid grid-cols-2 gap-3 mb-6">
+      <div className="px-5 grid grid-cols-2 gap-3 mb-6 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:grid-cols-4 md:gap-4">
         {summaryStats.map((stat, i) => (
           <motion.div
             key={stat.label}
