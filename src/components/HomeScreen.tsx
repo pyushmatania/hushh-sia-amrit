@@ -608,20 +608,14 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
           {activeCategory !== "experience" && activeCategory !== "curation" && activeCategory !== "service" && (activeCategory !== "home" || isSectionVisible("all_listings")) && (
             <LazySection minHeight="400px" rootMargin="300px">
               {isMobile ? (
-                <div className="mt-4">
-                  <div className="flex items-center justify-between px-4 mb-3">
-                    <h2 className="text-base font-bold text-foreground">
-                      {activeCategory === "home" ? (activeMood ? `${activeMood.charAt(0).toUpperCase() + activeMood.slice(1)} Vibes` : "All Listings") : `All ${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)}s`}
-                    </h2>
-                    <span className="text-[10px] text-muted-foreground">{(activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties).length} found</span>
-                  </div>
-                  <MixedListingFeed
-                    properties={activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties}
-                    onPropertyTap={onPropertyTap}
-                    wishlist={wishlist}
-                    onToggleWishlist={onToggleWishlist}
-                  />
-                </div>
+                <MobilePropertyGrid
+                  properties={activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties}
+                  onPropertyTap={onPropertyTap}
+                  wishlist={wishlist}
+                  onToggleWishlist={onToggleWishlist}
+                  rows={2}
+                  title={activeCategory === "home" ? (activeMood ? `${activeMood.charAt(0).toUpperCase() + activeMood.slice(1)} Vibes` : "All Listings") : `All ${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)}s`}
+                />
               ) : (
               <div className="mt-7 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
                 <div className="flex items-center justify-between px-5 md:px-0 mb-3 md:mb-6">
