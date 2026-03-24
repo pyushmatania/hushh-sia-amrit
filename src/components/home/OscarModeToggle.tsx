@@ -308,7 +308,7 @@ interface OscarThemedListingProps {
 }
 
 export function OscarThemedListing({ properties, onPropertyTap, wishlist, onToggleWishlist }: OscarThemedListingProps) {
-  const premiumPicks = [...properties].sort((a, b) => b.rating - a.rating).slice(0, 6);
+  const premiumPicks = [...properties].sort((a, b) => b.rating - a.rating);
   const isMobile = useIsMobile();
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
