@@ -592,11 +592,12 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
   useEffect(() => () => clearTimers(), [clearTimers]);
 
   useEffect(() => {
-    if (typeof document === "undefined") return;
+    if (typeof document === "undefined" || typeof window === "undefined") return;
     const { body } = document;
     const prevOverflow = body.style.overflow;
     const prevTouchAction = body.style.touchAction;
-    if (revealed) {
+    const shouldLockBody = revealed && window.matchMedia("(max-width: 767px)").matches;
+    if (shouldLockBody) {
       body.style.overflow = "hidden";
       body.style.touchAction = "none";
     }
