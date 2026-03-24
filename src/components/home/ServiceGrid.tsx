@@ -327,8 +327,8 @@ export default function ServiceGrid({ services, onServiceTap }: ServiceGridProps
               {trending.map((s, i) => <MobileHoloCard key={s.id} service={s} onTap={onServiceTap} index={i} />)}
             </div>
           ) : (
-            <div className="grid grid-cols-3 lg:grid-cols-4 gap-5">
-              {trending.map((s, i) => <DesktopServiceCard key={s.id} service={s} onTap={onServiceTap} index={i} />)}
+            <div className="grid grid-cols-4 gap-5">
+              {trending.map((s, i) => i === 0 ? <DesktopServiceWide key={s.id} service={s} onTap={onServiceTap} index={i} /> : <DesktopServiceCard key={s.id} service={s} onTap={onServiceTap} index={i} />)}
             </div>
           )}
         </>
@@ -341,8 +341,8 @@ export default function ServiceGrid({ services, onServiceTap }: ServiceGridProps
           {topRated.map((s, i) => <MobileGameCard key={s.id} service={s} onTap={onServiceTap} index={i} />)}
         </div>
       ) : (
-        <div className="grid grid-cols-3 lg:grid-cols-4 gap-5">
-          {topRated.map((s, i) => <DesktopServiceCard key={s.id} service={s} onTap={onServiceTap} index={i} />)}
+        <div className="grid grid-cols-4 gap-5">
+          {topRated.map((s, i) => i % 5 === 2 ? <DesktopServiceWide key={s.id} service={s} onTap={onServiceTap} index={i} /> : <DesktopServiceCard key={s.id} service={s} onTap={onServiceTap} index={i} />)}
         </div>
       )}
 
