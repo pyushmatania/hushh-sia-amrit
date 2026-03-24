@@ -151,6 +151,31 @@ export default function AdminExperiencePackages() {
     window.dispatchEvent(new Event("hushh:listings-updated"));
   };
 
+  // Auto-save for existing packages
+  const autoSavePackage = useCallback(async (data: Partial<PackageRow>) => {
+    if (!data.id || !data.name) return false;
+    const payload = {
+      name: data.name, emoji: data.emoji || "✨", price: data.price || 0,
+      includes: data.includes || [], gradient: data.gradient || GRADIENT_OPTIONS[0],
+      sort_order: data.sort_order || 0, active: data.active ?? true,
+      image_url: (data.image_urls || [])[0] || data.image_url || null,
+      image_urls: data.image_urls || [], video_url: data.video_url || null,
+    };
+    const { error } = await supabase.from("experience_packages").update(payload).eq("id", data.id);
+    if (!error) {
+      setPackages(prev => prev.map(p => p.id === data.id ? { ...p, ...payload } as PackageRow : p));
+      window.dispatchEvent(new Event("hushh:listings-updated"));
+    }
+    return !error;
+  }, []);
+
+  const { status: autoSaveStatus } = useAutoSave({
+    data: editing,
+    onSave: autoSavePackage,
+    enabled: !isCreating && !!editing?.id,
+    debounceMs: 2000,
+  });
+
   const deletePackage = async (id: string) => {
     setDeleteTarget(id);
   };
