@@ -38,13 +38,14 @@ const preloadIcons = [
 
 const isDesktop = typeof window !== "undefined" && window.matchMedia("(min-width: 768px)").matches;
 
-function getTimeConfig() {
+function getTimeConfig(variant: string = "1") {
   const hour = new Date().getHours();
   const isDarkTime = hour >= 17 || hour < 5;
+  const isV2 = variant === "2";
   if (hour >= 5 && hour < 12) return {
     greeting: "Good Morning",
     emoji: "☀️",
-    bg: isDesktop ? splashMorningDesktop : splashMorning,
+    bg: isV2 ? splash2Dawn : (isDesktop ? splashMorningDesktop : splashMorning),
     overlay: "linear-gradient(180deg, hsla(0,0%,0%,0.35) 0%, hsla(0,0%,0%,0.1) 40%, hsla(0,0%,0%,0.5) 100%)",
     hasFireflies: false,
     hasShootingStars: false,
