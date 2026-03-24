@@ -177,13 +177,13 @@ export default function AdminAnalytics() {
     <motion.div className="space-y-5" variants={stagger} initial="initial" animate="animate">
       {/* Header */}
       <motion.div variants={fadeUp}>
-        <h1 className="text-2xl font-bold text-foreground flex items-center gap-2.5">
+        <h1 className="text-2xl lg:text-3xl font-bold text-foreground flex items-center gap-2.5">
           <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
             <BarChart3 size={20} className="text-primary" />
           </div>
           Analytics
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">Revenue, bookings, guests & operations</p>
+        <p className="text-sm lg:text-base text-muted-foreground mt-1">Revenue, bookings, guests & operations</p>
       </motion.div>
 
       {/* Tabs */}
