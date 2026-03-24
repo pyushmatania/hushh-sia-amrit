@@ -609,7 +609,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                 {tagline.split("").map((char, i) => (
                   <motion.span
                     key={i}
-                    className="inline-block"
+                    className="inline-block text-[11px] md:text-sm lg:text-base"
                     style={{
                       letterSpacing: "0.22em",
                       textTransform: "uppercase",
