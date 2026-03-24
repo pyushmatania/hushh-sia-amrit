@@ -311,7 +311,7 @@ export default function FinanceHub() {
       </motion.div>
 
       {/* ─── Quick Stats ─── */}
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
         {[
           { label: "All-Time Rev", value: formatCurrency(revenueData.totalRevenue), icon: IndianRupee, color: "text-emerald-400", bg: "bg-emerald-500/10" },
           { label: "This Week", value: formatCurrency(revenueData.thisWeek), icon: TrendingUp, color: "text-blue-400", bg: "bg-blue-500/10" },

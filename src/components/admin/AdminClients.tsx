@@ -1183,7 +1183,7 @@ export default function AdminClients({ initialUserId, onContextConsumed, onBack 
           <p className="text-muted-foreground text-sm">No clients match your filters</p>
         </div>
       ) : (
-        <div className="space-y-2.5">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3">
           {filtered.map((c, i) => {
             const seg = segmentConfig[c.segment] || segmentConfig.regular;
             const tier = tierGradients[c.tier] || tierGradients.Silver;
