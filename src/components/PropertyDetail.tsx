@@ -1374,7 +1374,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
         {/* Action buttons */}
         <div className="grid grid-cols-3 gap-2 mb-4">
           <a
-            href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(property.location)}`}
+            href={`https://www.google.com/maps/dir/?api=1&destination=${property.lat ?? 18.856},${property.lng ?? 82.572}`}
             target="_blank"
             rel="noopener noreferrer"
             className="glass rounded-xl px-3 py-3 flex flex-col items-center gap-1.5 text-foreground border border-border hover:border-primary/40 transition-colors"
@@ -1385,7 +1385,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
             <span className="text-[11px] font-medium">Navigate</span>
           </a>
           <a
-            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(property.location)}`}
+            href={`https://www.google.com/maps/search/?api=1&query=${property.lat ?? 18.856},${property.lng ?? 82.572}`}
             target="_blank"
             rel="noopener noreferrer"
             className="glass rounded-xl px-3 py-3 flex flex-col items-center gap-1.5 text-foreground border border-border hover:border-primary/40 transition-colors"
@@ -1395,7 +1395,16 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
             </div>
             <span className="text-[11px] font-medium">Open Map</span>
           </a>
-          <button className="glass rounded-xl px-3 py-3 flex flex-col items-center gap-1.5 text-foreground border border-border hover:border-primary/40 transition-colors">
+          <button
+            onClick={() => {
+              if (onHostChat) {
+                onHostChat(property.hostName, property.id);
+              } else {
+                import("sonner").then(({ toast }) => toast.info(`Contacting ${property.hostName}...`));
+              }
+            }}
+            className="glass rounded-xl px-3 py-3 flex flex-col items-center gap-1.5 text-foreground border border-border hover:border-primary/40 transition-colors"
+          >
             <div className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center">
               <Phone size={14} className="text-primary" />
             </div>
