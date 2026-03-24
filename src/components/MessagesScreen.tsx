@@ -638,6 +638,7 @@ export default function MessagesScreen() {
 
   const handlePin = useCallback((id: string) => { setPinnedIds(prev => { const next = new Set(prev); if (next.has(id)) next.delete(id); else next.add(id); return next; }); }, []);
   const handleArchive = useCallback((id: string) => { setArchivedIds(prev => new Set(prev).add(id)); }, []);
+  const handleUnarchive = useCallback((id: string) => { setArchivedIds(prev => { const next = new Set(prev); next.delete(id); return next; }); }, []);
 
   const unreadNotifCount = notifications.filter(n => !n.read && !readNotifications.has(n.id)).length;
   const unreadChatCount = user ? conversations.reduce((s, c) => s + c.unread_count, 0) : dynamicMockThreads.reduce((s, t) => s + t.unread, 0);
