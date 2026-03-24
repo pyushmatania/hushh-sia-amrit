@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import LazySection from "./home/LazySection";
 import { Bell, MapPin, ArrowRight } from "lucide-react";
 import { hapticSelection } from "@/lib/haptics";
-import PullToRefresh from "./PullToRefresh";
 import CategoryBar from "./CategoryBar";
 import PropertyCard from "./PropertyCard";
 import PropertyCardSmall from "./PropertyCardSmall";
@@ -58,11 +57,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
   const { packs: experiencePacks } = useCurations();
   const { isSectionVisible, getSortOrder } = useHomepageSections("home");
   const appConfig = useAppConfig();
-  const [refreshKey, setRefreshKey] = useState(0);
-  const handleRefresh = useCallback(async () => {
-    await new Promise((r) => setTimeout(r, 800));
-    setRefreshKey((k) => k + 1);
-  }, []);
+  const [refreshKey] = useState(0);
   const [activeCategory, setActiveCategory] = useState("home");
   const [subFilter, setSubFilter] = useState("All");
   const [activeMood, setActiveMood] = useState<"romantic" | "party" | "chill" | "work" | null>(null);
@@ -191,8 +186,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
   }, [filteredProperties, activeMood]);
 
   return (
-    <PullToRefresh onRefresh={handleRefresh}>
-    <div ref={contentRef} data-pull-scroll-container="true" key={refreshKey} className="pb-24 min-h-screen overflow-y-auto overflow-x-hidden bg-mesh smooth-main-scroll" style={{ overscrollBehaviorX: "none", WebkitOverflowScrolling: "touch" }}>
+    <div ref={contentRef} key={refreshKey} className="pb-24 min-h-screen overflow-y-auto overflow-x-hidden bg-mesh smooth-main-scroll" style={{ overscrollBehaviorX: "none", WebkitOverflowScrolling: "touch" }}>
 
       {/* Header */}
       <div className="px-5 pt-5 pb-2 flex items-center justify-between">
@@ -539,6 +533,5 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
 
       <div className="h-20" />
     </div>
-    </PullToRefresh>
   );
 }

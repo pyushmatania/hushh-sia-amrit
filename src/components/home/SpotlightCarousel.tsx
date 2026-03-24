@@ -260,7 +260,7 @@ export default function SpotlightCarousel({ properties, onPropertyTap, category 
         onScroll={handleScroll}
         data-no-pull-refresh="true"
         className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2"
-        style={{ scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch", touchAction: "pan-x", overscrollBehaviorX: "contain" }}
+        style={{ scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch", touchAction: "pan-x pan-y", overscrollBehaviorX: "contain" }}
       >
         {topProperties.map((p, i) => {
           const cfg = getCardConfig(i);

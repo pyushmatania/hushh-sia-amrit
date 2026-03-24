@@ -3,7 +3,6 @@ import { MapPin, Calendar as CalendarIcon, Clock, ChevronRight, Ticket, QrCode, 
 import { useRef, useState, useCallback, useMemo, useEffect } from "react";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { Calendar } from "@/components/ui/calendar";
-import PullToRefresh from "./PullToRefresh";
 import type { Booking } from "@/pages/Index";
 import OrderHistorySection from "./OrderHistorySection";
 import LiveOrderingSheet from "./LiveOrderingSheet";
@@ -368,7 +367,6 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
   }, [selectedCalDate, bookedDatesMap]);
 
   return (
-    <PullToRefresh onRefresh={handleRefresh}>
     <div key={refreshKey} className="pb-24 bg-mesh min-h-screen">
       <div className="px-5 pt-6 pb-2">
         <div className="flex items-center justify-between">
@@ -571,6 +569,5 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
         );
       })()}
     </div>
-    </PullToRefresh>
   );
 }

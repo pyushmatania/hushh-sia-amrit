@@ -159,7 +159,7 @@ export default function FoodieCarousel({ properties, onPropertyTap }: FoodieCaro
 
   return (
     <div>
-      <div ref={scrollRef} onScroll={handleScroll} data-no-pull-refresh="true" className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2" style={{ scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch", touchAction: "pan-x", overscrollBehaviorX: "contain" }}>
+      <div ref={scrollRef} onScroll={handleScroll} className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2" style={{ scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch", touchAction: "pan-x pan-y", overscrollBehaviorX: "contain" }}>
         {items.map((p, i) => (
           <FoodieVideoCard key={p.id} property={p} videoSrc={foodieVideos[i % foodieVideos.length]} overlayText={foodieOverlays[i % foodieOverlays.length]} isActive={i === activeIndex} accent={foodieAccents[i % foodieAccents.length]} onTap={() => onPropertyTap(p)} isFirst={i === 0} />
         ))}
