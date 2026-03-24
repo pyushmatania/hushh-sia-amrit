@@ -97,7 +97,7 @@ export default function Index() {
   }, []);
 
   const handleExperienceTap = useCallback((pack: ExperiencePack) => {
-    const property = properties.find(p => p.id === pack.propertyId);
+    const property = liveProperties.find(p => p.id === pack.propertyId);
     if (property) {
       setScreen({ type: "experienceDetail", pack, property });
       setActiveTab("home");
