@@ -237,7 +237,12 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
   const [desktopShowAll, setDesktopShowAll] = useState(false);
+  const overflowScrollRef = useRef<HTMLDivElement>(null);
+  const [overflowCanLeft, setOverflowCanLeft] = useState(false);
+  const [overflowCanRight, setOverflowCanRight] = useState(false);
   const CARDS_PER_PAGE = 4;
+  const COLS = 4;
+  const ROWS_INITIAL = 3;
 
   useEffect(() => { setVisibleCount(INITIAL_BATCH); }, [properties]);
 
