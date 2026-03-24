@@ -148,6 +148,12 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
 
   const stayProperties = useMemo(() => properties.filter(p => p.primaryCategory === "stay"), [properties]);
   const experienceProperties = useMemo(() => properties.filter(p => p.primaryCategory === "experience"), [properties]);
+  const serviceProperties = useMemo(() => properties.filter(p => p.primaryCategory === "service"), [properties]);
+
+  // Convert curated combos to Property objects for the "All Curations" grid
+  const curationAsProperties = useMemo(() => {
+    return curatedCombos.map(combo => comboToProperty(combo));
+  }, [curatedCombos, comboToProperty]);
 
   const topRated = useMemo(() => [...filteredProperties].sort((a, b) => b.rating - a.rating).slice(0, 6), [filteredProperties]);
   const trendingNow = useMemo(() => filteredProperties.filter(p => p.slotsLeft > 0 && p.slotsLeft <= 3), [filteredProperties]);
@@ -190,6 +196,24 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
     return filteredProperties.filter(moodMap[activeMood] || (() => true));
   }, [filteredProperties, activeMood]);
 
+  // Per-category data for the "All ___" section
+  const allSectionData = useMemo((): { properties: Property[]; title: string } => {
+    switch (activeCategory) {
+      case "home":
+        return { properties: activeMood ? moodFilteredProperties : properties, title: activeMood ? `${activeMood.charAt(0).toUpperCase() + activeMood.slice(1)} Vibes` : "All Listings" };
+      case "stay":
+        return { properties: stayProperties, title: "All Stays" };
+      case "experience":
+        return { properties: experienceProperties, title: "All Experiences" };
+      case "service":
+        return { properties: serviceProperties, title: "All Services" };
+      case "curation":
+        return { properties: curationAsProperties, title: "All Curations" };
+      default:
+        return { properties: filteredProperties, title: "All Listings" };
+    }
+  }, [activeCategory, activeMood, properties, moodFilteredProperties, stayProperties, experienceProperties, serviceProperties, curationAsProperties, filteredProperties]);
+
   return (
     <div ref={contentRef} key={refreshKey} className="pb-24 md:pb-8 min-h-screen md:h-[calc(100vh-4rem)] md:overflow-y-auto overflow-x-hidden bg-mesh smooth-main-scroll" style={{ overscrollBehaviorX: "none", WebkitOverflowScrolling: "touch" }}>
 
@@ -222,7 +246,6 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
         <RotatingSearchBar onSearchTap={onSearchTap} onMapTap={onMapTap} />
         <CategoryBar active={activeCategory} onChange={handleCategoryChange} />
       </div>
-
 
         <div key={activeCategory}>
 
@@ -483,16 +506,6 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               )}
               </LazySection>
 
-              {isMobile && (
-                <MobilePropertyGrid
-                  properties={filteredProperties}
-                  onPropertyTap={onPropertyTap}
-                  wishlist={wishlist}
-                  onToggleWishlist={onToggleWishlist}
-                  rows={2}
-                  title="All Experiences"
-                />
-              )}
               </>
               )}
             </>
@@ -541,16 +554,6 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 </div>
               )}
 
-              {isMobile && (
-                <MobilePropertyGrid
-                  properties={filteredProperties}
-                  onPropertyTap={onPropertyTap}
-                  wishlist={wishlist}
-                  onToggleWishlist={onToggleWishlist}
-                  rows={2}
-                  title="All Services"
-                />
-              )}
               </>
               )}
             </>
@@ -620,16 +623,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 <p className="text-xs text-muted-foreground md:text-sm">Work & Chill, Day Escape, Game Night — perfect for weekdays!</p>
               </div>
 
-              {isMobile && (
-                <MobilePropertyGrid
-                  properties={properties}
-                  onPropertyTap={onPropertyTap}
-                  wishlist={wishlist}
-                  onToggleWishlist={onToggleWishlist}
-                  rows={2}
-                  title="All Curations & Listings"
-                />
-              )}
+              
               </>
               )}
             </>
@@ -701,29 +695,29 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
             </LazySection>
           )}
 
-          {/* ═══════ ALL LISTINGS ═══════ */}
-          {activeCategory !== "experience" && activeCategory !== "curation" && activeCategory !== "service" && (activeCategory !== "home" || isSectionVisible("all_listings")) && (
+          {/* ═══════ ALL LISTINGS (per category) ═══════ */}
+          {(activeCategory !== "home" || isSectionVisible("all_listings")) && (
             <LazySection minHeight="400px" rootMargin="300px">
               {isMobile ? (
                 <MobilePropertyGrid
-                  properties={activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties}
+                  properties={allSectionData.properties}
                   onPropertyTap={onPropertyTap}
                   wishlist={wishlist}
                   onToggleWishlist={onToggleWishlist}
                   rows={2}
-                  title={activeCategory === "home" ? (activeMood ? `${activeMood.charAt(0).toUpperCase() + activeMood.slice(1)} Vibes` : "All Listings") : `All ${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)}s`}
+                  title={allSectionData.title}
                 />
               ) : (
               <div className="mt-7 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
                 <div className="flex items-center justify-between px-5 md:px-0 mb-3 md:mb-6">
                   <h2 className="text-lg font-bold text-foreground md:text-2xl lg:text-3xl">
-                    {activeCategory === "home" ? (activeMood ? `${activeMood.charAt(0).toUpperCase() + activeMood.slice(1)} Vibes` : "All Listings") : `All ${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)}s`}
+                    {allSectionData.title}
                   </h2>
-                  <span className="text-xs text-muted-foreground md:text-sm">{(activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties).length} found</span>
+                  <span className="text-xs text-muted-foreground md:text-sm">{allSectionData.properties.length} found</span>
                 </div>
-                {(activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties).length > 0 ? (
+                {allSectionData.properties.length > 0 ? (
                   <MixedListingFeed
-                    properties={activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties}
+                    properties={allSectionData.properties}
                     onPropertyTap={onPropertyTap}
                     wishlist={wishlist}
                     onToggleWishlist={onToggleWishlist}
