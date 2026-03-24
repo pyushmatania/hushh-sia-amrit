@@ -1375,7 +1375,7 @@ export const curatedCombos: CuratedCombo[] = [
     time: "6 PM – 10 PM",
     priceRange: [1499, 2999],
     includes: ["Candle setup 🕯️", "Soft music 🎵", "3-course dinner 🍽️", "Rose petals", "Champagne 🥂"],
-    image: listingCoupleCocoon,
+    image: curationJustUsNight,
     gradient: "from-rose-600/80 to-pink-900/60",
     tags: ["💑 Couple Friendly", "✨ Premium"],
     popular: true,
