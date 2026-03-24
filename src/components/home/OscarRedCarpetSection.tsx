@@ -245,7 +245,7 @@ export default function OscarRedCarpetSection({ properties, onPropertyTap, wishl
 
       {/* Cards grid */}
       <div className="relative z-[6] px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8 max-w-6xl mx-auto">
           {premiumPicks.map((p, i) => (
             <OscarCard key={p.id} property={p} onTap={onPropertyTap} index={i} isWL={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
           ))}
