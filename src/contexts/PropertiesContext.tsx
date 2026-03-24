@@ -60,7 +60,7 @@ function mergeDbRow(row: any, staticMatch: Property | undefined): Property {
   const dbImages = Array.isArray(row.image_urls) ? row.image_urls.filter(Boolean) : [];
   const staticImages = staticMatch?.images?.filter(Boolean) || [];
 
-  // If DB has images, use ONLY those (admin-managed). Otherwise fall back to static/mapped.
+  // If DB has images, use ONLY those (admin-managed). Otherwise use only the mapped thumbnail — never pull generic static arrays.
   let images: string[];
   if (dbImages.length > 0) {
     images = dbImages;
@@ -68,7 +68,9 @@ function mergeDbRow(row: any, staticMatch: Property | undefined): Property {
     const mappedThumb = getListingThumbnail(row.name || "", [], { preferMapped: true });
     const guaranteedFallback = staticProperties[0]?.images?.[0] || "";
     const primaryImage = mappedThumb || staticImages[0] || guaranteedFallback;
-    images = Array.from(new Set([primaryImage, ...staticImages].filter(Boolean)));
+    // Only use the single primary image — do NOT spread the full staticImages array
+    // because it often contains generic shared photos (property1, property3 etc.)
+    images = [primaryImage].filter(Boolean);
   }
 
   return {
