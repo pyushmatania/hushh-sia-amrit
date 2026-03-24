@@ -283,6 +283,19 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                   </LazySection>
                 )});
               }
+              if (isMobile) {
+                homeSections.push({ key: "mixed_feed", order: getSortOrder("curated_packs") + 1, node: (
+                  <LazySection minHeight="400px" rootMargin="300px">
+                    <SectionTitle title="🎯 DISCOVER MORE" />
+                    <MixedListingFeed
+                      properties={properties}
+                      onPropertyTap={onPropertyTap}
+                      wishlist={wishlist}
+                      onToggleWishlist={onToggleWishlist}
+                    />
+                  </LazySection>
+                )});
+              }
 
               homeSections.sort((a, b) => a.order - b.order);
 
@@ -323,6 +336,21 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 ))}
               </div>
 
+              {isMobile ? (
+                <div className="mt-4">
+                  <div className="flex items-center justify-between px-4 mb-3">
+                    <h2 className="text-base font-bold text-foreground">🏡 Featured Stays</h2>
+                    <span className="text-[10px] text-muted-foreground">{filteredProperties.length} stays</span>
+                  </div>
+                  <MixedListingFeed
+                    properties={filteredProperties}
+                    onPropertyTap={onPropertyTap}
+                    wishlist={wishlist}
+                    onToggleWishlist={onToggleWishlist}
+                  />
+                </div>
+              ) : (
+              <>
               {trendingNow.length > 0 && (
                 <div className="mt-4">
                   <div className="flex items-center justify-between px-5 mb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:mb-6">
@@ -362,6 +390,8 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                   ))}
                 </div>
               </div>
+              </>
+              )}
               </motion.div>
               )}
               </AnimatePresence>
