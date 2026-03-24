@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { useAppConfig } from "@/hooks/use-app-config";
 
-// Time-of-day splash backgrounds
+// Time-of-day splash backgrounds — Variant 1 (Classic)
 import splashMorning from "@/assets/splash-morning.webp";
 import splashAfternoon from "@/assets/splash-afternoon.webp";
 import splashEvening from "@/assets/splash-evening.webp";
@@ -13,6 +13,12 @@ import splashMorningDesktop from "@/assets/splash-morning-desktop.webp";
 import splashAfternoonDesktop from "@/assets/splash-afternoon-desktop.webp";
 import splashEveningDesktop from "@/assets/splash-evening-desktop.webp";
 import splashNightDesktop from "@/assets/splash-night-desktop.webp";
+
+// Time-of-day splash backgrounds — Variant 2 (Cinematic Glass H)
+import splash2Dawn from "@/assets/splash2-dawn-v4.jpg";
+import splash2Day from "@/assets/splash2-day-v4.jpg";
+import splash2Dusk from "@/assets/splash2-dusk-v4.jpg";
+import splash2Night from "@/assets/splash2-night-v4.jpg";
 
 // Preload 3D category icons during splash
 import iconHome from "@/assets/icon-home.webp";
