@@ -3,12 +3,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Send, Loader2, Zap, Maximize2, Minimize2, Sparkles,
   IndianRupee, TrendingUp, Users, Database, BarChart3, Shield,
-  Copy, Check, Mic, RefreshCw, Trash2, Clock, ArrowRight, Wand2, BrainCircuit
+  Copy, Check, Mic, Trash2, Clock, ArrowRight, Wand2, BrainCircuit,
+  ChevronDown, ChevronRight as ChevRight, Package, Calendar, Star,
+  FileText, Settings, Megaphone, Tag, UtensilsCrossed, UserCheck,
+  ClipboardList, Wallet, HelpCircle, BookOpen,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { playAIThinkingSound, playAISuccessSound, playAIActionSound, playAIErrorSound } from "@/lib/ai-sounds";
 import HushhBot from "./HushhBot";
 
+/* ─── Rotating placeholder ─── */
 const ROTATING_PLACEHOLDERS = [
   "Show me today's revenue breakdown...",
   "Which properties have the most bookings?",
@@ -18,8 +22,6 @@ const ROTATING_PLACEHOLDERS = [
   "Who are the top 5 spending customers?",
   "Compare this week vs last week revenue...",
   "Show me all upcoming bookings for tomorrow...",
-  "What's the average booking value this month?",
-  "Find all 5-star reviews from last week...",
 ];
 
 function useRotatingPlaceholder(userInput: string) {
@@ -28,159 +30,147 @@ function useRotatingPlaceholder(userInput: string) {
   const [typing, setTyping] = useState(true);
 
   useEffect(() => {
-    if (userInput) return; // stop when user is typing
+    if (userInput) return;
     const text = ROTATING_PLACEHOLDERS[index];
     let charIdx = 0;
-    setDisplayed("");
-    setTyping(true);
-
+    setDisplayed(""); setTyping(true);
     const typeTimer = setInterval(() => {
       charIdx++;
       setDisplayed(text.slice(0, charIdx));
-      if (charIdx >= text.length) {
-        clearInterval(typeTimer);
-        setTyping(false);
-      }
+      if (charIdx >= text.length) { clearInterval(typeTimer); setTyping(false); }
     }, 35);
-
     return () => clearInterval(typeTimer);
   }, [index, userInput]);
 
   useEffect(() => {
-    if (userInput) return;
-    if (typing) return;
-    const pause = setTimeout(() => {
-      setIndex(prev => (prev + 1) % ROTATING_PLACEHOLDERS.length);
-    }, 2000);
+    if (userInput || typing) return;
+    const pause = setTimeout(() => setIndex(prev => (prev + 1) % ROTATING_PLACEHOLDERS.length), 2000);
     return () => clearTimeout(pause);
   }, [typing, userInput]);
 
   return userInput ? "" : displayed;
 }
 
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-  hadActions?: boolean;
-  timestamp?: number;
+interface Message { role: "user" | "assistant"; content: string; hadActions?: boolean; timestamp?: number; }
+
+/* ─── Category-wise examples ─── */
+interface ExampleCategory {
+  id: string;
+  label: string;
+  icon: typeof IndianRupee;
+  color: string;
+  examples: { text: string; desc: string }[];
 }
+
+const exampleCategories: ExampleCategory[] = [
+  {
+    id: "revenue", label: "Revenue & Finance", icon: IndianRupee, color: "text-emerald-500",
+    examples: [
+      { text: "Revenue summary this month", desc: "Total earnings, breakdowns by property" },
+      { text: "Compare this week vs last week revenue", desc: "Trend analysis with % change" },
+      { text: "What was our best earning day?", desc: "Peak revenue day with details" },
+      { text: "Show average booking value by property", desc: "Per-property pricing insights" },
+      { text: "List all refunds processed this month", desc: "Refund amounts and reasons" },
+    ],
+  },
+  {
+    id: "bookings", label: "Bookings", icon: Calendar, color: "text-blue-500",
+    examples: [
+      { text: "Show all pending bookings", desc: "Bookings awaiting confirmation" },
+      { text: "Upcoming bookings for tomorrow", desc: "Next day's schedule" },
+      { text: "Compare weekend vs weekday bookings", desc: "Occupancy patterns" },
+      { text: "Which slots are most popular?", desc: "Morning/afternoon/evening trends" },
+      { text: "Show cancellation rate this month", desc: "Booking drop-off analysis" },
+    ],
+  },
+  {
+    id: "guests", label: "Guests & Loyalty", icon: Users, color: "text-amber-500",
+    examples: [
+      { text: "Who are the top 5 spending customers?", desc: "High-value guest profiles" },
+      { text: "Guest insights & loyalty stats", desc: "Tier distribution and points" },
+      { text: "How many new users joined this week?", desc: "Growth metrics" },
+      { text: "Show Gold tier members", desc: "Premium customer list" },
+      { text: "Which guest has the most bookings?", desc: "Most frequent visitor" },
+    ],
+  },
+  {
+    id: "inventory", label: "Inventory & Menu", icon: Package, color: "text-orange-500",
+    examples: [
+      { text: "Low stock inventory alerts", desc: "Items below threshold" },
+      { text: "Move Coca Cola to top of inventory", desc: "Reorder items instantly" },
+      { text: "Most ordered items this week", desc: "Popular menu items" },
+      { text: "Update price of Chai to ₹30", desc: "Quick price adjustments" },
+      { text: "Add new item: Mango Lassi at ₹60", desc: "Create inventory items" },
+    ],
+  },
+  {
+    id: "properties", label: "Properties", icon: Star, color: "text-pink-500",
+    examples: [
+      { text: "Top performing property", desc: "Highest revenue venue" },
+      { text: "Which property needs attention?", desc: "Low rating or occupancy alerts" },
+      { text: "Show all property ratings", desc: "Rating leaderboard" },
+      { text: "Properties with no bookings this week", desc: "Underperforming venues" },
+      { text: "Update Firefly Villa price to ₹9000", desc: "Quick pricing changes" },
+    ],
+  },
+  {
+    id: "reviews", label: "Reviews", icon: FileText, color: "text-violet-500",
+    examples: [
+      { text: "Find all 5-star reviews from last week", desc: "Positive feedback highlights" },
+      { text: "Show negative reviews needing response", desc: "Reputation management" },
+      { text: "Average rating by property", desc: "Quality benchmarks" },
+      { text: "Most common feedback themes", desc: "Sentiment analysis" },
+    ],
+  },
+  {
+    id: "marketing", label: "Marketing & Coupons", icon: Megaphone, color: "text-rose-500",
+    examples: [
+      { text: "Create a 15% off coupon for weekends", desc: "Generate promo codes" },
+      { text: "Show active campaigns", desc: "Current promotions" },
+      { text: "Which coupon has the most uses?", desc: "Campaign effectiveness" },
+      { text: "Create a new promotional campaign", desc: "Marketing automation" },
+    ],
+  },
+  {
+    id: "staff", label: "Staff & Operations", icon: ClipboardList, color: "text-cyan-500",
+    examples: [
+      { text: "Show pending staff tasks", desc: "Unfinished work items" },
+      { text: "Staff attendance today", desc: "Who's checked in" },
+      { text: "Assign cleaning task to morning shift", desc: "Task delegation" },
+      { text: "Show overtime hours this month", desc: "Labor cost tracking" },
+    ],
+  },
+];
 
 const quickPrompts = [
-  { icon: IndianRupee, text: "Revenue summary this month", color: "from-emerald-500/15 to-emerald-500/5", accent: "text-emerald-500", emoji: "💰" },
-  { icon: TrendingUp, text: "Top performing property", color: "from-blue-500/15 to-blue-500/5", accent: "text-blue-500", emoji: "📊" },
-  { icon: Users, text: "Guest insights & loyalty stats", color: "from-amber-500/15 to-amber-500/5", accent: "text-amber-500", emoji: "👥" },
-  { icon: Zap, text: "Move Coca Cola to top of inventory", color: "from-primary/15 to-primary/5", accent: "text-primary", emoji: "⚡" },
-  { icon: BarChart3, text: "Compare weekend vs weekday bookings", color: "from-pink-500/15 to-pink-500/5", accent: "text-pink-500", emoji: "📈" },
-  { icon: Database, text: "Low stock inventory alerts", color: "from-orange-500/15 to-orange-500/5", accent: "text-orange-500", emoji: "📦" },
+  { text: "Revenue summary this month", emoji: "💰", color: "text-emerald-500" },
+  { text: "Top performing property", emoji: "📊", color: "text-blue-500" },
+  { text: "Low stock inventory alerts", emoji: "📦", color: "text-orange-500" },
+  { text: "Upcoming bookings for tomorrow", emoji: "📅", color: "text-pink-500" },
 ];
 
-const capabilities = [
-  { icon: Database, label: "Query Data", desc: "Search all tables instantly", color: "bg-blue-500/10 text-blue-500" },
-  { icon: Zap, label: "Execute Actions", desc: "Create, update, delete records", color: "bg-amber-500/10 text-amber-500" },
-  { icon: BarChart3, label: "Analytics", desc: "Revenue & trend insights", color: "bg-emerald-500/10 text-emerald-500" },
-  { icon: Shield, label: "Smart Ops", desc: "Reorder, pricing, inventory", color: "bg-purple-500/10 text-purple-500" },
-];
+/* ─── Subcomponents ─── */
 
-const exampleQueries = [
-  "What was our best day this month?",
-  "Show me all pending bookings",
-  "Which property needs attention?",
-  "Update prices for weekend slots",
-  "Create a new promotional campaign",
-  "Who are our top 5 spenders?",
-];
-
-/* ─── Floating particles ─── */
-function FloatingParticles({ count = 6 }: { count?: number }) {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {Array.from({ length: count }).map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute rounded-full bg-primary/8"
-          style={{
-            width: 2 + (i % 3) * 2,
-            height: 2 + (i % 3) * 2,
-            left: `${8 + (i * 14) % 80}%`,
-            top: `${10 + (i * 18) % 70}%`,
-          }}
-          animate={{
-            y: [0, -15 - i * 4, 0],
-            x: [0, (i % 2 ? 6 : -6), 0],
-            opacity: [0.15, 0.5, 0.15],
-          }}
-          transition={{ duration: 3 + i * 0.6, repeat: Infinity, delay: i * 0.3 }}
-        />
-      ))}
-    </div>
-  );
-}
-
-/* ─── Voice wave visualizer ─── */
 function VoiceWaveVisualizer() {
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.8 }}
-      className="flex items-center gap-[3px] h-6"
-    >
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-[3px] h-6">
       {Array.from({ length: 7 }).map((_, i) => (
-        <motion.div
-          key={i}
-          className="w-[3px] rounded-full bg-red-400"
-          animate={{ height: [5, 14 + i * 2, 5] }}
-          transition={{ duration: 0.35 + i * 0.04, repeat: Infinity, delay: i * 0.05 }}
-        />
+        <motion.div key={i} className="w-[3px] rounded-full bg-red-400" animate={{ height: [5, 14 + i * 2, 5] }} transition={{ duration: 0.35 + i * 0.04, repeat: Infinity, delay: i * 0.05 }} />
       ))}
     </motion.div>
   );
 }
 
-/* ─── Thinking indicator ─── */
 function ThinkingIndicator() {
   return (
     <div className="flex justify-start">
-      <motion.div
-        initial={{ opacity: 0, y: 8, scale: 0.95 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        className="flex items-start gap-2.5 max-w-[85%]"
-      >
-        <HushhBot size={32} state="thinking" />
-        <div className="rounded-2xl border border-primary/15 px-4 py-3 bg-primary/[0.04] relative overflow-hidden">
-          {/* Shimmer sweep */}
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent"
-            animate={{ x: ["-100%", "100%"] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-          />
-          <div className="relative z-10">
-            <div className="flex items-center gap-2 mb-1.5">
-              <motion.span
-                animate={{ opacity: [0.5, 1, 0.5] }}
-                transition={{ duration: 1.2, repeat: Infinity }}
-                className="text-[11px] font-semibold text-primary font-display"
-              >
-                Thinking...
-              </motion.span>
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-              >
-                <BrainCircuit size={10} className="text-primary/40" />
-              </motion.div>
-            </div>
-            <div className="flex gap-1">
-              {[0, 1, 2, 3, 4].map(i => (
-                <motion.div
-                  key={i}
-                  className="h-1 rounded-full bg-primary/30"
-                  style={{ width: 5 + Math.random() * 14 }}
-                  animate={{ opacity: [0.2, 1, 0.2], scaleX: [0.5, 1, 0.5] }}
-                  transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.08 }}
-                />
-              ))}
-            </div>
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex items-start gap-2.5 max-w-[85%]">
+        <HushhBot size={28} state="thinking" />
+        <div className="rounded-2xl border border-primary/10 px-4 py-3 bg-card relative overflow-hidden">
+          <motion.div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent" animate={{ x: ["-100%", "100%"] }} transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }} />
+          <div className="relative z-10 flex items-center gap-2">
+            <motion.span animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 1.2, repeat: Infinity }} className="text-[11px] font-medium text-primary">Thinking…</motion.span>
+            <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }}><BrainCircuit size={10} className="text-primary/40" /></motion.div>
           </div>
         </div>
       </motion.div>
@@ -188,144 +178,129 @@ function ThinkingIndicator() {
   );
 }
 
-/* ─── Typewriter for assistant messages ─── */
 function TypewriterContent({ content, isLatest }: { content: string; isLatest: boolean }) {
   const [displayed, setDisplayed] = useState(isLatest ? "" : content);
   const [done, setDone] = useState(!isLatest);
-
   useEffect(() => {
     if (!isLatest) { setDisplayed(content); setDone(true); return; }
-    let idx = 0;
-    setDisplayed("");
-    setDone(false);
-    const iv = setInterval(() => {
-      idx += 2;
-      setDisplayed(content.slice(0, idx));
-      if (idx >= content.length) { clearInterval(iv); setDone(true); }
-    }, 8);
+    let idx = 0; setDisplayed(""); setDone(false);
+    const iv = setInterval(() => { idx += 2; setDisplayed(content.slice(0, idx)); if (idx >= content.length) { clearInterval(iv); setDone(true); } }, 8);
     return () => clearInterval(iv);
   }, [content, isLatest]);
 
   return (
-    <div className="text-xs leading-relaxed space-y-1 font-display">
+    <div className="text-xs leading-relaxed space-y-1">
       <RichMarkdown content={displayed} />
-      {!done && (
-        <motion.span
-          className="inline-block w-[2px] h-[1em] bg-primary/60 ml-0.5 align-text-bottom"
-          animate={{ opacity: [1, 0, 1] }}
-          transition={{ duration: 0.5, repeat: Infinity }}
-        />
-      )}
+      {!done && <motion.span className="inline-block w-[2px] h-[1em] bg-primary/60 ml-0.5 align-text-bottom" animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.5, repeat: Infinity }} />}
     </div>
   );
 }
 
-/* ─── Message bubble ─── */
 function MessageBubble({ msg, isLatest }: { msg: Message; isLatest: boolean }) {
   const [copied, setCopied] = useState(false);
   const isUser = msg.role === "user";
-
-  const copy = () => {
-    navigator.clipboard.writeText(msg.content);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
-  };
+  const copy = () => { navigator.clipboard.writeText(msg.content); setCopied(true); setTimeout(() => setCopied(false), 1500); };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12, scale: 0.97 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ type: "spring", damping: 25, stiffness: 300 }}
-      className={`flex ${isUser ? "justify-end" : "justify-start"}`}
-    >
-      {!isUser && (
-        <motion.div
-          initial={{ scale: 0, rotate: -20 }}
-          animate={{ scale: 1, rotate: 0 }}
-          transition={{ type: "spring", damping: 15 }}
-          className="mr-2 shrink-0 mt-1"
-        >
-          <HushhBot size={30} state={msg.hadActions ? "success" : "idle"} />
-        </motion.div>
-      )}
-      <div className={`max-w-[82%]`}>
-        <motion.div
-          whileHover={{ scale: 1.01 }}
-          className={`rounded-2xl px-4 py-3 ${
-            isUser
-              ? "text-primary-foreground shadow-lg"
-              : "border border-border/50 shadow-sm"
-          }`}
-          style={isUser
-            ? { background: "linear-gradient(135deg, hsl(var(--primary)), hsl(270 80% 60%))", boxShadow: "0 4px 16px -4px hsl(var(--primary) / 0.3)" }
-            : { background: "linear-gradient(135deg, hsl(var(--card)), hsl(var(--secondary) / 0.3))" }
-          }
-        >
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ type: "spring", damping: 25 }} className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
+      {!isUser && <div className="mr-2 shrink-0 mt-1"><HushhBot size={26} state={msg.hadActions ? "success" : "idle"} /></div>}
+      <div className="max-w-[82%]">
+        <div className={`rounded-2xl px-3.5 py-2.5 ${isUser ? "bg-primary text-primary-foreground" : "bg-card border border-border/50"}`}>
           {!isUser && msg.hadActions && (
-            <motion.div
-              initial={{ opacity: 0, x: -8, scale: 0.9 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              transition={{ type: "spring", damping: 15 }}
-              className="flex items-center gap-1.5 mb-2 text-[10px] font-semibold text-emerald-500 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg w-fit"
-            >
-              <motion.div animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 0.5 }}>
-                <Zap size={10} />
-              </motion.div>
-              Actions executed
-            </motion.div>
+            <div className="flex items-center gap-1.5 mb-2 text-[10px] font-medium text-emerald-500 bg-emerald-500/8 px-2 py-1 rounded-lg w-fit">
+              <Zap size={9} /> Actions executed
+            </div>
           )}
-
-          {isUser ? (
-            <span className="text-sm font-display">{msg.content}</span>
-          ) : (
-            <TypewriterContent content={msg.content} isLatest={isLatest} />
-          )}
-
-          <div className="flex items-center justify-between mt-1.5">
-            {msg.timestamp && (
-              <span className="text-[8px] text-muted-foreground/40 font-mono flex items-center gap-0.5">
-                <Clock size={7} />
-                {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-              </span>
-            )}
-            {!isUser && (
-              <button onClick={copy} className="text-[9px] text-muted-foreground/40 hover:text-primary transition flex items-center gap-0.5 ml-auto">
-                {copied ? <Check size={8} className="text-emerald-400" /> : <Copy size={8} />}
-              </button>
-            )}
+          {isUser ? <span className="text-[13px]">{msg.content}</span> : <TypewriterContent content={msg.content} isLatest={isLatest} />}
+          <div className="flex items-center justify-between mt-1">
+            {msg.timestamp && <span className="text-[8px] text-muted-foreground/40"><Clock size={7} className="inline mr-0.5" />{new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>}
+            {!isUser && <button onClick={copy} className="text-muted-foreground/30 hover:text-primary transition ml-auto">{copied ? <Check size={9} className="text-emerald-500" /> : <Copy size={9} />}</button>}
           </div>
-        </motion.div>
+        </div>
       </div>
     </motion.div>
   );
 }
 
-/* ─── Rich markdown ─── */
 function RichMarkdown({ content }: { content: string }) {
   const lines = content.split("\n");
-  return (
-    <>
-      {lines.map((line, i) => {
-        if (line.startsWith("### ")) return <h3 key={i} className="font-bold text-sm mt-2 text-foreground">{line.slice(4)}</h3>;
-        if (line.startsWith("## ")) return <h2 key={i} className="font-bold text-sm mt-2 text-foreground">{line.slice(3)}</h2>;
-        if (line.startsWith("# ")) return <h1 key={i} className="font-bold mt-2 text-foreground">{line.slice(2)}</h1>;
-        if (line.startsWith("- ") || line.startsWith("* "))
-          return <li key={i} className="ml-4 list-disc text-foreground/80">{fmtInline(line.slice(2))}</li>;
-        if (/^\d+\.\s/.test(line))
-          return <li key={i} className="ml-4 list-decimal text-foreground/80">{fmtInline(line.replace(/^\d+\.\s/, ""))}</li>;
-        if (line.trim() === "") return <div key={i} className="h-1" />;
-        return <p key={i} className="text-foreground/85">{fmtInline(line)}</p>;
-      })}
-    </>
-  );
+  return <>{lines.map((line, i) => {
+    if (line.startsWith("### ")) return <h3 key={i} className="font-bold text-sm mt-2 text-foreground">{line.slice(4)}</h3>;
+    if (line.startsWith("## ")) return <h2 key={i} className="font-bold text-sm mt-2 text-foreground">{line.slice(3)}</h2>;
+    if (line.startsWith("# ")) return <h1 key={i} className="font-bold mt-2 text-foreground">{line.slice(2)}</h1>;
+    if (line.startsWith("- ") || line.startsWith("* ")) return <li key={i} className="ml-4 list-disc text-foreground/80">{fmtInline(line.slice(2))}</li>;
+    if (/^\d+\.\s/.test(line)) return <li key={i} className="ml-4 list-decimal text-foreground/80">{fmtInline(line.replace(/^\d+\.\s/, ""))}</li>;
+    if (line.trim() === "") return <div key={i} className="h-1" />;
+    return <p key={i} className="text-foreground/85">{fmtInline(line)}</p>;
+  })}</>;
 }
 
 function fmtInline(text: string) {
   return text.split(/(\*\*.*?\*\*)/g).map((part, i) => {
-    if (part.startsWith("**") && part.endsWith("**"))
-      return <strong key={i} className="text-foreground font-semibold">{part.slice(2, -2)}</strong>;
+    if (part.startsWith("**") && part.endsWith("**")) return <strong key={i} className="text-foreground font-semibold">{part.slice(2, -2)}</strong>;
     return part;
   });
+}
+
+/* ─── Collapsible Category Section ─── */
+function CategorySection({ cat, onSend, onFill, initialOpen }: { cat: ExampleCategory; onSend: (t: string) => void; onFill: (t: string) => void; initialOpen: boolean }) {
+  const [open, setOpen] = useState(initialOpen);
+  const [showAll, setShowAll] = useState(false);
+  const visibleExamples = showAll ? cat.examples : cat.examples.slice(0, 3);
+
+  return (
+    <div className="border border-border/40 rounded-xl overflow-hidden bg-card/50">
+      <button onClick={() => setOpen(!open)} className="w-full flex items-center gap-2.5 px-3.5 py-3 text-left active:bg-secondary/30 transition-colors">
+        <cat.icon size={14} className={cat.color} />
+        <span className="text-[12px] font-semibold text-foreground flex-1">{cat.label}</span>
+        <span className="text-[10px] text-muted-foreground mr-1">{cat.examples.length}</span>
+        <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
+          <ChevronDown size={13} className="text-muted-foreground" />
+        </motion.div>
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
+            <div className="px-3 pb-3 space-y-1.5">
+              {visibleExamples.map((ex, i) => (
+                <motion.div key={i} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }}
+                  className="group flex items-center gap-2 px-2.5 py-2 rounded-lg hover:bg-secondary/40 cursor-pointer transition-colors"
+                  onClick={() => onFill(ex.text)}
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[11px] font-medium text-foreground/90 truncate">{ex.text}</p>
+                    <p className="text-[9px] text-muted-foreground/60 truncate">{ex.desc}</p>
+                  </div>
+                  <button onClick={(e) => { e.stopPropagation(); onSend(ex.text); }} className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                    <ArrowRight size={12} className="text-primary" />
+                  </button>
+                </motion.div>
+              ))}
+              {cat.examples.length > 3 && (
+                <button onClick={() => setShowAll(!showAll)} className="text-[10px] text-primary font-medium px-2.5 py-1 flex items-center gap-1 hover:underline">
+                  {showAll ? "Show less" : `Show ${cat.examples.length - 3} more`}
+                  <ChevronDown size={10} className={showAll ? "rotate-180" : ""} />
+                </button>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/* ─── Stats cards ─── */
+function StatCard({ label, value, icon: Icon, color }: { label: string; value: string | number; icon: typeof IndianRupee; color: string }) {
+  return (
+    <div className="bg-card border border-border/40 rounded-xl p-3 flex items-center gap-2.5">
+      <div className={`w-8 h-8 rounded-lg flex items-center justify-center bg-secondary/60 ${color}`}><Icon size={14} /></div>
+      <div>
+        <p className="text-[10px] text-muted-foreground">{label}</p>
+        <p className="text-sm font-semibold text-foreground">{value}</p>
+      </div>
+    </div>
+  );
 }
 
 /* ─── Main Component ─── */
@@ -337,6 +312,7 @@ export default function AdminAI() {
   const [context, setContext] = useState<any>(null);
   const [expanded, setExpanded] = useState(false);
   const [isHolding, setIsHolding] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { loadContext(); }, []);
@@ -364,7 +340,6 @@ export default function AdminAI() {
     const curations = curationsRes.data ?? [];
     const reviews = reviewsRes.data ?? [];
 
-    // Build rich summary
     const totalRevenue = bookings.reduce((s, b) => s + Number(b.total), 0);
     const orderRevenue = orders.reduce((s, o) => s + Number(o.total), 0);
     const avgBookingValue = bookings.length ? Math.round(totalRevenue / bookings.length) : 0;
@@ -374,24 +349,7 @@ export default function AdminAI() {
     const tierBreakdown = profiles.reduce((acc, p) => { acc[p.tier] = (acc[p.tier] || 0) + 1; return acc; }, {} as Record<string, number>);
 
     setContext({
-      summary: {
-        totalRevenue,
-        orderRevenue,
-        combinedRevenue: totalRevenue + orderRevenue,
-        totalBookings: bookings.length,
-        totalUsers: profiles.length,
-        activeListings: listings.filter(l => l.status === "published").length,
-        totalListings: listings.length,
-        totalOrders: orders.length,
-        avgBookingValue,
-        avgRating,
-        lowStockCount: lowStockItems.length,
-        activeCampaigns: (campaignsRes.data ?? []).filter(c => c.active).length,
-        activeCoupons: (couponsRes.data ?? []).filter(c => c.active).length,
-        pendingTasks: (staffTasksRes.data ?? []).filter(t => t.status === "pending").length,
-        bookingStatusBreakdown: statusBreakdown,
-        userTierBreakdown: tierBreakdown,
-      },
+      summary: { totalRevenue, orderRevenue, combinedRevenue: totalRevenue + orderRevenue, totalBookings: bookings.length, totalUsers: profiles.length, activeListings: listings.filter(l => l.status === "published").length, totalListings: listings.length, totalOrders: orders.length, avgBookingValue, avgRating, lowStockCount: lowStockItems.length, activeCampaigns: (campaignsRes.data ?? []).filter(c => c.active).length, activeCoupons: (couponsRes.data ?? []).filter(c => c.active).length, pendingTasks: (staffTasksRes.data ?? []).filter(t => t.status === "pending").length, bookingStatusBreakdown: statusBreakdown, userTierBreakdown: tierBreakdown },
       listings: listings.map(l => ({ name: l.name, price: l.base_price, capacity: l.capacity, category: l.category, status: l.status, location: l.location, rating: l.rating, reviews: l.review_count, tags: l.tags, host: l.host_name })),
       recentBookings: bookings.slice(0, 30).map(b => ({ total: b.total, status: b.status, date: b.date, slot: b.slot, guests: b.guests, property: b.property_id, user: b.user_id })),
       inventory: inventory.map(i => ({ name: i.name, category: i.category, emoji: i.emoji, price: i.unit_price, stock: i.stock, available: i.available, lowStock: i.stock <= i.low_stock_threshold })),
@@ -405,58 +363,34 @@ export default function AdminAI() {
     });
   };
 
-  useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages]);
+  useEffect(() => { scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" }); }, [messages]);
 
   const sendMessage = useCallback(async (text: string) => {
     if (!text.trim() || loading) return;
     const userMsg: Message = { role: "user", content: text, timestamp: Date.now() };
     setMessages(prev => [...prev, userMsg]);
-    setInput("");
-    setLoading(true);
+    setInput(""); setLoading(true);
     playAIThinkingSound();
-
     const allMessages = [...messages, userMsg];
 
     try {
-      const resp = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-ai`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          },
-          body: JSON.stringify({
-            messages: allMessages.map(m => ({ role: m.role, content: m.content })),
-            context,
-          }),
-        }
-      );
+      const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-ai`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
+        body: JSON.stringify({ messages: allMessages.map(m => ({ role: m.role, content: m.content })), context }),
+      });
 
       if (!resp.ok) {
         const err = await resp.json().catch(() => ({ error: "Request failed" }));
         playAIErrorSound();
         setMessages(prev => [...prev, { role: "assistant", content: `⚠️ ${err.error || "Something went wrong"}`, timestamp: Date.now() }]);
-        setLoading(false);
-        return;
+        setLoading(false); return;
       }
 
       const data = await resp.json();
       data.actions_performed ? playAIActionSound() : playAISuccessSound();
-
-      setMessages(prev => [...prev, {
-        role: "assistant",
-        content: data.content || "Done!",
-        hadActions: data.actions_performed,
-        timestamp: Date.now(),
-      }]);
-
-      if (data.actions_performed) {
-        window.dispatchEvent(new Event("hushh:listings-updated"));
-        loadContext();
-      }
+      setMessages(prev => [...prev, { role: "assistant", content: data.content || "Done!", hadActions: data.actions_performed, timestamp: Date.now() }]);
+      if (data.actions_performed) { window.dispatchEvent(new Event("hushh:listings-updated")); loadContext(); }
     } catch {
       playAIErrorSound();
       setMessages(prev => [...prev, { role: "assistant", content: "⚠️ Failed to connect. Try again.", timestamp: Date.now() }]);
@@ -469,361 +403,161 @@ export default function AdminAI() {
     if ("vibrate" in navigator) navigator.vibrate(30);
     if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
       const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-      const recog = new SR();
-      recog.lang = "en-IN";
-      recog.continuous = false;
-      recog.interimResults = false;
-      recog.onresult = (e: any) => {
-        setInput(e.results[0][0].transcript);
-        setIsHolding(false);
-      };
-      recog.onerror = () => setIsHolding(false);
-      recog.onend = () => setIsHolding(false);
-      recog.start();
-      (window as any).__hushhRecog = recog;
+      const recog = new SR(); recog.lang = "en-IN"; recog.continuous = false; recog.interimResults = false;
+      recog.onresult = (e: any) => { setInput(e.results[0][0].transcript); setIsHolding(false); };
+      recog.onerror = () => setIsHolding(false); recog.onend = () => setIsHolding(false);
+      recog.start(); (window as any).__hushhRecog = recog;
     }
   }, []);
 
-  const stopHold = useCallback(() => {
-    setIsHolding(false);
-    if ((window as any).__hushhRecog) (window as any).__hushhRecog.stop();
-  }, []);
-
-  const clearChat = () => { setMessages([]); };
+  const stopHold = useCallback(() => { setIsHolding(false); if ((window as any).__hushhRecog) (window as any).__hushhRecog.stop(); }, []);
 
   const botState = loading ? "thinking" : isHolding ? "listening" : messages.length === 0 ? "idle" : "success";
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ type: "spring", damping: 25 }}
-      className="space-y-4 relative"
-    >
-      <FloatingParticles count={10} />
+  const stats = context?.summary;
 
+  return (
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between relative z-10">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <motion.div whileHover={{ rotate: [0, -10, 10, 0] }} transition={{ duration: 0.5 }}>
-            <HushhBot size={48} state={botState} />
-          </motion.div>
+          <HushhBot size={40} state={botState} />
           <div>
-            <h1 className="text-lg font-bold text-foreground flex items-center gap-2 font-display">
-              Hushh AI Assistant
-              <motion.span
-                animate={{ opacity: [0.7, 1, 0.7] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="text-[9px] font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
-              >
-                Online
-              </motion.span>
+            <h1 className="text-base font-bold text-foreground flex items-center gap-2">
+              AI Assistant
+              <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500">Online</span>
             </h1>
-            <p className="text-[11px] text-muted-foreground flex items-center gap-1">
-              <Wand2 size={10} className="text-primary/40" />
-              Ask questions, analyze data, or execute actions
-            </p>
+            <p className="text-[10px] text-muted-foreground">Query data · Analyze · Execute actions</p>
           </div>
         </div>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1">
           {messages.length > 0 && (
-            <motion.button
-              whileTap={{ scale: 0.9, rotate: -90 }}
-              onClick={clearChat}
-              className="p-2 rounded-xl hover:bg-secondary transition border border-border/50"
-            >
-              <Trash2 size={16} className="text-muted-foreground" />
-            </motion.button>
+            <button onClick={() => setMessages([])} className="p-2 rounded-lg hover:bg-secondary transition"><Trash2 size={14} className="text-muted-foreground" /></button>
           )}
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setExpanded(!expanded)}
-            className="p-2 rounded-xl hover:bg-secondary transition border border-border/50"
-          >
-            {expanded ? <Minimize2 size={16} className="text-muted-foreground" /> : <Maximize2 size={16} className="text-muted-foreground" />}
-          </motion.button>
+          <button onClick={() => setShowHelp(!showHelp)} className={`p-2 rounded-lg transition ${showHelp ? "bg-primary/10 text-primary" : "hover:bg-secondary text-muted-foreground"}`}>
+            <BookOpen size={14} />
+          </button>
+          <button onClick={() => setExpanded(!expanded)} className="p-2 rounded-lg hover:bg-secondary transition">
+            {expanded ? <Minimize2 size={14} className="text-muted-foreground" /> : <Maximize2 size={14} className="text-muted-foreground" />}
+          </button>
         </div>
       </div>
 
-      {/* Empty state */}
-      <AnimatePresence>
-        {messages.length === 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            className="space-y-4 relative z-10"
-          >
-            {/* Hero */}
-            <motion.div
-              className="relative rounded-2xl border border-primary/15 overflow-hidden p-6 text-center"
-              style={{ background: "linear-gradient(135deg, hsl(var(--card)), hsl(var(--primary) / 0.06))" }}
-            >
-              <FloatingParticles count={5} />
-              <motion.div
-                className="flex justify-center mb-4"
-                initial={{ scale: 0, rotate: -30 }}
-                animate={{ scale: 1, rotate: 0 }}
-                transition={{ type: "spring", damping: 12, delay: 0.1 }}
-              >
-                <HushhBot size={72} state="idle" />
-              </motion.div>
-              <motion.h3
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="text-base font-bold text-foreground mb-1 font-display"
-              >
-                Hello! How can I help you today?
-              </motion.h3>
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-                className="text-xs text-muted-foreground max-w-xs mx-auto leading-relaxed mb-4"
-              >
-                I can query your data, generate analytics, manage inventory, and execute actions — all through natural language.
-              </motion.p>
+      {/* Input bar — always visible */}
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage(input)}
+            placeholder={rotatingPlaceholder || "Ask anything…"} disabled={loading}
+            className="w-full bg-card border border-border/50 rounded-xl pl-4 pr-4 py-2.5 text-[13px] text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-primary/30 transition" />
+        </div>
+        <button onPointerDown={startHold} onPointerUp={stopHold} onPointerLeave={stopHold}
+          className={`w-10 h-10 rounded-xl flex items-center justify-center border transition ${isHolding ? "bg-red-500/15 border-red-400/30 text-red-400" : "bg-secondary/40 border-border/50 text-muted-foreground"}`}>
+          <AnimatePresence mode="wait">
+            {isHolding ? <motion.div key="w" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><VoiceWaveVisualizer /></motion.div> : <Mic size={16} />}
+          </AnimatePresence>
+        </button>
+        <motion.button onClick={() => sendMessage(input)} disabled={!input.trim() || loading} whileTap={{ scale: 0.93 }}
+          className="w-10 h-10 rounded-xl bg-primary text-primary-foreground disabled:opacity-30 flex items-center justify-center transition">
+          {loading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+        </motion.button>
+      </div>
 
-              {/* Input bar below avatar */}
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <input
-                    value={input}
-                    onChange={e => setInput(e.target.value)}
-                    onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage(input)}
-                    placeholder={rotatingPlaceholder || "Ask anything or give a command..."}
-                    className="w-full bg-background/50 border border-border rounded-xl pl-4 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition font-display"
-                    disabled={loading}
-                  />
-                </div>
-                <motion.button
-                  onPointerDown={startHold}
-                  onPointerUp={stopHold}
-                  onPointerLeave={stopHold}
-                  whileTap={{ scale: 0.9 }}
-                  whileHover={{ scale: 1.05 }}
-                  className={`relative w-11 h-11 rounded-xl flex items-center justify-center border transition ${
-                    isHolding
-                      ? "bg-red-500/20 border-red-400/40 text-red-400"
-                      : "bg-secondary/50 border-border/60 text-muted-foreground hover:text-primary hover:border-primary/30"
-                  }`}
-                >
-                  <AnimatePresence mode="wait">
-                    {isHolding ? (
-                      <motion.div key="wave" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                        <VoiceWaveVisualizer />
-                      </motion.div>
-                    ) : (
-                      <motion.div key="mic" initial={{ scale: 0.8 }} animate={{ scale: 1 }}>
-                        <Mic size={18} />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                  {isHolding && (
-                    <motion.div
-                      className="absolute inset-0 rounded-xl border-2 border-red-400/40"
-                      animate={{ scale: [1, 1.15, 1], opacity: [0.6, 0, 0.6] }}
-                      transition={{ duration: 0.8, repeat: Infinity }}
-                    />
-                  )}
-                </motion.button>
-                <motion.button
-                  onClick={() => sendMessage(input)}
-                  disabled={!input.trim() || loading}
-                  whileTap={{ scale: 0.93 }}
-                  whileHover={{ scale: 1.05 }}
-                  className="px-4 h-11 rounded-xl text-primary-foreground disabled:opacity-40 transition overflow-hidden flex items-center relative"
-                  style={{
-                    background: "linear-gradient(135deg, hsl(var(--primary)), hsl(270 80% 60%))",
-                    boxShadow: "0 4px 14px -2px hsl(var(--primary) / 0.25)",
-                  }}
-                >
-                  {loading ? (
-                    <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}>
-                      <Loader2 size={18} />
-                    </motion.div>
-                  ) : (
-                    <motion.div animate={{ x: [0, 2, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
-                      <Send size={18} />
-                    </motion.div>
-                  )}
-                </motion.button>
-              </div>
-              <div className="flex items-center justify-between mt-2 px-1">
-                <p className="text-[9px] text-muted-foreground/40 flex items-center gap-1 font-mono">
-                  <motion.div animate={{ rotate: [0, 360] }} transition={{ duration: 6, repeat: Infinity, ease: "linear" }}>
-                    <Sparkles size={8} />
-                  </motion.div>
-                  Hushh AI · Hold 🎤 to speak
-                </p>
-                <p className="text-[9px] text-muted-foreground/40 font-mono">Enter ↵</p>
-              </div>
+      <AnimatePresence mode="wait">
+        {/* ─── Empty state ─── */}
+        {messages.length === 0 && !showHelp && (
+          <motion.div key="empty" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-4">
 
-              {/* Capabilities */}
-              <div className="grid grid-cols-2 gap-2 mt-4">
-                {capabilities.map((cap, i) => (
-                  <motion.div
-                    key={cap.label}
-                    initial={{ opacity: 0, y: 6, scale: 0.9 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ delay: 0.3 + i * 0.08, type: "spring", damping: 20 }}
-                    whileHover={{ scale: 1.03, y: -2 }}
-                    className="flex items-center gap-2 text-left p-2.5 rounded-xl border border-border/50 bg-secondary/20 cursor-default"
-                  >
-                    <motion.div
-                      animate={{ rotate: [0, 5, -5, 0] }}
-                      transition={{ duration: 3, repeat: Infinity, delay: i * 0.5 }}
-                      className={`w-7 h-7 rounded-lg flex items-center justify-center ${cap.color}`}
-                    >
-                      <cap.icon size={13} />
-                    </motion.div>
-                    <div>
-                      <span className="text-[10px] font-semibold text-foreground block">{cap.label}</span>
-                      <span className="text-[8px] text-muted-foreground">{cap.desc}</span>
-                    </div>
-                  </motion.div>
-                ))}
+            {/* Quick stats */}
+            {stats && (
+              <div className="grid grid-cols-2 gap-2">
+                <StatCard label="Revenue" value={`₹${(stats.combinedRevenue / 1000).toFixed(1)}k`} icon={IndianRupee} color="text-emerald-500" />
+                <StatCard label="Bookings" value={stats.totalBookings} icon={Calendar} color="text-blue-500" />
+                <StatCard label="Guests" value={stats.totalUsers} icon={Users} color="text-amber-500" />
+                <StatCard label="Low Stock" value={stats.lowStockCount} icon={Package} color="text-orange-500" />
               </div>
-            </motion.div>
+            )}
 
             {/* Quick prompts */}
             <div>
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-1">Try asking</p>
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Quick actions</p>
               <div className="grid grid-cols-2 gap-2">
                 {quickPrompts.map((qp, i) => (
-                  <motion.button
-                    key={i}
-                    initial={{ opacity: 0, y: 6, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ delay: 0.1 + i * 0.05, type: "spring", damping: 20 }}
-                    whileTap={{ scale: 0.95 }}
-                    whileHover={{ scale: 1.02, y: -1 }}
-                    onClick={() => sendMessage(qp.text)}
-                    className={`group relative rounded-xl border border-border/60 bg-gradient-to-br ${qp.color} p-3 text-left hover:border-primary/30 transition-all`}
-                  >
-                    <div className="flex items-center gap-2 mb-1">
-                      <motion.span
-                        animate={{ scale: [1, 1.1, 1] }}
-                        transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }}
-                        className="text-base"
-                      >
-                        {qp.emoji}
-                      </motion.span>
-                      <qp.icon size={12} className={qp.accent} />
-                    </div>
-                    <span className="text-[10px] font-medium text-foreground block leading-tight">{qp.text}</span>
-                    <ArrowRight size={10} className="absolute bottom-2.5 right-2.5 text-muted-foreground/30 group-hover:text-primary/50 group-hover:translate-x-0.5 transition-all" />
+                  <motion.button key={i} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
+                    whileTap={{ scale: 0.96 }} onClick={() => sendMessage(qp.text)}
+                    className="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-border/40 bg-card hover:border-primary/20 transition-colors text-left">
+                    <span className="text-base">{qp.emoji}</span>
+                    <span className="text-[11px] font-medium text-foreground/80 leading-tight">{qp.text}</span>
                   </motion.button>
                 ))}
               </div>
             </div>
 
-            {/* Example queries strip */}
+            {/* Category examples — first 3 open, rest collapsed */}
             <div>
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-1">More examples</p>
-              <div className="flex flex-wrap gap-1.5">
-                {exampleQueries.map((eq, i) => (
-                  <motion.button
-                    key={i}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.3 + i * 0.04, type: "spring", damping: 20 }}
-                    whileHover={{ scale: 1.05, y: -1 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setInput(eq)}
-                    className="text-[9px] px-2.5 py-1.5 rounded-full border border-border/60 text-muted-foreground/60 hover:text-primary hover:border-primary/30 hover:bg-primary/5 transition font-display"
-                  >
-                    "{eq}"
-                  </motion.button>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Browse by category</p>
+                <button onClick={() => setShowHelp(true)} className="text-[10px] text-primary font-medium flex items-center gap-0.5">
+                  All categories <ChevRight size={10} />
+                </button>
+              </div>
+              <div className="space-y-2">
+                {exampleCategories.slice(0, 4).map((cat, i) => (
+                  <CategorySection key={cat.id} cat={cat} onSend={sendMessage} onFill={setInput} initialOpen={i === 0} />
                 ))}
               </div>
+            </div>
+
+            {/* Capabilities footer */}
+            <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-secondary/30 border border-border/30">
+              <Wand2 size={14} className="text-primary/60 shrink-0" />
+              <p className="text-[10px] text-muted-foreground leading-relaxed">
+                <span className="font-medium text-foreground/70">Powered by AI</span> — Ask in natural language. I can read all your business data, create reports, manage inventory, and execute operational changes.
+              </p>
             </div>
           </motion.div>
         )}
-      </AnimatePresence>
 
-      {/* Chat area */}
-      <AnimatePresence>
-        {messages.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="space-y-4 relative z-10"
-          >
-            {/* Input bar below header when chatting */}
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <input
-                  value={input}
-                  onChange={e => setInput(e.target.value)}
-                  onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage(input)}
-                  placeholder={rotatingPlaceholder || "Ask anything or give a command..."}
-                  className="w-full bg-card border border-border rounded-xl pl-4 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition font-display"
-                  disabled={loading}
-                />
-              </div>
-              <motion.button
-                onPointerDown={startHold}
-                onPointerUp={stopHold}
-                onPointerLeave={stopHold}
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ scale: 1.05 }}
-                className={`relative w-11 h-11 rounded-xl flex items-center justify-center border transition ${
-                  isHolding
-                    ? "bg-red-500/20 border-red-400/40 text-red-400"
-                    : "bg-secondary/50 border-border/60 text-muted-foreground hover:text-primary hover:border-primary/30"
-                }`}
-              >
-                <AnimatePresence mode="wait">
-                  {isHolding ? (
-                    <motion.div key="wave" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                      <VoiceWaveVisualizer />
-                    </motion.div>
-                  ) : (
-                    <motion.div key="mic" initial={{ scale: 0.8 }} animate={{ scale: 1 }}>
-                      <Mic size={18} />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.button>
-              <motion.button
-                onClick={() => sendMessage(input)}
-                disabled={!input.trim() || loading}
-                whileTap={{ scale: 0.93 }}
-                whileHover={{ scale: 1.05 }}
-                className="px-4 h-11 rounded-xl text-primary-foreground disabled:opacity-40 transition overflow-hidden flex items-center relative"
-                style={{
-                  background: "linear-gradient(135deg, hsl(var(--primary)), hsl(270 80% 60%))",
-                  boxShadow: "0 4px 14px -2px hsl(var(--primary) / 0.25)",
-                }}
-              >
-                {loading ? (
-                  <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}>
-                    <Loader2 size={18} />
-                  </motion.div>
-                ) : (
-                  <motion.div animate={{ x: [0, 2, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
-                    <Send size={18} />
-                  </motion.div>
-                )}
-              </motion.button>
+        {/* ─── Help / All categories ─── */}
+        {messages.length === 0 && showHelp && (
+          <motion.div key="help" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <HelpCircle size={14} className="text-primary" /> What can I help with?
+              </h2>
+              <button onClick={() => setShowHelp(false)} className="text-[10px] text-primary font-medium flex items-center gap-0.5">
+                ← Back
+              </button>
             </div>
+            <div className="space-y-2">
+              {exampleCategories.map((cat, i) => (
+                <CategorySection key={cat.id} cat={cat} onSend={(t) => { setShowHelp(false); sendMessage(t); }} onFill={(t) => { setShowHelp(false); setInput(t); }} initialOpen={false} />
+              ))}
+            </div>
+          </motion.div>
+        )}
 
-            {/* Chat messages */}
-            <div
-              ref={scrollRef}
-              className={`rounded-2xl border border-border/50 overflow-y-auto transition-all relative ${expanded ? "h-[60vh]" : "h-[45vh]"}`}
-              style={{ background: "linear-gradient(180deg, hsl(var(--card)), hsl(var(--background) / 0.5))" }}
-            >
-              <FloatingParticles count={4} />
-              <div className="p-4 space-y-4 relative z-10">
+        {/* ─── Chat area ─── */}
+        {messages.length > 0 && (
+          <motion.div key="chat" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
+            <div ref={scrollRef} className={`rounded-2xl border border-border/40 overflow-y-auto transition-all bg-card/30 ${expanded ? "h-[60vh]" : "h-[45vh]"}`}>
+              <div className="p-4 space-y-3">
                 {messages.map((msg, i) => (
                   <MessageBubble key={i} msg={msg} isLatest={i === messages.length - 1 && msg.role === "assistant"} />
                 ))}
                 <AnimatePresence>{loading && <ThinkingIndicator />}</AnimatePresence>
               </div>
             </div>
+
+            {/* Suggestion chips after last message */}
+            {!loading && messages.length > 0 && messages[messages.length - 1].role === "assistant" && (
+              <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="flex flex-wrap gap-1.5">
+                {["Follow up", "Show more details", "Export this data", "What else can you tell me?"].map((chip, i) => (
+                  <button key={i} onClick={() => sendMessage(chip)} className="text-[10px] px-2.5 py-1.5 rounded-full border border-border/50 text-muted-foreground hover:text-primary hover:border-primary/30 transition bg-card">
+                    {chip}
+                  </button>
+                ))}
+              </motion.div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
