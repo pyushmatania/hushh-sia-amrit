@@ -182,33 +182,21 @@ function HexGridOverlay({ active, color, intensity }: { active: boolean; color: 
   );
 }
 
-/* Circuit lines that pulse with energy */
+/* Circuit lines — simplified for perf */
 function CircuitLines({ active, color, intensity }: { active: boolean; color: string; intensity: number }) {
   if (!active) return null;
   return (
     <div className="absolute inset-0 pointer-events-none z-[9] rounded-[20px] overflow-hidden">
       <svg width="100%" height="100%" viewBox="0 0 350 400" preserveAspectRatio="none" style={{ opacity: 0.15 + intensity * 0.5, transition: "opacity 0.2s" }}>
-        {/* Left circuit */}
         <path d="M0 200 L20 200 L35 185 L35 120 L50 105 L50 60" fill="none" stroke={color} strokeWidth="1.2" strokeDasharray="80 400" strokeDashoffset="0">
           <animate attributeName="stroke-dashoffset" values="480;0" dur="1.5s" repeatCount="indefinite" />
         </path>
-        {/* Right circuit */}
         <path d="M350 180 L330 180 L315 195 L315 260 L300 275 L300 340" fill="none" stroke={color} strokeWidth="1.2" strokeDasharray="80 400" strokeDashoffset="0">
           <animate attributeName="stroke-dashoffset" values="480;0" dur="1.8s" repeatCount="indefinite" />
         </path>
-        {/* Bottom circuit */}
-        <path d="M80 400 L80 370 L100 350 L180 350 L200 330 L250 330 L270 350 L350 350" fill="none" stroke={color} strokeWidth="1" strokeDasharray="60 300" strokeDashoffset="0">
-          <animate attributeName="stroke-dashoffset" values="360;0" dur="2s" repeatCount="indefinite" />
-        </path>
-        {/* Top circuit */}
-        <path d="M50 0 L50 30 L70 50 L150 50 L170 30 L170 0" fill="none" stroke={color} strokeWidth="1" strokeDasharray="50 250" strokeDashoffset="0">
-          <animate attributeName="stroke-dashoffset" values="300;0" dur="1.4s" repeatCount="indefinite" />
-        </path>
-        {/* Circuit nodes */}
-        {[[50, 60], [300, 340], [100, 350], [170, 30], [35, 120], [315, 260]].map(([cx, cy], i) => (
+        {[[50, 60], [300, 340]].map(([cx, cy], i) => (
           <circle key={i} cx={cx} cy={cy} r="3" fill={color} opacity={0.4 + intensity * 0.6}>
             <animate attributeName="r" values="2;4;2" dur={`${1 + i * 0.2}s`} repeatCount="indefinite" />
-            <animate attributeName="opacity" values={`${0.3 + intensity * 0.3};${0.6 + intensity * 0.4};${0.3 + intensity * 0.3}`} dur={`${1 + i * 0.2}s`} repeatCount="indefinite" />
           </circle>
         ))}
       </svg>
