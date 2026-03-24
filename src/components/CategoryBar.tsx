@@ -55,14 +55,14 @@ export default memo(function CategoryBar({ active, onChange }: CategoryBarProps)
   const handleClick = useCallback((id: string) => onChange(id), [onChange]);
 
   return (
-    <div className="flex justify-around px-0">
+    <div className="flex justify-around px-0 md:justify-center md:gap-6 lg:gap-8">
       {categories.map((cat) => {
         const isActive = active === cat.id;
         return (
           <button
             key={cat.id}
             onClick={() => handleClick(cat.id)}
-            className="relative flex flex-col items-center gap-1 px-1.5 pt-2 pb-2.5 shrink-0 group min-w-0 flex-1"
+            className="relative flex flex-col items-center gap-1 px-1.5 pt-2 pb-2.5 shrink-0 group min-w-0 flex-1 md:flex-none md:px-4 md:rounded-xl md:hover:bg-muted/50 md:transition-colors md:cursor-pointer"
           >
             <div className="relative h-14 flex items-center justify-center">
               <AnimatedIcon cat={cat} isActive={isActive} />
@@ -72,7 +72,7 @@ export default memo(function CategoryBar({ active, onChange }: CategoryBarProps)
                 </span>
               )}
             </div>
-            <span className={`text-[10px] font-medium whitespace-nowrap transition-colors duration-200 ${
+            <span className={`text-[10px] md:text-sm font-medium whitespace-nowrap transition-colors duration-200 ${
               isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground/70"
             }`}>
               {cat.label}

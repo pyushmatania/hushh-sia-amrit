@@ -35,8 +35,8 @@ function SectionBoundary({ children, name }: { children: ReactNode; name: string
 /* Lightweight section title — replaces deleted SectionDivider component */
 function SectionTitle({ title }: { title: string }) {
   return (
-    <div className="px-5 pt-6 pb-3">
-      <h2 className="text-xs font-bold tracking-[0.15em] text-muted-foreground uppercase">{title}</h2>
+    <div className="px-5 pt-6 pb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:pt-10 md:pb-5">
+      <h2 className="text-xs font-bold tracking-[0.15em] text-muted-foreground uppercase md:text-lg md:tracking-wider lg:text-xl">{title}</h2>
     </div>
   );
 }
@@ -186,10 +186,10 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
   }, [filteredProperties, activeMood]);
 
   return (
-    <div ref={contentRef} key={refreshKey} className="pb-24 min-h-screen overflow-y-auto overflow-x-hidden bg-mesh smooth-main-scroll" style={{ overscrollBehaviorX: "none", WebkitOverflowScrolling: "touch" }}>
+    <div ref={contentRef} key={refreshKey} className="pb-24 md:pb-8 min-h-screen overflow-y-auto overflow-x-hidden bg-mesh smooth-main-scroll" style={{ overscrollBehaviorX: "none", WebkitOverflowScrolling: "touch" }}>
 
       {/* Header */}
-      <div className="px-5 pt-5 pb-2 flex items-center justify-between">
+      <div className="px-5 pt-5 pb-2 flex items-center justify-between md:hidden">
         <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/40 glow-sm">
             <img src={profileAvatar} alt="Profile" className="w-full h-full object-cover" />
@@ -210,7 +210,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
       </div>
 
       {/* Search + Categories */}
-      <div className="mx-0 pb-1 pt-2" style={{
+      <div className="mx-0 pb-1 pt-2 md:px-8 lg:px-16 xl:px-24 2xl:px-32" style={{
         background: "linear-gradient(135deg, rgba(120,80,220,0.15) 0%, rgba(60,40,140,0.08) 50%, rgba(180,100,255,0.12) 100%)",
         borderBottom: "1px solid rgba(255,255,255,0.08)",
       }}>
@@ -500,12 +500,12 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
           {/* ═══════ ALL LISTINGS ═══════ */}
           {activeCategory !== "experience" && activeCategory !== "curation" && activeCategory !== "service" && (activeCategory !== "home" || isSectionVisible("all_listings")) && (
             <LazySection minHeight="400px" rootMargin="300px">
-              <div className="mt-7">
-                <div className="flex items-center justify-between px-5 mb-3">
-                  <h2 className="text-lg font-bold text-foreground">
+              <div className="mt-7 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+                <div className="flex items-center justify-between px-5 md:px-0 mb-3 md:mb-6">
+                  <h2 className="text-lg font-bold text-foreground md:text-2xl lg:text-3xl">
                     {activeCategory === "home" ? (activeMood ? `${activeMood.charAt(0).toUpperCase() + activeMood.slice(1)} Vibes` : "All Listings") : `All ${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)}s`}
                   </h2>
-                  <span className="text-xs text-muted-foreground">{(activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties).length} found</span>
+                  <span className="text-xs text-muted-foreground md:text-sm">{(activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties).length} found</span>
                 </div>
                 {(activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties).length > 0 ? (
                   <MixedListingFeed
@@ -526,12 +526,12 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
           )}
         </div>
 
-      <div className="mx-5 mt-8 mb-4 flex items-center justify-center gap-2 glass rounded-2xl px-4 py-3">
+      <div className="mx-5 mt-8 mb-4 flex items-center justify-center gap-2 glass rounded-2xl px-4 py-3 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32">
         <span className="text-lg">🏷️</span>
-        <span className="text-sm font-medium text-foreground">Prices include all fees · No hidden charges</span>
+        <span className="text-sm font-medium text-foreground md:text-base">Prices include all fees · No hidden charges</span>
       </div>
 
-      <div className="h-20" />
+      <div className="h-20 md:h-8" />
     </div>
   );
 }

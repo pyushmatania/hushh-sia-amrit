@@ -4,6 +4,7 @@ import { useAppConfig } from "@/hooks/use-app-config";
 import SplashScreen from "@/components/SplashScreen";
 
 import BottomNav from "@/components/BottomNav";
+import DesktopTopNav from "@/components/DesktopTopNav";
 import HomeScreen from "@/components/HomeScreen";
 import NotificationToastProvider from "@/components/NotificationToastProvider";
 import NotificationPermissionBanner from "@/components/NotificationPermissionBanner";
@@ -191,6 +192,20 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
+      <DesktopTopNav
+        active={activeTab}
+        onChange={(tab) => {
+          if (tab === "hostDashboard") {
+            handleOpenHostDashboard();
+          } else {
+            setActiveTab(tab);
+            setScreen({ type: "home" });
+          }
+        }}
+        messageBadge={unreadCount}
+        onNotificationTap={() => setShowNotifications(true)}
+      />
+      <div className="md:pt-16">
       <Suspense fallback={lazyFallback}>
       <AnimatePresence mode="wait">
         {screen.type === "home" && activeTab === "home" && (
@@ -317,6 +332,7 @@ export default function Index() {
         )}
       </AnimatePresence>
       </Suspense>
+      </div>
 
       {/* Search overlay */}
       <AnimatePresence>
