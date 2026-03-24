@@ -429,11 +429,20 @@ export default function AdminCurations() {
               </div>
             </div>
 
+            {editingId && autoSaveStatus !== "idle" && (
+              <div className={`text-center py-1.5 rounded-xl text-[11px] font-semibold ${
+                autoSaveStatus === "saving" ? "bg-amber-500/15 text-amber-500" :
+                autoSaveStatus === "saved" ? "bg-emerald-500/15 text-emerald-500" :
+                "bg-destructive/15 text-destructive"
+              }`}>
+                {autoSaveStatus === "saving" ? "⏳ Auto-saving..." : autoSaveStatus === "saved" ? "✓ Auto-saved" : "⚠ Save error"}
+              </div>
+            )}
             <motion.button whileTap={{ scale: 0.97 }} onClick={saveCuration}
               disabled={saving || !editing.name || !editing.property_id}
               className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-50">
               {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-              {editingId ? "Update Curation" : "Create Curation"}
+              {editingId ? "Save & Close" : "Create Curation"}
             </motion.button>
           </div>
         )}
