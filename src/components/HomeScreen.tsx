@@ -338,6 +338,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 )});
                 homeSections.push({ key: "discovery_2", order: getSortOrder("curated_packs") + 3, node: (
                   <LazySection minHeight="300px" rootMargin="300px">
+                    <Suspense fallback={null}>
                     <MobileDiscoverySection
                       properties={properties}
                       onPropertyTap={onPropertyTap}
@@ -348,6 +349,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                        offset={10}
                        category="home"
                      />
+                    </Suspense>
                   </LazySection>
                 )});
               }
