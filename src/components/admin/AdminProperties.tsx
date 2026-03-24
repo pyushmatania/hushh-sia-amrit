@@ -1042,7 +1042,6 @@ function EditSection({ title, icon, id, expanded, onToggle, children, badge, col
     </div>
   );
 }
-}
 
 function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
