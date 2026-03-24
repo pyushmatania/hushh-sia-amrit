@@ -481,7 +481,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               )}
 
               <SectionTitle title="✨ EXPERIENCE PACKS" />
-              <div className="space-y-5 pb-2">
+              <div className="space-y-5 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
                 {experiencePacks.map((pack, i) => (
                   <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
                 ))}
