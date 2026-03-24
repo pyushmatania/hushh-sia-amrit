@@ -107,7 +107,7 @@ export default function Index() {
         description: pack.tagline || pack.name,
         fullDescription: pack.tagline || "",
         location: "Jeypore, Odisha",
-        images: pack.imageUrls?.length ? pack.imageUrls : [pack.image || ""],
+        images: [""],
         basePrice: pack.price,
         rating: 4.8,
         reviewCount: 0,
