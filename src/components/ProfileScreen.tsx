@@ -780,6 +780,22 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
         )}
       </AnimatePresence>
 
+      {/* Wallpapers Easter Egg */}
+      <AnimatePresence>
+        {showWallpapers && (
+          <motion.div
+            className="fixed inset-0 z-[60] bg-background"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 40 }}
+          >
+            <Suspense fallback={<div className="h-screen flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" /></div>}>
+              <WallpapersPage onBack={() => setShowWallpapers(false)} />
+            </Suspense>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Past Trips Full Screen */}
       <AnimatePresence>
         {showPastTrips && (
