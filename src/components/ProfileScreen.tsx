@@ -135,7 +135,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
   }
 
   return (
-    <div className="pb-24 bg-mesh min-h-screen">
+    <div className="pb-24 bg-mesh min-h-screen md:h-[calc(100vh-4rem)] md:overflow-y-auto">
       {/* Header */}
       <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-6 pb-1 flex items-center justify-between">
         <motion.h1
