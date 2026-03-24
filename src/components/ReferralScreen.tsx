@@ -53,7 +53,7 @@ export default function ReferralScreen({ onBack }: ReferralScreenProps) {
     >
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-md border-b border-border">
-        <div className="flex items-center gap-3 px-4 py-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+        <div className="flex items-center gap-3 px-4 py-3 md:px-8 md:max-w-4xl md:mx-auto">
           <button onClick={onBack} className="text-foreground active:scale-90 transition-transform">
             <ArrowLeft size={22} />
           </button>
