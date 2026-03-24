@@ -5,6 +5,7 @@ import { hapticSelection, hapticSuccess } from "@/lib/haptics";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
+import { checkRateLimit, formatRetryTime, RATE_LIMITS } from "@/lib/rate-limiter";
 
 interface MenuItem {
   id: string;
