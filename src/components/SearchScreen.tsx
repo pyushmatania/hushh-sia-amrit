@@ -187,7 +187,7 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
             <button
               key={pill.label}
               onClick={pill.action}
-              className="px-3 py-1.5 rounded-full text-xs font-medium border border-border text-muted-foreground hover:border-foreground/30 transition-all whitespace-nowrap shrink-0"
+              className="px-3 py-1.5 rounded-full text-xs md:text-sm font-medium border border-border text-muted-foreground hover:border-foreground/30 transition-all whitespace-nowrap shrink-0 md:cursor-pointer"
             >
               {pill.label}
             </button>
