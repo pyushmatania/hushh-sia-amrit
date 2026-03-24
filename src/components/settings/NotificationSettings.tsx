@@ -168,7 +168,7 @@ export default function NotificationSettings() {
     }
     setIsSendingTest(testNotif.key);
     try {
-      const payload = { ...testNotif.payload };
+      const payload: Record<string, any> = { ...testNotif.payload };
       // Replace personalization tokens
       payload.title = payload.title.replace(/\{name\}/g, displayName);
       payload.body = payload.body.replace(/\{name\}/g, displayName).replace(/\{location\}/g, userLocation);
