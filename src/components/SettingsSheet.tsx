@@ -71,7 +71,7 @@ export default function SettingsSheet({ open, onClose, settingType }: SettingsSh
               <h2 className="text-base font-bold text-foreground">{settingTitles[settingType] || "Settings"}</h2>
             </div>
 
-            <div className="px-5 py-4 pb-8">
+            <div className="px-5 py-4 pb-8 md:px-8 md:py-6">
               {settingType === "account" && <AccountSettings />}
               {settingType === "payments" && <PaymentSettings />}
               {settingType === "notifications" && <NotificationSettings />}

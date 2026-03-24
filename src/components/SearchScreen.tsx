@@ -494,7 +494,7 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
             <p className="text-sm text-muted-foreground mt-1 text-center">Try adjusting your filters or search query</p>
           </motion.div>
         ) : (
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
             {filtered.map((property, i) => (
               <motion.div
                 key={property.id}

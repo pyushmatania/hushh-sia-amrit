@@ -41,7 +41,7 @@ export default function WishlistScreen({ wishlist, onToggleWishlist, onPropertyT
           description="Tap the heart icon on any property to save it here. Your favourite villas, venues, and experiences — all in one place."
         />
       ) : (
-        <div className="px-5 space-y-4">
+        <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {wishlisted.map((property, i) => (
             <motion.div
               key={property.id}

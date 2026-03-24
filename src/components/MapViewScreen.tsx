@@ -501,8 +501,8 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
                 ))}
               </div>
             </div>
-            <div className="overflow-y-auto px-4 pb-36" style={{ maxHeight: "calc(100% - 80px)" }}>
-              <div className="space-y-3">
+            <div className="overflow-y-auto px-4 pb-36 md:px-8" style={{ maxHeight: "calc(100% - 80px)" }}>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                 {sortedProperties.map((p) => (
                   <motion.div
                     key={p.id}
