@@ -1002,8 +1002,8 @@ export default function AdminProperties() {
 
 /* ─── Subcomponents ─── */
 
-function EditSection({ title, icon, id, expanded, onToggle, children }: {
-  title: string; icon: React.ReactNode; id: string; expanded: string; onToggle: (id: string) => void; children: React.ReactNode;
+function EditSection({ title, icon, id, expanded, onToggle, children, badge }: {
+  title: string; icon: React.ReactNode; id: string; expanded: string; onToggle: (id: string) => void; children: React.ReactNode; badge?: string;
 }) {
   const isOpen = expanded === id;
   return (
@@ -1013,6 +1013,7 @@ function EditSection({ title, icon, id, expanded, onToggle, children }: {
           {icon}
         </div>
         {title}
+        {badge && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/15 text-primary">{badge}</span>}
         <ChevronDown size={14} className={`ml-auto text-muted-foreground transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
       </button>
       <AnimatePresence>
