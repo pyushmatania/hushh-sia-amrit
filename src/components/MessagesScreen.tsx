@@ -416,10 +416,6 @@ function ThreadCard({ thread, index, onClick, onPin, onArchive }: {
         className={`relative z-10 rounded-2xl cursor-pointer transition-shadow ${
           thread.unread > 0 ? "bg-primary/[0.04]" : "bg-secondary/30"
         }`}
-        style={{
-          border: thread.unread > 0 ? "1px solid hsl(var(--primary) / 0.15)" : "1px solid hsl(var(--border))",
-          backgroundColor: "hsl(var(--background))",
-        }}
         whileTap={{ scale: 0.98 }}
       >
         <div className="p-3.5">
