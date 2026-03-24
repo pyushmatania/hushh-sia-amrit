@@ -1,6 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/telegram";
+const AI_GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 const MAX_RUNTIME_MS = 55_000;
 const MIN_REMAINING_MS = 5_000;
 
@@ -36,6 +37,121 @@ Deno.serve(async () => {
 
     let currentOffset = state.update_offset;
     let totalProcessed = 0;
+
+    // --- AI Business Query Handler ---
+    const handleAIQuery = async (question: string): Promise<string> => {
+      try {
+        // Gather business context from database
+        const now = new Date();
+        const istOffset = 5.5 * 60 * 60 * 1000;
+        const istNow = new Date(now.getTime() + istOffset);
+        const todayIST = istNow.toISOString().split("T")[0];
+
+        // Last 7 days
+        const weekAgo = new Date(istNow);
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        const weekAgoIST = weekAgo.toISOString().split("T")[0];
+
+        // Last 30 days
+        const monthAgo = new Date(istNow);
+        monthAgo.setDate(monthAgo.getDate() - 30);
+        const monthAgoIST = monthAgo.toISOString().split("T")[0];
+
+        // Fetch data in parallel
+        const [
+          { data: recentBookings },
+          { data: recentOrders },
+          { data: inventory },
+          { count: totalUsers },
+          { data: recentReviews },
+          { data: listings },
+          { data: todayBookings },
+        ] = await Promise.all([
+          supabase.from("bookings").select("booking_id, date, guests, slot, total, status, property_id, created_at").gte("date", weekAgoIST).order("created_at", { ascending: false }).limit(50),
+          supabase.from("orders").select("id, total, status, property_id, created_at").gte("created_at", `${weekAgoIST}T00:00:00`).order("created_at", { ascending: false }).limit(50),
+          supabase.from("inventory").select("name, emoji, stock, low_stock_threshold, unit_price, available, category").eq("available", true).limit(50),
+          supabase.from("profiles").select("id", { count: "exact", head: true }),
+          supabase.from("reviews").select("rating, content, property_id, created_at").gte("created_at", `${monthAgoIST}T00:00:00`).order("created_at", { ascending: false }).limit(20),
+          supabase.from("host_listings").select("name, status, base_price, capacity, category, rating, review_count").eq("status", "published").limit(20),
+          supabase.from("bookings").select("total, status, guests").eq("date", todayIST),
+        ]);
+
+        // Calculate summaries
+        const weekBookings = recentBookings || [];
+        const weekRevenue = weekBookings.filter(b => b.status !== "cancelled").reduce((s, b) => s + Number(b.total), 0);
+        const weekOrders = recentOrders || [];
+        const weekOrderRevenue = weekOrders.reduce((s, o) => s + Number(o.total), 0);
+        const todayRev = (todayBookings || []).filter(b => b.status !== "cancelled").reduce((s, b) => s + Number(b.total), 0);
+        const todayOrderRev = weekOrders.filter(o => o.created_at >= `${todayIST}T00:00:00`).reduce((s, o) => s + Number(o.total), 0);
+        const lowStockItems = (inventory || []).filter(i => i.stock <= i.low_stock_threshold);
+        const avgRating = (recentReviews || []).length > 0 ? ((recentReviews || []).reduce((s, r) => s + r.rating, 0) / (recentReviews || []).length).toFixed(1) : "N/A";
+
+        const context = `
+BUSINESS DATA (as of ${todayIST}, IST timezone):
+
+TODAY:
+- Bookings today: ${(todayBookings || []).length} (Revenue: ₹${todayRev.toLocaleString("en-IN")})
+- Orders today: ${weekOrders.filter(o => o.created_at >= `${todayIST}T00:00:00`).length} (Revenue: ₹${todayOrderRev.toLocaleString("en-IN")})
+- Total today: ₹${(todayRev + todayOrderRev).toLocaleString("en-IN")}
+
+LAST 7 DAYS:
+- Bookings: ${weekBookings.length} (Revenue: ₹${weekRevenue.toLocaleString("en-IN")})
+- Orders: ${weekOrders.length} (Revenue: ₹${weekOrderRevenue.toLocaleString("en-IN")})
+- Combined revenue: ₹${(weekRevenue + weekOrderRevenue).toLocaleString("en-IN")}
+- Cancelled bookings: ${weekBookings.filter(b => b.status === "cancelled").length}
+
+PROPERTIES:
+${(listings || []).map(l => `- ${l.name}: ₹${l.base_price}/slot, capacity ${l.capacity}, rating ${l.rating} (${l.review_count} reviews)`).join("\n")}
+
+INVENTORY (${(inventory || []).length} items):
+- Low stock alerts: ${lowStockItems.length > 0 ? lowStockItems.map(i => `${i.emoji} ${i.name}: ${i.stock} left`).join(", ") : "None"}
+
+USERS: ${totalUsers || 0} registered
+REVIEWS: Avg rating ${avgRating} from ${(recentReviews || []).length} recent reviews
+
+RECENT BOOKINGS:
+${weekBookings.slice(0, 10).map(b => `- ${b.booking_id}: ${b.date}, ${b.guests} guests, ₹${b.total}, ${b.status}`).join("\n")}
+`;
+
+        const aiResponse = await fetch(AI_GATEWAY_URL, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "google/gemini-3-flash-preview",
+            messages: [
+              {
+                role: "system",
+                content: `You are the AI business assistant for Hushh Jeypore, a premium hospitality venue. You answer the admin's questions about business performance using ONLY the provided data. Keep answers concise, use emojis, format for Telegram (HTML tags: <b>bold</b>, <i>italic</i>, <code>code</code>). Use ₹ for currency. If the data doesn't cover the question, say so honestly. Never make up numbers.`,
+              },
+              {
+                role: "user",
+                content: `${context}\n\nADMIN QUESTION: ${question}`,
+              },
+            ],
+          }),
+        });
+
+        if (!aiResponse.ok) {
+          const errText = await aiResponse.text();
+          console.error("AI gateway error:", aiResponse.status, errText);
+          if (aiResponse.status === 429) return "⏳ AI is busy right now. Try again in a moment.";
+          if (aiResponse.status === 402) return "⚠️ AI credits exhausted. Contact admin to top up.";
+          return "❌ AI is temporarily unavailable. Use /help for standard commands.";
+        }
+
+        const aiData = await aiResponse.json();
+        const reply = aiData.choices?.[0]?.message?.content;
+        if (!reply) return "🤔 I couldn't generate a response. Try rephrasing your question.";
+
+        return reply;
+      } catch (err) {
+        console.error("AI query error:", err);
+        return "❌ Error processing your question. Try a /command instead.";
+      }
+    };
 
     // Command handlers
     const handleCommand = async (
@@ -219,7 +335,33 @@ Deno.serve(async () => {
             .update({ replied: true, reply_text: reply })
             .eq("update_id", update.update_id);
         }
-        // Auto-reply for non-command messages
+        // AI-powered reply for admin messages (non-command)
+        else if (
+          state.admin_chat_id &&
+          String(chatId) === String(state.admin_chat_id) &&
+          text.trim().length > 2
+        ) {
+          const aiReply = await handleAIQuery(text);
+          await fetch(`${GATEWAY_URL}/sendMessage`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${LOVABLE_API_KEY}`,
+              "X-Connection-Api-Key": TELEGRAM_API_KEY,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              chat_id: chatId,
+              text: aiReply,
+              parse_mode: "HTML",
+            }),
+          });
+
+          await supabase
+            .from("telegram_messages")
+            .update({ replied: true, reply_text: aiReply })
+            .eq("update_id", update.update_id);
+        }
+        // Auto-reply for non-admin messages
         else if (state.auto_reply_enabled && state.auto_reply_message) {
           await fetch(`${GATEWAY_URL}/sendMessage`, {
             method: "POST",
