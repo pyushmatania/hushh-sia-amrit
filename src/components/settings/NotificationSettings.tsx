@@ -348,7 +348,7 @@ export default function NotificationSettings() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04 }}
               whileTap={{ scale: 0.95 }}
-              disabled={!!isSendingTest || !isSubscribed}
+              disabled={!!isSendingTest}
               onClick={() => sendPushNotification(tn)}
               className="relative overflow-hidden rounded-xl p-3 text-left transition-all disabled:opacity-40 border border-border bg-card hover:shadow-md group"
             >
