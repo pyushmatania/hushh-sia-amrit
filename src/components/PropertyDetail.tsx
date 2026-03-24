@@ -1,5 +1,6 @@
 import { motion, AnimatePresence, useMotionValue, useTransform, animate, PanInfo } from "framer-motion";
 import { useAppConfig } from "@/hooks/use-app-config";
+import L from "leaflet";
 import {
   ArrowLeft, Share2, Heart, Star, BadgeCheck, MapPin,
   ChevronDown, ChevronUp, Minus, Plus, Droplets, Flame,
@@ -14,7 +15,7 @@ import {
   Armchair, GlassWater, Bell, Truck, Radio, Disc3,
   Wind, Tag, Check, BedDouble, Layers
 } from "lucide-react";
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useSlotAvailability } from "@/hooks/use-slot-availability";
 import { shareProperty } from "@/lib/share";
 import { useToast } from "@/hooks/use-toast";
@@ -135,6 +136,161 @@ function getNearbyPlaces(category: string) {
     { icon: <Trees size={16} />, name: "Jagannath Sagar Lake", distance: "1.2 km" },
     { icon: <Camera size={16} />, name: "Koraput Museum", distance: "3.5 km" },
   ];
+}
+
+/* ═══════ INLINE LEAFLET MAP WITH ROUTE ═══════ */
+function PropertyLocationMap({ property }: { property: Property }) {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<L.Map | null>(null);
+  const routeRef = useRef<L.Polyline | null>(null);
+  const [routeInfo, setRouteInfo] = useState<{ km: string; mins: number } | null>(null);
+  const [routeLoading, setRouteLoading] = useState(false);
+
+  const propLat = property.lat ?? 18.856;
+  const propLng = property.lng ?? 82.572;
+
+  useEffect(() => {
+    if (!mapRef.current || mapInstanceRef.current) return;
+
+    const map = L.map(mapRef.current, {
+      center: [propLat, propLng],
+      zoom: 14,
+      zoomControl: false,
+      attributionControl: false,
+      dragging: true,
+      scrollWheelZoom: false,
+    });
+
+    L.tileLayer("https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
+      maxZoom: 20,
+    }).addTo(map);
+
+    // Property marker with photo
+    const photoHtml = `
+      <div style="position:relative;">
+        <div style="width:48px;height:48px;border-radius:50%;border:3px solid hsl(270,80%,65%);overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.3);">
+          <img src="${property.images[0] || ""}" style="width:100%;height:100%;object-fit:cover;" />
+        </div>
+        <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%) rotate(45deg);width:12px;height:12px;background:hsl(270,80%,65%);border-radius:2px;"></div>
+        <div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:hsl(270,80%,65%);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;white-space:nowrap;">
+          ₹${property.basePrice.toLocaleString()}
+        </div>
+      </div>
+    `;
+
+    const icon = L.divIcon({
+      html: photoHtml,
+      className: "custom-photo-marker",
+      iconSize: [48, 60],
+      iconAnchor: [24, 60],
+    });
+
+    L.marker([propLat, propLng], { icon }).addTo(map);
+
+    mapInstanceRef.current = map;
+
+    // Auto-fetch route from user location
+    fetchRoute(map);
+
+    return () => {
+      map.remove();
+      mapInstanceRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const fetchRoute = async (map: L.Map) => {
+    setRouteLoading(true);
+    try {
+      const pos = await new Promise<GeolocationPosition>((resolve, reject) =>
+        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 8000 })
+      );
+      const userLat = pos.coords.latitude;
+      const userLng = pos.coords.longitude;
+
+      // User marker
+      const userIcon = L.divIcon({
+        html: `<div style="width:14px;height:14px;background:hsl(270,80%,65%);border:3px solid white;border-radius:50%;box-shadow:0 0 10px hsl(270,80%,65%,0.5);"></div>`,
+        className: "custom-photo-marker",
+        iconSize: [14, 14],
+        iconAnchor: [7, 7],
+      });
+      L.marker([userLat, userLng], { icon: userIcon }).addTo(map);
+
+      // OSRM route
+      const url = `https://router.project-osrm.org/route/v1/driving/${userLng},${userLat};${propLng},${propLat}?overview=full&geometries=geojson`;
+      const resp = await fetch(url);
+      const data = await resp.json();
+
+      if (data.routes?.[0]) {
+        const coords = data.routes[0].geometry.coordinates.map((c: number[]) => [c[1], c[0]] as [number, number]);
+        routeRef.current = L.polyline(coords, {
+          color: "hsl(270, 80%, 65%)",
+          weight: 5,
+          opacity: 0.85,
+          lineCap: "round",
+          lineJoin: "round",
+          dashArray: "10, 6",
+        }).addTo(map);
+
+        map.fitBounds(routeRef.current.getBounds(), { padding: [40, 40], maxZoom: 14, animate: true });
+
+        const km = (data.routes[0].distance / 1000).toFixed(1);
+        const mins = Math.ceil(data.routes[0].duration / 60);
+        setRouteInfo({ km, mins });
+      }
+    } catch {
+      // Location denied — just show map centered on property
+    } finally {
+      setRouteLoading(false);
+    }
+  };
+
+  return (
+    <div className="relative rounded-2xl overflow-hidden border-2 border-primary/20 glow-border-radiate mb-3">
+      <div ref={mapRef} className="w-full aspect-[16/9] z-0" />
+
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 pointer-events-none z-[400]" style={{
+        background: "linear-gradient(180deg, hsl(var(--background) / 0.08) 0%, transparent 20%, transparent 70%, hsl(var(--background) / 0.25) 100%)",
+      }} />
+      <div className="absolute inset-0 pointer-events-none z-[400]" style={{
+        boxShadow: "inset 0 0 30px hsl(var(--background) / 0.2)",
+      }} />
+
+      {/* Route info badge */}
+      {routeInfo && (
+        <div className="absolute top-3 right-3 z-[500] glass rounded-full px-3 py-1.5 flex items-center gap-2 pointer-events-none">
+          <span className="text-[10px] font-bold text-primary">{routeInfo.km} km</span>
+          <span className="text-[9px] text-muted-foreground">·</span>
+          <span className="text-[10px] font-medium text-foreground">{routeInfo.mins} min</span>
+        </div>
+      )}
+
+      {routeLoading && (
+        <div className="absolute top-3 right-3 z-[500] glass rounded-full px-3 py-1.5 pointer-events-none">
+          <span className="text-[10px] text-muted-foreground animate-pulse">Finding route...</span>
+        </div>
+      )}
+
+      {/* Bottom info bar */}
+      <div className="relative z-[500] bg-card/90 backdrop-blur-sm px-4 py-3 flex items-center gap-3 border-t border-border">
+        <div className="w-10 h-10 rounded-xl overflow-hidden border border-border shrink-0">
+          <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-foreground truncate">{property.name}</p>
+          <p className="text-[11px] text-muted-foreground flex items-center gap-1">
+            <MapPin size={10} /> {property.location}
+          </p>
+        </div>
+        <div className="flex items-center gap-1">
+          <Star size={12} className="text-gold fill-gold" />
+          <span className="text-xs font-semibold text-foreground">{property.rating}</span>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function getFaqs(category: string) {
@@ -1047,62 +1203,8 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
         </h3>
         <p className="text-sm text-muted-foreground mb-3">{property.location}</p>
 
-        {/* Map Card — styled like in-app map feature */}
-        <div className="relative rounded-2xl overflow-hidden border-2 border-primary/20 glow-border-radiate mb-3">
-          {/* Map iframe */}
-          <div className="relative aspect-[16/9]">
-            <iframe
-              title="Property Location"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(property.location)}&zoom=14`}
-            />
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 pointer-events-none" style={{
-              background: "linear-gradient(180deg, hsl(var(--background) / 0.1) 0%, transparent 25%, transparent 65%, hsl(var(--background) / 0.35) 100%), radial-gradient(ellipse at center, transparent 50%, hsl(var(--background) / 0.15) 100%)",
-            }} />
-            <div className="absolute inset-0 pointer-events-none" style={{
-              boxShadow: "inset 0 0 40px hsl(var(--background) / 0.25), inset 0 0 80px hsl(var(--background) / 0.08)",
-            }} />
-
-            {/* Property photo marker pinned on map */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-full pointer-events-none z-10">
-              <div className="relative">
-                <div className="w-12 h-12 rounded-full border-[2.5px] border-primary overflow-hidden shadow-elevated glow-sm">
-                  <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover" />
-                </div>
-                {/* Pin triangle */}
-                <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-primary rotate-45 rounded-sm" />
-              </div>
-            </div>
-
-            {/* Price tag badge */}
-            <div className="absolute top-3 left-3 glass rounded-full px-3 py-1.5 flex items-center gap-1.5 pointer-events-none">
-              <span className="text-xs font-bold text-foreground">₹{property.basePrice.toLocaleString()}</span>
-              <span className="text-[10px] text-muted-foreground">/ slot</span>
-            </div>
-          </div>
-
-          {/* Bottom info bar */}
-          <div className="bg-card/90 backdrop-blur-sm px-4 py-3 flex items-center gap-3 border-t border-border">
-            <div className="w-10 h-10 rounded-xl overflow-hidden border border-border shrink-0">
-              <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-foreground truncate">{property.name}</p>
-              <p className="text-[11px] text-muted-foreground flex items-center gap-1">
-                <MapPin size={10} /> {property.location}
-              </p>
-            </div>
-            <div className="flex items-center gap-1">
-              <Star size={12} className="text-gold fill-gold" />
-              <span className="text-xs font-semibold text-foreground">{property.rating}</span>
-            </div>
-          </div>
-        </div>
+        {/* Map Card — Leaflet with route */}
+        <PropertyLocationMap property={property} />
 
         {/* How to get there */}
         <div className="glass rounded-2xl p-4 mb-3 border border-border">
