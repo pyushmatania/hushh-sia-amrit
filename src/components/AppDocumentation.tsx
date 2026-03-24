@@ -1347,7 +1347,30 @@ function MobileTab() {
         </div>
       </DocSection>
 
-      {/* PWA Manifest */}
+      {/* Native Caching & WebView Tuning */}
+      <DocSection title="Native-Grade Caching & Performance" icon={<Zap size={15} className="text-primary" />}>
+        <div className="space-y-2">
+          {[
+            { title: "Native Data Cache", desc: "Capacitor Preferences stores API responses with TTL. Stale-while-revalidate pattern — shows cached data instantly, revalidates in background." },
+            { title: "Prefetch on Launch", desc: "On native cold start, listings, curations, packages, and app_config are fetched and cached before React renders." },
+            { title: "CapacitorHttp", desc: "Native HTTP stack bypasses WebView CORS. Direct native networking = faster API calls, no cookie/header overhead." },
+            { title: "WebView Tuning", desc: "androidScheme:'https', allowMixedContent:true, captureInput:true. Background color #050505 eliminates white flash." },
+            { title: "Keyboard Config", desc: "resize:'body' with resizeOnFullScreen — inputs stay visible when keyboard opens, no layout reflow." },
+            { title: "SplashScreen", desc: "CENTER_CROP scale type for edge-to-edge splash. Zero duration auto-hide — React takes over instantly." },
+          ].map(p => (
+            <div key={p.title} className="flex gap-2 p-2.5 rounded-xl" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border) / 0.3)" }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0 mt-1.5" />
+              <div>
+                <p className="font-bold text-foreground text-xs">{p.title}</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{p.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-2 p-2.5 rounded-xl font-mono text-[9px]" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border) / 0.3)", color: "hsl(var(--muted-foreground))" }}>
+          App Launch → initNativePlugins() → prefetchCriticalData() → React render (cached data available) → background revalidation
+        </div>
+      </DocSection>
       <DocSection title="PWA Configuration" icon={<Globe size={15} className="text-primary" />}>
         <DataTable headers={["Property", "Value"]} rows={[
           ["name", "Hushh Jeypore"],
