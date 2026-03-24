@@ -51,6 +51,8 @@ export interface AppConfig {
   // Notifications
   booking_reminder_hours: number;
   review_prompt_hours: number;
+  // Splash
+  splash_variant: string;
 }
 
 const defaults: AppConfig = {
