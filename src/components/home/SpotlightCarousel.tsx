@@ -87,17 +87,26 @@ const VideoCard = memo(function VideoCard({
       ([entry]) => {
         const vis = entry.isIntersecting;
         setIsVisible(vis);
-        if (vis) {
-          videoRef.current?.play().catch(() => {});
-        } else {
+        if (!vis) {
           videoRef.current?.pause();
         }
       },
-      { threshold: 0.1, rootMargin: "50px" }
+      { threshold: 0.1, rootMargin: "20px" }
     );
     observer.observe(card);
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (!isVisible || !videoRef.current) return;
+
+    if (isActive) {
+      videoRef.current.play().catch(() => {});
+      return;
+    }
+
+    videoRef.current.pause();
+  }, [isVisible, isActive]);
 
   return (
     <div
@@ -139,9 +148,9 @@ const VideoCard = memo(function VideoCard({
               muted={muted}
               loop
               playsInline
-              preload={isFirst ? "auto" : "metadata"}
+              preload={isFirst ? "auto" : "none"}
               onCanPlay={() => setVideoReady(true)}
-              className="absolute inset-0 w-full h-full object-cover z-[1]"
+              className="absolute inset-0 w-full h-full object-cover z-[1] pointer-events-none"
               style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.4s", filter: "blur(0.6px)" }}
             />
           )}
@@ -249,8 +258,9 @@ export default function SpotlightCarousel({ properties, onPropertyTap, category 
       <div
         ref={scrollRef}
         onScroll={handleScroll}
+        data-no-pull-refresh="true"
         className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2"
-        style={{ scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" }}
+        style={{ scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch", touchAction: "pan-x", overscrollBehaviorX: "contain" }}
       >
         {topProperties.map((p, i) => {
           const cfg = getCardConfig(i);
