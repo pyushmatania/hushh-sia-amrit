@@ -402,7 +402,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden px-5"
+            className="overflow-hidden px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32"
           >
             <div className="rounded-2xl border border-border bg-card p-3 mb-3">
               <Calendar
