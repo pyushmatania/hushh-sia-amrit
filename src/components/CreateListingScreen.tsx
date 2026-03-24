@@ -112,7 +112,7 @@ export default function CreateListingScreen({ onBack, onSubmit, initialData }: C
       </div>
 
       {/* Step indicator */}
-      <div className="px-5 mb-6 flex gap-2">
+      <div className="px-5 mb-6 flex gap-2 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:max-w-3xl">
         {steps.map((s, i) => (
           <div key={s} className="flex-1">
             <div className={`h-1 rounded-full transition-colors ${i <= step ? "bg-primary" : "bg-border"}`} />
