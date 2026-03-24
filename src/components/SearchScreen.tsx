@@ -232,7 +232,7 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden border-b border-border"
           >
-            <div className="px-5 py-4 space-y-5">
+            <div className="px-5 py-4 space-y-5 md:max-w-3xl md:mx-auto">
               {/* Category */}
               <div>
                 <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5">
