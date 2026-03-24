@@ -34,11 +34,12 @@ const isDesktop = typeof window !== "undefined" && window.matchMedia("(min-width
 
 function getTimeConfig() {
   const hour = new Date().getHours();
+  const isDarkTime = hour >= 17 || hour < 5;
   if (hour >= 5 && hour < 12) return {
     greeting: "Good Morning",
     emoji: "☀️",
     bg: isDesktop ? splashMorningDesktop : splashMorning,
-    overlay: "linear-gradient(180deg, hsla(0,0%,0%,0.25) 0%, hsla(0,0%,0%,0.05) 40%, hsla(0,0%,0%,0.4) 100%)",
+    overlay: "linear-gradient(180deg, hsla(0,0%,0%,0.35) 0%, hsla(0,0%,0%,0.1) 40%, hsla(0,0%,0%,0.5) 100%)",
     hasFireflies: false,
     hasShootingStars: false,
     hasBirds: true,
@@ -47,12 +48,19 @@ function getTimeConfig() {
     hasTwinkle: false,
     particleColor: "hsla(45, 90%, 70%, 0.5)",
     glowColor: "hsla(40, 100%, 65%, 0.3)",
+    isDark: false,
+    textColor: "hsla(0,0%,100%,1)",
+    textShadow: "0 2px 24px hsla(0,0%,0%,0.7), 0 0 60px hsla(0,0%,0%,0.3)",
+    brandGradient: "linear-gradient(180deg, hsla(0,0%,100%,1) 0%, hsla(45,90%,85%,1) 50%, hsla(35,100%,70%,0.95) 100%)",
+    brandGlow: "drop-shadow(0 0 25px hsla(35,100%,50%,0.6)) drop-shadow(0 4px 35px hsla(0,0%,0%,0.7))",
+    taglineColor: "hsla(0,0%,100%,0.85)",
+    taglineGlow: "0 0 16px hsla(35,100%,60%,0.5), 0 2px 8px hsla(0,0%,0%,0.6)",
   };
   if (hour >= 12 && hour < 17) return {
     greeting: "Good Afternoon",
     emoji: "🌤️",
     bg: isDesktop ? splashAfternoonDesktop : splashAfternoon,
-    overlay: "linear-gradient(180deg, hsla(0,0%,0%,0.2) 0%, hsla(0,0%,0%,0.0) 40%, hsla(0,0%,0%,0.35) 100%)",
+    overlay: "linear-gradient(180deg, hsla(0,0%,0%,0.3) 0%, hsla(0,0%,0%,0.05) 40%, hsla(0,0%,0%,0.45) 100%)",
     hasFireflies: false,
     hasShootingStars: false,
     hasBirds: true,
@@ -61,6 +69,13 @@ function getTimeConfig() {
     hasTwinkle: false,
     particleColor: "hsla(45, 80%, 75%, 0.4)",
     glowColor: "hsla(45, 90%, 60%, 0.25)",
+    isDark: false,
+    textColor: "hsla(0,0%,100%,1)",
+    textShadow: "0 2px 24px hsla(0,0%,0%,0.7), 0 0 60px hsla(0,0%,0%,0.3)",
+    brandGradient: "linear-gradient(180deg, hsla(0,0%,100%,1) 0%, hsla(40,95%,80%,1) 50%, hsla(25,100%,65%,0.95) 100%)",
+    brandGlow: "drop-shadow(0 0 25px hsla(30,100%,55%,0.5)) drop-shadow(0 4px 35px hsla(0,0%,0%,0.7))",
+    taglineColor: "hsla(0,0%,100%,0.85)",
+    taglineGlow: "0 0 16px hsla(40,90%,60%,0.5), 0 2px 8px hsla(0,0%,0%,0.6)",
   };
   if (hour >= 17 && hour < 21) return {
     greeting: "Good Evening",
@@ -75,12 +90,19 @@ function getTimeConfig() {
     hasTwinkle: true,
     particleColor: "hsla(35, 100%, 65%, 0.7)",
     glowColor: "hsla(20, 100%, 55%, 0.3)",
+    isDark: true,
+    textColor: "hsla(0,0%,100%,1)",
+    textShadow: "0 2px 20px hsla(0,0%,0%,0.5), 0 0 40px hsla(270,80%,50%,0.3)",
+    brandGradient: "linear-gradient(180deg, hsla(0,0%,100%,1) 0%, hsla(0,0%,100%,0.9) 40%, hsla(270,80%,85%,1) 100%)",
+    brandGlow: "drop-shadow(0 0 30px hsla(270,80%,65%,0.7)) drop-shadow(0 4px 40px hsla(0,0%,0%,0.6))",
+    taglineColor: "hsla(0,0%,100%,0.8)",
+    taglineGlow: "0 0 18px hsla(270,80%,65%,0.5), 0 2px 8px hsla(0,0%,0%,0.5)",
   };
   return {
     greeting: "Good Night",
     emoji: "🌙",
     bg: isDesktop ? splashNightDesktop : splashNight,
-    overlay: "linear-gradient(180deg, hsla(0,0%,0%,0.15) 0%, hsla(0,0%,0%,0.05) 40%, hsla(0,0%,0%,0.55) 100%)",
+    overlay: "linear-gradient(180deg, hsla(0,0%,0%,0.2) 0%, hsla(0,0%,0%,0.05) 40%, hsla(0,0%,0%,0.55) 100%)",
     hasFireflies: true,
     hasShootingStars: true,
     hasBirds: false,
@@ -89,6 +111,13 @@ function getTimeConfig() {
     hasTwinkle: true,
     particleColor: "hsla(55, 90%, 70%, 0.8)",
     glowColor: "hsla(45, 80%, 70%, 0.25)",
+    isDark: true,
+    textColor: "hsla(0,0%,100%,1)",
+    textShadow: "0 2px 20px hsla(0,0%,0%,0.6), 0 0 50px hsla(220,80%,60%,0.3)",
+    brandGradient: "linear-gradient(180deg, hsla(0,0%,100%,1) 0%, hsla(220,70%,90%,1) 50%, hsla(270,80%,80%,1) 100%)",
+    brandGlow: "drop-shadow(0 0 30px hsla(270,80%,65%,0.7)) drop-shadow(0 4px 40px hsla(0,0%,0%,0.7))",
+    taglineColor: "hsla(0,0%,100%,0.85)",
+    taglineGlow: "0 0 20px hsla(270,80%,65%,0.6), 0 2px 10px hsla(0,0%,0%,0.5)",
   };
 }
 
@@ -440,9 +469,10 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
             <div className="flex-1 flex flex-col justify-center items-center px-8 pt-16 md:pt-24 lg:pt-32">
               {/* Date */}
               <motion.p
-                className="text-[11px] md:text-sm lg:text-base font-semibold tracking-[0.2em] uppercase text-white/50"
+                className="text-[11px] md:text-sm lg:text-base font-semibold tracking-[0.2em] uppercase"
+                style={{ color: config.textColor, opacity: 0.6, textShadow: config.textShadow }}
                 initial={{ opacity: 0, y: -15 }}
-                animate={phase >= 2 ? { opacity: 1, y: 0 } : { opacity: 0, y: -15 }}
+                animate={phase >= 2 ? { opacity: 0.6, y: 0 } : { opacity: 0, y: -15 }}
                 transition={{ duration: 0.4 }}
               >
                 {new Date().toLocaleDateString("en-US", {
@@ -454,9 +484,10 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
               {/* Greeting */}
               <motion.h1
-                className="text-[32px] md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-white text-center mt-2 md:mt-4 leading-tight"
+                className="text-[32px] md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-center mt-2 md:mt-4 leading-tight"
                 style={{
-                  textShadow: "0 2px 20px hsla(0,0%,0%,0.5)",
+                  color: config.textColor,
+                  textShadow: config.textShadow,
                   fontFamily: "'Playfair Display', serif",
                 }}
                 initial={{ opacity: 0, y: 25, scale: 0.9 }}
@@ -480,7 +511,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                 transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
               >
                 <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-[10px] md:text-xs lg:text-sm font-medium text-white/70 tracking-wide">Jeypore, Odisha</span>
+                <span className="text-[10px] md:text-xs lg:text-sm font-medium tracking-wide" style={{ color: config.taglineColor }}> Jeypore, Odisha</span>
               </motion.div>
             </div>
 
@@ -526,13 +557,13 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                         style={{
                           lineHeight: 1,
                           color: "transparent",
-                          backgroundImage: "linear-gradient(180deg, hsla(0,0%,100%,1) 0%, hsla(0,0%,100%,0.85) 50%, hsla(270,80%,85%,0.9) 100%)",
+                          backgroundImage: config.brandGradient,
                           WebkitBackgroundClip: "text",
                           backgroundClip: "text",
                           fontFamily: "'Playfair Display', serif",
                           fontWeight: 900,
                           fontStyle: "italic",
-                          filter: "drop-shadow(0 0 20px hsla(270,80%,65%,0.5)) drop-shadow(0 4px 30px hsla(0,0%,0%,0.6))",
+                          filter: config.brandGlow,
                         }}
                         initial={{ y: 60, opacity: 0, rotateX: 90, scale: 0.3 }}
                         animate={phase >= 3 ? { y: 0, opacity: 1, rotateX: 0, scale: 1 } : { y: 60, opacity: 0, rotateX: 90, scale: 0.3 }}
@@ -622,9 +653,9 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                       letterSpacing: "0.22em",
                       textTransform: "uppercase",
                       fontWeight: 600,
-                      color: "hsla(0,0%,100%,0.6)",
+                      color: config.taglineColor,
                       fontFamily: "'Space Grotesk', sans-serif",
-                      textShadow: "0 0 12px hsla(270,80%,65%,0.4), 0 1px 6px hsla(0,0%,0%,0.5)",
+                      textShadow: config.taglineGlow,
                     }}
                     initial={{ y: 20, opacity: 0, filter: "blur(4px)" }}
                     animate={phase >= 3 ? { y: 0, opacity: 1, filter: "blur(0px)" } : { y: 20, opacity: 0 }}
