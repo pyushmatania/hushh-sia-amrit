@@ -598,6 +598,48 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
           />
         </div>
 
+        {/* Floating glowing orbs — inspired by ambient UI */}
+        <motion.div
+          className="absolute top-8 right-12 w-3 h-3 rounded-full z-[5] pointer-events-none"
+          style={{ background: "hsla(270,80%,65%,0.6)", boxShadow: "0 0 12px 4px hsla(270,80%,65%,0.4)" }}
+          animate={{ y: [0, -6, 0], opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute top-20 left-6 w-2 h-2 rounded-full z-[5] pointer-events-none"
+          style={{ background: "hsla(320,80%,55%,0.5)", boxShadow: "0 0 10px 3px hsla(320,80%,55%,0.3)" }}
+          animate={{ y: [0, -8, 0], opacity: [0.4, 0.9, 0.4] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+        />
+        <motion.div
+          className="absolute bottom-16 right-8 w-2.5 h-2.5 rounded-full z-[5] pointer-events-none"
+          style={{ background: "hsla(200,80%,60%,0.5)", boxShadow: "0 0 10px 3px hsla(200,80%,60%,0.3)" }}
+          animate={{ y: [0, -5, 0], opacity: [0.3, 0.8, 0.3] }}
+          transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+        />
+
+        {/* Curved neon arc line */}
+        <svg className="absolute inset-0 w-full h-full z-[5] pointer-events-none" viewBox="0 0 390 300" fill="none" preserveAspectRatio="none">
+          <motion.path
+            d="M -20 280 Q 100 180 200 200 Q 300 220 410 120"
+            stroke="url(#arcGrad)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            fill="none"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 0.4 }}
+            transition={{ duration: 2, delay: 0.5, ease: "easeOut" }}
+          />
+          <defs>
+            <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="hsla(270,80%,65%,0)" />
+              <stop offset="30%" stopColor="hsla(270,80%,65%,0.6)" />
+              <stop offset="60%" stopColor="hsla(320,80%,55%,0.5)" />
+              <stop offset="100%" stopColor="hsla(200,80%,60%,0)" />
+            </linearGradient>
+          </defs>
+        </svg>
+
         <div className="aspect-[4/3] relative overflow-hidden">
           {/* Skeleton loader */}
           {!imgLoaded && (
