@@ -570,7 +570,7 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
                 clearRoute();
               }
             }}
-            className="absolute bottom-6 left-4 right-4 z-[1000] touch-pan-x"
+            className="absolute bottom-6 left-4 right-4 z-[1000] touch-pan-x md:left-auto md:right-6 md:w-[420px]"
           >
             <div className="relative">
               {/* Drag handle */}
