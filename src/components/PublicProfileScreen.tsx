@@ -208,7 +208,7 @@ export default function PublicProfileScreen({ userId, onBack, onMessage }: Publi
           </motion.div>
 
           {/* Reviews */}
-          <motion.div variants={staggerItem} className="px-5 mb-6">
+          <motion.div variants={staggerItem} className="px-5 mb-6 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
             <h3 className="text-base font-bold text-foreground mb-3 flex items-center gap-2">
               <Star size={16} className="text-primary" /> Reviews ({reviews.length})
             </h3>
