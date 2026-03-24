@@ -203,7 +203,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
         Object.entries(grouped).map(([cat, catItems]) => (
           <div key={cat}>
             <h3 className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-2 capitalize">{cat}</h3>
-            <div className="space-y-1.5">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-1.5">
               {catItems.map((item) => (
                 <SwipeableRow
                   key={item.id}
