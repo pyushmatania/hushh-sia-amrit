@@ -196,6 +196,24 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
     return filteredProperties.filter(moodMap[activeMood] || (() => true));
   }, [filteredProperties, activeMood]);
 
+  // Per-category data for the "All ___" section
+  const allSectionData = useMemo((): { properties: Property[]; title: string } => {
+    switch (activeCategory) {
+      case "home":
+        return { properties: activeMood ? moodFilteredProperties : properties, title: activeMood ? `${activeMood.charAt(0).toUpperCase() + activeMood.slice(1)} Vibes` : "All Listings" };
+      case "stay":
+        return { properties: stayProperties, title: "All Stays" };
+      case "experience":
+        return { properties: experienceProperties, title: "All Experiences" };
+      case "service":
+        return { properties: serviceProperties, title: "All Services" };
+      case "curation":
+        return { properties: curationAsProperties, title: "All Curations" };
+      default:
+        return { properties: filteredProperties, title: "All Listings" };
+    }
+  }, [activeCategory, activeMood, properties, moodFilteredProperties, stayProperties, experienceProperties, serviceProperties, curationAsProperties, filteredProperties]);
+
   return (
     <div ref={contentRef} key={refreshKey} className="pb-24 md:pb-8 min-h-screen md:h-[calc(100vh-4rem)] md:overflow-y-auto overflow-x-hidden bg-mesh smooth-main-scroll" style={{ overscrollBehaviorX: "none", WebkitOverflowScrolling: "touch" }}>
 
@@ -228,24 +246,6 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
         <RotatingSearchBar onSearchTap={onSearchTap} onMapTap={onMapTap} />
         <CategoryBar active={activeCategory} onChange={handleCategoryChange} />
       </div>
-
-  // Per-category data for the "All ___" section
-  const allSectionData = useMemo((): { properties: Property[]; title: string } => {
-    switch (activeCategory) {
-      case "home":
-        return { properties: activeMood ? moodFilteredProperties : properties, title: activeMood ? `${activeMood.charAt(0).toUpperCase() + activeMood.slice(1)} Vibes` : "All Listings" };
-      case "stay":
-        return { properties: stayProperties, title: "All Stays" };
-      case "experience":
-        return { properties: experienceProperties, title: "All Experiences" };
-      case "service":
-        return { properties: serviceProperties, title: "All Services" };
-      case "curation":
-        return { properties: curationAsProperties, title: "All Curations" };
-      default:
-        return { properties: filteredProperties, title: "All Listings" };
-    }
-  }, [activeCategory, activeMood, properties, moodFilteredProperties, stayProperties, experienceProperties, serviceProperties, curationAsProperties, filteredProperties]);
 
         <div key={activeCategory}>
 
