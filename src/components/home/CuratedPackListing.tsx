@@ -180,10 +180,10 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
               autoPlay
               loop
               playsInline
-              preload="auto"
+              preload={index < 2 ? "auto" : "metadata"}
               onCanPlay={() => setVideoReady(true)}
               className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-              style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.3s" }}
+              style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.3s", filter: "blur(0.6px)" }}
             />
           )}
 
