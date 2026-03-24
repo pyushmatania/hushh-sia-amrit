@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Bell, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
+import { Capacitor } from "@capacitor/core";
 
 const DISMISSED_KEY = "hushh_notif_perm_dismissed";
 
@@ -16,9 +17,12 @@ export default function NotificationPermissionBanner() {
 
   useEffect(() => {
     if (!user) return;
-    if (!("Notification" in window)) return;
-    if (Notification.permission !== "default") return;
+    const isNative = Capacitor.isNativePlatform();
+    if (!isNative && !("Notification" in window)) return;
+    if (!isNative && Notification.permission !== "default") return;
     if (localStorage.getItem(DISMISSED_KEY)) return;
+    // On native, check if we already have a push token
+    if (isNative && localStorage.getItem("hushh_native_push_token")) return;
     // Delay showing to avoid overwhelming on first load
     const t = setTimeout(() => setVisible(true), 5000);
     return () => clearTimeout(t);
@@ -26,13 +30,20 @@ export default function NotificationPermissionBanner() {
 
   const handleEnable = async () => {
     try {
-      const result = await Notification.requestPermission();
-      if (result === "granted") {
-        // Show a test notification
-        new window.Notification("Notifications Enabled 🎉", {
-          body: "You'll now get alerts for bookings, messages & more.",
-          icon: "/favicon.ico",
-        });
+      if (Capacitor.isNativePlatform()) {
+        const { PushNotifications } = await import("@capacitor/push-notifications");
+        const perm = await PushNotifications.requestPermissions();
+        if (perm.receive === "granted") {
+          await PushNotifications.register();
+        }
+      } else {
+        const result = await Notification.requestPermission();
+        if (result === "granted") {
+          new window.Notification("Notifications Enabled 🎉", {
+            body: "You'll now get alerts for bookings, messages & more.",
+            icon: "/favicon.ico",
+          });
+        }
       }
     } catch {
       // iOS Safari doesn't support this
