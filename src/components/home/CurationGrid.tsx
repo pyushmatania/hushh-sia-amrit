@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Clock, Sparkles, ArrowRight, TrendingUp, Heart, Star, Crown, Zap, Flame, MapPin, Users } from "lucide-react";
 import type { CuratedCombo } from "@/data/properties";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { MobileCurationGrid } from "./MobileCompactGrid";
 
 interface CurationGridProps {
   combos: CuratedCombo[];
@@ -271,9 +272,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
         <>
           <SectionHeader icon={TrendingUp} title="🔥 Trending Curations" subtitle="Most booked this week" accent="hsl(0 80% 55% / 0.15)" />
           {isMobile ? (
-            <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2" style={{ WebkitOverflowScrolling: "touch" }}>
-              {popular.slice(0, 8).map((c, i) => <MobilePrismCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
-            </div>
+            <MobileCurationGrid combos={popular.slice(0, 8)} onComboTap={onComboTap} rows={2} />
           ) : (
             <div className="grid grid-cols-4 gap-5">
               {popular.slice(0, 8).map((c, i) => <DesktopCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
@@ -287,9 +286,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
         <>
           <SectionHeader icon={Heart} title="💕 Date Night Specials" subtitle="Curated for couples" accent="hsl(340 75% 55% / 0.15)" />
           {isMobile ? (
-            <div className="px-4 grid grid-cols-2 gap-3">
-              {romantic.slice(0, 6).map((c, i) => <MobileNeonCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
-            </div>
+            <MobileCurationGrid combos={romantic.slice(0, 8)} onComboTap={onComboTap} rows={2} />
           ) : (
             <div className="grid grid-cols-4 gap-5">
               {romantic.slice(0, 4).map((c, i) => <DesktopCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
@@ -303,9 +300,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
         <>
           <SectionHeader icon={Zap} title="🎉 Party & Celebrations" subtitle="Get the party started" accent="hsl(35 95% 50% / 0.15)" />
           {isMobile ? (
-            <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2" style={{ WebkitOverflowScrolling: "touch" }}>
-              {party.slice(0, 8).map((c, i) => <MobilePrismCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
-            </div>
+            <MobileCurationGrid combos={party.slice(0, 8)} onComboTap={onComboTap} rows={3} />
           ) : (
             <div className="grid grid-cols-4 gap-5">
               {party.slice(0, 8).map((c, i) => <DesktopCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
@@ -317,9 +312,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
       {/* ━━ BUDGET ━━ */}
       <SectionHeader icon={Sparkles} title="💸 Budget Combos" subtitle="Starting under ₹999" accent="hsl(160 80% 40% / 0.15)" />
       {isMobile ? (
-        <div className="px-4 grid grid-cols-2 gap-3 pb-2">
-          {budget.map((c, i) => <MobileNeonCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
-        </div>
+        <MobileCurationGrid combos={budget} onComboTap={onComboTap} rows={2} />
       ) : (
         <div className="grid grid-cols-4 gap-5">
           {budget.map((c, i) => <DesktopCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
@@ -331,9 +324,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
         <>
           <SectionHeader icon={Star} title="✨ All Curations" subtitle={`${combos.length} bundles`} />
           {isMobile ? (
-            <div className="px-4 grid grid-cols-2 gap-3 pb-4">
-              {combos.slice(6).map((c, i) => <MobileNeonCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
-            </div>
+            <MobileCurationGrid combos={combos.slice(6)} onComboTap={onComboTap} rows={3} />
           ) : (
             <div className="grid grid-cols-4 gap-5 pb-6">
               {combos.slice(6).map((c, i) => <DesktopCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}

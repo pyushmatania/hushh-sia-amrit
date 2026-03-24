@@ -27,6 +27,8 @@ import ServiceGrid from "./home/ServiceGrid";
 import CurationGrid from "./home/CurationGrid";
 import ActiveTripCard from "./home/ActiveTripCard";
 import { OscarToggle, OscarThemedListing } from "./home/OscarModeToggle";
+import { MobilePropertyGrid } from "./home/MobileCompactGrid";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 /** Wraps a home feed section so a crash in one section doesn't kill the whole feed */
 function SectionBoundary({ children, name }: { children: ReactNode; name: string }) {
@@ -64,6 +66,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
   const [activeMood, setActiveMood] = useState<"romantic" | "party" | "chill" | "work" | null>(null);
   const [activePackFilter, setActivePackFilter] = useState("tonight");
   const [oscarMode, setOscarMode] = useState(false);
+  const isMobile = useIsMobile();
   const contentRef = useRef<HTMLDivElement>(null);
 
   const scrollToTop = useCallback(() => {
@@ -400,6 +403,16 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               )}
 
               <LazySection minHeight="400px" rootMargin="300px">
+              {isMobile ? (
+                <MobilePropertyGrid
+                  properties={filteredProperties}
+                  onPropertyTap={onPropertyTap}
+                  wishlist={wishlist}
+                  onToggleWishlist={onToggleWishlist}
+                  rows={2}
+                  title="🔥 All Experiences"
+                />
+              ) : (
               <div className="mt-6">
                 <div className="flex items-center justify-between px-5 mb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:mb-6">
                   <h2 className="text-lg font-bold text-foreground md:text-xl lg:text-2xl">🔥 All Experiences</h2>
@@ -419,6 +432,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                   </div>
                 )}
               </div>
+              )}
               </LazySection>
               </>
               )}
@@ -458,7 +472,18 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 ))}
               </div>
 
-              <ServiceGrid services={filteredProperties} onServiceTap={onPropertyTap} />
+              {isMobile ? (
+                <MobilePropertyGrid
+                  properties={filteredProperties}
+                  onPropertyTap={onPropertyTap}
+                  wishlist={wishlist}
+                  onToggleWishlist={onToggleWishlist}
+                  rows={2}
+                  title="🛎️ All Services"
+                />
+              ) : (
+                <ServiceGrid services={filteredProperties} onServiceTap={onPropertyTap} />
+              )}
 
               {filteredProperties.length === 0 && (
                 <div className="px-5 py-12 text-center">
@@ -549,6 +574,16 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
           {/* ═══════ ALL LISTINGS ═══════ */}
           {activeCategory !== "experience" && activeCategory !== "curation" && activeCategory !== "service" && (activeCategory !== "home" || isSectionVisible("all_listings")) && (
             <LazySection minHeight="400px" rootMargin="300px">
+              {isMobile ? (
+                <MobilePropertyGrid
+                  properties={activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties}
+                  onPropertyTap={onPropertyTap}
+                  wishlist={wishlist}
+                  onToggleWishlist={onToggleWishlist}
+                  rows={2}
+                  title={activeCategory === "home" ? (activeMood ? `${activeMood.charAt(0).toUpperCase() + activeMood.slice(1)} Vibes` : "All Listings") : `All ${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)}s`}
+                />
+              ) : (
               <div className="mt-7 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
                 <div className="flex items-center justify-between px-5 md:px-0 mb-3 md:mb-6">
                   <h2 className="text-lg font-bold text-foreground md:text-2xl lg:text-3xl">
@@ -571,6 +606,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                   </div>
                 )}
               </div>
+              )}
             </LazySection>
           )}
 
