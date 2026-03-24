@@ -168,7 +168,7 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
           {/* Sort button */}
           <button
             onClick={() => setShowSort(!showSort)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all shrink-0 ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs md:text-sm font-medium border transition-all shrink-0 md:cursor-pointer md:hover:shadow-sm ${
               sortBy !== "relevance"
                 ? "border-primary bg-primary/10 text-primary"
                 : "border-border text-foreground"
