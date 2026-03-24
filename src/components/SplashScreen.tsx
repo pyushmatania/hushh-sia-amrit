@@ -314,7 +314,7 @@ function TwinklingStars() {
   );
 }
 
-/* ── Sun Rays (morning) ── */
+/* ── Sun Rays (morning) — subtle, no flash ── */
 function SunRays() {
   return (
     <motion.div
@@ -322,15 +322,15 @@ function SunRays() {
       style={{
         top: "8%",
         right: "-10%",
-        width: 300,
-        height: 300,
-        background: "conic-gradient(from 200deg, transparent 0deg, hsla(45, 100%, 80%, 0.08) 15deg, transparent 30deg, hsla(45, 100%, 80%, 0.06) 45deg, transparent 60deg, hsla(45, 100%, 80%, 0.1) 75deg, transparent 90deg, hsla(45, 100%, 80%, 0.05) 120deg, transparent 150deg)",
+        width: 200,
+        height: 200,
+        background: "radial-gradient(ellipse, hsla(45, 80%, 75%, 0.06) 0%, transparent 70%)",
         borderRadius: "50%",
-        filter: "blur(8px)",
+        filter: "blur(12px)",
       }}
-      initial={{ rotate: 0, opacity: 0, scale: 0.5 }}
-      animate={{ rotate: 25, opacity: 1, scale: 1.2 }}
-      transition={{ duration: 5, ease: "easeOut" }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 0.6 }}
+      transition={{ duration: 2, ease: "easeOut" }}
     />
   );
 }
