@@ -514,9 +514,8 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                     {letters.map((letter, i) => (
                       <motion.span
                         key={i}
-                        className="inline-block relative"
+                        className="inline-block relative text-[56px] md:text-[80px] lg:text-[100px] xl:text-[120px]"
                         style={{
-                          fontSize: "56px",
                           lineHeight: 1,
                           color: "transparent",
                           backgroundImage: "linear-gradient(180deg, hsla(0,0%,100%,1) 0%, hsla(0,0%,100%,0.85) 50%, hsla(270,80%,85%,0.9) 100%)",
