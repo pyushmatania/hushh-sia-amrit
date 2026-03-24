@@ -491,14 +491,18 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               </div>
 
               {isMobile ? (
-                <MobilePropertyGrid
-                  properties={filteredProperties}
-                  onPropertyTap={onPropertyTap}
-                  wishlist={wishlist}
-                  onToggleWishlist={onToggleWishlist}
-                  rows={2}
-                  title="🛎️ All Services"
-                />
+                <div className="mt-4">
+                  <div className="flex items-center justify-between px-4 mb-3">
+                    <h2 className="text-base font-bold text-foreground">🛎️ All Services</h2>
+                    <span className="text-[10px] text-muted-foreground">{filteredProperties.length} found</span>
+                  </div>
+                  <MixedListingFeed
+                    properties={filteredProperties}
+                    onPropertyTap={onPropertyTap}
+                    wishlist={wishlist}
+                    onToggleWishlist={onToggleWishlist}
+                  />
+                </div>
               ) : (
                 <ServiceGrid services={filteredProperties} onServiceTap={onPropertyTap} />
               )}
