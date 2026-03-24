@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Building2, Sparkles, UtensilsCrossed, Wrench, Package, Gift, TrendingUp, AlertTriangle, RefreshCw, Clock } from "lucide-react";
+import { Building2, Sparkles, UtensilsCrossed, Wrench, Package, Gift, TrendingUp, AlertTriangle, RefreshCw, Clock, History } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import AdminProperties from "./AdminProperties";
 import AdminCurations from "./AdminCurations";
