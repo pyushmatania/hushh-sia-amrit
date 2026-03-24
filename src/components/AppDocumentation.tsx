@@ -1635,7 +1635,7 @@ function MobileTab() {
 function ChangelogTab() {
   return (
     <div className="space-y-4">
-      <SectionHeader title="Change History" subtitle={`${changeLog.length} versions from v1.0 to v1.27`} />
+      <SectionHeader title="Change History" subtitle={`${changeLog.length} versions from v1.0 to v1.36`} />
       
       <div className="relative pl-4">
         {/* Timeline line */}
