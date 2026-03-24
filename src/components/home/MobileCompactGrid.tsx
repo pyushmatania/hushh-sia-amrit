@@ -158,9 +158,9 @@ export function MobilePropertyGrid({ properties, onPropertyTap, wishlist, onTogg
       {!showAll ? (
         <>
           <div ref={scrollRef} className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2"
-            style={{ WebkitOverflowScrolling: "touch", scrollSnapType: "x proximity" }}>
+            style={{ WebkitOverflowScrolling: "touch", scrollSnapType: "x proximity", perspective: "800px" }}>
             {columns.map((col, ci) => (
-              <div key={ci} className="flex flex-col gap-3 shrink-0" style={{ scrollSnapAlign: "start" }}>
+              <div key={ci} className="flex flex-col gap-3 shrink-0 will-change-transform" style={{ scrollSnapAlign: "start", transformStyle: "preserve-3d" }}>
                 {col.map(p => (
                   <CompactPropertyCard key={p.id} property={p} onTap={onPropertyTap}
                     isWL={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
