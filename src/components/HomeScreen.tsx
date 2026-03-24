@@ -283,6 +283,19 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                   </LazySection>
                 )});
               }
+              if (isMobile) {
+                homeSections.push({ key: "mixed_feed", order: getSortOrder("curated_packs") + 1, node: (
+                  <LazySection minHeight="400px" rootMargin="300px">
+                    <SectionTitle title="🎯 DISCOVER MORE" />
+                    <MixedListingFeed
+                      properties={properties}
+                      onPropertyTap={onPropertyTap}
+                      wishlist={wishlist}
+                      onToggleWishlist={onToggleWishlist}
+                    />
+                  </LazySection>
+                )});
+              }
 
               homeSections.sort((a, b) => a.order - b.order);
 
