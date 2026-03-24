@@ -629,11 +629,13 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
         </div>
 
         {/* Category badge — top left */}
-        {categoryLabels[property.category] && (
+        {property.category && categoryLabels[Array.isArray(property.category) ? property.category[0] : property.category] && (
           <div className="absolute top-16 left-4 z-10">
-            <span className={`text-[10px] font-bold tracking-wider px-3 py-1 rounded-full border backdrop-blur-md ${categoryLabels[property.category].bg}`}>
-              {categoryLabels[property.category].emoji} {categoryLabels[property.category].label}
-            </span>
+            {(() => { const cat = Array.isArray(property.category) ? property.category[0] : property.category; return (
+              <span className={`text-[10px] font-bold tracking-wider px-3 py-1 rounded-full border backdrop-blur-md ${categoryLabels[cat].bg}`}>
+                {categoryLabels[cat].emoji} {categoryLabels[cat].label}
+              </span>
+            ); })()}
           </div>
         )}
 
