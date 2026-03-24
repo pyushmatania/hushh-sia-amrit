@@ -728,7 +728,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
                       </span>
                       {/* Viewers microcopy */}
                       {slot.viewersNow && slot.viewersNow > 0 && (
-                        <p className="text-[9px] text-amber-400 font-medium mt-1 animate-pulse">
+                        <p className="text-[9px] text-amber-700 dark:text-amber-400 font-medium mt-1 animate-pulse">
                           👀 {slot.viewersNow} people viewing
                         </p>
                       )}
