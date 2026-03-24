@@ -124,7 +124,8 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
       className="fixed inset-0 z-30 bg-mesh overflow-y-auto pb-36 md:pb-8"
     >
       {/* Header with progress */}
-      <div className="sticky top-0 z-10 glass px-5 py-3 space-y-2.5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:pt-20">
+      <div className="sticky top-0 z-10 glass px-5 py-3 space-y-2.5 md:pt-20">
+        <div className="md:max-w-5xl md:mx-auto">
         <div className="flex items-center gap-3">
           <button onClick={onBack} className="w-9 h-9 rounded-full border border-border flex items-center justify-center md:hover:bg-secondary transition-colors">
             <ArrowLeft size={16} className="text-foreground" />
@@ -151,10 +152,11 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
             </div>
           ))}
         </div>
+        </div>
       </div>
 
       {/* Two-column layout on desktop */}
-      <div className="md:flex md:gap-8 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:mt-6">
+      <div className="md:flex md:gap-8 md:max-w-5xl md:mx-auto md:px-8 md:mt-6">
 
         {/* LEFT COLUMN */}
         <div className="px-5 py-4 space-y-5 md:px-0 md:flex-1 md:min-w-0">
