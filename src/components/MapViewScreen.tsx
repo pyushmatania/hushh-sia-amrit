@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Star, MapPin, Navigation, Layers, Search, SlidersHorizontal, List, Map as MapIcon, ArrowUpDown, Plus, Minus, Share2, LocateFixed, Loader2 } from "lucide-react";
+import { X, Star, MapPin, Navigation, Layers, Search, SlidersHorizontal, List, Map as MapIcon, ArrowUpDown, Plus, Minus, Share2, LocateFixed, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { properties, type Property } from "@/data/properties";
 import L from "leaflet";
@@ -554,24 +554,53 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
 
       {/* Selected Property Card (map view only) */}
       <AnimatePresence>
-        {selectedPin && !listView && (
+        {selectedPin && !listView && (() => {
+          const currentIdx = filteredProperties.findIndex(p => p.id === selectedPin.id);
+          const canPrev = currentIdx > 0;
+          const canNext = currentIdx < filteredProperties.length - 1;
+          const goTo = (dir: -1 | 1) => {
+            const next = filteredProperties[currentIdx + dir];
+            if (next) {
+              setSelectedPin(next);
+              clearRoute();
+              mapInstanceRef.current?.panTo([next.lat, next.lng], { animate: true });
+            }
+          };
+          return (
           <motion.div
             key={selectedPin.id}
             initial={{ y: 120, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 120, opacity: 0 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            drag="y"
-            dragConstraints={{ top: 0, bottom: 0 }}
-            dragElastic={0.4}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.3}
             onDragEnd={(_, info) => {
-              if (info.offset.y > 60 || info.velocity.y > 300) {
-                setSelectedPin(null);
-                clearRoute();
-              }
+              if (info.offset.x < -50 && canNext) goTo(1);
+              else if (info.offset.x > 50 && canPrev) goTo(-1);
             }}
-            className="absolute bottom-6 left-4 right-4 z-[1000] touch-pan-x md:left-auto md:right-6 md:w-[420px]"
+            className="absolute bottom-6 left-4 right-4 z-[1000] touch-pan-y md:left-auto md:right-6 md:w-[420px]"
           >
+            {/* Arrow buttons */}
+            {canPrev && (
+              <motion.button
+                whileTap={{ scale: 0.85 }}
+                onClick={(e) => { e.stopPropagation(); goTo(-1); }}
+                className="absolute -left-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-background/90 border border-border shadow-elevated flex items-center justify-center"
+              >
+                <ChevronLeft size={16} className="text-foreground" />
+              </motion.button>
+            )}
+            {canNext && (
+              <motion.button
+                whileTap={{ scale: 0.85 }}
+                onClick={(e) => { e.stopPropagation(); goTo(1); }}
+                className="absolute -right-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-background/90 border border-border shadow-elevated flex items-center justify-center"
+              >
+                <ChevronRight size={16} className="text-foreground" />
+              </motion.button>
+            )}
             <div className="relative">
               {/* Drag handle */}
               <div className="flex justify-center pt-2 pb-1">
@@ -657,8 +686,17 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
               </div>
             </div>
             </div>
+            {/* Property index indicator */}
+            {filteredProperties.length > 1 && (
+              <div className="flex justify-center mt-2">
+                <span className="text-[10px] font-medium text-muted-foreground bg-secondary/80 backdrop-blur-sm px-2.5 py-0.5 rounded-full">
+                  {currentIdx + 1} / {filteredProperties.length}
+                </span>
+              </div>
+            )}
           </motion.div>
-        )}
+          );
+        })()}
       </AnimatePresence>
     </motion.div>
   );
