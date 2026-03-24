@@ -191,30 +191,30 @@ export default function AuthScreen() {
           </AnimatePresence>
 
           <div className="relative">
-            <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/50" />
+            <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50" />
             <input
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               type="email"
               placeholder="Email address"
-              className="w-full bg-white/10 backdrop-blur-md border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-sm text-foreground placeholder:text-foreground/40 outline-none focus:ring-1 focus:ring-primary/40"
+              className="w-full bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl pl-12 pr-4 py-3.5 text-sm text-white placeholder:text-white/40 outline-none focus:ring-1 focus:ring-primary/40 focus:border-white/30"
             />
           </div>
 
           {mode !== "forgot" && (
             <div className="relative">
-              <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/50" />
+              <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50" />
               <input
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-                className="w-full bg-white/10 backdrop-blur-md border border-white/10 rounded-xl pl-12 pr-12 py-3.5 text-sm text-foreground placeholder:text-foreground/40 outline-none focus:ring-1 focus:ring-primary/40"
+                className="w-full bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl pl-12 pr-12 py-3.5 text-sm text-white placeholder:text-white/40 outline-none focus:ring-1 focus:ring-primary/40 focus:border-white/30"
               />
               <button
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground/50"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
