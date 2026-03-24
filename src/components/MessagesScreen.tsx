@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, animate } from "framer-motion";
 import {
   MessageCircle, Bell, Clock, ChevronRight, Sparkles, Calendar,
   CheckCircle2, Send, ArrowLeft, Phone, MoreVertical, Search,
