@@ -642,8 +642,8 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 </div>
               )}
 
-              <MobileDiscoverySection properties={properties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Local Legends" sectionEmoji="🌟" offset={2} />
-              <MobileDiscoverySection properties={properties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Signature Bundles" sectionEmoji="🎁" offset={12} />
+<MobileDiscoverySection properties={properties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Local Legends" sectionEmoji="🌟" offset={2} category="curation" />
+              <MobileDiscoverySection properties={properties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Signature Bundles" sectionEmoji="🎁" offset={12} category="curation" />
 
               <SectionTitle title="✨ EXPERIENCE PACKS" />
               <div className={isMobile ? "flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar px-4 pb-2" : "space-y-5 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0 md:px-8 lg:px-16 xl:px-24 2xl:px-32"} style={isMobile ? { WebkitOverflowScrolling: "touch", scrollbarWidth: "none" } : undefined}>
