@@ -112,7 +112,7 @@ const accentPresets = {
 };
 
 const packAccents: Record<string, typeof accentPresets.chill> = {
-  // DB UUIDs
+  // Original 8 DB UUIDs
   "afc5ded6-c6cf-45c7-bc3c-e9e9e8c939ac": accentPresets.chill,
   "99e244ea-e3df-4674-8177-03533b906f49": accentPresets.party,
   "12269e8f-5d2e-4406-87f9-359603ba474a": accentPresets.romantic,
@@ -121,6 +121,32 @@ const packAccents: Record<string, typeof accentPresets.chill> = {
   "78e62799-1125-4db2-9e49-7527c7d02eb7": accentPresets.game,
   "96e01ca0-f198-4c1a-8b36-690d5e91d2e1": accentPresets.work,
   "3b9a0f7b-ba37-4a75-9ef7-897d11f4e8ff": accentPresets.team,
+  // New 25 curations
+  "56892cc3-1e6e-4115-8526-bb30f54fc0a8": accentPresets.romantic,  // Sunset Wine
+  "48b07927-4042-46e6-b662-68b89d5788e9": accentPresets.chill,     // Stargazing
+  "a190b5ed-bd7f-4473-bb68-c0ca6e5ee48b": accentPresets.romantic,  // Proposal
+  "29a24212-5bb3-47c9-9afc-194bdb097f3d": accentPresets.romantic,  // Honeymoon
+  "b57ebad6-0ab1-4868-a718-7a026907dfa9": accentPresets.party,     // Sundowner
+  "02e0a874-f86c-48f0-9eba-729eb279899d": accentPresets.party,     // College Reunion
+  "5b5bf118-948a-4a6d-80a8-e594962ee927": accentPresets.party,     // Holi
+  "4c9e57ca-7cc4-4b44-9f0b-b6553fbd78b7": accentPresets.party,     // Ladies Night
+  "2a7dbb62-ffa4-4b75-a505-2037862d055e": accentPresets.chill,     // Yoga
+  "e24468f4-1bc9-4898-aa8e-595778a06105": accentPresets.chill,     // Detox
+  "32c20d30-9f82-4911-b371-43b181814dfc": accentPresets.chill,     // Spa
+  "36be07ae-d02b-4d1b-b142-d266616eeac6": accentPresets.chill,     // Reading
+  "04d93188-1bd4-4851-84f7-379a8adbbe0d": accentPresets.bbq,       // Tribal Thali
+  "ecd2cca3-8f2b-4e38-8867-112da1b1b13e": accentPresets.bbq,       // BBQ Masterclass
+  "b086e9f3-f3a6-4531-9191-8cc26187e5ea": accentPresets.movie,     // Pizza Movie
+  "5cb2cb1d-a204-45a4-b87a-3ff6457dbcb5": accentPresets.bbq,       // Farm Breakfast
+  "ff114a79-a69e-41a1-ad1c-0d3779970e1b": accentPresets.work,      // Deep Work
+  "27a40efc-1fe3-4780-811b-e2e7beb11b85": accentPresets.team,      // Brainstorm
+  "8651c0eb-2b37-42ec-b115-c812626beb4c": accentPresets.game,      // Sunrise Hike
+  "a35bf365-f267-4360-bdc7-4cd67899df5f": accentPresets.chill,     // Pottery
+  "766cce59-2d45-4d2e-9776-6c2a1988e51e": accentPresets.game,      // Cycling
+  "43e6415d-db5c-4de9-8475-c37ad12b4d68": accentPresets.party,     // Mehndi
+  "02b62760-41d5-479d-bf95-aeb990ec3e86": accentPresets.party,     // Baby Shower
+  "bcbb0e06-9790-45ec-9881-700558443bcc": accentPresets.bbq,       // Farewell
+  "dd841c9f-5986-4c32-ac00-2198c0e09838": accentPresets.romantic,  // Anniversary
   // Legacy
   "ep-1": accentPresets.chill,
   "ep-2": accentPresets.romantic,
