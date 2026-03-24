@@ -881,7 +881,6 @@ export default function MessagesScreen() {
           </motion.div>
         )}
       </AnimatePresence>
-        </div>
       </div>
 
       <AnimatePresence>
