@@ -199,10 +199,10 @@ export default function AdminAnalytics() {
       </motion.div>
 
       {/* Summary Cards — always visible */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {summaryCards.map((card) => (
           <motion.div key={card.label} variants={fadeUp}
-            className="rounded-2xl bg-card border border-border p-4 hover:shadow-md transition-shadow">
+            className="rounded-2xl bg-card border border-border p-4 lg:p-5 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between mb-2">
               <div className={`w-8 h-8 rounded-xl ${card.bg} flex items-center justify-center`}>
                 <card.icon size={16} className={card.color} />
