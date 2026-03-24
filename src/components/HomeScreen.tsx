@@ -35,8 +35,8 @@ function SectionBoundary({ children, name }: { children: ReactNode; name: string
 /* Lightweight section title — replaces deleted SectionDivider component */
 function SectionTitle({ title }: { title: string }) {
   return (
-    <div className="px-5 pt-6 pb-3">
-      <h2 className="text-xs font-bold tracking-[0.15em] text-muted-foreground uppercase">{title}</h2>
+    <div className="px-5 pt-6 pb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:pt-10 md:pb-5">
+      <h2 className="text-xs font-bold tracking-[0.15em] text-muted-foreground uppercase md:text-lg md:tracking-wider lg:text-xl">{title}</h2>
     </div>
   );
 }
