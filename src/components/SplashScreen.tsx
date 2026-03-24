@@ -557,13 +557,13 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                         style={{
                           lineHeight: 1,
                           color: "transparent",
-                          backgroundImage: "linear-gradient(180deg, hsla(0,0%,100%,1) 0%, hsla(0,0%,100%,0.85) 50%, hsla(270,80%,85%,0.9) 100%)",
+                          backgroundImage: config.brandGradient,
                           WebkitBackgroundClip: "text",
                           backgroundClip: "text",
                           fontFamily: "'Playfair Display', serif",
                           fontWeight: 900,
                           fontStyle: "italic",
-                          filter: "drop-shadow(0 0 20px hsla(270,80%,65%,0.5)) drop-shadow(0 4px 30px hsla(0,0%,0%,0.6))",
+                          filter: config.brandGlow,
                         }}
                         initial={{ y: 60, opacity: 0, rotateX: 90, scale: 0.3 }}
                         animate={phase >= 3 ? { y: 0, opacity: 1, rotateX: 0, scale: 1 } : { y: 60, opacity: 0, rotateX: 90, scale: 0.3 }}
