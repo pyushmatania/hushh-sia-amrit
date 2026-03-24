@@ -482,6 +482,17 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               </div>
               )}
               </LazySection>
+
+              {isMobile && (
+                <MobilePropertyGrid
+                  properties={filteredProperties}
+                  onPropertyTap={onPropertyTap}
+                  wishlist={wishlist}
+                  onToggleWishlist={onToggleWishlist}
+                  rows={2}
+                  title="All Experiences"
+                />
+              )}
               </>
               )}
             </>
@@ -520,22 +531,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 ))}
               </div>
 
-              {isMobile ? (
-                <div className="mt-4">
-                  <div className="flex items-center justify-between px-4 mb-3">
-                    <h2 className="text-base font-bold text-foreground">🛎️ All Services</h2>
-                    <span className="text-[10px] text-muted-foreground">{filteredProperties.length} found</span>
-                  </div>
-                  <MixedListingFeed
-                    properties={filteredProperties}
-                    onPropertyTap={onPropertyTap}
-                    wishlist={wishlist}
-                    onToggleWishlist={onToggleWishlist}
-                  />
-                </div>
-              ) : (
-                <ServiceGrid services={filteredProperties} onServiceTap={onPropertyTap} />
-              )}
+              <ServiceGrid services={filteredProperties} onServiceTap={onPropertyTap} />
 
               {filteredProperties.length === 0 && (
                 <div className="px-5 py-12 text-center">
@@ -543,6 +539,17 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                   <p className="text-foreground font-semibold">No services match this filter</p>
                   <button onClick={() => handleSubFilter("All")} className="text-xs text-primary mt-2 font-medium">Show all services</button>
                 </div>
+              )}
+
+              {isMobile && (
+                <MobilePropertyGrid
+                  properties={filteredProperties}
+                  onPropertyTap={onPropertyTap}
+                  wishlist={wishlist}
+                  onToggleWishlist={onToggleWishlist}
+                  rows={2}
+                  title="All Services"
+                />
               )}
               </>
               )}
@@ -612,6 +619,17 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 </div>
                 <p className="text-xs text-muted-foreground md:text-sm">Work & Chill, Day Escape, Game Night — perfect for weekdays!</p>
               </div>
+
+              {isMobile && (
+                <MobilePropertyGrid
+                  properties={properties}
+                  onPropertyTap={onPropertyTap}
+                  wishlist={wishlist}
+                  onToggleWishlist={onToggleWishlist}
+                  rows={2}
+                  title="All Curations & Listings"
+                />
+              )}
               </>
               )}
             </>
