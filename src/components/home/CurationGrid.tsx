@@ -272,7 +272,9 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
         <>
           <SectionHeader icon={TrendingUp} title="🔥 Trending Curations" subtitle="Most booked this week" accent="hsl(0 80% 55% / 0.15)" />
           {isMobile ? (
-            <MobileCurationGrid combos={popular.slice(0, 8)} onComboTap={onComboTap} rows={2} />
+            <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2" style={{ WebkitOverflowScrolling: "touch" }}>
+              {popular.slice(0, 8).map((c, i) => <MobilePrismCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
+            </div>
           ) : (
             <div className="grid grid-cols-4 gap-5">
               {popular.slice(0, 8).map((c, i) => <DesktopCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
