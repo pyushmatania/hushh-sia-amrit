@@ -539,7 +539,25 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
             </div>
 
             {/* Bottom — Brand area */}
-            <div className="pb-14 flex flex-col items-center px-8">
+            <div className="pb-14 flex flex-col items-center px-8 relative">
+
+              {/* Background glow behind brand */}
+              {phase >= 3 && (
+                <motion.div
+                  className="absolute pointer-events-none"
+                  style={{
+                    width: 280,
+                    height: 120,
+                    bottom: 20,
+                    borderRadius: "50%",
+                    background: "radial-gradient(ellipse, hsla(270,80%,65%,0.25) 0%, hsla(320,70%,55%,0.12) 40%, transparent 70%)",
+                    filter: "blur(30px)",
+                  }}
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: [0, 1, 0.7, 1], scale: 1 }}
+                  transition={{ duration: 1.5, ease: "easeOut" }}
+                />
+              )}
 
               {/* Logo image OR typographic animation */}
               {appConfig.logo_url ? (
@@ -552,89 +570,199 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                   transition={{ type: "spring", stiffness: 200, damping: 12 }}
                 />
               ) : (
-                <div className="flex items-center" style={{ perspective: "800px" }}>
-                  {letters.map((letter, i) => (
-                    <motion.span
-                      key={i}
-                      className="text-[46px] text-white inline-block"
-                      style={{
-                        fontFamily: "'Playfair Display', serif",
-                        fontWeight: 900,
-                        fontStyle: "italic",
-                        textShadow: "0 0 30px hsla(270, 80%, 65%, 0.6), 0 0 60px hsla(270, 80%, 65%, 0.3), 0 4px 40px hsla(0,0%,0%,0.5)",
-                        WebkitTextStroke: "0.5px hsla(0,0%,100%,0.15)",
-                      }}
-                      initial={{ y: 50, opacity: 0, rotateY: -120, scale: 0.3 }}
-                      animate={phase >= 3 ? { y: 0, opacity: 1, rotateY: 0, scale: 1 } : { y: 50, opacity: 0, rotateY: -120, scale: 0.3 }}
-                      transition={{
-                        delay: i * 0.08,
-                        type: "spring",
-                        stiffness: 300,
-                        damping: 16,
-                      }}
-                    >
-                      {letter}
-                    </motion.span>
-                  ))}
+                <div className="relative flex flex-col items-center">
+                  {/* Main brand name */}
+                  <div className="flex items-center relative" style={{ perspective: "1000px" }}>
+                    {letters.map((letter, i) => (
+                      <motion.span
+                        key={i}
+                        className="inline-block relative"
+                        style={{
+                          fontSize: "56px",
+                          lineHeight: 1,
+                          color: "transparent",
+                          backgroundImage: "linear-gradient(180deg, hsla(0,0%,100%,1) 0%, hsla(0,0%,100%,0.85) 50%, hsla(270,80%,85%,0.9) 100%)",
+                          WebkitBackgroundClip: "text",
+                          backgroundClip: "text",
+                          fontFamily: "'Playfair Display', serif",
+                          fontWeight: 900,
+                          fontStyle: "italic",
+                          filter: "drop-shadow(0 0 20px hsla(270,80%,65%,0.5)) drop-shadow(0 4px 30px hsla(0,0%,0%,0.6))",
+                        }}
+                        initial={{ y: 60, opacity: 0, rotateX: 90, scale: 0.3 }}
+                        animate={phase >= 3 ? { y: 0, opacity: 1, rotateX: 0, scale: 1 } : { y: 60, opacity: 0, rotateX: 90, scale: 0.3 }}
+                        transition={{
+                          delay: i * 0.1,
+                          type: "spring",
+                          stiffness: 250,
+                          damping: 14,
+                        }}
+                      >
+                        {letter}
+                      </motion.span>
+                    ))}
 
-                  {/* Shush emoji */}
-                  <motion.span
-                    className="text-[34px] ml-1.5 inline-block"
-                    initial={{ scale: 0, rotate: -40 }}
-                    animate={phase >= 3 ? { scale: [0, 1.5, 1], rotate: [-40, 10, 0] } : { scale: 0 }}
-                    transition={{ delay: letters.length * 0.08 + 0.1, duration: 0.5, ease: "easeOut" }}
-                  >
-                    🤫
-                  </motion.span>
+                    {/* Shush emoji with bounce */}
+                    <motion.span
+                      className="text-[38px] ml-2 inline-block"
+                      initial={{ scale: 0, rotate: -60, y: 20 }}
+                      animate={phase >= 3 ? { scale: [0, 1.6, 0.9, 1.15, 1], rotate: [-60, 15, -5, 0], y: [20, -8, 2, 0] } : { scale: 0 }}
+                      transition={{ delay: letters.length * 0.1 + 0.15, duration: 0.7, ease: "easeOut" }}
+                    >
+                      🤫
+                    </motion.span>
+
+                    {/* Sparkle accents around the name */}
+                    {phase >= 3 && [
+                      { x: -12, y: -8, delay: 0.6, size: 6 },
+                      { x: "calc(100% + 8px)", y: 4, delay: 0.8, size: 5 },
+                      { x: "30%", y: -14, delay: 1, size: 4 },
+                    ].map((spark, si) => (
+                      <motion.div
+                        key={si}
+                        className="absolute pointer-events-none"
+                        style={{ left: spark.x, top: spark.y }}
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: [0, 1.5, 0], opacity: [0, 1, 0], rotate: [0, 180] }}
+                        transition={{ delay: spark.delay, duration: 0.8, ease: "easeOut" }}
+                      >
+                        <svg width={spark.size * 2} height={spark.size * 2} viewBox="0 0 12 12" fill="none">
+                          <path d="M6 0 L7 4.5 L12 6 L7 7.5 L6 12 L5 7.5 L0 6 L5 4.5 Z" fill="hsla(0,0%,100%,0.9)" />
+                        </svg>
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  {/* Animated shimmer sweep across name */}
+                  {phase >= 3 && (
+                    <motion.div
+                      className="absolute pointer-events-none"
+                      style={{
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        background: "linear-gradient(105deg, transparent 30%, hsla(0,0%,100%,0.25) 45%, hsla(270,80%,80%,0.3) 50%, hsla(0,0%,100%,0.25) 55%, transparent 70%)",
+                        backgroundSize: "300% 100%",
+                        mixBlendMode: "overlay",
+                      }}
+                      initial={{ backgroundPosition: "200% 0" }}
+                      animate={{ backgroundPosition: ["-100% 0", "200% 0"] }}
+                      transition={{ delay: 0.8, duration: 1.5, ease: "easeInOut" }}
+                    />
+                  )}
                 </div>
               )}
 
-              {/* Tagline — typed reveal */}
+              {/* Decorative divider */}
               <motion.div
-                className="overflow-hidden mt-2.5"
-                initial={{ width: 0 }}
-                animate={phase >= 3 ? { width: "auto" } : { width: 0 }}
-                transition={{ delay: 0.5, duration: 0.7, ease: "easeOut" }}
+                className="flex items-center gap-3 mt-4"
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={phase >= 3 ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }}
+                transition={{ delay: 0.5, duration: 0.4, ease: "easeOut" }}
               >
-                <p
-                  className="text-[10px] tracking-[0.25em] uppercase font-semibold text-white/45 whitespace-nowrap"
-                  style={{
-                    textShadow: "0 1px 8px hsla(0,0%,0%,0.4)",
-                    fontFamily: "'DM Sans', sans-serif",
-                  }}
+                <motion.div
+                  style={{ height: 1, background: "linear-gradient(90deg, transparent, hsla(0,0%,100%,0.4))" }}
+                  initial={{ width: 0 }}
+                  animate={phase >= 3 ? { width: 40 } : { width: 0 }}
+                  transition={{ delay: 0.6, duration: 0.5 }}
+                />
+                <motion.span
+                  className="text-[8px]"
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={phase >= 3 ? { opacity: 0.5, scale: 1 } : { opacity: 0, scale: 0 }}
+                  transition={{ delay: 0.7, type: "spring", stiffness: 300 }}
                 >
-                  {tagline}
-                </p>
+                  ✦
+                </motion.span>
+                <motion.div
+                  style={{ height: 1, background: "linear-gradient(90deg, hsla(0,0%,100%,0.4), transparent)" }}
+                  initial={{ width: 0 }}
+                  animate={phase >= 3 ? { width: 40 } : { width: 0 }}
+                  transition={{ delay: 0.6, duration: 0.5 }}
+                />
               </motion.div>
 
-              {/* Accent underline swipe */}
-              <motion.div
-                className="mt-2.5 rounded-full"
-                style={{
-                  height: 2,
-                  background: "linear-gradient(90deg, transparent, hsla(270,80%,65%,0.8), hsl(var(--primary)), hsla(270,80%,65%,0.8), transparent)",
-                }}
-                initial={{ width: 0, opacity: 0 }}
-                animate={phase >= 3 ? { width: 100, opacity: 1 } : { width: 0, opacity: 0 }}
-                transition={{ delay: 0.8, duration: 0.5, ease: "easeOut" }}
-              />
+              {/* Tagline — character-by-character reveal with stagger */}
+              <div className="mt-2 flex items-center justify-center gap-[1.5px] overflow-hidden">
+                {tagline.split("").map((char, i) => (
+                  <motion.span
+                    key={i}
+                    className="inline-block"
+                    style={{
+                      fontSize: "11px",
+                      letterSpacing: "0.22em",
+                      textTransform: "uppercase",
+                      fontWeight: 600,
+                      color: "hsla(0,0%,100%,0.6)",
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      textShadow: "0 0 12px hsla(270,80%,65%,0.4), 0 1px 6px hsla(0,0%,0%,0.5)",
+                    }}
+                    initial={{ y: 20, opacity: 0, filter: "blur(4px)" }}
+                    animate={phase >= 3 ? { y: 0, opacity: 1, filter: "blur(0px)" } : { y: 20, opacity: 0 }}
+                    transition={{
+                      delay: 0.6 + i * 0.025,
+                      type: "spring",
+                      stiffness: 200,
+                      damping: 18,
+                    }}
+                  >
+                    {char === " " ? "\u00A0" : char}
+                  </motion.span>
+                ))}
+              </div>
 
-              {/* Pulse rings */}
+              {/* Glowing accent underline with shimmer */}
+              <motion.div
+                className="mt-3 relative rounded-full overflow-hidden"
+                style={{ height: 2.5 }}
+                initial={{ width: 0, opacity: 0 }}
+                animate={phase >= 3 ? { width: 120, opacity: 1 } : { width: 0, opacity: 0 }}
+                transition={{ delay: 1, duration: 0.6, ease: "easeOut" }}
+              >
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: "linear-gradient(90deg, transparent, hsla(270,80%,70%,0.9), hsla(320,80%,65%,1), hsla(270,80%,70%,0.9), transparent)",
+                    boxShadow: "0 0 12px 2px hsla(270,80%,65%,0.5)",
+                  }}
+                />
+                {/* Shimmer traveling dot */}
+                <motion.div
+                  className="absolute h-full rounded-full"
+                  style={{
+                    width: 20,
+                    background: "hsla(0,0%,100%,0.6)",
+                    filter: "blur(3px)",
+                  }}
+                  animate={{ x: [-20, 140] }}
+                  transition={{ delay: 1.3, duration: 0.8, ease: "easeInOut", repeat: 1, repeatDelay: 0.5 }}
+                />
+              </motion.div>
+
+              {/* Pulse rings — more dramatic */}
               {phase >= 3 && (
                 <>
                   <motion.div
-                    className="absolute w-24 h-24 rounded-full border pointer-events-none"
-                    style={{ borderColor: "hsla(0,0%,100%,0.08)", bottom: 40 }}
-                    initial={{ scale: 0.3, opacity: 0 }}
-                    animate={{ scale: [0.3, 2.5], opacity: [0.4, 0] }}
-                    transition={{ delay: 1, duration: 1.8, ease: "easeOut" }}
+                    className="absolute w-32 h-32 rounded-full pointer-events-none"
+                    style={{
+                      bottom: 30,
+                      border: "1px solid hsla(270,80%,65%,0.15)",
+                      boxShadow: "0 0 20px 2px hsla(270,80%,65%,0.08)",
+                    }}
+                    initial={{ scale: 0.2, opacity: 0 }}
+                    animate={{ scale: [0.2, 3], opacity: [0.6, 0] }}
+                    transition={{ delay: 0.8, duration: 2, ease: "easeOut" }}
                   />
                   <motion.div
-                    className="absolute w-24 h-24 rounded-full border pointer-events-none"
-                    style={{ borderColor: "hsla(270,80%,65%,0.06)", bottom: 40 }}
-                    initial={{ scale: 0.3, opacity: 0 }}
-                    animate={{ scale: [0.3, 3], opacity: [0.3, 0] }}
-                    transition={{ delay: 1.4, duration: 1.8, ease: "easeOut" }}
+                    className="absolute w-32 h-32 rounded-full pointer-events-none"
+                    style={{
+                      bottom: 30,
+                      border: "1px solid hsla(320,70%,60%,0.1)",
+                    }}
+                    initial={{ scale: 0.2, opacity: 0 }}
+                    animate={{ scale: [0.2, 3.5], opacity: [0.4, 0] }}
+                    transition={{ delay: 1.2, duration: 2, ease: "easeOut" }}
                   />
                 </>
               )}
