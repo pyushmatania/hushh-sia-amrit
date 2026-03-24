@@ -420,6 +420,8 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 )}
               </div>
               </LazySection>
+              </>
+              )}
             </>
           )}
 
