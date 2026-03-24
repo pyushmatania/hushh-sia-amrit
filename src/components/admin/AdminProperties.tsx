@@ -86,6 +86,7 @@ const defaultListing: Partial<Listing> = {
 export default function AdminProperties() {
   const { toast } = useToast();
   const [listings, setListings] = useState<Listing[]>([]);
+  const [curationCount, setCurationCount] = useState(0);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -100,8 +101,28 @@ export default function AdminProperties() {
   const [bulkMode, setBulkMode] = useState(false);
 
   useEffect(() => {
-    supabase.from("host_listings").select("*").order("sort_order").order("created_at", { ascending: false })
-      .then(({ data }) => { setListings((data as Listing[]) ?? []); setLoading(false); });
+    const load = async () => {
+      setLoading(true);
+      const [listingsRes, curationsRes] = await Promise.all([
+        supabase
+          .from("host_listings")
+          .select("*")
+          .order("sort_order")
+          .order("created_at", { ascending: false }),
+        supabase.from("curations").select("id", { count: "exact", head: true }),
+      ]);
+
+      setListings((listingsRes.data as Listing[]) ?? []);
+      setCurationCount(curationsRes.count ?? 0);
+      setLoading(false);
+    };
+
+    load();
+    const onRefresh = () => {
+      load();
+    };
+    window.addEventListener("hushh:listings-updated", onRefresh);
+    return () => window.removeEventListener("hushh:listings-updated", onRefresh);
   }, []);
 
   const filtered = listings
@@ -194,11 +215,16 @@ export default function AdminProperties() {
   };
 
   const openEdit = (listing: Listing) => {
-    setEditingListing({ ...listing });
+    const fallbackThumb = getListingThumbnail(listing.name, listing.image_urls, { preferMapped: true });
+    const resolvedImages = listing.image_urls?.length
+      ? listing.image_urls
+      : fallbackThumb
+      ? [fallbackThumb]
+      : [];
+
+    setEditingListing({ ...listing, image_urls: resolvedImages });
     setIsCreating(false);
-    // Auto-expand media gallery if property has images, otherwise basic info
-    setExpandedSection((listing.image_urls?.length > 0) ? "images" : "basic");
-    setExpandedSection("images");
+    setExpandedSection(resolvedImages.length > 0 ? "images" : "basic");
     setPreviewMode(false);
   };
 
@@ -398,15 +424,28 @@ export default function AdminProperties() {
       {/* Category pills with counts */}
       <div className="flex gap-1.5 overflow-x-auto hide-scrollbar">
         {["all", ...primaryCategoryOptions].map(c => {
-          const count = c === "all" ? listings.length : listings.filter(l => l.primary_category === c).length;
+          const count = c === "all"
+            ? listings.length
+            : c === "curation"
+            ? curationCount
+            : listings.filter(l => l.primary_category === c).length;
+
           return (
-            <button key={c} onClick={() => setCategoryFilter(c)}
+            <button
+              key={c}
+              onClick={() => {
+                if (c === "curation") {
+                  window.dispatchEvent(new Event("hushh:open-curations"));
+                  return;
+                }
+                setCategoryFilter(c);
+              }}
               className={`px-3 py-1.5 rounded-xl text-[11px] font-semibold capitalize whitespace-nowrap transition-all flex items-center gap-1.5 ${
                 categoryFilter === c
                   ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-500/20 shadow-sm"
                   : "bg-card text-muted-foreground hover:text-foreground border border-border"
               }`}>
-              {c === "all" ? "All Types" : c}
+              {c === "all" ? "All Types" : c === "curation" ? "Curations" : c}
               <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold ${
                 categoryFilter === c ? "bg-indigo-500/20 text-indigo-600 dark:text-indigo-300" : "bg-secondary text-muted-foreground"
               }`}>{count}</span>
@@ -414,6 +453,10 @@ export default function AdminProperties() {
           );
         })}
       </div>
+
+      <p className="text-[10px] text-muted-foreground -mt-1">
+        Curations are managed in the Curated tab ({curationCount}).
+      </p>
 
       {/* Listings */}
       {loading ? (
