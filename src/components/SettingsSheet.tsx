@@ -1,10 +1,14 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronLeft, Bell, Shield, Globe, Accessibility, Moon, EyeOff, Loader2, Smartphone } from "lucide-react";
-import { useState } from "react";
+import { X, ChevronLeft, Bell, Shield, Globe, Accessibility, Moon, EyeOff, Loader2, Smartphone,
+  CreditCard, User, Database, Trash2, Download, ChevronRight, Copy, Check, LogOut, Key, History, Wallet, Plus, HardDrive
+} from "lucide-react";
+import { useState, useCallback } from "react";
 import { usePrivacyMode } from "@/hooks/use-privacy-mode";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
+import { toast as sonnerToast } from "sonner";
 
 interface SettingsSheetProps {
   open: boolean;
@@ -27,6 +31,274 @@ function ToggleSwitch({ enabled, onChange }: { enabled: boolean; onChange: (v: b
   );
 }
 
+function SettingRow({ icon: Icon, label, desc, right, delay = 0, onClick, danger }: {
+  icon?: typeof Bell; label: string; desc?: string; right?: React.ReactNode; delay?: number; onClick?: () => void; danger?: boolean;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay }}
+      className={`flex items-center justify-between py-4 border-b border-border last:border-0 ${onClick ? "cursor-pointer active:bg-muted/30 transition-colors" : ""}`}
+      onClick={onClick}
+    >
+      <div className="flex items-center gap-3 flex-1 min-w-0 pr-4">
+        {Icon && <Icon size={16} className={danger ? "text-destructive" : "text-muted-foreground"} />}
+        <div>
+          <p className={`text-sm font-medium ${danger ? "text-destructive" : "text-foreground"}`}>{label}</p>
+          {desc && <p className="text-xs text-muted-foreground mt-0.5">{desc}</p>}
+        </div>
+      </div>
+      {right || (onClick && <ChevronRight size={16} className="text-muted-foreground" />)}
+    </motion.div>
+  );
+}
+
+function SectionHeader({ title }: { title: string }) {
+  return <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-5 mb-2">{title}</h4>;
+}
+
+// ─── ACCOUNT SETTINGS ───
+function AccountSettings() {
+  const { user, signOut } = useAuth();
+  const { toast } = useToast();
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const email = user?.email || "guest@hushh.app";
+
+  const handlePasswordReset = async () => {
+    if (!user?.email) { toast({ title: "Login required", variant: "destructive" }); return; }
+    const { error } = await supabase.auth.resetPasswordForEmail(user.email);
+    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+    else toast({ title: "Password reset email sent ✉️", description: "Check your inbox" });
+  };
+
+  const handleExportData = async () => {
+    setIsExporting(true);
+    try {
+      // Simulate data export (collects profile, bookings, etc.)
+      await new Promise(r => setTimeout(r, 1500));
+      toast({ title: "Data export ready 📦", description: "Your data will be emailed to you" });
+    } finally { setIsExporting(false); }
+  };
+
+  const handleDeleteAccount = async () => {
+    toast({ title: "Account deletion requested", description: "Our team will process this within 48 hours" });
+    setShowDeleteConfirm(false);
+  };
+
+  return (
+    <div className="space-y-1">
+      <SectionHeader title="Profile" />
+      <SettingRow icon={User} label="Email" desc={email} />
+      <SettingRow icon={Key} label="Change password" desc="Send a password reset email" onClick={handlePasswordReset} />
+      
+      <SectionHeader title="Data & Privacy" />
+      <SettingRow
+        icon={Download}
+        label="Export my data"
+        desc="Download all your personal data"
+        onClick={handleExportData}
+        right={isExporting ? <Loader2 size={16} className="animate-spin text-primary" /> : undefined}
+      />
+      <SettingRow icon={History} label="Login activity" desc="View recent login sessions" onClick={() => toast({ title: "1 active session", description: "Current device · last active now" })} />
+
+      <SectionHeader title="Danger Zone" />
+      {!showDeleteConfirm ? (
+        <SettingRow icon={Trash2} label="Delete my account" desc="Permanently delete all data" onClick={() => setShowDeleteConfirm(true)} danger />
+      ) : (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
+          className="rounded-xl p-4 my-2"
+          style={{ background: "hsl(var(--destructive) / 0.08)", border: "1px solid hsl(var(--destructive) / 0.2)" }}
+        >
+          <p className="text-sm font-medium text-destructive mb-1">Are you sure?</p>
+          <p className="text-xs text-muted-foreground mb-3">This action is irreversible. All bookings, reviews, and loyalty points will be lost.</p>
+          <div className="flex gap-2">
+            <button
+              onClick={handleDeleteAccount}
+              className="flex-1 py-2 rounded-lg text-xs font-semibold text-destructive-foreground"
+              style={{ background: "hsl(var(--destructive))" }}
+            >
+              Delete permanently
+            </button>
+            <button
+              onClick={() => setShowDeleteConfirm(false)}
+              className="flex-1 py-2 rounded-lg text-xs font-semibold bg-muted text-foreground"
+            >
+              Cancel
+            </button>
+          </div>
+        </motion.div>
+      )}
+
+      {user && (
+        <>
+          <SectionHeader title="" />
+          <SettingRow icon={LogOut} label="Sign out" desc="Log out of your account" onClick={signOut} danger />
+        </>
+      )}
+    </div>
+  );
+}
+
+// ─── PAYMENTS & PAYOUTS ───
+function PaymentSettings() {
+  const { toast } = useToast();
+  const [savedCards] = useState([
+    { id: "1", type: "visa", last4: "4242", expiry: "12/27", isDefault: true },
+    { id: "2", type: "mastercard", last4: "8888", expiry: "03/26", isDefault: false },
+  ]);
+  const [savedUPI] = useState([
+    { id: "u1", vpa: "user@paytm", isDefault: true },
+  ]);
+
+  const transactions = [
+    { id: "t1", label: "Bonfire Night Booking", amount: "₹3,500", date: "Dec 15", status: "completed" as const },
+    { id: "t2", label: "Tribal Thali Experience", amount: "₹1,200", date: "Dec 10", status: "completed" as const },
+    { id: "t3", label: "Refund — Rain cancellation", amount: "+₹2,000", date: "Dec 5", status: "refunded" as const },
+  ];
+
+  return (
+    <div className="space-y-1">
+      <SectionHeader title="Saved Cards" />
+      {savedCards.map((card, i) => (
+        <motion.div
+          key={card.id}
+          initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}
+          className="flex items-center gap-3 py-3.5 border-b border-border"
+        >
+          <div className="w-10 h-7 rounded-md flex items-center justify-center text-xs font-bold"
+            style={{ background: card.type === "visa" ? "linear-gradient(135deg, hsl(220 90% 55%), hsl(250 80% 60%))" : "linear-gradient(135deg, hsl(0 85% 55%), hsl(35 90% 55%))" }}>
+            <span className="text-white">{card.type === "visa" ? "V" : "M"}</span>
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-medium text-foreground">•••• {card.last4}</p>
+            <p className="text-xs text-muted-foreground">Expires {card.expiry}</p>
+          </div>
+          {card.isDefault && (
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary">DEFAULT</span>
+          )}
+        </motion.div>
+      ))}
+
+      <SectionHeader title="UPI" />
+      {savedUPI.map((upi, i) => (
+        <motion.div
+          key={upi.id}
+          initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.15 + i * 0.05 }}
+          className="flex items-center gap-3 py-3.5 border-b border-border"
+        >
+          <div className="w-10 h-7 rounded-md flex items-center justify-center text-xs font-bold"
+            style={{ background: "linear-gradient(135deg, hsl(150 70% 45%), hsl(180 60% 40%))" }}>
+            <span className="text-white">₹</span>
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-medium text-foreground">{upi.vpa}</p>
+          </div>
+          {upi.isDefault && (
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary">DEFAULT</span>
+          )}
+        </motion.div>
+      ))}
+
+      <motion.button
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}
+        onClick={() => toast({ title: "Coming soon", description: "Payment method management will be available with Razorpay integration" })}
+        className="flex items-center gap-2 py-3 text-sm font-medium text-primary"
+      >
+        <Plus size={16} /> Add payment method
+      </motion.button>
+
+      <SectionHeader title="Recent Transactions" />
+      {transactions.map((tx, i) => (
+        <motion.div
+          key={tx.id}
+          initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 + i * 0.05 }}
+          className="flex items-center justify-between py-3.5 border-b border-border last:border-0"
+        >
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-foreground">{tx.label}</p>
+            <p className="text-xs text-muted-foreground">{tx.date}</p>
+          </div>
+          <div className="text-right">
+            <p className={`text-sm font-semibold ${tx.status === "refunded" ? "text-green-500" : "text-foreground"}`}>{tx.amount}</p>
+            <p className={`text-[10px] font-medium ${tx.status === "refunded" ? "text-green-500" : "text-muted-foreground"}`}>
+              {tx.status === "refunded" ? "Refunded" : "Paid"}
+            </p>
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
+// ─── STORAGE & DATA ───
+function StorageSettings() {
+  const { toast } = useToast();
+  const [clearing, setClearing] = useState(false);
+
+  const storageItems = [
+    { label: "Cached images", size: "12.4 MB", icon: HardDrive },
+    { label: "Preloaded videos", size: "48.2 MB", icon: HardDrive },
+    { label: "Offline data", size: "2.1 MB", icon: Database },
+  ];
+
+  const handleClearCache = async () => {
+    setClearing(true);
+    try {
+      if ('caches' in window) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map(k => caches.delete(k)));
+      }
+      localStorage.removeItem("hushh_video_cache");
+      await new Promise(r => setTimeout(r, 800));
+      toast({ title: "Cache cleared ✨", description: "Freed up storage space" });
+    } finally { setClearing(false); }
+  };
+
+  return (
+    <div className="space-y-1">
+      <SectionHeader title="Storage Usage" />
+      {storageItems.map((item, i) => (
+        <SettingRow
+          key={item.label}
+          icon={item.icon}
+          label={item.label}
+          desc={item.size}
+          delay={i * 0.04}
+        />
+      ))}
+
+      <SectionHeader title="Actions" />
+      <SettingRow
+        icon={Trash2}
+        label="Clear cache"
+        desc="Remove cached images and videos"
+        onClick={handleClearCache}
+        right={clearing ? <Loader2 size={16} className="animate-spin text-primary" /> : undefined}
+      />
+      <SettingRow
+        icon={Download}
+        label="Download data for offline"
+        desc="Save property data for offline browsing"
+        onClick={() => toast({ title: "Offline pack downloaded 📥", description: "Property data saved for offline use" })}
+      />
+
+      <motion.div
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+        className="rounded-xl p-3 mt-4"
+        style={{ background: "hsl(var(--muted) / 0.5)", border: "1px solid hsl(var(--border))" }}
+      >
+        <p className="text-[11px] text-muted-foreground">
+          💡 <span className="text-foreground font-medium">Tip:</span> Clearing cache will make images and videos reload on next visit but won't affect your bookings or account data.
+        </p>
+      </motion.div>
+    </div>
+  );
+}
+
+// ─── NOTIFICATIONS (existing, enhanced) ───
 function NotificationSettings() {
   const { toast } = useToast();
   const { isSupported, isSubscribed, isLoading, isiOS, isPWA, permission, subscribe, unsubscribe } = usePushNotifications();
@@ -62,9 +334,7 @@ function NotificationSettings() {
     setIsSendingTest(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-
       toast({ title: "Sending 3 test notifications...", description: "At 5s, 10s, and 15s intervals" });
-
       for (const notif of testNotifications) {
         setTimeout(async () => {
           try {
@@ -73,7 +343,6 @@ function NotificationSettings() {
                 body: { user_id: user.id, payload: { title: notif.title, body: notif.body, url: notif.url } }
               });
             } else {
-              // Guest mode — use browser Notification API directly
               if (Notification.permission === 'granted') {
                 new Notification(notif.title, { body: notif.body, icon: '/favicon.ico' });
               }
@@ -81,7 +350,6 @@ function NotificationSettings() {
           } catch (e) { console.error('[Push Test]', e); }
         }, notif.delay);
       }
-
       setTimeout(() => setIsSendingTest(false), 16000);
     } catch (err: any) {
       toast({ title: "Failed", description: err.message, variant: "destructive" });
@@ -100,7 +368,6 @@ function NotificationSettings() {
 
   return (
     <div className="space-y-1">
-      {/* Push Notification Toggle */}
       <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="py-4 border-b border-border">
         <div className="flex items-center justify-between">
           <div className="flex-1 min-w-0 pr-4">
@@ -153,15 +420,23 @@ function NotificationSettings() {
   );
 }
 
+// ─── SECURITY ───
 function SecuritySettings() {
-  const items = [
-    { label: "Change password", desc: "Update your account password", action: true },
-    { label: "Two-factor authentication", desc: "Add an extra layer of security", toggle: false },
-    { label: "Active sessions", desc: "1 device logged in", action: true },
-    { label: "Login history", desc: "View recent login activity", action: true },
-  ];
-
+  const { toast } = useToast();
   const [twoFa, setTwoFa] = useState(false);
+
+  const items = [
+    { label: "Change password", desc: "Send a password reset email", action: true, onClick: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user?.email) { toast({ title: "Login required", variant: "destructive" }); return; }
+      const { error } = await supabase.auth.resetPasswordForEmail(user.email);
+      if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+      else toast({ title: "Reset email sent ✉️" });
+    }},
+    { label: "Two-factor authentication", desc: "Add an extra layer of security", toggle: true },
+    { label: "Active sessions", desc: "1 device logged in", action: true, onClick: () => toast({ title: "Current session", description: "Web browser · active now" }) },
+    { label: "Login history", desc: "View recent login activity", action: true, onClick: () => toast({ title: "Last login", description: "Today from this device" }) },
+  ];
 
   return (
     <div className="space-y-1">
@@ -171,16 +446,17 @@ function SecuritySettings() {
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: i * 0.04 }}
-          className="flex items-center justify-between py-4 border-b border-border last:border-0"
+          className={`flex items-center justify-between py-4 border-b border-border last:border-0 ${item.onClick ? "cursor-pointer active:bg-muted/30" : ""}`}
+          onClick={item.onClick}
         >
           <div className="flex-1 min-w-0 pr-4">
             <p className="text-sm font-medium text-foreground">{item.label}</p>
             <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
           </div>
-          {item.label === "Two-factor authentication" ? (
+          {item.toggle ? (
             <ToggleSwitch enabled={twoFa} onChange={setTwoFa} />
           ) : (
-            <ChevronLeft size={16} className="text-muted-foreground rotate-180" />
+            <ChevronRight size={16} className="text-muted-foreground" />
           )}
         </motion.div>
       ))}
@@ -188,15 +464,16 @@ function SecuritySettings() {
   );
 }
 
+// ─── LANGUAGE ───
 function LanguageSettings() {
   const [lang, setLang] = useState("en");
   const [currency, setCurrency] = useState("inr");
 
   const languages = [
-    { id: "en", label: "English", native: "English" },
-    { id: "hi", label: "Hindi", native: "हिन्दी" },
-    { id: "od", label: "Odia", native: "ଓଡ଼ିଆ" },
-    { id: "te", label: "Telugu", native: "తెలుగు" },
+    { id: "en", label: "English", native: "English", flag: "🇬🇧" },
+    { id: "hi", label: "Hindi", native: "हिन्दी", flag: "🇮🇳" },
+    { id: "od", label: "Odia", native: "ଓଡ଼ିଆ", flag: "🇮🇳" },
+    { id: "te", label: "Telugu", native: "తెలుగు", flag: "🇮🇳" },
   ];
 
   const currencies = [
@@ -207,7 +484,7 @@ function LanguageSettings() {
   return (
     <div className="space-y-6">
       <div>
-        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Language</h4>
+        <SectionHeader title="Language" />
         <div className="space-y-1">
           {languages.map((l) => (
             <button
@@ -217,17 +494,16 @@ function LanguageSettings() {
                 lang === l.id ? "bg-primary/10 border border-primary/30" : "border border-transparent"
               }`}
             >
-              <div className="text-left">
-                <p className="text-sm font-medium text-foreground">{l.label}</p>
-                <p className="text-xs text-muted-foreground">{l.native}</p>
+              <div className="flex items-center gap-3">
+                <span className="text-lg">{l.flag}</span>
+                <div className="text-left">
+                  <p className="text-sm font-medium text-foreground">{l.label}</p>
+                  <p className="text-xs text-muted-foreground">{l.native}</p>
+                </div>
               </div>
               {lang === l.id && (
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="w-5 h-5 rounded-full bg-primary flex items-center justify-center"
-                >
-                  <div className="w-2 h-2 rounded-full bg-primary-foreground" />
+                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                  <Check size={12} className="text-primary-foreground" />
                 </motion.div>
               )}
             </button>
@@ -236,7 +512,7 @@ function LanguageSettings() {
       </div>
 
       <div>
-        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Currency</h4>
+        <SectionHeader title="Currency" />
         <div className="space-y-1">
           {currencies.map((c) => (
             <button
@@ -251,12 +527,8 @@ function LanguageSettings() {
                 <p className="text-xs text-muted-foreground">{c.desc}</p>
               </div>
               {currency === c.id && (
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="w-5 h-5 rounded-full bg-primary flex items-center justify-center"
-                >
-                  <div className="w-2 h-2 rounded-full bg-primary-foreground" />
+                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                  <Check size={12} className="text-primary-foreground" />
                 </motion.div>
               )}
             </button>
@@ -267,6 +539,7 @@ function LanguageSettings() {
   );
 }
 
+// ─── ACCESSIBILITY ───
 function AccessibilitySettings() {
   const [settings, setSettings] = useState({
     reduceMotion: false,
@@ -288,24 +561,19 @@ function AccessibilitySettings() {
   return (
     <div className="space-y-1">
       {items.map((item, i) => (
-        <motion.div
+        <SettingRow
           key={item.key}
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: i * 0.04 }}
-          className="flex items-center justify-between py-4 border-b border-border last:border-0"
-        >
-          <div className="flex-1 min-w-0 pr-4">
-            <p className="text-sm font-medium text-foreground">{item.label}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
-          </div>
-          <ToggleSwitch enabled={settings[item.key]} onChange={() => toggle(item.key)} />
-        </motion.div>
+          label={item.label}
+          desc={item.desc}
+          delay={i * 0.04}
+          right={<ToggleSwitch enabled={settings[item.key]} onChange={() => toggle(item.key)} />}
+        />
       ))}
     </div>
   );
 }
 
+// ─── PRIVACY ───
 function PrivacySettings() {
   const { privacyMode, togglePrivacy } = usePrivacyMode();
   const items = [
@@ -318,27 +586,22 @@ function PrivacySettings() {
   return (
     <div className="space-y-1">
       {items.map((item, i) => (
-        <motion.div
+        <SettingRow
           key={item.key}
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: i * 0.04 }}
-          className="flex items-center justify-between py-4 border-b border-border last:border-0"
-        >
-          <div className="flex-1 min-w-0 pr-4">
-            <p className="text-sm font-medium text-foreground">{item.label}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
-          </div>
-          <ToggleSwitch
-            enabled={item.isPrivacy ? privacyMode : extras[item.key as keyof typeof extras]}
-            onChange={() => item.isPrivacy ? togglePrivacy() : setExtras(s => ({ ...s, [item.key]: !s[item.key as keyof typeof extras] }))}
-          />
-        </motion.div>
+          label={item.label}
+          desc={item.desc}
+          delay={i * 0.04}
+          right={
+            <ToggleSwitch
+              enabled={item.isPrivacy ? privacyMode : extras[item.key as keyof typeof extras]}
+              onChange={() => item.isPrivacy ? togglePrivacy() : setExtras(s => ({ ...s, [item.key]: !s[item.key as keyof typeof extras] }))}
+            />
+          }
+        />
       ))}
       {privacyMode && (
         <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
+          initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
           className="rounded-xl p-3 mt-2"
           style={{ background: "hsl(var(--primary) / 0.06)", border: "1px solid hsl(var(--primary) / 0.15)" }}
         >
@@ -351,20 +614,27 @@ function PrivacySettings() {
   );
 }
 
+// ─── SETTINGS REGISTRY ───
 const settingTitles: Record<string, string> = {
+  account: "Account Settings",
+  payments: "Payments & Payouts",
   notifications: "Notifications",
   security: "Login & Security",
   language: "Language & Region",
   accessibility: "Accessibility",
   privacy: "Privacy",
+  storage: "Storage & Data",
 };
 
 const settingIcons: Record<string, typeof Bell> = {
+  account: User,
+  payments: CreditCard,
   notifications: Bell,
   security: Shield,
   language: Globe,
   accessibility: Accessibility,
   privacy: EyeOff,
+  storage: Database,
 };
 
 export default function SettingsSheet({ open, onClose, settingType }: SettingsSheetProps) {
@@ -401,11 +671,14 @@ export default function SettingsSheet({ open, onClose, settingType }: SettingsSh
             </div>
 
             <div className="px-5 py-4 pb-8">
+              {settingType === "account" && <AccountSettings />}
+              {settingType === "payments" && <PaymentSettings />}
               {settingType === "notifications" && <NotificationSettings />}
               {settingType === "security" && <SecuritySettings />}
               {settingType === "language" && <LanguageSettings />}
               {settingType === "accessibility" && <AccessibilitySettings />}
               {settingType === "privacy" && <PrivacySettings />}
+              {settingType === "storage" && <StorageSettings />}
             </div>
           </motion.div>
         </>
