@@ -15,6 +15,7 @@ import DeleteConfirmDialog from "./DeleteConfirmDialog";
 import BatchOperationsBar from "./BatchOperationsBar";
 import { getListingThumbnail } from "@/lib/listing-thumbnails";
 import MultiImageEditor from "./MultiImageEditor";
+import { useAutoSave } from "@/hooks/use-auto-save";
 
 const MOOD_OPTIONS = ["Romantic", "Party", "Chill", "Adventure", "Work", "Celebration", "Family"];
 const INCLUDE_OPTIONS = [
