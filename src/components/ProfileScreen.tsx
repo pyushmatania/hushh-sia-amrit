@@ -155,8 +155,8 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
         </motion.button>
       </div>
 
-      {/* Desktop two-column layout */}
-      <div className="md:flex md:gap-8 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:mt-4">
+      {/* Desktop responsive wrapper */}
+      <div className="md:px-8 lg:px-16 xl:px-24 2xl:px-32">
 
       {/* Profile Hero Card — reimagined */}
       <motion.div
