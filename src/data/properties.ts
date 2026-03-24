@@ -1450,7 +1450,7 @@ export const curatedCombos: CuratedCombo[] = [
     time: "8 PM – 11 PM",
     priceRange: [999, 1999],
     includes: ["25ft screen 🎬", "Popcorn 🍿", "Bean bags 🛋️", "Drinks 🍹", "Blankets"],
-    image: listingMovieAmphitheater,
+    image: curationMovieNight,
     gradient: "from-indigo-600/80 to-slate-900/60",
     tags: ["🎬 Movie Night", "🌟 Popular"],
   },
