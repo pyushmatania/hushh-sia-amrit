@@ -30,7 +30,7 @@ export default function PackageCard({ pkg, index, properties, onPropertyTap }: P
       initial={{ opacity: 0, scale: 0.97 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: index * 0.08 }}
-      className="shrink-0 w-[240px] rounded-2xl overflow-hidden glass cursor-pointer active:scale-[0.97] transition-transform"
+      className="shrink-0 w-[240px] md:w-full rounded-2xl overflow-hidden glass cursor-pointer active:scale-[0.97] transition-all md:hover:shadow-elevated md:hover:border-primary/20"
       onClick={handleTap}
     >
       <div className="p-5 space-y-2">
