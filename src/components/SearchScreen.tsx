@@ -209,10 +209,10 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
                 <button
                   key={key}
                   onClick={() => { setSortBy(key); setShowSort(false); }}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+                  className={`px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium border transition-all md:cursor-pointer ${
                     sortBy === key
                       ? "border-foreground bg-foreground text-background"
-                      : "border-border text-foreground"
+                      : "border-border text-foreground hover:bg-muted/50"
                   }`}
                 >
                   {sortLabels[key]}
