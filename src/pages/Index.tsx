@@ -135,7 +135,7 @@ export default function Index() {
       setScreen({ type: "experienceDetail", pack, property: syntheticProperty });
       setActiveTab("home");
     }
-  }, [properties]);
+  }, [liveProperties]);
 
   const handleBook = useCallback((property: Property, slotId: string, guests: number, date: Date, extras?: Property[], roomsCount?: number, extraMattresses?: number) => {
     setScreen({ type: "builder", property, slotId, guests, date, extras, roomsCount, extraMattresses });
