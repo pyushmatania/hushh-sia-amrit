@@ -219,51 +219,59 @@ function OscarPropertyCard({ property, onTap, index, isWL, onToggleWishlist, tot
       aria-label={`${property.name} — ₹${cheapest.toLocaleString()} onwards, rated ${property.rating}`}
       onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onTap(property); } }}
     >
-      <FairyLights count={isSingle ? 18 : 12} />
+      {!isSingle && <FairyLights count={12} />}
 
       {/* Card frame */}
-      <div className={`relative overflow-hidden ${isSingle ? "rounded-3xl" : "rounded-2xl"} mt-2`}
-        style={{
+      <div className={`relative overflow-hidden ${isSingle ? "rounded-[28px]" : "rounded-2xl"} ${isSingle ? "" : "mt-2"}`}
+        style={isSingle ? {
+          border: "none",
+          boxShadow: "0 0 60px rgba(255,215,0,0.2), 0 24px 80px rgba(0,0,0,0.5)",
+        } : {
           backgroundImage: `url(${oscarWoodTexture})`,
           backgroundSize: "cover",
-          padding: isSingle ? "8px" : "6px",
-          border: isSingle ? "3px solid #DAA520" : "2px solid #B8860B",
-          boxShadow: isSingle
-            ? "0 0 50px rgba(255,215,0,0.35), 0 20px 60px rgba(0,0,0,0.6), inset 0 0 30px rgba(255,215,0,0.05)"
-            : hovered
-              ? "0 0 35px rgba(255,215,0,0.4), 0 16px 50px rgba(0,0,0,0.5)"
-              : "0 0 15px rgba(255,215,0,0.15), 0 8px 30px rgba(0,0,0,0.3)",
+          padding: "6px",
+          border: "2px solid #B8860B",
+          boxShadow: hovered
+            ? "0 0 35px rgba(255,215,0,0.4), 0 16px 50px rgba(0,0,0,0.5)"
+            : "0 0 15px rgba(255,215,0,0.15), 0 8px 30px rgba(0,0,0,0.3)",
           transition: "box-shadow 0.4s ease, transform 0.3s ease",
           transform: hovered ? "translateY(-3px)" : "translateY(0)",
         }}
       >
-        {/* Corner flourishes for single mode */}
-        {isSingle && (
-          <>
-            <CornerFlourish position="tl" />
-            <CornerFlourish position="tr" />
-            <CornerFlourish position="bl" />
-            <CornerFlourish position="br" />
-          </>
-        )}
-
         {/* Ribbon badge */}
         {isSingle && <RibbonBadge number={index + 1} />}
 
-        <div className={`relative ${isSingle ? "h-[380px] rounded-2xl" : "h-[260px] md:h-[320px] rounded-xl"} overflow-hidden`}>
+        <div className={`relative ${isSingle ? "h-[440px] rounded-[28px]" : "h-[260px] md:h-[320px] rounded-xl"} overflow-hidden`}>
           <img src={property.images[0]} alt={property.name}
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-700"
             style={{ transform: hovered ? "scale(1.08)" : "scale(1)" }}
             loading="lazy" />
 
+          {/* Cinematic gradient overlay */}
           <div className="absolute inset-0" style={{
-            background: "linear-gradient(to top, rgba(10,2,2,0.95) 0%, rgba(30,5,5,0.6) 35%, transparent 70%)",
+            background: isSingle
+              ? "linear-gradient(to top, rgba(5,0,0,0.97) 0%, rgba(20,2,2,0.7) 30%, rgba(0,0,0,0.15) 55%, transparent 75%)"
+              : "linear-gradient(to top, rgba(10,2,2,0.95) 0%, rgba(30,5,5,0.6) 35%, transparent 70%)",
           }} />
 
-          {/* Inner gold border glow for single */}
+          {/* Vignette for single */}
           {isSingle && (
-            <div className="absolute inset-0 pointer-events-none z-[5] rounded-2xl"
-              style={{ boxShadow: "inset 0 0 20px rgba(255,215,0,0.15), inset 0 0 3px rgba(255,215,0,0.3)" }} />
+            <div className="absolute inset-0 pointer-events-none z-[3]" style={{
+              background: "radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.4) 100%)",
+            }} />
+          )}
+
+          {/* Top film grain line */}
+          {isSingle && (
+            <div className="absolute top-0 left-0 right-0 h-[2px] z-[5]" style={{
+              background: "linear-gradient(90deg, transparent 10%, rgba(255,215,0,0.4) 30%, rgba(255,255,255,0.3) 50%, rgba(255,215,0,0.4) 70%, transparent 90%)",
+            }} />
+          )}
+
+          {/* Inner gold edge glow for single */}
+          {isSingle && (
+            <div className="absolute inset-0 pointer-events-none z-[5] rounded-[28px]"
+              style={{ boxShadow: "inset 0 0 40px rgba(139,0,0,0.3), inset 0 0 2px rgba(255,215,0,0.2)" }} />
           )}
 
           {/* Badge */}
