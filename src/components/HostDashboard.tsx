@@ -108,7 +108,7 @@ export default function HostDashboard({
         <TrendingUp size={16} className="text-muted-foreground" />
       </motion.button>
 
-      <div className="px-5">
+      <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
         <h3 className="text-base font-bold text-foreground mb-3 flex items-center gap-2">
           <Home size={16} className="text-primary" />
           Your Listings ({listings.length})
