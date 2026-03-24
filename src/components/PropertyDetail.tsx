@@ -1184,7 +1184,115 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
         </div>
       </div>
 
-      {/* Sticky bottom */}
+      {/* Desktop Sticky Booking Sidebar */}
+      <div className="hidden md:block md:w-[38%] lg:w-[35%] md:shrink-0">
+        <div className="sticky top-24 rounded-2xl border border-border shadow-xl shadow-black/10 p-6 bg-card space-y-5">
+          <div className="flex items-baseline gap-2">
+            <span className="text-2xl font-bold text-foreground">₹{selectedSlotData?.price.toLocaleString() || property.basePrice.toLocaleString()}</span>
+            <span className="text-muted-foreground text-sm">/ {selectedSlotData?.label.toLowerCase() || "slot"}</span>
+          </div>
+
+          {/* Date picker inline */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className={cn(
+                "w-full flex items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all",
+                dateRange?.from ? "border-primary/40 bg-primary/[0.04]" : "border-border hover:border-foreground/30"
+              )}>
+                <CalendarIcon size={16} className="text-primary shrink-0" />
+                <span className="text-sm font-medium text-foreground flex-1">
+                  {dateRange?.from ? (
+                    dateRange.to && isStay ? (
+                      <>{format(dateRange.from, "d MMM")} → {format(dateRange.to, "d MMM")} <span className="text-xs text-muted-foreground">({nightCount}N)</span></>
+                    ) : format(dateRange.from, "d MMM yyyy")
+                  ) : (
+                    <span className="text-muted-foreground">{isStay ? "Check-in → Check-out" : "Pick a date"}</span>
+                  )}
+                </span>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              {isStay ? (
+                <Calendar mode="range" selected={dateRange} onSelect={(val) => setDateRange(val)} disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))} numberOfMonths={1} initialFocus className={cn("p-3 pointer-events-auto")} />
+              ) : (
+                <Calendar mode="single" selected={dateRange?.from} onSelect={(val) => setDateRange(val ? { from: val, to: val } : undefined)} disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))} numberOfMonths={1} initialFocus className={cn("p-3 pointer-events-auto")} />
+              )}
+            </PopoverContent>
+          </Popover>
+
+          {/* Slot selector */}
+          <div>
+            <p className="text-sm font-semibold text-foreground mb-2">Time Slot</p>
+            <div className="grid grid-cols-2 gap-2">
+              {property.slots.map((slot) => (
+                <button
+                  key={slot.id}
+                  onClick={() => slot.available && setSelectedSlot(slot.id)}
+                  disabled={!slot.available}
+                  className={`p-3 rounded-xl text-left border transition-all ${
+                    selectedSlot === slot.id
+                      ? "border-primary bg-primary/[0.08] shadow-sm"
+                      : slot.available ? "border-border hover:border-foreground/30" : "border-border opacity-35"
+                  }`}
+                >
+                  <p className="text-sm font-medium text-foreground">{slot.label}</p>
+                  <p className="text-xs text-muted-foreground">{slot.time}</p>
+                  <p className="text-sm font-semibold text-foreground mt-1">₹{slot.price.toLocaleString()}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Guest stepper */}
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-semibold text-foreground">Guests</p>
+              <p className="text-xs text-muted-foreground">Max {property.capacity}</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <button onClick={() => setGuests(Math.max(1, guests - 1))} disabled={guests <= 1} className="w-9 h-9 rounded-full border border-border flex items-center justify-center disabled:opacity-30 hover:bg-secondary transition-colors">
+                <Minus size={14} className="text-foreground" />
+              </button>
+              <span className="text-lg font-bold text-foreground w-6 text-center">{guests}</span>
+              <button onClick={() => setGuests(Math.min(property.capacity, guests + 1))} disabled={guests >= property.capacity} className="w-9 h-9 rounded-full border border-border flex items-center justify-center disabled:opacity-30 hover:bg-secondary transition-colors">
+                <Plus size={14} className="text-foreground" />
+              </button>
+            </div>
+          </div>
+
+          <div className="border-t border-border pt-4 space-y-2">
+            {selectedSlotData && (
+              <>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">₹{selectedSlotData.price.toLocaleString()} × {isStay && nightCount > 0 ? `${nightCount} night${nightCount !== 1 ? "s" : ""}` : "1 slot"}</span>
+                  <span className="text-foreground font-medium">₹{(selectedSlotData.price * (isStay && nightCount > 0 ? nightCount : 1)).toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">GST 18%</span>
+                  <span className="text-foreground font-medium">₹{Math.round(selectedSlotData.price * 0.18).toLocaleString()}</span>
+                </div>
+                <div className="border-t border-border pt-2 flex justify-between">
+                  <span className="text-foreground font-bold">Total</span>
+                  <span className="text-lg font-bold text-foreground">₹{Math.round(selectedSlotData.price * 1.18 * (isStay && nightCount > 0 ? nightCount : 1)).toLocaleString()}</span>
+                </div>
+              </>
+            )}
+          </div>
+
+          <motion.button
+            onClick={() => selectedSlotData && selectedDate && onBook(property, selectedSlot!, guests, selectedDate, addedExtras.length > 0 ? addedExtras : undefined, isStayProp ? roomsCount : undefined, isStayProp ? extraMattressCount : undefined)}
+            disabled={!selectedSlotData || !selectedDate}
+            className="w-full bg-primary text-primary-foreground py-4 rounded-xl font-semibold text-lg hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            whileTap={{ scale: 0.97 }}
+          >
+            {selectedSlotData && selectedDate ? `Book Now` : "Select date & slot"}
+          </motion.button>
+          <p className="text-center text-xs text-muted-foreground">You won't be charged yet</p>
+        </div>
+      </div>
+      </div>
+
+      {/* Sticky bottom — mobile only */}
       <AnimatePresence>
         {selectedSlotData && selectedDate && (
           <motion.div
