@@ -1045,8 +1045,8 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
         <h3 className="text-lg font-semibold text-foreground mb-3">📍 Location</h3>
         <p className="text-sm text-muted-foreground mb-3">{property.location}</p>
         
-        {/* Embedded Map */}
-        <div className="rounded-2xl overflow-hidden border border-border mb-3 aspect-[16/9]">
+        {/* Embedded Map with gradient overlay */}
+        <div className="relative rounded-2xl overflow-hidden border border-border mb-3 aspect-[16/9]">
           <iframe
             title="Property Location"
             width="100%"
@@ -1056,6 +1056,13 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
             referrerPolicy="no-referrer-when-downgrade"
             src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(property.location)}&zoom=14`}
           />
+          <div className="absolute inset-0 pointer-events-none rounded-2xl" style={{
+            background: "linear-gradient(180deg, hsl(var(--background) / 0.15) 0%, transparent 30%, transparent 60%, hsl(var(--background) / 0.25) 100%), radial-gradient(ellipse at center, transparent 40%, hsl(var(--background) / 0.2) 100%)",
+            mixBlendMode: "multiply",
+          }} />
+          <div className="absolute inset-0 pointer-events-none rounded-2xl" style={{
+            boxShadow: "inset 0 0 30px hsl(var(--background) / 0.3), inset 0 0 60px hsl(var(--background) / 0.1)",
+          }} />
         </div>
 
         <div className="glass rounded-2xl p-4 mb-3">
