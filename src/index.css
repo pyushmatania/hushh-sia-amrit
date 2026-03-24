@@ -266,6 +266,11 @@
   contain-intrinsic-size: auto 380px;
 }
 
+/* GPU-layer promotion for scroll-intensive containers */
+.smooth-main-scroll > * {
+  contain: layout style;
+}
+
 /* Haptic press feedback */
 .haptic-press {
   transition: transform 0.1s ease;

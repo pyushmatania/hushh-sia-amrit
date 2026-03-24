@@ -24,8 +24,8 @@ interface MixedListingFeedProps {
 }
 
 /** How many items to render initially — rest load on scroll */
-const INITIAL_BATCH = 6;
-const BATCH_SIZE = 4;
+const INITIAL_BATCH = 4;
+const BATCH_SIZE = 3;
 
 export default function MixedListingFeed({ properties, onPropertyTap, wishlist, onToggleWishlist }: MixedListingFeedProps) {
   const [visibleCount, setVisibleCount] = useState(INITIAL_BATCH);

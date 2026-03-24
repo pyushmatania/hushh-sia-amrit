@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useCallback, useMemo } from "react";
+import { useRef, useState, useEffect, useCallback, useMemo, memo } from "react";
 import { VolumeX, Volume2, Bookmark, Flame, Zap, Sparkles } from "lucide-react";
 import { type Property } from "@/data/properties";
 import { AccentFrame, AccentTag } from "@/components/shared/AccentFrame";
@@ -51,54 +51,12 @@ type VideoAccent = {
 };
 
 const accentStyles: VideoAccent[] = [
-  {
-    color: "hsl(0 85% 55%)",
-    tag: {
-      label: "TONIGHT'S PICK",
-      bg: "linear-gradient(135deg, hsl(0 85% 55%), hsl(35 95% 55%))",
-      icon: <Flame size={11} className="text-primary-foreground" />,
-    },
-  },
-  {
-    color: "hsl(var(--primary))",
-    tag: {
-      label: "CURATED",
-      bg: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))",
-      icon: <Sparkles size={11} className="text-primary-foreground" />,
-    },
-  },
-  {
-    color: "hsl(280 90% 60%)",
-    tag: {
-      label: "HUSHH LIVE",
-      bg: "linear-gradient(135deg, hsl(280 90% 60%), hsl(200 90% 55%))",
-      icon: <Zap size={11} className="text-primary-foreground" />,
-    },
-  },
-  {
-    color: "hsl(43 96% 56%)",
-    tag: {
-      label: "LIMITED SLOTS",
-      bg: "linear-gradient(135deg, hsl(43 96% 50%), hsl(30 90% 45%))",
-      icon: <Sparkles size={11} className="text-primary-foreground" />,
-    },
-  },
-  {
-    color: "hsl(270 80% 65%)",
-    tag: {
-      label: "EDITOR'S PICK",
-      bg: "linear-gradient(135deg, hsl(270 80% 65%), hsl(320 80% 60%))",
-      icon: <Sparkles size={11} className="text-primary-foreground" />,
-    },
-  },
-  {
-    color: "hsl(var(--primary))",
-    tag: {
-      label: "TRENDING",
-      bg: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))",
-      icon: <Sparkles size={11} className="text-primary-foreground" />,
-    },
-  },
+  { color: "hsl(0 85% 55%)", tag: { label: "TONIGHT'S PICK", bg: "linear-gradient(135deg, hsl(0 85% 55%), hsl(35 95% 55%))", icon: <Flame size={11} className="text-primary-foreground" /> } },
+  { color: "hsl(var(--primary))", tag: { label: "CURATED", bg: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))", icon: <Sparkles size={11} className="text-primary-foreground" /> } },
+  { color: "hsl(280 90% 60%)", tag: { label: "HUSHH LIVE", bg: "linear-gradient(135deg, hsl(280 90% 60%), hsl(200 90% 55%))", icon: <Zap size={11} className="text-primary-foreground" /> } },
+  { color: "hsl(43 96% 56%)", tag: { label: "LIMITED SLOTS", bg: "linear-gradient(135deg, hsl(43 96% 50%), hsl(30 90% 45%))", icon: <Sparkles size={11} className="text-primary-foreground" /> } },
+  { color: "hsl(270 80% 65%)", tag: { label: "EDITOR'S PICK", bg: "linear-gradient(135deg, hsl(270 80% 65%), hsl(320 80% 60%))", icon: <Sparkles size={11} className="text-primary-foreground" /> } },
+  { color: "hsl(var(--primary))", tag: { label: "TRENDING", bg: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))", icon: <Sparkles size={11} className="text-primary-foreground" /> } },
 ];
 
 interface SpotlightCarouselProps {
@@ -109,49 +67,33 @@ interface SpotlightCarouselProps {
   onToggleWishlist?: (id: string) => void;
 }
 
-function VideoCard({
-  property,
-  videoSrc,
-  overlayText,
-  isActive,
-  onTap,
-  dateLabel,
-  accent,
-  isSaved,
-  onToggleSave,
-  isFirst,
+const VideoCard = memo(function VideoCard({
+  property, videoSrc, overlayText, isActive, onTap, dateLabel, accent, isSaved, onToggleSave, isFirst,
 }: {
-  property: Property;
-  videoSrc: string;
-  overlayText: string;
-  isActive: boolean;
-  onTap: () => void;
-  dateLabel: string;
-  accent: VideoAccent;
-  isSaved?: boolean;
-  onToggleSave?: (id: string) => void;
-  isFirst?: boolean;
+  property: Property; videoSrc: string; overlayText: string; isActive: boolean; onTap: () => void;
+  dateLabel: string; accent: VideoAccent; isSaved?: boolean; onToggleSave?: (id: string) => void; isFirst?: boolean;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const [muted, setMuted] = useState(true);
   const saved = isSaved ?? false;
   const [videoReady, setVideoReady] = useState(false);
-  const [shouldLoad, setShouldLoad] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const card = cardRef.current;
     if (!card) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          const video = videoRef.current;
-          if (video) video.play().catch(() => {});
+        const vis = entry.isIntersecting;
+        setIsVisible(vis);
+        if (vis) {
+          videoRef.current?.play().catch(() => {});
         } else {
           videoRef.current?.pause();
         }
       },
-      { threshold: [0, 0.1], rootMargin: "400px" }
+      { threshold: 0.1, rootMargin: "200px" }
     );
     observer.observe(card);
     return () => observer.disconnect();
@@ -160,7 +102,7 @@ function VideoCard({
   return (
     <div
       ref={cardRef}
-      className="shrink-0 cursor-pointer"
+      className="shrink-0 cursor-pointer will-change-transform"
       style={{
         width: "85vw",
         maxWidth: "380px",
@@ -177,85 +119,78 @@ function VideoCard({
           className="relative w-full h-full overflow-hidden rounded-[20px]"
           style={{ border: "1px solid hsl(var(--border) / 0.24)" }}
         >
-
-        {/* Buffering skeleton — shows until video is ready */}
-        {!videoReady && (
-          <div className="absolute inset-0 z-[2] pointer-events-none">
-            <OptimizedImage
-              src={property.images[0]}
-              alt={property.name}
-              fill
-              className="object-cover"
-              sizes="(max-width: 640px) 85vw, 380px"
-              priority={isFirst}
-            />
-            <div className="absolute inset-0 video-buffer-shimmer" />
-          </div>
-        )}
-        {shouldLoad && (
-          <video
-            ref={videoRef}
-            src={videoSrc}
-            muted={muted}
-            autoPlay
-            loop
-            playsInline
-            preload="auto"
-            onCanPlay={() => setVideoReady(true)}
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.5s" }}
+          {/* Background poster — always visible */}
+          <OptimizedImage
+            src={property.images[0]}
+            alt={property.name}
+            fill
+            className="object-cover"
+            sizes="(max-width: 640px) 85vw, 380px"
+            priority={isFirst}
           />
-        )}
+          {/* Shimmer while video loads */}
+          {!videoReady && <div className="absolute inset-0 z-[2] pointer-events-none video-buffer-shimmer" />}
 
-        <AccentTag tag={accent.tag} className="absolute top-4 left-4 z-10" />
+          {/* Video — only load when visible */}
+          {isVisible && (
+            <video
+              ref={videoRef}
+              src={videoSrc}
+              muted={muted}
+              loop
+              playsInline
+              preload="metadata"
+              onCanPlay={() => setVideoReady(true)}
+              className="absolute inset-0 w-full h-full object-cover z-[1]"
+              style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.4s" }}
+            />
+          )}
 
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setMuted(!muted);
-          }}
-          className="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md z-10"
-          style={{ background: "hsl(var(--foreground) / 0.36)" }}
-        >
-          {muted ? <VolumeX size={18} className="text-white" /> : <Volume2 size={18} className="text-white" />}
-        </button>
-
-        <div className="absolute inset-0 flex items-end pointer-events-none" style={{ paddingBottom: "38%" }}>
-          <p
-            className="text-[26px] font-black italic text-white/90 leading-[1.15] px-5"
-            style={{ fontFamily: "'Playfair Display', serif", textShadow: "0 2px 8px rgba(0,0,0,0.8), 0 4px 24px rgba(0,0,0,0.5)" }}
+          {/* Tag + mute button — ALWAYS visible */}
+          <AccentTag tag={accent.tag} className="absolute top-4 left-4 z-10" />
+          <button
+            onClick={(e) => { e.stopPropagation(); setMuted(!muted); }}
+            className="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md z-10"
+            style={{ background: "hsl(var(--foreground) / 0.36)" }}
           >
-            {overlayText}
-          </p>
-        </div>
+            {muted ? <VolumeX size={18} className="text-white" /> : <Volume2 size={18} className="text-white" />}
+          </button>
 
-        <div
-          className="absolute bottom-0 left-0 right-0 p-5"
-          style={{ background: "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.7) 45%, rgba(0,0,0,0.25) 70%, transparent 100%)" }}
-        >
-          <div className="flex items-end justify-between">
-            <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-bold text-primary mb-1">{dateLabel}</p>
-              <h3 className="text-[22px] font-extrabold text-white leading-tight line-clamp-2" style={{ textShadow: "0 1px 6px rgba(0,0,0,0.5)" }}>{property.name}</h3>
-              <p className="text-[13px] text-white/75 font-medium mt-1">{property.location}</p>
-            </div>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggleSave?.(property.id);
-              }}
-              className="w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md ml-3 shrink-0 active:scale-110 transition-transform"
-              style={{ background: "hsl(var(--foreground) / 0.36)" }}
+          {/* Overlay text — ALWAYS visible */}
+          <div className="absolute inset-0 flex items-end pointer-events-none z-[5]" style={{ paddingBottom: "38%" }}>
+            <p
+              className="text-[26px] font-black italic text-white/90 leading-[1.15] px-5"
+              style={{ fontFamily: "'Playfair Display', serif", textShadow: "0 2px 8px rgba(0,0,0,0.8), 0 4px 24px rgba(0,0,0,0.5)" }}
             >
-              <Bookmark size={18} className={saved ? "text-primary fill-primary" : "text-white"} />
-            </button>
+              {overlayText}
+            </p>
           </div>
-        </div>
+
+          {/* Bottom details — ALWAYS visible */}
+          <div
+            className="absolute bottom-0 left-0 right-0 p-5 z-[5]"
+            style={{ background: "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.7) 45%, rgba(0,0,0,0.25) 70%, transparent 100%)" }}
+          >
+            <div className="flex items-end justify-between">
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] font-bold text-primary mb-1">{dateLabel}</p>
+                <h3 className="text-[22px] font-extrabold text-white leading-tight line-clamp-2" style={{ textShadow: "0 1px 6px rgba(0,0,0,0.5)" }}>{property.name}</h3>
+                <p className="text-[13px] text-white/75 font-medium mt-1">{property.location}</p>
+              </div>
+              <button
+                onClick={(e) => { e.stopPropagation(); onToggleSave?.(property.id); }}
+                className="w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md ml-3 shrink-0 active:scale-110 transition-transform"
+                style={{ background: "hsl(var(--foreground) / 0.36)" }}
+              >
+                <Bookmark size={18} className={saved ? "text-primary fill-primary" : "text-white"} />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
-}
+});
 
 export default function SpotlightCarousel({ properties, onPropertyTap, category = "home", wishlist = [], onToggleWishlist }: SpotlightCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -268,7 +203,6 @@ export default function SpotlightCarousel({ properties, onPropertyTap, category 
   const videos = videosByCategory[category] || videosByCategory.home;
   const overlays = overlaysByCategory[category] || overlaysByCategory.home;
 
-  // Build per-card overrides from DB config
   const getCardConfig = useCallback((index: number) => {
     const dbCard = dbVideoCards[index];
     const fallbackVideo = videos[index % videos.length];
@@ -276,24 +210,16 @@ export default function SpotlightCarousel({ properties, onPropertyTap, category 
     const fallbackAccent = accentStyles[index % accentStyles.length];
 
     if (dbCard) {
-      // Use DB video_url if set, otherwise fall back to hardcoded
       const videoUrl = dbCard.video_url?.trim() ? dbCard.video_url : fallbackVideo;
       const overlayText = dbCard.overlay_text?.trim() ? dbCard.overlay_text : fallbackOverlay;
-      // Build accent from DB tag config
       const accent: VideoAccent = {
         color: fallbackAccent.color,
         tag: {
           label: dbCard.tag_label || fallbackAccent.tag.label,
-          bg: dbCard.tag_color
-            ? `linear-gradient(135deg, var(--tw-gradient-stops))` // CSS gradient classes won't work in inline style
-            : fallbackAccent.tag.bg,
+          bg: dbCard.tag_color && !dbCard.tag_color.startsWith("linear") ? fallbackAccent.tag.bg : (dbCard.tag_color || fallbackAccent.tag.bg),
           icon: fallbackAccent.tag.icon,
         },
       };
-      // If tag_color is a tailwind gradient string like "from-red-500 to-orange-500", keep the default bg style
-      if (dbCard.tag_color && !dbCard.tag_color.startsWith("linear")) {
-        accent.tag.bg = fallbackAccent.tag.bg; // keep fallback gradient for inline style
-      }
       return { videoUrl, overlayText, accent };
     }
     return { videoUrl: fallbackVideo, overlayText: fallbackOverlay, accent: fallbackAccent };
