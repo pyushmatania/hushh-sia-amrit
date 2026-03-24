@@ -766,7 +766,7 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
         {statCards.map((card, i) => (
           <motion.div key={card.label}
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06, duration: 0.4 }}
-            className="rounded-2xl bg-card border border-border/60 p-3.5 hover:border-primary/20 transition-colors group"
+            className="rounded-2xl bg-card border border-border/60 p-3.5 lg:p-5 hover:border-primary/20 transition-colors group"
           >
             <div className="flex items-center justify-between mb-2.5">
               <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${card.accent} flex items-center justify-center`}>
