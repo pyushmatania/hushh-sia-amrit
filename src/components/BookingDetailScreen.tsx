@@ -106,7 +106,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
       className="fixed inset-0 z-30 bg-mesh overflow-y-auto pb-32"
     >
       {/* Header */}
-      <div className="sticky top-0 z-10 glass px-5 md:px-8 lg:px-16 xl:px-24 py-3">
+      <div className="sticky top-0 z-10 glass px-5 md:px-8 py-3"><div className="md:max-w-5xl md:mx-auto flex items-center gap-3">
         <div className="flex items-center gap-3">
           <motion.button
             onClick={onBack}
