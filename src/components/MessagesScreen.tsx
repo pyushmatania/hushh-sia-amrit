@@ -649,6 +649,7 @@ export default function MessagesScreen() {
     : dynamicMockThreads.map(t => ({ ...t, pinned: pinnedIds.has(t.id), conversation: null as Conversation | null }));
 
   const visibleChats = chatThreads.filter(t => !archivedIds.has(t.id));
+  const archivedChats = chatThreads.filter(t => archivedIds.has(t.id));
   const filteredChats = searchQuery ? visibleChats.filter(t => t.name.toLowerCase().includes(searchQuery.toLowerCase()) || t.lastMessage.toLowerCase().includes(searchQuery.toLowerCase())) : visibleChats;
   const pinnedChats = filteredChats.filter(t => t.pinned);
   const activeTrip = filteredChats.filter(t => !t.pinned && (t.tripStatus === "active" || t.tripStatus === "upcoming"));
