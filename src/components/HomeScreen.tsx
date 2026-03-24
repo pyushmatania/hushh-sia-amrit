@@ -259,9 +259,9 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               if (isSectionVisible("curated_packs")) {
                 homeSections.push({ key: "curated_packs", order: getSortOrder("curated_packs"), node: (
                   <LazySection minHeight="400px">
-                    <SectionTitle title="✨ CURATED PACKS" />
+              <SectionTitle title="✨ CURATED PACKS" />
                     <div className="space-y-5 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
-                      {filteredPacks.slice(0, 4).map((pack, i) => (
+                      {filteredPacks.slice(0, 6).map((pack, i) => (
                         <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
                       ))}
                     </div>
@@ -502,6 +502,18 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 <p className="text-xs text-muted-foreground md:text-sm">Work & Chill, Day Escape, Game Night — perfect for weekdays!</p>
               </div>
             </>
+          )}
+
+          {/* ═══════ HOME: CURATIONS & EXPERIENCES SECTION ═══════ */}
+          {activeCategory === "home" && experiencePacks.length > 0 && (
+            <LazySection minHeight="400px" rootMargin="300px">
+              <SectionTitle title="🎯 CURATED EXPERIENCES" />
+              <div className="space-y-5 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+                {experiencePacks.slice(0, 6).map((pack, i) => (
+                  <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
+                ))}
+              </div>
+            </LazySection>
           )}
 
           {/* ═══════ ALL LISTINGS ═══════ */}
