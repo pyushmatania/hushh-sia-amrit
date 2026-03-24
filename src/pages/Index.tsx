@@ -191,11 +191,11 @@ export default function Index() {
   }, [cancelBooking]);
 
   const handleRebook = useCallback((propertyId: string) => {
-    const property = properties.find(p => p.id === propertyId);
+    const property = liveProperties.find(p => p.id === propertyId);
     if (property) {
       setScreen({ type: "detail", property });
     }
-  }, []);
+  }, [liveProperties]);
 
   const handleOpenHostDashboard = useCallback(() => {
     setScreen({ type: "hostDashboard" });

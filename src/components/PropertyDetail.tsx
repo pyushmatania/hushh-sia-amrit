@@ -566,6 +566,11 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
   const liked = isWishlisted;
   const [imgLoaded, setImgLoaded] = useState(false);
 
+  useEffect(() => {
+    setImgIndex(0);
+    setImgLoaded(false);
+  }, [property.id]);
+
   const heroX = useMotionValue(0);
   const heroOpacity = useTransform(heroX, [-120, 0, 120], [0.4, 1, 0.4]);
 
