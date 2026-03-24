@@ -487,12 +487,12 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 ))}
               </div>
 
-              <div className="mx-4 mt-6 p-4 rounded-2xl border border-foreground/10" style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(6,95,70,0.15) 100%)" }}>
+              <div className="mx-4 mt-6 p-4 rounded-2xl border border-foreground/10 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32" style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(6,95,70,0.15) 100%)" }}>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-lg">💸</span>
-                  <h3 className="text-sm font-bold text-foreground">Budget Combos from ₹299</h3>
+                  <h3 className="text-sm font-bold text-foreground md:text-base">Budget Combos from ₹299</h3>
                 </div>
-                <p className="text-xs text-muted-foreground">Work & Chill, Day Escape, Game Night — perfect for weekdays!</p>
+                <p className="text-xs text-muted-foreground md:text-sm">Work & Chill, Day Escape, Game Night — perfect for weekdays!</p>
               </div>
             </>
           )}
