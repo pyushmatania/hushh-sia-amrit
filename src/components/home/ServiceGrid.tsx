@@ -489,12 +489,7 @@ export default function ServiceGrid({ services, onServiceTap }: ServiceGridProps
         </div>
       ) : (
         <div className="grid grid-cols-4 gap-5 pb-6">
-          {services.map((s, i) => {
-            if (i % 7 === 0 && i > 0) return <DesktopPanoCard key={s.id} service={s} onTap={onServiceTap} index={i} />;
-            if (i % 5 === 0) return <DesktopOverlayCard key={s.id} service={s} onTap={onServiceTap} index={i} />;
-            if (i % 3 === 0) return <DesktopGlassCard key={s.id} service={s} onTap={onServiceTap} index={i} />;
-            return <DesktopMinimalCard key={s.id} service={s} onTap={onServiceTap} index={i} />;
-          })}
+          {services.map((s, i) => <DesktopServiceCard key={s.id} service={s} onTap={onServiceTap} index={i} />)}
         </div>
       )}
     </div>
