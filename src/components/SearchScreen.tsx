@@ -151,7 +151,7 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
         </div>
 
         {/* Filter & Sort Row */}
-        <div className="flex items-center gap-2 mt-3 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-2 mt-3 overflow-x-auto no-scrollbar md:max-w-3xl md:mx-auto md:flex-wrap md:overflow-visible">
           <button
             onClick={() => setShowFilters(!showFilters)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all shrink-0 ${
