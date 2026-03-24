@@ -61,7 +61,7 @@ export default function ReferralScreen({ onBack }: ReferralScreenProps) {
         </div>
       </div>
 
-      <div className="px-5 py-6">
+      <div className="px-5 py-6 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:max-w-4xl md:mx-auto">
         {/* Hero */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
