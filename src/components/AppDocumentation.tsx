@@ -1437,7 +1437,7 @@ function MobileTab() {
       </DocSection>
 
       <div className="text-center py-4">
-        <p className="text-[10px] text-muted-foreground"><Smartphone size={10} className="inline text-primary mr-1" />Mobile Blueprint v1.28 · Reference for web expansion</p>
+        <p className="text-[10px] text-muted-foreground"><Smartphone size={10} className="inline text-primary mr-1" />Mobile Blueprint v1.35 · Reference for web expansion</p>
       </div>
     </div>
   );
