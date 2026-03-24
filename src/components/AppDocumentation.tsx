@@ -487,7 +487,7 @@ function OverviewTab() {
       </div>
 
       <div className="text-center py-4">
-        <p className="text-[10px] text-muted-foreground"><Sparkles size={10} className="inline text-primary mr-1" />Hushh v1.27 · Made in Jeypore ❤️</p>
+        <p className="text-[10px] text-muted-foreground"><Sparkles size={10} className="inline text-primary mr-1" />Hushh v1.28 · Made in Jeypore ❤️</p>
       </div>
     </div>
   );
