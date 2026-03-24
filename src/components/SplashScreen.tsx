@@ -114,7 +114,7 @@ function getTimeConfig(variant: string = "1") {
   return {
     greeting: "Good Night",
     emoji: "🌙",
-    bg: isV2 ? splash2Night : (isDesktop ? splashNightDesktop : splashNight),
+    bg: isV2 ? (isDesktop ? splash2NightDesktop : splash2Night) : (isDesktop ? splashNightDesktop : splashNight),
     overlay: "linear-gradient(180deg, hsla(0,0%,0%,0.2) 0%, hsla(0,0%,0%,0.05) 40%, hsla(0,0%,0%,0.55) 100%)",
     hasFireflies: true,
     hasShootingStars: true,
