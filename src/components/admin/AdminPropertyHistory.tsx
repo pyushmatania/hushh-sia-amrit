@@ -202,6 +202,7 @@ function AISearchBar({ onResult, properties }: { onResult: (answer: string) => v
       title="Property Intelligence"
       subtitle="Search across all property history & analytics"
       placeholder="Who stayed in the villa last weekend?"
+      contextKey="properties"
       examples={[
         "Who stayed in the villa last weekend?",
         "How many times was Maggi ordered this month?",
