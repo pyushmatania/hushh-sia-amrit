@@ -463,6 +463,22 @@ function RelatedPropertyRow({ relatedProperty, added, onToggle, onViewDetails }:
   );
 }
 
+/* Character avatars for host DPs */
+import avatarChar1 from "@/assets/avatar-char-1.webp";
+import avatarChar2 from "@/assets/avatar-char-2.webp";
+import avatarChar3 from "@/assets/avatar-char-3.webp";
+import avatarChar4 from "@/assets/avatar-char-4.webp";
+import avatarChar5 from "@/assets/avatar-char-5.webp";
+import avatarChar6 from "@/assets/avatar-char-6.webp";
+import avatarChar7 from "@/assets/avatar-char-7.webp";
+import avatarChar8 from "@/assets/avatar-char-8.webp";
+const hostAvatars = [avatarChar1, avatarChar2, avatarChar3, avatarChar4, avatarChar5, avatarChar6, avatarChar7, avatarChar8];
+function getHostAvatar(name: string) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = ((hash << 5) - hash + name.charCodeAt(i)) | 0;
+  return hostAvatars[Math.abs(hash) % hostAvatars.length];
+}
+
 interface PropertyDetailProps {
   property: Property;
   onBack: () => void;
@@ -470,9 +486,10 @@ interface PropertyDetailProps {
   onPropertyTap?: (property: Property) => void;
   isWishlisted?: boolean;
   onToggleWishlist?: (id: string) => void;
+  onHostChat?: (hostName: string, propertyId: string) => void;
 }
 
-export default function PropertyDetail({ property, onBack, onBook, onPropertyTap, isWishlisted = false, onToggleWishlist }: PropertyDetailProps) {
+export default function PropertyDetail({ property, onBack, onBook, onPropertyTap, isWishlisted = false, onToggleWishlist, onHostChat }: PropertyDetailProps) {
   const { properties: allProperties } = usePropertiesData();
   const [imgIndex, setImgIndex] = useState(0);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
