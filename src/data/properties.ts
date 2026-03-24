@@ -30,6 +30,14 @@ import listingHushhRides from "@/assets/listing-hushh-rides.webp";
 import listingChefOnCall from "@/assets/listing-chef-on-call.webp";
 import listingPartyDecor from "@/assets/listing-party-decor.webp";
 import listingDjSound from "@/assets/listing-dj-sound.webp";
+import curationAfterHours from "@/assets/curation-after-hours.jpg";
+import curationPartyScene from "@/assets/curation-party-scene.jpg";
+import curationJustUsNight from "@/assets/curation-just-us-night.jpg";
+import curationBbqBonfire from "@/assets/curation-bbq-bonfire.jpg";
+import curationMovieNight from "@/assets/curation-movie-night.jpg";
+import curationGameNight from "@/assets/curation-game-night.jpg";
+import curationWorkEscape from "@/assets/curation-work-escape.jpg";
+import curationTeamWork from "@/assets/curation-team-work.jpg";
 
 export interface TimeSlot {
   id: string;
@@ -1354,7 +1362,7 @@ export const curatedCombos: CuratedCombo[] = [
     time: "7 PM – 11 PM",
     priceRange: [999, 1999],
     includes: ["Bonfire 🔥", "Maggi 🍜", "Beer 🍺", "Old songs playlist 🎶", "Blankets"],
-    image: listingEmberGrounds,
+    image: curationAfterHours,
     gradient: "from-orange-600/80 to-amber-900/60",
     tags: ["🔥 Hot", "🌙 Night Special"],
     popular: true,
@@ -1367,7 +1375,7 @@ export const curatedCombos: CuratedCombo[] = [
     time: "6 PM – 10 PM",
     priceRange: [1499, 2999],
     includes: ["Candle setup 🕯️", "Soft music 🎵", "3-course dinner 🍽️", "Rose petals", "Champagne 🥂"],
-    image: listingCoupleCocoon,
+    image: curationJustUsNight,
     gradient: "from-rose-600/80 to-pink-900/60",
     tags: ["💑 Couple Friendly", "✨ Premium"],
     popular: true,
@@ -1380,7 +1388,7 @@ export const curatedCombos: CuratedCombo[] = [
     time: "7 PM – 12 AM",
     priceRange: [1999, 3999],
     includes: ["Speaker system 🔊", "LED lights 💡", "Snacks 🍿", "Drinks 🍹", "Fog machine"],
-    image: listingEmberGrounds,
+    image: curationPartyScene,
     gradient: "from-purple-600/80 to-violet-900/60",
     tags: ["🎉 Party Ready", "🔥 Trending"],
   },
@@ -1405,7 +1413,7 @@ export const curatedCombos: CuratedCombo[] = [
     time: "6 PM – 10 PM",
     priceRange: [1499, 2999],
     includes: ["BBQ platter 🍗", "Bonfire 🔥", "Drinks 🍺", "Stargazing 🌌", "Marshmallows"],
-    image: listingFireflyVilla,
+    image: curationBbqBonfire,
     gradient: "from-red-600/80 to-orange-900/60",
     tags: ["🔥 Hot", "🍗 Foodie"],
   },
@@ -1417,7 +1425,7 @@ export const curatedCombos: CuratedCombo[] = [
     time: "10 AM – 4 PM",
     priceRange: [299, 599],
     includes: ["High-speed WiFi ⚡", "Unlimited coffee ☕", "Quiet workspace 🔇", "Snacks 🍪", "Power backup"],
-    image: listingWorkPod,
+    image: curationWorkEscape,
     gradient: "from-emerald-600/80 to-teal-900/60",
     tags: ["💻 Work Friendly", "💸 Budget Friendly"],
     popular: true,
@@ -1442,7 +1450,7 @@ export const curatedCombos: CuratedCombo[] = [
     time: "8 PM – 11 PM",
     priceRange: [999, 1999],
     includes: ["25ft screen 🎬", "Popcorn 🍿", "Bean bags 🛋️", "Drinks 🍹", "Blankets"],
-    image: listingMovieAmphitheater,
+    image: curationMovieNight,
     gradient: "from-indigo-600/80 to-slate-900/60",
     tags: ["🎬 Movie Night", "🌟 Popular"],
   },
@@ -1454,7 +1462,7 @@ export const curatedCombos: CuratedCombo[] = [
     time: "7 PM – 11 PM",
     priceRange: [799, 1499],
     includes: ["PS5 console 🎮", "Board games 🎲", "Snacks 🍕", "Drinks 🥤", "Score tracking"],
-    image: listingKaraokeCube,
+    image: curationGameNight,
     gradient: "from-green-600/80 to-emerald-900/60",
     tags: ["🎮 Gaming", "🎉 Fun"],
   },
