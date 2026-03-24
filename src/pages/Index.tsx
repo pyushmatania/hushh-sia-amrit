@@ -192,6 +192,20 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
+      <DesktopTopNav
+        active={activeTab}
+        onChange={(tab) => {
+          if (tab === "hostDashboard") {
+            handleOpenHostDashboard();
+          } else {
+            setActiveTab(tab);
+            setScreen({ type: "home" });
+          }
+        }}
+        messageBadge={unreadCount}
+        onNotificationTap={() => setShowNotifications(true)}
+      />
+      <div className="md:pt-16">
       <Suspense fallback={lazyFallback}>
       <AnimatePresence mode="wait">
         {screen.type === "home" && activeTab === "home" && (
