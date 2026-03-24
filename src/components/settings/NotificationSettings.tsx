@@ -162,42 +162,53 @@ export default function NotificationSettings() {
 
   // Send a REAL iOS push notification via the edge function
   const sendPushNotification = useCallback(async (testNotif: typeof PUSH_TEST_NOTIFICATIONS[0]) => {
-    if (!user) {
-      toast({ title: "Login required", description: "Sign in to test push notifications", variant: "destructive" });
-      return;
-    }
     setIsSendingTest(testNotif.key);
     try {
       const payload: Record<string, any> = { ...testNotif.payload };
-      // Replace personalization tokens
       payload.title = payload.title.replace(/\{name\}/g, displayName);
       payload.body = payload.body.replace(/\{name\}/g, displayName).replace(/\{location\}/g, userLocation);
       payload.url = "/";
       payload.icon = "/icon-192.png";
 
-      const { data, error } = await supabase.functions.invoke("send-push-notification", {
-        body: { user_id: user.id, payload },
-      });
+      let pushSent = 0;
 
-      if (error) throw error;
+      if (user) {
+        // Try real push via edge function
+        try {
+          const { data, error } = await supabase.functions.invoke("send-push-notification", {
+            body: { user_id: user.id, payload },
+          });
+          if (!error) pushSent = data?.sent || 0;
+        } catch {}
 
-      // Also insert into notifications table for in-app tracking
-      await supabase.from("notifications").insert({
-        user_id: user.id,
-        type: testNotif.key,
-        title: payload.title,
-        body: payload.body,
-        icon: testNotif.label.split(" ")[0], // emoji
-      });
+        // Also insert into notifications table for in-app tracking
+        await supabase.from("notifications").insert({
+          user_id: user.id,
+          type: testNotif.key,
+          title: payload.title,
+          body: payload.body,
+          icon: testNotif.label.split(" ")[0],
+        });
+      }
 
-      const sent = data?.sent || 0;
+      // Always show in-app toast as fallback / confirmation
       toast({
-        title: sent > 0 ? `${testNotif.label.split(" ")[0]} Push sent!` : "No push subscription found",
-        description: sent > 0 ? `Delivered to ${sent} device(s)` : "Enable push notifications first",
+        title: `${testNotif.label.split(" ")[0]} ${payload.title}`,
+        description: payload.body,
       });
+
+      // Try browser notification if permitted (works without auth)
+      if ("Notification" in window && Notification.permission === "granted") {
+        try {
+          const opts: NotificationOptions = { body: payload.body, icon: "/icon-192.png", tag: payload.tag };
+          if (payload.image) (opts as any).image = payload.image;
+          new window.Notification(payload.title, opts);
+        } catch {}
+      }
+
       setPushSentCount(c => c + 1);
     } catch (err: any) {
-      toast({ title: "Push failed", description: err.message, variant: "destructive" });
+      toast({ title: "Notification failed", description: err.message, variant: "destructive" });
     }
     setIsSendingTest(null);
   }, [user, displayName, userLocation, toast]);
@@ -205,26 +216,31 @@ export default function NotificationSettings() {
   // Send all test pushes
   const sendAllPushNotifications = async () => {
     setIsSendingTest("all");
-    for (const n of PUSH_TEST_NOTIFICATIONS) {
-      await sendPushNotification(n);
-      await new Promise(r => setTimeout(r, 800));
+    for (let i = 0; i < PUSH_TEST_NOTIFICATIONS.length; i++) {
+      if (i > 0) await new Promise(r => setTimeout(r, (pushTimer || 5) * 1000));
+      await sendPushNotification(PUSH_TEST_NOTIFICATIONS[i]);
     }
     setIsSendingTest(null);
   };
 
   // Auto-repeat timer — cycles through notification types
   const startPushTimer = useCallback(() => {
-    if (!user || pushTimer === 0) return;
+    if (pushTimer === 0) return;
     setPushTimerActive(true);
     pushIndexRef.current = 0;
     setPushSentCount(0);
+
+    // Send first one immediately
+    const firstNotif = PUSH_TEST_NOTIFICATIONS[0];
+    sendPushNotification(firstNotif);
+    pushIndexRef.current = 1;
 
     pushTimerRef.current = setInterval(() => {
       const notif = PUSH_TEST_NOTIFICATIONS[pushIndexRef.current % PUSH_TEST_NOTIFICATIONS.length];
       sendPushNotification(notif);
       pushIndexRef.current++;
     }, pushTimer * 1000);
-  }, [user, pushTimer, sendPushNotification]);
+  }, [pushTimer, sendPushNotification]);
 
   const stopPushTimer = useCallback(() => {
     if (pushTimerRef.current) clearInterval(pushTimerRef.current);
@@ -320,10 +336,10 @@ export default function NotificationSettings() {
 
       {/* Send all button */}
       <motion.button whileTap={{ scale: 0.97 }} onClick={sendAllPushNotifications}
-        disabled={!!isSendingTest || !isSubscribed}
+        disabled={!!isSendingTest}
         className="w-full py-2.5 rounded-xl text-xs font-bold text-primary-foreground flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-primary/80 shadow-md disabled:opacity-40 mb-2">
         {isSendingTest === "all" ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
-        Send All 8 Push Notifications
+        Send All ({pushTimer || 5}s interval)
       </motion.button>
 
       {/* Individual test buttons */}
@@ -337,7 +353,7 @@ export default function NotificationSettings() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04 }}
               whileTap={{ scale: 0.95 }}
-              disabled={!!isSendingTest || !isSubscribed}
+              disabled={!!isSendingTest}
               onClick={() => sendPushNotification(tn)}
               className="relative overflow-hidden rounded-xl p-3 text-left transition-all disabled:opacity-40 border border-border bg-card hover:shadow-md group"
             >
@@ -404,7 +420,7 @@ export default function NotificationSettings() {
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={startPushTimer}
-              disabled={pushTimer === 0 || !isSubscribed}
+              disabled={pushTimer === 0}
               className="flex-1 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 bg-emerald-500 text-white shadow-md disabled:opacity-40"
             >
               <Play size={14} /> Start Timer ({pushTimer}s)
@@ -421,7 +437,7 @@ export default function NotificationSettings() {
         </div>
 
         {!isSubscribed && (
-          <p className="text-[10px] text-destructive font-semibold text-center">⚠ Enable push notifications above first</p>
+          <p className="text-[10px] text-muted-foreground text-center">💡 Enable push above for real iOS notifications. In-app toasts work without it.</p>
         )}
       </div>
 
