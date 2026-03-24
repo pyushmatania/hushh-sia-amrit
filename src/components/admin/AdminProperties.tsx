@@ -382,7 +382,7 @@ export default function AdminProperties() {
           <button onClick={openCreate} className="mt-3 text-sm text-primary font-medium">Create one →</button>
         </div>
       ) : viewMode === "grid" ? (
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
           {filtered.map((listing, i) => (
             <motion.div key={listing.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03 }}
