@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Phone, Mail, MessageCircle as WhatsAppIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import PublicProfileScreen from "./PublicProfileScreen";
+const WallpapersPage = lazy(() => import("@/pages/Wallpapers"));
 import {
   ChevronRight, Bell, Settings, HelpCircle, LogOut,
   Shield, Gift, Star, Sun, Moon, Monitor, BadgeCheck,
@@ -9,7 +10,7 @@ import {
   Award, Zap, Calendar, TrendingUp, Crown, Pencil, LogIn, EyeOff,
   MapPin, Clock, Users, ArrowLeft, ChevronLeft, HardDrive
 } from "lucide-react";
-import { useState, useCallback, useRef, useMemo } from "react";
+import { useState, useCallback, useRef, useMemo, lazy, Suspense } from "react";
 import type { Booking } from "@/pages/Index";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { useTheme } from "@/hooks/use-theme";
@@ -82,6 +83,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
   const [showHelpCentre, setShowHelpCentre] = useState(false);
   const [showLegal, setShowLegal] = useState(false);
   const [showDocs, setShowDocs] = useState(false);
+  const [showWallpapers, setShowWallpapers] = useState(false);
   const versionTapCount = useRef(0);
   const versionTapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [showPastTrips, setShowPastTrips] = useState(false);
@@ -603,15 +605,21 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
         </div>
       )}
 
-      {/* Version — tap 5× to reveal docs */}
+      {/* Version — tap 5× for docs, 7× for wallpapers */}
       <p
         className="text-center text-[11px] text-muted-foreground pb-4 cursor-pointer select-none"
         onClick={() => {
           versionTapCount.current += 1;
           if (versionTapTimer.current) clearTimeout(versionTapTimer.current);
-          if (versionTapCount.current >= 5) {
+          if (versionTapCount.current >= 7) {
             versionTapCount.current = 0;
-            setShowDocs(true);
+            setShowWallpapers(true);
+          } else if (versionTapCount.current >= 5) {
+            // don't reset yet — wait for 7
+            versionTapTimer.current = setTimeout(() => {
+              if (versionTapCount.current >= 5) setShowDocs(true);
+              versionTapCount.current = 0;
+            }, 800);
           } else {
             versionTapTimer.current = setTimeout(() => {
               versionTapCount.current = 0;
@@ -769,6 +777,22 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
       <AnimatePresence>
         {showDocs && (
           <AppDocumentation open={showDocs} onClose={() => setShowDocs(false)} />
+        )}
+      </AnimatePresence>
+
+      {/* Wallpapers Easter Egg */}
+      <AnimatePresence>
+        {showWallpapers && (
+          <motion.div
+            className="fixed inset-0 z-[60] bg-background"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 40 }}
+          >
+            <Suspense fallback={<div className="h-screen flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" /></div>}>
+              <WallpapersPage onBack={() => setShowWallpapers(false)} />
+            </Suspense>
+          </motion.div>
         )}
       </AnimatePresence>
 
