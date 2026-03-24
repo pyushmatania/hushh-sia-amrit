@@ -1,6 +1,6 @@
 # 🏡 HUSHH — Private Experience Marketplace
 
-> **Made in Jeypore ❤️** | v1.34 | Internal Documentation & Blueprint
+> **Made in Jeypore ❤️** | v1.35 | Internal Documentation & Blueprint
 
 Hushh is a premium mobile-first marketplace for booking private experiences, stays, and curated lifestyle services in Jeypore, India. Think Airbnb meets a concierge — but hyper-local, with a focus on curated combos and on-demand add-ons.
 
@@ -1571,7 +1571,7 @@ Theme-aware utilities: `glass`/`glass-light`, `glow-sm/md/lg`, `shadow-card/elev
 | server.url | `https://hushh-jeypore.lovable.app` (live — instant updates) |
 | Build pipeline | GitHub Actions → npm install → build → cap add android → cap sync → gradlew assembleDebug → APK artifact |
 
-### Native Plugins (v1.34)
+### Native Plugins (v1.35)
 
 | Plugin | Purpose | Bridge File |
 |--------|---------|-------------|
@@ -1598,6 +1598,17 @@ All native bridges follow a consistent fallback pattern:
 Capacitor Native Plugin → Web API → Graceful no-op
 ```
 Example: Share → `@capacitor/share` → `navigator.share()` → `clipboard.writeText()` → silent fail
+
+### Native-Grade Caching (v1.35)
+
+| Feature | Details |
+|---------|---------|
+| **Native Data Cache** | `src/lib/native-cache.ts` — cacheSet/cacheGet with TTL + stale-while-revalidate |
+| **Prefetch on Launch** | Listings, curations, packages, app_config cached on cold start via `prefetchCriticalData()` |
+| **CapacitorHttp** | Native HTTP stack enabled — bypasses WebView CORS, faster API calls |
+| **WebView Tuning** | `androidScheme:'https'`, `allowMixedContent:true`, `captureInput:true`, `backgroundColor:#050505` |
+| **Keyboard** | `resize:'body'`, `resizeOnFullScreen:true` — no layout reflow on input focus |
+| **Launch Flow** | `initNativePlugins()` → `prefetchCriticalData()` → React render with cached data available instantly |
 
 ### PWA Configuration
 

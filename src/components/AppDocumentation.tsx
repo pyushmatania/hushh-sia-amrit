@@ -157,6 +157,7 @@ export const changeLog = [
   { version: "1.32", phase: "Scroll Fix — Capacitor WebView", items: ["Removed PullToRefresh wrapper from HomeScreen and TripsScreen — was calling e.preventDefault() blocking native scroll in Capacitor WebView", "Changed horizontal carousel touchAction from pan-x to pan-x pan-y — allows vertical scroll passthrough", "Video cards: only active card plays, others pause — reduces concurrent decode pressure", "Video preload reduced to only first visible card with requestIdleCallback for deferred warmups"] },
   { version: "1.33", phase: "Native Capacitor Integration", items: ["Custom app icon generated (1024px, purple-gold 'h' lettermark) with all Android density sizes (mdpi→xxxhdpi)", "Domain updated to hushh-jeypore.lovable.app (published URL)", "Capacitor plugins: @capacitor/push-notifications, camera, geolocation, haptics, local-notifications, status-bar, splash-screen, app", "Native haptics: hapticLight/Medium/Heavy/Success/Error/Selection use @capacitor/haptics ImpactStyle when in native shell, Web Vibration API fallback", "Push notifications: native registration via @capacitor/push-notifications with token storage, PWA service worker fallback", "Status bar: dark style with #050505 background, non-overlay mode on Android", "NotificationPermissionBanner: auto-detects native vs web and uses correct API", "GitHub Actions: icon copying step generates all mipmap densities from source icon", "src/lib/native.ts: centralized platform detection (isNative, isAndroid, isIOS) and plugin initialization"] },
   { version: "1.34", phase: "Full Native Capabilities", items: ["@capacitor/share — native share sheet for properties, referral codes, bookings", "@capacitor/clipboard — native clipboard for copy referral code, booking IDs", "@capacitor/network — native network status detection with connection type (WiFi/cellular/none)", "@capacitor/browser — in-app browser for external links (payment pages, social links)", "@capacitor/preferences — native key-value storage replacing localStorage for persistent data", "@capacitor/screen-orientation — locked to portrait mode on native", "@capacitor/keyboard — iOS keyboard resize mode (Body) with scroll enabled", "Android back button handler — navigates back or minimizes app via @capacitor/app", "Deep link handler — appUrlOpen listener routes URLs to correct screen", "Native share bridge (src/lib/native-share.ts) — Capacitor Share → Web Share API → clipboard fallback chain", "Native network bridge (src/lib/native-network.ts) — exposes isOnline + connectionType with real-time listener", "Native browser bridge (src/lib/native-browser.ts) — in-app browser with popover presentation", "Native preferences bridge (src/lib/native-preferences.ts) — async get/set/remove with localStorage fallback", "OfflineBanner upgraded to use native network detection", "ReferralScreen uses native clipboard for copy", "share.ts re-exports from native-share for backward compatibility", "useOnlineStatus hook now delegates to native network detection"] },
+  { version: "1.35", phase: "Native-Grade Caching & WebView Tuning", items: ["Native data cache layer (src/lib/native-cache.ts) — cacheSet/cacheGet/cacheRemove with TTL + stale-while-revalidate pattern", "Prefetch critical data on native launch — listings, curations, packages, app_config cached in @capacitor/preferences", "capacitor.config.ts: androidScheme:'https', allowMixedContent:true, captureInput:true for native-like WebView", "Android backgroundColor:#050505 — eliminates white flash on cold start", "Keyboard plugin config: resize:'body' with resizeOnFullScreen for proper input handling", "CapacitorHttp enabled — uses native HTTP stack bypassing WebView CORS, faster API calls", "SplashScreen androidScaleType:'CENTER_CROP' for edge-to-edge splash", "App startup flow: initNativePlugins → prefetchCriticalData → React render with cached data available instantly", "Messages screen: swipe-to-pin and swipe-to-archive with full archive/unarchive lifecycle"] },
 ];
 
 // ─── TAB DEFINITIONS ─────────────────────────────────────────
@@ -307,7 +308,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
           </div>
           <div>
             <p className="text-sm font-black text-foreground tracking-tight">Hushh Docs</p>
-            <p className="text-[9px] text-muted-foreground font-medium">v1.28 · Internal</p>
+            <p className="text-[9px] text-muted-foreground font-medium">v1.35 · Internal</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -493,7 +494,7 @@ function OverviewTab() {
       </div>
 
       <div className="text-center py-4">
-        <p className="text-[10px] text-muted-foreground"><Sparkles size={10} className="inline text-primary mr-1" />Hushh v1.28 · Made in Jeypore ❤️</p>
+        <p className="text-[10px] text-muted-foreground"><Sparkles size={10} className="inline text-primary mr-1" />Hushh v1.35 · Made in Jeypore ❤️</p>
       </div>
     </div>
   );
@@ -1346,7 +1347,30 @@ function MobileTab() {
         </div>
       </DocSection>
 
-      {/* PWA Manifest */}
+      {/* Native Caching & WebView Tuning */}
+      <DocSection title="Native-Grade Caching & Performance" icon={<Zap size={15} className="text-primary" />}>
+        <div className="space-y-2">
+          {[
+            { title: "Native Data Cache", desc: "Capacitor Preferences stores API responses with TTL. Stale-while-revalidate pattern — shows cached data instantly, revalidates in background." },
+            { title: "Prefetch on Launch", desc: "On native cold start, listings, curations, packages, and app_config are fetched and cached before React renders." },
+            { title: "CapacitorHttp", desc: "Native HTTP stack bypasses WebView CORS. Direct native networking = faster API calls, no cookie/header overhead." },
+            { title: "WebView Tuning", desc: "androidScheme:'https', allowMixedContent:true, captureInput:true. Background color #050505 eliminates white flash." },
+            { title: "Keyboard Config", desc: "resize:'body' with resizeOnFullScreen — inputs stay visible when keyboard opens, no layout reflow." },
+            { title: "SplashScreen", desc: "CENTER_CROP scale type for edge-to-edge splash. Zero duration auto-hide — React takes over instantly." },
+          ].map(p => (
+            <div key={p.title} className="flex gap-2 p-2.5 rounded-xl" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border) / 0.3)" }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0 mt-1.5" />
+              <div>
+                <p className="font-bold text-foreground text-xs">{p.title}</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{p.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-2 p-2.5 rounded-xl font-mono text-[9px]" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border) / 0.3)", color: "hsl(var(--muted-foreground))" }}>
+          App Launch → initNativePlugins() → prefetchCriticalData() → React render (cached data available) → background revalidation
+        </div>
+      </DocSection>
       <DocSection title="PWA Configuration" icon={<Globe size={15} className="text-primary" />}>
         <DataTable headers={["Property", "Value"]} rows={[
           ["name", "Hushh Jeypore"],
@@ -1436,7 +1460,7 @@ function MobileTab() {
       </DocSection>
 
       <div className="text-center py-4">
-        <p className="text-[10px] text-muted-foreground"><Smartphone size={10} className="inline text-primary mr-1" />Mobile Blueprint v1.28 · Reference for web expansion</p>
+        <p className="text-[10px] text-muted-foreground"><Smartphone size={10} className="inline text-primary mr-1" />Mobile Blueprint v1.35 · Reference for web expansion</p>
       </div>
     </div>
   );
@@ -1488,7 +1512,7 @@ function ChangelogTab() {
 function generateFullDoc(): string {
   const header = `# 🏡 HUSHH — Private Experience Marketplace
 
-> **Made in Jeypore ❤️** | v1.28 | Internal Documentation & Blueprint
+> **Made in Jeypore ❤️** | v1.35 | Internal Documentation & Blueprint
 
 Hushh is a premium mobile-first marketplace for booking private experiences, stays, and curated lifestyle services in Jeypore, India.
 
@@ -1590,7 +1614,7 @@ function generatePDFHtml(): string {
 
   const changelog = changeLog.map(p => `<div class="version-block"><div class="version-badge">v${p.version}</div><div class="version-title">${p.phase}</div><ul>${p.items.map(i => `<li>${i}</li>`).join("")}</ul></div>`).join("");
 
-  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Hushh Documentation v1.28</title>
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Hushh Documentation v1.35</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:wght@700;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -1627,7 +1651,7 @@ li{font-size:10px;margin:2px 0;color:#444;}
 <div class="hero">
 <div class="emoji">🏡</div>
 <h1>HUSHH</h1>
-<div class="subtitle">Private Experience Marketplace · v1.31 · Made in Jeypore ❤️</div>
+<div class="subtitle">Private Experience Marketplace · v1.35 · Made in Jeypore ❤️</div>
 <div style="font-size:10px;color:#555;">Book private stays, curated experiences, and on-demand services — all in one app.</div>
 </div>
 
@@ -1798,6 +1822,16 @@ ${tables.map(([t, d]) => `<tr><td style="font-family:monospace;color:#7c3aed;fon
 <tr><td>React Query</td><td>30s stale, 2× retry, exponential backoff</td></tr>
 </table>
 
+<h3>Native-Grade Caching (v1.35)</h3>
+<table><tr><th>Feature</th><th>Details</th></tr>
+<tr><td>Native Data Cache</td><td>Capacitor Preferences with TTL + stale-while-revalidate</td></tr>
+<tr><td>Prefetch on Launch</td><td>Listings, curations, packages, config cached on cold start</td></tr>
+<tr><td>CapacitorHttp</td><td>Native HTTP stack, bypasses WebView CORS overhead</td></tr>
+<tr><td>WebView Tuning</td><td>androidScheme:https, allowMixedContent, captureInput, bg:#050505</td></tr>
+<tr><td>Keyboard</td><td>resize:body, resizeOnFullScreen — no layout reflow on input focus</td></tr>
+<tr><td>Launch Flow</td><td>initNativePlugins → prefetchCriticalData → React render with cache</td></tr>
+</table>
+
 <h3>AI Prompts for Web/Desktop Conversion</h3>
 <ol style="font-size:10px;line-height:1.8;">
 <li>Convert single-column to multi-panel: sidebar nav + main content + detail panel</li>
@@ -1814,7 +1848,7 @@ ${tables.map(([t, d]) => `<tr><td style="font-family:monospace;color:#7c3aed;fon
 ${changelog}
 
 <div class="footer">
-<p>🏡 Hushh v1.31 · Private Experience Marketplace · Made in Jeypore ❤️</p>
+<p>🏡 Hushh v1.35 · Private Experience Marketplace · Made in Jeypore ❤️</p>
 <p>80+ Components · 27 Hooks · 45 Tables · 6 Edge Functions · 15 Screens · 22 Admin Pages</p>
 <p>Generated ${new Date().toLocaleDateString()}</p>
 </div>
