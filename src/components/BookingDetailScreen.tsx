@@ -106,7 +106,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
       className="fixed inset-0 z-30 bg-mesh overflow-y-auto pb-32"
     >
       {/* Header */}
-      <div className="sticky top-0 z-10 glass px-5 py-3">
+      <div className="sticky top-0 z-10 glass px-5 md:px-8 lg:px-16 xl:px-24 py-3">
         <div className="flex items-center gap-3">
           <motion.button
             onClick={onBack}
@@ -116,7 +116,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
             <ArrowLeft size={16} className="text-foreground" />
           </motion.button>
           <div className="flex-1">
-            <h2 className="font-semibold text-base text-foreground">Booking Details</h2>
+            <h2 className="font-semibold text-base md:text-lg text-foreground">Booking Details</h2>
             <p className="text-xs text-muted-foreground">ID: {booking.bookingId}</p>
           </div>
           <motion.button className="w-9 h-9 rounded-full border border-border flex items-center justify-center" whileTap={{ scale: 0.85 }}>
@@ -125,7 +125,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
         </div>
       </div>
 
-      <div className="px-5 py-4 space-y-5">
+      <div className="px-5 md:px-8 lg:px-16 xl:px-24 py-4 md:flex md:gap-8 md:items-start">
         {/* Status banner */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}

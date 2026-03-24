@@ -533,7 +533,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
             : `You don't have any ${activeFilter} trips right now.`}
         />
       ) : (
-        <div className="px-5 pt-4 space-y-6">
+        <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-4 space-y-6 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0">
           {filteredBookings.map((trip, i) => (
             <SwipeableCard
               key={trip.id}
