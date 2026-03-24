@@ -367,8 +367,10 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
   const [show, setShow] = useState(true);
   const [phase, setPhase] = useState(0);
   const [imgReady, setImgReady] = useState(false);
-  const config = useMemo(getTimeConfig, []);
   const appConfig = useAppConfig();
+  const splashVariant = appConfig.splash_variant || "1";
+  const config = useMemo(() => getTimeConfig(splashVariant), [splashVariant]);
+  const isV2 = splashVariant === "2";
   const brandName = appConfig.app_name || "hushh";
   const tagline = appConfig.app_tagline || "Private experiences await";
   const letters = useMemo(() => brandName.split(""), [brandName]);
