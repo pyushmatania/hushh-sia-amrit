@@ -504,7 +504,7 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
                 className="flex gap-3 rounded-2xl border border-border p-3 md:p-4 cursor-pointer hover:bg-secondary/30 hover:border-border/80 hover:shadow-card transition-all"
                 onClick={() => onPropertyTap(property)}
               >
-                <img src={property.images[0]} alt={property.name} className="w-24 h-24 rounded-xl object-cover shrink-0" />
+                <img src={property.images[0]} alt={property.name} className="w-24 h-24 md:w-32 md:h-32 rounded-xl object-cover shrink-0" />
                 <div className="flex-1 min-w-0 py-0.5">
                   <h3 className="font-semibold text-sm text-foreground flex items-center gap-1 truncate">
                     {property.name}
