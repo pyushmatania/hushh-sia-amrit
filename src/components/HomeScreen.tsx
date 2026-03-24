@@ -486,7 +486,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
 
               <OscarToggle isOn={oscarMode} onToggle={() => setOscarMode(!oscarMode)} />
               {oscarMode ? (
-                <OscarThemedListing properties={filteredProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
+                <OscarThemedListing properties={properties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
               ) : (
               <>
               <div className="px-4 pt-2 pb-3 flex gap-2 overflow-x-auto hide-scrollbar md:justify-center md:flex-wrap md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-3 md:pt-4 md:pb-6">
