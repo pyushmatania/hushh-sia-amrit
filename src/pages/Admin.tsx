@@ -163,6 +163,7 @@ export default function Admin() {
       case "reports": return <AdminReports />;
       case "notifications": return <AdminNotifications />;
       case "settings": return <AdminSettings />;
+      case "telegram": return <AdminTelegram />;
       default: return <CommandCenter onNavigate={setPage} />;
     }
   };
