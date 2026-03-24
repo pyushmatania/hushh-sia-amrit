@@ -35,8 +35,9 @@ import { useUnreadCount } from "@/hooks/use-unread-count";
 import { useNotifications } from "@/hooks/use-notifications";
 import { useLoyalty } from "@/hooks/use-loyalty";
 import { useToast } from "@/hooks/use-toast";
-import { properties, type Property } from "@/data/properties";
+import { type Property } from "@/data/properties";
 import type { ExperiencePack } from "@/components/home/CuratedPackCard";
+import { usePropertiesData } from "@/contexts/PropertiesContext";
 
 export interface Booking {
   id: string;
@@ -67,6 +68,7 @@ export default function Index() {
   const appConfig = useAppConfig();
   const bookingPrefix = (appConfig.app_name || "HUSHH").toUpperCase();
   const { user, loading } = useAuth();
+  const { properties: liveProperties } = usePropertiesData();
 
   // Dynamic page title from admin config
   useEffect(() => {
@@ -95,7 +97,7 @@ export default function Index() {
   }, []);
 
   const handleExperienceTap = useCallback((pack: ExperiencePack) => {
-    const property = properties.find(p => p.id === pack.propertyId);
+    const property = liveProperties.find(p => p.id === pack.propertyId);
     if (property) {
       setScreen({ type: "experienceDetail", pack, property });
       setActiveTab("home");
@@ -133,7 +135,7 @@ export default function Index() {
       setScreen({ type: "experienceDetail", pack, property: syntheticProperty });
       setActiveTab("home");
     }
-  }, [properties]);
+  }, [liveProperties]);
 
   const handleBook = useCallback((property: Property, slotId: string, guests: number, date: Date, extras?: Property[], roomsCount?: number, extraMattresses?: number) => {
     setScreen({ type: "builder", property, slotId, guests, date, extras, roomsCount, extraMattresses });
@@ -189,11 +191,11 @@ export default function Index() {
   }, [cancelBooking]);
 
   const handleRebook = useCallback((propertyId: string) => {
-    const property = properties.find(p => p.id === propertyId);
+    const property = liveProperties.find(p => p.id === propertyId);
     if (property) {
       setScreen({ type: "detail", property });
     }
-  }, []);
+  }, [liveProperties]);
 
   const handleOpenHostDashboard = useCallback(() => {
     setScreen({ type: "hostDashboard" });
