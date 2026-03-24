@@ -402,7 +402,7 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
     {
       id: "ai-search",
       label: "AI Search",
-      render: () => <NeuralSearchWidget title="Ask AI" subtitle="Business intelligence at your fingertips" placeholder="Ask about revenue, guests, trends..." examples={commandCenterExamples} onSearch={handleCommandCenterSearch} />,
+      render: () => <NeuralSearchWidget title="Ask AI" subtitle="Business intelligence at your fingertips" placeholder="Ask about revenue, guests, trends..." examples={commandCenterExamples} contextKey="dashboard" onSearch={handleCommandCenterSearch} />,
     },
     {
       id: "live-orders",

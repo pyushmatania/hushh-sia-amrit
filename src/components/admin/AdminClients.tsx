@@ -897,6 +897,7 @@ function ClientAISearch({ clients, listingMap }: { clients: ClientProfile[]; lis
       title="Client Intelligence"
       subtitle="Deep insights across guest behavior & spend"
       placeholder="Who are the top spenders this month?"
+      contextKey="clients"
       examples={[
         "Who are the top 3 spenders?",
         "Which clients ordered food but never booked?",
