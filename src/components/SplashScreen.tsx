@@ -53,7 +53,6 @@ function getTimeConfig() {
     hasTwinkle: false,
     particleColor: "hsla(45, 80%, 75%, 0.4)",
     glowColor: "hsla(45, 90%, 60%, 0.25)",
-    ambientSound: "/audio/birds-morning.wav",
   };
   if (hour >= 17 && hour < 21) return {
     greeting: "Good Evening",
