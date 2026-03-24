@@ -225,17 +225,22 @@ export default function NotificationSettings() {
 
   // Auto-repeat timer — cycles through notification types
   const startPushTimer = useCallback(() => {
-    if (!user || pushTimer === 0) return;
+    if (pushTimer === 0) return;
     setPushTimerActive(true);
     pushIndexRef.current = 0;
     setPushSentCount(0);
+
+    // Send first one immediately
+    const firstNotif = PUSH_TEST_NOTIFICATIONS[0];
+    sendPushNotification(firstNotif);
+    pushIndexRef.current = 1;
 
     pushTimerRef.current = setInterval(() => {
       const notif = PUSH_TEST_NOTIFICATIONS[pushIndexRef.current % PUSH_TEST_NOTIFICATIONS.length];
       sendPushNotification(notif);
       pushIndexRef.current++;
     }, pushTimer * 1000);
-  }, [user, pushTimer, sendPushNotification]);
+  }, [pushTimer, sendPushNotification]);
 
   const stopPushTimer = useCallback(() => {
     if (pushTimerRef.current) clearInterval(pushTimerRef.current);
