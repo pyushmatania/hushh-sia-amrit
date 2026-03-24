@@ -6,6 +6,7 @@ import AdminProperties from "./AdminProperties";
 import AdminCurations from "./AdminCurations";
 import AdminInventory from "./AdminInventory";
 import AdminExperiencePackages from "./AdminExperiencePackages";
+import RevisionHistoryPanel from "./RevisionHistoryPanel";
 
 const tabs = [
   { id: "properties", label: "Properties", icon: Building2, color: "from-indigo-500 to-violet-500", badge: "bg-indigo-500/15 text-indigo-600 dark:text-indigo-400" },
