@@ -12,33 +12,47 @@ export default function NotificationCenter({ onBack }: NotificationCenterProps) 
 
   if (loading) {
     return (
-      <motion.div
-        initial={{ opacity: 0, x: "100%" }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: "100%" }}
-        transition={{ type: "spring", damping: 28, stiffness: 300 }}
-        className="fixed inset-0 z-50 bg-background flex items-center justify-center"
-      >
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </motion.div>
+      <>
+        {/* Mobile: full screen */}
+        <motion.div
+          initial={{ opacity: 0, x: "100%" }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: "100%" }}
+          transition={{ type: "spring", damping: 28, stiffness: 300 }}
+          className="fixed inset-0 z-50 bg-background flex items-center justify-center md:hidden"
+        >
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </motion.div>
+        {/* Desktop: backdrop + small panel */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="hidden md:flex fixed inset-0 z-50 items-start justify-end pt-16 pr-6"
+        >
+          <div className="fixed inset-0 bg-black/30" onClick={onBack} />
+          <motion.div
+            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+            className="relative z-10 w-[420px] max-h-[70vh] rounded-2xl bg-background border border-border shadow-2xl flex items-center justify-center p-12"
+          >
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </motion.div>
+        </motion.div>
+      </>
     );
   }
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: "100%" }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: "100%" }}
-      transition={{ type: "spring", damping: 28, stiffness: 300 }}
-      className="fixed inset-0 z-50 bg-background overflow-y-auto pb-8 md:pt-4"
-    >
+  const content = (
+    <>
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 pt-[max(12px,env(safe-area-inset-top))] pb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:pt-6">
+      <div className="flex items-center gap-3 px-4 pt-[max(12px,env(safe-area-inset-top))] pb-3 md:px-5 md:pt-5">
         <motion.button whileTap={{ scale: 0.9 }} onClick={onBack} className="w-10 h-10 rounded-full glass flex items-center justify-center md:cursor-pointer md:hover:bg-muted/50 transition-colors">
           <ArrowLeft size={20} className="text-foreground" />
         </motion.button>
         <div className="flex-1">
-          <h1 className="text-lg font-bold text-foreground md:text-2xl">Notifications</h1>
+          <h1 className="text-lg font-bold text-foreground">Notifications</h1>
           {unreadCount > 0 && (
             <p className="text-xs text-muted-foreground">{unreadCount} unread</p>
           )}
@@ -55,7 +69,7 @@ export default function NotificationCenter({ onBack }: NotificationCenterProps) 
       </div>
 
       {/* Notifications List */}
-      <div className="px-4 mt-2 space-y-2 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-3 md:space-y-0 md:max-w-6xl md:mx-auto">
+      <div className="px-4 mt-2 space-y-2 md:px-5">
         {notifications.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
@@ -100,6 +114,40 @@ export default function NotificationCenter({ onBack }: NotificationCenterProps) 
           ))}
         </AnimatePresence>
       </div>
-    </motion.div>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile: full-screen slide-in (unchanged) */}
+      <motion.div
+        initial={{ opacity: 0, x: "100%" }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: "100%" }}
+        transition={{ type: "spring", damping: 28, stiffness: 300 }}
+        className="fixed inset-0 z-50 bg-background overflow-y-auto pb-8 md:hidden"
+      >
+        {content}
+      </motion.div>
+
+      {/* Desktop: small floating panel anchored top-right */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="hidden md:flex fixed inset-0 z-50 items-start justify-end pt-16 pr-6"
+      >
+        <div className="fixed inset-0 bg-black/30" onClick={onBack} />
+        <motion.div
+          initial={{ opacity: 0, y: -10, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -10, scale: 0.95 }}
+          transition={{ type: "spring", damping: 25, stiffness: 350 }}
+          className="relative z-10 w-[420px] max-h-[70vh] rounded-2xl bg-background border border-border shadow-2xl overflow-y-auto pb-4"
+        >
+          {content}
+        </motion.div>
+      </motion.div>
+    </>
   );
 }
