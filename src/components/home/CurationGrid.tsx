@@ -304,7 +304,9 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
         <>
           <SectionHeader icon={Zap} title="🎉 Party & Celebrations" subtitle="Get the party started" accent="hsl(35 95% 50% / 0.15)" />
           {isMobile ? (
-            <MobileCurationGrid combos={party.slice(0, 8)} onComboTap={onComboTap} rows={3} />
+            <div className="px-4 grid grid-cols-2 gap-3">
+              {party.slice(0, 8).map((c, i) => <MobileNeonCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
+            </div>
           ) : (
             <div className="grid grid-cols-4 gap-5">
               {party.slice(0, 8).map((c, i) => <DesktopCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
