@@ -866,16 +866,36 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
         {/* Host Info */}
         <div className="glass rounded-2xl p-4 mb-5">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-xl">
-              👤
+            <div className="relative w-14 h-14 shrink-0">
+              <div className="absolute inset-0 rounded-full" style={{
+                background: "linear-gradient(135deg, hsl(var(--primary)), hsla(320,80%,55%,1))",
+                padding: "2px",
+              }}>
+                <div className="w-full h-full rounded-full overflow-hidden bg-background">
+                  <img src={getHostAvatar(property.hostName)} alt={property.hostName} className="w-full h-full object-cover" />
+                </div>
+              </div>
+              {/* Online indicator */}
+              <div className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-background" style={{ background: "hsl(var(--success))" }} />
             </div>
             <div className="flex-1">
               <h4 className="font-semibold text-foreground">Hosted by {property.hostName}</h4>
               <p className="text-xs text-muted-foreground">Host since {property.hostSince} · {property.responseRate} response rate</p>
             </div>
-            <button className="glass rounded-full px-3 py-1.5 text-xs font-medium text-foreground flex items-center gap-1">
-              <MessageCircle size={12} /> Chat
-            </button>
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={() => {
+                hapticMedium();
+                if (onHostChat) {
+                  onHostChat(property.hostName, property.id);
+                } else {
+                  import("sonner").then(({ toast }) => toast.info(`Opening chat with ${property.hostName}...`));
+                }
+              }}
+              className="glow-border-radiate rounded-full px-4 py-2 text-xs font-semibold text-foreground flex items-center gap-1.5 bg-primary/10 border border-primary/30"
+            >
+              <MessageCircle size={13} className="text-primary" /> Chat
+            </motion.button>
           </div>
         </div>
 
