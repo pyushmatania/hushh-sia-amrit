@@ -98,6 +98,7 @@ const defaults: AppConfig = {
   damage_deposit: 1000,
   booking_reminder_hours: 24,
   review_prompt_hours: 48,
+  splash_variant: "1",
 };
 
 const stringKeys = new Set([
