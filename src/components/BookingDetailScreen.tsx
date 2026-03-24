@@ -106,7 +106,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
       className="fixed inset-0 z-30 bg-mesh overflow-y-auto pb-32"
     >
       {/* Header */}
-      <div className="sticky top-0 z-10 glass px-5 py-3">
+      <div className="sticky top-0 z-10 glass px-5 md:px-8 lg:px-16 xl:px-24 py-3">
         <div className="flex items-center gap-3">
           <motion.button
             onClick={onBack}
@@ -116,7 +116,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
             <ArrowLeft size={16} className="text-foreground" />
           </motion.button>
           <div className="flex-1">
-            <h2 className="font-semibold text-base text-foreground">Booking Details</h2>
+            <h2 className="font-semibold text-base md:text-lg text-foreground">Booking Details</h2>
             <p className="text-xs text-muted-foreground">ID: {booking.bookingId}</p>
           </div>
           <motion.button className="w-9 h-9 rounded-full border border-border flex items-center justify-center" whileTap={{ scale: 0.85 }}>
@@ -125,7 +125,8 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
         </div>
       </div>
 
-      <div className="px-5 py-4 space-y-5">
+      <div className="px-5 md:px-8 lg:px-16 xl:px-24 py-4 md:flex md:gap-8 md:items-start">
+      <div className="md:flex-1 md:min-w-0 space-y-5">
         {/* Status banner */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -515,8 +516,102 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
         </motion.div>
       </div>
 
+      {/* Desktop sticky sidebar — Payment & QR */}
+      <div className="hidden md:block md:w-[380px] lg:w-[420px] md:sticky md:top-24">
+        <div className="rounded-2xl border border-border bg-card p-5 space-y-4 shadow-lg">
+          <h4 className="font-semibold text-foreground">Payment Summary</h4>
+          <div className="space-y-2">
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-muted-foreground">Booking</span>
+              <span className={`font-medium ${isCancelled ? "line-through text-muted-foreground" : "text-foreground"}`}>
+                ₹{booking.total.toLocaleString()}
+              </span>
+            </div>
+            {orderedTotal > 0 && (
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-muted-foreground">Add-ons</span>
+                <span className="font-medium text-foreground">₹{orderedTotal.toLocaleString()}</span>
+              </div>
+            )}
+            <div className="flex justify-between items-center pt-2 border-t border-border">
+              <span className="text-sm font-semibold text-foreground">Grand Total</span>
+              <span className={`font-bold text-xl ${isCancelled ? "line-through text-muted-foreground" : "text-foreground"}`}>
+                ₹{(booking.total + orderedTotal).toLocaleString()}
+              </span>
+            </div>
+            {isCancelled && (
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-success font-medium">Refund</span>
+                <span className="font-bold text-success">₹{booking.total.toLocaleString()}</span>
+              </div>
+            )}
+          </div>
+
+          {/* QR Code */}
+          {(isUpcoming || isActive) && !isCancelled && (
+            <div className="flex flex-col items-center pt-4 border-t border-border">
+              <div className="w-28 h-28 bg-secondary rounded-2xl flex items-center justify-center mb-2">
+                <QrCode size={56} className="text-muted-foreground" />
+              </div>
+              <p className="text-xs text-muted-foreground">Show at venue entrance</p>
+            </div>
+          )}
+
+          {/* Desktop actions */}
+          <div className="pt-3 border-t border-border space-y-2">
+            {isActive && !isCancelled && (
+              <>
+                <motion.button
+                  onClick={() => setShowFoodOrder(true)}
+                  className="w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2"
+                  style={{ background: "hsl(160 84% 39%)", color: "white" }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <Utensils size={14} /> Order Food
+                </motion.button>
+                <motion.button
+                  onClick={() => setShowAddonsSheet(true)}
+                  className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm"
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <Plus size={14} className="inline mr-1" /> Add Extras
+                </motion.button>
+              </>
+            )}
+            {isUpcoming && !isCancelled && (
+              <>
+                <motion.button
+                  onClick={() => setShowAddonsSheet(true)}
+                  className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm"
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <Plus size={14} className="inline mr-1" /> Add Extras
+                </motion.button>
+                <motion.button
+                  onClick={() => setShowCancelDialog(true)}
+                  className="w-full py-3 rounded-xl border border-destructive/30 text-destructive font-semibold text-sm"
+                  whileTap={{ scale: 0.97 }}
+                >
+                  Cancel Booking
+                </motion.button>
+              </>
+            )}
+            {isCompleted && (
+              <motion.button
+                onClick={() => onRebook(booking.propertyId)}
+                className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm"
+                whileTap={{ scale: 0.97 }}
+              >
+                Book Again <ChevronRight size={16} className="inline ml-1" />
+              </motion.button>
+            )}
+          </div>
+        </div>
+      </div>
+      </div>
+
       {/* Bottom actions */}
-      <div className="fixed bottom-0 left-0 right-0 glass px-5 py-3.5 z-40">
+      <div className="fixed bottom-0 left-0 right-0 glass px-5 py-3.5 z-40 md:hidden">
         {isActive && !isCancelled ? (
           <div className="flex gap-3">
             <motion.button

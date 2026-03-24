@@ -364,13 +364,13 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
 
   return (
     <div key={refreshKey} className="pb-24 bg-mesh min-h-screen">
-      <div className="px-5 pt-6 pb-2">
+      <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-6 pb-2">
         <div className="flex items-center justify-between">
           <div>
             <motion.h1
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-2xl font-bold text-foreground"
+              className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground"
             >
               Your Trips
             </motion.h1>
@@ -378,7 +378,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.1 }}
-              className="text-sm text-muted-foreground mt-1"
+              className="text-sm md:text-base text-muted-foreground mt-1"
             >
               {onCancel ? "Swipe left on upcoming trips to cancel" : "Manage your bookings"}
             </motion.p>
@@ -402,7 +402,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden px-5"
+            className="overflow-hidden px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32"
           >
             <div className="rounded-2xl border border-border bg-card p-3 mb-3">
               <Calendar
@@ -458,8 +458,8 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
       </AnimatePresence>
 
       {/* Filter tabs */}
-      <div className="px-5 pt-1 pb-2">
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+      <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-1 pb-2">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide md:flex-wrap">
           {filterTabs.map((tab) => {
             const isActive = activeFilter === tab.value;
             const count = counts[tab.value] || 0;
@@ -490,7 +490,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="mx-5 mt-1 mb-1 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20"
+          className="mx-5 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 mt-1 mb-1 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20"
         >
           <p className="text-[11px] text-primary font-medium text-center">✨ These are sample trips — book a venue to see your real trips here!</p>
         </motion.div>
@@ -533,7 +533,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
             : `You don't have any ${activeFilter} trips right now.`}
         />
       ) : (
-        <div className="px-5 pt-4 space-y-6">
+        <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-4 space-y-6 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0">
           {filteredBookings.map((trip, i) => (
             <SwipeableCard
               key={trip.id}
