@@ -1425,7 +1425,7 @@ export const curatedCombos: CuratedCombo[] = [
     time: "10 AM – 4 PM",
     priceRange: [299, 599],
     includes: ["High-speed WiFi ⚡", "Unlimited coffee ☕", "Quiet workspace 🔇", "Snacks 🍪", "Power backup"],
-    image: listingWorkPod,
+    image: curationWorkEscape,
     gradient: "from-emerald-600/80 to-teal-900/60",
     tags: ["💻 Work Friendly", "💸 Budget Friendly"],
     popular: true,
