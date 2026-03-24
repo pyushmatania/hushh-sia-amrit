@@ -23,7 +23,7 @@ export default function ActiveTripCard({ onViewTrip }: ActiveTripCardProps) {
   if (!property) return null;
 
   return (
-    <div className="px-4 pt-3 pb-1 md:px-0 md:pt-4 md:pb-2">
+    <div className="px-4 pt-3 pb-1 md:px-0 md:pt-4 md:pb-2 md:max-w-3xl md:mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 16, filter: "blur(4px)" }}
         animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
