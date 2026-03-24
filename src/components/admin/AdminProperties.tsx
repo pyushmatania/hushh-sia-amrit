@@ -359,16 +359,24 @@ export default function AdminProperties() {
         </div>
       </div>
 
-      {/* Category pills */}
+      {/* Category pills with counts */}
       <div className="flex gap-1.5 overflow-x-auto hide-scrollbar">
-        {["all", ...primaryCategoryOptions].map(c => (
-          <button key={c} onClick={() => setCategoryFilter(c)}
-            className={`px-3 py-1.5 rounded-xl text-[11px] font-semibold capitalize whitespace-nowrap transition-all ${
-              categoryFilter === c
-                ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-500/20 shadow-sm"
-                : "bg-card text-muted-foreground hover:text-foreground border border-border"
-            }`}>{c === "all" ? "All Types" : c}</button>
-        ))}
+        {["all", ...primaryCategoryOptions].map(c => {
+          const count = c === "all" ? listings.length : listings.filter(l => l.primary_category === c).length;
+          return (
+            <button key={c} onClick={() => setCategoryFilter(c)}
+              className={`px-3 py-1.5 rounded-xl text-[11px] font-semibold capitalize whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                categoryFilter === c
+                  ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-500/20 shadow-sm"
+                  : "bg-card text-muted-foreground hover:text-foreground border border-border"
+              }`}>
+              {c === "all" ? "All Types" : c}
+              <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold ${
+                categoryFilter === c ? "bg-indigo-500/20 text-indigo-600 dark:text-indigo-300" : "bg-secondary text-muted-foreground"
+              }`}>{count}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Listings */}
