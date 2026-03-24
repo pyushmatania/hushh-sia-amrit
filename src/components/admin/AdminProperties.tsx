@@ -195,6 +195,8 @@ export default function AdminProperties() {
   const openEdit = (listing: Listing) => {
     setEditingListing({ ...listing });
     setIsCreating(false);
+    // Auto-expand media gallery if property has images, otherwise basic info
+    setExpandedSection((listing.image_urls?.length > 0) ? "images" : "basic");
     setExpandedSection("images");
     setPreviewMode(false);
   };
@@ -730,7 +732,7 @@ export default function AdminProperties() {
                 </EditSection>
 
                 {/* Media Gallery */}
-                <EditSection title="Media Gallery" icon={<Camera size={16} />} id="images" expanded={expandedSection} onToggle={setExpandedSection}>
+                <EditSection title="Media Gallery" icon={<Camera size={16} />} id="images" expanded={expandedSection} onToggle={setExpandedSection} badge={`${(editingListing.image_urls || []).length} photos`} collapsedImages={editingListing.image_urls || []}>
                   <MultiImageEditor
                     images={editingListing.image_urls || []}
                     onChange={urls => setEditingListing(p => ({ ...p!, image_urls: urls }))}
@@ -1000,8 +1002,8 @@ export default function AdminProperties() {
 
 /* ─── Subcomponents ─── */
 
-function EditSection({ title, icon, id, expanded, onToggle, children }: {
-  title: string; icon: React.ReactNode; id: string; expanded: string; onToggle: (id: string) => void; children: React.ReactNode;
+function EditSection({ title, icon, id, expanded, onToggle, children, badge, collapsedImages }: {
+  title: string; icon: React.ReactNode; id: string; expanded: string; onToggle: (id: string) => void; children: React.ReactNode; badge?: string; collapsedImages?: string[];
 }) {
   const isOpen = expanded === id;
   return (
@@ -1011,6 +1013,7 @@ function EditSection({ title, icon, id, expanded, onToggle, children }: {
           {icon}
         </div>
         {title}
+        {badge && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/15 text-primary">{badge}</span>}
         <ChevronDown size={14} className={`ml-auto text-muted-foreground transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
       </button>
       <AnimatePresence>
@@ -1021,6 +1024,21 @@ function EditSection({ title, icon, id, expanded, onToggle, children }: {
           </motion.div>
         )}
       </AnimatePresence>
+      {/* Collapsed thumbnail strip */}
+      {!isOpen && collapsedImages && collapsedImages.length > 0 && (
+        <div className="px-3.5 pb-3 flex gap-1.5 overflow-x-auto hide-scrollbar">
+          {collapsedImages.slice(0, 6).map((url, i) => (
+            <div key={i} className="shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-border">
+              <img src={url} alt="" className="w-full h-full object-cover" />
+            </div>
+          ))}
+          {collapsedImages.length > 6 && (
+            <div className="shrink-0 w-12 h-12 rounded-lg bg-secondary flex items-center justify-center text-[10px] text-muted-foreground font-bold">
+              +{collapsedImages.length - 6}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

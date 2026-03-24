@@ -53,7 +53,8 @@ export default function MultiImageEditor({
       setUploadProgress(Math.round((completed / totalFiles) * 100));
     }
     if (newUrls.length > 0) {
-      onChange([...images, ...newUrls].slice(0, maxImages));
+      const updated = [...images, ...newUrls].slice(0, maxImages);
+      onChange(updated);
       setActiveIndex(images.length);
     }
     setUploading(false);
