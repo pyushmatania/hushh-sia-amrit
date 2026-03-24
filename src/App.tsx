@@ -17,6 +17,7 @@ import NotFound from "./pages/NotFound.tsx";
 
 const Admin = lazy(() => import("./pages/Admin.tsx"));
 const Staff = lazy(() => import("./pages/Staff.tsx"));
+const Wallpapers = lazy(() => import("./pages/Wallpapers.tsx"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
