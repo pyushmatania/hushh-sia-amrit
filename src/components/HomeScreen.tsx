@@ -345,7 +345,14 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
           {/* ═══════ EXPERIENCES TAB ═══════ */}
           {activeCategory === "experience" && (
             <>
-              <SectionTitle title="🎉 TOP EXPERIENCES" />
+              <div className="px-5 pt-6 pb-2 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:pt-10 md:pb-4 md:text-center">
+                <h1 className="text-2xl font-bold text-foreground md:text-4xl lg:text-5xl" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                  Experiences 🎉
+                </h1>
+                <p className="text-sm text-muted-foreground mt-1 md:text-lg lg:text-xl md:mt-2 md:max-w-2xl md:mx-auto" style={{ fontFamily: "'Playfair Display', serif" }}>
+                  Unforgettable moments, handpicked for you
+                </p>
+              </div>
               <SpotlightCarousel properties={experienceProperties} onPropertyTap={onPropertyTap} category="experience" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
 
               <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar md:justify-center md:flex-wrap md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-3">
@@ -405,12 +412,12 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
           {/* ═══════ SERVICES TAB ═══════ */}
           {activeCategory === "service" && (
             <>
-              <div className="px-5 pt-6 pb-1 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
-                <h1 className="text-2xl font-bold text-foreground md:text-3xl lg:text-4xl" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                  Services 🛎️
+              <div className="px-5 pt-6 pb-1 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:pt-10 md:pb-4 md:text-center">
+                <h1 className="text-2xl font-bold text-foreground md:text-4xl lg:text-5xl" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                  Premium Services 🛎️
                 </h1>
-                <p className="text-sm text-muted-foreground mt-1 md:text-base lg:text-lg">
-                  Add to any booking, or book standalone
+                <p className="text-sm text-muted-foreground mt-1 md:text-lg lg:text-xl md:mt-2 md:max-w-2xl md:mx-auto" style={{ fontFamily: "'Playfair Display', serif" }}>
+                  Elevate your experience with curated add-ons
                 </p>
               </div>
 
