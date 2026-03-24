@@ -206,8 +206,8 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
       onClick={() => { hapticSelection(); onTap(pack); }}
     >
       {/* Video area */}
-      <div className="relative md:rounded-[20px] md:overflow-hidden md:hover:shadow-elevated md:transition-shadow" style={{ height: "70vh", maxHeight: "520px" }}>
-        <AccentFrame color={accent.color} radius="20px" glowAlpha={0.08} />
+      <div className="relative md:rounded-[20px] md:overflow-hidden md:hover:shadow-elevated md:transition-shadow h-[70vh] max-h-[520px] md:h-[50vh] md:max-h-[400px]">
+        <div className="md:hidden"><AccentFrame color={accent.color} radius="20px" glowAlpha={0.08} /></div>
         <div
           className="relative w-full h-full overflow-hidden rounded-[20px]"
           style={{ border: "1px solid hsl(var(--border) / 0.24)" }}
