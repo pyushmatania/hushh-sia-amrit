@@ -412,6 +412,16 @@ export default function AdminExperiencePackages() {
                 storagePath="packages"
                 label="Package Images"
                 maxImages={8}
+                dimensionTip="Recommended: 800×800px (1:1 square) or 1200×800px (3:2), JPG/WebP, under 2MB"
+              />
+
+              {/* Package Video (for vertical video cards) */}
+              <VideoEditor
+                videoUrl={editing.video_url || null}
+                onChange={url => setEditing(p => ({ ...p!, video_url: url }))}
+                storagePath="package-videos"
+                label="Vertical Video (for discovery cards)"
+                dimensionTip="Recommended: 1080×1920px (9:16 vertical), MP4, under 15MB, 5-15 seconds"
               />
 
               {/* Gradient picker */}
