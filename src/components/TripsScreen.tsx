@@ -204,11 +204,7 @@ function TiltCard({
 
           {/* Card content */}
           <div className="relative px-5 pb-5 -mt-8" style={{ transform: "translateZ(20px)" }}>
-            <div className="rounded-2xl p-4 space-y-3 border border-border/40" style={{
-              background: "hsl(var(--card) / 0.85)",
-              backdropFilter: "blur(20px) saturate(1.4)",
-              boxShadow: `0 4px 16px hsl(var(--foreground) / 0.08), inset 0 1px 0 hsl(var(--foreground) / 0.04)`,
-            }}>
+            <div className="rounded-2xl p-4 space-y-3 border border-border bg-card">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <h3 className="font-bold text-base text-foreground truncate">{property.name}</h3>
