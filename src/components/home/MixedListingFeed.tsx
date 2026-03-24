@@ -8,6 +8,7 @@ import PropertyDuoRow from "@/components/home/PropertyDuoRow";
 import PropertyCardStack from "@/components/home/PropertyCardStack";
 import PropertyCardCinematic from "@/components/home/PropertyCardCinematic";
 import PropertyCardPolaroid from "@/components/home/PropertyCardPolaroid";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const interstitials: { icon: ReactNode; text: string; sub: string; accent: string }[] = [
   { icon: <TrendingUp size={18} className="text-primary" />, text: "Trending this week", sub: "Based on 2,400+ bookings in Jeypore", accent: "linear-gradient(135deg, hsl(var(--primary) / 0.08), hsl(270 80% 65% / 0.12))" },
