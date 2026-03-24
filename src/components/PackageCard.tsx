@@ -35,7 +35,7 @@ export default function PackageCard({ pkg, index, properties, onPropertyTap }: P
     >
       <div className="p-5 space-y-2">
         <span className="text-3xl">{pkg.emoji}</span>
-        <h4 className="font-semibold text-base text-foreground">{pkg.name}</h4>
+        <h4 className="font-semibold text-base md:text-lg text-foreground">{pkg.name}</h4>
         <p className="font-bold text-lg text-gradient">₹{pkg.price.toLocaleString()}</p>
         <div className="flex flex-wrap gap-1 pt-1">
           {pkg.includes.map((item) => (
