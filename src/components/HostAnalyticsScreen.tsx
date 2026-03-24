@@ -109,9 +109,9 @@ export default function HostAnalyticsScreen({ onBack }: HostAnalyticsScreenProps
             </div>
             <ResponsiveContainer width="100%" height={180}>
               <BarChart data={analytics.weeklyBookings} barSize={20}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsla(260, 15%, 30%, 0.3)" />
-                <XAxis dataKey="name" tick={{ fontSize: 10, fill: "hsl(260, 10%, 55%)" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 10, fill: "hsl(260, 10%, 55%)" }} axisLine={false} tickLine={false} allowDecimals={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="name" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} allowDecimals={false} />
                 <Tooltip content={<CustomTooltip />} />
                 <Bar dataKey="bookings" fill="hsl(270, 80%, 65%)" radius={[6, 6, 0, 0]} />
               </BarChart>
