@@ -1283,7 +1283,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
           <motion.button
             onClick={() => selectedSlotData && selectedDate && onBook(property, selectedSlot!, guests, selectedDate, addedExtras.length > 0 ? addedExtras : undefined, isStayProp ? roomsCount : undefined, isStayProp ? extraMattressCount : undefined)}
             disabled={!selectedSlotData || !selectedDate}
-            className="w-full bg-primary text-primary-foreground py-4 rounded-xl font-semibold text-lg hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-primary text-primary-foreground py-4 rounded-xl font-semibold text-lg hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed glow-radiate-pulse"
             whileTap={{ scale: 0.97 }}
           >
             {selectedSlotData && selectedDate ? `Book Now` : "Select date & slot"}
@@ -1314,7 +1314,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
             </div>
             <motion.button
               onClick={() => onBook(property, selectedSlot!, guests, selectedDate, addedExtras.length > 0 ? addedExtras : undefined, isStayProp ? roomsCount : undefined, isStayProp ? extraMattressCount : undefined)}
-              className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold text-sm glow-primary"
+              className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold text-sm glow-radiate"
               whileTap={{ scale: 0.93 }}
               transition={{ type: "spring", stiffness: 400 }}
             >

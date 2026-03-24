@@ -61,7 +61,7 @@ export default function BottomNav({ active, onChange, messageBadge = 0 }: Bottom
                   {isActive && (
                     <motion.div
                       layoutId="navActivePill"
-                      className="absolute inset-0 -mx-1 rounded-2xl"
+                      className="absolute inset-0 -mx-1 rounded-2xl glow-border-radiate"
                       style={{
                         background: "hsl(var(--primary) / 0.1)",
                       }}
