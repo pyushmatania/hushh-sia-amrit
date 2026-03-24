@@ -55,7 +55,7 @@ const FoodieVideoCard = memo(function FoodieVideoCard({
           videoRef.current?.pause();
         }
       },
-      { threshold: 0.1, rootMargin: "200px" }
+      { threshold: 0.1, rootMargin: "50px" }
     );
     observer.observe(card);
     return () => observer.disconnect();
