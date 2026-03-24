@@ -548,26 +548,31 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                 />
               ) : (
                 <div className="relative flex flex-col items-center">
-                  {/* Main brand name — 3D glossy PIXIA-style */}
+                  {/* Main brand name — 3D inflated bubble style (PIXIA-exact) */}
                   <div className="flex items-center relative" style={{ perspective: "1200px" }}>
                     {letters.map((letter, i) => (
                       <motion.span
                         key={i}
-                        className="inline-block relative text-[58px] md:text-[84px] lg:text-[104px] xl:text-[124px]"
+                        className="inline-block relative text-[62px] md:text-[90px] lg:text-[110px] xl:text-[130px]"
                         style={{
                           lineHeight: 1,
-                          fontFamily: "'Space Grotesk', sans-serif",
-                          fontWeight: 900,
-                          fontStyle: "normal",
+                          fontFamily: "'Fredoka', 'Nunito', sans-serif",
+                          fontWeight: 700,
                           textTransform: "uppercase",
-                          color: "hsla(220,60%,92%,1)",
-                          backgroundImage: "linear-gradient(180deg, hsla(200,100%,95%,1) 0%, hsla(220,80%,85%,1) 25%, hsla(240,70%,75%,1) 50%, hsla(220,80%,65%,1) 75%, hsla(200,90%,80%,1) 100%)",
+                          color: "transparent",
+                          backgroundImage: "linear-gradient(180deg, hsla(210,100%,98%,1) 0%, hsla(215,100%,88%,1) 18%, hsla(225,90%,72%,1) 40%, hsla(230,85%,58%,1) 60%, hsla(225,80%,68%,1) 80%, hsla(215,90%,82%,1) 100%)",
                           WebkitBackgroundClip: "text",
                           backgroundClip: "text",
-                          WebkitTextStroke: "2.5px hsla(230,60%,18%,0.95)",
+                          WebkitTextStroke: "3px hsla(230,55%,15%,1)",
                           paintOrder: "stroke fill",
-                          filter: "drop-shadow(0 2px 0 hsla(230,60%,15%,0.9)) drop-shadow(0 4px 0 hsla(230,50%,12%,0.8)) drop-shadow(0 6px 0 hsla(230,40%,10%,0.6)) drop-shadow(0 8px 16px hsla(230,60%,10%,0.5)) drop-shadow(0 0 30px hsla(220,80%,60%,0.4))",
-                          letterSpacing: "-0.02em",
+                          filter: [
+                            "drop-shadow(0 3px 0 hsla(230,60%,12%,1))",
+                            "drop-shadow(0 6px 0 hsla(230,50%,10%,0.85))",
+                            "drop-shadow(0 9px 0 hsla(230,40%,8%,0.6))",
+                            "drop-shadow(0 12px 20px hsla(230,60%,8%,0.5))",
+                            "drop-shadow(0 0 35px hsla(220,90%,65%,0.35))",
+                          ].join(" "),
+                          letterSpacing: "0.02em",
                         }}
                         initial={{ y: 80, opacity: 0, rotateX: 90, scale: 0.2 }}
                         animate={phase >= 3 ? { y: 0, opacity: 1, rotateX: 0, scale: 1 } : { y: 80, opacity: 0, rotateX: 90, scale: 0.2 }}
@@ -579,11 +584,11 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                         }}
                       >
                         {letter}
-                        {/* Glossy highlight overlay */}
+                        {/* Glossy highlight — top shine band */}
                         <span
                           className="absolute inset-0 pointer-events-none"
                           style={{
-                            backgroundImage: "linear-gradient(180deg, hsla(0,0%,100%,0.5) 0%, hsla(0,0%,100%,0.15) 35%, transparent 55%, hsla(220,80%,90%,0.1) 100%)",
+                            backgroundImage: "linear-gradient(170deg, hsla(0,0%,100%,0.7) 0%, hsla(0,0%,100%,0.35) 25%, transparent 48%, hsla(220,80%,90%,0.08) 100%)",
                             WebkitBackgroundClip: "text",
                             backgroundClip: "text",
                             color: "transparent",
