@@ -577,7 +577,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
               {/* Decorative divider */}
               <motion.div
-                className="flex items-center gap-3 mt-4"
+                className="flex items-center gap-3 md:gap-5 mt-4 md:mt-6"
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={phase >= 3 ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }}
                 transition={{ delay: 0.5, duration: 0.4, ease: "easeOut" }}
