@@ -402,8 +402,8 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                     onToggleWishlist={onToggleWishlist}
                   />
                 </div>
-                <MobileDiscoverySection properties={stayProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Cozy Retreats" sectionEmoji="🌿" offset={0} />
-                <MobileDiscoverySection properties={stayProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Weekend Escapes" sectionEmoji="🏖️" offset={5} />
+<MobileDiscoverySection properties={stayProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Cozy Retreats" sectionEmoji="🌿" offset={0} category="stay" />
+                <MobileDiscoverySection properties={stayProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Weekend Escapes" sectionEmoji="🏖️" offset={5} category="stay" />
                 </>
               ) : (
               <>
