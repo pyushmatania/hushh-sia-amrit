@@ -189,7 +189,7 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1, duration: 0.5 }}
-        className="mx-4 mt-4 rounded-3xl overflow-hidden relative md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 md:max-w-3xl"
+        className="mx-4 mt-4 rounded-3xl overflow-hidden relative md:mx-auto md:max-w-3xl"
         style={{
           background: "linear-gradient(145deg, hsl(var(--card)), hsl(var(--secondary)))",
           border: "1px solid hsl(var(--border) / 0.5)",
@@ -296,7 +296,7 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
       </motion.div>
 
       {/* ─── Tabs (scrollable) ─── */}
-      <div className="mx-4 mt-4 mb-3 flex gap-1 p-1 rounded-full bg-card border border-border/50 overflow-x-auto no-scrollbar md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 md:max-w-3xl md:flex-wrap md:overflow-visible">
+      <div className="mx-4 mt-4 mb-3 flex gap-1 p-1 rounded-full bg-card border border-border/50 overflow-x-auto no-scrollbar md:mx-auto md:max-w-3xl md:flex-wrap md:overflow-visible md:justify-center">
         <TabChip active={tab === "rewards"} label="Rewards" icon="🎁" onClick={() => setTab("rewards")} />
         <TabChip active={tab === "spin"} label="Spin" icon="🎰" onClick={() => setTab("spin")} />
         <TabChip active={tab === "milestones"} label="Quests" icon="🏆" onClick={() => setTab("milestones")} />
@@ -306,7 +306,7 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
       </div>
 
       {/* ─── Tab Content ─── */}
-      <div className="pb-[max(32px,env(safe-area-inset-bottom))] md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+      <div className="pb-[max(32px,env(safe-area-inset-bottom))] md:max-w-3xl md:mx-auto">
         <AnimatePresence mode="wait">
           {/* REWARDS */}
           {tab === "rewards" && (

@@ -657,15 +657,16 @@ export default function MessagesScreen() {
   const supportChats = filteredChats.filter(t => !t.pinned && t.tripStatus === "support");
 
   return (
-    <div className="pb-24 min-h-screen bg-background">
+    <div className="pb-24 min-h-screen bg-background md:h-[calc(100vh-4rem)] md:overflow-y-auto">
       {/* Header */}
       <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-8 pb-4">
+        <div className="md:max-w-3xl md:mx-auto">
         <div className="flex items-center justify-between mb-5">
           <motion.h1 initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} className="text-[26px] md:text-3xl lg:text-4xl font-bold text-foreground tracking-tight">
             Messages
           </motion.h1>
           <motion.button initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} onClick={() => setShowSearch(!showSearch)}
-            className="w-9 h-9 rounded-full bg-secondary/60 flex items-center justify-center active:scale-90 transition-transform">
+            className="w-9 h-9 rounded-full bg-secondary/60 flex items-center justify-center active:scale-90 transition-transform md:cursor-pointer md:hover:bg-muted/50">
             {showSearch ? <X size={16} className="text-foreground" /> : <Search size={16} className="text-foreground" />}
           </motion.button>
         </div>
@@ -689,23 +690,25 @@ export default function MessagesScreen() {
           <Tab active={tab === "chats"} label="Chats" count={unreadChatCount} onClick={() => setTab("chats")} />
           <Tab active={tab === "notifications"} label="Updates" count={unreadNotifCount} onClick={() => setTab("notifications")} />
         </motion.div>
+        </div>
       </div>
 
       {/* Concierge CTA */}
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="mx-5 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 mb-5 flex gap-2 md:max-w-xl">
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="mx-5 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 mb-5 flex gap-2 md:max-w-xl md:mx-auto">
         <button onClick={() => {
           setTab("chats");
           if (user && conversations.length > 0) setActiveConvo(conversations[0]);
           else if (!user) setActiveMockThread(dynamicMockThreads[0]);
-        }} className="flex-1 flex items-center justify-center gap-2 py-3 rounded-full bg-primary text-primary-foreground text-[13px] font-medium active:scale-[0.97] transition-transform">
+        }} className="flex-1 flex items-center justify-center gap-2 py-3 rounded-full bg-primary text-primary-foreground text-[13px] font-medium active:scale-[0.97] transition-transform md:cursor-pointer md:hover:bg-primary/90">
           <HeadphonesIcon size={15} /> Chat with Concierge
         </button>
-        <button className="flex items-center justify-center gap-2 px-5 py-3 rounded-full border border-border text-foreground text-[13px] font-medium bg-card active:scale-[0.97] transition-transform">
+        <button className="flex items-center justify-center gap-2 px-5 py-3 rounded-full border border-border text-foreground text-[13px] font-medium bg-card active:scale-[0.97] transition-transform md:cursor-pointer md:hover:bg-muted/50">
           <Phone size={14} /> Call
         </button>
       </motion.div>
 
       <div className="md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+        <div className="md:max-w-3xl md:mx-auto">
       <AnimatePresence mode="wait">
         {tab === "chats" && (
           <motion.div key="chats" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="px-5 md:px-0">
@@ -864,7 +867,7 @@ export default function MessagesScreen() {
         )}
 
         {tab === "notifications" && (
-          <motion.div key="notifs" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="px-5 md:px-0 space-y-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-3 md:space-y-0">
+          <motion.div key="notifs" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="px-5 md:px-0 space-y-2 md:grid md:grid-cols-2 md:gap-3 md:space-y-0">
             {notifications.filter(n => !n.read && !readNotifications.has(n.id)).length > 0 && (
               <p className="text-[10px] uppercase tracking-[0.1em] font-semibold text-muted-foreground mb-1 md:col-span-full">New</p>
             )}
@@ -881,6 +884,7 @@ export default function MessagesScreen() {
           </motion.div>
         )}
       </AnimatePresence>
+      </div>
       </div>
 
       <AnimatePresence>
