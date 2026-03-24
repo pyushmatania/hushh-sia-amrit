@@ -222,7 +222,7 @@ export default function SpinWheel({ onWin, disabled }: SpinWheelProps) {
                 <g key={i}>
                   <path
                     d={`M100,100 L${x1},${y1} A100,100 0 ${largeArc},1 ${x2},${y2} Z`}
-                    fill={i % 2 === 0 ? "hsl(260 18% 12%)" : "hsl(260 15% 16%)"}
+                    fill={i % 2 === 0 ? "hsl(var(--card))" : "hsl(var(--muted))"}
                     stroke="hsl(var(--border) / 0.5)"
                     strokeWidth="0.5"
                   />
