@@ -10,6 +10,7 @@ import DeleteConfirmDialog from "./DeleteConfirmDialog";
 import BatchOperationsBar from "./BatchOperationsBar";
 import MultiImageEditor from "./MultiImageEditor";
 import VideoEditor from "./VideoEditor";
+import { useAutoSave } from "@/hooks/use-auto-save";
 
 interface PackageRow {
   id: string;
