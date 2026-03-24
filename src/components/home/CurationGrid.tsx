@@ -378,7 +378,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
           {budget.map((c, i) => <MobileNeonCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
         </div>
       ) : (
-        <div className="grid grid-cols-3 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-4 gap-5">
           {budget.map((c, i) => <DesktopCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
         </div>
       )}
