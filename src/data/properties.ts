@@ -1388,7 +1388,7 @@ export const curatedCombos: CuratedCombo[] = [
     time: "7 PM – 12 AM",
     priceRange: [1999, 3999],
     includes: ["Speaker system 🔊", "LED lights 💡", "Snacks 🍿", "Drinks 🍹", "Fog machine"],
-    image: listingEmberGrounds,
+    image: curationPartyScene,
     gradient: "from-purple-600/80 to-violet-900/60",
     tags: ["🎉 Party Ready", "🔥 Trending"],
   },
