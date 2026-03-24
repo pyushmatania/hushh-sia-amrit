@@ -107,7 +107,7 @@ export default function PropertyCard({ property, index, onTap, isWishlisted = fa
 
   return (
     <div
-      className="cursor-pointer px-5 group active:scale-[0.97] transition-transform md:hover:opacity-95"
+      className="cursor-pointer px-5 md:px-0 group active:scale-[0.97] transition-transform md:hover:opacity-95"
       onClick={handleClick}
       style={{ animationDelay: `${index * 60}ms` }}
     >

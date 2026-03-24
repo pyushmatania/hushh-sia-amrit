@@ -8,6 +8,7 @@ import PropertyDuoRow from "@/components/home/PropertyDuoRow";
 import PropertyCardStack from "@/components/home/PropertyCardStack";
 import PropertyCardCinematic from "@/components/home/PropertyCardCinematic";
 import PropertyCardPolaroid from "@/components/home/PropertyCardPolaroid";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const interstitials: { icon: ReactNode; text: string; sub: string; accent: string }[] = [
   { icon: <TrendingUp size={18} className="text-primary" />, text: "Trending this week", sub: "Based on 2,400+ bookings in Jeypore", accent: "linear-gradient(135deg, hsl(var(--primary) / 0.08), hsl(270 80% 65% / 0.12))" },
@@ -30,6 +31,7 @@ const BATCH_SIZE = 3;
 export default function MixedListingFeed({ properties, onPropertyTap, wishlist, onToggleWishlist }: MixedListingFeedProps) {
   const [visibleCount, setVisibleCount] = useState(INITIAL_BATCH);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
   // Reset visible count when properties change
   useEffect(() => {
@@ -58,6 +60,28 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
     let cycle = 0;
     let rendered = 0;
 
+    // Desktop: uniform clean grid — all PropertyCard
+    if (!isMobile) {
+      while (i < properties.length && rendered < visibleCount) {
+        const p = properties[i];
+        const isWL = wishlist.includes(p.id);
+        items.push(
+          <PropertyCard
+            key={p.id}
+            property={p}
+            index={i}
+            onTap={onPropertyTap}
+            isWishlisted={isWL}
+            onToggleWishlist={onToggleWishlist}
+          />
+        );
+        i++;
+        rendered++;
+      }
+      return items;
+    }
+
+    // Mobile: creative mixed feed (unchanged)
     while (i < properties.length && rendered < visibleCount) {
       const pos = i % 10;
 
@@ -127,17 +151,15 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
     }
 
     return items;
-  }, [properties, onPropertyTap, wishlist, onToggleWishlist, visibleCount]);
+  }, [properties, onPropertyTap, wishlist, onToggleWishlist, visibleCount, isMobile]);
 
   if (properties.length === 0) return null;
 
   return (
     <div className="space-y-6 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
-      {/* Mobile: creative mixed feed. Desktop: uniform grid */}
-      <div className="md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-6 xl:gap-8 space-y-6 md:space-y-0">
+      <div className={isMobile ? "space-y-6" : "grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 xl:gap-8"}>
         {elements}
       </div>
-      {/* Sentinel for infinite scroll */}
       {visibleCount < properties.length && (
         <div ref={sentinelRef} className="h-px" />
       )}
