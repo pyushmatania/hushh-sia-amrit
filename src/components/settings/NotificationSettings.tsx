@@ -1,92 +1,105 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bell, Smartphone, Loader2, Mail, MessageSquare, Tag, Calendar, Volume2, VolumeX, Clock, Zap, Star, Users, ShoppingBag, AlertCircle, Heart, Image, MapPin, Sparkles, Gift, ChefHat, PartyPopper, RefreshCw, Send } from "lucide-react";
+import { Bell, Smartphone, Loader2, Mail, MessageSquare, Tag, Calendar, Volume2, VolumeX, Clock, Zap, Star, Users, ShoppingBag, AlertCircle, Heart, Image, MapPin, Sparkles, Gift, ChefHat, PartyPopper, RefreshCw, Send, Play, Square, Timer } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { supabase } from "@/integrations/supabase/client";
 import { SectionHeader, ToggleSwitch } from "./SettingRow";
 
-const TEST_NOTIFICATIONS = [
+const PUSH_TEST_NOTIFICATIONS = [
   {
     key: "image",
-    label: "Image Notification",
+    label: "📸 Image Notification",
     icon: Image,
     color: "from-pink-500 to-rose-500",
-    emoji: "🖼️",
-    title: "New Photo Added! 📸",
-    body: "A stunning sunset photo was uploaded from The Firefly Villa. Tap to view the gallery.",
-    type: "image",
+    payload: {
+      title: "New Gallery Photo! 📸",
+      body: "A stunning sunset was captured at The Firefly Villa. Swipe to see the full gallery.",
+      image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80",
+      tag: "test-image",
+    },
   },
   {
     key: "personalized",
-    label: "Personalized Data",
+    label: "👤 Personalized",
     icon: Users,
     color: "from-violet-500 to-purple-500",
-    emoji: "👤",
-    title: "Hey {name}! 👋",
-    body: "Welcome back, {name}! You have 3 new recommendations based on your preferences.",
-    type: "user",
+    payload: {
+      title: "Hey {name}! 👋",
+      body: "Welcome back, {name}! Based on your history, we found 3 new experiences near {location}.",
+      tag: "test-personalized",
+    },
   },
   {
     key: "location",
-    label: "Location Based",
+    label: "📍 Location Alert",
     icon: MapPin,
     color: "from-emerald-500 to-teal-500",
-    emoji: "📍",
-    title: "Nearby Experience! 📍",
-    body: "You're near Koraput Garden House — a bonfire night is happening tonight at 7 PM. Join in!",
-    type: "location",
+    payload: {
+      title: "You're near a hidden gem! 📍",
+      body: "Koraput Garden House is 2km away — a live bonfire night starts at 7 PM tonight. 🔥",
+      image: "https://images.unsplash.com/photo-1475483768296-6163e08872a1?w=800&q=80",
+      tag: "test-location",
+    },
   },
   {
     key: "booking",
-    label: "Booking Confirmed",
+    label: "🎫 Booking Confirmed",
     icon: Calendar,
     color: "from-blue-500 to-indigo-500",
-    emoji: "🎫",
-    title: "Booking Confirmed! 🎉",
-    body: "Your stay at The Firefly Villa is confirmed for Dec 28. Check-in at 3 PM. Booking ID: HUSHH-2847.",
-    type: "booking",
+    payload: {
+      title: "Booking Confirmed! 🎉",
+      body: "Your evening slot at The Firefly Villa on Dec 28 is locked in. Check-in at 3 PM. ID: HUSHH-2847",
+      tag: "test-booking",
+    },
   },
   {
     key: "order",
-    label: "Order Prepared",
+    label: "🍽️ Order Ready",
     icon: ChefHat,
     color: "from-orange-500 to-amber-500",
-    emoji: "🍽️",
-    title: "Order Ready! 🍽️",
-    body: "Your farm-to-table thali with chai is ready for pickup at counter 2. Enjoy your meal!",
-    type: "order",
+    payload: {
+      title: "Your order is ready! 🍽️",
+      body: "Farm-to-table thali with masala chai is waiting at Counter 2. Enjoy your meal!",
+      image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=800&q=80",
+      tag: "test-order",
+    },
   },
   {
     key: "stylish",
-    label: "Stylish Alert",
+    label: "✨ Stylish Alert",
     icon: Sparkles,
     color: "from-fuchsia-500 to-pink-500",
-    emoji: "✨",
-    title: "New Collection Dropped ✨",
-    body: "Exclusive curated experiences just launched — Stargazing, Sunrise Yoga & more. Be the first to book!",
-    type: "system",
+    payload: {
+      title: "✨ New Drop: Curated Experiences",
+      body: "Stargazing Retreat, Sunrise Yoga & Tribal Thali — exclusive curations just launched. Be first to book!",
+      image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80",
+      tag: "test-stylish",
+    },
   },
   {
     key: "festival",
-    label: "Festival Offer",
+    label: "🎊 Festival Offer",
     icon: PartyPopper,
     color: "from-yellow-500 to-orange-500",
-    emoji: "🎊",
-    title: "Holi Special — 40% OFF! 🎊",
-    body: "Celebrate with us! Use code HOLI40 for 40% off all outdoor experiences. Valid till March 26.",
-    type: "promo",
+    payload: {
+      title: "🎊 Holi Special — 40% OFF!",
+      body: "Celebrate with colors & curations! Use code HOLI40 on all outdoor experiences. Valid till Mar 26.",
+      image: "https://images.unsplash.com/photo-1576398289164-c48dc021b4e1?w=800&q=80",
+      tag: "test-festival",
+    },
   },
   {
     key: "reward",
-    label: "Loyalty Reward",
+    label: "🏆 Loyalty Reward",
     icon: Gift,
     color: "from-cyan-500 to-blue-500",
-    emoji: "🎁",
-    title: "You Unlocked Gold Tier! 🏆",
-    body: "Congratulations! 500 pts earned. Enjoy priority booking, free upgrades & exclusive perks.",
-    type: "reward",
+    payload: {
+      title: "You unlocked Gold Tier! 🏆",
+      body: "500 pts earned! Enjoy priority booking, free upgrades & exclusive member perks.",
+      tag: "test-reward",
+    },
   },
 ];
 
@@ -96,8 +109,14 @@ export default function NotificationSettings() {
   const { isSupported, isSubscribed, isLoading, isiOS, isPWA, permission, subscribe, unsubscribe } = usePushNotifications();
   const [isSendingTest, setIsSendingTest] = useState<string | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [checkInterval, setCheckInterval] = useState(0); // 0 = off
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Auto-repeat push timer
+  const [pushTimer, setPushTimer] = useState(0); // 0 = off, seconds
+  const [pushTimerActive, setPushTimerActive] = useState(false);
+  const pushTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const pushIndexRef = useRef(0);
+  const [pushSentCount, setPushSentCount] = useState(0);
+
   const [settings, setSettings] = useState({
     bookingUpdates: true,
     promotions: true,
@@ -117,23 +136,20 @@ export default function NotificationSettings() {
   const [quietStart, setQuietStart] = useState("22:00");
   const [quietEnd, setQuietEnd] = useState("08:00");
   const [vibrate, setVibrate] = useState(true);
+  const [displayName, setDisplayName] = useState("Guest");
+  const [userLocation, setUserLocation] = useState("Jeypore");
 
-  const fetchUnread = async () => {
-    if (!user) return;
-    const { count } = await supabase.from("notifications").select("id", { count: "exact", head: true }).eq("user_id", user.id).eq("read", false);
-    setUnreadCount(count || 0);
-  };
-
-  useEffect(() => { fetchUnread(); }, [user]);
-
-  // Auto-check interval
+  // Fetch profile data
   useEffect(() => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    if (checkInterval > 0) {
-      intervalRef.current = setInterval(fetchUnread, checkInterval * 1000);
-    }
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-  }, [checkInterval, user]);
+    if (!user) return;
+    supabase.from("profiles").select("display_name, location").eq("user_id", user.id).single()
+      .then(({ data }) => {
+        if (data?.display_name) setDisplayName(data.display_name);
+        if (data?.location) setUserLocation(data.location);
+      });
+    supabase.from("notifications").select("id", { count: "exact", head: true }).eq("user_id", user.id).eq("read", false)
+      .then(({ count }) => setUnreadCount(count || 0));
+  }, [user]);
 
   const toggle = (key: keyof typeof settings) => setSettings(s => ({ ...s, [key]: !s[key] }));
 
@@ -144,39 +160,82 @@ export default function NotificationSettings() {
     } catch (err: any) { toast({ title: "Error", description: err.message, variant: "destructive" }); }
   };
 
-  const sendTestNotification = async (testNotif: typeof TEST_NOTIFICATIONS[0]) => {
+  // Send a REAL iOS push notification via the edge function
+  const sendPushNotification = useCallback(async (testNotif: typeof PUSH_TEST_NOTIFICATIONS[0]) => {
+    if (!user) {
+      toast({ title: "Login required", description: "Sign in to test push notifications", variant: "destructive" });
+      return;
+    }
     setIsSendingTest(testNotif.key);
     try {
-      const displayName = user ? (await supabase.from("profiles").select("display_name").eq("user_id", user.id).single()).data?.display_name || "Guest" : "Guest";
-      const title = testNotif.title.replace("{name}", displayName);
-      const body = testNotif.body.replace("{name}", displayName);
+      const payload = { ...testNotif.payload };
+      // Replace personalization tokens
+      payload.title = payload.title.replace(/\{name\}/g, displayName);
+      payload.body = payload.body.replace(/\{name\}/g, displayName).replace(/\{location\}/g, userLocation);
+      payload.url = "/";
+      payload.icon = "/icon-192.png";
 
-      if (user) {
-        await supabase.from("notifications").insert({
-          user_id: user.id,
-          type: testNotif.type,
-          title,
-          body,
-          icon: testNotif.emoji,
-        });
-        toast({ title: `${testNotif.emoji} ${testNotif.label} sent!`, description: "Check your notification center" });
-      } else {
-        toast({ title: `${testNotif.emoji} ${title}`, description: body });
-      }
+      const { data, error } = await supabase.functions.invoke("send-push-notification", {
+        body: { user_id: user.id, payload },
+      });
+
+      if (error) throw error;
+
+      // Also insert into notifications table for in-app tracking
+      await supabase.from("notifications").insert({
+        user_id: user.id,
+        type: testNotif.key,
+        title: payload.title,
+        body: payload.body,
+        icon: testNotif.label.split(" ")[0], // emoji
+      });
+
+      const sent = data?.sent || 0;
+      toast({
+        title: sent > 0 ? `${testNotif.label.split(" ")[0]} Push sent!` : "No push subscription found",
+        description: sent > 0 ? `Delivered to ${sent} device(s)` : "Enable push notifications first",
+      });
+      setPushSentCount(c => c + 1);
     } catch (err: any) {
-      toast({ title: "Failed", description: err.message, variant: "destructive" });
+      toast({ title: "Push failed", description: err.message, variant: "destructive" });
+    }
+    setIsSendingTest(null);
+  }, [user, displayName, userLocation, toast]);
+
+  // Send all test pushes
+  const sendAllPushNotifications = async () => {
+    setIsSendingTest("all");
+    for (const n of PUSH_TEST_NOTIFICATIONS) {
+      await sendPushNotification(n);
+      await new Promise(r => setTimeout(r, 800));
     }
     setIsSendingTest(null);
   };
 
-  const sendAllTestNotifications = async () => {
-    setIsSendingTest("all");
-    for (const n of TEST_NOTIFICATIONS) {
-      await sendTestNotification(n);
-      await new Promise(r => setTimeout(r, 500));
-    }
-    setIsSendingTest(null);
-  };
+  // Auto-repeat timer — cycles through notification types
+  const startPushTimer = useCallback(() => {
+    if (!user || pushTimer === 0) return;
+    setPushTimerActive(true);
+    pushIndexRef.current = 0;
+    setPushSentCount(0);
+
+    pushTimerRef.current = setInterval(() => {
+      const notif = PUSH_TEST_NOTIFICATIONS[pushIndexRef.current % PUSH_TEST_NOTIFICATIONS.length];
+      sendPushNotification(notif);
+      pushIndexRef.current++;
+    }, pushTimer * 1000);
+  }, [user, pushTimer, sendPushNotification]);
+
+  const stopPushTimer = useCallback(() => {
+    if (pushTimerRef.current) clearInterval(pushTimerRef.current);
+    pushTimerRef.current = null;
+    setPushTimerActive(false);
+  }, []);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => { if (pushTimerRef.current) clearInterval(pushTimerRef.current); };
+  }, []);
 
   const handleMarkAllRead = async () => {
     if (!user) return;
@@ -209,9 +268,9 @@ export default function NotificationSettings() {
   ];
 
   const enabledCount = Object.values(settings).filter(Boolean).length;
-  const intervalOptions = [
-    { label: "Off", value: 0 },
+  const timerOptions = [
     { label: "5s", value: 5 },
+    { label: "10s", value: 10 },
     { label: "15s", value: 15 },
     { label: "30s", value: 30 },
     { label: "60s", value: 60 },
@@ -226,14 +285,14 @@ export default function NotificationSettings() {
           <div className="flex-1 mr-4">
             <div className="flex items-center gap-2 mb-1">
               <Smartphone size={16} className="text-primary" />
-              <p className="text-sm font-bold text-foreground">Push Notifications</p>
+              <p className="text-sm font-bold text-foreground">iOS Push Notifications</p>
               {unreadCount > 0 && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-destructive text-destructive-foreground">{unreadCount} unread</span>}
             </div>
             <p className="text-xs text-muted-foreground">
               {!isSupported
                 ? isiOS && !isPWA ? "Install as app first (Share → Add to Home Screen)" : "Not supported in this browser"
                 : permission === 'denied' ? "Blocked — update browser settings"
-                : isSubscribed ? "Enabled — real-time alerts active" : "Tap to enable real-time push alerts"}
+                : isSubscribed ? "✅ Enabled — real iOS push alerts active" : "Tap to enable real-time push alerts"}
             </p>
           </div>
           {isSupported && permission !== 'denied' && (
@@ -253,49 +312,34 @@ export default function NotificationSettings() {
         <p className="text-[10px] text-muted-foreground mt-2">{enabledCount}/{Object.keys(settings).length} notification types enabled</p>
       </motion.div>
 
-      {/* Auto-check interval */}
-      <SectionHeader title="Check Interval" />
-      <div className="rounded-2xl p-3 mb-3 border border-border bg-card">
-        <div className="flex items-center gap-2 mb-2.5">
-          <RefreshCw size={14} className={`${checkInterval > 0 ? "text-primary animate-spin" : "text-muted-foreground"}`} style={checkInterval > 0 ? { animationDuration: `${checkInterval}s` } : {}} />
-          <p className="text-xs font-semibold text-foreground">Auto-check for new notifications</p>
-          {checkInterval > 0 && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-primary/10 text-primary">Every {checkInterval}s</span>}
-        </div>
-        <div className="flex gap-1.5">
-          {intervalOptions.map(opt => (
-            <button key={opt.value} onClick={() => { setCheckInterval(opt.value); toast({ title: opt.value ? `Checking every ${opt.value}s` : "Auto-check disabled" }); }}
-              className={`flex-1 py-2 rounded-xl text-[11px] font-semibold transition-all ${
-                checkInterval === opt.value
-                  ? "bg-primary text-primary-foreground shadow-md"
-                  : "bg-muted/50 text-muted-foreground hover:bg-muted"
-              }`}>
-              {opt.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* ═══════════ iOS PUSH TEST SECTION ═══════════ */}
+      <SectionHeader title="Test iOS Push Notifications" />
+      <p className="text-[11px] text-muted-foreground -mt-2 mb-3 px-1">
+        These send <span className="font-bold text-foreground">real iOS push notifications</span> to your device. Some include rich images. Make sure push is enabled above.
+      </p>
 
-      {/* Test Notification Categories */}
-      <SectionHeader title="Test Notifications" />
-      <div className="space-y-1.5 mb-4">
-        <motion.button whileTap={{ scale: 0.97 }} onClick={sendAllTestNotifications}
-          disabled={isSendingTest === "all"}
-          className="w-full py-2.5 rounded-xl text-xs font-bold text-primary-foreground flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-primary/80 shadow-md disabled:opacity-60">
-          {isSendingTest === "all" ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
-          Send All Test Notifications
-        </motion.button>
+      {/* Send all button */}
+      <motion.button whileTap={{ scale: 0.97 }} onClick={sendAllPushNotifications}
+        disabled={!!isSendingTest || !isSubscribed}
+        className="w-full py-2.5 rounded-xl text-xs font-bold text-primary-foreground flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-primary/80 shadow-md disabled:opacity-40 mb-2">
+        {isSendingTest === "all" ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+        Send All 8 Push Notifications
+      </motion.button>
 
-        <div className="grid grid-cols-2 gap-1.5">
-          {TEST_NOTIFICATIONS.map((tn, i) => (
+      {/* Individual test buttons */}
+      <div className="grid grid-cols-2 gap-1.5 mb-4">
+        {PUSH_TEST_NOTIFICATIONS.map((tn, i) => {
+          const hasImage = !!tn.payload.image;
+          return (
             <motion.button
               key={tn.key}
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04 }}
               whileTap={{ scale: 0.95 }}
-              disabled={!!isSendingTest}
-              onClick={() => sendTestNotification(tn)}
-              className="relative overflow-hidden rounded-xl p-3 text-left transition-all disabled:opacity-50 border border-border bg-card hover:shadow-md group"
+              disabled={!!isSendingTest || !isSubscribed}
+              onClick={() => sendPushNotification(tn)}
+              className="relative overflow-hidden rounded-xl p-3 text-left transition-all disabled:opacity-40 border border-border bg-card hover:shadow-md group"
             >
               <div className={`absolute inset-0 opacity-[0.06] bg-gradient-to-br ${tn.color}`} />
               <div className="relative">
@@ -307,14 +351,78 @@ export default function NotificationSettings() {
                       <tn.icon size={12} className="text-white" />
                     )}
                   </div>
-                  <span className="text-sm">{tn.emoji}</span>
+                  {hasImage && (
+                    <span className="text-[8px] font-bold px-1 py-0.5 rounded bg-pink-500/15 text-pink-600 dark:text-pink-400">📷 IMAGE</span>
+                  )}
                 </div>
                 <p className="text-[11px] font-semibold text-foreground leading-tight">{tn.label}</p>
-                <p className="text-[9px] text-muted-foreground mt-0.5 line-clamp-2">{tn.body.replace("{name}", "you")}</p>
+                <p className="text-[9px] text-muted-foreground mt-0.5 line-clamp-2">
+                  {tn.payload.body.replace(/\{name\}/g, displayName).replace(/\{location\}/g, userLocation)}
+                </p>
               </div>
             </motion.button>
+          );
+        })}
+      </div>
+
+      {/* ═══════════ AUTO-REPEAT PUSH TIMER ═══════════ */}
+      <SectionHeader title="Auto-Repeat Push Timer" />
+      <div className="rounded-2xl p-4 mb-4 border border-border bg-card space-y-3">
+        <div className="flex items-center gap-2">
+          <Timer size={16} className={pushTimerActive ? "text-primary animate-pulse" : "text-muted-foreground"} />
+          <div className="flex-1">
+            <p className="text-xs font-bold text-foreground">
+              {pushTimerActive ? `🔴 Running — every ${pushTimer}s` : "Send push notifications on repeat"}
+            </p>
+            <p className="text-[10px] text-muted-foreground">
+              {pushTimerActive ? `${pushSentCount} notification(s) sent so far` : "Cycles through all 8 notification types"}
+            </p>
+          </div>
+        </div>
+
+        {/* Interval selector */}
+        <div className="flex gap-1.5">
+          {timerOptions.map(opt => (
+            <button
+              key={opt.value}
+              onClick={() => { if (!pushTimerActive) setPushTimer(opt.value); }}
+              disabled={pushTimerActive}
+              className={`flex-1 py-2 rounded-xl text-[11px] font-semibold transition-all ${
+                pushTimer === opt.value
+                  ? "bg-primary text-primary-foreground shadow-md"
+                  : "bg-muted/50 text-muted-foreground hover:bg-muted disabled:opacity-50"
+              }`}
+            >
+              {opt.label}
+            </button>
           ))}
         </div>
+
+        {/* Start / Stop */}
+        <div className="flex gap-2">
+          {!pushTimerActive ? (
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={startPushTimer}
+              disabled={pushTimer === 0 || !isSubscribed}
+              className="flex-1 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 bg-emerald-500 text-white shadow-md disabled:opacity-40"
+            >
+              <Play size={14} /> Start Timer ({pushTimer}s)
+            </motion.button>
+          ) : (
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={stopPushTimer}
+              className="flex-1 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 bg-destructive text-destructive-foreground shadow-md"
+            >
+              <Square size={14} /> Stop Timer
+            </motion.button>
+          )}
+        </div>
+
+        {!isSubscribed && (
+          <p className="text-[10px] text-destructive font-semibold text-center">⚠ Enable push notifications above first</p>
+        )}
       </div>
 
       {/* Quiet hours */}
