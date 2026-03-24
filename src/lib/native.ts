@@ -1,27 +1,22 @@
 /**
  * Capacitor native platform detection & initialization.
- * Provides a single source of truth for "are we in a native app?"
- * and initialises native plugins on startup.
  */
 import { Capacitor } from "@capacitor/core";
 
-/** true when running inside a Capacitor native shell (Android/iOS) */
 export const isNative = Capacitor.isNativePlatform();
-
-/** true specifically on Android */
 export const isAndroid = Capacitor.getPlatform() === "android";
-
-/** true specifically on iOS */
 export const isIOS = Capacitor.getPlatform() === "ios";
 
-/**
- * Initialise native-only plugins.
- * Call once from App.tsx on mount.
- */
 export async function initNativePlugins() {
   if (!isNative) return;
 
-  // Status bar — dark content, brand bg
+  // Hide Capacitor splash screen immediately (we use our own React splash)
+  try {
+    const { SplashScreen } = await import("@capacitor/splash-screen");
+    await SplashScreen.hide();
+  } catch {}
+
+  // Status bar
   try {
     const { StatusBar, Style } = await import("@capacitor/status-bar");
     await StatusBar.setStyle({ style: Style.Dark });
@@ -31,13 +26,13 @@ export async function initNativePlugins() {
     }
   } catch {}
 
-  // Lock portrait orientation
+  // Lock portrait
   try {
     const { ScreenOrientation } = await import("@capacitor/screen-orientation");
     await ScreenOrientation.lock({ orientation: "portrait" });
   } catch {}
 
-  // Keyboard: scroll-resize mode on iOS
+  // Keyboard on iOS
   if (isIOS) {
     try {
       const { Keyboard, KeyboardResize } = await import("@capacitor/keyboard");
@@ -46,7 +41,7 @@ export async function initNativePlugins() {
     } catch {}
   }
 
-  // Android back button handler
+  // Android back button
   if (isAndroid) {
     try {
       const { App: CapApp } = await import("@capacitor/app");
@@ -60,21 +55,21 @@ export async function initNativePlugins() {
     } catch {}
   }
 
-  // Deep link handler
+  // Deep links
   try {
     const { App: CapApp } = await import("@capacitor/app");
     CapApp.addListener("appUrlOpen", (event) => {
       const url = new URL(event.url);
       const path = url.pathname + url.search;
       if (path) {
-        window.location.hash = ""; // reset
+        window.location.hash = "";
         window.history.pushState(null, "", path);
         window.dispatchEvent(new PopStateEvent("popstate"));
       }
     });
   } catch {}
 
-  // Register for push notifications
+  // Push notifications
   try {
     const { PushNotifications } = await import("@capacitor/push-notifications");
     const permResult = await PushNotifications.checkPermissions();

@@ -31,7 +31,8 @@ jobs:
         run: npm run build
 
       - name: Remove live-reload server config
-        run: sed -i '/server:/,/}/d' capacitor.config.ts || true
+        run: |
+          sed -i '/server: {/,/},/d' capacitor.config.ts || true
 
       - name: Add Android platform
         run: |
@@ -42,25 +43,44 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
 
-      - name: Copy app icon to Android resources
+      - name: Install ImageMagick
+        run: sudo apt-get install -y imagemagick
+
+      - name: Replace app icon and splash screen
         run: |
-          # Generate adaptive icon resources from the app icon
           ICONS_DIR="android/app/src/main/res"
+          
+          # Generate launcher icons from app-icon.png
           for size_dir in mdpi:48 hdpi:72 xhdpi:96 xxhdpi:144 xxxhdpi:192; do
             dir=$(echo $size_dir | cut -d: -f1)
             size=$(echo $size_dir | cut -d: -f2)
             mkdir -p "$ICONS_DIR/mipmap-$dir"
-            if command -v convert &> /dev/null; then
-              convert public/app-icon.png -resize ${size}x${size} "$ICONS_DIR/mipmap-$dir/ic_launcher.png"
-              convert public/app-icon.png -resize ${size}x${size} "$ICONS_DIR/mipmap-$dir/ic_launcher_round.png"
-              convert public/app-icon.png -resize ${size}x${size} "$ICONS_DIR/mipmap-$dir/ic_launcher_foreground.png"
-            else
-              cp public/icon-${size}.png "$ICONS_DIR/mipmap-$dir/ic_launcher.png" 2>/dev/null || true
-              cp public/icon-${size}.png "$ICONS_DIR/mipmap-$dir/ic_launcher_round.png" 2>/dev/null || true
-              cp public/icon-${size}.png "$ICONS_DIR/mipmap-$dir/ic_launcher_foreground.png" 2>/dev/null || true
-            fi
+            convert public/app-icon.png -resize ${size}x${size} "$ICONS_DIR/mipmap-$dir/ic_launcher.png"
+            convert public/app-icon.png -resize ${size}x${size} "$ICONS_DIR/mipmap-$dir/ic_launcher_round.png"
+            convert public/app-icon.png -resize ${size}x${size} "$ICONS_DIR/mipmap-$dir/ic_launcher_foreground.png"
           done
-          echo "App icons copied to Android resources"
+          
+          # Create a solid dark splash screen (no Capacitor logo)
+          for size_dir in mdpi:480x800 hdpi:720x1280 xhdpi:960x1600 xxhdpi:1440x2560 xxxhdpi:1440x2560; do
+            dir=$(echo $size_dir | cut -d: -f1)
+            dims=$(echo $size_dir | cut -d: -f2)
+            mkdir -p "$ICONS_DIR/drawable-$dir"
+            convert -size $dims xc:"#050505" "$ICONS_DIR/drawable-$dir/splash.png"
+          done
+          mkdir -p "$ICONS_DIR/drawable"
+          convert -size 1440x2560 xc:"#050505" "$ICONS_DIR/drawable/splash.png"
+          
+          echo "App icons and splash screens configured"
+
+      - name: Patch Android theme for dark splash
+        run: |
+          STYLES="android/app/src/main/res/values/styles.xml"
+          if [ -f "$STYLES" ]; then
+            sed -i 's|@drawable/splash|@drawable/splash|g' "$STYLES"
+            sed -i '/<style name="AppTheme.NoActionBar"/,/<\/style>/ {
+              /<item name="android:background">/d
+            }' "$STYLES"
+          fi
 
       - name: Setup Java 21
         uses: actions/setup-java@v4

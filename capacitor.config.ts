@@ -12,7 +12,7 @@ const config: CapacitorConfig = {
   android: {
     allowMixedContent: true,
     captureInput: true,
-    webContentsDebuggingEnabled: false,
+    webContentsDebuggingEnabled: true,
     backgroundColor: "#050505",
     buildOptions: {
       keystorePath: undefined,
@@ -21,10 +21,11 @@ const config: CapacitorConfig = {
   },
   plugins: {
     SplashScreen: {
-      launchAutoHide: true,
+      launchAutoHide: false,
       launchShowDuration: 0,
       backgroundColor: "#050505",
       androidScaleType: "CENTER_CROP",
+      showSpinner: false,
     },
     PushNotifications: {
       presentationOptions: ["badge", "sound", "alert"],
