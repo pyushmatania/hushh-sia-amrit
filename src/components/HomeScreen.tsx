@@ -370,7 +370,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                     <h2 className="text-lg font-bold text-foreground">⚡ Slots Filling Up</h2>
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 font-semibold animate-pulse">LIVE</span>
                   </div>
-                  <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
+                  <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5 md:grid md:grid-cols-3 lg:grid-cols-4 md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-6">
                     {trendingNow.slice(0, 4).map((p, i) => (
                       <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
                     ))}
