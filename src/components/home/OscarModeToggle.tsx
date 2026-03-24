@@ -309,6 +309,37 @@ interface OscarThemedListingProps {
 
 export function OscarThemedListing({ properties, onPropertyTap, wishlist, onToggleWishlist }: OscarThemedListingProps) {
   const premiumPicks = [...properties].sort((a, b) => b.rating - a.rating).slice(0, 6);
+  const isMobile = useIsMobile();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+
+  const handlePrev = useCallback(() => {
+    setCurrentIndex(i => Math.max(0, i - 1));
+    hapticSelection();
+  }, []);
+
+  const handleNext = useCallback(() => {
+    setCurrentIndex(i => Math.min(premiumPicks.length - 1, i + 1));
+    hapticSelection();
+  }, [premiumPicks.length]);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    const diff = touchStartX.current - touchEndX.current;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) handleNext();
+      else handlePrev();
+    }
+  }, [handleNext, handlePrev]);
 
   if (premiumPicks.length === 0) return null;
 
@@ -370,13 +401,108 @@ export function OscarThemedListing({ properties, onPropertyTap, wishlist, onTogg
             </div>
           </motion.div>
 
-          {/* Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-7xl mx-auto">
-            {premiumPicks.map((p, i) => (
-              <OscarPropertyCard key={p.id} property={p} onTap={onPropertyTap} index={i}
-                isWL={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
-            ))}
-          </div>
+          {/* Mobile: Swipeable single card */}
+          {isMobile ? (
+            <div className="relative max-w-sm mx-auto">
+              {/* Dot indicators */}
+              <div className="flex items-center justify-center gap-2 mb-4">
+                {premiumPicks.map((_, i) => (
+                  <button key={i} onClick={() => { setCurrentIndex(i); hapticSelection(); }}
+                    className="rounded-full transition-all duration-300"
+                    style={{
+                      width: i === currentIndex ? 20 : 6,
+                      height: 6,
+                      background: i === currentIndex
+                        ? "linear-gradient(90deg, #FFD700, #DAA520)"
+                        : "rgba(255,215,0,0.2)",
+                      boxShadow: i === currentIndex ? "0 0 8px rgba(255,215,0,0.4)" : "none",
+                    }}
+                    aria-label={`Go to property ${i + 1}`} />
+                ))}
+              </div>
+
+              {/* Swipe area */}
+              <div
+                ref={scrollRef}
+                className="overflow-hidden"
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentIndex}
+                    initial={{ opacity: 0, x: 80 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -80 }}
+                    transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <OscarPropertyCard
+                      property={premiumPicks[currentIndex]}
+                      onTap={onPropertyTap}
+                      index={0}
+                      isWL={wishlist.includes(premiumPicks[currentIndex].id)}
+                      onToggleWishlist={onToggleWishlist}
+                    />
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Counter */}
+              <div className="text-center mt-3">
+                <span className="text-xs font-bold tracking-wider" style={{ color: "rgba(255,215,0,0.5)" }}>
+                  {currentIndex + 1} / {premiumPicks.length}
+                </span>
+              </div>
+            </div>
+          ) : (
+            /* Desktop: Grid with arrow navigation */
+            <div className="relative max-w-7xl mx-auto">
+              {/* Arrow buttons */}
+              <button
+                onClick={handlePrev}
+                disabled={currentIndex === 0}
+                className="absolute -left-4 lg:-left-10 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 disabled:opacity-20 disabled:cursor-default"
+                style={{
+                  background: "linear-gradient(145deg, #2a1a00, #1a0d00)",
+                  border: "2px solid #DAA520",
+                  boxShadow: "0 0 20px rgba(255,215,0,0.25), 0 4px 15px rgba(0,0,0,0.4)",
+                }}
+                aria-label="Previous properties"
+              >
+                <ChevronLeft size={20} style={{ color: "#FFD700" }} />
+              </button>
+
+              <button
+                onClick={() => { setCurrentIndex(i => Math.min(Math.max(0, premiumPicks.length - 3), i + 1)); hapticSelection(); }}
+                disabled={currentIndex >= premiumPicks.length - 3}
+                className="absolute -right-4 lg:-right-10 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 disabled:opacity-20 disabled:cursor-default"
+                style={{
+                  background: "linear-gradient(145deg, #2a1a00, #1a0d00)",
+                  border: "2px solid #DAA520",
+                  boxShadow: "0 0 20px rgba(255,215,0,0.25), 0 4px 15px rgba(0,0,0,0.4)",
+                }}
+                aria-label="Next properties"
+              >
+                <ChevronRight size={20} style={{ color: "#FFD700" }} />
+              </button>
+
+              {/* Sliding grid */}
+              <div className="overflow-hidden">
+                <motion.div
+                  className="grid grid-cols-3 gap-6 md:gap-8"
+                  animate={{ x: `-${currentIndex * (100 / 3)}%` }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  style={{ width: `${(premiumPicks.length / 3) * 100}%` }}
+                >
+                  {premiumPicks.map((p, i) => (
+                    <OscarPropertyCard key={p.id} property={p} onTap={onPropertyTap} index={i}
+                      isWL={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
+                  ))}
+                </motion.div>
+              </div>
+            </div>
+          )}
 
           {/* Footer */}
           <div className="flex justify-center mt-10">
