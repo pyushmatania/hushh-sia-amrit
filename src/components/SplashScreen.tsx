@@ -571,18 +571,17 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                         className="inline-block relative text-[58px] md:text-[84px] lg:text-[104px] xl:text-[124px]"
                         style={{
                           lineHeight: 1,
-                          fontFamily: "'Space Grotesk', sans-serif",
-                          fontWeight: 900,
+                          fontFamily: "'Pacifico', cursive",
+                          fontWeight: 400,
                           fontStyle: "normal",
-                          textTransform: "uppercase",
                           color: "hsla(220,60%,92%,1)",
-                          backgroundImage: "linear-gradient(180deg, hsla(200,100%,95%,1) 0%, hsla(220,80%,85%,1) 25%, hsla(240,70%,75%,1) 50%, hsla(220,80%,65%,1) 75%, hsla(200,90%,80%,1) 100%)",
+                          backgroundImage: "linear-gradient(180deg, hsla(0,0%,100%,1) 0%, hsla(200,100%,90%,1) 30%, hsla(270,80%,85%,1) 60%, hsla(320,70%,80%,1) 100%)",
                           WebkitBackgroundClip: "text",
                           backgroundClip: "text",
-                          WebkitTextStroke: "2.5px hsla(230,60%,18%,0.95)",
+                          WebkitTextStroke: "1.5px hsla(260,40%,20%,0.6)",
                           paintOrder: "stroke fill",
-                          filter: "drop-shadow(0 2px 0 hsla(230,60%,15%,0.9)) drop-shadow(0 4px 0 hsla(230,50%,12%,0.8)) drop-shadow(0 6px 0 hsla(230,40%,10%,0.6)) drop-shadow(0 8px 16px hsla(230,60%,10%,0.5)) drop-shadow(0 0 30px hsla(220,80%,60%,0.4))",
-                          letterSpacing: "-0.02em",
+                          filter: "drop-shadow(0 2px 0 hsla(260,50%,15%,0.7)) drop-shadow(0 4px 0 hsla(260,40%,12%,0.5)) drop-shadow(0 8px 16px hsla(260,60%,10%,0.5)) drop-shadow(0 0 40px hsla(270,80%,60%,0.4))",
+                          letterSpacing: "0.02em",
                         }}
                         initial={{ y: 80, opacity: 0, rotateX: 90, scale: 0.2 }}
                         animate={phase >= 3 ? { y: 0, opacity: 1, rotateX: 0, scale: 1 } : { y: 80, opacity: 0, rotateX: 90, scale: 0.2 }}
