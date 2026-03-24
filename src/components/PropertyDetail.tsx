@@ -110,10 +110,10 @@ const amenityIconMap: Record<string, React.ReactNode> = {
 };
 
 const categoryLabels: Record<string, { label: string; emoji: string; bg: string }> = {
-  stay: { label: "STAY", emoji: "🏡", bg: "bg-emerald-500/15 text-emerald-400 border-emerald-500/20" },
-  experience: { label: "EXPERIENCE", emoji: "🎉", bg: "bg-purple-500/15 text-purple-400 border-purple-500/20" },
-  service: { label: "SERVICE", emoji: "🛎️", bg: "bg-amber-500/15 text-amber-400 border-amber-500/20" },
-  curation: { label: "CURATION", emoji: "✨", bg: "bg-rose-500/15 text-rose-400 border-rose-500/20" },
+  stay: { label: "STAY", emoji: "🏡", bg: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/20" },
+  experience: { label: "EXPERIENCE", emoji: "🎉", bg: "bg-purple-500/15 text-purple-700 dark:text-purple-400 border-purple-500/20" },
+  service: { label: "SERVICE", emoji: "🛎️", bg: "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/20" },
+  curation: { label: "CURATION", emoji: "✨", bg: "bg-rose-500/15 text-rose-700 dark:text-rose-400 border-rose-500/20" },
 };
 
 function getNearbyPlaces(category: string) {
@@ -509,8 +509,8 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
             </span>
           )}
           {property.discountLabel && (
-            <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
-              <Tag size={10} /> {property.discountLabel}
+               <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+               <Tag size={10} /> {property.discountLabel}
             </span>
           )}
         </div>
@@ -663,7 +663,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
           <div className="mt-2 px-3 py-2 rounded-xl bg-primary/[0.06] border border-primary/20">
             <p className="text-[11px] text-foreground">
               <span className="font-semibold">{nightCount} night{nightCount !== 1 ? "s" : ""}</span>
-              <span className="text-muted-foreground"> × ₹{selectedSlotData.price.toLocaleString()} = </span>
+              <span className="text-muted-foreground"> × ₹{selectedSlotData?.price.toLocaleString()} = </span>
               <span className="font-bold text-primary">₹{(selectedSlotData.price * nightCount).toLocaleString()}</span>
             </p>
           </div>
@@ -691,12 +691,12 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
               <div className="grid grid-cols-2 gap-2.5">
                 {filteredSlots.map((slot) => {
                   const tagConfig: Record<string, { label: string; color: string; bg: string }> = {
-                    almost_full: { label: "Almost Full", color: "text-red-400", bg: "bg-red-500/15" },
-                    best_price: { label: "Best Price", color: "text-emerald-400", bg: "bg-emerald-500/15" },
-                    trending: { label: "Trending", color: "text-amber-400", bg: "bg-amber-500/15" },
-                    last_slot: { label: "Last Slot!", color: "text-red-400", bg: "bg-red-500/15" },
-                    couple_pick: { label: "Couple Pick", color: "text-pink-400", bg: "bg-pink-500/15" },
-                    work_best: { label: "Work Best", color: "text-blue-400", bg: "bg-blue-500/15" },
+                    almost_full: { label: "Almost Full", color: "text-red-700 dark:text-red-400", bg: "bg-red-500/15" },
+                    best_price: { label: "Best Price", color: "text-emerald-700 dark:text-emerald-400", bg: "bg-emerald-500/15" },
+                    trending: { label: "Trending", color: "text-amber-700 dark:text-amber-400", bg: "bg-amber-500/15" },
+                    last_slot: { label: "Last Slot!", color: "text-red-700 dark:text-red-400", bg: "bg-red-500/15" },
+                    couple_pick: { label: "Couple Pick", color: "text-pink-700 dark:text-pink-400", bg: "bg-pink-500/15" },
+                    work_best: { label: "Work Best", color: "text-blue-700 dark:text-blue-400", bg: "bg-blue-500/15" },
                   };
                   const slotTag = slot.tag ? tagConfig[slot.tag] : null;
 
@@ -728,7 +728,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
                       </span>
                       {/* Viewers microcopy */}
                       {slot.viewersNow && slot.viewersNow > 0 && (
-                        <p className="text-[9px] text-amber-400 font-medium mt-1 animate-pulse">
+                        <p className="text-[9px] text-amber-700 dark:text-amber-400 font-medium mt-1 animate-pulse">
                           👀 {slot.viewersNow} people viewing
                         </p>
                       )}
@@ -888,8 +888,8 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
               {extraMattressCount > 0 && (
                 <>
                   <span className="text-border">·</span>
-                  <Layers size={12} className="text-amber-400" />
-                  <span className="text-amber-400 font-medium">{extraMattressCount} mattress (+₹{(extraMattressCount * EXTRA_MATTRESS_PRICE).toLocaleString()})</span>
+                  <Layers size={12} className="text-amber-700 dark:text-amber-400" />
+                  <span className="text-amber-700 dark:text-amber-400 font-medium">{extraMattressCount} mattress (+₹{(extraMattressCount * EXTRA_MATTRESS_PRICE).toLocaleString()})</span>
                 </>
               )}
             </div>
@@ -1184,7 +1184,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
             initial={{ y: 80 }}
             animate={{ y: 0 }}
             exit={{ y: 80 }}
-            className="fixed bottom-0 left-0 right-0 glass px-5 py-3.5 flex items-center justify-between z-40"
+            className="fixed bottom-0 left-0 right-0 glass border-t border-border/50 px-5 py-3.5 flex items-center justify-between z-40 backdrop-blur-xl bg-card/90 dark:bg-card/70"
           >
             <div>
               <span className="font-semibold text-gradient-warm text-lg">₹{selectedSlotData.price.toLocaleString()}</span>
@@ -1192,7 +1192,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
               <p className="text-xs text-muted-foreground">
                 {isStayProp && <><BedDouble size={10} className="inline text-primary mr-0.5" />{roomsCount}R · </>}
                 {guests} guests · {format(selectedDate, "d MMM")}
-                {extraMattressCount > 0 && <span className="text-amber-400 font-medium"> · +{extraMattressCount}🛏️</span>}
+                {extraMattressCount > 0 && <span className="text-amber-700 dark:text-amber-400 font-medium"> · +{extraMattressCount}🛏️</span>}
                 {addedExtras.length > 0 && <span className="text-primary font-medium"> · +{addedExtras.length} extra{addedExtras.length > 1 ? "s" : ""}</span>}
               </p>
             </div>
