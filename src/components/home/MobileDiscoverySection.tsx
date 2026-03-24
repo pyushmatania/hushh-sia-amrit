@@ -149,7 +149,7 @@ export default function MobileDiscoverySection({
         <div className="px-2">
           <PropertyCardStack
             properties={stackProps}
-            index={offset + 2}
+            startIndex={offset + 2}
             onTap={onPropertyTap}
             wishlist={wishlist}
             onToggleWishlist={onToggleWishlist}
