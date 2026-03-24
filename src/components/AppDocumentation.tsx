@@ -351,6 +351,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
             {activeTab === "architecture" && <ArchitectureTab />}
             {activeTab === "database" && <DatabaseTab />}
             {activeTab === "wireframes" && <WireframesTab />}
+            {activeTab === "desktop" && <DesktopTab />}
             {activeTab === "mobile" && <MobileTab />}
             {activeTab === "changelog" && <ChangelogTab />}
           </motion.div>
