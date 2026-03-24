@@ -1414,6 +1414,15 @@ standalone: campaigns · coupons · expenses · budget_allocations · app_config
 - **PropertyDetail** wired to `useSlotAvailability` — Shows real-time "X spots left" from `property_slots` + `slot_availability` tables when date is selected
 - **3 hooks now active in UI**: useSearch, useOrders (via LiveOrderingSheet), useSlotAvailability (via PropertyDetail)
 
+### v1.28 — Rate Limiting & Resilience Hardening
+- **Client-side rate limiter** (`src/lib/rate-limiter.ts`) — sliding window counter with configurable limits per action
+- **Auth rate limiting**: Login (5 attempts/5 min), Signup (3/10 min), Password reset (3/15 min) — auto-resets on success
+- **Order submission rate limiting**: 5 orders/minute per user — prevents duplicate submissions
+- **Section-level error boundaries** on HomeScreen — crash in one feed section (spotlight, packs, foodie) doesn't kill the entire home feed
+- **Rate limit configs**: `RATE_LIMITS` constant with predefined limits for AUTH_LOGIN, AUTH_SIGNUP, AUTH_RESET, ORDER_SUBMIT, SPIN_WHEEL, REVIEW_SUBMIT, SEARCH_QUERY
+- **User-facing error messages**: Rate limit errors show human-readable retry times ("Try again in 3 minutes")
+- **Audit report resolved**: All 8 critical issues confirmed fixed, 20+ warnings addressed, remaining items documented
+
 ---
 
 ## 📐 Conventions & Guidelines
