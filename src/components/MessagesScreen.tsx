@@ -234,15 +234,17 @@ function ThreadCard({ thread, index, onClick, onPin, onArchive }: {
 
       {/* Card */}
       <motion.div
-        drag="x" dragConstraints={{ left: -100, right: 100 }} dragElastic={0.08} dragMomentum={false}
+        drag="x" dragConstraints={{ left: -120, right: 120 }} dragElastic={0.12} dragMomentum={false}
+        dragDirectionLock
         style={{ x: dragX }}
+        onDragStart={handleDragStart}
         onDrag={(_, info) => {
           if (info.offset.x > SWIPE_THRESHOLD) setSwipeState("pin");
           else if (info.offset.x < -SWIPE_THRESHOLD) setSwipeState("archive");
           else setSwipeState("idle");
         }}
         onDragEnd={handleDragEnd}
-        onClick={onClick}
+        onClick={handleTap}
         className="relative z-10 bg-card rounded-2xl cursor-pointer border border-border/50 hover:border-border transition-colors"
         whileTap={{ scale: 0.985 }}
       >
