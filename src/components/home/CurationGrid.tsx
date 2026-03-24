@@ -288,7 +288,9 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
         <>
           <SectionHeader icon={Heart} title="💕 Date Night Specials" subtitle="Curated for couples" accent="hsl(340 75% 55% / 0.15)" />
           {isMobile ? (
-            <MobileCurationGrid combos={romantic.slice(0, 8)} onComboTap={onComboTap} rows={2} />
+            <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2" style={{ WebkitOverflowScrolling: "touch" }}>
+              {romantic.slice(0, 8).map((c, i) => <MobilePrismCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
+            </div>
           ) : (
             <div className="grid grid-cols-4 gap-5">
               {romantic.slice(0, 4).map((c, i) => <DesktopCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
