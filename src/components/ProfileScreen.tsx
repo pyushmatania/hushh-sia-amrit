@@ -307,7 +307,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
       </motion.div>
 
       {/* Quick Stats Row */}
-      <div className="mx-5 mt-4 grid grid-cols-3 gap-3">
+      <div className="mx-5 mt-4 grid grid-cols-3 md:grid-cols-6 gap-3">
           {[
             { icon: Calendar, value: String(bookings.filter(b => b.status !== "cancelled").length), label: "Bookings", color: "text-primary" },
             { icon: Heart, value: "8", label: "Wishlisted", color: "text-primary" },
