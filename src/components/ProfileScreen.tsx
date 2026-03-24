@@ -604,15 +604,21 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
         </div>
       )}
 
-      {/* Version — tap 5× to reveal docs */}
+      {/* Version — tap 5× for docs, 7× for wallpapers */}
       <p
         className="text-center text-[11px] text-muted-foreground pb-4 cursor-pointer select-none"
         onClick={() => {
           versionTapCount.current += 1;
           if (versionTapTimer.current) clearTimeout(versionTapTimer.current);
-          if (versionTapCount.current >= 5) {
+          if (versionTapCount.current >= 7) {
             versionTapCount.current = 0;
-            setShowDocs(true);
+            setShowWallpapers(true);
+          } else if (versionTapCount.current >= 5) {
+            // don't reset yet — wait for 7
+            versionTapTimer.current = setTimeout(() => {
+              if (versionTapCount.current >= 5) setShowDocs(true);
+              versionTapCount.current = 0;
+            }, 800);
           } else {
             versionTapTimer.current = setTimeout(() => {
               versionTapCount.current = 0;
