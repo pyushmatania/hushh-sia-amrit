@@ -145,19 +145,67 @@ export default function AdminTelegram() {
   const sendNotifyTest = async (eventType: string) => {
     try {
       let eventData: any = {};
-      if (eventType === "new_booking") {
-        eventData = { booking_id: "TEST-001", guests: 4, date: new Date().toISOString().split("T")[0], slot: "Morning", total: 5000, status: "confirmed" };
-      } else if (eventType === "new_order") {
-        eventData = { id: "test-order-id-123", total: 1200, property_id: "test", status: "pending" };
-      } else if (eventType === "custom") {
-        eventData = { text: "🧪 This is a test notification from Hushh Jeypore Admin!" };
+      const today = new Date().toISOString().split("T")[0];
+
+      switch (eventType) {
+        case "new_booking":
+          eventData = { booking_id: "TEST-BK-001", guests: 4, date: today, slot: "Morning (6AM–12PM)", total: 5000, status: "confirmed", property_id: "villa-sunrise" };
+          break;
+        case "booking_cancelled":
+          eventData = { booking_id: "TEST-BK-002", date: today, total: 3500 };
+          break;
+        case "new_order":
+          eventData = { id: "test-order-id-123456", total: 1200, property_id: "villa-sunrise", status: "pending", booking_id: "TEST-BK-001" };
+          break;
+        case "order_status":
+          eventData = { id: "test-order-id-123456", status: "preparing" };
+          break;
+        case "low_inventory":
+          eventData = { items: [
+            { emoji: "🍗", name: "Chicken Tikka", stock: 3 },
+            { emoji: "🧊", name: "Ice Cubes", stock: 5 },
+            { emoji: "🥤", name: "Cola", stock: 2 },
+          ]};
+          break;
+        case "daily_summary":
+          eventData = { date: today, booking_count: 12, revenue: 85000, order_count: 28, new_users: 5, avg_rating: 4.7 };
+          break;
+        case "checkin_alert":
+          eventData = { text: `✅ <b>Guest Check-in</b>\n\n👤 Rahul Sharma\n📋 Booking: TEST-BK-003\n🏠 Villa Sunrise\n⏰ ${new Date().toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata" })}` };
+          break;
+        case "payment_received":
+          eventData = { text: `💳 <b>Payment Received!</b>\n\n💰 Amount: ₹5,000\n📋 Booking: TEST-BK-004\n💳 Method: UPI\n🔗 ID: pay_test_abc123\n✅ Status: Captured` };
+          break;
+        case "refund_initiated":
+          eventData = { text: `🔄 <b>Refund Initiated</b>\n\n💰 Amount: ₹2,500\n📋 Booking: TEST-BK-005\n📝 Reason: Guest cancelled\n⏳ Status: Processing` };
+          break;
+        case "staff_alert":
+          eventData = { text: `👷 <b>Staff Alert</b>\n\n👤 Ravi Kumar marked <b>absent</b> today\n📅 Date: ${today}\n📋 Department: Kitchen\n⚠️ Backup may be needed` };
+          break;
+        case "review_alert":
+          eventData = { text: `⭐ <b>New Review</b>\n\n🏠 Villa Sunrise\n⭐ Rating: 5/5\n💬 "Amazing stay! The staff was incredibly helpful and the food was delicious."\n👤 Guest: Priya M.` };
+          break;
+        case "capacity_warning":
+          eventData = { text: `🔴 <b>Capacity Warning</b>\n\n🏠 Villa Sunrise — Morning Slot\n📅 ${today}\n👥 Booked: 9/10 guests\n⚠️ Only 1 spot remaining!` };
+          break;
+        case "system_health":
+          eventData = { text: `🟢 <b>System Health Check</b>\n\n✅ Database: Online\n✅ Edge Functions: Active\n✅ Storage: 42% used\n✅ Active sessions: 15\n⏰ Checked at: ${new Date().toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata" })}` };
+          break;
+        case "custom":
+          eventData = { text: "🧪 This is a test notification from Hushh Jeypore Admin!" };
+          break;
       }
 
+      // For text-based event types, use "custom" event_type
+      const actualEventType = ["checkin_alert", "payment_received", "refund_initiated", "staff_alert", "review_alert", "capacity_warning", "system_health"].includes(eventType)
+        ? "custom"
+        : eventType;
+
       const { error } = await supabase.functions.invoke("telegram-notify", {
-        body: { event_type: eventType, data: eventData },
+        body: { event_type: actualEventType, data: eventData },
       });
       if (error) throw error;
-      toast.success(`${eventType} notification sent!`);
+      toast.success(`${eventType} notification sent! ✅`);
       loadAll();
     } catch (e: any) {
       toast.error(`Notification failed: ${e.message}`);
@@ -434,23 +482,80 @@ export default function AdminTelegram() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Test Notifications</CardTitle>
+              <CardTitle className="text-base">📋 Booking & Order Alerts</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              <p className="text-xs text-muted-foreground mb-3">
-                Send test notifications to verify each alert type works
-              </p>
               {[
-                { type: "new_booking", label: "🎫 Test Booking Alert", desc: "Simulates a new booking notification" },
-                { type: "new_order", label: "🛒 Test Order Alert", desc: "Simulates a new order notification" },
-                { type: "custom", label: "📢 Test Custom Message", desc: "Sends a generic test notification" },
+                { type: "new_booking", label: "🎫 New Booking", desc: "Simulates a new booking confirmation" },
+                { type: "booking_cancelled", label: "❌ Booking Cancelled", desc: "Simulates a booking cancellation" },
+                { type: "new_order", label: "🛒 New Order", desc: "Simulates a new in-stay order" },
+                { type: "order_status", label: "👨‍🍳 Order Status Update", desc: "Simulates order status → preparing" },
               ].map(({ type, label, desc }) => (
-                <Button
-                  key={type}
-                  variant="outline"
-                  className="w-full justify-between"
-                  onClick={() => sendNotifyTest(type)}
-                >
+                <Button key={type} variant="outline" className="w-full justify-between" onClick={() => sendNotifyTest(type)}>
+                  <div className="text-left">
+                    <p className="text-sm font-medium">{label}</p>
+                    <p className="text-xs text-muted-foreground">{desc}</p>
+                  </div>
+                  <ArrowUpRight size={14} />
+                </Button>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">💰 Finance & Payments</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {[
+                { type: "payment_received", label: "💳 Payment Received", desc: "Simulates a successful payment capture" },
+                { type: "refund_initiated", label: "🔄 Refund Initiated", desc: "Simulates a refund processing alert" },
+                { type: "daily_summary", label: "📊 Daily Summary", desc: "Revenue, bookings & orders digest" },
+              ].map(({ type, label, desc }) => (
+                <Button key={type} variant="outline" className="w-full justify-between" onClick={() => sendNotifyTest(type)}>
+                  <div className="text-left">
+                    <p className="text-sm font-medium">{label}</p>
+                    <p className="text-xs text-muted-foreground">{desc}</p>
+                  </div>
+                  <ArrowUpRight size={14} />
+                </Button>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">🏠 Operations & Staff</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {[
+                { type: "checkin_alert", label: "✅ Guest Check-in", desc: "Simulates a guest checking in" },
+                { type: "low_inventory", label: "📦 Low Inventory", desc: "Simulates low stock items alert" },
+                { type: "staff_alert", label: "👷 Staff Absent", desc: "Simulates staff absence notification" },
+                { type: "capacity_warning", label: "🔴 Capacity Warning", desc: "Simulates near-full slot warning" },
+              ].map(({ type, label, desc }) => (
+                <Button key={type} variant="outline" className="w-full justify-between" onClick={() => sendNotifyTest(type)}>
+                  <div className="text-left">
+                    <p className="text-sm font-medium">{label}</p>
+                    <p className="text-xs text-muted-foreground">{desc}</p>
+                  </div>
+                  <ArrowUpRight size={14} />
+                </Button>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">⭐ Guest & System</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {[
+                { type: "review_alert", label: "⭐ New Review", desc: "Simulates a 5-star guest review" },
+                { type: "system_health", label: "🟢 System Health", desc: "Simulates system health check report" },
+                { type: "custom", label: "📢 Custom Message", desc: "Sends a generic test notification" },
+              ].map(({ type, label, desc }) => (
+                <Button key={type} variant="outline" className="w-full justify-between" onClick={() => sendNotifyTest(type)}>
                   <div className="text-left">
                     <p className="text-sm font-medium">{label}</p>
                     <p className="text-xs text-muted-foreground">{desc}</p>
