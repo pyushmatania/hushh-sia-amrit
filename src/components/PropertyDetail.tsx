@@ -545,7 +545,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
 
         {/* Highlights */}
         <h3 className="text-lg font-semibold text-foreground mb-3">✨ Highlights</h3>
-        <div className="grid grid-cols-1 gap-2 mb-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-5">
           {property.highlights.map((h, i) => (
             <motion.div
               key={i}
