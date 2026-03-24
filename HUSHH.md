@@ -1700,6 +1700,22 @@ Use these prompts when converting the mobile-first app to a responsive web/deskt
 | Trigger | Location | Result |
 |---------|----------|--------|
 | Tap version text 5× within 2s | Profile tab, bottom | Full in-app documentation overlay |
+| Tap version text 7× within 2s | Profile tab, bottom | Wallpaper gallery — download all splash screen assets |
+| Visit `/wallpapers` | Direct URL | Public wallpaper download page (phone + desktop + app icon) |
+
+---
+
+## 📋 v1.36 — Desktop & Wallpaper Gallery
+
+- Cinematic splash screen — time-of-day island villa backgrounds (dawn/day/dusk/night) with fireflies, stars, birds, lanterns
+- Desktop 16:9 variants of all cinematic splash backgrounds (expanded from mobile art)
+- Pacifico curvy script typography for splash brand name
+- Wallpaper gallery Easter egg — downloadable phone + desktop wallpapers (16 total)
+- Asset catalog (`src/data/wallpapers.ts`) — organized Classic + Cinematic assets
+- Admin Branding toggle: Classic vs Cinematic splash variant
+- Desktop splash screen support with responsive background selection
+- `/wallpapers` route + Profile 7-tap Easter egg access
+- Desktop tab in documentation with full responsive architecture reference
 
 ---
 
