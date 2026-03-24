@@ -42,6 +42,26 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
 
+      - name: Copy app icon to Android resources
+        run: |
+          # Generate adaptive icon resources from the app icon
+          ICONS_DIR="android/app/src/main/res"
+          for size_dir in mdpi:48 hdpi:72 xhdpi:96 xxhdpi:144 xxxhdpi:192; do
+            dir=$(echo $size_dir | cut -d: -f1)
+            size=$(echo $size_dir | cut -d: -f2)
+            mkdir -p "$ICONS_DIR/mipmap-$dir"
+            if command -v convert &> /dev/null; then
+              convert public/app-icon.png -resize ${size}x${size} "$ICONS_DIR/mipmap-$dir/ic_launcher.png"
+              convert public/app-icon.png -resize ${size}x${size} "$ICONS_DIR/mipmap-$dir/ic_launcher_round.png"
+              convert public/app-icon.png -resize ${size}x${size} "$ICONS_DIR/mipmap-$dir/ic_launcher_foreground.png"
+            else
+              cp public/icon-${size}.png "$ICONS_DIR/mipmap-$dir/ic_launcher.png" 2>/dev/null || true
+              cp public/icon-${size}.png "$ICONS_DIR/mipmap-$dir/ic_launcher_round.png" 2>/dev/null || true
+              cp public/icon-${size}.png "$ICONS_DIR/mipmap-$dir/ic_launcher_foreground.png" 2>/dev/null || true
+            fi
+          done
+          echo "App icons copied to Android resources"
+
       - name: Setup Java 21
         uses: actions/setup-java@v4
         with:

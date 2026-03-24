@@ -1,13 +1,32 @@
-import type { CapacitorConfig } from '@capacitor/cli';
+import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: 'app.lovable.hushhjeypore',
-  appName: 'hushh-jeypore',
-  webDir: 'dist',
+  appId: "com.hushh.jeypore",
+  appName: "Hushh Jeypore",
+  webDir: "dist",
   server: {
-    url: 'https://335dfa9e-e50c-4ce8-b34c-a697f11333f3.lovableproject.com?forceHideBadge=true',
-    cleartext: true
-  }
+    url: "https://hushh-jeypore.lovable.app?forceHideBadge=true",
+    cleartext: true,
+  },
+  plugins: {
+    SplashScreen: {
+      launchAutoHide: true,
+      launchShowDuration: 0,
+      backgroundColor: "#050505",
+    },
+    PushNotifications: {
+      presentationOptions: ["badge", "sound", "alert"],
+    },
+    LocalNotifications: {
+      smallIcon: "ic_notification",
+      iconColor: "#a65eed",
+      sound: "default",
+    },
+    StatusBar: {
+      style: "DARK",
+      backgroundColor: "#050505",
+    },
+  },
 };
 
 export default config;
