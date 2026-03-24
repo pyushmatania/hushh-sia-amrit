@@ -530,8 +530,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               </div>
             </LazySection>
           )}
-        </motion.div>
-      </AnimatePresence>
+        </div>
 
       <motion.div
         initial={{ opacity: 0, y: 10 }}
