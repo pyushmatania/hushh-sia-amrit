@@ -2,6 +2,8 @@ import { motion, AnimatePresence, useMotionValue, animate } from "framer-motion"
 import { useState, useCallback, useRef, useEffect } from "react";
 import { hapticSuccess } from "@/lib/haptics";
 import { playTick, playWinJingle } from "@/lib/spin-sounds";
+import { checkRateLimit, RATE_LIMITS, formatRetryTime } from "@/lib/rate-limiter";
+import { toast } from "sonner";
 
 interface SpinWheelProps {
   onWin: (prize: Prize) => void;
@@ -70,6 +72,16 @@ export default function SpinWheel({ onWin, disabled }: SpinWheelProps) {
 
   const handleSpin = useCallback(() => {
     if (spinning || disabled) return;
+
+    const { allowed, retryAfterMs } = checkRateLimit(
+      "spin:wheel",
+      RATE_LIMITS.SPIN_WHEEL.maxAttempts,
+      RATE_LIMITS.SPIN_WHEEL.windowMs
+    );
+    if (!allowed) {
+      toast.error(`Come back later! Try again in ${formatRetryTime(retryAfterMs)}`);
+      return;
+    }
     setSpinning(true);
     setResult(null);
     setShowConfetti(false);
