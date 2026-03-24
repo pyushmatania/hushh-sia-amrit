@@ -482,6 +482,17 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               </div>
               )}
               </LazySection>
+
+              {isMobile && (
+                <MobilePropertyGrid
+                  properties={filteredProperties}
+                  onPropertyTap={onPropertyTap}
+                  wishlist={wishlist}
+                  onToggleWishlist={onToggleWishlist}
+                  rows={2}
+                  title="All Experiences"
+                />
+              )}
               </>
               )}
             </>
