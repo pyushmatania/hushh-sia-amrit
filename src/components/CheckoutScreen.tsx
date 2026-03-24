@@ -154,7 +154,7 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
       </div>
 
       {/* Two-column layout on desktop */}
-      <div className="md:flex md:gap-8 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:mt-6">
+      <div className="md:flex md:gap-8 md:max-w-5xl md:mx-auto md:px-8 md:mt-6">
 
         {/* LEFT COLUMN */}
         <div className="px-5 py-4 space-y-5 md:px-0 md:flex-1 md:min-w-0">
