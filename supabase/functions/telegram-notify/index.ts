@@ -26,6 +26,15 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    const body = await req.json();
+    const {
+      event_type,
+      data: eventData,
+      chat_id,
+      use_admin_chat = false,
+      use_group_chat = false,
+    } = body;
+
     // Get config
     const { data: state } = await supabase
       .from("telegram_bot_state")
@@ -40,16 +49,43 @@ Deno.serve(async (req) => {
       );
     }
 
-    const targetChatId = state.group_chat_id || state.admin_chat_id;
+    let targetChatId = chat_id || null;
+
+    if (!targetChatId) {
+      if (use_group_chat) targetChatId = state.group_chat_id;
+      else if (use_admin_chat) targetChatId = state.admin_chat_id;
+      else targetChatId = state.group_chat_id || state.admin_chat_id;
+    }
+
+    // Fallback: auto-detect latest customer chat from polled messages
+    if (!targetChatId) {
+      const { data: latestMessage } = await supabase
+        .from("telegram_messages")
+        .select("chat_id")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (latestMessage?.chat_id) {
+        targetChatId = String(latestMessage.chat_id);
+
+        // Persist as admin chat for future sends
+        await supabase
+          .from("telegram_bot_state")
+          .update({ admin_chat_id: targetChatId })
+          .eq("id", 1);
+      }
+    }
+
     if (!targetChatId) {
       return new Response(
-        JSON.stringify({ error: "No chat_id configured" }),
+        JSON.stringify({
+          error: "No chat_id configured",
+          hint: "Send a message to the bot once, then run Poll. Or set Admin Chat ID in Telegram config.",
+        }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
-
-    const body = await req.json();
-    const { event_type, data: eventData } = body;
 
     let message = "";
 

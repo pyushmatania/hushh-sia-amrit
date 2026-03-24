@@ -53,11 +53,31 @@ Deno.serve(async (req) => {
       }
     }
 
+    // Fallback: use latest incoming chat from telegram_messages
+    if (!targetChatId) {
+      const { data: latestMessage } = await supabase
+        .from("telegram_messages")
+        .select("chat_id")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (latestMessage?.chat_id) {
+        targetChatId = String(latestMessage.chat_id);
+
+        // Persist for future tests
+        await supabase
+          .from("telegram_bot_state")
+          .update({ admin_chat_id: targetChatId })
+          .eq("id", 1);
+      }
+    }
+
     if (!targetChatId || !text) {
       return new Response(
         JSON.stringify({
           error: "chat_id and text are required",
-          hint: "Set admin_chat_id or group_chat_id in telegram_bot_state, or provide chat_id directly",
+          hint: "Set admin_chat_id/group_chat_id or send a message to your bot and run Poll once.",
         }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
