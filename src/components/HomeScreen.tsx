@@ -387,6 +387,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               </div>
 
               {isMobile ? (
+                <>
                 <div className="mt-4">
                   <div className="flex items-center justify-between px-4 mb-3">
                     <h2 className="text-base font-bold text-foreground">🏡 Featured Stays</h2>
@@ -401,6 +402,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 </div>
                 <MobileDiscoverySection properties={stayProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Cozy Retreats" sectionEmoji="🌿" offset={0} />
                 <MobileDiscoverySection properties={stayProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Weekend Escapes" sectionEmoji="🏖️" offset={5} />
+                </>
               ) : (
               <>
               {trendingNow.length > 0 && (
