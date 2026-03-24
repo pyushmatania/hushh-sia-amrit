@@ -72,7 +72,7 @@ export default memo(function CategoryBar({ active, onChange }: CategoryBarProps)
                 </span>
               )}
             </div>
-            <span className={`text-[10px] font-medium whitespace-nowrap transition-colors duration-200 ${
+            <span className={`text-[10px] md:text-sm font-medium whitespace-nowrap transition-colors duration-200 ${
               isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground/70"
             }`}>
               {cat.label}
