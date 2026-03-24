@@ -64,7 +64,7 @@ const FoodieVideoCard = memo(function FoodieVideoCard({
   return (
     <div
       ref={cardRef}
-      className="shrink-0 cursor-pointer will-change-transform"
+      className="shrink-0 cursor-pointer"
       style={{
         width: "85vw", maxWidth: "380px", scrollSnapAlign: "center",
         opacity: isActive ? 1 : 0.7,
