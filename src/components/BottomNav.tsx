@@ -40,7 +40,8 @@ export default function BottomNav({ active, onChange, messageBadge = 0 }: Bottom
         transition={{ type: "spring", stiffness: 300, damping: 28, delay: 0.1 }}
         style={{
           background: "hsl(var(--card))",
-          borderTop: "1px solid hsl(var(--border) / 0.3)",
+          borderTop: "1px solid hsl(var(--border))",
+          boxShadow: "var(--shadow-card)",
         }}
       >
 
