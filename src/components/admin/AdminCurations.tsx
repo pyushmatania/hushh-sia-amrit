@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles, Search, Plus, Save, X, Eye, Trash2,
@@ -15,6 +15,7 @@ import DeleteConfirmDialog from "./DeleteConfirmDialog";
 import BatchOperationsBar from "./BatchOperationsBar";
 import { getListingThumbnail } from "@/lib/listing-thumbnails";
 import MultiImageEditor from "./MultiImageEditor";
+import { useAutoSave } from "@/hooks/use-auto-save";
 
 const MOOD_OPTIONS = ["Romantic", "Party", "Chill", "Adventure", "Work", "Celebration", "Family"];
 const INCLUDE_OPTIONS = [
@@ -185,6 +186,33 @@ export default function AdminCurations() {
     window.dispatchEvent(new Event("hushh:listings-updated"));
   };
 
+  // Auto-save for existing curations
+  const autoSaveCuration = useCallback(async (data: CurationDraft & { _editingId?: string }) => {
+    const id = (data as any)._editingId;
+    if (!id || !data.name || !data.property_id) return false;
+    const payload = {
+      name: data.name, emoji: data.emoji, tagline: data.tagline,
+      price: data.price, original_price: data.original_price,
+      slot: data.slot, includes: data.includes, tags: data.tags,
+      mood: data.mood, badge: data.badge || null, property_id: data.property_id, active: data.active,
+      image_urls: data.image_urls || [],
+    };
+    const { error } = await supabase.from("curations").update(payload).eq("id", id);
+    if (!error) {
+      setCurations(prev => prev.map(c => c.id === id ? { ...c, ...payload } : c));
+      window.dispatchEvent(new Event("hushh:listings-updated"));
+    }
+    return !error;
+  }, []);
+
+  const autoSaveData = editing && editingId ? { ...editing, _editingId: editingId } : null;
+  const { status: autoSaveStatus } = useAutoSave({
+    data: autoSaveData,
+    onSave: autoSaveCuration,
+    enabled: !!editingId,
+    debounceMs: 2000,
+  });
+
   const toggleActive = async (id: string, current: boolean) => {
     await supabase.from("curations").update({ active: !current }).eq("id", id);
     setCurations(prev => prev.map(c => c.id === id ? { ...c, active: !current } : c));
@@ -202,7 +230,16 @@ export default function AdminCurations() {
             <Sparkles size={20} className="text-primary" />
             {editingId ? "Edit Curation" : "Create Curation"}
           </h1>
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
+            {editingId && autoSaveStatus !== "idle" && (
+              <span className={`px-2 py-1 rounded-lg text-[10px] font-semibold ${
+                autoSaveStatus === "saving" ? "bg-amber-500/15 text-amber-500" :
+                autoSaveStatus === "saved" ? "bg-emerald-500/15 text-emerald-500" :
+                "bg-destructive/15 text-destructive"
+              }`}>
+                {autoSaveStatus === "saving" ? "⏳ Saving..." : autoSaveStatus === "saved" ? "✓ Saved" : "⚠ Error"}
+              </span>
+            )}
             <button onClick={() => setPreviewMode(!previewMode)}
               className="px-3 py-1.5 rounded-lg text-xs font-medium bg-secondary text-foreground flex items-center gap-1">
               <Eye size={12} /> {previewMode ? "Edit" : "Preview"}
@@ -392,11 +429,20 @@ export default function AdminCurations() {
               </div>
             </div>
 
+            {editingId && autoSaveStatus !== "idle" && (
+              <div className={`text-center py-1.5 rounded-xl text-[11px] font-semibold ${
+                autoSaveStatus === "saving" ? "bg-amber-500/15 text-amber-500" :
+                autoSaveStatus === "saved" ? "bg-emerald-500/15 text-emerald-500" :
+                "bg-destructive/15 text-destructive"
+              }`}>
+                {autoSaveStatus === "saving" ? "⏳ Auto-saving..." : autoSaveStatus === "saved" ? "✓ Auto-saved" : "⚠ Save error"}
+              </div>
+            )}
             <motion.button whileTap={{ scale: 0.97 }} onClick={saveCuration}
               disabled={saving || !editing.name || !editing.property_id}
               className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-50">
               {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-              {editingId ? "Update Curation" : "Create Curation"}
+              {editingId ? "Save & Close" : "Create Curation"}
             </motion.button>
           </div>
         )}

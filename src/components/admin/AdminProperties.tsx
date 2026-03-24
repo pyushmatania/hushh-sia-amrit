@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { useAutoSave } from "@/hooks/use-auto-save";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Building2, Search, Plus, Trash2, Pause, Play, Pencil,
@@ -271,6 +272,34 @@ export default function AdminProperties() {
     }
     setEditingListing(null);
   };
+
+  // Auto-save for existing listings (not new ones)
+  const autoSaveProperty = useCallback(async (data: Partial<Listing>) => {
+    if (!data.id || !data.name) return false;
+    const payload = {
+      name: data.name, description: data.description || "", full_description: data.full_description || "",
+      location: data.location || "Jeypore, Odisha", base_price: data.base_price ?? 0, capacity: data.capacity ?? 10,
+      status: data.status || "draft", category: data.category || "Stays", image_urls: data.image_urls || [],
+      amenities: data.amenities || [], tags: data.tags || [], highlights: data.highlights || [],
+      property_type: data.property_type || "", primary_category: data.primary_category || "stay",
+      host_name: data.host_name || "", rating: data.rating ?? 0, review_count: data.review_count ?? 0,
+      lat: data.lat ?? 0, lng: data.lng ?? 0, discount_label: data.discount_label || "",
+      entry_instructions: data.entry_instructions || "", slots: data.slots || [], rules: data.rules || [],
+    };
+    const { error } = await supabase.from("host_listings").update(payload).eq("id", data.id);
+    if (!error) {
+      setListings(prev => prev.map(l => l.id === data.id ? { ...l, ...payload } as Listing : l));
+      notifyListingsUpdated();
+    }
+    return !error;
+  }, []);
+
+  const { status: autoSaveStatus } = useAutoSave({
+    data: editingListing,
+    onSave: autoSaveProperty,
+    enabled: !isCreating && !!editingListing?.id,
+    debounceMs: 2000,
+  });
 
   const statsBase = categoryFilter === "all" ? listings : listings.filter(l => l.primary_category === categoryFilter);
   const stats = {
@@ -575,10 +604,19 @@ export default function AdminProperties() {
                         }`}>
                         <Eye size={13} /> Preview
                       </motion.button>
+                      {!isCreating && autoSaveStatus !== "idle" && (
+                        <span className={`px-2.5 py-2 rounded-xl text-[10px] font-semibold flex items-center gap-1 ${
+                          autoSaveStatus === "saving" ? "bg-amber-500/15 text-amber-500" :
+                          autoSaveStatus === "saved" ? "bg-emerald-500/15 text-emerald-500" :
+                          "bg-destructive/15 text-destructive"
+                        }`}>
+                          {autoSaveStatus === "saving" ? "⏳ Saving..." : autoSaveStatus === "saved" ? "✓ Saved" : "⚠ Error"}
+                        </span>
+                      )}
                       <motion.button whileTap={{ scale: 0.95 }}
                         onClick={saveListing}
                         className="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white text-xs font-semibold shadow-lg shadow-indigo-200/30 dark:shadow-indigo-900/30">
-                        Save
+                        {isCreating ? "Create" : "Save & Close"}
                       </motion.button>
                       <button onClick={() => { setEditingListing(null); setPreviewMode(false); }}
                         className="p-2 rounded-xl bg-card/80 backdrop-blur-sm border border-border hover:bg-secondary transition">
