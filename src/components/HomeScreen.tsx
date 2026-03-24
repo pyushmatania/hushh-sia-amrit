@@ -26,7 +26,7 @@ import FoodieCarousel from "./home/FoodieCarousel";
 import ServiceGrid from "./home/ServiceGrid";
 import CurationGrid from "./home/CurationGrid";
 import ActiveTripCard from "./home/ActiveTripCard";
-import OscarRedCarpetSection from "./home/OscarRedCarpetSection";
+import { OscarToggle, OscarThemedListing } from "./home/OscarModeToggle";
 
 /** Wraps a home feed section so a crash in one section doesn't kill the whole feed */
 function SectionBoundary({ children, name }: { children: ReactNode; name: string }) {
@@ -63,6 +63,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
   const [subFilter, setSubFilter] = useState("All");
   const [activeMood, setActiveMood] = useState<"romantic" | "party" | "chill" | "work" | null>(null);
   const [activePackFilter, setActivePackFilter] = useState("tonight");
+  const [oscarMode, setOscarMode] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
   const scrollToTop = useCallback(() => {
@@ -283,6 +284,11 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
           {activeCategory === "stay" && (
             <>
               <SectionTitle title="🏡 FEATURED STAYS" />
+              <OscarToggle isOn={oscarMode} onToggle={() => setOscarMode(!oscarMode)} />
+              {oscarMode ? (
+                <OscarThemedListing properties={stayProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
+              ) : (
+              <>
               <SpotlightCarousel properties={stayProperties} onPropertyTap={onPropertyTap} category="stay" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
 
               <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar md:justify-center md:flex-wrap md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-3">
@@ -340,6 +346,8 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                   ))}
                 </div>
               </div>
+              </>
+              )}
             </>
           )}
 
@@ -354,6 +362,11 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                   Unforgettable moments, handpicked for you
                 </p>
               </div>
+              <OscarToggle isOn={oscarMode} onToggle={() => setOscarMode(!oscarMode)} />
+              {oscarMode ? (
+                <OscarThemedListing properties={experienceProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
+              ) : (
+              <>
               <SpotlightCarousel properties={experienceProperties} onPropertyTap={onPropertyTap} category="experience" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
 
               <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar md:justify-center md:flex-wrap md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-3">
@@ -407,6 +420,8 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 )}
               </div>
               </LazySection>
+              </>
+              )}
             </>
           )}
 
@@ -421,6 +436,11 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                   Elevate your experience with curated add-ons
                 </p>
               </div>
+              <OscarToggle isOn={oscarMode} onToggle={() => setOscarMode(!oscarMode)} />
+              {oscarMode ? (
+                <OscarThemedListing properties={filteredProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
+              ) : (
+              <>
 
               <div className="px-4 pt-3 pb-3 flex gap-2 overflow-x-auto hide-scrollbar md:justify-center md:flex-wrap md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-3">
                 {serviceFilters.map(tag => (
@@ -446,6 +466,8 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                   <p className="text-foreground font-semibold">No services match this filter</p>
                   <button onClick={() => handleSubFilter("All")} className="text-xs text-primary mt-2 font-medium">Show all services</button>
                 </div>
+              )}
+              </>
               )}
             </>
           )}
@@ -544,18 +566,12 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               </div>
             </LazySection>
           )}
-        </div>
-
-      {/* ═══════ OSCAR RED CARPET SECTION ═══════ */}
-      <LazySection minHeight="400px" rootMargin="300px">
-        <OscarRedCarpetSection
-          properties={properties}
-          onPropertyTap={onPropertyTap}
-          wishlist={wishlist}
-          onToggleWishlist={onToggleWishlist}
-        />
-      </LazySection>
-
+              </div>
+              <OscarToggle isOn={oscarMode} onToggle={() => setOscarMode(!oscarMode)} />
+              {oscarMode ? (
+                <OscarThemedListing properties={properties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
+              ) : (
+              <>
       <div className="mx-5 mt-8 mb-4 flex items-center justify-center gap-2 glass rounded-2xl px-4 py-3 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32">
         <span className="text-lg">🏷️</span>
         <span className="text-sm font-medium text-foreground md:text-base">Prices include all fees · No hidden charges</span>
