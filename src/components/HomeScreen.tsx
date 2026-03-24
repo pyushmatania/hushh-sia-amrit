@@ -502,6 +502,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
 
               <LazySection minHeight="400px" rootMargin="300px">
               {isMobile ? (
+                <>
                 <div className="mt-4">
                   <div className="flex items-center justify-between px-4 mb-3">
                     <h2 className="text-base font-bold text-foreground">🔥 All Experiences</h2>
@@ -514,6 +515,9 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                     onToggleWishlist={onToggleWishlist}
                   />
                 </div>
+                <MobileDiscoverySection properties={experienceProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Adrenaline Rush" sectionEmoji="⚡" offset={0} />
+                <MobileDiscoverySection properties={experienceProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Cultural Treasures" sectionEmoji="🏛️" offset={7} />
+                </>
               ) : (
               <div className="mt-6">
                 <div className="flex items-center justify-between px-5 mb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:mb-6">
