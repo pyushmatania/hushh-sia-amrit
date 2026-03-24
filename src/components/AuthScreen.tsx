@@ -69,6 +69,11 @@ export default function AuthScreen() {
       setError("Please enter your email address");
       return;
     }
+    const { allowed, retryAfterMs } = checkRateLimit(`auth:reset:${email}`, RATE_LIMITS.AUTH_RESET.maxAttempts, RATE_LIMITS.AUTH_RESET.windowMs);
+    if (!allowed) {
+      setError(`Too many reset requests. Try again in ${formatRetryTime(retryAfterMs)}`);
+      return;
+    }
     setLoading(true);
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
