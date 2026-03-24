@@ -467,7 +467,7 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
 
           {/* EARN */}
           {tab === "earn" && (
-            <motion.div key="earn" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="px-4 space-y-3">
+            <motion.div key="earn" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="px-4 space-y-3 md:px-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4 md:space-y-0">
               <p className="text-xs text-muted-foreground mb-1">Ways to stack more points 🚀</p>
               {earnMethods.map((m, i) => (
                 <motion.div

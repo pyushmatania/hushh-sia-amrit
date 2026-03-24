@@ -71,7 +71,7 @@ export default function ReferralScreen({ onBack }: ReferralScreenProps) {
           <div className="w-20 h-20 rounded-full bg-primary/10 mx-auto mb-4 flex items-center justify-center">
             <Gift size={36} className="text-primary" />
           </div>
-          <h2 className="text-2xl font-bold text-foreground mb-2">Share the Love</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-2 md:text-3xl">Share the Love</h2>
           <p className="text-sm text-muted-foreground max-w-[280px] mx-auto">
             Invite friends to Hushh and you both earn reward points on their first booking!
           </p>
