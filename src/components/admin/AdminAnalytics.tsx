@@ -233,7 +233,7 @@ export default function AdminAnalytics() {
               </h3>
               <span className="text-[10px] font-semibold text-primary bg-primary/10 px-2.5 py-1 rounded-lg">14 days</span>
             </div>
-            <div className="h-[200px]">
+            <div className="h-[200px] lg:h-[260px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={revenueByDay}>
                   <defs>
