@@ -170,9 +170,7 @@ function TiltCard({
         {/* Multi-layer depth shadow — light-mode-aware */}
         <div className="absolute -inset-[1px] rounded-3xl pointer-events-none shadow-[0_2px_8px_hsla(260,20%,20%,0.08),0_8px_24px_hsla(260,20%,20%,0.10),0_16px_40px_hsla(270,60%,50%,0.08)] dark:shadow-[0_2px_4px_hsla(0,0%,0%,0.3),0_8px_16px_hsla(0,0%,0%,0.25),0_16px_32px_hsla(0,0%,0%,0.2),0_24px_48px_-8px_hsla(270,60%,50%,0.15)]" />
 
-        <div className="relative bg-card rounded-3xl overflow-hidden border border-border/40" style={{
-          boxShadow: `inset 0 1px 0 hsla(0,0%,100%,0.06), inset 0 -1px 0 hsla(0,0%,0%,0.2)`,
-        }}>
+        <div className="relative bg-card rounded-3xl overflow-hidden border border-border">
           {/* Background image */}
           <div className="relative h-[220px] overflow-hidden">
             <motion.img src={property.images[0]} alt={property.name} className="w-full h-[260px] object-cover" style={{ y: imgY }} />
