@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import LazySection from "./home/LazySection";
 import { Bell, MapPin, ArrowRight } from "lucide-react";
 import { hapticSelection } from "@/lib/haptics";
@@ -288,10 +288,13 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
             <>
               <SectionTitle title="🏡 FEATURED STAYS" />
               <OscarToggle isOn={oscarMode} onToggle={() => setOscarMode(!oscarMode)} />
+              <AnimatePresence mode="wait">
               {oscarMode ? (
-                <OscarThemedListing properties={stayProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
+                <motion.div key="oscar-stays" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+                  <OscarThemedListing properties={stayProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
+                </motion.div>
               ) : (
-              <>
+              <motion.div key="normal-stays" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
               <SpotlightCarousel properties={stayProperties} onPropertyTap={onPropertyTap} category="stay" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
 
               <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar md:justify-center md:flex-wrap md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-3">
@@ -349,8 +352,9 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                   ))}
                 </div>
               </div>
-              </>
+              </motion.div>
               )}
+              </AnimatePresence>
             </>
           )}
 

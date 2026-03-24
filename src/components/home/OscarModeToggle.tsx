@@ -308,7 +308,7 @@ interface OscarThemedListingProps {
 }
 
 export function OscarThemedListing({ properties, onPropertyTap, wishlist, onToggleWishlist }: OscarThemedListingProps) {
-  const premiumPicks = [...properties].sort((a, b) => b.rating - a.rating).slice(0, 6);
+  const premiumPicks = [...properties].sort((a, b) => b.rating - a.rating);
   const isMobile = useIsMobile();
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -403,57 +403,11 @@ export function OscarThemedListing({ properties, onPropertyTap, wishlist, onTogg
 
           {/* Mobile: Swipeable single card */}
           {isMobile ? (
-            <div className="relative max-w-sm mx-auto">
-              {/* Dot indicators */}
-              <div className="flex items-center justify-center gap-2 mb-4">
-                {premiumPicks.map((_, i) => (
-                  <button key={i} onClick={() => { setCurrentIndex(i); hapticSelection(); }}
-                    className="rounded-full transition-all duration-300"
-                    style={{
-                      width: i === currentIndex ? 20 : 6,
-                      height: 6,
-                      background: i === currentIndex
-                        ? "linear-gradient(90deg, #FFD700, #DAA520)"
-                        : "rgba(255,215,0,0.2)",
-                      boxShadow: i === currentIndex ? "0 0 8px rgba(255,215,0,0.4)" : "none",
-                    }}
-                    aria-label={`Go to property ${i + 1}`} />
-                ))}
-              </div>
-
-              {/* Swipe area */}
-              <div
-                ref={scrollRef}
-                className="overflow-hidden"
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-              >
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={currentIndex}
-                    initial={{ opacity: 0, x: 80 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -80 }}
-                    transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                  >
-                    <OscarPropertyCard
-                      property={premiumPicks[currentIndex]}
-                      onTap={onPropertyTap}
-                      index={0}
-                      isWL={wishlist.includes(premiumPicks[currentIndex].id)}
-                      onToggleWishlist={onToggleWishlist}
-                    />
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-
-              {/* Counter */}
-              <div className="text-center mt-3">
-                <span className="text-xs font-bold tracking-wider" style={{ color: "rgba(255,215,0,0.5)" }}>
-                  {currentIndex + 1} / {premiumPicks.length}
-                </span>
-              </div>
+            <div className="grid grid-cols-2 gap-3">
+              {premiumPicks.map((p, i) => (
+                <OscarPropertyCard key={p.id} property={p} onTap={onPropertyTap} index={i}
+                  isWL={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
+              ))}
             </div>
           ) : (
             /* Desktop: Grid with arrow navigation */
