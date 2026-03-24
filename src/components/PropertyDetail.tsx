@@ -582,18 +582,18 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
     >
       {/* Hero — Mobile Cinematic */}
       <div className="relative overflow-hidden md:hidden">
-        {/* Animated gradient border frame */}
-        <div className="absolute inset-0 z-[5] pointer-events-none rounded-b-3xl" style={{
-          border: "2px solid transparent",
-          borderImage: "linear-gradient(135deg, hsla(270,80%,65%,0.4), hsla(320,80%,55%,0.2), hsla(270,80%,65%,0.4)) 1",
-        }} />
-        <div className="absolute bottom-0 left-0 right-0 h-[2px] z-[5] pointer-events-none overflow-hidden">
+        {/* Animated progress bar at bottom */}
+        <div className="absolute bottom-0 left-0 right-0 h-[3px] z-[6] pointer-events-none overflow-hidden">
           <motion.div
-            className="h-full rounded-full"
-            style={{ background: "linear-gradient(90deg, hsl(var(--primary)), hsla(320, 80%, 55%, 1), hsl(var(--primary)))" }}
+            className="h-full"
+            style={{
+              background: "linear-gradient(90deg, hsla(270,80%,65%,0), hsl(var(--primary)) 30%, hsla(320,80%,55%,1) 60%, hsl(var(--primary)) 80%, hsla(270,80%,65%,0))",
+              filter: "blur(0.5px)",
+              boxShadow: "0 0 8px 2px hsla(270,80%,65%,0.5)",
+            }}
             initial={{ width: "0%" }}
             animate={{ width: "100%" }}
-            transition={{ duration: 4, ease: "linear", repeat: Infinity }}
+            transition={{ duration: 4, ease: "easeInOut", repeat: Infinity }}
             key={imgIndex}
           />
         </div>
