@@ -475,7 +475,7 @@ export default function ServiceGrid({ services, onServiceTap }: ServiceGridProps
             </div>
           ) : (
             <div className="grid grid-cols-4 gap-5">
-              {budget.map((s, i) => <DesktopMinimalCard key={s.id} service={s} onTap={onServiceTap} index={i} />)}
+              {budget.map((s, i) => <DesktopServiceCard key={s.id} service={s} onTap={onServiceTap} index={i} />)}
             </div>
           )}
         </>
