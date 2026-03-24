@@ -355,6 +355,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
             {activeTab === "wireframes" && <WireframesTab />}
             {activeTab === "desktop" && <DesktopTab />}
             {activeTab === "mobile" && <MobileTab />}
+            {activeTab === "wallpapers" && <WallpapersTab />}
             {activeTab === "changelog" && <ChangelogTab />}
           </motion.div>
         </AnimatePresence>
