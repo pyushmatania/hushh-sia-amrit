@@ -137,7 +137,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
   return (
     <div className="pb-24 bg-mesh min-h-screen md:h-[calc(100vh-4rem)] md:overflow-y-auto">
       {/* Header */}
-      <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-6 pb-1 flex items-center justify-between">
+      <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-6 pb-1 flex items-center justify-between md:max-w-4xl md:mx-auto">
         <motion.h1
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -156,7 +156,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
       </div>
 
       {/* Desktop responsive wrapper */}
-      <div className="md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+      <div className="md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:max-w-4xl md:mx-auto">
 
       {/* Profile Hero Card — reimagined */}
       <motion.div
@@ -307,7 +307,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
       </motion.div>
 
       {/* Quick Stats Row */}
-      <div className="mx-5 mt-4 grid grid-cols-3 md:grid-cols-6 gap-3">
+      <div className="mx-5 mt-4 grid grid-cols-3 md:grid-cols-3 gap-3">
           {[
             { icon: Calendar, value: String(bookings.filter(b => b.status !== "cancelled").length), label: "Bookings", color: "text-primary" },
             { icon: Heart, value: "8", label: "Wishlisted", color: "text-primary" },
@@ -421,7 +421,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
       </motion.div>
 
       {/* Two Cards Grid */}
-      <div className="mx-5 mt-5 grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="mx-5 mt-5 grid grid-cols-2 md:grid-cols-2 gap-3">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}

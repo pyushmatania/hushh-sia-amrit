@@ -427,7 +427,7 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
       </AnimatePresence>
 
       {/* Results */}
-      <div className="px-5 pt-4 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+      <div className="px-5 pt-4 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:max-w-4xl md:mx-auto">
         {/* DB results when searching */}
         {query.trim() && dbResults.length > 0 && (
           <div className="mb-4">
@@ -494,7 +494,7 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
             <p className="text-sm text-muted-foreground mt-1 text-center">Try adjusting your filters or search query</p>
           </motion.div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
             {filtered.map((property, i) => (
               <motion.div
                 key={property.id}
