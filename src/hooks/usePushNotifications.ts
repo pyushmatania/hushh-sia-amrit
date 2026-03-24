@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { Capacitor } from '@capacitor/core';
 
 const VAPID_PUBLIC_KEY = 'BG1pTfhyjNsScfEnyuW_YVgxhhkFPajS-KOrhkLRVs_u6e5LaPGt_itjHfTTeKBD82B_gBd9e4qvM8J4Msmmw_E';
 
@@ -59,8 +60,22 @@ export function usePushNotifications() {
   const [isLoading, setIsLoading] = useState(false);
   const [isiOS, setIsiOS] = useState(false);
   const [isPWA, setIsPWA] = useState(false);
+  const [isNativeApp, setIsNativeApp] = useState(false);
 
   useEffect(() => {
+    const nativePlatform = Capacitor.isNativePlatform();
+    setIsNativeApp(nativePlatform);
+
+    // In native apps, push is handled by @capacitor/push-notifications (see native.ts)
+    if (nativePlatform) {
+      setIsSupported(true);
+      // Check if we already have a token from native registration
+      const nativeToken = localStorage.getItem('hushh_native_push_token');
+      setIsSubscribed(!!nativeToken);
+      setPermission('granted');
+      return;
+    }
+
     const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
     setIsiOS(isIOSDevice);
     const isPWAMode = window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone === true;
@@ -138,5 +153,29 @@ export function usePushNotifications() {
     } finally { setIsLoading(false); }
   }, []);
 
-  return { isSupported, isSubscribed, permission, isLoading, isiOS, isPWA, subscribe, unsubscribe };
+  const nativeSubscribe = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const { PushNotifications } = await import('@capacitor/push-notifications');
+      const perm = await PushNotifications.requestPermissions();
+      if (perm.receive === 'granted') {
+        await PushNotifications.register();
+        setPermission('granted');
+        setIsSubscribed(true);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  return {
+    isSupported,
+    isSubscribed,
+    permission,
+    isLoading,
+    isiOS,
+    isPWA,
+    subscribe: isNativeApp ? nativeSubscribe : subscribe,
+    unsubscribe,
+  };
 }
