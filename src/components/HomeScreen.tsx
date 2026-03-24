@@ -267,7 +267,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               <SectionTitle title="✨ CURATED PACKS" />
                     {isMobile ? (
                       <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar px-4 pb-2" style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}>
-                        {filteredPacks.slice(0, 6).map((pack, i) => (
+                        {filteredPacks.slice(0, 12).map((pack, i) => (
                           <div key={pack.id} className="snap-start shrink-0 w-[85vw]">
                             <CuratedPackListing pack={pack} index={i} onTap={handlePackTap} />
                           </div>
@@ -275,7 +275,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                       </div>
                     ) : (
                       <div className="md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
-                        {filteredPacks.slice(0, 6).map((pack, i) => (
+                        {filteredPacks.slice(0, 9).map((pack, i) => (
                           <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
                         ))}
                       </div>
