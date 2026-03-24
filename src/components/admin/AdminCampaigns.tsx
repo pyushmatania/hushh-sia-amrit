@@ -167,7 +167,7 @@ export default function AdminCampaigns() {
           <p className="text-zinc-400 text-xs mt-1">Create your first campaign to boost bookings</p>
         </motion.div>
       ) : (
-        <div className="space-y-2.5">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2.5">
           {campaigns.map((c, i) => {
             const tc = typeConfig[c.type] || typeConfig.flash_deal;
             return (

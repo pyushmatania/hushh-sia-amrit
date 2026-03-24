@@ -236,13 +236,13 @@ export default function AdminSettings() {
     <motion.div className="space-y-5" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2.5">
+         <h1 className="text-2xl lg:text-3xl font-bold text-foreground flex items-center gap-2.5">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-zinc-100 to-zinc-50 dark:from-zinc-800 dark:to-zinc-700 flex items-center justify-center shadow-sm">
               <Settings size={20} className="text-zinc-600 dark:text-zinc-300" />
             </div>
             Settings
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">Configure app preferences and rules</p>
+          <p className="text-sm lg:text-base text-muted-foreground mt-1">Configure app preferences and rules</p>
         </div>
         <motion.button
           whileTap={{ scale: 0.9, rotate: resolvedTheme === "dark" ? -30 : 30 }}
@@ -266,7 +266,7 @@ export default function AdminSettings() {
         ))}
       </div>
 
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {currentSections.map((section, si) => (
           <motion.div
             key={section.title}

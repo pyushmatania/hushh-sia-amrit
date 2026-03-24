@@ -177,13 +177,13 @@ export default function AdminAnalytics() {
     <motion.div className="space-y-5" variants={stagger} initial="initial" animate="animate">
       {/* Header */}
       <motion.div variants={fadeUp}>
-        <h1 className="text-2xl font-bold text-foreground flex items-center gap-2.5">
+        <h1 className="text-2xl lg:text-3xl font-bold text-foreground flex items-center gap-2.5">
           <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
             <BarChart3 size={20} className="text-primary" />
           </div>
           Analytics
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">Revenue, bookings, guests & operations</p>
+        <p className="text-sm lg:text-base text-muted-foreground mt-1">Revenue, bookings, guests & operations</p>
       </motion.div>
 
       {/* Tabs */}
@@ -199,10 +199,10 @@ export default function AdminAnalytics() {
       </motion.div>
 
       {/* Summary Cards — always visible */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {summaryCards.map((card) => (
           <motion.div key={card.label} variants={fadeUp}
-            className="rounded-2xl bg-card border border-border p-4 hover:shadow-md transition-shadow">
+            className="rounded-2xl bg-card border border-border p-4 lg:p-5 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between mb-2">
               <div className={`w-8 h-8 rounded-xl ${card.bg} flex items-center justify-center`}>
                 <card.icon size={16} className={card.color} />
@@ -216,15 +216,15 @@ export default function AdminAnalytics() {
                 </span>
               )}
             </div>
-            <p className="text-xl font-bold text-foreground tabular-nums">{card.value}</p>
-            <p className="text-[10px] text-muted-foreground mt-0.5">{card.label} · {card.suffix}</p>
+            <p className="text-xl lg:text-2xl font-bold text-foreground tabular-nums">{card.value}</p>
+            <p className="text-[10px] lg:text-xs text-muted-foreground mt-0.5">{card.label} · {card.suffix}</p>
           </motion.div>
         ))}
       </div>
 
       {/* === OVERVIEW TAB === */}
       {tab === "overview" && (
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Revenue Trend */}
           <motion.div variants={fadeUp} className="rounded-2xl bg-card border border-border p-5">
             <div className="flex items-center justify-between mb-4">
@@ -233,7 +233,7 @@ export default function AdminAnalytics() {
               </h3>
               <span className="text-[10px] font-semibold text-primary bg-primary/10 px-2.5 py-1 rounded-lg">14 days</span>
             </div>
-            <div className="h-[200px]">
+            <div className="h-[200px] lg:h-[260px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={revenueByDay}>
                   <defs>

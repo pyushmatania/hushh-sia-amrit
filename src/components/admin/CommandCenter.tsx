@@ -762,11 +762,11 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
       </AnimatePresence>
 
       {/* Stat Cards — clean minimal */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 lg:gap-4">
         {statCards.map((card, i) => (
           <motion.div key={card.label}
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06, duration: 0.4 }}
-            className="rounded-2xl bg-card border border-border/60 p-3.5 hover:border-primary/20 transition-colors group"
+            className="rounded-2xl bg-card border border-border/60 p-3.5 lg:p-5 hover:border-primary/20 transition-colors group"
           >
             <div className="flex items-center justify-between mb-2.5">
               <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${card.accent} flex items-center justify-center`}>
@@ -776,8 +776,8 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
                 {card.up ? <ArrowUpRight size={9} /> : <ArrowDownRight size={9} />} {card.change}
               </span>
             </div>
-            <p className="text-xl font-bold text-foreground tabular-nums leading-none"><AnimatedCounter value={card.value} prefix={card.prefix} /></p>
-            <p className="text-[10px] text-muted-foreground mt-1 font-medium">{card.label}</p>
+            <p className="text-xl lg:text-2xl font-bold text-foreground tabular-nums leading-none"><AnimatedCounter value={card.value} prefix={card.prefix} /></p>
+            <p className="text-[10px] lg:text-xs text-muted-foreground mt-1 font-medium">{card.label}</p>
           </motion.div>
         ))}
       </div>
