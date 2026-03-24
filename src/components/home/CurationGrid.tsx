@@ -168,7 +168,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
 
               <div className="absolute bottom-0 left-0 right-0 p-2.5">
                 <span className="text-lg">{combo.emoji}</span>
-                <h4 className="text-[12px] font-bold text-white leading-tight mt-0.5">{combo.name}</h4>
+                <h4 className="text-[12px] md:text-sm font-bold text-white leading-tight mt-0.5">{combo.name}</h4>
                 <p className="text-[9px] text-white/50 mt-0.5 line-clamp-1">{combo.tagline}</p>
                 <p className="text-[11px] font-bold text-white mt-1">
                   ₹{combo.priceRange[0].toLocaleString()}<span className="font-normal text-white/40">+</span>
