@@ -605,7 +605,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
               </motion.div>
 
               {/* Tagline — character-by-character reveal with stagger */}
-              <div className="mt-2 flex items-center justify-center gap-[1.5px] overflow-hidden">
+              <div className="mt-2 md:mt-4 flex items-center justify-center gap-[1.5px] md:gap-[2.5px] overflow-hidden">
                 {tagline.split("").map((char, i) => (
                   <motion.span
                     key={i}
