@@ -501,7 +501,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mx-5 mt-2 mb-1 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3"
+          className="mx-5 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 mt-2 mb-1 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 md:max-w-2xl md:self-center"
         >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-amber-500/15 flex items-center justify-center shrink-0">
