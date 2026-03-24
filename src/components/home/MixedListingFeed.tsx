@@ -60,11 +60,123 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
     let cycle = 0;
     let rendered = 0;
 
-    // Desktop: uniform clean grid — all PropertyCard
+    // Desktop: creative bento grid with varied card sizes
     if (!isMobile) {
       while (i < properties.length && rendered < visibleCount) {
+        const pos = i % 8;
         const p = properties[i];
         const isWL = wishlist.includes(p.id);
+
+        // Pos 0: Hero wide card spanning 2 cols
+        if (pos === 0 && i + 1 < properties.length) {
+          const p2 = properties[i + 1];
+          items.push(
+            <div key={`hero-${p.id}`} className="col-span-2 lg:col-span-3 xl:col-span-4">
+              <div className="grid grid-cols-5 gap-4" style={{ height: 360 }}>
+                {/* Large left */}
+                <div
+                  className="col-span-3 relative rounded-2xl overflow-hidden cursor-pointer group"
+                  onClick={() => onPropertyTap(p)}
+                >
+                  <img src={p.images[0]} alt={p.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+                  <div className="absolute top-4 left-4">
+                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-full text-primary-foreground" style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))" }}>
+                      ✨ FEATURED
+                    </span>
+                  </div>
+                  {onToggleWishlist && (
+                    <button onClick={(e) => { e.stopPropagation(); onToggleWishlist(p.id); }} className="absolute top-4 right-4">
+                      <Heart size={22} className={isWL ? "fill-primary text-primary" : "fill-foreground/20 text-background"} />
+                    </button>
+                  )}
+                  <div className="absolute bottom-0 left-0 right-0 p-6">
+                    <h3 className="text-2xl font-bold text-white leading-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{p.name}</h3>
+                    <p className="text-sm text-white/65 mt-1">{p.description}</p>
+                    <div className="flex items-center gap-3 mt-3">
+                      <span className="flex items-center gap-1"><Star size={13} className="fill-amber-400 text-amber-400" /><span className="text-sm font-bold text-white">{p.rating}</span></span>
+                      <span className="text-sm text-white/50">{p.location}</span>
+                      <span className="ml-auto text-lg font-bold text-white">₹{Math.min(...p.slots.filter(s => s.available).map(s => s.price)).toLocaleString()}<span className="text-xs text-white/40">+</span></span>
+                    </div>
+                  </div>
+                </div>
+                {/* Right stack */}
+                <div className="col-span-2 flex flex-col gap-4">
+                  <div
+                    className="flex-1 relative rounded-2xl overflow-hidden cursor-pointer group"
+                    onClick={() => onPropertyTap(p2)}
+                  >
+                    <img src={p2.images[0]} alt={p2.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+                    {onToggleWishlist && (
+                      <button onClick={(e) => { e.stopPropagation(); onToggleWishlist(p2.id); }} className="absolute top-3 right-3">
+                        <Heart size={20} className={wishlist.includes(p2.id) ? "fill-primary text-primary" : "fill-foreground/20 text-background"} />
+                      </button>
+                    )}
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <h4 className="text-base font-bold text-white">{p2.name}</h4>
+                      <div className="flex items-center justify-between mt-1">
+                        <span className="text-xs text-white/60">{p2.location}</span>
+                        <span className="text-sm font-bold text-white">₹{Math.min(...p2.slots.filter(s => s.available).map(s => s.price)).toLocaleString()}</span>
+                      </div>
+                    </div>
+                  </div>
+                  {i + 2 < properties.length && (
+                    <div
+                      className="flex-1 relative rounded-2xl overflow-hidden cursor-pointer group"
+                      onClick={() => onPropertyTap(properties[i + 2])}
+                    >
+                      <img src={properties[i + 2].images[0]} alt={properties[i + 2].name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 p-4">
+                        <h4 className="text-base font-bold text-white">{properties[i + 2].name}</h4>
+                        <div className="flex items-center justify-between mt-1">
+                          <span className="text-xs text-white/60">{properties[i + 2].location}</span>
+                          <span className="text-sm font-bold text-white">₹{Math.min(...properties[i + 2].slots.filter(s => s.available).map(s => s.price)).toLocaleString()}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+          i += Math.min(3, properties.length - i);
+          rendered += 3;
+          continue;
+        }
+
+        // Pos 3-4: Horizontal editorial row with image left, info right
+        if (pos === 3) {
+          items.push(
+            <div key={`editorial-${p.id}`} className="col-span-2 lg:col-span-3 xl:col-span-4">
+              <div
+                className="flex gap-5 rounded-2xl overflow-hidden cursor-pointer group hover:shadow-elevated transition-all"
+                style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border) / 0.3)", height: 200 }}
+                onClick={() => onPropertyTap(p)}
+              >
+                <div className="relative w-[320px] shrink-0 overflow-hidden">
+                  <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/10" />
+                </div>
+                <div className="flex-1 p-5 flex flex-col justify-center">
+                  <span className="text-[9px] font-bold tracking-widest text-primary uppercase">{p.category.toUpperCase()}</span>
+                  <h3 className="text-xl font-bold text-foreground mt-1 leading-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{p.name}</h3>
+                  <p className="text-sm text-muted-foreground mt-1.5 line-clamp-2">{p.description}</p>
+                  <div className="flex items-center gap-3 mt-auto pt-3">
+                    <span className="flex items-center gap-1"><Star size={12} className="fill-primary text-primary" /><span className="text-sm font-medium text-foreground">{p.rating}</span></span>
+                    <span className="text-xs text-muted-foreground">{p.location}</span>
+                    <span className="ml-auto text-lg font-bold text-foreground">₹{Math.min(...p.slots.filter(s => s.available).map(s => s.price)).toLocaleString()}<span className="text-xs text-muted-foreground"> onwards</span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+          i++; rendered++;
+          continue;
+        }
+
+        // Default: standard card
         items.push(
           <PropertyCard
             key={p.id}
