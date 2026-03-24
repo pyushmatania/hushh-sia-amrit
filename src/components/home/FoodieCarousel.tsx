@@ -40,21 +40,22 @@ const FoodieVideoCard = memo(function FoodieVideoCard({
   const cardRef = useRef<HTMLDivElement>(null);
   const [muted, setMuted] = useState(true);
   const [videoReady, setVideoReady] = useState(false);
-  const [shouldLoad, setShouldLoad] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const card = cardRef.current;
     if (!card) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setShouldLoad(true);
+        const vis = entry.isIntersecting;
+        setIsVisible(vis);
+        if (vis) {
           videoRef.current?.play().catch(() => {});
         } else {
           videoRef.current?.pause();
         }
       },
-      { threshold: [0, 0.1], rootMargin: "400px" }
+      { threshold: 0.1, rootMargin: "200px" }
     );
     observer.observe(card);
     return () => observer.disconnect();
@@ -63,7 +64,7 @@ const FoodieVideoCard = memo(function FoodieVideoCard({
   return (
     <div
       ref={cardRef}
-      className="shrink-0 cursor-pointer"
+      className="shrink-0 cursor-pointer will-change-transform"
       style={{
         width: "85vw", maxWidth: "380px", scrollSnapAlign: "center",
         opacity: isActive ? 1 : 0.7,
@@ -75,26 +76,27 @@ const FoodieVideoCard = memo(function FoodieVideoCard({
       <div className="relative" style={{ height: "65vh", maxHeight: "520px" }}>
         <AccentFrame color={accent.color} radius="20px" glowAlpha={0.08} />
         <div className="relative w-full h-full overflow-hidden rounded-[20px]" style={{ border: "1px solid hsl(var(--border) / 0.24)" }}>
-          {!videoReady && (
-            <div className="absolute inset-0 z-[2] pointer-events-none">
-              <img src={property.images[0]} alt={property.name} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
-              <div className="absolute inset-0 video-buffer-shimmer" />
-            </div>
-          )}
-          {shouldLoad && (
+          {/* Background poster — always visible */}
+          <img src={property.images[0]} alt={property.name} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+          {/* Shimmer while video loads */}
+          {!videoReady && <div className="absolute inset-0 z-[2] pointer-events-none video-buffer-shimmer" />}
+
+          {/* Video — only load when visible */}
+          {isVisible && (
             <video
               ref={videoRef}
               src={videoSrc}
               muted={muted}
-              autoPlay
               loop
               playsInline
-              preload="auto"
-              onCanPlayThrough={() => setVideoReady(true)}
-              className="absolute inset-0 w-full h-full object-cover"
-              style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.5s" }}
+              preload="metadata"
+              onCanPlay={() => setVideoReady(true)}
+              className="absolute inset-0 w-full h-full object-cover z-[1]"
+              style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.4s" }}
             />
           )}
+
+          {/* Tag + controls — ALWAYS visible */}
           <AccentTag tag={accent.tag} className="absolute top-4 left-4 z-10" />
           <button
             onClick={(e) => { e.stopPropagation(); setMuted(!muted); }}
@@ -103,12 +105,16 @@ const FoodieVideoCard = memo(function FoodieVideoCard({
           >
             {muted ? <VolumeX size={18} className="text-white" /> : <Volume2 size={18} className="text-white" />}
           </button>
-          <div className="absolute inset-0 flex items-end pointer-events-none" style={{ paddingBottom: "35%" }}>
+
+          {/* Overlay text — ALWAYS visible */}
+          <div className="absolute inset-0 flex items-end pointer-events-none z-[5]" style={{ paddingBottom: "35%" }}>
             <p className="text-[26px] font-black italic text-white/90 leading-[1.15] px-5" style={{ fontFamily: "'Playfair Display', serif", textShadow: "0 2px 8px rgba(0,0,0,0.8), 0 4px 24px rgba(0,0,0,0.5)" }}>
               {overlayText}
             </p>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 p-5" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.7) 45%, rgba(0,0,0,0.25) 70%, transparent 100%)" }}>
+
+          {/* Bottom details — ALWAYS visible */}
+          <div className="absolute bottom-0 left-0 right-0 p-5 z-[5]" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.7) 45%, rgba(0,0,0,0.25) 70%, transparent 100%)" }}>
             <div className="flex items-end justify-between">
               <div className="flex-1 min-w-0">
                 <h3 className="text-[20px] font-extrabold text-white leading-tight line-clamp-2" style={{ textShadow: "0 1px 6px rgba(0,0,0,0.5)" }}>{property.name}</h3>
