@@ -33,9 +33,16 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const root = document.documentElement;
+    // Add transition class for smooth color morph
+    root.style.setProperty("transition", "background-color 0.5s ease, color 0.4s ease");
     root.classList.remove("light", "dark");
     root.classList.add(resolvedTheme);
     localStorage.setItem("hushh-theme", theme);
+    // Remove transition after it completes to avoid interfering with other animations
+    const timer = setTimeout(() => {
+      root.style.removeProperty("transition");
+    }, 600);
+    return () => clearTimeout(timer);
   }, [theme, resolvedTheme]);
 
   useEffect(() => {
