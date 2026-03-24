@@ -509,8 +509,8 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
             </span>
           )}
           {property.discountLabel && (
-            <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
-              <Tag size={10} /> {property.discountLabel}
+               <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+               <Tag size={10} /> {property.discountLabel}
             </span>
           )}
         </div>
