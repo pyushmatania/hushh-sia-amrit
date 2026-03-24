@@ -7,7 +7,7 @@ import {
   Shield, Gift, Star, Sun, Moon, Monitor, BadgeCheck,
   CreditCard, Globe, Accessibility, FileText, Heart,
   Award, Zap, Calendar, TrendingUp, Crown, Pencil, LogIn, EyeOff,
-  MapPin, Clock, Users, ArrowLeft, ChevronLeft
+  MapPin, Clock, Users, ArrowLeft, ChevronLeft, HardDrive
 } from "lucide-react";
 import { useState, useCallback, useRef, useMemo } from "react";
 import type { Booking } from "@/pages/Index";
