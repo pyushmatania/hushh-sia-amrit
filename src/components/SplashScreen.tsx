@@ -477,7 +477,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
             </div>
 
             {/* Bottom — Brand area */}
-            <div className="pb-14 flex flex-col items-center px-8 relative">
+            <div className="pb-14 md:pb-24 lg:pb-32 flex flex-col items-center px-8 relative">
 
               {/* Background glow behind brand */}
               {phase >= 3 && (
