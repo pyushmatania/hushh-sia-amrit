@@ -186,6 +186,33 @@ export default function AdminCurations() {
     window.dispatchEvent(new Event("hushh:listings-updated"));
   };
 
+  // Auto-save for existing curations
+  const autoSaveCuration = useCallback(async (data: CurationDraft & { _editingId?: string }) => {
+    const id = (data as any)._editingId;
+    if (!id || !data.name || !data.property_id) return false;
+    const payload = {
+      name: data.name, emoji: data.emoji, tagline: data.tagline,
+      price: data.price, original_price: data.original_price,
+      slot: data.slot, includes: data.includes, tags: data.tags,
+      mood: data.mood, badge: data.badge || null, property_id: data.property_id, active: data.active,
+      image_urls: data.image_urls || [],
+    };
+    const { error } = await supabase.from("curations").update(payload).eq("id", id);
+    if (!error) {
+      setCurations(prev => prev.map(c => c.id === id ? { ...c, ...payload } : c));
+      window.dispatchEvent(new Event("hushh:listings-updated"));
+    }
+    return !error;
+  }, []);
+
+  const autoSaveData = editing && editingId ? { ...editing, _editingId: editingId } : null;
+  const { status: autoSaveStatus } = useAutoSave({
+    data: autoSaveData,
+    onSave: autoSaveCuration,
+    enabled: !!editingId,
+    debounceMs: 2000,
+  });
+
   const toggleActive = async (id: string, current: boolean) => {
     await supabase.from("curations").update({ active: !current }).eq("id", id);
     setCurations(prev => prev.map(c => c.id === id ? { ...c, active: !current } : c));
