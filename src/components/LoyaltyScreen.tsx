@@ -296,7 +296,7 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
       </motion.div>
 
       {/* ─── Tabs (scrollable) ─── */}
-      <div className="mx-4 mt-4 mb-3 flex gap-1 p-1 rounded-full bg-card border border-border/50 overflow-x-auto no-scrollbar">
+      <div className="mx-4 mt-4 mb-3 flex gap-1 p-1 rounded-full bg-card border border-border/50 overflow-x-auto no-scrollbar md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 md:max-w-3xl md:flex-wrap md:overflow-visible">
         <TabChip active={tab === "rewards"} label="Rewards" icon="🎁" onClick={() => setTab("rewards")} />
         <TabChip active={tab === "spin"} label="Spin" icon="🎰" onClick={() => setTab("spin")} />
         <TabChip active={tab === "milestones"} label="Quests" icon="🏆" onClick={() => setTab("milestones")} />
