@@ -115,184 +115,55 @@ function MobileNeonCard({ combo, onTap, index }: { combo: CuratedCombo; onTap: (
 }
 
 /* ═══════════════════════════════════════════════
-   DESKTOP-ONLY CURATION CARDS
+   DESKTOP-ONLY: Single consistent card
    ═══════════════════════════════════════════════ */
 
-/* ─── Desktop: Immersive Overlay Card ─── */
-function DesktopImmersiveCard({ combo, onTap, index }: { combo: CuratedCombo; onTap: (c: CuratedCombo) => void; index: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.04, duration: 0.4 }}
-      onClick={() => onTap(combo)}
-      className="rounded-2xl overflow-hidden cursor-pointer group relative"
-      style={{ height: 340, border: "1px solid hsl(var(--border) / 0.15)" }}
-    >
-      <img src={combo.image} alt={combo.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
-      <div className={`absolute inset-0 bg-gradient-to-t ${combo.gradient} to-transparent opacity-30 group-hover:opacity-50 transition-opacity duration-500`} />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/5 group-hover:from-black/95 transition-all duration-500" />
-
-      {/* Top badges */}
-      <div className="absolute top-4 left-4 right-4 flex justify-between items-start z-10">
-        <div className="flex gap-1.5">
-          {combo.popular && (
-            <span className="text-[10px] font-bold px-2.5 py-1 rounded-full text-primary-foreground flex items-center gap-1" style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(280 80% 55%))" }}>
-              <Sparkles size={10} /> Popular
-            </span>
-          )}
-        </div>
-        <span className="text-[10px] text-white/70 px-2.5 py-1 rounded-full flex items-center gap-1 border border-white/15" style={{ background: "hsl(var(--foreground) / 0.2)", backdropFilter: "blur(10px)" }}>
-          <Clock size={10} /> {combo.time}
-        </span>
-      </div>
-
-      {/* Content slides up on hover */}
-      <div className="absolute bottom-0 left-0 right-0 p-5 transition-transform duration-500 translate-y-6 group-hover:translate-y-0">
-        <span className="text-2xl">{combo.emoji}</span>
-        <h4 className="text-lg font-bold text-white leading-tight mt-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{combo.name}</h4>
-        <p className="text-sm text-white/55 mt-1 italic opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100" style={{ fontFamily: "'Playfair Display', serif" }}>{combo.tagline}</p>
-        
-        <div className="flex flex-wrap gap-1.5 mt-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-150">
-          {combo.includes.slice(0, 3).map((item, i) => (
-            <span key={i} className="text-[9px] px-2 py-0.5 rounded-full bg-white/10 text-white/80 border border-white/10">{item}</span>
-          ))}
-          {combo.includes.length > 3 && <span className="text-[9px] px-2 py-0.5 rounded-full text-primary font-bold" style={{ background: "hsl(var(--primary) / 0.2)" }}>+{combo.includes.length - 3}</span>}
-        </div>
-
-        <div className="flex items-center justify-between mt-3">
-          <div>
-            <span className="text-lg font-bold text-white">₹{combo.priceRange[0].toLocaleString()}</span>
-            <span className="text-xs text-white/40"> – ₹{combo.priceRange[1].toLocaleString()}</span>
-          </div>
-          <div className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold transition-all duration-300" style={{ background: "hsl(var(--primary))", color: "hsl(var(--primary-foreground))" }}>
-            Book <ArrowRight size={13} />
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-/* ─── Desktop: Glass Info Card ─── */
-function DesktopGlassCurationCard({ combo, onTap, index }: { combo: CuratedCombo; onTap: (c: CuratedCombo) => void; index: number }) {
+function DesktopCurationCard({ combo, onTap, index }: { combo: CuratedCombo; onTap: (c: CuratedCombo) => void; index: number }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.04, duration: 0.35 }}
+      transition={{ delay: index * 0.03, duration: 0.35 }}
       onClick={() => onTap(combo)}
       className="rounded-2xl overflow-hidden cursor-pointer group"
       style={{
-        background: "hsl(var(--card) / 0.6)",
-        backdropFilter: "blur(20px) saturate(1.5)",
+        background: "hsl(var(--card))",
         border: "1px solid hsl(var(--border) / 0.25)",
-        boxShadow: "0 8px 32px hsl(var(--foreground) / 0.06), inset 0 1px 0 hsl(var(--foreground) / 0.04)",
+        boxShadow: "0 2px 12px hsl(var(--foreground) / 0.04)",
       }}
     >
-      <div className="relative h-[200px] overflow-hidden">
-        <img src={combo.image} alt={combo.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
-        <div className={`absolute inset-0 bg-gradient-to-t ${combo.gradient} to-transparent opacity-35`} />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-        
-        <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
-          <span className="text-2xl">{combo.emoji}</span>
-          <div className="px-3 py-1.5 rounded-xl text-sm font-bold" style={{ background: "hsl(var(--primary) / 0.9)", color: "hsl(var(--primary-foreground))", backdropFilter: "blur(8px)" }}>
-            ₹{combo.priceRange[0].toLocaleString()}+
-          </div>
+      <div className="relative aspect-[4/3] overflow-hidden">
+        <img src={combo.image} alt={combo.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+        <div className={`absolute inset-0 bg-gradient-to-t ${combo.gradient} to-transparent opacity-25`} />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        <div className="absolute top-3 left-3 flex items-center gap-1.5">
+          <span className="text-xl">{combo.emoji}</span>
+          {combo.popular && (
+            <span className="text-[9px] font-bold px-2 py-0.5 rounded-full text-primary-foreground" style={{ background: "hsl(var(--primary) / 0.85)" }}>
+              <Sparkles size={8} className="inline mr-0.5" />Popular
+            </span>
+          )}
         </div>
+        <span className="absolute top-3 right-3 text-[10px] text-white/80 px-2 py-0.5 rounded-full flex items-center gap-1 border border-white/15" style={{ background: "hsl(var(--foreground) / 0.2)", backdropFilter: "blur(8px)" }}>
+          <Clock size={9} /> {combo.time}
+        </span>
       </div>
-
       <div className="p-4">
-        <h4 className="text-base font-bold text-foreground leading-tight">{combo.name}</h4>
+        <h4 className="text-sm font-bold text-foreground leading-tight line-clamp-1">{combo.name}</h4>
         <p className="text-xs text-muted-foreground mt-1 italic line-clamp-1" style={{ fontFamily: "'Playfair Display', serif" }}>{combo.tagline}</p>
-        
         <div className="flex flex-wrap gap-1 mt-2.5">
           {combo.includes.slice(0, 3).map((item, i) => (
-            <span key={i} className="text-[8px] px-2 py-0.5 rounded-full border border-border/50 text-muted-foreground" style={{ background: "hsl(var(--muted) / 0.5)" }}>{item}</span>
+            <span key={i} className="text-[8px] px-2 py-0.5 rounded-full border text-muted-foreground" style={{ borderColor: "hsl(var(--border) / 0.5)", background: "hsl(var(--muted) / 0.5)" }}>{item}</span>
           ))}
         </div>
-
-        <div className="mt-3 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold opacity-0 group-hover:opacity-100 -translate-y-1 group-hover:translate-y-0 transition-all duration-300" style={{ background: "hsl(var(--primary) / 0.1)", color: "hsl(var(--primary))" }}>
-          Quick Book <ArrowRight size={12} />
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-/* ─── Desktop: Panoramic Wide Card ─── */
-function DesktopPanoCurationCard({ combo, onTap, index }: { combo: CuratedCombo; onTap: (c: CuratedCombo) => void; index: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.04, duration: 0.4 }}
-      onClick={() => onTap(combo)}
-      className="col-span-2 rounded-2xl overflow-hidden cursor-pointer group relative"
-      style={{ height: 200, border: "1px solid hsl(var(--border) / 0.2)" }}
-    >
-      <img src={combo.image} alt={combo.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
-      <div className="absolute inset-0" style={{ background: "linear-gradient(90deg, hsl(var(--background) / 0.95) 0%, hsl(var(--background) / 0.7) 45%, transparent 100%)" }} />
-
-      <div className="absolute inset-0 flex items-center p-6">
-        <div className="flex-1 max-w-[55%]">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-2xl">{combo.emoji}</span>
-            {combo.popular && (
-              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full text-primary-foreground" style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(280 80% 55%))" }}>
-                EDITOR'S PICK
-              </span>
-            )}
+        <div className="flex items-center justify-between mt-3 pt-3 border-t" style={{ borderColor: "hsl(var(--border) / 0.3)" }}>
+          <div>
+            <span className="text-base font-bold text-foreground">₹{combo.priceRange[0].toLocaleString()}</span>
+            <span className="text-[10px] text-muted-foreground"> – ₹{combo.priceRange[1].toLocaleString()}</span>
           </div>
-          <h4 className="text-xl font-bold text-foreground leading-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{combo.name}</h4>
-          <p className="text-sm text-muted-foreground mt-1 italic" style={{ fontFamily: "'Playfair Display', serif" }}>{combo.tagline}</p>
-          <div className="flex flex-wrap gap-1.5 mt-2">
-            {combo.includes.slice(0, 3).map((item, i) => (
-              <span key={i} className="text-[9px] px-2 py-0.5 rounded-full border border-border/50 text-muted-foreground" style={{ background: "hsl(var(--muted) / 0.5)" }}>{item}</span>
-            ))}
+          <div className="flex items-center gap-1 text-xs font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+            Book <ArrowRight size={12} />
           </div>
-          <div className="flex items-center gap-3 mt-3">
-            <div>
-              <span className="text-lg font-bold text-foreground">₹{combo.priceRange[0].toLocaleString()}</span>
-              <span className="text-xs text-muted-foreground"> – ₹{combo.priceRange[1].toLocaleString()}</span>
-            </div>
-            <div className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold transition-all duration-300 ml-auto group-hover:scale-105" style={{ background: "hsl(var(--primary))", color: "hsl(var(--primary-foreground))" }}>
-              Book <ArrowRight size={13} />
-            </div>
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-/* ─── Desktop: Compact Minimal Card ─── */
-function DesktopCompactCard({ combo, onTap, index }: { combo: CuratedCombo; onTap: (c: CuratedCombo) => void; index: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.04, duration: 0.35 }}
-      onClick={() => onTap(combo)}
-      className="rounded-2xl overflow-hidden cursor-pointer group"
-      style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border) / 0.3)" }}
-    >
-      <div className="relative h-[160px] overflow-hidden">
-        <img src={combo.image} alt={combo.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-        <div className="absolute bottom-3 left-3"><span className="text-xl">{combo.emoji}</span></div>
-        {combo.popular && (
-          <div className="absolute top-3 left-3 text-[9px] font-bold px-2 py-0.5 rounded-full text-primary-foreground" style={{ background: "hsl(var(--primary) / 0.85)" }}>
-            <Sparkles size={8} className="inline mr-0.5" />Popular
-          </div>
-        )}
-      </div>
-      <div className="p-3.5">
-        <h4 className="text-sm font-bold text-foreground leading-tight line-clamp-1">{combo.name}</h4>
-        <div className="flex items-center justify-between mt-2">
-          <span className="text-xs text-muted-foreground flex items-center gap-1"><Clock size={10} />{combo.time}</span>
-          <span className="text-sm font-bold text-primary">₹{combo.priceRange[0].toLocaleString()}</span>
         </div>
       </div>
     </motion.div>
@@ -405,11 +276,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
             </div>
           ) : (
             <div className="grid grid-cols-4 gap-5">
-              {popular.slice(0, 8).map((c, i) => {
-                if (i === 0) return <DesktopPanoCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />;
-                if (i % 3 === 0) return <DesktopImmersiveCard key={c.id} combo={c} onTap={onComboTap} index={i} />;
-                return <DesktopGlassCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />;
-              })}
+              {popular.slice(0, 8).map((c, i) => <DesktopCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
             </div>
           )}
         </>
@@ -425,10 +292,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
             </div>
           ) : (
             <div className="grid grid-cols-4 gap-5">
-              {romantic.slice(0, 4).map((c, i) => {
-                if (i === 1) return <DesktopPanoCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />;
-                return <DesktopImmersiveCard key={c.id} combo={c} onTap={onComboTap} index={i} />;
-              })}
+              {romantic.slice(0, 4).map((c, i) => <DesktopCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
             </div>
           )}
         </>
@@ -444,10 +308,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
             </div>
           ) : (
             <div className="grid grid-cols-4 gap-5">
-              {party.slice(0, 8).map((c, i) => {
-                if (i % 4 === 0) return <DesktopPanoCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />;
-                return <DesktopGlassCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />;
-              })}
+              {party.slice(0, 8).map((c, i) => <DesktopCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
             </div>
           )}
         </>
@@ -461,7 +322,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
         </div>
       ) : (
         <div className="grid grid-cols-4 gap-5">
-          {budget.map((c, i) => <DesktopCompactCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
+          {budget.map((c, i) => <DesktopCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
         </div>
       )}
 
@@ -475,12 +336,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
             </div>
           ) : (
             <div className="grid grid-cols-4 gap-5 pb-6">
-              {combos.slice(6).map((c, i) => {
-                if (i % 7 === 0) return <DesktopPanoCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />;
-                if (i % 5 === 0) return <DesktopImmersiveCard key={c.id} combo={c} onTap={onComboTap} index={i} />;
-                if (i % 3 === 0) return <DesktopGlassCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />;
-                return <DesktopCompactCard key={c.id} combo={c} onTap={onComboTap} index={i} />;
-              })}
+              {combos.slice(6).map((c, i) => <DesktopCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
             </div>
           )}
         </>
