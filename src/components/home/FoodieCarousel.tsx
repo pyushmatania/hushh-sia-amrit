@@ -92,7 +92,7 @@ const FoodieVideoCard = memo(function FoodieVideoCard({
               preload="metadata"
               onCanPlay={() => setVideoReady(true)}
               className="absolute inset-0 w-full h-full object-cover z-[1]"
-              style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.4s" }}
+              style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.4s", filter: "blur(0.6px)" }}
             />
           )}
 

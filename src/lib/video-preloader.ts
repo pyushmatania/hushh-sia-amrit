@@ -45,8 +45,17 @@ export function preloadVideos() {
   if (preloaded) return;
   preloaded = true;
 
-  // Priority: add <link rel=preload> for above-the-fold spotlight videos
-  PRIORITY_VIDEOS.forEach((url) => {
+  // Priority: fetch first 2 spotlight videos eagerly into cache
+  PRIORITY_VIDEOS.slice(0, 2).forEach((url) => {
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "video";
+    link.href = url;
+    link.setAttribute("fetchpriority", "high");
+    document.head.appendChild(link);
+  });
+  // Remaining priority videos at low priority
+  PRIORITY_VIDEOS.slice(2).forEach((url) => {
     const link = document.createElement("link");
     link.rel = "preload";
     link.as = "video";
