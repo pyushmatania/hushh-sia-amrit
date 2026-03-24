@@ -1,18 +1,103 @@
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Bell, Smartphone, Loader2, Mail, MessageSquare, Tag, Calendar, Volume2, VolumeX, Clock, Zap, Star, Users, ShoppingBag, AlertCircle, Heart } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Bell, Smartphone, Loader2, Mail, MessageSquare, Tag, Calendar, Volume2, VolumeX, Clock, Zap, Star, Users, ShoppingBag, AlertCircle, Heart, Image, MapPin, Sparkles, Gift, ChefHat, PartyPopper, RefreshCw, Send } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { supabase } from "@/integrations/supabase/client";
 import { SectionHeader, ToggleSwitch } from "./SettingRow";
 
+const TEST_NOTIFICATIONS = [
+  {
+    key: "image",
+    label: "Image Notification",
+    icon: Image,
+    color: "from-pink-500 to-rose-500",
+    emoji: "🖼️",
+    title: "New Photo Added! 📸",
+    body: "A stunning sunset photo was uploaded from The Firefly Villa. Tap to view the gallery.",
+    type: "image",
+  },
+  {
+    key: "personalized",
+    label: "Personalized Data",
+    icon: Users,
+    color: "from-violet-500 to-purple-500",
+    emoji: "👤",
+    title: "Hey {name}! 👋",
+    body: "Welcome back, {name}! You have 3 new recommendations based on your preferences.",
+    type: "user",
+  },
+  {
+    key: "location",
+    label: "Location Based",
+    icon: MapPin,
+    color: "from-emerald-500 to-teal-500",
+    emoji: "📍",
+    title: "Nearby Experience! 📍",
+    body: "You're near Koraput Garden House — a bonfire night is happening tonight at 7 PM. Join in!",
+    type: "location",
+  },
+  {
+    key: "booking",
+    label: "Booking Confirmed",
+    icon: Calendar,
+    color: "from-blue-500 to-indigo-500",
+    emoji: "🎫",
+    title: "Booking Confirmed! 🎉",
+    body: "Your stay at The Firefly Villa is confirmed for Dec 28. Check-in at 3 PM. Booking ID: HUSHH-2847.",
+    type: "booking",
+  },
+  {
+    key: "order",
+    label: "Order Prepared",
+    icon: ChefHat,
+    color: "from-orange-500 to-amber-500",
+    emoji: "🍽️",
+    title: "Order Ready! 🍽️",
+    body: "Your farm-to-table thali with chai is ready for pickup at counter 2. Enjoy your meal!",
+    type: "order",
+  },
+  {
+    key: "stylish",
+    label: "Stylish Alert",
+    icon: Sparkles,
+    color: "from-fuchsia-500 to-pink-500",
+    emoji: "✨",
+    title: "New Collection Dropped ✨",
+    body: "Exclusive curated experiences just launched — Stargazing, Sunrise Yoga & more. Be the first to book!",
+    type: "system",
+  },
+  {
+    key: "festival",
+    label: "Festival Offer",
+    icon: PartyPopper,
+    color: "from-yellow-500 to-orange-500",
+    emoji: "🎊",
+    title: "Holi Special — 40% OFF! 🎊",
+    body: "Celebrate with us! Use code HOLI40 for 40% off all outdoor experiences. Valid till March 26.",
+    type: "promo",
+  },
+  {
+    key: "reward",
+    label: "Loyalty Reward",
+    icon: Gift,
+    color: "from-cyan-500 to-blue-500",
+    emoji: "🎁",
+    title: "You Unlocked Gold Tier! 🏆",
+    body: "Congratulations! 500 pts earned. Enjoy priority booking, free upgrades & exclusive perks.",
+    type: "reward",
+  },
+];
+
 export default function NotificationSettings() {
   const { user } = useAuth();
   const { toast } = useToast();
   const { isSupported, isSubscribed, isLoading, isiOS, isPWA, permission, subscribe, unsubscribe } = usePushNotifications();
-  const [isSendingTest, setIsSendingTest] = useState(false);
+  const [isSendingTest, setIsSendingTest] = useState<string | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [checkInterval, setCheckInterval] = useState(0); // 0 = off
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [settings, setSettings] = useState({
     bookingUpdates: true,
     promotions: true,
@@ -33,11 +118,22 @@ export default function NotificationSettings() {
   const [quietEnd, setQuietEnd] = useState("08:00");
   const [vibrate, setVibrate] = useState(true);
 
-  useEffect(() => {
+  const fetchUnread = async () => {
     if (!user) return;
-    supabase.from("notifications").select("id", { count: "exact", head: true }).eq("user_id", user.id).eq("read", false)
-      .then(({ count }) => setUnreadCount(count || 0));
-  }, [user]);
+    const { count } = await supabase.from("notifications").select("id", { count: "exact", head: true }).eq("user_id", user.id).eq("read", false);
+    setUnreadCount(count || 0);
+  };
+
+  useEffect(() => { fetchUnread(); }, [user]);
+
+  // Auto-check interval
+  useEffect(() => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (checkInterval > 0) {
+      intervalRef.current = setInterval(fetchUnread, checkInterval * 1000);
+    }
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, [checkInterval, user]);
 
   const toggle = (key: keyof typeof settings) => setSettings(s => ({ ...s, [key]: !s[key] }));
 
@@ -48,27 +144,38 @@ export default function NotificationSettings() {
     } catch (err: any) { toast({ title: "Error", description: err.message, variant: "destructive" }); }
   };
 
-  const handleTestPush = async () => {
-    setIsSendingTest(true);
+  const sendTestNotification = async (testNotif: typeof TEST_NOTIFICATIONS[0]) => {
+    setIsSendingTest(testNotif.key);
     try {
-      const { data: { user: u } } = await supabase.auth.getUser();
-      toast({ title: "Sending test notification...", description: "You'll receive it in a few seconds" });
-      setTimeout(async () => {
-        try {
-          if (u) {
-            await supabase.functions.invoke('send-push-notification', {
-              body: { user_id: u.id, payload: { title: "🎉 Test Notification", body: "Push notifications are working! You'll receive booking updates here.", url: "/" } }
-            });
-          } else if (Notification.permission === 'granted') {
-            new Notification("🎉 Test Notification", { body: "Push notifications are working!", icon: '/favicon.ico' });
-          }
-        } catch (e) { console.error('[Push Test]', e); }
-        setIsSendingTest(false);
-      }, 3000);
+      const displayName = user ? (await supabase.from("profiles").select("display_name").eq("user_id", user.id).single()).data?.display_name || "Guest" : "Guest";
+      const title = testNotif.title.replace("{name}", displayName);
+      const body = testNotif.body.replace("{name}", displayName);
+
+      if (user) {
+        await supabase.from("notifications").insert({
+          user_id: user.id,
+          type: testNotif.type,
+          title,
+          body,
+          icon: testNotif.emoji,
+        });
+        toast({ title: `${testNotif.emoji} ${testNotif.label} sent!`, description: "Check your notification center" });
+      } else {
+        toast({ title: `${testNotif.emoji} ${title}`, description: body });
+      }
     } catch (err: any) {
       toast({ title: "Failed", description: err.message, variant: "destructive" });
-      setIsSendingTest(false);
     }
+    setIsSendingTest(null);
+  };
+
+  const sendAllTestNotifications = async () => {
+    setIsSendingTest("all");
+    for (const n of TEST_NOTIFICATIONS) {
+      await sendTestNotification(n);
+      await new Promise(r => setTimeout(r, 500));
+    }
+    setIsSendingTest(null);
   };
 
   const handleMarkAllRead = async () => {
@@ -102,6 +209,13 @@ export default function NotificationSettings() {
   ];
 
   const enabledCount = Object.values(settings).filter(Boolean).length;
+  const intervalOptions = [
+    { label: "Off", value: 0 },
+    { label: "5s", value: 5 },
+    { label: "15s", value: 15 },
+    { label: "30s", value: 30 },
+    { label: "60s", value: 60 },
+  ];
 
   return (
     <div className="space-y-1">
@@ -128,15 +242,6 @@ export default function NotificationSettings() {
           )}
         </div>
         <div className="flex gap-2 mt-3">
-          {isSubscribed && (
-            <motion.button initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} whileTap={{ scale: 0.97 }}
-              onClick={handleTestPush} disabled={isSendingTest}
-              className="flex-1 py-2 rounded-xl text-xs font-semibold text-primary flex items-center justify-center gap-1.5"
-              style={{ background: "hsl(var(--primary) / 0.08)", border: "1px solid hsl(var(--primary) / 0.15)" }}>
-              {isSendingTest ? <Loader2 size={12} className="animate-spin" /> : <Bell size={12} />}
-              Test notification
-            </motion.button>
-          )}
           {unreadCount > 0 && (
             <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} whileTap={{ scale: 0.97 }}
               onClick={handleMarkAllRead}
@@ -147,6 +252,70 @@ export default function NotificationSettings() {
         </div>
         <p className="text-[10px] text-muted-foreground mt-2">{enabledCount}/{Object.keys(settings).length} notification types enabled</p>
       </motion.div>
+
+      {/* Auto-check interval */}
+      <SectionHeader title="Check Interval" />
+      <div className="rounded-2xl p-3 mb-3 border border-border bg-card">
+        <div className="flex items-center gap-2 mb-2.5">
+          <RefreshCw size={14} className={`${checkInterval > 0 ? "text-primary animate-spin" : "text-muted-foreground"}`} style={checkInterval > 0 ? { animationDuration: `${checkInterval}s` } : {}} />
+          <p className="text-xs font-semibold text-foreground">Auto-check for new notifications</p>
+          {checkInterval > 0 && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-primary/10 text-primary">Every {checkInterval}s</span>}
+        </div>
+        <div className="flex gap-1.5">
+          {intervalOptions.map(opt => (
+            <button key={opt.value} onClick={() => { setCheckInterval(opt.value); toast({ title: opt.value ? `Checking every ${opt.value}s` : "Auto-check disabled" }); }}
+              className={`flex-1 py-2 rounded-xl text-[11px] font-semibold transition-all ${
+                checkInterval === opt.value
+                  ? "bg-primary text-primary-foreground shadow-md"
+                  : "bg-muted/50 text-muted-foreground hover:bg-muted"
+              }`}>
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Test Notification Categories */}
+      <SectionHeader title="Test Notifications" />
+      <div className="space-y-1.5 mb-4">
+        <motion.button whileTap={{ scale: 0.97 }} onClick={sendAllTestNotifications}
+          disabled={isSendingTest === "all"}
+          className="w-full py-2.5 rounded-xl text-xs font-bold text-primary-foreground flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-primary/80 shadow-md disabled:opacity-60">
+          {isSendingTest === "all" ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+          Send All Test Notifications
+        </motion.button>
+
+        <div className="grid grid-cols-2 gap-1.5">
+          {TEST_NOTIFICATIONS.map((tn, i) => (
+            <motion.button
+              key={tn.key}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.04 }}
+              whileTap={{ scale: 0.95 }}
+              disabled={!!isSendingTest}
+              onClick={() => sendTestNotification(tn)}
+              className="relative overflow-hidden rounded-xl p-3 text-left transition-all disabled:opacity-50 border border-border bg-card hover:shadow-md group"
+            >
+              <div className={`absolute inset-0 opacity-[0.06] bg-gradient-to-br ${tn.color}`} />
+              <div className="relative">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <div className={`w-6 h-6 rounded-lg bg-gradient-to-br ${tn.color} flex items-center justify-center`}>
+                    {isSendingTest === tn.key ? (
+                      <Loader2 size={12} className="animate-spin text-white" />
+                    ) : (
+                      <tn.icon size={12} className="text-white" />
+                    )}
+                  </div>
+                  <span className="text-sm">{tn.emoji}</span>
+                </div>
+                <p className="text-[11px] font-semibold text-foreground leading-tight">{tn.label}</p>
+                <p className="text-[9px] text-muted-foreground mt-0.5 line-clamp-2">{tn.body.replace("{name}", "you")}</p>
+              </div>
+            </motion.button>
+          ))}
+        </div>
+      </div>
 
       {/* Quiet hours */}
       <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="py-4 border-b border-border">
