@@ -99,8 +99,41 @@ export default function Index() {
     if (property) {
       setScreen({ type: "experienceDetail", pack, property });
       setActiveTab("home");
+    } else {
+      // Fallback: open experience detail with a synthetic property from pack data
+      const syntheticProperty: Property = {
+        id: pack.propertyId || pack.id,
+        name: pack.name,
+        description: pack.tagline || pack.name,
+        fullDescription: pack.tagline || "",
+        location: "Jeypore, Odisha",
+        lat: 18.856,
+        lng: 82.571,
+        images: [""],
+        basePrice: pack.price,
+        rating: 4.8,
+        reviewCount: 0,
+        amenities: pack.includes || [],
+        amenityIcons: (pack.includes || []).map(() => "✨"),
+        capacity: 20,
+        tags: pack.tags || [],
+        category: ["experience"],
+        primaryCategory: "experience",
+        slotsLeft: 5,
+        verified: true,
+        slots: pack.slot ? [{ id: "default", label: pack.slot, time: pack.slot, price: pack.price, available: true }] : [],
+        entryInstructions: "",
+        hostName: "Hushh",
+        hostSince: "2024",
+        responseRate: "100%",
+        rules: [],
+        reviews: [],
+        highlights: pack.includes?.slice(0, 3) || [],
+      };
+      setScreen({ type: "experienceDetail", pack, property: syntheticProperty });
+      setActiveTab("home");
     }
-  }, []);
+  }, [properties]);
 
   const handleBook = useCallback((property: Property, slotId: string, guests: number, date: Date, extras?: Property[], roomsCount?: number, extraMattresses?: number) => {
     setScreen({ type: "builder", property, slotId, guests, date, extras, roomsCount, extraMattresses });
