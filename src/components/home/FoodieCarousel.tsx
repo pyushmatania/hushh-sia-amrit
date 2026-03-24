@@ -161,9 +161,31 @@ export default function FoodieCarousel({ properties, onPropertyTap }: FoodieCaro
 
   return (
     <div>
-      <div ref={scrollRef} onScroll={handleScroll} className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2" style={{ scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch", touchAction: "pan-x pan-y", overscrollBehaviorX: "contain" }}>
+      {/* Mobile: horizontal scroll */}
+      <div ref={scrollRef} onScroll={handleScroll} className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2 md:hidden" style={{ scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch", touchAction: "pan-x pan-y", overscrollBehaviorX: "contain" }}>
         {items.map((p, i) => (
           <FoodieVideoCard key={p.id} property={p} videoSrc={foodieVideos[i % foodieVideos.length]} overlayText={foodieOverlays[i % foodieOverlays.length]} isActive={i === activeIndex} accent={foodieAccents[i % foodieAccents.length]} onTap={() => onPropertyTap(p)} isFirst={i === 0} />
+        ))}
+      </div>
+      {/* Desktop: grid layout */}
+      <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+        {items.map((p, i) => (
+          <div
+            key={p.id}
+            className="relative overflow-hidden rounded-2xl cursor-pointer group"
+            style={{ height: 360 }}
+            onClick={() => onPropertyTap(p)}
+          >
+            <img src={p.images[0]} alt={p.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-5">
+              <p className="text-2xl lg:text-3xl font-black italic text-white/90" style={{ fontFamily: "'Playfair Display', serif", textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}>
+                {foodieOverlays[i % foodieOverlays.length]}
+              </p>
+              <h3 className="text-lg font-bold text-white mt-2">{p.name}</h3>
+              <p className="text-sm text-white/60 mt-1">{p.description}</p>
+            </div>
+          </div>
         ))}
       </div>
     </div>

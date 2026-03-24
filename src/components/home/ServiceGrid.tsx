@@ -32,7 +32,7 @@ export default function ServiceGrid({ services, onServiceTap }: ServiceGridProps
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45 }}
         onClick={() => onServiceTap(featured)}
-        className="mx-4 rounded-3xl overflow-hidden cursor-pointer active:scale-[0.98] transition-transform group relative"
+        className="mx-4 rounded-3xl overflow-hidden cursor-pointer active:scale-[0.98] transition-transform group relative md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 md:hover:shadow-xl md:transition-shadow"
         style={{ height: 220 }}
       >
         <img
@@ -88,7 +88,7 @@ export default function ServiceGrid({ services, onServiceTap }: ServiceGridProps
       </motion.div>
 
       {/* Staggered 2-col masonry-ish cards */}
-      <div className="px-4 grid grid-cols-2 gap-3">
+      <div className="px-4 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 md:gap-6 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
         {rest.map((service, i) => {
           const config = serviceIconMap[service.propertyType || ""] || defaultIcon;
           const Icon = config.icon;

@@ -132,8 +132,11 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
   if (properties.length === 0) return null;
 
   return (
-    <div className="space-y-6">
-      {elements}
+    <div className="space-y-6 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+      {/* Mobile: creative mixed feed. Desktop: uniform grid */}
+      <div className="md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-6 xl:gap-8 space-y-6 md:space-y-0">
+        {elements}
+      </div>
       {/* Sentinel for infinite scroll */}
       {visibleCount < properties.length && (
         <div ref={sentinelRef} className="h-px" />

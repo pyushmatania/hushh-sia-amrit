@@ -22,7 +22,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
         onClick={() => onComboTap(hero)}
-        className="mx-4 rounded-3xl overflow-hidden cursor-pointer active:scale-[0.98] transition-transform group relative"
+        className="mx-4 rounded-3xl overflow-hidden cursor-pointer active:scale-[0.98] transition-transform group relative md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 md:hover:shadow-xl md:transition-shadow"
         style={{ height: 280 }}
       >
         <img
@@ -91,7 +91,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
 
       {/* Pair — side-by-side landscape cards */}
       {pair.length > 0 && (
-        <div className="grid grid-cols-2 gap-3 px-4">
+        <div className="grid grid-cols-2 gap-3 px-4 md:grid-cols-3 md:gap-6 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
           {pair.map((combo, i) => (
             <motion.div
               key={combo.id}
@@ -141,7 +141,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
 
       {/* Remaining — Horizontal scroll strip (portrait mini-cards) */}
       {rest.length > 0 && (
-        <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-1">
+        <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-1 md:grid md:grid-cols-3 lg:grid-cols-4 md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-6">
           {rest.map((combo, i) => (
             <motion.div
               key={combo.id}

@@ -240,7 +240,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 homeSections.push({ key: "packages", order: getSortOrder("packages"), node: (
                   <>
                     <SectionTitle title="BOOK YOUR EXPERIENCE" />
-                    <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4" style={{ touchAction: "pan-x", WebkitOverflowScrolling: "touch", overscrollBehaviorX: "contain" }}>
+                    <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-6" style={{ touchAction: "pan-x", WebkitOverflowScrolling: "touch", overscrollBehaviorX: "contain" }}>
                       {packages.map((pkg, i) => (
                         <PackageCard key={pkg.id} pkg={pkg} index={i} properties={properties} onPropertyTap={onPropertyTap} />
                       ))}
@@ -260,7 +260,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 homeSections.push({ key: "curated_packs", order: getSortOrder("curated_packs"), node: (
                   <LazySection minHeight="400px">
                     <SectionTitle title="✨ CURATED PACKS" />
-                    <div className="space-y-5 pb-2">
+                    <div className="space-y-5 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
                       {filteredPacks.slice(0, 4).map((pack, i) => (
                         <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
                       ))}
@@ -284,12 +284,12 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               <SectionTitle title="🏡 FEATURED STAYS" />
               <SpotlightCarousel properties={stayProperties} onPropertyTap={onPropertyTap} category="stay" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
 
-              <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
+              <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar md:justify-center md:flex-wrap md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-3">
                 {stayFilters.map(type => (
                   <button
                     key={type}
                     onClick={() => handleSubFilter(type)}
-                    className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 ${
+                    className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 md:text-sm md:px-5 md:py-2.5 md:cursor-pointer md:hover:bg-muted/50 ${
                       subFilter === type
                         ? "bg-primary text-primary-foreground font-semibold shadow-md"
                         : "bg-foreground/5 text-foreground/80 border border-foreground/10"
@@ -302,11 +302,11 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
 
               {trendingNow.length > 0 && (
                 <div className="mt-4">
-                  <div className="flex items-center justify-between px-5 mb-3">
-                    <h2 className="text-lg font-bold text-foreground">🔥 Trending Stays</h2>
-                    <button onClick={() => handleSubFilter("All")} className="text-xs text-primary font-medium flex items-center gap-1">View all <ArrowRight size={12} /></button>
+                  <div className="flex items-center justify-between px-5 mb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:mb-6">
+                    <h2 className="text-lg font-bold text-foreground md:text-xl lg:text-2xl">🔥 Trending Stays</h2>
+                    <button onClick={() => handleSubFilter("All")} className="text-xs text-primary font-medium flex items-center gap-1 md:text-sm">View all <ArrowRight size={12} /></button>
                   </div>
-                  <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
+                  <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5 md:grid md:grid-cols-3 lg:grid-cols-4 md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-6">
                     {trendingNow.map((p, i) => (
                       <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
                     ))}
@@ -316,11 +316,11 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
 
               {budgetPicks.length > 0 && (
                 <div className="mt-6">
-                  <div className="flex items-center justify-between px-5 mb-3">
-                    <h2 className="text-lg font-bold text-foreground">💸 Budget Friendly</h2>
-                    <button onClick={() => handleSubFilter("All")} className="text-xs text-primary font-medium flex items-center gap-1">View all <ArrowRight size={12} /></button>
+                  <div className="flex items-center justify-between px-5 mb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:mb-6">
+                    <h2 className="text-lg font-bold text-foreground md:text-xl lg:text-2xl">💸 Budget Friendly</h2>
+                    <button onClick={() => handleSubFilter("All")} className="text-xs text-primary font-medium flex items-center gap-1 md:text-sm">View all <ArrowRight size={12} /></button>
                   </div>
-                  <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
+                  <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5 md:grid md:grid-cols-3 lg:grid-cols-4 md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-6">
                     {budgetPicks.map((p, i) => (
                       <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
                     ))}
@@ -329,11 +329,11 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               )}
 
               <div className="mt-6">
-                <div className="flex items-center justify-between px-5 mb-3">
-                  <h2 className="text-lg font-bold text-foreground">⭐ Top Rated Stays</h2>
-                  <span className="text-xs text-muted-foreground">{stayProperties.length} stays</span>
+                <div className="flex items-center justify-between px-5 mb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:mb-6">
+                  <h2 className="text-lg font-bold text-foreground md:text-xl lg:text-2xl">⭐ Top Rated Stays</h2>
+                  <span className="text-xs text-muted-foreground md:text-sm">{stayProperties.length} stays</span>
                 </div>
-                <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
+                <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5 md:grid md:grid-cols-3 lg:grid-cols-4 md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-6">
                   {topRated.map((p, i) => (
                     <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
                   ))}
@@ -348,12 +348,12 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               <SectionTitle title="🎉 TOP EXPERIENCES" />
               <SpotlightCarousel properties={experienceProperties} onPropertyTap={onPropertyTap} category="experience" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
 
-              <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
+              <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar md:justify-center md:flex-wrap md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-3">
                 {experienceFilters.map(tag => (
                   <button
                     key={tag}
                     onClick={() => handleSubFilter(tag)}
-                    className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 ${
+                    className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 md:text-sm md:px-5 md:py-2.5 md:cursor-pointer md:hover:bg-muted/50 ${
                       subFilter === tag
                         ? "bg-primary text-primary-foreground font-semibold shadow-md"
                         : "bg-foreground/5 text-foreground/80 border border-foreground/10"
@@ -370,7 +370,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                     <h2 className="text-lg font-bold text-foreground">⚡ Slots Filling Up</h2>
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 font-semibold animate-pulse">LIVE</span>
                   </div>
-                  <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
+                  <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5 md:grid md:grid-cols-3 lg:grid-cols-4 md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-6">
                     {trendingNow.slice(0, 4).map((p, i) => (
                       <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
                     ))}
@@ -380,9 +380,9 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
 
               <LazySection minHeight="400px" rootMargin="300px">
               <div className="mt-6">
-                <div className="flex items-center justify-between px-5 mb-3">
-                  <h2 className="text-lg font-bold text-foreground">🔥 All Experiences</h2>
-                  <span className="text-xs text-muted-foreground">{filteredProperties.length} found</span>
+                <div className="flex items-center justify-between px-5 mb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:mb-6">
+                  <h2 className="text-lg font-bold text-foreground md:text-xl lg:text-2xl">🔥 All Experiences</h2>
+                  <span className="text-xs text-muted-foreground md:text-sm">{filteredProperties.length} found</span>
                 </div>
                 <MixedListingFeed
                   properties={filteredProperties}
@@ -405,21 +405,21 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
           {/* ═══════ SERVICES TAB ═══════ */}
           {activeCategory === "service" && (
             <>
-              <div className="px-5 pt-6 pb-1">
-                <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+              <div className="px-5 pt-6 pb-1 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+                <h1 className="text-2xl font-bold text-foreground md:text-3xl lg:text-4xl" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                   Services 🛎️
                 </h1>
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className="text-sm text-muted-foreground mt-1 md:text-base lg:text-lg">
                   Add to any booking, or book standalone
                 </p>
               </div>
 
-              <div className="px-4 pt-3 pb-3 flex gap-2 overflow-x-auto hide-scrollbar">
+              <div className="px-4 pt-3 pb-3 flex gap-2 overflow-x-auto hide-scrollbar md:justify-center md:flex-wrap md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-3">
                 {serviceFilters.map(tag => (
                   <button
                     key={tag}
                     onClick={() => handleSubFilter(tag)}
-                    className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 ${
+                    className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 md:text-sm md:px-5 md:py-2.5 md:cursor-pointer md:hover:bg-muted/50 ${
                       subFilter === tag
                         ? "bg-primary text-primary-foreground font-semibold shadow-md"
                         : "bg-foreground/5 text-foreground/80 border border-foreground/10"
@@ -445,21 +445,21 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
           {/* ═══════ CURATIONS TAB ═══════ */}
           {activeCategory === "curation" && (
             <>
-              <div className="px-5 pt-6 pb-2">
-                <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+              <div className="px-5 pt-6 pb-2 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+                <h1 className="text-2xl font-bold text-foreground md:text-3xl lg:text-4xl" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                   Curated for You ✨
                 </h1>
-                <p className="text-sm text-muted-foreground mt-1" style={{ fontFamily: "'Playfair Display', serif" }}>
+                <p className="text-sm text-muted-foreground mt-1 md:text-base lg:text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>
                   One-tap bundles, crafted by locals
                 </p>
               </div>
 
-              <div className="px-4 pt-2 pb-3 flex gap-2 overflow-x-auto hide-scrollbar">
+              <div className="px-4 pt-2 pb-3 flex gap-2 overflow-x-auto hide-scrollbar md:justify-center md:flex-wrap md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-3">
                 {curationFilters.map(tag => (
                   <button
                     key={tag}
                     onClick={() => handleSubFilter(tag)}
-                    className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 ${
+                    className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 md:text-sm md:px-5 md:py-2.5 md:cursor-pointer md:hover:bg-muted/50 ${
                       subFilter === tag
                         ? "bg-primary text-primary-foreground font-semibold shadow-md"
                         : "bg-foreground/5 text-foreground/80 border border-foreground/10"
@@ -481,18 +481,18 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               )}
 
               <SectionTitle title="✨ EXPERIENCE PACKS" />
-              <div className="space-y-5 pb-2">
+              <div className="space-y-5 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
                 {experiencePacks.map((pack, i) => (
                   <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
                 ))}
               </div>
 
-              <div className="mx-4 mt-6 p-4 rounded-2xl border border-foreground/10" style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(6,95,70,0.15) 100%)" }}>
+              <div className="mx-4 mt-6 p-4 rounded-2xl border border-foreground/10 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32" style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(6,95,70,0.15) 100%)" }}>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-lg">💸</span>
-                  <h3 className="text-sm font-bold text-foreground">Budget Combos from ₹299</h3>
+                  <h3 className="text-sm font-bold text-foreground md:text-base">Budget Combos from ₹299</h3>
                 </div>
-                <p className="text-xs text-muted-foreground">Work & Chill, Day Escape, Game Night — perfect for weekdays!</p>
+                <p className="text-xs text-muted-foreground md:text-sm">Work & Chill, Day Escape, Game Night — perfect for weekdays!</p>
               </div>
             </>
           )}
