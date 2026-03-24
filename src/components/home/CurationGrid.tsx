@@ -325,7 +325,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
         </div>
       ) : (
         <div className="grid grid-cols-4 gap-5">
-          {budget.map((c, i) => <DesktopCompactCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
+          {budget.map((c, i) => <DesktopCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
         </div>
       )}
 
