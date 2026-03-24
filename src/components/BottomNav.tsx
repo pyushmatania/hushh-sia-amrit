@@ -29,7 +29,7 @@ export default function BottomNav({ active, onChange, messageBadge = 0 }: Bottom
 
   return (
     <div
-      className="fixed left-0 right-0 z-40"
+      className="fixed left-0 right-0 z-40 md:hidden"
       style={{
         bottom: "0px",
       }}
