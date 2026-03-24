@@ -181,9 +181,9 @@ export default function HostEarnings() {
         <div className="h-[160px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data.weeklyData} barSize={24}>
-              <XAxis dataKey="week" tick={{ fontSize: 10, fill: "hsl(260,10%,55%)" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 9, fill: "hsl(260,10%,55%)" }} axisLine={false} tickLine={false} tickFormatter={(v) => formatCurrency(v)} />
-              <Tooltip contentStyle={{ background: "hsl(260,18%,10%)", border: "1px solid hsl(260,15%,16%)", borderRadius: 12, fontSize: 11 }} />
+              <XAxis dataKey="week" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} tickFormatter={(v) => formatCurrency(v)} />
+              <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 12, fontSize: 11 }} />
               <Bar dataKey="revenue" fill="hsl(270,80%,65%)" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>

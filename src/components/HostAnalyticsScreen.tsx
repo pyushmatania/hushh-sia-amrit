@@ -137,9 +137,9 @@ export default function HostAnalyticsScreen({ onBack }: HostAnalyticsScreenProps
                     <stop offset="100%" stopColor="hsl(160, 60%, 42%)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsla(260, 15%, 30%, 0.3)" />
-                <XAxis dataKey="name" tick={{ fontSize: 10, fill: "hsl(260, 10%, 55%)" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 10, fill: "hsl(260, 10%, 55%)" }} axisLine={false} tickLine={false} tickFormatter={(v) => formatCurrency(v)} />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="name" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} tickFormatter={(v) => formatCurrency(v)} />
                 <Tooltip content={<CustomTooltip />} />
                 <Area type="monotone" dataKey="revenue" stroke="hsl(160, 60%, 42%)" fill="url(#revenueGrad)" strokeWidth={2} />
               </AreaChart>
