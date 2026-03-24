@@ -604,10 +604,19 @@ export default function AdminProperties() {
                         }`}>
                         <Eye size={13} /> Preview
                       </motion.button>
+                      {!isCreating && autoSaveStatus !== "idle" && (
+                        <span className={`px-2.5 py-2 rounded-xl text-[10px] font-semibold flex items-center gap-1 ${
+                          autoSaveStatus === "saving" ? "bg-amber-500/15 text-amber-500" :
+                          autoSaveStatus === "saved" ? "bg-emerald-500/15 text-emerald-500" :
+                          "bg-destructive/15 text-destructive"
+                        }`}>
+                          {autoSaveStatus === "saving" ? "⏳ Saving..." : autoSaveStatus === "saved" ? "✓ Saved" : "⚠ Error"}
+                        </span>
+                      )}
                       <motion.button whileTap={{ scale: 0.95 }}
                         onClick={saveListing}
                         className="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white text-xs font-semibold shadow-lg shadow-indigo-200/30 dark:shadow-indigo-900/30">
-                        Save
+                        {isCreating ? "Create" : "Save & Close"}
                       </motion.button>
                       <button onClick={() => { setEditingListing(null); setPreviewMode(false); }}
                         className="p-2 rounded-xl bg-card/80 backdrop-blur-sm border border-border hover:bg-secondary transition">
