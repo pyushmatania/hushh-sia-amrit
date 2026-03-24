@@ -258,11 +258,12 @@ export default function SpotlightCarousel({ properties, onPropertyTap, category 
 
   return (
     <div>
+      {/* Mobile: horizontal scroll carousel */}
       <div
         ref={scrollRef}
         onScroll={handleScroll}
         data-no-pull-refresh="true"
-        className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2"
+        className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2 md:hidden"
         style={{ scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch", touchAction: "pan-x pan-y", overscrollBehaviorX: "contain" }}
       >
         {topProperties.map((p, i) => {
@@ -284,13 +285,41 @@ export default function SpotlightCarousel({ properties, onPropertyTap, category 
           );
         })}
       </div>
-      <div className="flex justify-center gap-1.5 mt-3">
+      {/* Mobile dots */}
+      <div className="flex justify-center gap-1.5 mt-3 md:hidden">
         {topProperties.map((_, i) => (
           <div
             key={i}
             className={`h-1.5 rounded-full transition-all duration-300 ${i === activeIndex ? "w-6 bg-primary" : "w-1.5 bg-foreground/20"}`}
           />
         ))}
+      </div>
+
+      {/* Desktop: Bento grid layout */}
+      <div className="hidden md:grid md:grid-cols-5 md:gap-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+        {topProperties.slice(0, 3).map((p, i) => {
+          const cfg = getCardConfig(i);
+          const isLarge = i === 0;
+          return (
+            <div
+              key={p.id}
+              className={`relative overflow-hidden rounded-2xl cursor-pointer group ${isLarge ? "col-span-3 row-span-2" : "col-span-2"}`}
+              style={{ height: isLarge ? undefined : i === 1 ? undefined : undefined, minHeight: isLarge ? 420 : 205 }}
+              onClick={() => onPropertyTap(p)}
+            >
+              <img src={p.images[0]} alt={p.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+              <AccentTag tag={cfg.accent.tag} className="absolute top-4 left-4 z-10" />
+              <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
+                <p className="text-sm font-bold text-primary mb-1">{dateLabels[i]}</p>
+                <h3 className={`font-extrabold text-white leading-tight ${isLarge ? "text-2xl lg:text-3xl" : "text-lg"}`} style={{ textShadow: "0 1px 6px rgba(0,0,0,0.5)" }}>
+                  {p.name}
+                </h3>
+                <p className="text-sm text-white/75 font-medium mt-1">{p.location}</p>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

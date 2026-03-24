@@ -141,7 +141,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
 
       {/* Remaining — Horizontal scroll strip (portrait mini-cards) */}
       {rest.length > 0 && (
-        <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-1">
+        <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-1 md:grid md:grid-cols-3 lg:grid-cols-4 md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-6">
           {rest.map((combo, i) => (
             <motion.div
               key={combo.id}
