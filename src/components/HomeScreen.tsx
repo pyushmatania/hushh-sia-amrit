@@ -28,6 +28,7 @@ import CurationGrid from "./home/CurationGrid";
 import ActiveTripCard from "./home/ActiveTripCard";
 import { OscarToggle, OscarThemedListing } from "./home/OscarModeToggle";
 import { MobilePropertyGrid } from "./home/MobileCompactGrid";
+import MobileDiscoverySection from "./home/MobileDiscoverySection";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 /** Wraps a home feed section so a crash in one section doesn't kill the whole feed */
