@@ -36,7 +36,7 @@ export default function HostDashboard({
   return (
     <div className="pb-24 bg-mesh min-h-screen">
       {/* Header */}
-      <div className="px-5 pt-6 pb-4 flex items-center justify-between">
+      <div className="px-5 pt-6 pb-4 flex items-center justify-between md:px-8 lg:px-16 xl:px-24 2xl:px-32">
         <div className="flex items-center gap-3">
           <motion.button
             whileTap={{ scale: 0.9 }}
@@ -49,7 +49,7 @@ export default function HostDashboard({
             <motion.h1
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-2xl font-bold text-foreground"
+              className="text-2xl font-bold text-foreground md:text-3xl"
             >
               Host Dashboard
             </motion.h1>
@@ -73,7 +73,7 @@ export default function HostDashboard({
       </div>
 
       {/* Stats */}
-      <div className="px-5 grid grid-cols-3 gap-3 mb-6">
+      <div className="px-5 grid grid-cols-3 gap-3 mb-6 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-4">
         {stats.map((stat, i) => (
           <motion.div
             key={stat.label}
@@ -96,7 +96,7 @@ export default function HostDashboard({
         transition={{ delay: 0.25 }}
         whileTap={{ scale: 0.97 }}
         onClick={onAnalytics}
-        className="mx-5 mb-6 w-[calc(100%-2.5rem)] rounded-2xl glass p-4 flex items-center gap-3 active:scale-[0.98] transition-transform"
+        className="mx-5 mb-6 w-[calc(100%-2.5rem)] rounded-2xl glass p-4 flex items-center gap-3 active:scale-[0.98] transition-transform md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 md:w-auto md:max-w-xl"
       >
         <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
           <BarChart3 size={18} className="text-primary" />
@@ -108,7 +108,7 @@ export default function HostDashboard({
         <TrendingUp size={16} className="text-muted-foreground" />
       </motion.button>
 
-      <div className="px-5">
+      <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
         <h3 className="text-base font-bold text-foreground mb-3 flex items-center gap-2">
           <Home size={16} className="text-primary" />
           Your Listings ({listings.length})
@@ -136,7 +136,7 @@ export default function HostDashboard({
             </motion.button>
           </motion.div>
         ) : (
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {listings.map((listing, i) => (
               <motion.div
                 key={listing.id}

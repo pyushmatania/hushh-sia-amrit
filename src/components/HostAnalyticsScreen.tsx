@@ -55,18 +55,18 @@ export default function HostAnalyticsScreen({ onBack }: HostAnalyticsScreenProps
       className="pb-24 bg-mesh min-h-screen"
     >
       {/* Header */}
-      <div className="px-5 pt-6 pb-4 flex items-center gap-3">
+      <div className="px-5 pt-6 pb-4 flex items-center gap-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
         <motion.button whileTap={{ scale: 0.9 }} onClick={onBack} className="w-9 h-9 rounded-full glass flex items-center justify-center">
           <ArrowLeft size={18} className="text-foreground" />
         </motion.button>
         <div>
-          <h1 className="text-xl font-bold text-foreground">Analytics</h1>
+          <h1 className="text-xl font-bold text-foreground md:text-2xl lg:text-3xl">Analytics</h1>
           <p className="text-xs text-muted-foreground">{hasData ? "Live data from your bookings" : "No bookings yet"}</p>
         </div>
       </div>
 
       {/* Summary Stats */}
-      <div className="px-5 grid grid-cols-2 gap-3 mb-6">
+      <div className="px-5 grid grid-cols-2 gap-3 mb-6 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:grid-cols-4 md:gap-4">
         {summaryStats.map((stat, i) => (
           <motion.div
             key={stat.label}
@@ -101,7 +101,7 @@ export default function HostAnalyticsScreen({ onBack }: HostAnalyticsScreenProps
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25 }}
-            className="mx-5 mb-6 glass rounded-2xl p-4"
+            className="mx-5 mb-6 glass rounded-2xl p-4 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32"
           >
             <div className="flex items-center gap-2 mb-4">
               <BarChart3 size={16} className="text-primary" />
@@ -123,7 +123,7 @@ export default function HostAnalyticsScreen({ onBack }: HostAnalyticsScreenProps
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="mx-5 mb-6 glass rounded-2xl p-4"
+            className="mx-5 mb-6 glass rounded-2xl p-4 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32"
           >
             <div className="flex items-center gap-2 mb-4">
               <TrendingUp size={16} className="text-emerald-500" />
@@ -147,7 +147,7 @@ export default function HostAnalyticsScreen({ onBack }: HostAnalyticsScreenProps
           </motion.div>
 
           {/* Category Breakdown + Occupancy */}
-          <div className="px-5 grid grid-cols-2 gap-3 mb-6">
+          <div className="px-5 grid grid-cols-2 gap-3 mb-6 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-4">
             {analytics.categoryBreakdown.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 12 }}
@@ -213,7 +213,7 @@ export default function HostAnalyticsScreen({ onBack }: HostAnalyticsScreenProps
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.45 }}
-              className="mx-5 mb-6 glass rounded-2xl p-4"
+              className="mx-5 mb-6 glass rounded-2xl p-4 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32"
             >
               <h3 className="text-sm font-bold text-foreground mb-3">Top Performing Listings</h3>
               <div className="space-y-3">

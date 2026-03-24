@@ -124,11 +124,11 @@ export default function PublicProfileScreen({ userId, onBack, onMessage }: Publi
     >
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-md border-b border-border">
-        <div className="flex items-center gap-3 px-4 py-3">
+        <div className="flex items-center gap-3 px-4 py-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
           <button onClick={onBack} className="text-foreground active:scale-90 transition-transform">
             <ArrowLeft size={22} />
           </button>
-          <h1 className="text-lg font-bold text-foreground flex-1">Profile</h1>
+          <h1 className="text-lg font-bold text-foreground flex-1 md:text-2xl">Profile</h1>
           <button className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center active:scale-90 transition-transform">
             <Share2 size={16} className="text-foreground" />
           </button>
@@ -193,7 +193,7 @@ export default function PublicProfileScreen({ userId, onBack, onMessage }: Publi
           </motion.div>
 
           {/* Stats */}
-          <motion.div variants={staggerItem} className="px-5 grid grid-cols-3 gap-3 mb-6">
+          <motion.div variants={staggerItem} className="px-5 grid grid-cols-3 gap-3 mb-6 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:max-w-2xl md:mx-auto md:gap-4">
             {[
               { icon: Calendar, value: bookingCount.toString(), label: "Trips" },
               { icon: Star, value: reviews.length.toString(), label: "Reviews" },
@@ -208,12 +208,12 @@ export default function PublicProfileScreen({ userId, onBack, onMessage }: Publi
           </motion.div>
 
           {/* Reviews */}
-          <motion.div variants={staggerItem} className="px-5 mb-6">
+          <motion.div variants={staggerItem} className="px-5 mb-6 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
             <h3 className="text-base font-bold text-foreground mb-3 flex items-center gap-2">
               <Star size={16} className="text-primary" /> Reviews ({reviews.length})
             </h3>
             {reviews.length > 0 ? (
-              <div className="space-y-3">
+              <div className="space-y-3 md:grid md:grid-cols-2 md:gap-4 md:space-y-0">
                 {reviews.map((review, i) => (
                   <motion.div
                     key={review.id}
@@ -260,11 +260,11 @@ export default function PublicProfileScreen({ userId, onBack, onMessage }: Publi
           </motion.div>
 
           {/* Achievements */}
-          <motion.div variants={staggerItem} className="px-5 mb-8">
+          <motion.div variants={staggerItem} className="px-5 mb-8 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
             <h3 className="text-base font-bold text-foreground mb-3 flex items-center gap-2">
               <Award size={16} className="text-primary" /> Achievements
             </h3>
-            <div className="flex gap-3 overflow-x-auto hide-scrollbar">
+            <div className="flex gap-3 overflow-x-auto hide-scrollbar md:flex-wrap md:overflow-visible">
               {[
                 { icon: "🔥", title: "Early Adopter", desc: "Joined early" },
                 { icon: "⭐", title: "5-Star Guest", desc: "Perfect rating" },

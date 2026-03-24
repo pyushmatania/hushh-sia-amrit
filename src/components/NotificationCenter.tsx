@@ -33,12 +33,12 @@ export default function NotificationCenter({ onBack }: NotificationCenterProps) 
       className="fixed inset-0 z-50 bg-background overflow-y-auto pb-8"
     >
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 pt-[max(12px,env(safe-area-inset-top))] pb-3">
+      <div className="flex items-center gap-3 px-4 pt-[max(12px,env(safe-area-inset-top))] pb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:pt-6">
         <motion.button whileTap={{ scale: 0.9 }} onClick={onBack} className="w-10 h-10 rounded-full glass flex items-center justify-center">
           <ArrowLeft size={20} className="text-foreground" />
         </motion.button>
         <div className="flex-1">
-          <h1 className="text-lg font-bold text-foreground">Notifications</h1>
+          <h1 className="text-lg font-bold text-foreground md:text-2xl">Notifications</h1>
           {unreadCount > 0 && (
             <p className="text-xs text-muted-foreground">{unreadCount} unread</p>
           )}
@@ -55,7 +55,7 @@ export default function NotificationCenter({ onBack }: NotificationCenterProps) 
       </div>
 
       {/* Notifications List */}
-      <div className="px-4 mt-2 space-y-2">
+      <div className="px-4 mt-2 space-y-2 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-3 md:space-y-0">
         {notifications.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
