@@ -224,7 +224,7 @@ export default function AdminAnalytics() {
 
       {/* === OVERVIEW TAB === */}
       {tab === "overview" && (
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Revenue Trend */}
           <motion.div variants={fadeUp} className="rounded-2xl bg-card border border-border p-5">
             <div className="flex items-center justify-between mb-4">
