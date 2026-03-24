@@ -364,13 +364,13 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
 
   return (
     <div key={refreshKey} className="pb-24 bg-mesh min-h-screen">
-      <div className="px-5 pt-6 pb-2">
+      <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-6 pb-2">
         <div className="flex items-center justify-between">
           <div>
             <motion.h1
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-2xl font-bold text-foreground"
+              className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground"
             >
               Your Trips
             </motion.h1>
@@ -378,7 +378,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.1 }}
-              className="text-sm text-muted-foreground mt-1"
+              className="text-sm md:text-base text-muted-foreground mt-1"
             >
               {onCancel ? "Swipe left on upcoming trips to cancel" : "Manage your bookings"}
             </motion.p>
