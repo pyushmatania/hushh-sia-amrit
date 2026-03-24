@@ -124,37 +124,37 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      className="fixed inset-0 z-50 bg-mesh overflow-y-auto pb-24"
+      className="fixed inset-0 z-50 bg-mesh overflow-y-auto pb-24 md:pt-4"
     >
       {/* Search Header */}
       <div className="sticky top-0 z-10 glass px-5 pt-4 pb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
-        <div className="flex items-center gap-3">
-          <div className="flex-1 flex items-center gap-3 rounded-xl bg-secondary px-4 py-3">
-            <Search size={18} className="text-muted-foreground shrink-0" />
+        <div className="flex items-center gap-3 md:max-w-3xl md:mx-auto">
+          <div className="flex-1 flex items-center gap-3 rounded-xl bg-secondary px-4 py-3 md:py-3.5">
+            <Search size={18} className="text-muted-foreground shrink-0 md:w-5 md:h-5" />
             <input
               type="text"
               value={query}
               onChange={(e) => handleQueryChange(e.target.value)}
               placeholder="Search villas, venues, experiences..."
-              className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
+              className="flex-1 bg-transparent text-sm md:text-base text-foreground placeholder:text-muted-foreground outline-none"
               autoFocus
             />
             {query && (
-              <button onClick={() => handleQueryChange("")}>
-                <X size={16} className="text-muted-foreground" />
+              <button onClick={() => handleQueryChange("")} className="md:cursor-pointer hover:opacity-70 transition-opacity">
+                <X size={16} className="text-muted-foreground md:w-5 md:h-5" />
               </button>
             )}
           </div>
-          <button onClick={onClose} className="text-sm font-medium text-primary shrink-0">
+          <button onClick={onClose} className="text-sm md:text-base font-medium text-primary shrink-0 md:cursor-pointer md:hover:text-primary/80 transition-colors">
             Cancel
           </button>
         </div>
 
         {/* Filter & Sort Row */}
-        <div className="flex items-center gap-2 mt-3 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-2 mt-3 overflow-x-auto no-scrollbar md:max-w-3xl md:mx-auto md:flex-wrap md:overflow-visible">
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all shrink-0 ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs md:text-sm font-medium border transition-all shrink-0 md:cursor-pointer md:hover:shadow-sm ${
               activeFilterCount > 0
                 ? "border-primary bg-primary/10 text-primary"
                 : "border-border text-foreground"
@@ -168,7 +168,7 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
           {/* Sort button */}
           <button
             onClick={() => setShowSort(!showSort)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all shrink-0 ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs md:text-sm font-medium border transition-all shrink-0 md:cursor-pointer md:hover:shadow-sm ${
               sortBy !== "relevance"
                 ? "border-primary bg-primary/10 text-primary"
                 : "border-border text-foreground"
@@ -187,7 +187,7 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
             <button
               key={pill.label}
               onClick={pill.action}
-              className="px-3 py-1.5 rounded-full text-xs font-medium border border-border text-muted-foreground hover:border-foreground/30 transition-all whitespace-nowrap shrink-0"
+              className="px-3 py-1.5 rounded-full text-xs md:text-sm font-medium border border-border text-muted-foreground hover:border-foreground/30 transition-all whitespace-nowrap shrink-0 md:cursor-pointer"
             >
               {pill.label}
             </button>
@@ -204,15 +204,15 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden border-b border-border bg-background/80 backdrop-blur-md"
           >
-            <div className="px-5 py-3 flex flex-wrap gap-2">
+            <div className="px-5 py-3 flex flex-wrap gap-2 md:max-w-3xl md:mx-auto">
               {(Object.keys(sortLabels) as SortOption[]).map((key) => (
                 <button
                   key={key}
                   onClick={() => { setSortBy(key); setShowSort(false); }}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+                  className={`px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium border transition-all md:cursor-pointer ${
                     sortBy === key
                       ? "border-foreground bg-foreground text-background"
-                      : "border-border text-foreground"
+                      : "border-border text-foreground hover:bg-muted/50"
                   }`}
                 >
                   {sortLabels[key]}
@@ -232,7 +232,7 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden border-b border-border"
           >
-            <div className="px-5 py-4 space-y-5">
+            <div className="px-5 py-4 space-y-5 md:max-w-3xl md:mx-auto">
               {/* Category */}
               <div>
                 <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5">
@@ -501,12 +501,12 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.06 }}
-                className="flex gap-3 rounded-2xl border border-border p-3 cursor-pointer hover:bg-secondary/30 transition-colors"
+                className="flex gap-3 rounded-2xl border border-border p-3 md:p-4 cursor-pointer hover:bg-secondary/30 hover:border-border/80 hover:shadow-card transition-all"
                 onClick={() => onPropertyTap(property)}
               >
-                <img src={property.images[0]} alt={property.name} className="w-24 h-24 rounded-xl object-cover shrink-0" />
+                <img src={property.images[0]} alt={property.name} className="w-24 h-24 md:w-32 md:h-32 rounded-xl object-cover shrink-0" />
                 <div className="flex-1 min-w-0 py-0.5">
-                  <h3 className="font-semibold text-sm text-foreground flex items-center gap-1 truncate">
+                  <h3 className="font-semibold text-sm md:text-base text-foreground flex items-center gap-1 truncate">
                     {property.name}
                     {property.verified && <BadgeCheck size={13} className="text-primary shrink-0" />}
                   </h3>

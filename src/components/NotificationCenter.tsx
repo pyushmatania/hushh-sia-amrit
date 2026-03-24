@@ -30,11 +30,11 @@ export default function NotificationCenter({ onBack }: NotificationCenterProps) 
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: "100%" }}
       transition={{ type: "spring", damping: 28, stiffness: 300 }}
-      className="fixed inset-0 z-50 bg-background overflow-y-auto pb-8"
+      className="fixed inset-0 z-50 bg-background overflow-y-auto pb-8 md:pt-4"
     >
       {/* Header */}
       <div className="flex items-center gap-3 px-4 pt-[max(12px,env(safe-area-inset-top))] pb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:pt-6">
-        <motion.button whileTap={{ scale: 0.9 }} onClick={onBack} className="w-10 h-10 rounded-full glass flex items-center justify-center">
+        <motion.button whileTap={{ scale: 0.9 }} onClick={onBack} className="w-10 h-10 rounded-full glass flex items-center justify-center md:cursor-pointer md:hover:bg-muted/50 transition-colors">
           <ArrowLeft size={20} className="text-foreground" />
         </motion.button>
         <div className="flex-1">
@@ -55,7 +55,7 @@ export default function NotificationCenter({ onBack }: NotificationCenterProps) 
       </div>
 
       {/* Notifications List */}
-      <div className="px-4 mt-2 space-y-2 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-3 md:space-y-0">
+      <div className="px-4 mt-2 space-y-2 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-3 md:space-y-0 md:max-w-6xl md:mx-auto">
         {notifications.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
@@ -74,7 +74,7 @@ export default function NotificationCenter({ onBack }: NotificationCenterProps) 
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03 }}
               onClick={() => !n.read && markAsRead(n.id)}
-              className={`glass rounded-2xl p-4 flex items-start gap-3 cursor-pointer transition-all ${
+              className={`glass rounded-2xl p-4 flex items-start gap-3 cursor-pointer transition-all md:hover:shadow-card md:hover:scale-[1.01] ${
                 !n.read ? "border-l-2 border-l-primary" : "opacity-70"
               }`}
             >

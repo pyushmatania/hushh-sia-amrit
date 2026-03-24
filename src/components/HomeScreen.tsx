@@ -186,7 +186,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
   }, [filteredProperties, activeMood]);
 
   return (
-    <div ref={contentRef} key={refreshKey} className="pb-24 md:pb-8 min-h-screen overflow-y-auto overflow-x-hidden bg-mesh smooth-main-scroll" style={{ overscrollBehaviorX: "none", WebkitOverflowScrolling: "touch" }}>
+    <div ref={contentRef} key={refreshKey} className="pb-24 md:pb-8 min-h-screen overflow-x-hidden bg-mesh smooth-main-scroll" style={{ overscrollBehaviorX: "none", WebkitOverflowScrolling: "touch" }}>
 
       {/* Header */}
       <div className="px-5 pt-5 pb-2 flex items-center justify-between md:hidden">
@@ -366,9 +366,9 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
 
               {trendingNow.length > 0 && (
                 <div className="mt-4">
-                  <div className="flex items-center justify-between px-5 mb-3">
-                    <h2 className="text-lg font-bold text-foreground">⚡ Slots Filling Up</h2>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 font-semibold animate-pulse">LIVE</span>
+                  <div className="flex items-center justify-between px-5 mb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:mb-6">
+                    <h2 className="text-lg font-bold text-foreground md:text-xl lg:text-2xl">⚡ Slots Filling Up</h2>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 font-semibold animate-pulse md:text-xs">LIVE</span>
                   </div>
                   <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5 md:grid md:grid-cols-3 lg:grid-cols-4 md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-6">
                     {trendingNow.slice(0, 4).map((p, i) => (
