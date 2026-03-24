@@ -402,8 +402,10 @@ function ThreadCard({ thread, index, onClick, onPin, onArchive }: {
       {/* Draggable card foreground */}
       <motion.div
         drag="x"
-        dragConstraints={{ left: -120, right: 120 }}
-        dragElastic={0.15}
+        dragConstraints={{ left: -100, right: 100 }}
+        dragElastic={0.08}
+        dragMomentum={false}
+        style={{ x: dragX }}
         onDrag={(_, info) => {
           if (info.offset.x > SWIPE_THRESHOLD) setSwipeState("pin");
           else if (info.offset.x < -SWIPE_THRESHOLD) setSwipeState("archive");
