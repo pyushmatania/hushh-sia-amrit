@@ -237,6 +237,7 @@ export default function AdminCatalog() {
           {activeTab === "curations" && <AdminCurations />}
           {activeTab === "food" && <AdminInventory filterCategory="food-drinks" />}
           {activeTab === "addons" && <AdminInventory filterCategory="addons" />}
+          {activeTab === "history" && <RevisionHistoryPanel />}
         </motion.div>
       </AnimatePresence>
     </div>
