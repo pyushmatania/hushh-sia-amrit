@@ -399,7 +399,7 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
 
           {/* MILESTONES / QUESTS */}
           {tab === "milestones" && (
-            <motion.div key="milestones" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="px-4 space-y-3">
+            <motion.div key="milestones" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="px-4 space-y-3 md:px-0 md:grid md:grid-cols-2 md:gap-4 md:space-y-0">
               <p className="text-xs text-muted-foreground mb-1">Complete quests to earn bonus rewards 🗡️</p>
               {milestones.map((ms, i) => {
                 const progressPercent = ms.achieved ? 100 : Math.floor(Math.random() * 70 + 10);
