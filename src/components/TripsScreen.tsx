@@ -271,12 +271,7 @@ function TiltCard({
             </div>
           </div>
 
-          <div className="absolute bottom-0 left-2 right-2 h-[6px] rounded-b-3xl pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent, hsla(0,0%,0%,0.25))" }} />
         </div>
-
-        <div className="absolute inset-0 rounded-3xl pointer-events-none border border-white/[0.06]" />
-        <div className="absolute top-2 bottom-2 -left-[1px] w-[2px] pointer-events-none rounded-l-3xl" style={{ background: "linear-gradient(to right, hsla(0,0%,0%,0.3), transparent)" }} />
-        <div className="absolute top-2 bottom-2 -right-[1px] w-[2px] pointer-events-none rounded-r-3xl" style={{ background: "linear-gradient(to left, hsla(0,0%,0%,0.3), transparent)" }} />
       </motion.div>
     </motion.div>
   );
