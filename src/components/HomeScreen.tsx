@@ -340,10 +340,11 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                       onPropertyTap={onPropertyTap}
                       wishlist={wishlist}
                       onToggleWishlist={onToggleWishlist}
-                      sectionTitle="Hidden Gems"
-                      sectionEmoji="💎"
-                      offset={10}
-                    />
+                       sectionTitle="Hidden Gems"
+                       sectionEmoji="💎"
+                       offset={10}
+                       category="home"
+                     />
                   </LazySection>
                 )});
               }
