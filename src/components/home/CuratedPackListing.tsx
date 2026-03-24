@@ -206,8 +206,8 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
       onClick={() => { hapticSelection(); onTap(pack); }}
     >
       {/* Video area */}
-      <div className="relative md:rounded-[20px] md:overflow-hidden md:hover:shadow-elevated md:transition-shadow" style={{ height: "70vh", maxHeight: "520px" }}>
-        <AccentFrame color={accent.color} radius="20px" glowAlpha={0.08} />
+      <div className="relative md:rounded-[20px] md:overflow-hidden md:hover:shadow-elevated md:transition-shadow h-[70vh] max-h-[520px] md:h-[50vh] md:max-h-[400px]">
+        <div className="md:hidden"><AccentFrame color={accent.color} radius="20px" glowAlpha={0.08} /></div>
         <div
           className="relative w-full h-full overflow-hidden rounded-[20px]"
           style={{ border: "1px solid hsl(var(--border) / 0.24)" }}
@@ -241,29 +241,29 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
             />
           )}
 
-          {/* Accent tag */}
-          <AccentTag tag={accent.tag} className="absolute top-4 left-4 z-10 md:top-5 md:left-5" />
+          {/* Accent tag - hide on desktop for cleaner look */}
+          <AccentTag tag={accent.tag} className="absolute top-4 left-4 z-10 md:hidden" />
 
           {/* Mute toggle */}
           <button
             onClick={(e) => { e.stopPropagation(); setMuted(!muted); }}
-            className="absolute top-4 right-4 md:top-5 md:right-5 w-10 h-10 md:w-11 md:h-11 rounded-full flex items-center justify-center z-10 md:hover:scale-110 md:transition-transform md:cursor-pointer"
+            className="absolute top-4 right-4 md:top-5 md:right-5 w-10 h-10 md:w-9 md:h-9 rounded-full flex items-center justify-center z-10 md:hover:scale-110 md:transition-transform md:cursor-pointer md:opacity-0 md:group-hover:opacity-100"
             style={{ background: "hsl(var(--foreground) / 0.36)", backdropFilter: "blur(8px)" }}
           >
-            {muted ? <VolumeX size={18} className="text-white" /> : <Volume2 size={18} className="text-white" />}
+            {muted ? <VolumeX size={18} className="text-white md:w-4 md:h-4" /> : <Volume2 size={18} className="text-white md:w-4 md:h-4" />}
           </button>
 
-          {/* Savings badge */}
+          {/* Savings badge - hide on desktop, show inline in bottom on desktop */}
           {savings > 0 && (
-            <div className="absolute top-4 right-16 md:top-5 md:right-[4.5rem] px-2.5 py-1 md:px-3.5 md:py-1.5 rounded-full z-10" style={{ background: "hsl(160 84% 39% / 0.9)" }}>
-              <span className="text-[10px] md:text-xs font-bold text-white">Save ₹{savings}</span>
+            <div className="absolute top-4 right-16 md:hidden px-2.5 py-1 rounded-full z-10" style={{ background: "hsl(160 84% 39% / 0.9)" }}>
+              <span className="text-[10px] font-bold text-white">Save ₹{savings}</span>
             </div>
           )}
 
-          {/* Tagline */}
+          {/* Tagline - smaller on desktop */}
           <div className="absolute left-0 right-0 pointer-events-none px-5 md:px-6" style={{ bottom: "52%" }}>
             <p
-              className="text-[15px] md:text-lg font-bold italic text-white/80 leading-snug"
+              className="text-[15px] md:text-base font-bold italic text-white/80 leading-snug"
               style={{
                 fontFamily: "'Playfair Display', serif",
                 textShadow: "0 2px 8px rgba(0,0,0,0.9), 0 4px 20px rgba(0,0,0,0.6)",
@@ -278,41 +278,57 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
             className="absolute bottom-0 left-0 right-0 p-5 md:p-6"
             style={{ background: "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.7) 45%, rgba(0,0,0,0.25) 70%, transparent 100%)" }}
           >
-            <span className="text-3xl md:text-4xl">{pack.emoji}</span>
-            <h3 className="text-[22px] md:text-2xl font-extrabold text-white leading-tight mt-1" style={{ fontFamily: "'Space Grotesk', sans-serif", textShadow: "0 1px 6px rgba(0,0,0,0.5)" }}>
+            <span className="text-3xl md:text-2xl">{pack.emoji}</span>
+            <h3 className="text-[22px] md:text-xl font-extrabold text-white leading-tight mt-1" style={{ fontFamily: "'Space Grotesk', sans-serif", textShadow: "0 1px 6px rgba(0,0,0,0.5)" }}>
               {pack.name}
             </h3>
 
             {/* Slot */}
-            <div className="flex items-center gap-1.5 mt-2 md:mt-2.5">
-              <Clock size={13} className="text-white/70 md:w-4 md:h-4" />
-              <span className="text-[12px] md:text-sm text-white/80 font-semibold tracking-wide">{pack.slot}</span>
+            <div className="flex items-center gap-1.5 mt-2 md:mt-1.5">
+              <Clock size={13} className="text-white/70 md:w-3.5 md:h-3.5" />
+              <span className="text-[12px] md:text-xs text-white/80 font-semibold tracking-wide">{pack.slot}</span>
             </div>
 
-            {/* Includes chips */}
-            <div className="flex flex-wrap gap-1.5 md:gap-2 mt-2.5 md:mt-3">
+            {/* Includes chips - show fewer on desktop */}
+            <div className="flex flex-wrap gap-1.5 md:gap-1.5 mt-2.5 md:mt-2">
               {pack.includes.slice(0, 4).map((item, i) => (
-                <span key={i} className="text-[10px] md:text-xs px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-white/90 font-medium border border-white/20" style={{ background: "hsl(var(--foreground) / 0.22)", backdropFilter: "blur(4px)" }}>
+                <span key={i} className="text-[10px] md:text-[10px] px-2.5 py-1 md:px-2 md:py-0.5 rounded-full text-white/90 font-medium border border-white/20 md:hidden" style={{ background: "hsl(var(--foreground) / 0.22)", backdropFilter: "blur(4px)" }}>
+                  {item}
+                </span>
+              ))}
+              {/* Desktop: show only 2 chips */}
+              {pack.includes.slice(0, 2).map((item, i) => (
+                <span key={`d-${i}`} className="hidden md:inline-flex text-[10px] px-2 py-0.5 rounded-full text-white/90 font-medium border border-white/15" style={{ background: "hsl(var(--foreground) / 0.18)" }}>
                   {item}
                 </span>
               ))}
               {pack.includes.length > 4 && (
-                <span className="text-[10px] md:text-xs px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-primary font-bold" style={{ background: "hsl(var(--primary) / 0.25)" }}>
+                <span className="text-[10px] px-2.5 py-1 rounded-full text-primary font-bold md:hidden" style={{ background: "hsl(var(--primary) / 0.25)" }}>
                   +{pack.includes.length - 4} more
+                </span>
+              )}
+              {pack.includes.length > 2 && (
+                <span className="hidden md:inline-flex text-[10px] px-2 py-0.5 rounded-full text-primary font-bold" style={{ background: "hsl(var(--primary) / 0.2)" }}>
+                  +{pack.includes.length - 2} more
                 </span>
               )}
             </div>
 
             {/* Price + CTA */}
-            <div className="flex items-center justify-between mt-3 md:mt-4">
+            <div className="flex items-center justify-between mt-3 md:mt-3">
               <div className="flex items-baseline gap-2">
-                <span className="text-2xl md:text-3xl font-extrabold text-white" style={{ textShadow: "0 1px 4px rgba(0,0,0,0.4)" }}>₹{pack.price}</span>
+                <span className="text-2xl md:text-xl font-extrabold text-white" style={{ textShadow: "0 1px 4px rgba(0,0,0,0.4)" }}>₹{pack.price}</span>
                 {pack.originalPrice && (
-                  <span className="text-[12px] md:text-sm text-white/50 line-through font-medium">₹{pack.originalPrice}</span>
+                  <span className="text-[12px] md:text-xs text-white/50 line-through font-medium">₹{pack.originalPrice}</span>
+                )}
+                {savings > 0 && (
+                  <span className="hidden md:inline-flex text-[10px] px-2 py-0.5 rounded-full font-bold text-white" style={{ background: "hsl(160 84% 39% / 0.85)" }}>
+                    Save ₹{savings}
+                  </span>
                 )}
               </div>
-              <div className="flex items-center gap-1.5 bg-primary text-primary-foreground px-5 py-2.5 md:px-6 md:py-3 rounded-full text-[13px] md:text-sm font-bold active:scale-95 transition-transform shadow-lg md:hover:bg-primary/90 md:cursor-pointer" style={{ boxShadow: "0 4px 16px hsl(var(--primary) / 0.4)" }}>
-                Book Now <ArrowRight size={13} className="md:w-4 md:h-4" />
+              <div className="flex items-center gap-1.5 bg-primary text-primary-foreground px-5 py-2.5 md:px-4 md:py-2 rounded-full text-[13px] md:text-xs font-bold active:scale-95 transition-transform shadow-lg md:hover:bg-primary/90 md:cursor-pointer" style={{ boxShadow: "0 4px 16px hsl(var(--primary) / 0.4)" }}>
+                Book Now <ArrowRight size={13} className="md:w-3.5 md:h-3.5" />
               </div>
             </div>
           </div>
