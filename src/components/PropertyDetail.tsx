@@ -1048,62 +1048,8 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
         </h3>
         <p className="text-sm text-muted-foreground mb-3">{property.location}</p>
 
-        {/* Map Card — styled like in-app map feature */}
-        <div className="relative rounded-2xl overflow-hidden border-2 border-primary/20 glow-border-radiate mb-3">
-          {/* Map iframe */}
-          <div className="relative aspect-[16/9]">
-            <iframe
-              title="Property Location"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(property.location)}&zoom=14`}
-            />
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 pointer-events-none" style={{
-              background: "linear-gradient(180deg, hsl(var(--background) / 0.1) 0%, transparent 25%, transparent 65%, hsl(var(--background) / 0.35) 100%), radial-gradient(ellipse at center, transparent 50%, hsl(var(--background) / 0.15) 100%)",
-            }} />
-            <div className="absolute inset-0 pointer-events-none" style={{
-              boxShadow: "inset 0 0 40px hsl(var(--background) / 0.25), inset 0 0 80px hsl(var(--background) / 0.08)",
-            }} />
-
-            {/* Property photo marker pinned on map */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-full pointer-events-none z-10">
-              <div className="relative">
-                <div className="w-12 h-12 rounded-full border-[2.5px] border-primary overflow-hidden shadow-elevated glow-sm">
-                  <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover" />
-                </div>
-                {/* Pin triangle */}
-                <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-primary rotate-45 rounded-sm" />
-              </div>
-            </div>
-
-            {/* Price tag badge */}
-            <div className="absolute top-3 left-3 glass rounded-full px-3 py-1.5 flex items-center gap-1.5 pointer-events-none">
-              <span className="text-xs font-bold text-foreground">₹{property.basePrice.toLocaleString()}</span>
-              <span className="text-[10px] text-muted-foreground">/ slot</span>
-            </div>
-          </div>
-
-          {/* Bottom info bar */}
-          <div className="bg-card/90 backdrop-blur-sm px-4 py-3 flex items-center gap-3 border-t border-border">
-            <div className="w-10 h-10 rounded-xl overflow-hidden border border-border shrink-0">
-              <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-foreground truncate">{property.name}</p>
-              <p className="text-[11px] text-muted-foreground flex items-center gap-1">
-                <MapPin size={10} /> {property.location}
-              </p>
-            </div>
-            <div className="flex items-center gap-1">
-              <Star size={12} className="text-gold fill-gold" />
-              <span className="text-xs font-semibold text-foreground">{property.rating}</span>
-            </div>
-          </div>
-        </div>
+        {/* Map Card — Leaflet with route */}
+        <PropertyLocationMap property={property} />
 
         {/* How to get there */}
         <div className="glass rounded-2xl p-4 mb-3 border border-border">
