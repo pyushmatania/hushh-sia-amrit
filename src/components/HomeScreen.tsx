@@ -172,7 +172,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
       const property = properties.find(p => p.id === pack.propertyId);
       if (property) onPropertyTap(property);
     }
-  }, [onPropertyTap, onExperienceTap]);
+  }, [onPropertyTap, onExperienceTap, properties]);
 
   const moodFilteredProperties = useMemo(() => {
     if (!activeMood) return filteredProperties;
