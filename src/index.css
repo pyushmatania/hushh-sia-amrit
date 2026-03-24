@@ -478,19 +478,6 @@
   95% { opacity: 0.8; transform: translateX(-1px); }
 }
 
-/* Desktop outer background — only visible on lg+ behind phone-frame */
-.desktop-outer-bg {
-  background: hsl(var(--background));
-}
-@media (min-width: 1024px) {
-  .desktop-outer-bg {
-    background: linear-gradient(180deg, #08080F 0%, #0C0B1D 50%, #111028 100%);
-  }
-  .light .desktop-outer-bg {
-    background: linear-gradient(180deg, #E8E6F0 0%, #DDD9EA 50%, #D4CFE4 100%);
-  }
-}
-
 /* Leaflet overrides */
 .custom-photo-marker {
   background: none !important;
