@@ -316,9 +316,9 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
 
               {budgetPicks.length > 0 && (
                 <div className="mt-6">
-                  <div className="flex items-center justify-between px-5 mb-3">
-                    <h2 className="text-lg font-bold text-foreground">💸 Budget Friendly</h2>
-                    <button onClick={() => handleSubFilter("All")} className="text-xs text-primary font-medium flex items-center gap-1">View all <ArrowRight size={12} /></button>
+                  <div className="flex items-center justify-between px-5 mb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:mb-6">
+                    <h2 className="text-lg font-bold text-foreground md:text-xl lg:text-2xl">💸 Budget Friendly</h2>
+                    <button onClick={() => handleSubFilter("All")} className="text-xs text-primary font-medium flex items-center gap-1 md:text-sm">View all <ArrowRight size={12} /></button>
                   </div>
                   <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5 md:grid md:grid-cols-3 lg:grid-cols-4 md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-6">
                     {budgetPicks.map((p, i) => (
