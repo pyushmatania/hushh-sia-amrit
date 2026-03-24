@@ -445,24 +445,24 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
           {/* ═══════ CURATIONS TAB ═══════ */}
           {activeCategory === "curation" && (
             <>
-              <div className="px-5 pt-6 pb-2 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
-                <h1 className="text-2xl font-bold text-foreground md:text-3xl lg:text-4xl" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+              <div className="px-5 pt-6 pb-2 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:pt-10 md:pb-4 md:text-center">
+                <h1 className="text-2xl font-bold text-foreground md:text-4xl lg:text-5xl" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                   Curated for You ✨
                 </h1>
-                <p className="text-sm text-muted-foreground mt-1 md:text-base lg:text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>
+                <p className="text-sm text-muted-foreground mt-1 md:text-lg lg:text-xl md:mt-2 md:max-w-2xl md:mx-auto" style={{ fontFamily: "'Playfair Display', serif" }}>
                   One-tap bundles, crafted by locals
                 </p>
               </div>
 
-              <div className="px-4 pt-2 pb-3 flex gap-2 overflow-x-auto hide-scrollbar md:justify-center md:flex-wrap md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-3">
+              <div className="px-4 pt-2 pb-3 flex gap-2 overflow-x-auto hide-scrollbar md:justify-center md:flex-wrap md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-3 md:pt-4 md:pb-6">
                 {curationFilters.map(tag => (
                   <button
                     key={tag}
                     onClick={() => handleSubFilter(tag)}
-                    className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 md:text-sm md:px-5 md:py-2.5 md:cursor-pointer md:hover:bg-muted/50 ${
+                    className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 md:text-sm md:px-6 md:py-2.5 md:rounded-xl md:cursor-pointer md:hover:shadow-md ${
                       subFilter === tag
-                        ? "bg-primary text-primary-foreground font-semibold shadow-md"
-                        : "bg-foreground/5 text-foreground/80 border border-foreground/10"
+                        ? "bg-primary text-primary-foreground font-semibold shadow-md md:shadow-lg"
+                        : "bg-foreground/5 text-foreground/80 border border-foreground/10 md:hover:bg-foreground/10 md:hover:border-foreground/20"
                     }`}
                   >
                     {tag}
@@ -487,10 +487,10 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 ))}
               </div>
 
-              <div className="mx-4 mt-6 p-4 rounded-2xl border border-foreground/10 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32" style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(6,95,70,0.15) 100%)" }}>
+              <div className="mx-4 mt-6 p-4 rounded-2xl border border-foreground/10 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 md:p-6 md:rounded-3xl md:mt-10 md:max-w-4xl md:self-center" style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(6,95,70,0.15) 100%)" }}>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-lg">💸</span>
-                  <h3 className="text-sm font-bold text-foreground md:text-base">Budget Combos from ₹299</h3>
+                  <span className="text-lg md:text-2xl">💸</span>
+                  <h3 className="text-sm font-bold text-foreground md:text-lg">Budget Combos from ₹299</h3>
                 </div>
                 <p className="text-xs text-muted-foreground md:text-sm">Work & Chill, Day Escape, Game Night — perfect for weekdays!</p>
               </div>
