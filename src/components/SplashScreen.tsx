@@ -429,7 +429,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
           <div className="absolute inset-0 flex flex-col z-10">
 
             {/* Top — Greeting area */}
-            <div className="flex-1 flex flex-col justify-center items-center px-8 pt-16">
+            <div className="flex-1 flex flex-col justify-center items-center px-8 pt-16 md:pt-24 lg:pt-32">
               {/* Date */}
               <motion.p
                 className="text-[11px] font-semibold tracking-[0.2em] uppercase text-white/50"
