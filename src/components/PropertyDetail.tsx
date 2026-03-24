@@ -889,7 +889,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
                 <>
                   <span className="text-border">·</span>
                   <Layers size={12} className="text-amber-400" />
-                  <span className="text-amber-400 font-medium">{extraMattressCount} mattress (+₹{(extraMattressCount * EXTRA_MATTRESS_PRICE).toLocaleString()})</span>
+                  <span className="text-amber-700 dark:text-amber-400 font-medium">{extraMattressCount} mattress (+₹{(extraMattressCount * EXTRA_MATTRESS_PRICE).toLocaleString()})</span>
                 </>
               )}
             </div>
