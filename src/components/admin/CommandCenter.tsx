@@ -776,8 +776,8 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
                 {card.up ? <ArrowUpRight size={9} /> : <ArrowDownRight size={9} />} {card.change}
               </span>
             </div>
-            <p className="text-xl font-bold text-foreground tabular-nums leading-none"><AnimatedCounter value={card.value} prefix={card.prefix} /></p>
-            <p className="text-[10px] text-muted-foreground mt-1 font-medium">{card.label}</p>
+            <p className="text-xl lg:text-2xl font-bold text-foreground tabular-nums leading-none"><AnimatedCounter value={card.value} prefix={card.prefix} /></p>
+            <p className="text-[10px] lg:text-xs text-muted-foreground mt-1 font-medium">{card.label}</p>
           </motion.div>
         ))}
       </div>
