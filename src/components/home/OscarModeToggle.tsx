@@ -348,9 +348,18 @@ function OscarPropertyCard({ property, onTap, index, isWL, onToggleWishlist, tot
         </div>
       </div>
 
-      {/* Carpet strip */}
-      <div className={`${isSingle ? "h-2 mx-6" : "h-1.5 mx-4"} rounded-b-full -mt-px`}
-        style={{ background: "linear-gradient(90deg, transparent, #DC143C, #FF2D2D, #DC143C, transparent)", boxShadow: "0 3px 12px rgba(220,20,60,0.25)" }} />
+      {/* Carpet strip — cinematic glow for single */}
+      {isSingle ? (
+        <div className="relative h-1 mx-2 mt-[-1px]">
+          <div className="absolute inset-0 rounded-b-full" style={{
+            background: "linear-gradient(90deg, transparent 5%, #DC143C 25%, #FF4444 50%, #DC143C 75%, transparent 95%)",
+            boxShadow: "0 4px 20px rgba(220,20,60,0.4), 0 1px 6px rgba(255,68,68,0.3)",
+          }} />
+        </div>
+      ) : (
+        <div className="h-1.5 mx-4 rounded-b-full -mt-px"
+          style={{ background: "linear-gradient(90deg, transparent, #DC143C, #FF2D2D, #DC143C, transparent)", boxShadow: "0 3px 12px rgba(220,20,60,0.25)" }} />
+      )}
     </motion.article>
   );
 }
