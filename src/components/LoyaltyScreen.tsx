@@ -161,7 +161,7 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
     >
       {/* ─── Header ─── */}
       <div className="sticky top-0 z-20 bg-background/80 backdrop-blur-xl border-b border-border/30">
-        <div className="flex items-center gap-3 px-4 pt-[max(12px,env(safe-area-inset-top))] pb-3">
+        <div className="flex items-center gap-3 px-4 pt-[max(12px,env(safe-area-inset-top))] pb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:pt-6">
           <motion.button whileTap={{ scale: 0.9 }} onClick={onBack}
             className="w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center">
             <ArrowLeft size={18} className="text-foreground" />
