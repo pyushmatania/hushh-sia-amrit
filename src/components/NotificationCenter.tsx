@@ -74,7 +74,7 @@ export default function NotificationCenter({ onBack }: NotificationCenterProps) 
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03 }}
               onClick={() => !n.read && markAsRead(n.id)}
-              className={`glass rounded-2xl p-4 flex items-start gap-3 cursor-pointer transition-all ${
+              className={`glass rounded-2xl p-4 flex items-start gap-3 cursor-pointer transition-all md:hover:shadow-card md:hover:scale-[1.01] ${
                 !n.read ? "border-l-2 border-l-primary" : "opacity-70"
               }`}
             >
