@@ -511,7 +511,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                 transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
               >
                 <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-[10px] md:text-xs lg:text-sm font-medium text-white/70 tracking-wide">Jeypore, Odisha</span>
+                <span className="text-[10px] md:text-xs lg:text-sm font-medium tracking-wide" style={{ color: config.taglineColor }}> Jeypore, Odisha</span>
               </motion.div>
             </div>
 
