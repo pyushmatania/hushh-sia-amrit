@@ -29,7 +29,7 @@ export default function BottomNav({ active, onChange, messageBadge = 0 }: Bottom
 
   return (
     <div
-      className="fixed left-0 right-0 z-40"
+      className="fixed left-0 right-0 z-40 lg:sticky lg:bottom-0 lg:left-auto lg:right-auto"
       style={{
         bottom: "0px",
       }}
