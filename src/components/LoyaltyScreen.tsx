@@ -306,7 +306,7 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
       </div>
 
       {/* ─── Tab Content ─── */}
-      <div className="pb-[max(32px,env(safe-area-inset-bottom))] md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+      <div className="pb-[max(32px,env(safe-area-inset-bottom))] md:max-w-3xl md:mx-auto">
         <AnimatePresence mode="wait">
           {/* REWARDS */}
           {tab === "rewards" && (

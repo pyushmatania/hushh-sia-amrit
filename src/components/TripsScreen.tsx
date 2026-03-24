@@ -363,9 +363,9 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
   }, [selectedCalDate, bookedDatesMap]);
 
   return (
-    <div key={refreshKey} className="pb-24 bg-mesh min-h-screen">
+    <div key={refreshKey} className="pb-24 bg-mesh min-h-screen md:h-[calc(100vh-4rem)] md:overflow-y-auto">
       <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-6 pb-2">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between md:max-w-4xl md:mx-auto">
           <div>
             <motion.h1
               initial={{ opacity: 0, y: -8 }}
@@ -386,8 +386,8 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={() => { setCalendarOpen(!calendarOpen); setSelectedCalDate(undefined); }}
-            className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${
-              calendarOpen ? "bg-primary/10 border-primary/30 text-primary" : "bg-secondary border-border text-muted-foreground"
+            className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all md:cursor-pointer ${
+              calendarOpen ? "bg-primary/10 border-primary/30 text-primary" : "bg-secondary border-border text-muted-foreground md:hover:bg-muted/50"
             }`}
           >
             <CalendarIcon size={18} />

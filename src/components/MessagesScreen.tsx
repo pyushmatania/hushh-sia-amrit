@@ -885,6 +885,7 @@ export default function MessagesScreen() {
         )}
       </AnimatePresence>
       </div>
+      </div>
 
       <AnimatePresence>
         {activeConvo && <RealtimeChatView conversation={activeConvo} onBack={() => setActiveConvo(null)} />}
