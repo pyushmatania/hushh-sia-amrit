@@ -472,7 +472,18 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 ))}
               </div>
 
-              <ServiceGrid services={filteredProperties} onServiceTap={onPropertyTap} />
+              {isMobile ? (
+                <MobilePropertyGrid
+                  properties={filteredProperties}
+                  onPropertyTap={onPropertyTap}
+                  wishlist={wishlist}
+                  onToggleWishlist={onToggleWishlist}
+                  rows={2}
+                  title="🛎️ All Services"
+                />
+              ) : (
+                <ServiceGrid services={filteredProperties} onServiceTap={onPropertyTap} />
+              )}
 
               {filteredProperties.length === 0 && (
                 <div className="px-5 py-12 text-center">
