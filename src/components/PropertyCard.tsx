@@ -107,7 +107,7 @@ export default function PropertyCard({ property, index, onTap, isWishlisted = fa
 
   return (
     <div
-      className="cursor-pointer px-5 group active:scale-[0.97] transition-transform"
+      className="cursor-pointer px-5 group active:scale-[0.97] transition-transform md:hover:opacity-95"
       onClick={handleClick}
       style={{ animationDelay: `${index * 60}ms` }}
     >
@@ -129,7 +129,7 @@ export default function PropertyCard({ property, index, onTap, isWishlisted = fa
           src={property.images[imgIndex]}
           alt={property.name}
           fill
-          className="object-cover touch-pan-y"
+          className="object-cover touch-pan-y group-hover:scale-105 transition-transform duration-500"
           sizes="(max-width: 640px) 90vw, 380px"
           onImageLoad={() => setImgLoaded(true)}
           showSkeleton={false}
@@ -172,7 +172,7 @@ export default function PropertyCard({ property, index, onTap, isWishlisted = fa
       <div className="pt-2.5 pb-1">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <h3 className="font-semibold text-[15px] text-foreground flex items-center gap-1">
+            <h3 className="font-semibold text-[15px] md:text-base text-foreground flex items-center gap-1">
               {property.name}
               {property.verified && <BadgeCheck size={14} className="text-primary shrink-0" />}
             </h3>

@@ -48,11 +48,11 @@ export default function WishlistScreen({ wishlist, onToggleWishlist, onPropertyT
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.08 }}
-              className="rounded-2xl border border-border overflow-hidden cursor-pointer active:scale-[0.98] transition-transform"
+              className="rounded-2xl border border-border overflow-hidden cursor-pointer active:scale-[0.98] transition-all md:hover:shadow-elevated md:hover:border-primary/20"
               onClick={() => onPropertyTap(property)}
             >
               <div className="relative aspect-[16/9]">
-                <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover" />
+                <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 <button
                   onClick={(e) => { e.stopPropagation(); onToggleWishlist(property.id); }}
                   className="absolute top-3 right-3 w-9 h-9 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center shadow-md"
@@ -68,7 +68,7 @@ export default function WishlistScreen({ wishlist, onToggleWishlist, onPropertyT
               <div className="p-4">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <h3 className="font-semibold text-[15px] text-foreground flex items-center gap-1.5">
+                    <h3 className="font-semibold text-[15px] md:text-base text-foreground flex items-center gap-1.5">
                       {property.name}
                       {property.verified && <BadgeCheck size={14} className="text-primary shrink-0" />}
                     </h3>

@@ -32,8 +32,8 @@ export default function ServiceGrid({ services, onServiceTap }: ServiceGridProps
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45 }}
         onClick={() => onServiceTap(featured)}
-        className="mx-4 rounded-3xl overflow-hidden cursor-pointer active:scale-[0.98] transition-transform group relative md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 md:hover:shadow-xl md:transition-shadow"
-        style={{ height: 220 }}
+        style={{ height: 220, minHeight: 220 }}
+        className="mx-4 rounded-3xl overflow-hidden cursor-pointer active:scale-[0.98] transition-all group relative md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 md:hover:shadow-xl md:transition-shadow md:h-[280px]"
       >
         <img
           src={featured.images[0]}
@@ -67,7 +67,7 @@ export default function ServiceGrid({ services, onServiceTap }: ServiceGridProps
         {/* Bottom content */}
         <div className="absolute bottom-0 left-0 right-0 p-4">
           <span className="text-[9px] font-bold tracking-widest text-white/50 uppercase">{featured.propertyType}</span>
-          <h3 className="text-xl font-bold text-white mt-0.5 leading-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+          <h3 className="text-xl md:text-2xl font-bold text-white mt-0.5 leading-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
             {featured.name}
           </h3>
           <p className="text-[12px] text-white/60 mt-0.5 line-clamp-1">{featured.description}</p>
@@ -102,7 +102,7 @@ export default function ServiceGrid({ services, onServiceTap }: ServiceGridProps
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: (i + 1) * 0.06, duration: 0.35 }}
               onClick={() => onServiceTap(service)}
-              className={`rounded-2xl overflow-hidden cursor-pointer active:scale-[0.97] transition-transform group relative ${isOdd ? "mt-4" : ""}`}
+              className={`rounded-2xl overflow-hidden cursor-pointer active:scale-[0.97] transition-all group relative md:hover:shadow-elevated ${isOdd ? "mt-4 md:mt-0" : ""}`}
               style={{ height: isOdd ? 200 : 220 }}
             >
               <img

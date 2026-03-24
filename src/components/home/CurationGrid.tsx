@@ -22,8 +22,8 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
         onClick={() => onComboTap(hero)}
-        className="mx-4 rounded-3xl overflow-hidden cursor-pointer active:scale-[0.98] transition-transform group relative md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 md:hover:shadow-xl md:transition-shadow"
-        style={{ height: 280 }}
+        className="mx-4 rounded-3xl overflow-hidden cursor-pointer active:scale-[0.98] transition-all group relative md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 md:hover:shadow-xl md:transition-shadow"
+        style={{ height: 280, minHeight: 280 }}
       >
         <img
           src={hero.image}
@@ -56,7 +56,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
         {/* Bottom editorial */}
         <div className="absolute bottom-0 left-0 right-0 p-5">
           <span className="text-3xl">{hero.emoji}</span>
-          <h3 className="text-2xl font-bold text-white leading-tight mt-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+          <h3 className="text-2xl md:text-3xl font-bold text-white leading-tight mt-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
             {hero.name}
           </h3>
           <p className="text-sm text-white/65 mt-1 italic" style={{ fontFamily: "'Playfair Display', serif" }}>
@@ -99,7 +99,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.15 + i * 0.08, duration: 0.4 }}
               onClick={() => onComboTap(combo)}
-              className="rounded-2xl overflow-hidden cursor-pointer active:scale-[0.97] transition-transform group relative"
+              className="rounded-2xl overflow-hidden cursor-pointer active:scale-[0.97] transition-all group relative md:hover:shadow-elevated"
               style={{ height: 200 }}
             >
               <img
@@ -118,7 +118,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
 
               <div className="absolute bottom-0 left-0 right-0 p-3">
                 <span className="text-lg">{combo.emoji}</span>
-                <h4 className="text-[13px] font-bold text-white leading-tight mt-0.5">{combo.name}</h4>
+                <h4 className="text-[13px] md:text-base font-bold text-white leading-tight mt-0.5">{combo.name}</h4>
                 <p className="text-[9px] text-white/55 mt-0.5 line-clamp-1 italic" style={{ fontFamily: "'Playfair Display', serif" }}>
                   {combo.tagline}
                 </p>
@@ -149,7 +149,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 + i * 0.05 }}
               onClick={() => onComboTap(combo)}
-              className="shrink-0 w-[150px] rounded-2xl overflow-hidden cursor-pointer group relative"
+              className="shrink-0 w-[150px] md:w-full rounded-2xl overflow-hidden cursor-pointer group relative md:hover:shadow-elevated transition-all"
               style={{ height: 210 }}
             >
               <img
@@ -168,7 +168,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
 
               <div className="absolute bottom-0 left-0 right-0 p-2.5">
                 <span className="text-lg">{combo.emoji}</span>
-                <h4 className="text-[12px] font-bold text-white leading-tight mt-0.5">{combo.name}</h4>
+                <h4 className="text-[12px] md:text-sm font-bold text-white leading-tight mt-0.5">{combo.name}</h4>
                 <p className="text-[9px] text-white/50 mt-0.5 line-clamp-1">{combo.tagline}</p>
                 <p className="text-[11px] font-bold text-white mt-1">
                   ₹{combo.priceRange[0].toLocaleString()}<span className="font-normal text-white/40">+</span>

@@ -30,19 +30,19 @@ export default function PackageCard({ pkg, index, properties, onPropertyTap }: P
       initial={{ opacity: 0, scale: 0.97 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: index * 0.08 }}
-      className="shrink-0 w-[240px] rounded-2xl overflow-hidden glass cursor-pointer active:scale-[0.97] transition-transform"
+      className="shrink-0 w-[240px] md:w-full rounded-2xl overflow-hidden glass cursor-pointer active:scale-[0.97] transition-all md:hover:shadow-elevated md:hover:border-primary/20"
       onClick={handleTap}
     >
       <div className="p-5 space-y-2">
         <span className="text-3xl">{pkg.emoji}</span>
-        <h4 className="font-semibold text-base text-foreground">{pkg.name}</h4>
+        <h4 className="font-semibold text-base md:text-lg text-foreground">{pkg.name}</h4>
         <p className="font-bold text-lg text-gradient">₹{pkg.price.toLocaleString()}</p>
         <div className="flex flex-wrap gap-1 pt-1">
           {pkg.includes.map((item) => (
-            <span key={item} className="text-[11px] bg-secondary/80 text-muted-foreground px-2 py-0.5 rounded-full">{item}</span>
+            <span key={item} className="text-[11px] md:text-xs bg-secondary/80 text-muted-foreground px-2 py-0.5 rounded-full">{item}</span>
           ))}
         </div>
-        <button className="mt-3 w-full py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold glow-sm active:scale-95 transition-transform">
+        <button className="mt-3 w-full py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold glow-sm active:scale-95 transition-transform md:hover:bg-primary/90 md:cursor-pointer">
           Book Now
         </button>
       </div>

@@ -21,10 +21,10 @@ export default function PropertyCardSmall({ property, index, onTap, isWishlisted
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
-      className="shrink-0 w-[260px] cursor-pointer group"
+      className="shrink-0 w-[260px] md:w-full cursor-pointer group"
       onClick={() => onTap(property)}
     >
-      <div className="relative aspect-square rounded-2xl overflow-hidden">
+      <div className="relative aspect-square rounded-2xl overflow-hidden md:hover:shadow-elevated md:transition-shadow">
         {!imgLoaded && (
           <div className="absolute inset-0 bg-secondary animate-pulse rounded-2xl">
             <div className="absolute inset-0 shimmer-bg" />
@@ -34,7 +34,7 @@ export default function PropertyCardSmall({ property, index, onTap, isWishlisted
           src={property.images[0]}
           alt={property.name}
           fill
-          className="object-cover"
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
           sizes="260px"
           onImageLoad={() => setImgLoaded(true)}
           showSkeleton={false}
@@ -64,7 +64,7 @@ export default function PropertyCardSmall({ property, index, onTap, isWishlisted
       </div>
 
       <div className="pt-2 px-0.5">
-        <h3 className="font-semibold text-sm text-foreground truncate">{property.name}</h3>
+        <h3 className="font-semibold text-sm md:text-base text-foreground truncate">{property.name}</h3>
         <p className="text-sm text-muted-foreground">
           <span className="text-gradient-warm font-semibold">₹{property.basePrice.toLocaleString()}</span> for 2 hours ·{" "}
           <Star size={11} className="inline fill-primary text-primary mb-0.5" /> {property.rating}
