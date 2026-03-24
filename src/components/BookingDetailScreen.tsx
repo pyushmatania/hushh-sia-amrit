@@ -125,7 +125,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
         </div>
       </div>
 
-      <div className="px-5 md:px-8 lg:px-16 xl:px-24 py-4 md:flex md:gap-8 md:items-start">
+      <div className="md:flex-1 md:min-w-0 space-y-5">
         {/* Status banner */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
