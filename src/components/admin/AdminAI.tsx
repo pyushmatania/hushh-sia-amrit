@@ -454,6 +454,13 @@ export default function AdminAI() {
         {/* ─── Chat area ─── */}
         {messages.length > 0 && (
           <motion.div key="chat" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
+            {/* Back to examples */}
+            <motion.button initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} onClick={() => setMessages([])}
+              className="flex items-center gap-1.5 text-[11px] font-medium text-primary hover:text-primary/80 transition group">
+              <ChevRight size={12} className="rotate-180 group-hover:-translate-x-0.5 transition-transform" />
+              Back to examples
+            </motion.button>
+
             <div ref={scrollRef} className={`rounded-2xl border border-border/40 overflow-y-auto transition-all bg-card/30 ${expanded ? "h-[60vh]" : "h-[45vh]"}`}>
               <div className="p-4 space-y-3">
                 {messages.map((msg, i) => (
