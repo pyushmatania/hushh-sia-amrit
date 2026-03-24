@@ -38,7 +38,7 @@ export default function NotificationCenter({ onBack }: NotificationCenterProps) 
           <ArrowLeft size={20} className="text-foreground" />
         </motion.button>
         <div className="flex-1">
-          <h1 className="text-lg font-bold text-foreground">Notifications</h1>
+          <h1 className="text-lg font-bold text-foreground md:text-2xl">Notifications</h1>
           {unreadCount > 0 && (
             <p className="text-xs text-muted-foreground">{unreadCount} unread</p>
           )}
