@@ -260,11 +260,11 @@ export default function PublicProfileScreen({ userId, onBack, onMessage }: Publi
           </motion.div>
 
           {/* Achievements */}
-          <motion.div variants={staggerItem} className="px-5 mb-8">
+          <motion.div variants={staggerItem} className="px-5 mb-8 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
             <h3 className="text-base font-bold text-foreground mb-3 flex items-center gap-2">
               <Award size={16} className="text-primary" /> Achievements
             </h3>
-            <div className="flex gap-3 overflow-x-auto hide-scrollbar">
+            <div className="flex gap-3 overflow-x-auto hide-scrollbar md:flex-wrap md:overflow-visible">
               {[
                 { icon: "🔥", title: "Early Adopter", desc: "Joined early" },
                 { icon: "⭐", title: "5-Star Guest", desc: "Perfect rating" },

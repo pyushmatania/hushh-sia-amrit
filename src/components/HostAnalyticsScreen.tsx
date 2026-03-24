@@ -213,7 +213,7 @@ export default function HostAnalyticsScreen({ onBack }: HostAnalyticsScreenProps
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.45 }}
-              className="mx-5 mb-6 glass rounded-2xl p-4"
+              className="mx-5 mb-6 glass rounded-2xl p-4 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32"
             >
               <h3 className="text-sm font-bold text-foreground mb-3">Top Performing Listings</h3>
               <div className="space-y-3">

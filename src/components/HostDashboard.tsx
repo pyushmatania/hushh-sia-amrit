@@ -136,7 +136,7 @@ export default function HostDashboard({
             </motion.button>
           </motion.div>
         ) : (
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {listings.map((listing, i) => (
               <motion.div
                 key={listing.id}
