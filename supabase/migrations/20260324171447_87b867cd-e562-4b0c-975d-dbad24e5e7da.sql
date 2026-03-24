@@ -1,0 +1,1 @@
+ALTER TABLE public.experience_packages ADD COLUMN IF NOT EXISTS video_url text DEFAULT NULL;

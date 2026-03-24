@@ -9,6 +9,7 @@ import SwipeableRow from "./SwipeableRow";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
 import BatchOperationsBar from "./BatchOperationsBar";
 import MultiImageEditor from "./MultiImageEditor";
+import VideoEditor from "./VideoEditor";
 
 interface PackageRow {
   id: string;
@@ -21,6 +22,7 @@ interface PackageRow {
   active: boolean;
   image_url: string | null;
   image_urls: string[];
+  video_url?: string | null;
 }
 
 const GRADIENT_OPTIONS = [
@@ -83,7 +85,7 @@ export default function AdminExperiencePackages() {
       name: "", emoji: "🎉", price: 0,
       includes: [], gradient: GRADIENT_OPTIONS[0],
       sort_order: packages.length + 1, active: true,
-      image_url: null, image_urls: [],
+      image_url: null, image_urls: [], video_url: null,
     });
     setIsCreating(true);
     setIncludeInput("");
@@ -117,6 +119,7 @@ export default function AdminExperiencePackages() {
       active: editing.active ?? true,
       image_url: (editing.image_urls || [])[0] || editing.image_url || null,
       image_urls: editing.image_urls || [],
+      video_url: editing.video_url || null,
     };
 
     if (isCreating) {
@@ -236,7 +239,7 @@ export default function AdminExperiencePackages() {
             <SwipeableRow
               key={pkg.id}
               showHint={pkg === filtered[0]}
-              onEdit={() => { setEditing({ ...pkg, image_urls: pkg.image_urls || (pkg.image_url ? [pkg.image_url] : []) }); setIsCreating(false); setIncludeInput(""); setPreviewMode(false); }}
+              onEdit={() => { setEditing({ ...pkg, image_urls: pkg.image_urls || (pkg.image_url ? [pkg.image_url] : []), video_url: pkg.video_url || null }); setIsCreating(false); setIncludeInput(""); setPreviewMode(false); }}
               onDelete={() => deletePackage(pkg.id)}
             >
               <div
@@ -282,7 +285,7 @@ export default function AdminExperiencePackages() {
                     {pkg.active ? "Active" : "Inactive"}
                   </button>
                   <button
-                    onClick={() => { setEditing({ ...pkg, image_urls: pkg.image_urls || (pkg.image_url ? [pkg.image_url] : []) }); setIsCreating(false); setIncludeInput(""); setPreviewMode(false); }}
+                    onClick={() => { setEditing({ ...pkg, image_urls: pkg.image_urls || (pkg.image_url ? [pkg.image_url] : []), video_url: pkg.video_url || null }); setIsCreating(false); setIncludeInput(""); setPreviewMode(false); }}
                     className="p-1.5 rounded-lg hover:bg-secondary transition"
                   >
                     <Pencil size={13} className="text-muted-foreground" />
@@ -412,6 +415,16 @@ export default function AdminExperiencePackages() {
                 storagePath="packages"
                 label="Package Images"
                 maxImages={8}
+                dimensionTip="Recommended: 800×800px (1:1 square) or 1200×800px (3:2), JPG/WebP, under 2MB"
+              />
+
+              {/* Package Video (for vertical video cards) */}
+              <VideoEditor
+                videoUrl={editing.video_url || null}
+                onChange={url => setEditing(p => ({ ...p!, video_url: url }))}
+                storagePath="package-videos"
+                label="Vertical Video (for discovery cards)"
+                dimensionTip="Recommended: 1080×1920px (9:16 vertical), MP4, under 15MB, 5-15 seconds"
               />
 
               {/* Gradient picker */}

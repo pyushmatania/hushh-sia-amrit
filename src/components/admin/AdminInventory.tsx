@@ -308,6 +308,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
                     storagePath="inventory"
                     label="Item Images"
                     maxImages={5}
+                    dimensionTip="Recommended: 600×600px (1:1 square), JPG/WebP, under 1MB"
                   />
                 </>
               )}

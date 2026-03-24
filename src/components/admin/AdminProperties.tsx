@@ -16,6 +16,7 @@ import SwipeableRow from "./SwipeableRow";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
 import BatchOperationsBar from "./BatchOperationsBar";
 import { getListingThumbnail } from "@/lib/listing-thumbnails";
+import MultiImageEditor from "./MultiImageEditor";
 
 interface Listing {
   id: string;
@@ -717,72 +718,14 @@ export default function AdminProperties() {
 
                 {/* Media Gallery */}
                 <EditSection title="Media Gallery" icon={<Camera size={16} />} id="images" expanded={expandedSection} onToggle={setExpandedSection}>
-                  <div className="space-y-3">
-                    {/* Current thumbnail preview */}
-                    {(() => {
-                      const thumb = getListingThumbnail(editingListing.name || "", editingListing.image_urls);
-                      return thumb ? (
-                        <div className="rounded-xl overflow-hidden border border-border aspect-video relative group">
-                          <img src={thumb} alt="" className="w-full h-full object-cover" />
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition flex items-center justify-center">
-                            <span className="text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition">Cover Image</span>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="rounded-xl border-2 border-dashed border-border aspect-video flex flex-col items-center justify-center gap-2 text-muted-foreground">
-                          <Camera size={24} className="text-muted-foreground/40" />
-                          <p className="text-xs">No images yet</p>
-                        </div>
-                      );
-                    })()}
-                    <div className="grid grid-cols-4 gap-2">
-                      {(editingListing.image_urls || []).map((url, i) => (
-                        <div key={i} className="relative aspect-square rounded-xl overflow-hidden bg-secondary group border border-border">
-                          <img src={url} alt="" className="w-full h-full object-cover" />
-                          <button onClick={() => {
-                            const urls = [...(editingListing.image_urls || [])];
-                            urls.splice(i, 1);
-                            setEditingListing(p => ({ ...p!, image_urls: urls }));
-                          }} className="absolute top-1 right-1 p-1 rounded-full bg-black/60 opacity-0 group-hover:opacity-100 transition">
-                            <X size={10} className="text-white" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                    {/* Upload from device */}
-                    <div className="flex gap-2">
-                      <label className="flex-1 py-3 rounded-xl border-2 border-dashed border-primary/30 text-xs text-primary font-medium hover:bg-primary/5 transition flex items-center justify-center gap-1.5 cursor-pointer">
-                        <Upload size={14} /> Upload from Device
-                        <input type="file" accept="image/*" multiple className="hidden" onChange={async (e) => {
-                          const files = e.target.files;
-                          if (!files) return;
-                          for (const file of Array.from(files)) {
-                            const ext = file.name.split('.').pop();
-                            const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-                            const { data, error } = await (await import("@/integrations/supabase/client")).supabase.storage.from("listing-images").upload(path, file);
-                            if (error) continue;
-                            const { data: urlData } = (await import("@/integrations/supabase/client")).supabase.storage.from("listing-images").getPublicUrl(path);
-                            if (urlData?.publicUrl) {
-                              setEditingListing(p => ({ ...p!, image_urls: [...(p?.image_urls || []), urlData.publicUrl] }));
-                            }
-                          }
-                        }} />
-                      </label>
-                    </div>
-                    <Field label="Add Image URL">
-                      <div className="flex gap-2">
-                        <Input id="new-image-url" placeholder="https://..." className="flex-1 rounded-xl" />
-                        <button onClick={() => {
-                          const input = document.getElementById("new-image-url") as HTMLInputElement;
-                          if (input.value) {
-                            setEditingListing(p => ({ ...p!, image_urls: [...(p?.image_urls || []), input.value] }));
-                            input.value = "";
-                          }
-                        }} className="px-4 py-2 rounded-xl bg-primary/15 text-primary text-sm font-semibold hover:bg-primary/25 transition">Add</button>
-                      </div>
-                    </Field>
-                    <p className="text-[10px] text-muted-foreground flex items-center gap-1"><Info size={9} /> Upload images or paste URLs. Drag to reorder. Local asset thumbnails shown automatically.</p>
-                  </div>
+                  <MultiImageEditor
+                    images={editingListing.image_urls || []}
+                    onChange={urls => setEditingListing(p => ({ ...p!, image_urls: urls }))}
+                    storagePath="properties"
+                    label="Property Images"
+                    maxImages={15}
+                    dimensionTip="Recommended: 1200×800px (3:2), JPG/WebP, under 2MB. First image is the cover."
+                  />
                 </EditSection>
 
                 {/* Pricing & Capacity */}
