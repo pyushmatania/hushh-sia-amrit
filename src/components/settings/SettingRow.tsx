@@ -17,7 +17,7 @@ export function ToggleSwitch({ enabled, onChange }: { enabled: boolean; onChange
 }
 
 export function SettingRow({ icon: Icon, label, desc, right, delay = 0, onClick, danger }: {
-  icon?: React.ComponentType<{ size?: number; className?: string }>; label: string; desc?: string; right?: React.ReactNode; delay?: number; onClick?: () => void; danger?: boolean;
+  icon?: React.ComponentType<any>; label: string; desc?: string; right?: React.ReactNode; delay?: number; onClick?: () => void; danger?: boolean;
 }) {
   return (
     <motion.div
