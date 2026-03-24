@@ -478,7 +478,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
             </button>
           </div>
         </div>
-        <div className="grid grid-cols-4 grid-rows-2 gap-2 rounded-2xl overflow-hidden max-h-[480px] lg:max-h-[540px] 2xl:max-h-[600px]">
+        <div className="relative grid grid-cols-4 grid-rows-2 gap-2 rounded-2xl overflow-hidden max-h-[480px] lg:max-h-[540px] 2xl:max-h-[600px]">
           <div className="col-span-2 row-span-2 relative group cursor-pointer" onClick={() => setImgIndex(0)}>
             <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover group-hover:brightness-110 transition-all duration-300" />
           </div>
