@@ -55,12 +55,12 @@ export default function HostAnalyticsScreen({ onBack }: HostAnalyticsScreenProps
       className="pb-24 bg-mesh min-h-screen"
     >
       {/* Header */}
-      <div className="px-5 pt-6 pb-4 flex items-center gap-3">
+      <div className="px-5 pt-6 pb-4 flex items-center gap-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
         <motion.button whileTap={{ scale: 0.9 }} onClick={onBack} className="w-9 h-9 rounded-full glass flex items-center justify-center">
           <ArrowLeft size={18} className="text-foreground" />
         </motion.button>
         <div>
-          <h1 className="text-xl font-bold text-foreground">Analytics</h1>
+          <h1 className="text-xl font-bold text-foreground md:text-2xl lg:text-3xl">Analytics</h1>
           <p className="text-xs text-muted-foreground">{hasData ? "Live data from your bookings" : "No bookings yet"}</p>
         </div>
       </div>
