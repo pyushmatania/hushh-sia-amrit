@@ -118,7 +118,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
 
               <div className="absolute bottom-0 left-0 right-0 p-3">
                 <span className="text-lg">{combo.emoji}</span>
-                <h4 className="text-[13px] font-bold text-white leading-tight mt-0.5">{combo.name}</h4>
+                <h4 className="text-[13px] md:text-base font-bold text-white leading-tight mt-0.5">{combo.name}</h4>
                 <p className="text-[9px] text-white/55 mt-0.5 line-clamp-1 italic" style={{ fontFamily: "'Playfair Display', serif" }}>
                   {combo.tagline}
                 </p>

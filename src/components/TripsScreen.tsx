@@ -467,10 +467,10 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
               <button
                 key={tab.value}
                 onClick={() => setActiveFilter(tab.value)}
-                className={`shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold transition-all border ${
+                className={`shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs md:text-sm font-semibold transition-all border md:cursor-pointer ${
                   isActive
                     ? "border-primary bg-primary/10 text-primary"
-                    : "border-border bg-secondary/50 text-muted-foreground hover:border-foreground/20"
+                    : "border-border bg-secondary/50 text-muted-foreground hover:border-foreground/20 md:hover:bg-muted/50"
                 }`}
               >
                 {tab.dotColor && <span className={`w-1.5 h-1.5 rounded-full ${tab.dotColor}`} />}
