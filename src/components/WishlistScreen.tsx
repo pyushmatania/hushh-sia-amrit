@@ -14,7 +14,7 @@ export default function WishlistScreen({ wishlist, onToggleWishlist, onPropertyT
   const wishlisted = properties.filter((p) => wishlist.includes(p.id));
 
   return (
-    <motion.div variants={pageSlideUp} initial="initial" animate="animate" exit="exit" className="pb-24 bg-mesh min-h-screen">
+    <motion.div variants={pageSlideUp} initial="initial" animate="animate" exit="exit" className="pb-24 bg-mesh min-h-screen md:h-[calc(100vh-4rem)] md:overflow-y-auto">
       <div className="px-5 pt-6 pb-4 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
         <motion.h1
           initial={{ opacity: 0, y: -8 }}
