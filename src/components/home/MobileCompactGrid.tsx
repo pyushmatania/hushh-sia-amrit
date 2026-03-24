@@ -4,6 +4,59 @@ import type { Property } from "@/data/properties";
 import type { CuratedCombo } from "@/data/properties";
 import OptimizedImage from "@/components/shared/OptimizedImage";
 
+/* ─── 3D Scroll Effect Hook ─── */
+function use3DScrollEffect(scrollRef: React.RefObject<HTMLDivElement | null>) {
+  const rafId = useRef(0);
+
+  const applyEffects = useCallback(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const centerX = containerRect.left + containerRect.width / 2;
+
+    const columns = container.children;
+    for (let i = 0; i < columns.length; i++) {
+      const col = columns[i] as HTMLElement;
+      const colRect = col.getBoundingClientRect();
+      const colCenterX = colRect.left + colRect.width / 2;
+
+      // Distance from center (-1 to 1)
+      const dist = (colCenterX - centerX) / (containerRect.width / 2);
+      const clampedDist = Math.max(-1, Math.min(1, dist));
+
+      // 3D perspective rotation
+      const rotateY = clampedDist * -8; // subtle rotation
+      const scale = 1 - Math.abs(clampedDist) * 0.06;
+      const translateZ = -Math.abs(clampedDist) * 15;
+      // Brightness/opacity fade at edges
+      const brightness = 1 - Math.abs(clampedDist) * 0.15;
+
+      col.style.transform = `perspective(800px) rotateY(${rotateY}deg) scale(${scale}) translateZ(${translateZ}px)`;
+      col.style.filter = `brightness(${brightness})`;
+      col.style.transition = "transform 0.1s ease-out, filter 0.1s ease-out";
+    }
+  }, [scrollRef]);
+
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    const onScroll = () => {
+      cancelAnimationFrame(rafId.current);
+      rafId.current = requestAnimationFrame(applyEffects);
+    };
+
+    // Initial apply
+    requestAnimationFrame(applyEffects);
+    container.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      container.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(rafId.current);
+    };
+  }, [applyEffects]);
+}
+
 /* ─── Compact Property Card for grid ─── */
 function CompactPropertyCard({ property, onTap, isWL, onToggleWishlist }: {
   property: Property; onTap: (p: Property) => void; isWL: boolean; onToggleWishlist?: (id: string) => void;
@@ -11,9 +64,13 @@ function CompactPropertyCard({ property, onTap, isWL, onToggleWishlist }: {
   const cheapest = Math.min(...property.slots.filter(s => s.available).map(s => s.price));
   return (
     <div className="shrink-0 w-[155px] cursor-pointer active:scale-[0.97] transition-transform" onClick={() => onTap(property)}>
-      <div className="relative aspect-[3/4] rounded-xl overflow-hidden">
+      <div className="relative aspect-[3/4] rounded-xl overflow-hidden" style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.3)" }}>
         <OptimizedImage src={property.images[0]} alt={property.name} fill className="object-cover" sizes="155px" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+        {/* Subtle edge reflection */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 40%, transparent 60%, rgba(255,255,255,0.03) 100%)",
+        }} />
         {onToggleWishlist && (
           <button onClick={(e) => { e.stopPropagation(); onToggleWishlist(property.id); }}
             className="absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center"
