@@ -570,8 +570,8 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               <OscarToggle isOn={oscarMode} onToggle={() => setOscarMode(!oscarMode)} />
               {oscarMode ? (
                 <OscarThemedListing properties={properties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
-              ) : (
-              <>
+              ) : null}
+
       <div className="mx-5 mt-8 mb-4 flex items-center justify-center gap-2 glass rounded-2xl px-4 py-3 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32">
         <span className="text-lg">🏷️</span>
         <span className="text-sm font-medium text-foreground md:text-base">Prices include all fees · No hidden charges</span>
