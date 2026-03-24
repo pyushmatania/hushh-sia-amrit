@@ -624,7 +624,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
             </motion.button>
             <motion.button
               onClick={() => setShowAddonsSheet(true)}
-              className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm glow-primary flex items-center justify-center gap-1"
+              className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm glow-radiate flex items-center justify-center gap-1"
               whileTap={{ scale: 0.95 }}
             >
               <Plus size={14} /> Add Extras
@@ -641,7 +641,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
             </motion.button>
             <motion.button
               onClick={() => setShowAddonsSheet(true)}
-              className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm glow-primary flex items-center justify-center gap-1"
+              className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm glow-radiate flex items-center justify-center gap-1"
               whileTap={{ scale: 0.95 }}
             >
               <Plus size={14} /> Add Extras
@@ -665,7 +665,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
             </motion.button>
             <motion.button
               onClick={() => onRebook(booking.propertyId)}
-              className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm glow-primary flex items-center justify-center gap-2"
+              className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm glow-radiate flex items-center justify-center gap-2"
               whileTap={{ scale: 0.95 }}
             >
               Book Again <ChevronRight size={16} />
@@ -868,7 +868,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
                 <motion.button
                   onClick={handleOrderAddons}
                   disabled={addonTotal === 0}
-                  className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm glow-primary flex items-center justify-center gap-2 disabled:opacity-40"
+                  className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm glow-radiate flex items-center justify-center gap-2 disabled:opacity-40"
                   whileTap={{ scale: 0.95 }}
                 >
                   <ShoppingBag size={14} />

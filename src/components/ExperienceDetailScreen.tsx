@@ -366,7 +366,7 @@ export default function ExperienceDetailScreen({ pack, property, onBack, onBook 
           <motion.button
             whileTap={{ scale: 0.94 }}
             onClick={() => { hapticMedium(); onBook(); }}
-            className="flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-primary text-primary-foreground font-bold text-sm glow-primary active:scale-95 transition-transform"
+            className="flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-primary text-primary-foreground font-bold text-sm glow-radiate active:scale-95 transition-transform"
           >
             <Zap size={16} />
             Book Now
