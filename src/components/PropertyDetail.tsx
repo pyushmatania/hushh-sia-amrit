@@ -548,6 +548,16 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
     animate(heroX, 0, { type: "spring", stiffness: 300, damping: 30 });
   }, [property.images.length, heroX]);
 
+  // Auto-slideshow every 4 seconds
+  useEffect(() => {
+    if (property.images.length <= 1) return;
+    const timer = setInterval(() => {
+      setImgIndex((i) => (i === property.images.length - 1 ? 0 : i + 1));
+      setImgLoaded(false);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [property.images.length]);
+
   const selectedSlotData = property.slots.find((s) => s.id === selectedSlot);
 
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
