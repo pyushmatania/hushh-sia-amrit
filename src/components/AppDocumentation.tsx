@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronDown, ChevronRight, BookOpen, Layers, MapPin, Users, Palette, Database, History, Sparkles, Shield, Zap, Copy, Check, FileText, Target, Layout, PenTool, TrendingUp, AlertTriangle, Clock, Server, Download, Home, Settings, BarChart3, Package, Globe, Cpu, Lock, Code, Monitor, Smartphone, Star, Heart, MessageSquare, Bell, CreditCard, Gift, Award, Search, Map, ShoppingCart, Calendar, UserCheck, Briefcase, Megaphone, Tag, Eye, Wifi, Activity, Boxes, ChevronUp } from "lucide-react";
+import { X, ChevronDown, ChevronRight, BookOpen, Layers, MapPin, Users, Palette, Database, History, Sparkles, Shield, Zap, Copy, Check, FileText, Target, Layout, PenTool, TrendingUp, AlertTriangle, Clock, Server, Download, Home, Settings, BarChart3, Package, Globe, Cpu, Lock, Code, Monitor, Smartphone, Star, Heart, MessageSquare, Bell, CreditCard, Gift, Award, Search, Map, ShoppingCart, Calendar, UserCheck, Briefcase, Megaphone, Tag, Eye, Wifi, Activity, Boxes, ChevronUp, Image as ImageIcon } from "lucide-react";
 import { useState, useCallback, useRef, useMemo } from "react";
 
 // ─── MERMAID DIAGRAM ─────────────────────────────────────────
@@ -158,16 +158,18 @@ export const changeLog = [
   { version: "1.33", phase: "Native Capacitor Integration", items: ["Custom app icon generated (1024px, purple-gold 'h' lettermark) with all Android density sizes (mdpi→xxxhdpi)", "Domain updated to hushh-jeypore.lovable.app (published URL)", "Capacitor plugins: @capacitor/push-notifications, camera, geolocation, haptics, local-notifications, status-bar, splash-screen, app", "Native haptics: hapticLight/Medium/Heavy/Success/Error/Selection use @capacitor/haptics ImpactStyle when in native shell, Web Vibration API fallback", "Push notifications: native registration via @capacitor/push-notifications with token storage, PWA service worker fallback", "Status bar: dark style with #050505 background, non-overlay mode on Android", "NotificationPermissionBanner: auto-detects native vs web and uses correct API", "GitHub Actions: icon copying step generates all mipmap densities from source icon", "src/lib/native.ts: centralized platform detection (isNative, isAndroid, isIOS) and plugin initialization"] },
   { version: "1.34", phase: "Full Native Capabilities", items: ["@capacitor/share — native share sheet for properties, referral codes, bookings", "@capacitor/clipboard — native clipboard for copy referral code, booking IDs", "@capacitor/network — native network status detection with connection type (WiFi/cellular/none)", "@capacitor/browser — in-app browser for external links (payment pages, social links)", "@capacitor/preferences — native key-value storage replacing localStorage for persistent data", "@capacitor/screen-orientation — locked to portrait mode on native", "@capacitor/keyboard — iOS keyboard resize mode (Body) with scroll enabled", "Android back button handler — navigates back or minimizes app via @capacitor/app", "Deep link handler — appUrlOpen listener routes URLs to correct screen", "Native share bridge (src/lib/native-share.ts) — Capacitor Share → Web Share API → clipboard fallback chain", "Native network bridge (src/lib/native-network.ts) — exposes isOnline + connectionType with real-time listener", "Native browser bridge (src/lib/native-browser.ts) — in-app browser with popover presentation", "Native preferences bridge (src/lib/native-preferences.ts) — async get/set/remove with localStorage fallback", "OfflineBanner upgraded to use native network detection", "ReferralScreen uses native clipboard for copy", "share.ts re-exports from native-share for backward compatibility", "useOnlineStatus hook now delegates to native network detection"] },
   { version: "1.35", phase: "Native-Grade Caching & WebView Tuning", items: ["Native data cache layer (src/lib/native-cache.ts) — cacheSet/cacheGet/cacheRemove with TTL + stale-while-revalidate pattern", "Prefetch critical data on native launch — listings, curations, packages, app_config cached in @capacitor/preferences", "capacitor.config.ts: androidScheme:'https', allowMixedContent:true, captureInput:true for native-like WebView", "Android backgroundColor:#050505 — eliminates white flash on cold start", "Keyboard plugin config: resize:'body' with resizeOnFullScreen for proper input handling", "CapacitorHttp enabled — uses native HTTP stack bypassing WebView CORS, faster API calls", "SplashScreen androidScaleType:'CENTER_CROP' for edge-to-edge splash", "App startup flow: initNativePlugins → prefetchCriticalData → React render with cached data available instantly", "Messages screen: swipe-to-pin and swipe-to-archive with full archive/unarchive lifecycle"] },
+  { version: "1.36", phase: "Desktop & Wallpaper Gallery", items: ["Cinematic splash screen — time-of-day island villa backgrounds (dawn/day/dusk/night) with fireflies, stars, birds, lanterns", "Desktop 16:9 variants of all cinematic splash backgrounds (expanded from mobile art)", "Pacifico curvy script typography for splash brand name", "Wallpaper gallery Easter egg — downloadable phone + desktop wallpapers", "Asset catalog (src/data/wallpapers.ts) — organized Classic + Cinematic assets", "Admin Branding toggle: Classic vs Cinematic splash variant", "Desktop splash screen support with responsive background selection", "/wallpapers route + Profile 7-tap Easter egg access", "Desktop tab in documentation with full responsive architecture reference"] },
 ];
 
 // ─── TAB DEFINITIONS ─────────────────────────────────────────
-type TabId = "overview" | "features" | "architecture" | "database" | "wireframes" | "mobile" | "changelog";
+type TabId = "overview" | "features" | "architecture" | "database" | "wireframes" | "desktop" | "mobile" | "changelog";
 const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: "overview", label: "Overview", icon: <Home size={14} /> },
   { id: "features", label: "Features", icon: <Star size={14} /> },
   { id: "architecture", label: "Arch", icon: <Cpu size={14} /> },
   { id: "database", label: "DB", icon: <Database size={14} /> },
   { id: "wireframes", label: "Wireframes", icon: <Monitor size={14} /> },
+  { id: "desktop", label: "Desktop", icon: <Monitor size={14} /> },
   { id: "mobile", label: "Mobile", icon: <Smartphone size={14} /> },
   { id: "changelog", label: "Log", icon: <History size={14} /> },
 ];
@@ -349,6 +351,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
             {activeTab === "architecture" && <ArchitectureTab />}
             {activeTab === "database" && <DatabaseTab />}
             {activeTab === "wireframes" && <WireframesTab />}
+            {activeTab === "desktop" && <DesktopTab />}
             {activeTab === "mobile" && <MobileTab />}
             {activeTab === "changelog" && <ChangelogTab />}
           </motion.div>
@@ -1154,6 +1157,166 @@ function WireframesTab() {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// TAB: DESKTOP & WEB
+// ═══════════════════════════════════════════════════════════════
+function DesktopTab() {
+  return (
+    <div className="space-y-6">
+      {/* Hero */}
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="rounded-3xl p-6 text-center relative overflow-hidden" style={{ background: "linear-gradient(160deg, hsl(var(--primary) / 0.12) 0%, hsl(270 60% 50% / 0.08) 100%)", border: "1px solid hsl(var(--primary) / 0.15)" }}>
+        <p className="text-4xl mb-3">🖥️</p>
+        <h2 className="text-xl font-black text-foreground tracking-tight">Desktop & Web Blueprint</h2>
+        <p className="text-[11px] text-muted-foreground mt-2 max-w-[300px] mx-auto leading-relaxed">Desktop-specific features, responsive adaptations, and web platform capabilities built on top of the mobile-first foundation.</p>
+        <div className="flex justify-center gap-2 mt-4 flex-wrap">
+          {["Responsive", "Desktop Nav", "Widescreen", "Keyboard-First", "Multi-Panel"].map(tag => (
+            <span key={tag} className="text-[9px] font-bold px-2.5 py-1 rounded-full" style={{ background: "hsl(var(--primary) / 0.1)", color: "hsl(var(--primary))", border: "1px solid hsl(var(--primary) / 0.15)" }}>{tag}</span>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Desktop Navigation */}
+      <div>
+        <SectionHeader title="Desktop Navigation" subtitle="How navigation adapts for larger screens" />
+        <div className="space-y-2">
+          <FeatureRow icon={<Monitor size={13} className="text-blue-400" />} title="Top Navigation Bar (DesktopTopNav)" desc="Persistent horizontal nav replaces BottomNav at md+ breakpoint. Logo, search, category links, user avatar dropdown." badge="md+" />
+          <FeatureRow icon={<Layout size={13} className="text-green-400" />} title="Multi-Panel Layouts" desc="Property detail uses side-by-side gallery + booking panel. Messages use split-pane (conversation list + chat thread)." badge="lg+" />
+          <FeatureRow icon={<Layers size={13} className="text-amber-400" />} title="Admin Sidebar" desc="Collapsible sidebar with 22+ nav items, grouped into sections. Command Palette (⌘K) for instant navigation." />
+          <FeatureRow icon={<Search size={13} className="text-cyan-400" />} title="Search Upgrade" desc="On desktop, search opens inline panel instead of full-screen overlay. Filter bar stays visible alongside results." />
+        </div>
+      </div>
+
+      {/* Responsive Breakpoints */}
+      <DocSection title="Responsive Breakpoints" icon={<Layout size={15} className="text-primary" />} defaultOpen>
+        <DataTable headers={["Breakpoint", "Width", "Layout Changes"]} rows={[
+          ["sm", "640px", "2-col grids, larger touch targets"],
+          ["md", "768px", "DesktopTopNav replaces BottomNav, wider cards"],
+          ["lg", "1024px", "3-col property grids, split-view panels"],
+          ["xl", "1280px", "4-col grids, max-width containers, sidebar expand"],
+          ["2xl", "1536px", "Max content width, generous whitespace"],
+        ]} />
+        <div className="mt-2 p-2.5 rounded-xl" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border) / 0.3)" }}>
+          <p className="text-[10px] text-muted-foreground"><strong className="text-foreground">Container strategy:</strong> <code className="text-primary">max-w-7xl mx-auto</code> on desktop. Pages use <code className="text-primary">px-4 md:px-8 lg:px-12</code> progressive padding.</p>
+        </div>
+      </DocSection>
+
+      {/* Desktop Typography */}
+      <DocSection title="Desktop Typography Scale" icon={<PenTool size={15} className="text-primary" />}>
+        <DataTable headers={["Element", "Mobile", "Desktop (md+)", "Font"]} rows={[
+          ["Page titles", "text-2xl", "text-3xl lg:text-4xl", "Space Grotesk"],
+          ["Section headers", "text-base", "text-lg lg:text-xl", "Space Grotesk"],
+          ["Card titles", "text-sm", "text-base", "Space Grotesk"],
+          ["Body text", "text-[13px]", "text-sm", "Space Grotesk"],
+          ["Splash brand", "text-[58px]", "md:text-[84px] lg:text-[104px] xl:text-[124px]", "Pacifico (cursive)"],
+          ["Splash greeting", "text-[32px]", "md:text-5xl lg:text-6xl xl:text-7xl", "Playfair Display"],
+        ]} />
+      </DocSection>
+
+      {/* Splash Screen */}
+      <DocSection title="Cinematic Splash Screen" icon={<Sparkles size={15} className="text-primary" />} defaultOpen>
+        <div className="space-y-3">
+          <div>
+            <p className="font-bold text-foreground text-xs mb-1.5">Two Variants (Admin Toggle)</p>
+            <DataTable headers={["Variant", "Style", "Backgrounds"]} rows={[
+              ["1 — Classic", "3D metallic typography, spring letter flip", "4 time-of-day photos (mobile + desktop)"],
+              ["2 — Cinematic (default)", "Island villa with H silhouette, underwater typography", "4 time-of-day illustrations (mobile 9:16 + desktop 16:9)"],
+            ]} />
+          </div>
+          <div>
+            <p className="font-bold text-foreground text-xs mb-1.5">Time-of-Day Assets</p>
+            <DataTable headers={["Time", "Hours", "Mobile Asset", "Desktop Asset"]} rows={[
+              ["Dawn ☀️", "05:00–11:59", "splash2-dawn-v2.jpg", "splash2-dawn-v2-desktop.jpg"],
+              ["Day 🌤️", "12:00–16:59", "splash2-day-v2.jpg", "splash2-day-v2-desktop.jpg"],
+              ["Dusk 🌅", "17:00–20:59", "splash2-dusk-v2.jpg", "splash2-dusk-v2-desktop.jpg"],
+              ["Night 🌙", "21:00–04:59", "splash2-night-v2.jpg", "splash2-night-v2-desktop.jpg"],
+            ]} />
+          </div>
+          <div>
+            <p className="font-bold text-foreground text-xs mb-1.5">Atmospheric Animations</p>
+            <div className="flex flex-wrap gap-1.5">
+              {["Fireflies (16-20 particles)", "Shooting Stars (3×)", "Flying Birds (5 SVG)", "Floating Lanterns (5×)", "Twinkling Stars (20×)", "Sun Rays", "Drifting Clouds"].map(e => (
+                <span key={e} className="text-[9px] px-2 py-1 rounded-full font-medium" style={{ background: "hsl(var(--primary) / 0.08)", color: "hsl(var(--primary))" }}>{e}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </DocSection>
+
+      {/* Wallpaper Gallery */}
+      <DocSection title="Wallpaper Gallery (Easter Egg)" icon={<Award size={15} className="text-primary" />}>
+        <div className="space-y-2">
+          <FeatureRow icon={<Download size={13} className="text-purple-400" />} title="Downloadable Wallpapers" desc="16 wallpapers: 8 phone (9:16) + 8 desktop (16:9), spanning Classic and Cinematic variants across all time-of-day themes." badge="🥚" />
+          <FeatureRow icon={<ImageIcon size={13} className="text-blue-400" />} title="App Icon Download" desc="PWA icon (512×512) available as a standalone download from the gallery." />
+          <FeatureRow icon={<Globe size={13} className="text-green-400" />} title="Direct URL Access" desc="/wallpapers route — accessible on both mobile and desktop without Easter egg trigger." />
+          <div className="p-2.5 rounded-xl" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border) / 0.3)" }}>
+            <p className="text-[10px] text-muted-foreground"><strong className="text-foreground">Filters:</strong> All / Classic / Cinematic × All Sizes / Phone / Desktop. Tap any wallpaper to download.</p>
+          </div>
+        </div>
+      </DocSection>
+
+      {/* Desktop Grid Layouts */}
+      <DocSection title="Desktop Grid Patterns" icon={<Boxes size={15} className="text-primary" />}>
+        <DataTable headers={["Component", "Mobile", "Tablet (md)", "Desktop (lg+)"]} rows={[
+          ["Property cards", "grid-cols-2", "grid-cols-3", "grid-cols-4 lg:grid-cols-5"],
+          ["Curation grid", "scroll-x", "grid-cols-3", "grid-cols-4"],
+          ["Wishlist grid", "grid-cols-2", "grid-cols-3", "grid-cols-4"],
+          ["Admin tables", "card list", "data table", "data table + filters sidebar"],
+          ["Stats grid", "grid-cols-2", "grid-cols-3", "grid-cols-4"],
+          ["Wallpaper phone", "grid-cols-2", "grid-cols-3", "grid-cols-4 lg:grid-cols-5"],
+          ["Wallpaper desktop", "grid-cols-1", "grid-cols-2", "grid-cols-3"],
+        ]} />
+      </DocSection>
+
+      {/* Mouse & Keyboard */}
+      <DocSection title="Mouse & Keyboard Interactions" icon={<PenTool size={15} className="text-primary" />}>
+        <div className="space-y-2">
+          {[
+            { title: "Hover States", desc: "Property cards: scale-105 + shadow-lg on hover. Wallpaper cards show download overlay. Buttons show opacity/scale transitions." },
+            { title: "Keyboard Shortcuts", desc: "⌘K: Command Palette (Admin). Esc: Close modals/sheets. Tab: Focus navigation. Enter: Confirm actions." },
+            { title: "Cursor Styles", desc: "pointer on clickables, grab on draggable elements, text on selectable content." },
+            { title: "whileHover vs whileTap", desc: "Desktop uses whileHover={{ scale: 1.05 }}. Mobile uses whileTap={{ scale: 0.95 }}. Both coexist via Framer Motion." },
+            { title: "Right-Click Context", desc: "Admin panel: context menus on property rows and booking cards for quick actions." },
+          ].map(p => (
+            <div key={p.title} className="flex gap-2 p-2.5 rounded-xl" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border) / 0.3)" }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0 mt-1.5" />
+              <div>
+                <p className="font-bold text-foreground text-xs">{p.title}</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{p.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </DocSection>
+
+      {/* Sheet → Modal Adaptation */}
+      <DocSection title="Sheet → Modal Adaptation" icon={<Layers size={15} className="text-primary" />}>
+        <DataTable headers={["Component", "Mobile (< md)", "Desktop (md+)"]} rows={[
+          ["Settings", "Bottom sheet (Vaul)", "Side sheet / Dialog"],
+          ["Edit Profile", "Bottom sheet", "Centered modal"],
+          ["Live Ordering", "Bottom sheet", "Side panel"],
+          ["Checkout", "Full screen", "Right panel + summary"],
+          ["Search", "Full screen overlay", "Inline dropdown panel"],
+          ["Map View", "Full screen", "Split-pane (list + map)"],
+          ["Wallpapers", "Full screen overlay", "Full page (/wallpapers)"],
+        ]} />
+      </DocSection>
+
+      {/* Easter Eggs */}
+      <DocSection title="Easter Eggs & Hidden Features" icon={<Award size={15} className="text-primary" />}>
+        <DataTable headers={["Trigger", "Location", "Result"]} rows={[
+          ["Tap version 5× in 2s", "Profile tab, bottom", "Full in-app documentation overlay"],
+          ["Tap version 7× in 2s", "Profile tab, bottom", "Wallpaper gallery with downloadable assets"],
+          ["Visit /wallpapers", "Direct URL", "Public wallpaper download page"],
+        ]} />
+      </DocSection>
+
+      <div className="text-center py-4">
+        <p className="text-[10px] text-muted-foreground"><Monitor size={10} className="inline text-primary mr-1" />Desktop Blueprint v1.36 · Responsive architecture reference</p>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
 // TAB: MOBILE & RESPONSIVE
 // ═══════════════════════════════════════════════════════════════
 function MobileTab() {
@@ -1472,7 +1635,7 @@ function MobileTab() {
 function ChangelogTab() {
   return (
     <div className="space-y-4">
-      <SectionHeader title="Change History" subtitle={`${changeLog.length} versions from v1.0 to v1.27`} />
+      <SectionHeader title="Change History" subtitle={`${changeLog.length} versions from v1.0 to v1.36`} />
       
       <div className="relative pl-4">
         {/* Timeline line */}
