@@ -1591,7 +1591,7 @@ function generatePDFHtml(): string {
 
   const changelog = changeLog.map(p => `<div class="version-block"><div class="version-badge">v${p.version}</div><div class="version-title">${p.phase}</div><ul>${p.items.map(i => `<li>${i}</li>`).join("")}</ul></div>`).join("");
 
-  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Hushh Documentation v1.28</title>
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Hushh Documentation v1.35</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:wght@700;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;}
