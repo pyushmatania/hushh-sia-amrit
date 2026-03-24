@@ -6,11 +6,12 @@ import {
   Copy, Check, Mic, Trash2, Clock, ArrowRight, Wand2, BrainCircuit,
   ChevronDown, ChevronRight as ChevRight, Package, Calendar, Star,
   FileText, Settings, Megaphone, Tag, UtensilsCrossed, UserCheck,
-  ClipboardList, Wallet, HelpCircle, BookOpen,
+  ClipboardList, Wallet, HelpCircle, BookOpen, CreditCard,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { playAIThinkingSound, playAISuccessSound, playAIActionSound, playAIErrorSound } from "@/lib/ai-sounds";
 import HushhBot from "./HushhBot";
+import { ALL_CATEGORIES, type ExampleCategory } from "./NeuralSearchWidget";
 
 /* ─── Rotating placeholder ─── */
 const ROTATING_PLACEHOLDERS = [
