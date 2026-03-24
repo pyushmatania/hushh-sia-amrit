@@ -506,7 +506,7 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
               >
                 <img src={property.images[0]} alt={property.name} className="w-24 h-24 md:w-32 md:h-32 rounded-xl object-cover shrink-0" />
                 <div className="flex-1 min-w-0 py-0.5">
-                  <h3 className="font-semibold text-sm text-foreground flex items-center gap-1 truncate">
+                  <h3 className="font-semibold text-sm md:text-base text-foreground flex items-center gap-1 truncate">
                     {property.name}
                     {property.verified && <BadgeCheck size={13} className="text-primary shrink-0" />}
                   </h3>
