@@ -110,10 +110,10 @@ const amenityIconMap: Record<string, React.ReactNode> = {
 };
 
 const categoryLabels: Record<string, { label: string; emoji: string; bg: string }> = {
-  stay: { label: "STAY", emoji: "🏡", bg: "bg-emerald-500/15 text-emerald-400 border-emerald-500/20" },
-  experience: { label: "EXPERIENCE", emoji: "🎉", bg: "bg-purple-500/15 text-purple-400 border-purple-500/20" },
-  service: { label: "SERVICE", emoji: "🛎️", bg: "bg-amber-500/15 text-amber-400 border-amber-500/20" },
-  curation: { label: "CURATION", emoji: "✨", bg: "bg-rose-500/15 text-rose-400 border-rose-500/20" },
+  stay: { label: "STAY", emoji: "🏡", bg: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/20" },
+  experience: { label: "EXPERIENCE", emoji: "🎉", bg: "bg-purple-500/15 text-purple-700 dark:text-purple-400 border-purple-500/20" },
+  service: { label: "SERVICE", emoji: "🛎️", bg: "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/20" },
+  curation: { label: "CURATION", emoji: "✨", bg: "bg-rose-500/15 text-rose-700 dark:text-rose-400 border-rose-500/20" },
 };
 
 function getNearbyPlaces(category: string) {
