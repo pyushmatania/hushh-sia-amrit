@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronDown, ChevronRight, BookOpen, Layers, MapPin, Users, Palette, Database, History, Sparkles, Shield, Zap, Copy, Check, FileText, Target, Layout, PenTool, TrendingUp, AlertTriangle, Clock, Server, Download, Home, Settings, BarChart3, Package, Globe, Cpu, Lock, Code, Monitor, Smartphone, Star, Heart, MessageSquare, Bell, CreditCard, Gift, Award, Search, Map, ShoppingCart, Calendar, UserCheck, Briefcase, Megaphone, Tag, Eye, Wifi, Activity, Boxes, ChevronUp } from "lucide-react";
+import { X, ChevronDown, ChevronRight, BookOpen, Layers, MapPin, Users, Palette, Database, History, Sparkles, Shield, Zap, Copy, Check, FileText, Target, Layout, PenTool, TrendingUp, AlertTriangle, Clock, Server, Download, Home, Settings, BarChart3, Package, Globe, Cpu, Lock, Code, Monitor, Smartphone, Star, Heart, MessageSquare, Bell, CreditCard, Gift, Award, Search, Map, ShoppingCart, Calendar, UserCheck, Briefcase, Megaphone, Tag, Eye, Wifi, Activity, Boxes, ChevronUp, Image as ImageIcon } from "lucide-react";
 import { useState, useCallback, useRef, useMemo } from "react";
 
 // ─── MERMAID DIAGRAM ─────────────────────────────────────────
