@@ -12,6 +12,9 @@ import authBgLight from "@/assets/auth-bg-light.webp";
 
 export default function AuthScreen() {
   const [mode, setMode] = useState<"login" | "signup" | "forgot">("login");
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
+  const authBg = isDark ? authBgDark : authBgLight;
   const appConfig = useAppConfig();
   const brandName = appConfig.app_name || "Hushh";
   const [email, setEmail] = useState("");
