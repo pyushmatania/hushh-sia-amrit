@@ -73,7 +73,7 @@ export default function HostDashboard({
       </div>
 
       {/* Stats */}
-      <div className="px-5 grid grid-cols-3 gap-3 mb-6">
+      <div className="px-5 grid grid-cols-3 gap-3 mb-6 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-4">
         {stats.map((stat, i) => (
           <motion.div
             key={stat.label}
