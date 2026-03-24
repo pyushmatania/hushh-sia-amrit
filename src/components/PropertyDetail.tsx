@@ -500,8 +500,9 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
         )}
       </div>
 
-      {/* Content */}
-      <div className="px-5 pt-5">
+      {/* Content — two-column on desktop */}
+      <div className="md:flex md:gap-8 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:mt-8">
+      <div className="px-5 pt-5 md:px-0 md:pt-0 md:flex-1 md:min-w-0">
         {/* Category badge + discount label */}
         <div className="flex items-center gap-2 mb-2 flex-wrap">
           {categoryLabels[property.primaryCategory] && (
