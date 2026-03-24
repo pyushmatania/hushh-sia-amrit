@@ -174,8 +174,7 @@ function TiltCard({
           {/* Background image */}
           <div className="relative h-[220px] overflow-hidden">
             <motion.img src={property.images[0]} alt={property.name} className="w-full h-[260px] object-cover" style={{ y: imgY }} />
-            <div className="absolute inset-0 bg-gradient-to-t from-card via-card/80 to-transparent" />
-            <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-card via-card/60 to-transparent" />
 
             <motion.div className="absolute inset-0 pointer-events-none" style={{
               background: `radial-gradient(ellipse at 30% 20%, hsla(270, 80%, 75%, 0.2) 0%, transparent 50%)`,
