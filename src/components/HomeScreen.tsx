@@ -319,6 +319,32 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                     />
                   </LazySection>
                 )});
+                homeSections.push({ key: "discovery_1", order: getSortOrder("curated_packs") + 2, node: (
+                  <LazySection minHeight="300px" rootMargin="300px">
+                    <MobileDiscoverySection
+                      properties={properties}
+                      onPropertyTap={onPropertyTap}
+                      wishlist={wishlist}
+                      onToggleWishlist={onToggleWishlist}
+                      sectionTitle="Staff Picks"
+                      sectionEmoji="🎬"
+                      offset={0}
+                    />
+                  </LazySection>
+                )});
+                homeSections.push({ key: "discovery_2", order: getSortOrder("curated_packs") + 3, node: (
+                  <LazySection minHeight="300px" rootMargin="300px">
+                    <MobileDiscoverySection
+                      properties={properties}
+                      onPropertyTap={onPropertyTap}
+                      wishlist={wishlist}
+                      onToggleWishlist={onToggleWishlist}
+                      sectionTitle="Hidden Gems"
+                      sectionEmoji="💎"
+                      offset={10}
+                    />
+                  </LazySection>
+                )});
               }
 
               homeSections.sort((a, b) => a.order - b.order);
