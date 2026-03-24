@@ -123,7 +123,7 @@ export default function HostAnalyticsScreen({ onBack }: HostAnalyticsScreenProps
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="mx-5 mb-6 glass rounded-2xl p-4"
+            className="mx-5 mb-6 glass rounded-2xl p-4 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32"
           >
             <div className="flex items-center gap-2 mb-4">
               <TrendingUp size={16} className="text-emerald-500" />
