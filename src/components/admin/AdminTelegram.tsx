@@ -196,15 +196,22 @@ export default function AdminTelegram() {
           break;
       }
 
-      // For text-based event types, use "custom" event_type
-      const actualEventType = ["checkin_alert", "payment_received", "refund_initiated", "staff_alert", "review_alert", "capacity_warning", "system_health"].includes(eventType)
-        ? "custom"
-        : eventType;
+      // Route daily_summary to dedicated function, others through telegram-notify
+      if (eventType === "daily_summary") {
+        const { error } = await supabase.functions.invoke("telegram-daily-summary", {
+          body: {},
+        });
+        if (error) throw error;
+      } else {
+        const actualEventType = ["checkin_alert", "payment_received", "refund_initiated", "staff_alert", "review_alert", "capacity_warning", "system_health"].includes(eventType)
+          ? "custom"
+          : eventType;
 
-      const { error } = await supabase.functions.invoke("telegram-notify", {
-        body: { event_type: actualEventType, data: eventData },
-      });
-      if (error) throw error;
+        const { error: notifyErr } = await supabase.functions.invoke("telegram-notify", {
+          body: { event_type: actualEventType, data: eventData },
+        });
+        if (notifyErr) throw notifyErr;
+      }
       toast.success(`${eventType} notification sent! ✅`);
       loadAll();
     } catch (e: any) {
