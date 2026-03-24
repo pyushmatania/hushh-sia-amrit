@@ -327,9 +327,10 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                       wishlist={wishlist}
                       onToggleWishlist={onToggleWishlist}
                       sectionTitle="Staff Picks"
-                      sectionEmoji="🎬"
-                      offset={0}
-                    />
+                     sectionEmoji="🎬"
+                       offset={0}
+                       category="home"
+                     />
                   </LazySection>
                 )});
                 homeSections.push({ key: "discovery_2", order: getSortOrder("curated_packs") + 3, node: (
