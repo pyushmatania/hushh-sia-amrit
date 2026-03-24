@@ -279,6 +279,30 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
     el.scrollBy({ left: dir === "right" ? scrollAmount : -scrollAmount, behavior: "smooth" });
   }, []);
 
+  const updateOverflowArrows = useCallback(() => {
+    const el = overflowScrollRef.current;
+    if (!el) return;
+    setOverflowCanLeft(el.scrollLeft > 10);
+    setOverflowCanRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10);
+  }, []);
+
+  useEffect(() => {
+    const el = overflowScrollRef.current;
+    if (!el || isMobile || desktopShowAll) return;
+    updateOverflowArrows();
+    el.addEventListener("scroll", updateOverflowArrows, { passive: true });
+    const ro = new ResizeObserver(updateOverflowArrows);
+    ro.observe(el);
+    return () => { el.removeEventListener("scroll", updateOverflowArrows); ro.disconnect(); };
+  }, [updateOverflowArrows, isMobile, desktopShowAll, properties]);
+
+  const scrollOverflow = useCallback((dir: "left" | "right") => {
+    const el = overflowScrollRef.current;
+    if (!el) return;
+    const cardW = el.querySelector("[data-overflow-card]")?.getBoundingClientRect().width || 260;
+    el.scrollBy({ left: dir === "left" ? -cardW * 2 : cardW * 2, behavior: "smooth" });
+  }, []);
+
   // Mobile: creative mixed feed elements
   const mobileElements = useMemo(() => {
     if (!isMobile) return [];
