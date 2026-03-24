@@ -240,8 +240,14 @@
   }
 }
 
-/* Scrollbar */
+/* Scrollbar — hide on mobile, show styled on desktop */
 ::-webkit-scrollbar { width: 0; height: 0; }
+@media (min-width: 768px) {
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: hsl(var(--muted)); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 4px; border: 2px solid hsl(var(--muted)); }
+  ::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground)); }
+}
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
