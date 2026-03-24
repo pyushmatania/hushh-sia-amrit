@@ -232,7 +232,11 @@ function DesktopAccentCard({ p, onTap, isWL, onToggleWishlist }: { p: Property; 
 export default function MixedListingFeed({ properties, onPropertyTap, wishlist, onToggleWishlist }: MixedListingFeedProps) {
   const [visibleCount, setVisibleCount] = useState(INITIAL_BATCH);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const desktopScrollRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+  const CARDS_PER_PAGE = 4;
 
   useEffect(() => { setVisibleCount(INITIAL_BATCH); }, [properties]);
 
@@ -246,135 +250,37 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
     return () => observer.disconnect();
   }, [properties.length]);
 
-  const elements = useMemo(() => {
+  const updateArrows = useCallback(() => {
+    const el = desktopScrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 10);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10);
+  }, []);
+
+  useEffect(() => {
+    const el = desktopScrollRef.current;
+    if (!el || isMobile) return;
+    el.addEventListener("scroll", updateArrows, { passive: true });
+    updateArrows();
+    return () => el.removeEventListener("scroll", updateArrows);
+  }, [isMobile, updateArrows, properties]);
+
+  const scrollDesktop = useCallback((dir: "left" | "right") => {
+    const el = desktopScrollRef.current;
+    if (!el) return;
+    const cardWidth = el.querySelector("[data-listing-card]")?.getBoundingClientRect().width || 300;
+    const scrollAmount = (cardWidth + 24) * CARDS_PER_PAGE;
+    el.scrollBy({ left: dir === "right" ? scrollAmount : -scrollAmount, behavior: "smooth" });
+  }, []);
+
+  // Mobile: creative mixed feed elements
+  const mobileElements = useMemo(() => {
+    if (!isMobile) return [];
     const items: ReactNode[] = [];
     let i = 0;
     let cycle = 0;
     let rendered = 0;
 
-    // Desktop: varied card types in a repeating pattern
-    if (!isMobile) {
-      while (i < properties.length && rendered < visibleCount) {
-        const pos = i % 12;
-        const p = properties[i];
-        const isWL = wishlist.includes(p.id);
-
-        // Pos 0: Hero bento (3 cards in mosaic)
-        if (pos === 0 && i + 2 < properties.length) {
-          const p2 = properties[i + 1];
-          const p3 = properties[i + 2];
-          items.push(
-            <div key={`hero-${p.id}`} className="col-span-2 lg:col-span-3 xl:col-span-4">
-              <div className="grid grid-cols-5 gap-4" style={{ height: 340 }}>
-                <div className="col-span-3 relative rounded-2xl overflow-hidden cursor-pointer group" onClick={() => onPropertyTap(p)}>
-                  <img src={p.images[0]} alt={p.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/5 group-hover:from-black/95 transition-all duration-500" />
-                  <div className="absolute top-4 left-4">
-                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-full text-primary-foreground" style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))" }}>✨ FEATURED</span>
-                  </div>
-                  {onToggleWishlist && (
-                    <button onClick={(e) => { e.stopPropagation(); onToggleWishlist(p.id); }} className="absolute top-4 right-4 w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "hsl(var(--foreground) / 0.2)", backdropFilter: "blur(10px)" }}>
-                      <Heart size={16} className={isWL ? "fill-primary text-primary" : "text-white"} />
-                    </button>
-                  )}
-                  <div className="absolute bottom-0 left-0 right-0 p-6 transition-transform duration-500 translate-y-4 group-hover:translate-y-0">
-                    <h3 className="text-2xl font-bold text-white leading-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{p.name}</h3>
-                    <p className="text-sm text-white/55 mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-400">{p.description}</p>
-                    <div className="flex items-center gap-3 mt-3">
-                      <span className="flex items-center gap-1"><Star size={13} className="fill-amber-400 text-amber-400" /><span className="text-sm font-bold text-white">{p.rating}</span></span>
-                      <span className="text-sm text-white/50">{p.location}</span>
-                      <span className="ml-auto text-lg font-bold text-white">₹{Math.min(...p.slots.filter(s => s.available).map(s => s.price)).toLocaleString()}<span className="text-xs text-white/40">+</span></span>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-span-2 flex flex-col gap-4">
-                  {[p2, p3].map((px) => (
-                    <div key={px.id} className="flex-1 relative rounded-2xl overflow-hidden cursor-pointer group" onClick={() => onPropertyTap(px)}>
-                      <img src={px.images[0]} alt={px.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 to-transparent" />
-                      {onToggleWishlist && (
-                        <button onClick={(e) => { e.stopPropagation(); onToggleWishlist(px.id); }} className="absolute top-3 right-3">
-                          <Heart size={18} className={wishlist.includes(px.id) ? "fill-primary text-primary" : "fill-foreground/20 text-background"} />
-                        </button>
-                      )}
-                      <div className="absolute bottom-0 left-0 right-0 p-4">
-                        <h4 className="text-base font-bold text-white">{px.name}</h4>
-                        <div className="flex items-center justify-between mt-1">
-                          <span className="text-xs text-white/60">{px.location}</span>
-                          <span className="text-sm font-bold text-white">₹{Math.min(...px.slots.filter(s => s.available).map(s => s.price)).toLocaleString()}</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          );
-          i += 3; rendered += 3;
-          continue;
-        }
-
-        // Pos 3: Panoramic wide card
-        if (pos === 3) {
-          items.push(<DesktopPanoCard key={`pano-${p.id}`} p={p} onTap={onPropertyTap} isWL={isWL} onToggleWishlist={onToggleWishlist} />);
-          i++; rendered++;
-          continue;
-        }
-
-        // Pos 4: Overlay reveal card
-        if (pos === 4) {
-          items.push(<DesktopOverlayCard key={`overlay-${p.id}`} p={p} onTap={onPropertyTap} isWL={isWL} onToggleWishlist={onToggleWishlist} />);
-          i++; rendered++;
-          continue;
-        }
-
-        // Pos 5-6: Editorial wide card (spans 2 cols)
-        if (pos === 5 && i + 0 < properties.length) {
-          items.push(<DesktopEditorialCard key={`editorial-${p.id}`} p={p} onTap={onPropertyTap} isWL={isWL} onToggleWishlist={onToggleWishlist} />);
-          i++; rendered++;
-          continue;
-        }
-
-        // Pos 7: Another pano
-        if (pos === 7) {
-          items.push(<DesktopPanoCard key={`pano2-${p.id}`} p={p} onTap={onPropertyTap} isWL={isWL} onToggleWishlist={onToggleWishlist} />);
-          i++; rendered++;
-          continue;
-        }
-
-        // Pos 8: Overlay card
-        if (pos === 8) {
-          items.push(<DesktopOverlayCard key={`overlay2-${p.id}`} p={p} onTap={onPropertyTap} isWL={isWL} onToggleWishlist={onToggleWishlist} />);
-          i++; rendered++;
-          continue;
-        }
-
-        // Pos 9: Accent card
-        if (pos === 9) {
-          items.push(<DesktopAccentCard key={`accent-${p.id}`} p={p} onTap={onPropertyTap} isWL={isWL} onToggleWishlist={onToggleWishlist} />);
-          i++; rendered++;
-          continue;
-        }
-
-        // Pos 10: Editorial again
-        if (pos === 10) {
-          items.push(<DesktopEditorialCard key={`editorial2-${p.id}`} p={p} onTap={onPropertyTap} isWL={isWL} onToggleWishlist={onToggleWishlist} />);
-          i++; rendered++;
-          continue;
-        }
-
-        // Even positions: Glass cards, odd: Minimal/Accent
-        if (pos % 2 === 0) {
-          items.push(<DesktopGlassCard key={`glass-${p.id}`} p={p} onTap={onPropertyTap} isWL={isWL} onToggleWishlist={onToggleWishlist} />);
-        } else {
-          items.push(<DesktopMinimalCard key={`min-${p.id}`} p={p} onTap={onPropertyTap} isWL={isWL} onToggleWishlist={onToggleWishlist} />);
-        }
-        i++; rendered++;
-      }
-      return items;
-    }
-
-    // Mobile: creative mixed feed (unchanged)
     while (i < properties.length && rendered < visibleCount) {
       const pos = i % 10;
 
@@ -436,16 +342,111 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
           i++; rendered++; break;
       }
     }
-
     return items;
   }, [properties, onPropertyTap, wishlist, onToggleWishlist, visibleCount, isMobile]);
 
   if (properties.length === 0) return null;
 
+  /* ─── Desktop: Clean Airbnb-style horizontal scroll with arrows ─── */
+  if (!isMobile) {
+    return (
+      <div className="relative md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+        {/* Left arrow */}
+        {canScrollLeft && (
+          <button
+            onClick={() => scrollDesktop("left")}
+            className="absolute left-2 lg:left-10 xl:left-18 2xl:left-26 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full flex items-center justify-center border border-border/40 shadow-lg transition-all hover:scale-110 hover:shadow-xl cursor-pointer"
+            style={{ background: "hsl(var(--background))", color: "hsl(var(--foreground))" }}
+          >
+            <ChevronLeft size={20} />
+          </button>
+        )}
+
+        {/* Right arrow */}
+        {canScrollRight && (
+          <button
+            onClick={() => scrollDesktop("right")}
+            className="absolute right-2 lg:right-10 xl:right-18 2xl:right-26 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full flex items-center justify-center border border-border/40 shadow-lg transition-all hover:scale-110 hover:shadow-xl cursor-pointer"
+            style={{ background: "hsl(var(--background))", color: "hsl(var(--foreground))" }}
+          >
+            <ChevronRight size={20} />
+          </button>
+        )}
+
+        {/* Scrollable card row */}
+        <div
+          ref={desktopScrollRef}
+          className="flex gap-6 overflow-x-auto hide-scrollbar pb-4"
+          style={{ scrollSnapType: "x mandatory", scrollBehavior: "smooth" }}
+        >
+          {properties.map((p) => {
+            const isWL = wishlist.includes(p.id);
+            const cheapest = Math.min(...p.slots.filter(s => s.available).map(s => s.price));
+            return (
+              <div
+                key={p.id}
+                data-listing-card
+                className="shrink-0 cursor-pointer group"
+                style={{ width: "calc((100% - 72px) / 4)", minWidth: 240, scrollSnapAlign: "start" }}
+                onClick={() => onPropertyTap(p)}
+              >
+                {/* Image with carousel dot placeholder */}
+                <div className="relative aspect-[4/3] rounded-xl overflow-hidden">
+                  <img
+                    src={p.images[0]}
+                    alt={p.name}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                  />
+                  {onToggleWishlist && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); onToggleWishlist(p.id); }}
+                      className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-transform hover:scale-110"
+                      style={{ background: "transparent" }}
+                    >
+                      <Heart size={20} className={isWL ? "fill-primary text-primary" : "fill-foreground/30 text-white"} strokeWidth={isWL ? 0 : 2} />
+                    </button>
+                  )}
+                  {/* Image dots */}
+                  {p.images.length > 1 && (
+                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+                      {p.images.slice(0, 5).map((_, di) => (
+                        <div key={di} className={`w-1.5 h-1.5 rounded-full ${di === 0 ? "bg-white" : "bg-white/50"}`} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Info — clean Airbnb style */}
+                <div className="mt-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-semibold text-foreground leading-tight line-clamp-1 flex-1">{p.name}</h4>
+                    <div className="flex items-center gap-1 ml-2 shrink-0">
+                      <Star size={12} className="fill-foreground text-foreground" />
+                      <span className="text-sm text-foreground">{p.rating}</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-0.5 line-clamp-1">{p.location}</p>
+                  <p className="text-sm text-muted-foreground mt-0.5">
+                    {p.slots.filter(s => s.available).length} slots available
+                  </p>
+                  <p className="text-sm text-foreground mt-1">
+                    <span className="font-semibold">₹{cheapest.toLocaleString()}</span>
+                    <span className="text-muted-foreground"> per slot</span>
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  /* ─── Mobile: Creative mixed feed (unchanged) ─── */
   return (
-    <div className="space-y-6 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
-      <div className={isMobile ? "space-y-6" : "grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 xl:gap-8"}>
-        {elements}
+    <div className="space-y-6">
+      <div className="space-y-6">
+        {mobileElements}
       </div>
       {visibleCount < properties.length && (
         <div ref={sentinelRef} className="h-px" />
