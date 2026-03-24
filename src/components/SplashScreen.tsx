@@ -362,52 +362,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
     import("@/lib/video-preloader").then(({ preloadVideos }) => preloadVideos());
   }, []);
 
-  // Ambient sound — triggered on first user interaction to bypass autoplay policy
-  useEffect(() => {
-    let audio: HTMLAudioElement | null = null;
-    let fadeInId: ReturnType<typeof setInterval>;
-    let started = false;
-
-    const startAudio = () => {
-      if (started) return;
-      started = true;
-      audio = new Audio(config.ambientSound);
-      audio.loop = true;
-      audio.volume = 0;
-      audio.play().catch(() => {});
-      let vol = 0;
-      fadeInId = setInterval(() => {
-        vol = Math.min(vol + 0.02, 0.25);
-        if (audio) audio.volume = vol;
-        if (vol >= 0.25) clearInterval(fadeInId);
-      }, 60);
-    };
-
-    // Try autoplay first
-    const autoTimer = setTimeout(() => {
-      startAudio();
-    }, 400);
-
-    // Also listen for user interaction as fallback
-    const interactionHandler = () => startAudio();
-    document.addEventListener("touchstart", interactionHandler, { once: true, passive: true });
-    document.addEventListener("click", interactionHandler, { once: true });
-
-    return () => {
-      clearTimeout(autoTimer);
-      clearInterval(fadeInId);
-      document.removeEventListener("touchstart", interactionHandler);
-      document.removeEventListener("click", interactionHandler);
-      if (audio) {
-        let vol = audio.volume;
-        const id = setInterval(() => {
-          vol = Math.max(vol - 0.05, 0);
-          if (audio) audio.volume = vol;
-          if (vol <= 0) { clearInterval(id); audio?.pause(); }
-        }, 40);
-      }
-    };
-  }, [config.ambientSound]);
+  // Ambient sound removed
 
   // Start phase timeline only when image is ready
   useEffect(() => {
