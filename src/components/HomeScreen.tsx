@@ -285,7 +285,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
 
               return (
                 <>
-                  {homeSections.map(s => <div key={s.key}>{s.node}</div>)}
+                  {homeSections.map(s => <SectionBoundary key={s.key} name={s.key}>{s.node}</SectionBoundary>)}
                 </>
               );
             })()}
