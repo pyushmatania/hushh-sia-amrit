@@ -1482,7 +1482,7 @@ function ChangelogTab() {
 function generateFullDoc(): string {
   const header = `# 🏡 HUSHH — Private Experience Marketplace
 
-> **Made in Jeypore ❤️** | v1.27 | Internal Documentation & Blueprint
+> **Made in Jeypore ❤️** | v1.28 | Internal Documentation & Blueprint
 
 Hushh is a premium mobile-first marketplace for booking private experiences, stays, and curated lifestyle services in Jeypore, India.
 
@@ -1498,6 +1498,59 @@ Hushh is a premium mobile-first marketplace for booking private experiences, sta
 
 ## Tech Stack
 React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion · React Query · React Router v6 · Lovable Cloud · Recharts · RHF + Zod
+
+---
+
+## 📱 Mobile & Responsive Blueprint
+
+### Distribution
+- **PWA**: VitePWA autoUpdate, service worker, installable, standalone portrait
+- **Capacitor**: app.lovable.hushhjeypore, WebView loads live URL, instant updates
+- **CI/CD**: GitHub Actions → debug APK on every push to main
+
+### Viewport & Layout
+- Target: 390×844px (iPhone 14/15). Tested on 360px (Android) and 428px (Pro Max)
+- overflow-x: hidden + overscroll-behavior-x: none on html/body/#root
+- Single-column stack, 2-col grids, bottom sheets (not dialogs), sticky nav
+
+### Touch & Interaction
+- 44px minimum touch targets, haptic feedback (navigator.vibrate)
+- Framer Motion springs (stiffness: 300, damping: 30), whileTap scale 0.95
+- Swipe gestures on messages, pull-to-refresh, scroll-snap carousels
+
+### Typography Scale
+- Titles: 24px/900 Space Grotesk | Headers: 16px/900 | Cards: 14px/700
+- Labels: 11px/700 DM Sans | Micro: 9-10px | Editorial: Playfair Display
+
+### Aspect Ratios
+- Property cards: 16:10 | Spotlight video: 16:9 | Gallery: 4:3
+- Avatars: 1:1 | Pack bg: full-screen | Spin wheel: 300×300
+
+### Theme System
+- HSL variables in :root (dark) and .light class
+- Semantic tokens only — no hardcoded colors in components
+- glass/glow/shadow utilities adapt per theme, 0.4s transition
+
+### Performance
+- Service worker: NetworkFirst API, CacheFirst static, 10MB limit
+- Fonts: preload + non-render-blocking pattern
+- LazySection (IntersectionObserver), OptimizedImage, video preloader
+- Inline HTML splash for instant FCP, React Query 30s stale + 2× retry
+
+### Navigation
+- Bottom nav: 5 tabs (Explore, Wishlists, Trips, Messages, Profile)
+- State machine navigation (not router), sheet/drawer for settings
+- Full-screen overlays for search/map, nested detail views
+
+### AI Prompts for Web/Desktop Conversion
+1. Convert single-column to multi-panel: sidebar nav, main content, detail panel
+2. Replace BottomNav with persistent left sidebar, add breadcrumbs
+3. Scale grids: 2→3→4 columns, add hover states replacing tap
+4. Bottom sheets → centered Dialogs on desktop, keep sheets on mobile
+5. Card lists → data tables with sorting/filtering/pagination
+6. Split-pane: messages list+chat, property gallery+info
+7. Scale typography: titles 3xl, headers xl, body sm, px-8, max-w-7xl
+8. Add hover:scale-105, keyboard shortcuts, cursor:pointer
 
 ---
 
