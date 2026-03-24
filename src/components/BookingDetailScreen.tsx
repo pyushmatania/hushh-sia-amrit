@@ -106,8 +106,8 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
       className="fixed inset-0 z-30 bg-mesh overflow-y-auto pb-32"
     >
       {/* Header */}
-      <div className="sticky top-0 z-10 glass px-5 md:px-8 py-3"><div className="md:max-w-5xl md:mx-auto flex items-center gap-3">
-        <div className="flex items-center gap-3">
+      <div className="sticky top-0 z-10 glass px-5 md:px-8 py-3">
+        <div className="md:max-w-5xl md:mx-auto flex items-center gap-3">
           <motion.button
             onClick={onBack}
             className="w-9 h-9 rounded-full border border-border flex items-center justify-center"
@@ -125,7 +125,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
         </div>
       </div>
 
-      <div className="px-5 md:px-8 lg:px-16 xl:px-24 py-4 md:flex md:gap-8 md:items-start">
+      <div className="px-5 md:px-8 py-4 md:max-w-5xl md:mx-auto md:flex md:gap-8 md:items-start">
       <div className="md:flex-1 md:min-w-0 space-y-5">
         {/* Status banner */}
         <motion.div
