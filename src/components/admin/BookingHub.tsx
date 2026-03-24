@@ -579,7 +579,7 @@ function OverviewTab({ stats, revenueTrend, statusDistribution, topProperties, t
       </div>
 
       {/* Status Distribution + Pending Alert */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <div className="rounded-2xl bg-card border border-border/60 p-4">
           <p className="text-xs font-semibold text-foreground mb-2">Status Mix</p>
           <div className="h-28">
