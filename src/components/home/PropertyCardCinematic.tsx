@@ -620,6 +620,8 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
           WebkitTouchCallout: "none",
           zIndex: revealed ? 9999 : isCharging ? 9998 : "auto",
           overflow: "visible",
+          contentVisibility: (revealed || isCharging) ? "visible" : "auto",
+          containIntrinsicSize: "auto 340px",
         } as React.CSSProperties}
       >
         {/* Ambient energy glow */}
