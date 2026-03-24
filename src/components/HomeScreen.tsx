@@ -3,8 +3,6 @@ import LazySection from "./home/LazySection";
 import { Bell, MapPin, ArrowRight } from "lucide-react";
 import { hapticSelection } from "@/lib/haptics";
 import CategoryBar from "./CategoryBar";
-import PropertyCard from "./PropertyCard";
-import PropertyCardSmall from "./PropertyCardSmall";
 import PackageCard from "./PackageCard";
 import { type Property } from "@/data/properties";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
