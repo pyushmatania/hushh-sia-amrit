@@ -407,7 +407,7 @@ export default function AdminCurations() {
               </div>
               Curations
             </h1>
-            <p className="text-xs text-muted-foreground mt-0.5 ml-[50px]">{totalCurations} experiences · Swipe or drag</p>
+            <p className="text-xs text-muted-foreground mt-0.5 ml-[50px]">{totalCurations} total · {activeCurations} active · {filtered.length} shown · Swipe or drag</p>
           </div>
           <div className="flex items-center gap-2">
             <motion.button whileTap={{ scale: 0.97 }}
