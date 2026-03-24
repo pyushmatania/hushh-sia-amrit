@@ -540,6 +540,17 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                   <button onClick={() => handleSubFilter("All")} className="text-xs text-primary mt-2 font-medium">Show all services</button>
                 </div>
               )}
+
+              {isMobile && (
+                <MobilePropertyGrid
+                  properties={filteredProperties}
+                  onPropertyTap={onPropertyTap}
+                  wishlist={wishlist}
+                  onToggleWishlist={onToggleWishlist}
+                  rows={2}
+                  title="All Services"
+                />
+              )}
               </>
               )}
             </>
