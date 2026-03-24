@@ -62,7 +62,8 @@ export default function SettingsSheet({ open, onClose, settingType }: SettingsSh
               <div className="w-10 h-1 rounded-full bg-muted" />
             </div>
 
-            <div className="flex items-center gap-3 px-5 py-3 border-b border-border">
+            <div className="hidden md:flex justify-center pt-0" />
+            <div className="flex items-center gap-3 px-5 py-3 md:px-8 md:py-4 border-b border-border">
               <button onClick={onClose} className="text-muted-foreground">
                 <X size={22} />
               </button>
