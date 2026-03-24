@@ -382,7 +382,7 @@ function MockChatView({ threadId, thread, onBack }: { threadId: string; thread: 
   }, [messages]);
 
   return (
-    <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", damping: 30, stiffness: 300 }} className="fixed inset-0 z-50 bg-background flex flex-col">
+    <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", damping: 30, stiffness: 300 }} className="fixed inset-0 z-50 bg-background flex flex-col md:relative md:inset-auto md:z-auto md:h-full">
       {/* Header */}
       <div className="flex items-center gap-3 px-4 py-3 border-b border-border/50 bg-background">
         <button onClick={onBack} className="text-foreground active:scale-90 transition-transform"><ArrowLeft size={20} /></button>
