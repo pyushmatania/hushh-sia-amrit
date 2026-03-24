@@ -167,7 +167,7 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
             <ArrowLeft size={18} className="text-foreground" />
           </motion.button>
           <div className="flex-1">
-            <h1 className="text-base font-bold text-foreground">Rewards</h1>
+            <h1 className="text-base font-bold text-foreground md:text-xl">Rewards</h1>
           </div>
           <motion.div
             className="flex items-center gap-1.5 rounded-full px-3.5 py-2"
