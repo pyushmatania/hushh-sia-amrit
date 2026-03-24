@@ -1,10 +1,12 @@
 # 🏡 HUSHH — Private Experience Marketplace
 
-> **Made in Jeypore ❤️** | v1.31 | Internal Documentation & Blueprint
+> **Made in Jeypore ❤️** | v1.33 | Internal Documentation & Blueprint
 
 Hushh is a premium mobile-first marketplace for booking private experiences, stays, and curated lifestyle services in Jeypore, India. Think Airbnb meets a concierge — but hyper-local, with a focus on curated combos and on-demand add-ons.
 
 **Published**: [hushh-jeypore.lovable.app](https://hushh-jeypore.lovable.app)
+
+**Android APK**: Auto-built via GitHub Actions on push to `main`. Download from Actions → Artifacts.
 
 ---
 
