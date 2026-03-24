@@ -355,7 +355,7 @@ export default function ServiceGrid({ services, onServiceTap }: ServiceGridProps
               {budget.map((s, i) => <MobileHoloCard key={s.id} service={s} onTap={onServiceTap} index={i} />)}
             </div>
           ) : (
-            <div className="grid grid-cols-3 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-4 gap-5">
               {budget.map((s, i) => <DesktopServiceCard key={s.id} service={s} onTap={onServiceTap} index={i} />)}
             </div>
           )}
@@ -369,8 +369,8 @@ export default function ServiceGrid({ services, onServiceTap }: ServiceGridProps
           {services.slice(0, 12).map((s, i) => <MobileGameCard key={s.id} service={s} onTap={onServiceTap} index={i} />)}
         </div>
       ) : (
-        <div className="grid grid-cols-3 lg:grid-cols-4 gap-5 pb-6">
-          {services.map((s, i) => <DesktopServiceCard key={s.id} service={s} onTap={onServiceTap} index={i} />)}
+        <div className="grid grid-cols-4 gap-5 pb-6">
+          {services.map((s, i) => i % 7 === 0 && i > 0 ? <DesktopServiceWide key={s.id} service={s} onTap={onServiceTap} index={i} /> : <DesktopServiceCard key={s.id} service={s} onTap={onServiceTap} index={i} />)}
         </div>
       )}
     </div>
