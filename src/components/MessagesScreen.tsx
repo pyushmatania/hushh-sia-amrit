@@ -708,6 +708,7 @@ export default function MessagesScreen() {
       </motion.div>
 
       <div className="md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+        <div className="md:max-w-3xl md:mx-auto">
       <AnimatePresence mode="wait">
         {tab === "chats" && (
           <motion.div key="chats" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="px-5 md:px-0">
