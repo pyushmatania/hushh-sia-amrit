@@ -34,7 +34,7 @@ export default function NotificationCenter({ onBack }: NotificationCenterProps) 
     >
       {/* Header */}
       <div className="flex items-center gap-3 px-4 pt-[max(12px,env(safe-area-inset-top))] pb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:pt-6">
-        <motion.button whileTap={{ scale: 0.9 }} onClick={onBack} className="w-10 h-10 rounded-full glass flex items-center justify-center">
+        <motion.button whileTap={{ scale: 0.9 }} onClick={onBack} className="w-10 h-10 rounded-full glass flex items-center justify-center md:cursor-pointer md:hover:bg-muted/50 transition-colors">
           <ArrowLeft size={20} className="text-foreground" />
         </motion.button>
         <div className="flex-1">
