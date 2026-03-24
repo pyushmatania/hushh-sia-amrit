@@ -119,6 +119,7 @@ export default function AdminExperiencePackages() {
       active: editing.active ?? true,
       image_url: (editing.image_urls || [])[0] || editing.image_url || null,
       image_urls: editing.image_urls || [],
+      video_url: editing.video_url || null,
     };
 
     if (isCreating) {
