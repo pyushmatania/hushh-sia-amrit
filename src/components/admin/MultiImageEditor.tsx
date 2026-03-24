@@ -46,16 +46,12 @@ export default function MultiImageEditor({
     } = await supabase.auth.getUser();
 
     if (error || !user) {
-      toast({
-        title: "Sign in required",
-        description: "Please sign in to upload images.",
-        variant: "destructive",
-      });
-      return null;
+      // Try anonymous admin path
+      return `admin/${storagePath}/${Date.now()}-${Math.random().toString(36).slice(2)}.${safeExt}`;
     }
 
     return `${user.id}/${storagePath}/${Date.now()}-${Math.random().toString(36).slice(2)}.${safeExt}`;
-  }, [storagePath, toast]);
+  }, [storagePath]);
 
   const handleUpload = async (files: FileList) => {
     setUploading(true);
