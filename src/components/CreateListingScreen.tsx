@@ -102,7 +102,7 @@ export default function CreateListingScreen({ onBack, onSubmit, initialData }: C
       className="min-h-screen bg-mesh"
     >
       {/* Header */}
-      <div className="px-5 pt-6 pb-4 flex items-center gap-3">
+      <div className="px-5 pt-6 pb-4 flex items-center gap-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
         <motion.button whileTap={{ scale: 0.9 }} onClick={onBack} className="w-9 h-9 rounded-full glass flex items-center justify-center">
           <ArrowLeft size={18} className="text-foreground" />
         </motion.button>
@@ -112,7 +112,7 @@ export default function CreateListingScreen({ onBack, onSubmit, initialData }: C
       </div>
 
       {/* Step indicator */}
-      <div className="px-5 mb-6 flex gap-2">
+      <div className="px-5 mb-6 flex gap-2 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:max-w-3xl">
         {steps.map((s, i) => (
           <div key={s} className="flex-1">
             <div className={`h-1 rounded-full transition-colors ${i <= step ? "bg-primary" : "bg-border"}`} />
@@ -122,7 +122,7 @@ export default function CreateListingScreen({ onBack, onSubmit, initialData }: C
       </div>
 
       {/* Step Content */}
-      <div className="px-5">
+      <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:max-w-3xl">
         <AnimatePresence mode="wait">
           {step === 0 && (
             <motion.div key="step0" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="space-y-5">
