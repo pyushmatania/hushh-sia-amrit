@@ -332,6 +332,7 @@ export default function Index() {
         )}
       </AnimatePresence>
       </Suspense>
+      </div>
 
       {/* Search overlay */}
       <AnimatePresence>
