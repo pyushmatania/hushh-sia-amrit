@@ -161,9 +161,9 @@ export default function HostEarnings() {
                   <stop offset="100%" stopColor="hsl(160,60%,42%)" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <XAxis dataKey="day" tick={{ fontSize: 9, fill: "hsl(260,10%,55%)" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 9, fill: "hsl(260,10%,55%)" }} axisLine={false} tickLine={false} tickFormatter={(v) => formatCurrency(v)} />
-              <Tooltip contentStyle={{ background: "hsl(260,18%,10%)", border: "1px solid hsl(260,15%,16%)", borderRadius: 12, fontSize: 11 }} />
+              <XAxis dataKey="day" tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} tickFormatter={(v) => formatCurrency(v)} />
+              <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 12, fontSize: 11 }} />
               <Area type="monotone" dataKey="revenue" stroke="hsl(160,60%,42%)" strokeWidth={2} fill="url(#earnGrad)" />
             </AreaChart>
           </ResponsiveContainer>
