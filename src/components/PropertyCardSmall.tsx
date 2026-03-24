@@ -24,7 +24,7 @@ export default function PropertyCardSmall({ property, index, onTap, isWishlisted
       className="shrink-0 w-[260px] md:w-full cursor-pointer group"
       onClick={() => onTap(property)}
     >
-      <div className="relative aspect-square rounded-2xl overflow-hidden">
+      <div className="relative aspect-square rounded-2xl overflow-hidden md:hover:shadow-elevated md:transition-shadow">
         {!imgLoaded && (
           <div className="absolute inset-0 bg-secondary animate-pulse rounded-2xl">
             <div className="absolute inset-0 shimmer-bg" />
