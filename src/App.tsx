@@ -40,7 +40,13 @@ const LoadingSpinner = () => (
 
 const App = () => {
   useEffect(() => {
-    import("@/lib/native").then(({ initNativePlugins }) => initNativePlugins()).catch(() => {});
+    import("@/lib/native").then(({ initNativePlugins, isNative }) => {
+      initNativePlugins();
+      // On native, prefetch critical data into local cache for instant UI
+      if (isNative) {
+        import("@/lib/native-cache").then(({ prefetchCriticalData }) => prefetchCriticalData()).catch(() => {});
+      }
+    }).catch(() => {});
   }, []);
   return (
   <QueryClientProvider client={queryClient}>
