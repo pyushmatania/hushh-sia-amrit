@@ -5,7 +5,7 @@ import {
   Sparkles, Tag, Megaphone, Ticket, ShoppingCart, LogOut,
   ChevronLeft, ChevronRight, Shield, Menu, X, FileSpreadsheet,
   Bot, Bell, ScrollText, Wallet, Zap, Trophy, Search, UserCheck, Package,
-  Home, Sun, Moon
+  Home, Sun, Moon, Send
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import CommandPalette from "./CommandPalette";
