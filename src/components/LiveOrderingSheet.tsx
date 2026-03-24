@@ -112,6 +112,15 @@ export default function LiveOrderingSheet({ open, onClose, propertyName, propert
 
   const handlePlaceOrder = async () => {
     if (placing) return;
+
+    // Rate limit order submissions
+    const rlKey = `order:submit:${user?.id || "guest"}`;
+    const { allowed, retryAfterMs } = checkRateLimit(rlKey, RATE_LIMITS.ORDER_SUBMIT.maxAttempts, RATE_LIMITS.ORDER_SUBMIT.windowMs);
+    if (!allowed) {
+      toast({ title: "⏳ Slow down", description: `Please wait ${formatRetryTime(retryAfterMs)} before placing another order`, variant: "destructive" });
+      return;
+    }
+
     setPlacing(true);
     hapticSuccess();
 
