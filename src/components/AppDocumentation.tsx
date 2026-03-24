@@ -1822,6 +1822,16 @@ ${tables.map(([t, d]) => `<tr><td style="font-family:monospace;color:#7c3aed;fon
 <tr><td>React Query</td><td>30s stale, 2× retry, exponential backoff</td></tr>
 </table>
 
+<h3>Native-Grade Caching (v1.35)</h3>
+<table><tr><th>Feature</th><th>Details</th></tr>
+<tr><td>Native Data Cache</td><td>Capacitor Preferences with TTL + stale-while-revalidate</td></tr>
+<tr><td>Prefetch on Launch</td><td>Listings, curations, packages, config cached on cold start</td></tr>
+<tr><td>CapacitorHttp</td><td>Native HTTP stack, bypasses WebView CORS overhead</td></tr>
+<tr><td>WebView Tuning</td><td>androidScheme:https, allowMixedContent, captureInput, bg:#050505</td></tr>
+<tr><td>Keyboard</td><td>resize:body, resizeOnFullScreen — no layout reflow on input focus</td></tr>
+<tr><td>Launch Flow</td><td>initNativePlugins → prefetchCriticalData → React render with cache</td></tr>
+</table>
+
 <h3>AI Prompts for Web/Desktop Conversion</h3>
 <ol style="font-size:10px;line-height:1.8;">
 <li>Convert single-column to multi-panel: sidebar nav + main content + detail panel</li>
