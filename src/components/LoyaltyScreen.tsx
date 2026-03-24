@@ -310,7 +310,7 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
         <AnimatePresence mode="wait">
           {/* REWARDS */}
           {tab === "rewards" && (
-            <motion.div key="rewards" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="px-4 space-y-3">
+            <motion.div key="rewards" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="px-4 space-y-3 md:px-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4 md:space-y-0">
               {rewards.map((r, i) => {
                 const canAfford = points >= r.cost;
                 const isRedeemed = redeemed.has(r.id);
