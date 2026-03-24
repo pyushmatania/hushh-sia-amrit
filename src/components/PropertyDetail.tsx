@@ -489,8 +489,24 @@ interface PropertyDetailProps {
   onHostChat?: (hostName: string, propertyId: string) => void;
 }
 
-export default function PropertyDetail({ property, onBack, onBook, onPropertyTap, isWishlisted = false, onToggleWishlist, onHostChat }: PropertyDetailProps) {
+export default function PropertyDetail({ property: incomingProperty, onBack, onBook, onPropertyTap, isWishlisted = false, onToggleWishlist, onHostChat }: PropertyDetailProps) {
   const { properties: allProperties } = usePropertiesData();
+
+  // Always resolve against the freshest listing record so media edits from catalog manager are reflected here.
+  const property = useMemo(() => {
+    const normalize = (value: string) => value.trim().toLowerCase();
+    const incomingName = normalize(incomingProperty.name || "");
+    const sameName = allProperties.filter((item) => normalize(item.name || "") === incomingName);
+
+    if (sameName.length > 0) {
+      // DB-merged listings are loaded before static fallbacks in context, so first match is the canonical one.
+      return sameName[0];
+    }
+
+    const sameId = allProperties.find((item) => item.id === incomingProperty.id);
+    return sameId ?? incomingProperty;
+  }, [incomingProperty, allProperties]);
+
   const [imgIndex, setImgIndex] = useState(0);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [guests, setGuests] = useState(2);
