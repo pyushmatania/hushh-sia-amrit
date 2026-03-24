@@ -20,6 +20,12 @@ import splash2Day from "@/assets/splash2-day-v2.jpg";
 import splash2Dusk from "@/assets/splash2-dusk-v2.jpg";
 import splash2Night from "@/assets/splash2-night-v2.jpg";
 
+// Desktop landscape — Variant 2
+import splash2DawnDesktop from "@/assets/splash2-dawn-v2-desktop.jpg";
+import splash2DayDesktop from "@/assets/splash2-day-v2-desktop.jpg";
+import splash2DuskDesktop from "@/assets/splash2-dusk-v2-desktop.jpg";
+import splash2NightDesktop from "@/assets/splash2-night-v2-desktop.jpg";
+
 // Preload 3D category icons during splash
 import iconHome from "@/assets/icon-home.webp";
 import iconStays from "@/assets/icon-stays-new.webp";
