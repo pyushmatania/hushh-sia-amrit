@@ -124,11 +124,11 @@ export default function PublicProfileScreen({ userId, onBack, onMessage }: Publi
     >
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-md border-b border-border">
-        <div className="flex items-center gap-3 px-4 py-3">
+        <div className="flex items-center gap-3 px-4 py-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
           <button onClick={onBack} className="text-foreground active:scale-90 transition-transform">
             <ArrowLeft size={22} />
           </button>
-          <h1 className="text-lg font-bold text-foreground flex-1">Profile</h1>
+          <h1 className="text-lg font-bold text-foreground flex-1 md:text-2xl">Profile</h1>
           <button className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center active:scale-90 transition-transform">
             <Share2 size={16} className="text-foreground" />
           </button>
