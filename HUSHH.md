@@ -1433,6 +1433,38 @@ standalone: campaigns · coupons · expenses · budget_allocations · app_config
 - **App ID**: `com.hushh.jeypore`, `capacitor.config.ts` with `server.url` pointing to published domain
 - APK artifact uploaded to GitHub Actions for download — no rebuild needed for web changes
 
+### v1.36 — Telegram Bot, AI Intelligence & APK Hardening
+
+#### 🤖 Telegram Admin Bot
+- **Bot polling** via `telegram-poll` Edge Function — receives and responds to admin messages
+- **Auto-reply** for common customer queries (`/bookings`, `/menu`, `/help`, `/status`)
+- **Auto-notifications** — booking created, order placed → instant Telegram alert to admin
+- **Daily summary cron** — revenue, booking count, key metrics sent at 9 PM IST
+- **11 admin commands**: `/report`, `/alerts`, `/lowstock`, `/tasks`, `/staff`, `/top`, `/expenses`, `/reviews`, `/confirm <id>`, `/cancel <id>`, `/broadcast <msg>`
+- **AI-powered business intelligence** — admin asks natural language questions ("What was last week's revenue?") and gets real-time data-driven answers via Gemini AI
+- **Test notifications panel** in Admin UI (`AdminTelegram.tsx`) — test all notification types
+
+#### 📱 APK & Native Fixes
+- **Crash fix** — `server` block properly stripped from `capacitor.config.ts` during CI build (replaced `sed` with reliable Node.js script)
+- **No more Capacitor icon** — build workflow installs ImageMagick, generates all launcher icon densities from `app-icon.png`, creates solid dark (#050505) splash screens
+- **Capacitor splash hidden immediately** — `SplashScreen.hide()` called in `initNativePlugins()` so React splash takes over instantly
+- **WebView debugging enabled** — `webContentsDebuggingEnabled: true` for Chrome DevTools via `chrome://inspect`
+- **Global error handlers** — `window.error` and `unhandledrejection` listeners in `main.tsx`
+
+#### 🛡 Error Boundary Enhancement
+- **Copy Log button** — crash screen now shows "Copy Log" with full stack trace, component tree, timestamp, URL, and user agent
+- **Inline dark styling** — error screen renders correctly even if CSS fails to load
+- **Clipboard fallback** — uses `document.execCommand('copy')` when `navigator.clipboard` unavailable (native WebView)
+
+#### Edge Functions
+| Function | Purpose |
+|----------|---------|
+| `telegram-poll` | Polls Telegram getUpdates, handles commands + AI queries |
+| `telegram-notify` | Sends formatted notifications (booking, order, test) |
+| `telegram-send` | Low-level Telegram message sender |
+| `telegram-daily-summary` | Cron: daily metrics digest at 9 PM IST |
+| `auto-notifications` | DB trigger: auto-send on booking/order create |
+
 ### v1.30 — Dark & Light Theme Polish
 - **Light mode fixes** — removed blur/white overlay on Trips property images
 - **Theme contrast improvements** across both dark and light modes
