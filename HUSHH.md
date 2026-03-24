@@ -1565,11 +1565,39 @@ Theme-aware utilities: `glass`/`glass-light`, `glow-sm/md/lg`, `shadow-card/elev
 
 | Config | Value |
 |--------|-------|
-| appId | `app.lovable.hushhjeypore` |
-| appName | `hushh-jeypore` |
+| appId | `com.hushh.jeypore` |
+| appName | `Hushh Jeypore` |
 | webDir | `dist` |
-| server.url | Lovable preview URL (live — instant updates) |
+| server.url | `https://hushh-jeypore.lovable.app` (live — instant updates) |
 | Build pipeline | GitHub Actions → npm install → build → cap add android → cap sync → gradlew assembleDebug → APK artifact |
+
+### Native Plugins (v1.34)
+
+| Plugin | Purpose | Bridge File |
+|--------|---------|-------------|
+| `@capacitor/share` | Native share sheet for properties & referrals | `src/lib/native-share.ts` |
+| `@capacitor/clipboard` | Copy referral codes, booking IDs | `src/lib/native-share.ts` |
+| `@capacitor/network` | Detect WiFi/cellular/offline with real-time listener | `src/lib/native-network.ts` |
+| `@capacitor/browser` | In-app browser for external links | `src/lib/native-browser.ts` |
+| `@capacitor/preferences` | Persistent key-value storage (replaces localStorage) | `src/lib/native-preferences.ts` |
+| `@capacitor/screen-orientation` | Portrait lock on native | `src/lib/native.ts` |
+| `@capacitor/keyboard` | iOS keyboard resize mode | `src/lib/native.ts` |
+| `@capacitor/app` | Android back button, deep links, app state | `src/lib/native.ts` |
+| `@capacitor/push-notifications` | Native push registration & token storage | `src/lib/native.ts` |
+| `@capacitor/haptics` | Impact/notification feedback | `src/lib/haptics.ts` |
+| `@capacitor/status-bar` | Dark style, #050505 background | `src/lib/native.ts` |
+| `@capacitor/camera` | Photo capture (available for reviews, profile) | Direct import |
+| `@capacitor/geolocation` | GPS location for nearby properties | Direct import |
+| `@capacitor/splash-screen` | Native splash with #050505 background | Capacitor config |
+| `@capacitor/local-notifications` | Scheduled local alerts | Direct import |
+
+### Fallback Chain Pattern
+
+All native bridges follow a consistent fallback pattern:
+```
+Capacitor Native Plugin → Web API → Graceful no-op
+```
+Example: Share → `@capacitor/share` → `navigator.share()` → `clipboard.writeText()` → silent fail
 
 ### PWA Configuration
 
