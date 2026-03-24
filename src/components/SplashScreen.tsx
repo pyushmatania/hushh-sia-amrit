@@ -256,19 +256,6 @@ function FloatingLanterns() {
             background: "radial-gradient(circle, hsla(45, 100%, 85%, 0.7) 0%, hsla(35, 100%, 60%, 0.3) 50%, transparent 100%)",
             boxShadow: `0 0 ${l.size}px ${l.size * 0.4}px hsla(35, 100%, 60%, 0.15)`,
           }} />
-          <motion.div
-            className="absolute rounded-full"
-            style={{
-              width: l.size * 0.4,
-              height: l.size * 0.4,
-              top: "30%",
-              left: "30%",
-              background: "hsla(45, 100%, 85%, 0.9)",
-              boxShadow: "0 0 6px 3px hsla(45, 100%, 80%, 0.6)",
-            }}
-            animate={{ opacity: [0.6, 1, 0.6], scale: [0.8, 1.1, 0.8] }}
-            transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
-          />
         </motion.div>
       ))}
     </>
