@@ -16,6 +16,7 @@ import SwipeableRow from "./SwipeableRow";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
 import BatchOperationsBar from "./BatchOperationsBar";
 import { getListingThumbnail } from "@/lib/listing-thumbnails";
+import MultiImageEditor from "./MultiImageEditor";
 
 interface Listing {
   id: string;
