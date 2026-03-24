@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import LazySection from "./home/LazySection";
 import { Bell, MapPin, ArrowRight } from "lucide-react";
 import { hapticSelection } from "@/lib/haptics";
