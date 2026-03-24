@@ -555,9 +555,15 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               )}
 
               <SectionTitle title="✨ EXPERIENCE PACKS" />
-              <div className="space-y-5 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
-                {experiencePacks.map((pack, i) => (
-                  <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
+              <div className={isMobile ? "flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar px-4 pb-2" : "space-y-5 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0 md:px-8 lg:px-16 xl:px-24 2xl:px-32"} style={isMobile ? { WebkitOverflowScrolling: "touch", scrollbarWidth: "none" } : undefined}>
+                {experiencePacks.slice(0, isMobile ? 6 : experiencePacks.length).map((pack, i) => (
+                  isMobile ? (
+                    <div key={pack.id} className="snap-start shrink-0 w-[85vw]">
+                      <CuratedPackListing pack={pack} index={i} onTap={handlePackTap} />
+                    </div>
+                  ) : (
+                    <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
+                  )
                 ))}
               </div>
 
