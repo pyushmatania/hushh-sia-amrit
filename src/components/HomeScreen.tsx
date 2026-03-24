@@ -197,7 +197,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
             <img src={profileAvatar} alt="Profile" className="w-full h-full object-cover" />
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">Hey, Akash!</p>
+            <p className="text-xs text-muted-foreground">Hey, Amrit!</p>
             <p className="text-sm font-semibold text-foreground flex items-center gap-1"><MapPin size={12} /> Jeypore, Odisha</p>
           </div>
         </motion.div>
