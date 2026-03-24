@@ -516,11 +516,20 @@ export default function AdminExperiencePackages() {
               </>
               )}
 
+              {!isCreating && autoSaveStatus !== "idle" && (
+                <div className={`text-center py-1.5 rounded-xl text-[11px] font-semibold ${
+                  autoSaveStatus === "saving" ? "bg-amber-500/15 text-amber-500" :
+                  autoSaveStatus === "saved" ? "bg-emerald-500/15 text-emerald-500" :
+                  "bg-destructive/15 text-destructive"
+                }`}>
+                  {autoSaveStatus === "saving" ? "⏳ Auto-saving..." : autoSaveStatus === "saved" ? "✓ Auto-saved" : "⚠ Save error"}
+                </div>
+              )}
               <button
                 onClick={save}
                 className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 active:scale-[0.98] transition"
               >
-                {isCreating ? "Add Package" : "Save Changes"}
+                {isCreating ? "Add Package" : "Save & Close"}
               </button>
             </motion.div>
           </motion.div>
