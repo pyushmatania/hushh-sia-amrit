@@ -1,5 +1,6 @@
 import { motion, AnimatePresence, useMotionValue, useTransform, animate, PanInfo } from "framer-motion";
 import { useAppConfig } from "@/hooks/use-app-config";
+import L from "leaflet";
 import {
   ArrowLeft, Share2, Heart, Star, BadgeCheck, MapPin,
   ChevronDown, ChevronUp, Minus, Plus, Droplets, Flame,
