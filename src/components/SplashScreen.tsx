@@ -444,13 +444,13 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           />
 
-          {/* ─── Layer 3: Floating particles ─── */}
+          {/* ─── Layer 3: Floating particles (fireflies) ─── */}
           {phase >= 1 && (
-            <FloatingParticles color={config.particleColor} count={config.hasFireflies ? 16 : 8} />
+            <FloatingParticles color={config.particleColor} count={isV2 ? 20 : (config.hasFireflies ? 16 : 8)} />
           )}
 
-          {/* ─── Layer 4: Shooting stars (evening/night) ─── */}
-          {config.hasShootingStars && phase >= 1 && (
+          {/* ─── Layer 4: Shooting stars ─── */}
+          {(config.hasShootingStars || isV2) && phase >= 1 && (
             <>
               <ShootingStar delay={1.2} />
               <ShootingStar delay={2.4} />
@@ -461,17 +461,17 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
           {/* ─── Layer 4b: Sun rays (morning) ─── */}
           {config.hasBirds && phase >= 1 && <SunRays />}
 
-          {/* ─── Layer 4c: Flying birds (morning/afternoon) ─── */}
-          {config.hasBirds && phase >= 1 && <FlyingBirds />}
+          {/* ─── Layer 4c: Flying birds ─── */}
+          {(config.hasBirds || isV2) && phase >= 1 && <FlyingBirds />}
 
-          {/* ─── Layer 4d: Drifting clouds (morning/afternoon) ─── */}
+          {/* ─── Layer 4d: Drifting clouds ─── */}
           {config.hasClouds && phase >= 1 && <DriftingClouds />}
 
-          {/* ─── Layer 4e: Floating lanterns (evening/night) ─── */}
-          {config.hasLanterns && phase >= 1 && <FloatingLanterns />}
+          {/* ─── Layer 4e: Floating lanterns ─── */}
+          {(config.hasLanterns || isV2) && phase >= 1 && <FloatingLanterns />}
 
-          {/* ─── Layer 4f: Twinkling stars (evening/night) ─── */}
-          {config.hasTwinkle && phase >= 1 && <TwinklingStars />}
+          {/* ─── Layer 4f: Twinkling stars ─── */}
+          {(config.hasTwinkle || isV2) && phase >= 1 && <TwinklingStars />}
           <div className="absolute inset-0 flex flex-col z-10">
 
             {/* Top — Greeting area */}
