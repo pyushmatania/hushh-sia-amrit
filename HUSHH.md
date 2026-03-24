@@ -1571,7 +1571,7 @@ Theme-aware utilities: `glass`/`glass-light`, `glow-sm/md/lg`, `shadow-card/elev
 | server.url | `https://hushh-jeypore.lovable.app` (live — instant updates) |
 | Build pipeline | GitHub Actions → npm install → build → cap add android → cap sync → gradlew assembleDebug → APK artifact |
 
-### Native Plugins (v1.34)
+### Native Plugins (v1.35)
 
 | Plugin | Purpose | Bridge File |
 |--------|---------|-------------|
