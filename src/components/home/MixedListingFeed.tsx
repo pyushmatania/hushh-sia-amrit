@@ -321,9 +321,16 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
           continue;
         }
 
-        // Pos 4-5: Overlay reveal cards
-        if (pos === 4 || pos === 8) {
+        // Pos 4: Overlay reveal card
+        if (pos === 4) {
           items.push(<DesktopOverlayCard key={`overlay-${p.id}`} p={p} onTap={onPropertyTap} isWL={isWL} onToggleWishlist={onToggleWishlist} />);
+          i++; rendered++;
+          continue;
+        }
+
+        // Pos 5-6: Editorial wide card (spans 2 cols)
+        if (pos === 5 && i + 0 < properties.length) {
+          items.push(<DesktopEditorialCard key={`editorial-${p.id}`} p={p} onTap={onPropertyTap} isWL={isWL} onToggleWishlist={onToggleWishlist} />);
           i++; rendered++;
           continue;
         }
@@ -335,7 +342,28 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
           continue;
         }
 
-        // Even positions: Glass cards, odd: Minimal
+        // Pos 8: Overlay card
+        if (pos === 8) {
+          items.push(<DesktopOverlayCard key={`overlay2-${p.id}`} p={p} onTap={onPropertyTap} isWL={isWL} onToggleWishlist={onToggleWishlist} />);
+          i++; rendered++;
+          continue;
+        }
+
+        // Pos 9: Accent card
+        if (pos === 9) {
+          items.push(<DesktopAccentCard key={`accent-${p.id}`} p={p} onTap={onPropertyTap} isWL={isWL} onToggleWishlist={onToggleWishlist} />);
+          i++; rendered++;
+          continue;
+        }
+
+        // Pos 10: Editorial again
+        if (pos === 10) {
+          items.push(<DesktopEditorialCard key={`editorial2-${p.id}`} p={p} onTap={onPropertyTap} isWL={isWL} onToggleWishlist={onToggleWishlist} />);
+          i++; rendered++;
+          continue;
+        }
+
+        // Even positions: Glass cards, odd: Minimal/Accent
         if (pos % 2 === 0) {
           items.push(<DesktopGlassCard key={`glass-${p.id}`} p={p} onTap={onPropertyTap} isWL={isWL} onToggleWishlist={onToggleWishlist} />);
         } else {
