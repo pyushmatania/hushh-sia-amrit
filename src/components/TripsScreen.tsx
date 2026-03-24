@@ -459,7 +459,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
 
       {/* Filter tabs */}
       <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-1 pb-2">
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide md:flex-wrap">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide md:flex-wrap md:justify-center">
           {filterTabs.map((tab) => {
             const isActive = activeFilter === tab.value;
             const count = counts[tab.value] || 0;
