@@ -72,36 +72,46 @@ export default function AdminCurations() {
   };
 
   const loadCurations = async () => {
-    const [curRes, listRes, bookRes, orderRes] = await Promise.all([
-      supabase.from("curations").select("*").order("sort_order"),
-      supabase.from("host_listings").select("id, name, image_urls, location, rating"),
-      supabase.from("bookings").select("property_id, total"),
-      supabase.from("orders").select("property_id, total"),
-    ]);
-    setCurations(curRes.data ?? []);
+    try {
+      const [curRes, listRes, bookRes, orderRes] = await Promise.all([
+        supabase.from("curations").select("*").order("sort_order"),
+        supabase.from("host_listings").select("id, name, image_urls, location, rating"),
+        supabase.from("bookings").select("property_id, total"),
+        supabase.from("orders").select("property_id, total"),
+      ]);
 
-    const pMap = new Map<string, PropertyInfo>();
-    (listRes.data ?? []).forEach(l => pMap.set(l.id, { name: l.name, imageUrls: l.image_urls || [], location: l.location, rating: l.rating }));
-    setPropertyMap(pMap);
+      if (curRes.error) {
+        console.error("Curations fetch error:", curRes.error);
+        toast({ title: "Failed to load curations", description: curRes.error.message, variant: "destructive" });
+      }
 
-    const bMap = new Map<string, number>();
-    const rMap = new Map<string, { bookingRev: number; orderRev: number; totalBookings: number }>();
-    (bookRes.data ?? []).forEach(b => {
-      bMap.set(b.property_id, (bMap.get(b.property_id) || 0) + 1);
-      const prev = rMap.get(b.property_id) || { bookingRev: 0, orderRev: 0, totalBookings: 0 };
-      prev.bookingRev += Number(b.total);
-      prev.totalBookings += 1;
-      rMap.set(b.property_id, prev);
-    });
-    (orderRes.data ?? []).forEach(o => {
-      const prev = rMap.get(o.property_id) || { bookingRev: 0, orderRev: 0, totalBookings: 0 };
-      prev.orderRev += Number(o.total);
-      rMap.set(o.property_id, prev);
-    });
-    setBookingCounts(bMap);
-    setRevenueMap(rMap);
+      setCurations(curRes.data ?? []);
 
-    setLoading(false);
+      const pMap = new Map<string, PropertyInfo>();
+      (listRes.data ?? []).forEach(l => pMap.set(l.id, { name: l.name, imageUrls: l.image_urls || [], location: l.location, rating: l.rating }));
+      setPropertyMap(pMap);
+
+      const bMap = new Map<string, number>();
+      const rMap = new Map<string, { bookingRev: number; orderRev: number; totalBookings: number }>();
+      (bookRes.data ?? []).forEach(b => {
+        bMap.set(b.property_id, (bMap.get(b.property_id) || 0) + 1);
+        const prev = rMap.get(b.property_id) || { bookingRev: 0, orderRev: 0, totalBookings: 0 };
+        prev.bookingRev += Number(b.total);
+        prev.totalBookings += 1;
+        rMap.set(b.property_id, prev);
+      });
+      (orderRes.data ?? []).forEach(o => {
+        const prev = rMap.get(o.property_id) || { bookingRev: 0, orderRev: 0, totalBookings: 0 };
+        prev.orderRev += Number(o.total);
+        rMap.set(o.property_id, prev);
+      });
+      setBookingCounts(bMap);
+      setRevenueMap(rMap);
+    } catch (err) {
+      console.error("Curations load error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { loadCurations(); }, []);
