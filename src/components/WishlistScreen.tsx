@@ -15,11 +15,11 @@ export default function WishlistScreen({ wishlist, onToggleWishlist, onPropertyT
 
   return (
     <motion.div variants={pageSlideUp} initial="initial" animate="animate" exit="exit" className="pb-24 bg-mesh min-h-screen">
-      <div className="px-5 pt-6 pb-4">
+      <div className="px-5 pt-6 pb-4 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
         <motion.h1
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-2xl font-bold text-foreground"
+          className="text-2xl font-bold text-foreground md:text-3xl lg:text-4xl"
         >
           Wishlists
         </motion.h1>
