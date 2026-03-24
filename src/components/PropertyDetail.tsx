@@ -569,13 +569,16 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       className="fixed inset-0 z-30 bg-mesh overflow-y-auto pb-28 md:pb-8"
     >
-      {/* Hero — Mobile Carousel */}
-      <div className="relative aspect-[4/3] overflow-hidden md:hidden">
+      {/* Hero — Mobile Cinematic */}
+      <div className="relative aspect-[3/4] overflow-hidden md:hidden">
+        {/* Skeleton loader */}
         {!imgLoaded && (
-          <div className="absolute inset-0 bg-secondary animate-pulse">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-muted/50 to-transparent animate-[shimmer_1.5s_infinite]" />
+          <div className="absolute inset-0 bg-secondary">
+            <div className="absolute inset-0 shimmer-bg" />
           </div>
         )}
+
+        {/* Main image with drag */}
         <motion.img
           key={imgIndex}
           src={property.images[imgIndex]}
@@ -587,35 +590,65 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
           dragElastic={0.15}
           onDragEnd={handleHeroDragEnd}
           onLoad={() => setImgLoaded(true)}
-          initial={{ opacity: 0, scale: 1.08 }}
+          initial={{ opacity: 0, scale: 1.06 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4 }}
+          transition={{ duration: 0.5 }}
         />
-        <div className="absolute top-0 left-0 right-0 flex justify-between items-center p-4">
-          <motion.button onClick={onBack} className="w-9 h-9 rounded-full glass flex items-center justify-center" whileTap={{ scale: 0.85 }}>
+
+        {/* Cinematic gradient overlay — bottom fade */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: "linear-gradient(0deg, hsl(var(--background)) 0%, hsl(var(--background) / 0.7) 15%, transparent 45%, transparent 70%, hsl(var(--background) / 0.3) 100%)",
+        }} />
+
+        {/* Top bar — back + actions */}
+        <div className="absolute top-0 left-0 right-0 flex justify-between items-center p-4 z-10">
+          <motion.button onClick={onBack} className="w-10 h-10 rounded-full glass flex items-center justify-center" whileTap={{ scale: 0.85 }}>
             <ArrowLeft size={18} className="text-foreground" />
           </motion.button>
-          <div className="flex gap-2">
-            <motion.button className="w-9 h-9 rounded-full glass flex items-center justify-center" whileTap={{ scale: 0.85 }} onClick={async () => { await shareProperty(property); }}>
+          <div className="flex gap-2.5">
+            <motion.button className="w-10 h-10 rounded-full glass flex items-center justify-center" whileTap={{ scale: 0.85 }} onClick={async () => { await shareProperty(property); }}>
               <Share2 size={16} className="text-foreground" />
             </motion.button>
-            <motion.button onClick={() => { hapticMedium(); onToggleWishlist?.(property.id); }} className="w-9 h-9 rounded-full glass flex items-center justify-center" whileTap={{ scale: 1.2 }}>
+            <motion.button onClick={() => { hapticMedium(); onToggleWishlist?.(property.id); }} className="w-10 h-10 rounded-full glass flex items-center justify-center" whileTap={{ scale: 1.2 }}>
               <Heart size={16} className={`transition-colors duration-200 ${liked ? "fill-primary text-primary" : "text-foreground"}`} />
             </motion.button>
           </div>
         </div>
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-          {property.images.map((_, i) => (
-            <motion.button key={i} onClick={() => { setImgIndex(i); setImgLoaded(false); }} className="rounded-full" animate={{ width: i === imgIndex ? 18 : 6, height: 6, backgroundColor: i === imgIndex ? "hsl(0 0% 96%)" : "hsla(0 0% 96% / 0.5)" }} transition={{ type: "spring", stiffness: 300, damping: 25 }} />
-          ))}
-        </div>
-        {property.tags.length > 0 && (
-          <div className="absolute bottom-10 left-4 flex gap-2">
-            {property.tags.map((tag) => (
-              <span key={tag} className="text-[11px] font-semibold glass px-3 py-1.5 rounded-full text-foreground">{tag}</span>
+
+        {/* Bottom content overlay — property name + meta */}
+        <div className="absolute bottom-0 left-0 right-0 px-5 pb-5 z-10">
+          {/* Tags */}
+          {property.tags.length > 0 && (
+            <div className="flex gap-2 mb-3">
+              {property.tags.map((tag) => (
+                <span key={tag} className="text-[11px] font-semibold glass px-3 py-1.5 rounded-full text-foreground">{tag}</span>
+              ))}
+            </div>
+          )}
+
+          {/* Dots indicator */}
+          <div className="flex gap-1.5 mb-3">
+            {property.images.map((_, i) => (
+              <motion.button
+                key={i}
+                onClick={() => { setImgIndex(i); setImgLoaded(false); }}
+                className="rounded-full"
+                animate={{
+                  width: i === imgIndex ? 20 : 6,
+                  height: 6,
+                  backgroundColor: i === imgIndex ? "hsl(270 80% 65%)" : "hsla(0 0% 100% / 0.4)",
+                }}
+                transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              />
             ))}
           </div>
-        )}
+        </div>
+
+        {/* Image count badge */}
+        <div className="absolute bottom-5 right-5 z-10 glass rounded-full px-2.5 py-1 flex items-center gap-1.5">
+          <Camera size={11} className="text-foreground/70" />
+          <span className="text-[10px] font-medium text-foreground/80">{imgIndex + 1}/{property.images.length}</span>
+        </div>
       </div>
 
       {/* Hero — Desktop Bento Grid */}
