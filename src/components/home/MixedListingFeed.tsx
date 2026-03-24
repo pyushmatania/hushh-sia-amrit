@@ -160,7 +160,7 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/10" />
                 </div>
                 <div className="flex-1 p-5 flex flex-col justify-center">
-                  <span className="text-[9px] font-bold tracking-widest text-primary uppercase">{p.category.toUpperCase()}</span>
+                  <span className="text-[9px] font-bold tracking-widest text-primary uppercase">{Array.isArray(p.category) ? p.category[0] : p.category}</span>
                   <h3 className="text-xl font-bold text-foreground mt-1 leading-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{p.name}</h3>
                   <p className="text-sm text-muted-foreground mt-1.5 line-clamp-2">{p.description}</p>
                   <div className="flex items-center gap-3 mt-auto pt-3">
