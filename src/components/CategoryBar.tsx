@@ -55,7 +55,7 @@ export default memo(function CategoryBar({ active, onChange }: CategoryBarProps)
   const handleClick = useCallback((id: string) => onChange(id), [onChange]);
 
   return (
-    <div className="flex justify-around px-0">
+    <div className="flex justify-around px-0 md:justify-center md:gap-6 lg:gap-8">
       {categories.map((cat) => {
         const isActive = active === cat.id;
         return (
