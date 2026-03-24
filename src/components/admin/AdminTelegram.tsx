@@ -212,7 +212,7 @@ export default function AdminTelegram() {
         });
         if (error) throw error;
       }
-      if (error) throw error;
+      if (err) throw err;
       toast.success(`${eventType} notification sent! ✅`);
       loadAll();
     } catch (e: any) {
