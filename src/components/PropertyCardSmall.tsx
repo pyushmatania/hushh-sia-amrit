@@ -21,7 +21,7 @@ export default function PropertyCardSmall({ property, index, onTap, isWishlisted
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
-      className="shrink-0 w-[260px] cursor-pointer group"
+      className="shrink-0 w-[260px] md:w-full cursor-pointer group"
       onClick={() => onTap(property)}
     >
       <div className="relative aspect-square rounded-2xl overflow-hidden">
