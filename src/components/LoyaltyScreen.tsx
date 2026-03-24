@@ -191,7 +191,7 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
         transition={{ delay: 0.1, duration: 0.5 }}
         className="mx-4 mt-4 rounded-3xl overflow-hidden relative"
         style={{
-          background: "linear-gradient(145deg, hsl(260 18% 12%), hsl(260 20% 8%))",
+          background: "linear-gradient(145deg, hsl(var(--card)), hsl(var(--secondary)))",
           border: "1px solid hsl(var(--border) / 0.5)",
         }}
       >
