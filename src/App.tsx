@@ -66,6 +66,7 @@ const App = () => {
               <Route path="/reset-password" element={<ErrorBoundary><ResetPassword /></ErrorBoundary>} />
               <Route path="/admin" element={<Suspense fallback={<LoadingSpinner />}><ErrorBoundary fallbackTitle="Admin panel error"><Admin /></ErrorBoundary></Suspense>} />
               <Route path="/staff" element={<Suspense fallback={<LoadingSpinner />}><ErrorBoundary fallbackTitle="Staff panel error"><Staff /></ErrorBoundary></Suspense>} />
+              <Route path="/wallpapers" element={<Suspense fallback={<LoadingSpinner />}><ErrorBoundary><Wallpapers /></ErrorBoundary></Suspense>} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
