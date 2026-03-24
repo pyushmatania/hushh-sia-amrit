@@ -657,7 +657,7 @@ export default function MessagesScreen() {
   const supportChats = filteredChats.filter(t => !t.pinned && t.tripStatus === "support");
 
   return (
-    <div className="pb-24 min-h-screen bg-background">
+    <div className="pb-24 min-h-screen bg-background md:h-[calc(100vh-4rem)] md:overflow-y-auto">
       {/* Header */}
       <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-8 pb-4">
         <div className="flex items-center justify-between mb-5">
