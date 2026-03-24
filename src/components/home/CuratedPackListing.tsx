@@ -183,19 +183,30 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
   useEffect(() => {
     const card = cardRef.current;
     if (!card) return;
-    const observer = new IntersectionObserver(
+    // Anticipate: start loading video 300px before it enters viewport
+    const loadObserver = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setShouldLoad(true);
+          loadObserver.disconnect();
+        }
+      },
+      { rootMargin: "300px" }
+    );
+    // Play/pause: only when actually visible
+    const playObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
           if (videoRef.current) videoRef.current.play().catch(() => {});
         } else {
           videoRef.current?.pause();
         }
       },
-      { threshold: [0, 0.1], rootMargin: "40px" }
+      { threshold: 0.1 }
     );
-    observer.observe(card);
-    return () => observer.disconnect();
+    loadObserver.observe(card);
+    playObserver.observe(card);
+    return () => { loadObserver.disconnect(); playObserver.disconnect(); };
   }, []);
 
   return (
