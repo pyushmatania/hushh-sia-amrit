@@ -178,12 +178,12 @@ export default function AuthScreen() {
                 exit={{ height: 0, opacity: 0 }}
               >
                 <div className="relative mb-4">
-                  <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                   <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50" />
                    <input
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Full name"
-                    className="w-full bg-white/10 backdrop-blur-md border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-sm text-foreground placeholder:text-foreground/40 outline-none focus:ring-1 focus:ring-primary/40"
+                    className="w-full bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl pl-12 pr-4 py-3.5 text-sm text-white placeholder:text-white/40 outline-none focus:ring-1 focus:ring-primary/40 focus:border-white/30"
                   />
                 </div>
               </motion.div>
