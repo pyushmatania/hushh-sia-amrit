@@ -55,7 +55,7 @@ export default function NotificationCenter({ onBack }: NotificationCenterProps) 
       </div>
 
       {/* Notifications List */}
-      <div className="px-4 mt-2 space-y-2 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-3 md:space-y-0">
+      <div className="px-4 mt-2 space-y-2 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-3 md:space-y-0 md:max-w-6xl md:mx-auto">
         {notifications.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
