@@ -161,9 +161,45 @@ function FairyLights({ count = 14 }: { count?: number }) {
   );
 }
 
+/* ─── Number Ribbon Badge ─── */
+function RibbonBadge({ number }: { number: number }) {
+  return (
+    <div className="absolute -top-1 -left-1 z-20 w-12 h-14 flex flex-col items-center justify-start pt-1.5"
+      style={{
+        background: "linear-gradient(180deg, #DC143C 0%, #8B0000 85%, transparent 100%)",
+        clipPath: "polygon(0 0, 100% 0, 100% 80%, 50% 100%, 0 80%)",
+        boxShadow: "2px 2px 10px rgba(0,0,0,0.5)",
+      }}>
+      <span className="text-[9px] font-black text-white/70 tracking-widest">N°</span>
+      <span className="text-lg font-black text-white leading-none" style={{ fontFamily: "'Playfair Display', serif", textShadow: "0 1px 4px rgba(0,0,0,0.6)" }}>
+        {number}
+      </span>
+    </div>
+  );
+}
+
+/* ─── Corner Flourish ─── */
+function CornerFlourish({ position }: { position: "tl" | "tr" | "bl" | "br" }) {
+  const rot = { tl: "0", tr: "90", bl: "270", br: "180" }[position];
+  const pos = {
+    tl: { top: 2, left: 2 },
+    tr: { top: 2, right: 2 },
+    bl: { bottom: 2, left: 2 },
+    br: { bottom: 2, right: 2 },
+  }[position];
+  return (
+    <div className="absolute z-10 w-8 h-8 pointer-events-none" style={{ ...pos, transform: `rotate(${rot}deg)` }}>
+      <svg viewBox="0 0 32 32" className="w-full h-full">
+        <path d="M2,2 L12,2 L12,4 L4,4 L4,12 L2,12 Z" fill="#FFD700" opacity="0.8" />
+        <circle cx="6" cy="6" r="1.5" fill="#FFD700" opacity="0.6" />
+      </svg>
+    </div>
+  );
+}
+
 /* ─── Property Card ─── */
-function OscarPropertyCard({ property, onTap, index, isWL, onToggleWishlist }: {
-  property: Property; onTap: (p: Property) => void; index: number; isWL: boolean; onToggleWishlist?: (id: string) => void;
+function OscarPropertyCard({ property, onTap, index, isWL, onToggleWishlist, totalCount, isSingle }: {
+  property: Property; onTap: (p: Property) => void; index: number; isWL: boolean; onToggleWishlist?: (id: string) => void; totalCount?: number; isSingle?: boolean;
 }) {
   const cheapest = Math.min(...property.slots.filter(s => s.available).map(s => s.price));
   const badges = ["🏆 BEST PICK", "⭐ TOP RATED", "👑 PREMIUM", "💎 EXCLUSIVE", "🌟 FEATURED", "🎭 CURATED"];
@@ -173,7 +209,7 @@ function OscarPropertyCard({ property, onTap, index, isWL, onToggleWishlist }: {
     <motion.article
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.6, delay: isSingle ? 0 : index * 0.12, ease: [0.22, 1, 0.36, 1] }}
       className="relative cursor-pointer group"
       onClick={() => onTap(property)}
       onMouseEnter={() => setHovered(true)}
@@ -183,23 +219,38 @@ function OscarPropertyCard({ property, onTap, index, isWL, onToggleWishlist }: {
       aria-label={`${property.name} — ₹${cheapest.toLocaleString()} onwards, rated ${property.rating}`}
       onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onTap(property); } }}
     >
-      <FairyLights count={12} />
+      <FairyLights count={isSingle ? 18 : 12} />
 
       {/* Card frame */}
-      <div className="relative overflow-hidden rounded-2xl mt-2"
+      <div className={`relative overflow-hidden ${isSingle ? "rounded-3xl" : "rounded-2xl"} mt-2`}
         style={{
           backgroundImage: `url(${oscarWoodTexture})`,
           backgroundSize: "cover",
-          padding: "6px",
-          border: "2px solid #B8860B",
-          boxShadow: hovered
-            ? "0 0 35px rgba(255,215,0,0.4), 0 16px 50px rgba(0,0,0,0.5)"
-            : "0 0 15px rgba(255,215,0,0.15), 0 8px 30px rgba(0,0,0,0.3)",
+          padding: isSingle ? "8px" : "6px",
+          border: isSingle ? "3px solid #DAA520" : "2px solid #B8860B",
+          boxShadow: isSingle
+            ? "0 0 50px rgba(255,215,0,0.35), 0 20px 60px rgba(0,0,0,0.6), inset 0 0 30px rgba(255,215,0,0.05)"
+            : hovered
+              ? "0 0 35px rgba(255,215,0,0.4), 0 16px 50px rgba(0,0,0,0.5)"
+              : "0 0 15px rgba(255,215,0,0.15), 0 8px 30px rgba(0,0,0,0.3)",
           transition: "box-shadow 0.4s ease, transform 0.3s ease",
           transform: hovered ? "translateY(-3px)" : "translateY(0)",
         }}
       >
-        <div className="relative h-[260px] md:h-[320px] overflow-hidden rounded-xl">
+        {/* Corner flourishes for single mode */}
+        {isSingle && (
+          <>
+            <CornerFlourish position="tl" />
+            <CornerFlourish position="tr" />
+            <CornerFlourish position="bl" />
+            <CornerFlourish position="br" />
+          </>
+        )}
+
+        {/* Ribbon badge */}
+        {isSingle && <RibbonBadge number={index + 1} />}
+
+        <div className={`relative ${isSingle ? "h-[380px] rounded-2xl" : "h-[260px] md:h-[320px] rounded-xl"} overflow-hidden`}>
           <img src={property.images[0]} alt={property.name}
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-700"
             style={{ transform: hovered ? "scale(1.08)" : "scale(1)" }}
@@ -209,15 +260,21 @@ function OscarPropertyCard({ property, onTap, index, isWL, onToggleWishlist }: {
             background: "linear-gradient(to top, rgba(10,2,2,0.95) 0%, rgba(30,5,5,0.6) 35%, transparent 70%)",
           }} />
 
+          {/* Inner gold border glow for single */}
+          {isSingle && (
+            <div className="absolute inset-0 pointer-events-none z-[5] rounded-2xl"
+              style={{ boxShadow: "inset 0 0 20px rgba(255,215,0,0.15), inset 0 0 3px rgba(255,215,0,0.3)" }} />
+          )}
+
           {/* Badge */}
-          <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg"
+          <div className={`absolute ${isSingle ? "top-4 left-14" : "top-3 left-3"} z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg`}
             style={{
               background: "linear-gradient(145deg, #2a1a00, #1a0d00)",
               border: "1.5px solid #DAA520",
               boxShadow: "0 3px 12px rgba(255,215,0,0.3)",
             }}>
             <img src={oscarTrophy} alt="" className="w-4 h-4 object-contain" />
-            <span className="text-[9px] font-black tracking-wider"
+            <span className={`${isSingle ? "text-[10px]" : "text-[9px]"} font-black tracking-wider`}
               style={{ backgroundImage: "linear-gradient(135deg, #FFD700, #FFF, #FFD700)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
               {badges[index % badges.length]}
             </span>
@@ -226,41 +283,49 @@ function OscarPropertyCard({ property, onTap, index, isWL, onToggleWishlist }: {
           {/* Wishlist */}
           {onToggleWishlist && (
             <button onClick={(e) => { e.stopPropagation(); onToggleWishlist(property.id); }}
-              className="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center z-10"
+              className={`absolute top-3 right-3 ${isSingle ? "w-11 h-11" : "w-9 h-9"} rounded-full flex items-center justify-center z-10`}
               style={{ background: "rgba(30,0,0,0.7)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,215,0,0.2)" }}
               aria-label={isWL ? `Remove ${property.name} from wishlist` : `Add ${property.name} to wishlist`}>
-              <Heart size={16} className={isWL ? "fill-red-400 text-red-400" : "text-white/80"} />
+              <Heart size={isSingle ? 20 : 16} className={isWL ? "fill-red-400 text-red-400" : "text-white/80"} />
             </button>
           )}
 
           {/* Content */}
-          <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5 z-10">
+          <div className={`absolute bottom-0 left-0 right-0 ${isSingle ? "p-5" : "p-4 md:p-5"} z-10`}>
             <div className="flex items-center gap-1 mb-1.5">
               {[...Array(5)].map((_, si) => (
-                <Gem key={si} size={11}
+                <Gem key={si} size={isSingle ? 14 : 11}
                   className={si < Math.round(property.rating) ? "fill-yellow-400 text-yellow-400" : "text-white/15"}
                   style={si < Math.round(property.rating) ? { filter: "drop-shadow(0 0 3px rgba(255,215,0,0.5))" } : {}} />
               ))}
-              <span className="text-[10px] font-bold ml-1" style={{ color: "#FFD700" }}>{property.rating}</span>
+              <span className={`${isSingle ? "text-xs" : "text-[10px]"} font-bold ml-1`} style={{ color: "#FFD700" }}>{property.rating}</span>
             </div>
 
-            <h3 className="text-lg md:text-xl font-black text-white leading-tight"
+            <h3 className={`${isSingle ? "text-2xl" : "text-lg md:text-xl"} font-black text-white leading-tight`}
               style={{ fontFamily: "'Playfair Display', serif", textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}>
               {property.name}
             </h3>
-            <p className="text-[11px] mt-0.5 line-clamp-1" style={{ color: "rgba(255,228,181,0.5)" }}>
+            <p className={`${isSingle ? "text-xs line-clamp-2" : "text-[11px] line-clamp-1"} mt-0.5`} style={{ color: "rgba(255,228,181,0.5)" }}>
               {property.description}
             </p>
 
+            {/* Location for single */}
+            {isSingle && (
+              <div className="flex items-center gap-1 mt-1.5">
+                <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#FFD700" }} />
+                <span className="text-[10px] font-medium" style={{ color: "rgba(255,228,181,0.6)" }}>{property.location}</span>
+              </div>
+            )}
+
             <div className="flex items-center justify-between mt-2.5">
               <div>
-                <span className="text-xl md:text-2xl font-black text-white" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                <span className={`${isSingle ? "text-2xl" : "text-xl md:text-2xl"} font-black text-white`} style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                   ₹{cheapest.toLocaleString()}
                 </span>
                 <span className="text-[10px] text-white/30 ml-1">onwards</span>
               </div>
               <motion.div
-                className="flex items-center gap-1 px-4 py-2 rounded-lg text-[11px] font-black"
+                className={`flex items-center gap-1 ${isSingle ? "px-5 py-2.5 rounded-xl text-xs" : "px-4 py-2 rounded-lg text-[11px]"} font-black`}
                 style={{
                   background: "linear-gradient(145deg, #FFD700, #DAA520, #B8860B)",
                   color: "#1a0d00",
@@ -268,7 +333,7 @@ function OscarPropertyCard({ property, onTap, index, isWL, onToggleWishlist }: {
                   boxShadow: "0 3px 14px rgba(255,215,0,0.35), inset 0 1px 0 rgba(255,255,255,0.3)",
                 }}
                 whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.93 }}>
-                Book Now <ArrowRight size={12} />
+                Book Now <ArrowRight size={isSingle ? 14 : 12} />
               </motion.div>
             </div>
           </div>
@@ -276,7 +341,7 @@ function OscarPropertyCard({ property, onTap, index, isWL, onToggleWishlist }: {
       </div>
 
       {/* Carpet strip */}
-      <div className="h-1.5 mx-4 rounded-b-full -mt-px"
+      <div className={`${isSingle ? "h-2 mx-6" : "h-1.5 mx-4"} rounded-b-full -mt-px`}
         style={{ background: "linear-gradient(90deg, transparent, #DC143C, #FF2D2D, #DC143C, transparent)", boxShadow: "0 3px 12px rgba(220,20,60,0.25)" }} />
     </motion.article>
   );
