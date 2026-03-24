@@ -57,7 +57,7 @@ export default function Admin() {
     requests: "Requests", history: "Property History", inventory: "Inventory",
     "staff-mgmt": "Staff Mgmt", budget: "Budget",
     checkin: "Check-in", reports: "Reports", notifications: "Notifications",
-    settings: "Settings", homepage: "Homepage Manager",
+    settings: "Settings", homepage: "Homepage Manager", telegram: "Telegram Bot",
   };
 
   const navigateTo = (target: AdminPage, ctx?: { propertyId?: string; userId?: string; bookingId?: string }) => {
