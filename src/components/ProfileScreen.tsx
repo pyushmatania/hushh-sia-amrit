@@ -35,14 +35,15 @@ const themeOptions = [
 ];
 
 const settingsMenu = [
-  { icon: Settings, label: "Account settings", settingKey: "" },
-  { icon: CreditCard, label: "Payments & payouts", settingKey: "" },
+  { icon: Settings, label: "Account settings", settingKey: "account" },
+  { icon: CreditCard, label: "Payments & payouts", settingKey: "payments" },
   { icon: Shield, label: "Login & security", settingKey: "security" },
   { icon: Shield, label: "Verify Identity", sublabel: "Upload ID", badge: "NEW", settingKey: "identity" },
   { icon: Bell, label: "Notifications", settingKey: "notifications" },
   { icon: Globe, label: "Language & region", settingKey: "language" },
   { icon: Accessibility, label: "Accessibility", settingKey: "accessibility" },
   { icon: EyeOff, label: "Privacy mode", sublabel: "🤫", settingKey: "privacy" },
+  { icon: HardDrive, label: "Storage & data", settingKey: "storage" },
   { icon: Gift, label: "Refer a friend", sublabel: "Earn ₹200", badge: "NEW", settingKey: "" },
   { icon: Star, label: "Loyalty points", sublabel: "320 pts", settingKey: "" },
   { icon: HelpCircle, label: "Help centre", settingKey: "" },
