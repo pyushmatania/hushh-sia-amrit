@@ -9,6 +9,7 @@ import SwipeableRow from "./SwipeableRow";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
 import BatchOperationsBar from "./BatchOperationsBar";
 import MultiImageEditor from "./MultiImageEditor";
+import VideoEditor from "./VideoEditor";
 
 interface PackageRow {
   id: string;
