@@ -867,7 +867,7 @@ export default function MessagesScreen() {
         )}
 
         {tab === "notifications" && (
-          <motion.div key="notifs" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="px-5 md:px-0 space-y-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-3 md:space-y-0">
+          <motion.div key="notifs" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="px-5 md:px-0 space-y-2 md:grid md:grid-cols-2 md:gap-3 md:space-y-0">
             {notifications.filter(n => !n.read && !readNotifications.has(n.id)).length > 0 && (
               <p className="text-[10px] uppercase tracking-[0.1em] font-semibold text-muted-foreground mb-1 md:col-span-full">New</p>
             )}
