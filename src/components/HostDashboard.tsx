@@ -36,7 +36,7 @@ export default function HostDashboard({
   return (
     <div className="pb-24 bg-mesh min-h-screen">
       {/* Header */}
-      <div className="px-5 pt-6 pb-4 flex items-center justify-between">
+      <div className="px-5 pt-6 pb-4 flex items-center justify-between md:px-8 lg:px-16 xl:px-24 2xl:px-32">
         <div className="flex items-center gap-3">
           <motion.button
             whileTap={{ scale: 0.9 }}
