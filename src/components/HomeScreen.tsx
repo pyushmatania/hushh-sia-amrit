@@ -380,9 +380,9 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
 
               <LazySection minHeight="400px" rootMargin="300px">
               <div className="mt-6">
-                <div className="flex items-center justify-between px-5 mb-3">
-                  <h2 className="text-lg font-bold text-foreground">🔥 All Experiences</h2>
-                  <span className="text-xs text-muted-foreground">{filteredProperties.length} found</span>
+                <div className="flex items-center justify-between px-5 mb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:mb-6">
+                  <h2 className="text-lg font-bold text-foreground md:text-xl lg:text-2xl">🔥 All Experiences</h2>
+                  <span className="text-xs text-muted-foreground md:text-sm">{filteredProperties.length} found</span>
                 </div>
                 <MixedListingFeed
                   properties={filteredProperties}
