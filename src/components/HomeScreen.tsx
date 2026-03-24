@@ -592,8 +592,16 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 </div>
               )}
 
-<MobileDiscoverySection properties={serviceProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Luxe Add-Ons" sectionEmoji="💎" offset={0} category="service" />
-              <MobileDiscoverySection properties={serviceProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Guest Favourites" sectionEmoji="⭐" offset={6} category="service" />
+{isMobile && (
+  <>
+    <LazySection minHeight="300px" rootMargin="300px">
+      <Suspense fallback={null}><MobileDiscoverySection properties={serviceProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Luxe Add-Ons" sectionEmoji="💎" offset={0} category="service" /></Suspense>
+    </LazySection>
+    <LazySection minHeight="300px" rootMargin="300px">
+      <Suspense fallback={null}><MobileDiscoverySection properties={serviceProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Guest Favourites" sectionEmoji="⭐" offset={6} category="service" /></Suspense>
+    </LazySection>
+  </>
+)}
 
               </>
               )}
