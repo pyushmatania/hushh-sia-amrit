@@ -194,16 +194,22 @@ function ThreadCard({ thread, index, onClick, onPin, onArchive }: {
 }) {
   const [swipeState, setSwipeState] = useState<"idle" | "pin" | "archive">("idle");
   const [dismissed, setDismissed] = useState(false);
-  const SWIPE_THRESHOLD = 80;
+  const SWIPE_THRESHOLD = 60;
   const dragX = useMotionValue(0);
+  const isDragging = useRef(false);
+
+  const handleDragStart = () => { isDragging.current = true; };
 
   const handleDragEnd = (_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
-    const swipedFar = Math.abs(info.offset.x) > SWIPE_THRESHOLD || Math.abs(info.velocity.x) > 600;
+    const swipedFar = Math.abs(info.offset.x) > SWIPE_THRESHOLD || Math.abs(info.velocity.x) > 500;
     if (swipedFar && info.offset.x > 0) onPin?.(thread.id);
     else if (swipedFar && info.offset.x < 0) { setDismissed(true); setTimeout(() => onArchive?.(thread.id), 300); }
     setSwipeState("idle");
     if (!(swipedFar && info.offset.x < 0)) animate(dragX, 0, { type: "spring", stiffness: 500, damping: 35 });
+    setTimeout(() => { isDragging.current = false; }, 50);
   };
+
+  const handleTap = () => { if (!isDragging.current) onClick(); };
 
   if (dismissed) return <motion.div initial={{ height: "auto", opacity: 1 }} animate={{ height: 0, opacity: 0, marginBottom: 0 }} transition={{ duration: 0.3 }} className="overflow-hidden" />;
 
@@ -228,15 +234,17 @@ function ThreadCard({ thread, index, onClick, onPin, onArchive }: {
 
       {/* Card */}
       <motion.div
-        drag="x" dragConstraints={{ left: -100, right: 100 }} dragElastic={0.08} dragMomentum={false}
+        drag="x" dragConstraints={{ left: -120, right: 120 }} dragElastic={0.12} dragMomentum={false}
+        dragDirectionLock
         style={{ x: dragX }}
+        onDragStart={handleDragStart}
         onDrag={(_, info) => {
           if (info.offset.x > SWIPE_THRESHOLD) setSwipeState("pin");
           else if (info.offset.x < -SWIPE_THRESHOLD) setSwipeState("archive");
           else setSwipeState("idle");
         }}
         onDragEnd={handleDragEnd}
-        onClick={onClick}
+        onClick={handleTap}
         className="relative z-10 bg-card rounded-2xl cursor-pointer border border-border/50 hover:border-border transition-colors"
         whileTap={{ scale: 0.985 }}
       >
