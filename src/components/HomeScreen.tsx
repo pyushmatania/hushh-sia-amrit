@@ -504,6 +504,18 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
             </>
           )}
 
+          {/* ═══════ HOME: CURATIONS & EXPERIENCES SECTION ═══════ */}
+          {activeCategory === "home" && experiencePacks.length > 0 && (
+            <LazySection minHeight="400px" rootMargin="300px">
+              <SectionTitle title="🎯 CURATED EXPERIENCES" />
+              <div className="space-y-5 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+                {experiencePacks.slice(0, 6).map((pack, i) => (
+                  <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
+                ))}
+              </div>
+            </LazySection>
+          )}
+
           {/* ═══════ ALL LISTINGS ═══════ */}
           {activeCategory !== "experience" && activeCategory !== "curation" && activeCategory !== "service" && (activeCategory !== "home" || isSectionVisible("all_listings")) && (
             <LazySection minHeight="400px" rootMargin="300px">
