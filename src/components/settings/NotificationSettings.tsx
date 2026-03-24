@@ -216,9 +216,9 @@ export default function NotificationSettings() {
   // Send all test pushes
   const sendAllPushNotifications = async () => {
     setIsSendingTest("all");
-    for (const n of PUSH_TEST_NOTIFICATIONS) {
-      await sendPushNotification(n);
-      await new Promise(r => setTimeout(r, 800));
+    for (let i = 0; i < PUSH_TEST_NOTIFICATIONS.length; i++) {
+      if (i > 0) await new Promise(r => setTimeout(r, (pushTimer || 5) * 1000));
+      await sendPushNotification(PUSH_TEST_NOTIFICATIONS[i]);
     }
     setIsSendingTest(null);
   };
