@@ -78,7 +78,7 @@ const VideoCard = memo(function VideoCard({
   const [muted, setMuted] = useState(true);
   const saved = isSaved ?? false;
   const [videoReady, setVideoReady] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(!!isFirst);
 
   useEffect(() => {
     const card = cardRef.current;

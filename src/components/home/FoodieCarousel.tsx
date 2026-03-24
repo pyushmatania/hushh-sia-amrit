@@ -40,7 +40,7 @@ const FoodieVideoCard = memo(function FoodieVideoCard({
   const cardRef = useRef<HTMLDivElement>(null);
   const [muted, setMuted] = useState(true);
   const [videoReady, setVideoReady] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(!!isFirst);
 
   useEffect(() => {
     const card = cardRef.current;
