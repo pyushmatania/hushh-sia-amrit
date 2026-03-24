@@ -500,9 +500,11 @@ export function OscarThemedListing({ properties, onPropertyTap, wishlist, onTogg
               {/* Swipeable single card */}
               <div
                 className="overflow-hidden"
+                style={{ touchAction: "pan-y" }}
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
+                onClickCapture={(e) => { if (swipeHandled.current) { e.stopPropagation(); e.preventDefault(); } }}
               >
                 <AnimatePresence mode="wait">
                   <motion.div
