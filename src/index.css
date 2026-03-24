@@ -323,6 +323,13 @@
 .animate-pulse-glow {
   animation: pulseGlow 2s ease-in-out infinite;
 }
+.light .animate-pulse-glow {
+  animation: pulseGlowLight 2s ease-in-out infinite;
+}
+@keyframes pulseGlowLight {
+  0%, 100% { box-shadow: 0 4px 12px -3px hsla(270, 60%, 50%, 0.12); }
+  50% { box-shadow: 0 4px 20px -3px hsla(270, 60%, 50%, 0.25); }
+}
 
 /* GPU-accelerated smooth scrolling for main page */
 .smooth-main-scroll {
