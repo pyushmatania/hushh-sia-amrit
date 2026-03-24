@@ -584,24 +584,8 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                     ))}
                   </div>
 
-                  {/* Animated shimmer sweep across name */}
-                  {phase >= 3 && (
-                    <motion.div
-                      className="absolute pointer-events-none"
-                      style={{
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        background: "linear-gradient(105deg, transparent 30%, hsla(0,0%,100%,0.25) 45%, hsla(270,80%,80%,0.3) 50%, hsla(0,0%,100%,0.25) 55%, transparent 70%)",
-                        backgroundSize: "300% 100%",
-                        mixBlendMode: "overlay",
-                      }}
-                      initial={{ backgroundPosition: "200% 0" }}
-                      animate={{ backgroundPosition: ["-100% 0", "200% 0"] }}
-                      transition={{ delay: 0.8, duration: 1.5, ease: "easeInOut" }}
-                    />
-                  )}
+
+
                 </div>
               )}
 
