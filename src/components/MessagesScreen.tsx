@@ -632,6 +632,7 @@ export default function MessagesScreen() {
   const [showSearch, setShowSearch] = useState(false);
   const [pinnedIds, setPinnedIds] = useState<Set<string>>(new Set(["c1"]));
   const [archivedIds, setArchivedIds] = useState<Set<string>>(new Set());
+  const [showArchived, setShowArchived] = useState(false);
 
   const dynamicMockThreads = useMemo(() => mockThreads.map(t => t.id === "c1" ? { ...t, name: `${brandName} Concierge` } : t), [brandName]);
 
