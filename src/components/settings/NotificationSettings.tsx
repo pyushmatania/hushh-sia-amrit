@@ -437,7 +437,7 @@ export default function NotificationSettings() {
         </div>
 
         {!isSubscribed && (
-          <p className="text-[10px] text-destructive font-semibold text-center">⚠ Enable push notifications above first</p>
+          <p className="text-[10px] text-muted-foreground text-center">💡 Enable push above for real iOS notifications. In-app toasts work without it.</p>
         )}
       </div>
 
