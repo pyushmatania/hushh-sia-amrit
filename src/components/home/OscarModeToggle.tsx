@@ -1,8 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Crown, ArrowRight, Heart, Gem } from "lucide-react";
+import { Crown, ArrowRight, ArrowLeft, Heart, Gem, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Property } from "@/data/properties";
 import { hapticSelection } from "@/lib/haptics";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 import oscarTrophy from "@/assets/oscar-trophy-3d.png";
 import oscarCrown from "@/assets/oscar-crown-3d.png";
