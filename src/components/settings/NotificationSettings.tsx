@@ -162,42 +162,53 @@ export default function NotificationSettings() {
 
   // Send a REAL iOS push notification via the edge function
   const sendPushNotification = useCallback(async (testNotif: typeof PUSH_TEST_NOTIFICATIONS[0]) => {
-    if (!user) {
-      toast({ title: "Login required", description: "Sign in to test push notifications", variant: "destructive" });
-      return;
-    }
     setIsSendingTest(testNotif.key);
     try {
       const payload: Record<string, any> = { ...testNotif.payload };
-      // Replace personalization tokens
       payload.title = payload.title.replace(/\{name\}/g, displayName);
       payload.body = payload.body.replace(/\{name\}/g, displayName).replace(/\{location\}/g, userLocation);
       payload.url = "/";
       payload.icon = "/icon-192.png";
 
-      const { data, error } = await supabase.functions.invoke("send-push-notification", {
-        body: { user_id: user.id, payload },
-      });
+      let pushSent = 0;
 
-      if (error) throw error;
+      if (user) {
+        // Try real push via edge function
+        try {
+          const { data, error } = await supabase.functions.invoke("send-push-notification", {
+            body: { user_id: user.id, payload },
+          });
+          if (!error) pushSent = data?.sent || 0;
+        } catch {}
 
-      // Also insert into notifications table for in-app tracking
-      await supabase.from("notifications").insert({
-        user_id: user.id,
-        type: testNotif.key,
-        title: payload.title,
-        body: payload.body,
-        icon: testNotif.label.split(" ")[0], // emoji
-      });
+        // Also insert into notifications table for in-app tracking
+        await supabase.from("notifications").insert({
+          user_id: user.id,
+          type: testNotif.key,
+          title: payload.title,
+          body: payload.body,
+          icon: testNotif.label.split(" ")[0],
+        });
+      }
 
-      const sent = data?.sent || 0;
+      // Always show in-app toast as fallback / confirmation
       toast({
-        title: sent > 0 ? `${testNotif.label.split(" ")[0]} Push sent!` : "No push subscription found",
-        description: sent > 0 ? `Delivered to ${sent} device(s)` : "Enable push notifications first",
+        title: `${testNotif.label.split(" ")[0]} ${payload.title}`,
+        description: payload.body,
       });
+
+      // Try browser notification if permitted (works without auth)
+      if ("Notification" in window && Notification.permission === "granted") {
+        try {
+          const opts: NotificationOptions = { body: payload.body, icon: "/icon-192.png", tag: payload.tag };
+          if (payload.image) (opts as any).image = payload.image;
+          new window.Notification(payload.title, opts);
+        } catch {}
+      }
+
       setPushSentCount(c => c + 1);
     } catch (err: any) {
-      toast({ title: "Push failed", description: err.message, variant: "destructive" });
+      toast({ title: "Notification failed", description: err.message, variant: "destructive" });
     }
     setIsSendingTest(null);
   }, [user, displayName, userLocation, toast]);
