@@ -3,15 +3,12 @@ import LazySection from "./home/LazySection";
 import { Bell, MapPin, ArrowRight } from "lucide-react";
 import { hapticSelection } from "@/lib/haptics";
 import CategoryBar from "./CategoryBar";
-import PropertyCard from "./PropertyCard";
-import PropertyCardSmall from "./PropertyCardSmall";
-import MixedListingFeed from "./home/MixedListingFeed";
 import PackageCard from "./PackageCard";
 import { type Property } from "@/data/properties";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
 import CuratedPackCard, { tonightTags, type ExperiencePack } from "./home/CuratedPackCard";
 import CuratedPackListing from "./home/CuratedPackListing";
-import { useState, useMemo, useCallback, useRef, type ReactNode } from "react";
+import { useState, useMemo, useCallback, useRef, type ReactNode, lazy, Suspense } from "react";
 import { useCurations } from "@/hooks/use-curations";
 import { useNotifications } from "@/hooks/use-notifications";
 import { useHomepageSections } from "@/hooks/use-homepage-sections";
@@ -21,16 +18,20 @@ import ErrorBoundary from "@/components/shared/ErrorBoundary";
 import profileAvatar from "@/assets/profile-avatar.webp";
 
 import RotatingSearchBar from "./home/RotatingSearchBar";
-import SpotlightCarousel from "./home/SpotlightCarousel";
-import FoodieCarousel from "./home/FoodieCarousel";
-import ServiceGrid from "./home/ServiceGrid";
-import CurationGrid from "./home/CurationGrid";
 import ActiveTripCard from "./home/ActiveTripCard";
 import { OscarToggle, OscarThemedListing } from "./home/OscarModeToggle";
 import { MobilePropertyGrid } from "./home/MobileCompactGrid";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { lazy, Suspense } from "react";
+
+// Lazy-load heavy components that import video assets to reduce initial bundle
+const SpotlightCarousel = lazy(() => import("./home/SpotlightCarousel"));
+const FoodieCarousel = lazy(() => import("./home/FoodieCarousel"));
+const MixedListingFeed = lazy(() => import("./home/MixedListingFeed"));
+const ServiceGrid = lazy(() => import("./home/ServiceGrid"));
+const CurationGrid = lazy(() => import("./home/CurationGrid"));
 const MobileDiscoverySection = lazy(() => import("./home/MobileDiscoverySection"));
+const PropertyCard = lazy(() => import("./PropertyCard"));
+const PropertyCardSmall = lazy(() => import("./PropertyCardSmall"));
 
 /** Wraps a home feed section so a crash in one section doesn't kill the whole feed */
 function SectionBoundary({ children, name }: { children: ReactNode; name: string }) {
