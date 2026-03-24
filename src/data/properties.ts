@@ -1462,7 +1462,7 @@ export const curatedCombos: CuratedCombo[] = [
     time: "7 PM – 11 PM",
     priceRange: [799, 1499],
     includes: ["PS5 console 🎮", "Board games 🎲", "Snacks 🍕", "Drinks 🥤", "Score tracking"],
-    image: listingKaraokeCube,
+    image: curationGameNight,
     gradient: "from-green-600/80 to-emerald-900/60",
     tags: ["🎮 Gaming", "🎉 Fun"],
   },
