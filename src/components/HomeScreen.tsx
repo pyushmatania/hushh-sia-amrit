@@ -587,12 +587,60 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
             </>
           )}
 
-          {/* ═══════ HOME: CURATIONS & EXPERIENCES SECTION ═══════ */}
+          {/* ═══════ HOME: CURATIONS DISCOVERY ═══════ */}
+          {activeCategory === "home" && curatedCombos.length > 0 && (
+            <LazySection minHeight="300px" rootMargin="300px">
+              <SectionTitle title="🎨 POPULAR CURATIONS" />
+              {isMobile ? (
+                <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar px-4 pb-2" style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}>
+                  {curatedCombos.slice(0, 10).map((combo) => (
+                    <div key={combo.id} className="snap-start shrink-0 w-[70vw]">
+                      <div className="relative aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer active:scale-[0.97] transition-transform" onClick={() => onPropertyTap(comboToProperty(combo))}>
+                        <img src={combo.image} alt={combo.name} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                        <div className={`absolute inset-0 bg-gradient-to-t ${combo.gradient} to-transparent opacity-40`} />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+                        {combo.popular && <span className="absolute top-3 left-3 text-[8px] font-bold px-2 py-1 rounded-full bg-primary text-primary-foreground">🔥 HOT</span>}
+                        <div className="absolute bottom-0 left-0 right-0 p-4">
+                          <span className="text-lg">{combo.emoji}</span>
+                          <h4 className="text-sm font-bold text-white leading-tight mt-1">{combo.name}</h4>
+                          <p className="text-[10px] text-white/60 mt-1 line-clamp-1" style={{ fontFamily: "'Playfair Display', serif" }}>{combo.tagline}</p>
+                          <div className="flex items-center justify-between mt-2">
+                            <span className="text-[10px] text-white/50">{combo.time}</span>
+                            <span className="text-sm font-bold text-white">₹{combo.priceRange[0].toLocaleString()}+</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 md:gap-6 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+                  {curatedCombos.slice(0, 10).map((combo) => (
+                    <div key={combo.id} className="relative aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer group" onClick={() => onPropertyTap(comboToProperty(combo))}>
+                      <img src={combo.image} alt={combo.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+                      {combo.popular && <span className="absolute top-3 left-3 text-[8px] font-bold px-2 py-1 rounded-full bg-primary text-primary-foreground">🔥 HOT</span>}
+                      <div className="absolute bottom-0 left-0 right-0 p-4">
+                        <span className="text-lg">{combo.emoji}</span>
+                        <h4 className="text-sm font-bold text-white leading-tight mt-1">{combo.name}</h4>
+                        <div className="flex items-center justify-between mt-2">
+                          <span className="text-xs text-white/50">{combo.time}</span>
+                          <span className="text-sm font-bold text-white">₹{combo.priceRange[0].toLocaleString()}+</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </LazySection>
+          )}
+
+          {/* ═══════ HOME: CURATED EXPERIENCES ═══════ */}
           {activeCategory === "home" && experiencePacks.length > 0 && (
             <LazySection minHeight="400px" rootMargin="300px">
               <SectionTitle title="🎯 CURATED EXPERIENCES" />
               <div className={isMobile ? "flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar px-4 pb-2" : "space-y-5 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0 md:px-8 lg:px-16 xl:px-24 2xl:px-32"} style={isMobile ? { WebkitOverflowScrolling: "touch", scrollbarWidth: "none" } : undefined}>
-                {experiencePacks.slice(0, 6).map((pack, i) => (
+                {experiencePacks.slice(0, 12).map((pack, i) => (
                   isMobile ? (
                     <div key={pack.id} className="snap-start shrink-0 w-[85vw]">
                       <CuratedPackListing pack={pack} index={i} onTap={handlePackTap} />
