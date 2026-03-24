@@ -119,7 +119,7 @@ export default function AdminCoupons() {
           <p className="text-zinc-400 text-xs mt-1">Create discount codes for your guests</p>
         </motion.div>
       ) : (
-        <div className="space-y-2.5">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2.5">
           {coupons.map((c, i) => (
             <motion.div key={c.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03 }}
