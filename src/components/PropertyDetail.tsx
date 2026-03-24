@@ -571,7 +571,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
       className="fixed inset-0 z-30 bg-mesh overflow-y-auto pb-28 md:pb-8"
     >
       {/* Hero — Mobile Cinematic */}
-      <div className="relative aspect-[3/4] overflow-hidden md:hidden">
+      <div className="relative aspect-[4/3] overflow-hidden md:hidden">
         {/* Skeleton loader */}
         {!imgLoaded && (
           <div className="absolute inset-0 bg-secondary">
@@ -591,14 +591,26 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
           dragElastic={0.15}
           onDragEnd={handleHeroDragEnd}
           onLoad={() => setImgLoaded(true)}
-          initial={{ opacity: 0, scale: 1.06 }}
+          initial={{ opacity: 0, scale: 1.04 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
         />
 
-        {/* Cinematic gradient overlay — bottom fade */}
+        {/* Cinematic gradient overlay — bottom fade + vignette */}
         <div className="absolute inset-0 pointer-events-none" style={{
-          background: "linear-gradient(0deg, hsl(var(--background)) 0%, hsl(var(--background) / 0.7) 15%, transparent 45%, transparent 70%, hsl(var(--background) / 0.3) 100%)",
+          background: "linear-gradient(0deg, hsl(var(--background)) 0%, hsl(var(--background) / 0.6) 12%, transparent 40%)",
+        }} />
+        {/* Top vignette */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: "linear-gradient(180deg, hsl(var(--background) / 0.4) 0%, transparent 25%)",
+        }} />
+        {/* Side vignette for depth */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: "radial-gradient(ellipse at center, transparent 50%, hsl(var(--background) / 0.3) 100%)",
+        }} />
+        {/* Subtle primary glow at bottom */}
+        <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none" style={{
+          background: "linear-gradient(0deg, hsla(270, 80%, 65%, 0.08) 0%, transparent 100%)",
         }} />
 
         {/* Top bar — back + actions */}
@@ -616,19 +628,19 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
           </div>
         </div>
 
-        {/* Bottom content overlay — property name + meta */}
-        <div className="absolute bottom-0 left-0 right-0 px-5 pb-5 z-10">
-          {/* Tags */}
-          {property.tags.length > 0 && (
-            <div className="flex gap-2 mb-3">
-              {property.tags.map((tag) => (
-                <span key={tag} className="text-[11px] font-semibold glass px-3 py-1.5 rounded-full text-foreground">{tag}</span>
-              ))}
-            </div>
-          )}
+        {/* Category badge — top left */}
+        {categoryLabels[property.category] && (
+          <div className="absolute top-16 left-4 z-10">
+            <span className={`text-[10px] font-bold tracking-wider px-3 py-1 rounded-full border backdrop-blur-md ${categoryLabels[property.category].bg}`}>
+              {categoryLabels[property.category].emoji} {categoryLabels[property.category].label}
+            </span>
+          </div>
+        )}
 
+        {/* Bottom content overlay — dots + count */}
+        <div className="absolute bottom-0 left-0 right-0 px-5 pb-4 z-10 flex items-end justify-between">
           {/* Dots indicator */}
-          <div className="flex gap-1.5 mb-3">
+          <div className="flex gap-1.5">
             {property.images.map((_, i) => (
               <motion.button
                 key={i}
@@ -643,12 +655,12 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
               />
             ))}
           </div>
-        </div>
 
-        {/* Image count badge */}
-        <div className="absolute bottom-5 right-5 z-10 glass rounded-full px-2.5 py-1 flex items-center gap-1.5">
-          <Camera size={11} className="text-foreground/70" />
-          <span className="text-[10px] font-medium text-foreground/80">{imgIndex + 1}/{property.images.length}</span>
+          {/* Image count badge */}
+          <div className="glass rounded-full px-2.5 py-1 flex items-center gap-1.5">
+            <Camera size={11} className="text-foreground/70" />
+            <span className="text-[10px] font-medium text-foreground/80">{imgIndex + 1}/{property.images.length}</span>
+          </div>
         </div>
       </div>
 
