@@ -265,11 +265,21 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 homeSections.push({ key: "curated_packs", order: getSortOrder("curated_packs"), node: (
                   <LazySection minHeight="400px">
               <SectionTitle title="✨ CURATED PACKS" />
-                    <div className="space-y-5 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
-                      {filteredPacks.slice(0, 6).map((pack, i) => (
-                        <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
-                      ))}
-                    </div>
+                    {isMobile ? (
+                      <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar px-4 pb-2" style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}>
+                        {filteredPacks.slice(0, 6).map((pack, i) => (
+                          <div key={pack.id} className="snap-start shrink-0 w-[85vw]">
+                            <CuratedPackListing pack={pack} index={i} onTap={handlePackTap} />
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+                        {filteredPacks.slice(0, 6).map((pack, i) => (
+                          <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
+                        ))}
+                      </div>
+                    )}
                   </LazySection>
                 )});
               }
@@ -545,9 +555,15 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               )}
 
               <SectionTitle title="✨ EXPERIENCE PACKS" />
-              <div className="space-y-5 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
-                {experiencePacks.map((pack, i) => (
-                  <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
+              <div className={isMobile ? "flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar px-4 pb-2" : "space-y-5 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0 md:px-8 lg:px-16 xl:px-24 2xl:px-32"} style={isMobile ? { WebkitOverflowScrolling: "touch", scrollbarWidth: "none" } : undefined}>
+                {experiencePacks.slice(0, isMobile ? 6 : experiencePacks.length).map((pack, i) => (
+                  isMobile ? (
+                    <div key={pack.id} className="snap-start shrink-0 w-[85vw]">
+                      <CuratedPackListing pack={pack} index={i} onTap={handlePackTap} />
+                    </div>
+                  ) : (
+                    <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
+                  )
                 ))}
               </div>
 
@@ -567,9 +583,15 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
           {activeCategory === "home" && experiencePacks.length > 0 && (
             <LazySection minHeight="400px" rootMargin="300px">
               <SectionTitle title="🎯 CURATED EXPERIENCES" />
-              <div className="space-y-5 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+              <div className={isMobile ? "flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar px-4 pb-2" : "space-y-5 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0 md:px-8 lg:px-16 xl:px-24 2xl:px-32"} style={isMobile ? { WebkitOverflowScrolling: "touch", scrollbarWidth: "none" } : undefined}>
                 {experiencePacks.slice(0, 6).map((pack, i) => (
-                  <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
+                  isMobile ? (
+                    <div key={pack.id} className="snap-start shrink-0 w-[85vw]">
+                      <CuratedPackListing pack={pack} index={i} onTap={handlePackTap} />
+                    </div>
+                  ) : (
+                    <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
+                  )
                 ))}
               </div>
             </LazySection>
