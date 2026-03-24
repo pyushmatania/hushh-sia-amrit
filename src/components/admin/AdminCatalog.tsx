@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Building2, Sparkles, UtensilsCrossed, Wrench, Package, Gift, TrendingUp, AlertTriangle, RefreshCw, Clock } from "lucide-react";
+import { Building2, Sparkles, UtensilsCrossed, Wrench, Package, Gift, TrendingUp, AlertTriangle, RefreshCw, Clock, History } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import AdminProperties from "./AdminProperties";
 import AdminCurations from "./AdminCurations";
 import AdminInventory from "./AdminInventory";
 import AdminExperiencePackages from "./AdminExperiencePackages";
+import RevisionHistoryPanel from "./RevisionHistoryPanel";
 
 const tabs = [
   { id: "properties", label: "Properties", icon: Building2, color: "from-indigo-500 to-violet-500", badge: "bg-indigo-500/15 text-indigo-600 dark:text-indigo-400" },
@@ -13,6 +14,7 @@ const tabs = [
   { id: "curations", label: "Curated", icon: Sparkles, color: "from-amber-500 to-orange-500", badge: "bg-amber-500/15 text-amber-600 dark:text-amber-400" },
   { id: "food", label: "Food", icon: UtensilsCrossed, color: "from-emerald-500 to-teal-500", badge: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" },
   { id: "addons", label: "Add-ons", icon: Wrench, color: "from-sky-500 to-blue-500", badge: "bg-sky-500/15 text-sky-600 dark:text-sky-400" },
+  { id: "history", label: "History", icon: History, color: "from-violet-500 to-purple-500", badge: "bg-violet-500/15 text-violet-600 dark:text-violet-400" },
 ] as const;
 
 type TabId = typeof tabs[number]["id"];
@@ -235,6 +237,7 @@ export default function AdminCatalog() {
           {activeTab === "curations" && <AdminCurations />}
           {activeTab === "food" && <AdminInventory filterCategory="food-drinks" />}
           {activeTab === "addons" && <AdminInventory filterCategory="addons" />}
+          {activeTab === "history" && <RevisionHistoryPanel />}
         </motion.div>
       </AnimatePresence>
     </div>
