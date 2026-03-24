@@ -653,9 +653,9 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                       letterSpacing: "0.22em",
                       textTransform: "uppercase",
                       fontWeight: 600,
-                      color: "hsla(0,0%,100%,0.6)",
+                      color: config.taglineColor,
                       fontFamily: "'Space Grotesk', sans-serif",
-                      textShadow: "0 0 12px hsla(270,80%,65%,0.4), 0 1px 6px hsla(0,0%,0%,0.5)",
+                      textShadow: config.taglineGlow,
                     }}
                     initial={{ y: 20, opacity: 0, filter: "blur(4px)" }}
                     animate={phase >= 3 ? { y: 0, opacity: 1, filter: "blur(0px)" } : { y: 20, opacity: 0 }}
