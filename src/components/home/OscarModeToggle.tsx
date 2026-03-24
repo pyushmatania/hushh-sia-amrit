@@ -466,24 +466,72 @@ export function OscarThemedListing({ properties, onPropertyTap, wishlist, onTogg
             </div>
           </motion.div>
 
-          {/* Mobile: Horizontal swipeable row */}
+          {/* Mobile: Single big card with swipe */}
           {isMobile ? (
             <div className="relative">
+              {/* Total count badge */}
+              <div className="flex justify-center mb-4">
+                <div className="flex items-center gap-2 px-4 py-1.5 rounded-full"
+                  style={{ background: "rgba(30,10,0,0.7)", border: "1px solid rgba(255,215,0,0.3)", backdropFilter: "blur(8px)" }}>
+                  <img src={oscarTrophy} alt="" className="w-4 h-4 object-contain" />
+                  <span className="text-[11px] font-bold tracking-wide" style={{ color: "#FFD700" }}>
+                    {currentIndex + 1} of {premiumPicks.length} Premium Picks
+                  </span>
+                  <img src={oscarStar} alt="" className="w-3 h-3 object-contain" />
+                </div>
+              </div>
+
+              {/* Swipeable single card */}
               <div
-                ref={scrollRef}
-                className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4 -mx-5 px-5"
-                style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none" }}
+                className="overflow-hidden"
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
               >
-                {premiumPicks.map((p, i) => (
-                  <div key={p.id} className="snap-start shrink-0" style={{ width: "calc(33.333% - 8px)", minWidth: "120px" }}>
-                    <OscarPropertyCard property={p} onTap={onPropertyTap} index={i}
-                      isWL={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
-                  </div>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={premiumPicks[currentIndex].id}
+                    initial={{ opacity: 0, x: 80, scale: 0.95 }}
+                    animate={{ opacity: 1, x: 0, scale: 1 }}
+                    exit={{ opacity: 0, x: -80, scale: 0.95 }}
+                    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <OscarPropertyCard
+                      property={premiumPicks[currentIndex]}
+                      onTap={onPropertyTap}
+                      index={currentIndex}
+                      isWL={wishlist.includes(premiumPicks[currentIndex].id)}
+                      onToggleWishlist={onToggleWishlist}
+                      isSingle
+                    />
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Dot indicators */}
+              <div className="flex justify-center gap-2 mt-4">
+                {premiumPicks.map((_, i) => (
+                  <button key={i} onClick={() => { setCurrentIndex(i); hapticSelection(); }}
+                    className="rounded-full transition-all duration-300"
+                    style={{
+                      width: i === currentIndex ? 24 : 8,
+                      height: 8,
+                      background: i === currentIndex
+                        ? "linear-gradient(90deg, #FFD700, #DAA520)"
+                        : "rgba(255,215,0,0.2)",
+                      boxShadow: i === currentIndex ? "0 0 10px rgba(255,215,0,0.4)" : "none",
+                    }}
+                  />
                 ))}
               </div>
-              {/* Scroll hint gradient */}
-              <div className="absolute right-0 top-0 bottom-4 w-8 pointer-events-none z-10"
-                style={{ background: "linear-gradient(270deg, rgba(10,2,2,0.9), transparent)" }} />
+
+              {/* Swipe hint */}
+              <motion.p className="text-center mt-3 text-[10px] font-medium tracking-wide"
+                style={{ color: "rgba(255,228,181,0.3)" }}
+                animate={{ opacity: [0.3, 0.6, 0.3] }}
+                transition={{ duration: 2, repeat: Infinity }}>
+                ← SWIPE TO EXPLORE →
+              </motion.p>
             </div>
           ) : (
             /* Desktop: Grid with arrow navigation */
