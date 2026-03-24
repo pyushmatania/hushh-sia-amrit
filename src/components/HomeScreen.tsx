@@ -362,6 +362,11 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                   Unforgettable moments, handpicked for you
                 </p>
               </div>
+              <OscarToggle isOn={oscarMode} onToggle={() => setOscarMode(!oscarMode)} />
+              {oscarMode ? (
+                <OscarThemedListing properties={experienceProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
+              ) : (
+              <>
               <SpotlightCarousel properties={experienceProperties} onPropertyTap={onPropertyTap} category="experience" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
 
               <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar md:justify-center md:flex-wrap md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-3">
