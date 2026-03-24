@@ -316,15 +316,19 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
       )}
 
       {/* ━━ BUDGET ━━ */}
-      <SectionHeader icon={Sparkles} title="💸 Budget Combos" subtitle="Starting under ₹999" accent="hsl(160 80% 40% / 0.15)" />
-      {isMobile ? (
-        <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2" style={{ WebkitOverflowScrolling: "touch" }}>
-          {budget.map((c, i) => <MobileNeonCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
-        </div>
-      ) : (
-        <div className="grid grid-cols-4 gap-5">
-          {budget.map((c, i) => <DesktopCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
-        </div>
+      {budget.length > 0 && (
+        <>
+          <SectionHeader icon={Sparkles} title="💰 Value Deals" subtitle="Best bang for your buck" accent="hsl(160 80% 40% / 0.15)" />
+          {isMobile ? (
+            <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2" style={{ WebkitOverflowScrolling: "touch" }}>
+              {budget.map((c, i) => <MobilePrismCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
+            </div>
+          ) : (
+            <div className="grid grid-cols-4 gap-5">
+              {budget.map((c, i) => <DesktopCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
+            </div>
+          )}
+        </>
       )}
 
       {/* ━━ MUST TRY ━━ */}

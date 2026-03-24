@@ -28,6 +28,7 @@ import CurationGrid from "./home/CurationGrid";
 import ActiveTripCard from "./home/ActiveTripCard";
 import { OscarToggle, OscarThemedListing } from "./home/OscarModeToggle";
 import { MobilePropertyGrid } from "./home/MobileCompactGrid";
+import MobileDiscoverySection from "./home/MobileDiscoverySection";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 /** Wraps a home feed section so a crash in one section doesn't kill the whole feed */
@@ -318,6 +319,32 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                     />
                   </LazySection>
                 )});
+                homeSections.push({ key: "discovery_1", order: getSortOrder("curated_packs") + 2, node: (
+                  <LazySection minHeight="300px" rootMargin="300px">
+                    <MobileDiscoverySection
+                      properties={properties}
+                      onPropertyTap={onPropertyTap}
+                      wishlist={wishlist}
+                      onToggleWishlist={onToggleWishlist}
+                      sectionTitle="Staff Picks"
+                      sectionEmoji="🎬"
+                      offset={0}
+                    />
+                  </LazySection>
+                )});
+                homeSections.push({ key: "discovery_2", order: getSortOrder("curated_packs") + 3, node: (
+                  <LazySection minHeight="300px" rootMargin="300px">
+                    <MobileDiscoverySection
+                      properties={properties}
+                      onPropertyTap={onPropertyTap}
+                      wishlist={wishlist}
+                      onToggleWishlist={onToggleWishlist}
+                      sectionTitle="Hidden Gems"
+                      sectionEmoji="💎"
+                      offset={10}
+                    />
+                  </LazySection>
+                )});
               }
 
               homeSections.sort((a, b) => a.order - b.order);
@@ -360,6 +387,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               </div>
 
               {isMobile ? (
+                <>
                 <div className="mt-4">
                   <div className="flex items-center justify-between px-4 mb-3">
                     <h2 className="text-base font-bold text-foreground">🏡 Featured Stays</h2>
@@ -372,6 +400,9 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                     onToggleWishlist={onToggleWishlist}
                   />
                 </div>
+                <MobileDiscoverySection properties={stayProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Cozy Retreats" sectionEmoji="🌿" offset={0} />
+                <MobileDiscoverySection properties={stayProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Weekend Escapes" sectionEmoji="🏖️" offset={5} />
+                </>
               ) : (
               <>
               {trendingNow.length > 0 && (
@@ -471,6 +502,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
 
               <LazySection minHeight="400px" rootMargin="300px">
               {isMobile ? (
+                <>
                 <div className="mt-4">
                   <div className="flex items-center justify-between px-4 mb-3">
                     <h2 className="text-base font-bold text-foreground">🔥 All Experiences</h2>
@@ -483,6 +515,9 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                     onToggleWishlist={onToggleWishlist}
                   />
                 </div>
+                <MobileDiscoverySection properties={experienceProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Adrenaline Rush" sectionEmoji="⚡" offset={0} />
+                <MobileDiscoverySection properties={experienceProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Cultural Treasures" sectionEmoji="🏛️" offset={7} />
+                </>
               ) : (
               <div className="mt-6">
                 <div className="flex items-center justify-between px-5 mb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:mb-6">
@@ -554,6 +589,9 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 </div>
               )}
 
+              <MobileDiscoverySection properties={serviceProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Luxe Add-Ons" sectionEmoji="💎" offset={0} />
+              <MobileDiscoverySection properties={serviceProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Guest Favourites" sectionEmoji="⭐" offset={6} />
+
               </>
               )}
             </>
@@ -601,6 +639,9 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                   <button onClick={() => handleSubFilter("All")} className="text-xs text-primary mt-2 font-medium">Show all combos</button>
                 </div>
               )}
+
+              <MobileDiscoverySection properties={properties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Local Legends" sectionEmoji="🌟" offset={2} />
+              <MobileDiscoverySection properties={properties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Signature Bundles" sectionEmoji="🎁" offset={12} />
 
               <SectionTitle title="✨ EXPERIENCE PACKS" />
               <div className={isMobile ? "flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar px-4 pb-2" : "space-y-5 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0 md:px-8 lg:px-16 xl:px-24 2xl:px-32"} style={isMobile ? { WebkitOverflowScrolling: "touch", scrollbarWidth: "none" } : undefined}>

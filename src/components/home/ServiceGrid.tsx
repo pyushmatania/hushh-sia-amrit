@@ -324,7 +324,7 @@ export default function ServiceGrid({ services, onServiceTap }: ServiceGridProps
       {/* ━━ POPULAR PICKS ━━ */}
       {popular.length > 0 && (
         <>
-          <SectionHeader icon={Crown} title="👑 Popular Picks" subtitle="Guest favorites" accent="hsl(280 70% 50% / 0.15)" />
+          <SectionHeader icon={Crown} title="✨ New Arrivals" subtitle="Just added this week" accent="hsl(280 70% 50% / 0.15)" />
           {isMobile ? (
             <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2" style={{ WebkitOverflowScrolling: "touch" }}>
               {popular.slice(0, 6).map((s, i) => <MobileHoloCard key={s.id} service={s} onTap={onServiceTap} index={i} />)}
