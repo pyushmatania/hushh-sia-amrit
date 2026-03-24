@@ -828,6 +828,45 @@ export type Database = {
           },
         ]
       }
+      listing_revisions: {
+        Row: {
+          change_type: string
+          changed_by: string | null
+          changed_by_name: string
+          changes: Json
+          created_at: string
+          entity_id: string
+          entity_name: string
+          entity_type: string
+          id: string
+          snapshot: Json
+        }
+        Insert: {
+          change_type?: string
+          changed_by?: string | null
+          changed_by_name?: string
+          changes?: Json
+          created_at?: string
+          entity_id: string
+          entity_name?: string
+          entity_type?: string
+          id?: string
+          snapshot?: Json
+        }
+        Update: {
+          change_type?: string
+          changed_by?: string | null
+          changed_by_name?: string
+          changes?: Json
+          created_at?: string
+          entity_id?: string
+          entity_name?: string
+          entity_type?: string
+          id?: string
+          snapshot?: Json
+        }
+        Relationships: []
+      }
       loyalty_transactions: {
         Row: {
           created_at: string
