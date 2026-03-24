@@ -100,19 +100,20 @@ function XpRing({ level, color, revealed }: { level: number; color: string; reve
   );
 }
 
-/* Sci-fi data stream particles */
+/* Sci-fi data stream particles — reduced count for perf */
 function DataStreamParticles({ color, active }: { color: string; active: boolean }) {
-  const particles = Array.from({ length: 30 }, (_, i) => ({
+  if (!active) return null;
+  const particles = Array.from({ length: 12 }, (_, i) => ({
     id: i,
-    left: `${2 + (i * 3.3) % 96}%`,
-    delay: `${i * 0.12}s`,
-    duration: `${0.8 + (i % 4) * 0.3}s`,
-    size: 1 + (i % 3),
+    left: `${2 + (i * 8.3) % 96}%`,
+    delay: `${i * 0.18}s`,
+    duration: `${0.8 + (i % 3) * 0.4}s`,
+    size: 1.5 + (i % 3),
     isSquare: i % 4 === 0,
   }));
 
   return (
-    <div className="absolute inset-0 pointer-events-none z-30 overflow-hidden" style={{ opacity: active ? 1 : 0, transition: "opacity 0.3s" }}>
+    <div className="absolute inset-0 pointer-events-none z-30 overflow-hidden">
       {particles.map((p) => (
         <div
           key={p.id}
@@ -123,8 +124,8 @@ function DataStreamParticles({ color, active }: { color: string; active: boolean
             width: `${p.size}px`,
             height: `${p.isSquare ? p.size * 3 : p.size}px`,
             background: p.isSquare ? `linear-gradient(to top, ${color}, transparent)` : color,
-            boxShadow: `0 0 ${p.size * 3}px ${color}, 0 0 ${p.size * 6}px ${color}50`,
-            animation: active ? `floatUp ${p.duration} ${p.delay} ease-out infinite` : "none",
+            boxShadow: `0 0 ${p.size * 3}px ${color}`,
+            animation: `floatUp ${p.duration} ${p.delay} ease-out infinite`,
           }}
         />
       ))}
