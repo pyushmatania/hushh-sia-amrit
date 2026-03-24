@@ -473,9 +473,9 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
             className="absolute inset-0 top-[max(100px,calc(env(safe-area-inset-top)+90px))] z-[999] bg-background/95 backdrop-blur-xl rounded-t-3xl border-t border-border overflow-hidden"
           >
-            <div className="px-4 pt-3 pb-2 space-y-2">
+            <div className="px-4 pt-3 pb-2 space-y-2 md:px-8">
               <div className="flex items-center justify-between">
-                <h2 className="text-sm font-bold text-foreground">{filteredProperties.length} Results</h2>
+                <h2 className="text-sm font-bold text-foreground md:text-base">{filteredProperties.length} Results</h2>
                 <button onClick={() => setListView(false)} className="text-xs font-semibold text-primary">Show Map</button>
               </div>
               <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
@@ -501,8 +501,8 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
                 ))}
               </div>
             </div>
-            <div className="overflow-y-auto px-4 pb-36" style={{ maxHeight: "calc(100% - 80px)" }}>
-              <div className="space-y-3">
+            <div className="overflow-y-auto px-4 pb-36 md:px-8" style={{ maxHeight: "calc(100% - 80px)" }}>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                 {sortedProperties.map((p) => (
                   <motion.div
                     key={p.id}
@@ -570,7 +570,7 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
                 clearRoute();
               }
             }}
-            className="absolute bottom-6 left-4 right-4 z-[1000] touch-pan-x"
+            className="absolute bottom-6 left-4 right-4 z-[1000] touch-pan-x md:left-auto md:right-6 md:w-[420px]"
           >
             <div className="relative">
               {/* Drag handle */}

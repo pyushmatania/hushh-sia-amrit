@@ -15,11 +15,11 @@ export default function WishlistScreen({ wishlist, onToggleWishlist, onPropertyT
 
   return (
     <motion.div variants={pageSlideUp} initial="initial" animate="animate" exit="exit" className="pb-24 bg-mesh min-h-screen">
-      <div className="px-5 pt-6 pb-4">
+      <div className="px-5 pt-6 pb-4 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
         <motion.h1
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-2xl font-bold text-foreground"
+          className="text-2xl font-bold text-foreground md:text-3xl lg:text-4xl"
         >
           Wishlists
         </motion.h1>
@@ -41,7 +41,7 @@ export default function WishlistScreen({ wishlist, onToggleWishlist, onPropertyT
           description="Tap the heart icon on any property to save it here. Your favourite villas, venues, and experiences — all in one place."
         />
       ) : (
-        <div className="px-5 space-y-4">
+        <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {wishlisted.map((property, i) => (
             <motion.div
               key={property.id}

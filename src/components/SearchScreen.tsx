@@ -127,7 +127,7 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
       className="fixed inset-0 z-50 bg-mesh overflow-y-auto pb-24"
     >
       {/* Search Header */}
-      <div className="sticky top-0 z-10 glass px-5 pt-4 pb-3">
+      <div className="sticky top-0 z-10 glass px-5 pt-4 pb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
         <div className="flex items-center gap-3">
           <div className="flex-1 flex items-center gap-3 rounded-xl bg-secondary px-4 py-3">
             <Search size={18} className="text-muted-foreground shrink-0" />
@@ -427,7 +427,7 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
       </AnimatePresence>
 
       {/* Results */}
-      <div className="px-5 pt-4">
+      <div className="px-5 pt-4 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
         {/* DB results when searching */}
         {query.trim() && dbResults.length > 0 && (
           <div className="mb-4">
@@ -494,7 +494,7 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
             <p className="text-sm text-muted-foreground mt-1 text-center">Try adjusting your filters or search query</p>
           </motion.div>
         ) : (
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
             {filtered.map((property, i) => (
               <motion.div
                 key={property.id}
