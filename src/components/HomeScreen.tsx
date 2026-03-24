@@ -517,8 +517,8 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                     onToggleWishlist={onToggleWishlist}
                   />
                 </div>
-                <MobileDiscoverySection properties={experienceProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Adrenaline Rush" sectionEmoji="⚡" offset={0} />
-                <MobileDiscoverySection properties={experienceProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Cultural Treasures" sectionEmoji="🏛️" offset={7} />
+<MobileDiscoverySection properties={experienceProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Adrenaline Rush" sectionEmoji="⚡" offset={0} category="experience" />
+                <MobileDiscoverySection properties={experienceProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} sectionTitle="Cultural Treasures" sectionEmoji="🏛️" offset={7} category="experience" />
                 </>
               ) : (
               <div className="mt-6">
