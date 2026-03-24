@@ -137,7 +137,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
   return (
     <div className="pb-24 bg-mesh min-h-screen md:h-[calc(100vh-4rem)] md:overflow-y-auto">
       {/* Header */}
-      <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-6 pb-1 flex items-center justify-between">
+      <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-6 pb-1 flex items-center justify-between md:max-w-4xl md:mx-auto">
         <motion.h1
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
