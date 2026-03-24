@@ -202,7 +202,7 @@ export default function AuthScreen() {
               onChange={(e) => setEmail(e.target.value)}
               type="email"
               placeholder="Email address"
-              className={`w-full backdrop-blur-xl rounded-xl pl-12 pr-4 py-3.5 text-sm outline-none focus:ring-1 focus:ring-primary/40 ${isDark ? "bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:border-white/30" : "bg-background/80 border border-border text-foreground placeholder:text-muted-foreground focus:border-primary/30"}`}
+              className={`w-full backdrop-blur-xl rounded-xl pl-12 pr-4 py-3.5 text-sm outline-none transition-shadow focus:ring-1 focus:ring-primary/40 focus:shadow-[0_0_20px_hsla(270,80%,65%,0.3)] ${isDark ? "bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:border-white/30" : "bg-background/80 border border-border text-foreground placeholder:text-muted-foreground focus:border-primary/30"}`}
             />
           </div>
 
