@@ -464,7 +464,7 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
                 onConfirm(finalTotal, roomsForConfirm ?? undefined, isStay ? extraMattressCount : undefined);
               }}
               disabled={liveGuests < 1}
-              className="w-full bg-primary text-primary-foreground py-4 rounded-xl font-semibold text-lg hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full bg-primary text-primary-foreground py-4 rounded-xl font-semibold text-lg hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 glow-radiate-pulse"
               whileTap={{ scale: 0.97 }}
             >
               Pay ₹{finalTotal.toLocaleString()} → 
