@@ -178,11 +178,21 @@ export default function Index() {
   );
 
   if (showSplash) {
-    return <SplashScreen onComplete={() => setShowSplash(false)} />;
+    return (
+      <div className="desktop-outer-bg min-h-screen flex justify-center">
+        <div className="w-full md:max-w-[768px] lg:max-w-[480px] min-h-screen bg-background relative md:mx-auto lg:rounded-3xl lg:shadow-2xl lg:my-4 lg:min-h-[calc(100vh-2rem)] lg:max-h-[calc(100vh-2rem)] lg:overflow-hidden lg:border lg:border-border/30">
+          <SplashScreen onComplete={() => setShowSplash(false)} />
+        </div>
+      </div>
+    );
   }
 
   if (loading) {
-    return <div className="min-h-screen bg-background" />;
+    return (
+      <div className="desktop-outer-bg min-h-screen flex justify-center">
+        <div className="w-full md:max-w-[768px] lg:max-w-[480px] min-h-screen bg-background md:mx-auto lg:rounded-3xl lg:my-4" />
+      </div>
+    );
   }
 
   const showBottomNav = screen.type === "home";
@@ -190,7 +200,8 @@ export default function Index() {
   const lazyFallback = <ScreenSkeleton />;
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
+    <div className="desktop-outer-bg min-h-screen flex justify-center">
+    <div className="w-full md:max-w-[768px] lg:max-w-[480px] min-h-screen bg-background overflow-x-hidden relative md:mx-auto lg:rounded-3xl lg:shadow-2xl lg:my-4 lg:min-h-[calc(100vh-2rem)] lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto lg:border lg:border-border/30">
       <Suspense fallback={lazyFallback}>
       <AnimatePresence mode="wait">
         {screen.type === "home" && activeTab === "home" && (
@@ -358,6 +369,7 @@ export default function Index() {
 
       <NotificationToastProvider />
       <NotificationPermissionBanner />
+    </div>
     </div>
   );
 }
