@@ -331,10 +331,10 @@ export default function NotificationSettings() {
 
       {/* Send all button */}
       <motion.button whileTap={{ scale: 0.97 }} onClick={sendAllPushNotifications}
-        disabled={!!isSendingTest || !isSubscribed}
+        disabled={!!isSendingTest}
         className="w-full py-2.5 rounded-xl text-xs font-bold text-primary-foreground flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-primary/80 shadow-md disabled:opacity-40 mb-2">
         {isSendingTest === "all" ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
-        Send All 8 Push Notifications
+        Send All ({pushTimer || 5}s interval)
       </motion.button>
 
       {/* Individual test buttons */}
