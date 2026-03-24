@@ -487,7 +487,7 @@ export default function BookingHub({
               {filtered.length === 0 ? (
                 <EmptyState message="No bookings match your filters" />
               ) : (
-                <div className="space-y-2">
+                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2">
                   {filtered.map((b, i) => (
                     <div key={b.id} className="flex items-start gap-2">
                       {bulkMode && (
