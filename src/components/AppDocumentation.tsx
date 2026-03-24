@@ -1157,6 +1157,166 @@ function WireframesTab() {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// TAB: DESKTOP & WEB
+// ═══════════════════════════════════════════════════════════════
+function DesktopTab() {
+  return (
+    <div className="space-y-6">
+      {/* Hero */}
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="rounded-3xl p-6 text-center relative overflow-hidden" style={{ background: "linear-gradient(160deg, hsl(var(--primary) / 0.12) 0%, hsl(270 60% 50% / 0.08) 100%)", border: "1px solid hsl(var(--primary) / 0.15)" }}>
+        <p className="text-4xl mb-3">🖥️</p>
+        <h2 className="text-xl font-black text-foreground tracking-tight">Desktop & Web Blueprint</h2>
+        <p className="text-[11px] text-muted-foreground mt-2 max-w-[300px] mx-auto leading-relaxed">Desktop-specific features, responsive adaptations, and web platform capabilities built on top of the mobile-first foundation.</p>
+        <div className="flex justify-center gap-2 mt-4 flex-wrap">
+          {["Responsive", "Desktop Nav", "Widescreen", "Keyboard-First", "Multi-Panel"].map(tag => (
+            <span key={tag} className="text-[9px] font-bold px-2.5 py-1 rounded-full" style={{ background: "hsl(var(--primary) / 0.1)", color: "hsl(var(--primary))", border: "1px solid hsl(var(--primary) / 0.15)" }}>{tag}</span>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Desktop Navigation */}
+      <div>
+        <SectionHeader title="Desktop Navigation" subtitle="How navigation adapts for larger screens" />
+        <div className="space-y-2">
+          <FeatureRow icon={<Monitor size={13} className="text-blue-400" />} title="Top Navigation Bar (DesktopTopNav)" desc="Persistent horizontal nav replaces BottomNav at md+ breakpoint. Logo, search, category links, user avatar dropdown." badge="md+" />
+          <FeatureRow icon={<Layout size={13} className="text-green-400" />} title="Multi-Panel Layouts" desc="Property detail uses side-by-side gallery + booking panel. Messages use split-pane (conversation list + chat thread)." badge="lg+" />
+          <FeatureRow icon={<Layers size={13} className="text-amber-400" />} title="Admin Sidebar" desc="Collapsible sidebar with 22+ nav items, grouped into sections. Command Palette (⌘K) for instant navigation." />
+          <FeatureRow icon={<Search size={13} className="text-cyan-400" />} title="Search Upgrade" desc="On desktop, search opens inline panel instead of full-screen overlay. Filter bar stays visible alongside results." />
+        </div>
+      </div>
+
+      {/* Responsive Breakpoints */}
+      <DocSection title="Responsive Breakpoints" icon={<Layout size={15} className="text-primary" />} defaultOpen>
+        <DataTable headers={["Breakpoint", "Width", "Layout Changes"]} rows={[
+          ["sm", "640px", "2-col grids, larger touch targets"],
+          ["md", "768px", "DesktopTopNav replaces BottomNav, wider cards"],
+          ["lg", "1024px", "3-col property grids, split-view panels"],
+          ["xl", "1280px", "4-col grids, max-width containers, sidebar expand"],
+          ["2xl", "1536px", "Max content width, generous whitespace"],
+        ]} />
+        <div className="mt-2 p-2.5 rounded-xl" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border) / 0.3)" }}>
+          <p className="text-[10px] text-muted-foreground"><strong className="text-foreground">Container strategy:</strong> <code className="text-primary">max-w-7xl mx-auto</code> on desktop. Pages use <code className="text-primary">px-4 md:px-8 lg:px-12</code> progressive padding.</p>
+        </div>
+      </DocSection>
+
+      {/* Desktop Typography */}
+      <DocSection title="Desktop Typography Scale" icon={<PenTool size={15} className="text-primary" />}>
+        <DataTable headers={["Element", "Mobile", "Desktop (md+)", "Font"]} rows={[
+          ["Page titles", "text-2xl", "text-3xl lg:text-4xl", "Space Grotesk"],
+          ["Section headers", "text-base", "text-lg lg:text-xl", "Space Grotesk"],
+          ["Card titles", "text-sm", "text-base", "Space Grotesk"],
+          ["Body text", "text-[13px]", "text-sm", "Space Grotesk"],
+          ["Splash brand", "text-[58px]", "md:text-[84px] lg:text-[104px] xl:text-[124px]", "Pacifico (cursive)"],
+          ["Splash greeting", "text-[32px]", "md:text-5xl lg:text-6xl xl:text-7xl", "Playfair Display"],
+        ]} />
+      </DocSection>
+
+      {/* Splash Screen */}
+      <DocSection title="Cinematic Splash Screen" icon={<Sparkles size={15} className="text-primary" />} defaultOpen>
+        <div className="space-y-3">
+          <div>
+            <p className="font-bold text-foreground text-xs mb-1.5">Two Variants (Admin Toggle)</p>
+            <DataTable headers={["Variant", "Style", "Backgrounds"]} rows={[
+              ["1 — Classic", "3D metallic typography, spring letter flip", "4 time-of-day photos (mobile + desktop)"],
+              ["2 — Cinematic (default)", "Island villa with H silhouette, underwater typography", "4 time-of-day illustrations (mobile 9:16 + desktop 16:9)"],
+            ]} />
+          </div>
+          <div>
+            <p className="font-bold text-foreground text-xs mb-1.5">Time-of-Day Assets</p>
+            <DataTable headers={["Time", "Hours", "Mobile Asset", "Desktop Asset"]} rows={[
+              ["Dawn ☀️", "05:00–11:59", "splash2-dawn-v2.jpg", "splash2-dawn-v2-desktop.jpg"],
+              ["Day 🌤️", "12:00–16:59", "splash2-day-v2.jpg", "splash2-day-v2-desktop.jpg"],
+              ["Dusk 🌅", "17:00–20:59", "splash2-dusk-v2.jpg", "splash2-dusk-v2-desktop.jpg"],
+              ["Night 🌙", "21:00–04:59", "splash2-night-v2.jpg", "splash2-night-v2-desktop.jpg"],
+            ]} />
+          </div>
+          <div>
+            <p className="font-bold text-foreground text-xs mb-1.5">Atmospheric Animations</p>
+            <div className="flex flex-wrap gap-1.5">
+              {["Fireflies (16-20 particles)", "Shooting Stars (3×)", "Flying Birds (5 SVG)", "Floating Lanterns (5×)", "Twinkling Stars (20×)", "Sun Rays", "Drifting Clouds"].map(e => (
+                <span key={e} className="text-[9px] px-2 py-1 rounded-full font-medium" style={{ background: "hsl(var(--primary) / 0.08)", color: "hsl(var(--primary))" }}>{e}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </DocSection>
+
+      {/* Wallpaper Gallery */}
+      <DocSection title="Wallpaper Gallery (Easter Egg)" icon={<Award size={15} className="text-primary" />}>
+        <div className="space-y-2">
+          <FeatureRow icon={<Download size={13} className="text-purple-400" />} title="Downloadable Wallpapers" desc="16 wallpapers: 8 phone (9:16) + 8 desktop (16:9), spanning Classic and Cinematic variants across all time-of-day themes." badge="🥚" />
+          <FeatureRow icon={<ImageIcon size={13} className="text-blue-400" />} title="App Icon Download" desc="PWA icon (512×512) available as a standalone download from the gallery." />
+          <FeatureRow icon={<Globe size={13} className="text-green-400" />} title="Direct URL Access" desc="/wallpapers route — accessible on both mobile and desktop without Easter egg trigger." />
+          <div className="p-2.5 rounded-xl" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border) / 0.3)" }}>
+            <p className="text-[10px] text-muted-foreground"><strong className="text-foreground">Filters:</strong> All / Classic / Cinematic × All Sizes / Phone / Desktop. Tap any wallpaper to download.</p>
+          </div>
+        </div>
+      </DocSection>
+
+      {/* Desktop Grid Layouts */}
+      <DocSection title="Desktop Grid Patterns" icon={<Boxes size={15} className="text-primary" />}>
+        <DataTable headers={["Component", "Mobile", "Tablet (md)", "Desktop (lg+)"]} rows={[
+          ["Property cards", "grid-cols-2", "grid-cols-3", "grid-cols-4 lg:grid-cols-5"],
+          ["Curation grid", "scroll-x", "grid-cols-3", "grid-cols-4"],
+          ["Wishlist grid", "grid-cols-2", "grid-cols-3", "grid-cols-4"],
+          ["Admin tables", "card list", "data table", "data table + filters sidebar"],
+          ["Stats grid", "grid-cols-2", "grid-cols-3", "grid-cols-4"],
+          ["Wallpaper phone", "grid-cols-2", "grid-cols-3", "grid-cols-4 lg:grid-cols-5"],
+          ["Wallpaper desktop", "grid-cols-1", "grid-cols-2", "grid-cols-3"],
+        ]} />
+      </DocSection>
+
+      {/* Mouse & Keyboard */}
+      <DocSection title="Mouse & Keyboard Interactions" icon={<PenTool size={15} className="text-primary" />}>
+        <div className="space-y-2">
+          {[
+            { title: "Hover States", desc: "Property cards: scale-105 + shadow-lg on hover. Wallpaper cards show download overlay. Buttons show opacity/scale transitions." },
+            { title: "Keyboard Shortcuts", desc: "⌘K: Command Palette (Admin). Esc: Close modals/sheets. Tab: Focus navigation. Enter: Confirm actions." },
+            { title: "Cursor Styles", desc: "pointer on clickables, grab on draggable elements, text on selectable content." },
+            { title: "whileHover vs whileTap", desc: "Desktop uses whileHover={{ scale: 1.05 }}. Mobile uses whileTap={{ scale: 0.95 }}. Both coexist via Framer Motion." },
+            { title: "Right-Click Context", desc: "Admin panel: context menus on property rows and booking cards for quick actions." },
+          ].map(p => (
+            <div key={p.title} className="flex gap-2 p-2.5 rounded-xl" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border) / 0.3)" }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0 mt-1.5" />
+              <div>
+                <p className="font-bold text-foreground text-xs">{p.title}</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{p.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </DocSection>
+
+      {/* Sheet → Modal Adaptation */}
+      <DocSection title="Sheet → Modal Adaptation" icon={<Layers size={15} className="text-primary" />}>
+        <DataTable headers={["Component", "Mobile (< md)", "Desktop (md+)"]} rows={[
+          ["Settings", "Bottom sheet (Vaul)", "Side sheet / Dialog"],
+          ["Edit Profile", "Bottom sheet", "Centered modal"],
+          ["Live Ordering", "Bottom sheet", "Side panel"],
+          ["Checkout", "Full screen", "Right panel + summary"],
+          ["Search", "Full screen overlay", "Inline dropdown panel"],
+          ["Map View", "Full screen", "Split-pane (list + map)"],
+          ["Wallpapers", "Full screen overlay", "Full page (/wallpapers)"],
+        ]} />
+      </DocSection>
+
+      {/* Easter Eggs */}
+      <DocSection title="Easter Eggs & Hidden Features" icon={<Award size={15} className="text-primary" />}>
+        <DataTable headers={["Trigger", "Location", "Result"]} rows={[
+          ["Tap version 5× in 2s", "Profile tab, bottom", "Full in-app documentation overlay"],
+          ["Tap version 7× in 2s", "Profile tab, bottom", "Wallpaper gallery with downloadable assets"],
+          ["Visit /wallpapers", "Direct URL", "Public wallpaper download page"],
+        ]} />
+      </DocSection>
+
+      <div className="text-center py-4">
+        <p className="text-[10px] text-muted-foreground"><Monitor size={10} className="inline text-primary mr-1" />Desktop Blueprint v1.36 · Responsive architecture reference</p>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
 // TAB: MOBILE & RESPONSIVE
 // ═══════════════════════════════════════════════════════════════
 function MobileTab() {
