@@ -145,7 +145,7 @@ function MobileGameCard({ service, onTap, index }: { service: Property; onTap: (
   );
 }
 
-/* ─── Desktop: Consistent clean card ─── */
+/* ─── Desktop: Varied card shapes ─── */
 function DesktopServiceCard({ service, onTap, index }: { service: Property; onTap: (s: Property) => void; index: number }) {
   const config = serviceIconMap[service.propertyType || ""] || defaultIcon;
   const Icon = config.icon;
@@ -187,6 +187,57 @@ function DesktopServiceCard({ service, onTap, index }: { service: Property; onTa
             <span className="text-[11px]">{service.slots.filter(s => s.available).length} slots</span>
           </div>
           <div className="flex items-center gap-1.5 bg-primary/10 text-primary px-3 py-1.5 rounded-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+            <span className="text-sm font-bold">₹{cheapest.toLocaleString()}</span>
+            <ArrowRight size={12} />
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ─── Desktop: Horizontal editorial card ─── */
+function DesktopServiceWide({ service, onTap, index }: { service: Property; onTap: (s: Property) => void; index: number }) {
+  const config = serviceIconMap[service.propertyType || ""] || defaultIcon;
+  const Icon = config.icon;
+  const cheapest = Math.min(...service.slots.filter(s => s.available).map(s => s.price));
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.04, duration: 0.35 }}
+      onClick={() => onTap(service)}
+      className="col-span-2 rounded-2xl overflow-hidden cursor-pointer group relative hover:shadow-elevated transition-all duration-300 flex"
+      style={{
+        background: "hsl(var(--card))",
+        border: "1px solid hsl(var(--border) / 0.3)",
+        height: 200,
+      }}
+    >
+      <div className="relative w-[280px] shrink-0 overflow-hidden">
+        <img src={service.images[0]} alt={service.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+        <div className={`absolute inset-0 bg-gradient-to-r ${config.gradient} to-transparent opacity-20`} />
+        <div className="absolute top-3 left-3 w-9 h-9 rounded-xl bg-black/30 backdrop-blur-md flex items-center justify-center border border-white/10">
+          <Icon size={16} className={config.color} />
+        </div>
+      </div>
+      <div className="flex-1 p-5 flex flex-col justify-center">
+        <div className="flex items-center gap-2">
+          <span className="text-[9px] font-bold tracking-widest text-muted-foreground uppercase">{service.propertyType}</span>
+          <div className="flex items-center gap-1 ml-auto">
+            <Star size={11} className="fill-amber-400 text-amber-400" />
+            <span className="text-xs font-bold text-foreground">{service.rating}</span>
+          </div>
+        </div>
+        <h4 className="text-lg font-bold text-foreground leading-tight mt-1.5" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{service.name}</h4>
+        <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{service.description}</p>
+        <div className="flex items-center gap-3 mt-auto pt-2">
+          <div className="flex items-center gap-1.5 text-muted-foreground">
+            <Clock size={12} />
+            <span className="text-xs">{service.slots.filter(s => s.available).length} slots open</span>
+          </div>
+          <div className="flex items-center gap-1.5 bg-primary/10 text-primary px-4 py-2 rounded-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors ml-auto">
             <span className="text-sm font-bold">₹{cheapest.toLocaleString()}</span>
             <ArrowRight size={12} />
           </div>
