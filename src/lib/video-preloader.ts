@@ -41,33 +41,51 @@ const SECONDARY_VIDEOS = [
 
 let preloaded = false;
 
+function hasSlowConnection() {
+  if (typeof navigator === "undefined") return false;
+  const connection = (navigator as Navigator & {
+    connection?: { saveData?: boolean; effectiveType?: string };
+  }).connection;
+
+  if (!connection) return false;
+  return connection.saveData === true || ["slow-2g", "2g"].includes(connection.effectiveType ?? "");
+}
+
+function appendVideoPreload(url: string, priority: "high" | "low") {
+  const existing = document.head.querySelector(`link[rel="preload"][as="video"][href="${url}"]`);
+  if (existing) return;
+
+  const link = document.createElement("link");
+  link.rel = "preload";
+  link.as = "video";
+  link.href = url;
+  link.setAttribute("fetchpriority", priority);
+  document.head.appendChild(link);
+}
+
 export function preloadVideos() {
   if (preloaded) return;
   preloaded = true;
 
-  // Priority: fetch first 2 spotlight videos eagerly into cache
-  PRIORITY_VIDEOS.slice(0, 2).forEach((url) => {
-    const link = document.createElement("link");
-    link.rel = "preload";
-    link.as = "video";
-    link.href = url;
-    link.setAttribute("fetchpriority", "high");
-    document.head.appendChild(link);
-  });
-  // Remaining priority videos at low priority
-  PRIORITY_VIDEOS.slice(2).forEach((url) => {
-    const link = document.createElement("link");
-    link.rel = "preload";
-    link.as = "video";
-    link.href = url;
-    link.setAttribute("fetchpriority", "low");
-    document.head.appendChild(link);
-  });
+  const isSlowConnection = hasSlowConnection();
+  const highPriorityCount = isSlowConnection ? 1 : 2;
 
-  // Secondary: fetch into cache after a short delay
-  setTimeout(() => {
-    SECONDARY_VIDEOS.forEach((url) => {
-      fetch(url, { priority: "low" } as RequestInit).catch(() => {});
-    });
-  }, 3000);
+  // Keep startup extremely light on mobile webview: warm only the first visible cards.
+  PRIORITY_VIDEOS.slice(0, highPriorityCount).forEach((url) => appendVideoPreload(url, "high"));
+
+  if (isSlowConnection) return;
+
+  const deferredWarmups = [
+    ...PRIORITY_VIDEOS.slice(highPriorityCount, highPriorityCount + 2),
+    SECONDARY_VIDEOS[0],
+  ].filter(Boolean) as string[];
+
+  const schedule =
+    typeof window !== "undefined" && "requestIdleCallback" in window
+      ? (cb: () => void) => (window as any).requestIdleCallback(cb, { timeout: 2500 })
+      : (cb: () => void) => window.setTimeout(cb, 1800);
+
+  schedule(() => {
+    deferredWarmups.forEach((url) => appendVideoPreload(url, "low"));
+  });
 }
