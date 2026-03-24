@@ -541,7 +541,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
                     {/* Shush emoji with bounce */}
                     <motion.span
-                      className="text-[38px] ml-2 inline-block"
+                      className="text-[38px] md:text-[54px] lg:text-[68px] xl:text-[80px] ml-2 md:ml-4 inline-block"
                       initial={{ scale: 0, rotate: -60, y: 20 }}
                       animate={phase >= 3 ? { scale: [0, 1.6, 0.9, 1.15, 1], rotate: [-60, 15, -5, 0], y: [20, -8, 2, 0] } : { scale: 0 }}
                       transition={{ delay: letters.length * 0.1 + 0.15, duration: 0.7, ease: "easeOut" }}
