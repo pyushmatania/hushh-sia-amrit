@@ -270,11 +270,12 @@ export default function AdminProperties() {
     setEditingListing(null);
   };
 
+  const statsBase = categoryFilter === "all" ? listings : listings.filter(l => l.primary_category === categoryFilter);
   const stats = {
-    total: listings.length,
-    published: listings.filter(l => l.status === "published").length,
-    draft: listings.filter(l => l.status === "draft").length,
-    paused: listings.filter(l => l.status === "paused").length,
+    total: statsBase.length,
+    published: statsBase.filter(l => l.status === "published").length,
+    draft: statsBase.filter(l => l.status === "draft").length,
+    paused: statsBase.filter(l => l.status === "paused").length,
   };
 
   const filters = ["all", "published", "draft", "paused"];
