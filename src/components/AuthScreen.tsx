@@ -255,9 +255,9 @@ export default function AuthScreen() {
           {mode !== "forgot" && (
             <>
               <div className="flex items-center gap-3 my-1">
-                <div className="flex-1 h-px bg-border" />
-                <span className="text-xs text-muted-foreground">or</span>
-                <div className="flex-1 h-px bg-border" />
+                <div className="flex-1 h-px bg-white/15" />
+                <span className="text-xs text-white/40">or</span>
+                <div className="flex-1 h-px bg-white/15" />
               </div>
 
               <motion.button
