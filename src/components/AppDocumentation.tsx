@@ -153,13 +153,14 @@ export const changeLog = [
 ];
 
 // ─── TAB DEFINITIONS ─────────────────────────────────────────
-type TabId = "overview" | "features" | "architecture" | "database" | "wireframes" | "changelog";
+type TabId = "overview" | "features" | "architecture" | "database" | "wireframes" | "mobile" | "changelog";
 const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: "overview", label: "Overview", icon: <Home size={14} /> },
   { id: "features", label: "Features", icon: <Star size={14} /> },
   { id: "architecture", label: "Arch", icon: <Cpu size={14} /> },
   { id: "database", label: "DB", icon: <Database size={14} /> },
   { id: "wireframes", label: "Wireframes", icon: <Monitor size={14} /> },
+  { id: "mobile", label: "Mobile", icon: <Smartphone size={14} /> },
   { id: "changelog", label: "Log", icon: <History size={14} /> },
 ];
 
