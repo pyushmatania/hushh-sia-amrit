@@ -1811,7 +1811,7 @@ ${tables.map(([t, d]) => `<tr><td style="font-family:monospace;color:#7c3aed;fon
 ${changelog}
 
 <div class="footer">
-<p>🏡 Hushh v1.28 · Private Experience Marketplace · Made in Jeypore ❤️</p>
+<p>🏡 Hushh v1.31 · Private Experience Marketplace · Made in Jeypore ❤️</p>
 <p>80+ Components · 27 Hooks · 45 Tables · 6 Edge Functions · 15 Screens · 22 Admin Pages</p>
 <p>Generated ${new Date().toLocaleDateString()}</p>
 </div>
