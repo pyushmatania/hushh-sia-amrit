@@ -365,7 +365,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
   return (
     <div key={refreshKey} className="pb-24 bg-mesh min-h-screen md:h-[calc(100vh-4rem)] md:overflow-y-auto">
       <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-6 pb-2">
-        <div className="flex items-center justify-between md:max-w-4xl md:mx-auto">
+        <div className="flex items-center justify-between md:max-w-3xl md:mx-auto">
           <div>
             <motion.h1
               initial={{ opacity: 0, y: -8 }}
@@ -404,7 +404,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32"
           >
-            <div className="rounded-2xl border border-border bg-card p-3 mb-3">
+            <div className="rounded-2xl border border-border bg-card p-3 mb-3 md:max-w-3xl md:mx-auto">
               <Calendar
                 mode="single"
                 selected={selectedCalDate}
@@ -459,7 +459,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
 
       {/* Filter tabs */}
       <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-1 pb-2">
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide md:flex-wrap md:justify-center">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide md:flex-wrap md:justify-center md:max-w-3xl md:mx-auto">
           {filterTabs.map((tab) => {
             const isActive = activeFilter === tab.value;
             const count = counts[tab.value] || 0;
@@ -491,7 +491,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mt-1 mb-1 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20 md:max-w-4xl md:mx-auto"
+            className="mt-1 mb-1 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20 md:max-w-3xl md:mx-auto"
           >
             <p className="text-[11px] md:text-xs text-primary font-medium text-center">✨ These are sample trips — book a venue to see your real trips here!</p>
           </motion.div>
@@ -501,27 +501,27 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
       {/* ID Verification Banner */}
       {idVerified === false && (
         <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
-        <motion.div
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-2 mb-1 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 md:max-w-4xl md:mx-auto"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/15 flex items-center justify-center shrink-0">
-              <Shield size={20} className="text-amber-400" />
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-2 mb-1 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 md:max-w-3xl md:mx-auto"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/15 flex items-center justify-center shrink-0">
+                <Shield size={20} className="text-amber-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-semibold text-foreground">Identity not verified</p>
+                <p className="text-[10px] text-muted-foreground">Upload your ID for a smoother check-in experience</p>
+              </div>
+              <button
+                onClick={() => setIdSheetOpen(true)}
+                className="px-3 py-1.5 rounded-lg bg-amber-500/15 text-amber-400 text-[10px] font-bold shrink-0 active:scale-95 transition-transform flex items-center gap-1"
+              >
+                <Upload size={10} /> Verify
+              </button>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-foreground">Identity not verified</p>
-              <p className="text-[10px] text-muted-foreground">Upload your ID for a smoother check-in experience</p>
-            </div>
-            <button
-              onClick={() => setIdSheetOpen(true)}
-              className="px-3 py-1.5 rounded-lg bg-amber-500/15 text-amber-400 text-[10px] font-bold shrink-0 active:scale-95 transition-transform flex items-center gap-1"
-            >
-              <Upload size={10} /> Verify
-            </button>
-          </div>
-        </motion.div>
+          </motion.div>
         </div>
       )}
 
@@ -532,12 +532,12 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
           icon={MapPin}
           emoji={activeFilter === "cancelled" ? "🚫" : activeFilter === "completed" ? "✅" : "🗺️"}
           title={`No ${activeFilter === "all" ? "" : activeFilter + " "}trips`}
-          description={activeFilter === "all" 
-            ? "Your adventures will show up here once you book a property. Start exploring!" 
+          description={activeFilter === "all"
+            ? "Your adventures will show up here once you book a property. Start exploring!"
             : `You don't have any ${activeFilter} trips right now.`}
         />
       ) : (
-        <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-4 space-y-6 md:max-w-4xl md:mx-auto md:grid md:grid-cols-2 md:gap-5 md:space-y-0">
+        <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-4 space-y-6 md:max-w-3xl md:mx-auto md:grid md:grid-cols-1 xl:max-w-5xl xl:grid-cols-2 md:gap-5 md:space-y-0">
           {filteredBookings.map((trip, i) => (
             <SwipeableCard
               key={trip.id}
