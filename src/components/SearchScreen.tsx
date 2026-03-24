@@ -501,7 +501,7 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.06 }}
-                className="flex gap-3 rounded-2xl border border-border p-3 cursor-pointer hover:bg-secondary/30 transition-colors"
+                className="flex gap-3 rounded-2xl border border-border p-3 md:p-4 cursor-pointer hover:bg-secondary/30 hover:border-border/80 hover:shadow-card transition-all"
                 onClick={() => onPropertyTap(property)}
               >
                 <img src={property.images[0]} alt={property.name} className="w-24 h-24 rounded-xl object-cover shrink-0" />
