@@ -1362,7 +1362,7 @@ export const curatedCombos: CuratedCombo[] = [
     time: "7 PM – 11 PM",
     priceRange: [999, 1999],
     includes: ["Bonfire 🔥", "Maggi 🍜", "Beer 🍺", "Old songs playlist 🎶", "Blankets"],
-    image: listingEmberGrounds,
+    image: curationAfterHours,
     gradient: "from-orange-600/80 to-amber-900/60",
     tags: ["🔥 Hot", "🌙 Night Special"],
     popular: true,
