@@ -52,7 +52,7 @@ export default function WishlistScreen({ wishlist, onToggleWishlist, onPropertyT
               onClick={() => onPropertyTap(property)}
             >
               <div className="relative aspect-[16/9]">
-                <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover" />
+                <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 <button
                   onClick={(e) => { e.stopPropagation(); onToggleWishlist(property.id); }}
                   className="absolute top-3 right-3 w-9 h-9 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center shadow-md"
