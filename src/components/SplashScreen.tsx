@@ -471,8 +471,8 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                 animate={phase >= 2 ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
                 transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-[10px] font-medium text-white/70 tracking-wide">Jeypore, Odisha</span>
+                <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-[10px] md:text-xs lg:text-sm font-medium text-white/70 tracking-wide">Jeypore, Odisha</span>
               </motion.div>
             </div>
 
