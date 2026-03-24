@@ -194,19 +194,39 @@ function ThreadCard({ thread, index, onClick, onPin, onArchive }: {
 }) {
   const [swipeState, setSwipeState] = useState<"idle" | "pin" | "archive">("idle");
   const [dismissed, setDismissed] = useState(false);
-  const SWIPE_THRESHOLD = 60;
+  const SWIPE_THRESHOLD = 55;
   const dragX = useMotionValue(0);
   const isDragging = useRef(false);
+  const dragStartX = useRef(0);
 
-  const handleDragStart = () => { isDragging.current = true; };
+  const handleDragStart = (_: any, info: { point: { x: number } }) => {
+    isDragging.current = false;
+    dragStartX.current = info.point.x;
+  };
 
   const handleDragEnd = (_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
-    const swipedFar = Math.abs(info.offset.x) > SWIPE_THRESHOLD || Math.abs(info.velocity.x) > 500;
-    if (swipedFar && info.offset.x > 0) onPin?.(thread.id);
-    else if (swipedFar && info.offset.x < 0) { setDismissed(true); setTimeout(() => onArchive?.(thread.id), 300); }
+    const totalDrag = Math.abs(info.offset.x);
+    const fast = Math.abs(info.velocity.x) > 400;
+    const triggered = totalDrag > SWIPE_THRESHOLD || fast;
+
+    if (triggered && info.offset.x > 0) {
+      // Pin/Unpin
+      animate(dragX, 0, { type: "spring", stiffness: 500, damping: 35 });
+      onPin?.(thread.id);
+    } else if (triggered && info.offset.x < 0) {
+      // Archive — slide fully off then collapse
+      animate(dragX, -400, { type: "spring", stiffness: 300, damping: 30 });
+      setDismissed(true);
+      setTimeout(() => onArchive?.(thread.id), 350);
+    } else {
+      // Snap back
+      animate(dragX, 0, { type: "spring", stiffness: 500, damping: 35 });
+    }
     setSwipeState("idle");
-    if (!(swipedFar && info.offset.x < 0)) animate(dragX, 0, { type: "spring", stiffness: 500, damping: 35 });
-    setTimeout(() => { isDragging.current = false; }, 50);
+
+    // Only mark as dragged if moved more than 8px (prevents tap-vs-drag conflict)
+    if (totalDrag > 8) isDragging.current = true;
+    setTimeout(() => { isDragging.current = false; }, 80);
   };
 
   const handleTap = () => { if (!isDragging.current) onClick(); };
@@ -222,21 +242,30 @@ function ThreadCard({ thread, index, onClick, onPin, onArchive }: {
       transition={{ delay: 0.02 + index * 0.03, duration: 0.3 }}
       className="relative rounded-2xl overflow-hidden"
     >
-      {/* Swipe backgrounds */}
-      <div className="absolute inset-0 flex">
-        <div className={`flex items-center justify-center w-1/2 ${swipeState === "pin" ? "bg-amber-500" : "bg-amber-500/60"}`}>
-          <Pin size={18} className="text-white rotate-45" />
+      {/* Swipe reveal backgrounds */}
+      <div className="absolute inset-0 flex pointer-events-none">
+        <div className={`flex items-center pl-5 w-1/2 transition-colors duration-150 ${swipeState === "pin" ? "bg-amber-500" : "bg-amber-500/50"}`}>
+          <div className="flex flex-col items-center gap-0.5">
+            <Pin size={16} className="text-white rotate-45" />
+            <span className="text-[9px] text-white/90 font-semibold">{thread.pinned ? "Unpin" : "Pin"}</span>
+          </div>
         </div>
-        <div className={`flex items-center justify-center w-1/2 ${swipeState === "archive" ? "bg-destructive" : "bg-destructive/60"}`}>
-          <Archive size={18} className="text-white" />
+        <div className={`flex items-center justify-end pr-5 w-1/2 transition-colors duration-150 ${swipeState === "archive" ? "bg-destructive" : "bg-destructive/50"}`}>
+          <div className="flex flex-col items-center gap-0.5">
+            <Archive size={16} className="text-white" />
+            <span className="text-[9px] text-white/90 font-semibold">Archive</span>
+          </div>
         </div>
       </div>
 
       {/* Card */}
       <motion.div
-        drag="x" dragConstraints={{ left: -120, right: 120 }} dragElastic={0.12} dragMomentum={false}
+        drag="x"
+        dragConstraints={{ left: -140, right: 140 }}
+        dragElastic={0.08}
+        dragMomentum={false}
         dragDirectionLock
-        style={{ x: dragX }}
+        style={{ x: dragX, touchAction: "pan-y" }}
         onDragStart={handleDragStart}
         onDrag={(_, info) => {
           if (info.offset.x > SWIPE_THRESHOLD) setSwipeState("pin");
@@ -246,7 +275,6 @@ function ThreadCard({ thread, index, onClick, onPin, onArchive }: {
         onDragEnd={handleDragEnd}
         onClick={handleTap}
         className="relative z-10 bg-card rounded-2xl cursor-pointer border border-border/50 hover:border-border transition-colors"
-        whileTap={{ scale: 0.985 }}
       >
         <div className="px-4 py-3.5">
           <div className="flex gap-3 items-center">
