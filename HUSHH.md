@@ -1,6 +1,6 @@
 # 🏡 HUSHH — Private Experience Marketplace
 
-> **Made in Jeypore ❤️** | v1.28 | Internal Documentation & Blueprint
+> **Made in Jeypore ❤️** | v1.31 | Internal Documentation & Blueprint
 
 Hushh is a premium mobile-first marketplace for booking private experiences, stays, and curated lifestyle services in Jeypore, India. Think Airbnb meets a concierge — but hyper-local, with a focus on curated combos and on-demand add-ons.
 
@@ -1423,6 +1423,28 @@ standalone: campaigns · coupons · expenses · budget_allocations · app_config
 - **Rate limit configs**: `RATE_LIMITS` constant with predefined limits for AUTH_LOGIN, AUTH_SIGNUP, AUTH_RESET, ORDER_SUBMIT, SPIN_WHEEL, REVIEW_SUBMIT, SEARCH_QUERY
 - **User-facing error messages**: Rate limit errors show human-readable retry times ("Try again in 3 minutes")
 - **Audit report resolved**: All 8 critical issues confirmed fixed, 20+ warnings addressed, remaining items documented
+
+### v1.29 — Native Android Distribution
+- **Capacitor 8 Android integration** — WebView loads live published URL for instant web updates
+- **GitHub Actions CI/CD pipeline** — auto-build debug APK on push to main branch
+- **Java 21 + Gradle 8.14** build configuration
+- **App ID**: `com.hushh.jeypore`, `capacitor.config.ts` with `server.url` pointing to published domain
+- APK artifact uploaded to GitHub Actions for download — no rebuild needed for web changes
+
+### v1.30 — Dark & Light Theme Polish
+- **Light mode fixes** — removed blur/white overlay on Trips property images
+- **Theme contrast improvements** across both dark and light modes
+- **Refined card backgrounds**, borders, and shadow tokens for light theme
+- Ensured all screens render correctly in both themes without hardcoded colors
+
+### v1.31 — Home Performance Optimization
+- **Replaced framer-motion AnimatePresence** with instant CSS renders on category tab switching
+- **PullToRefresh rebuilt** with native CSS transforms — eliminated layout thrashing during scroll
+- **Video carousel rootMargin reduced** (400px → 50px) to prevent GPU memory bloat from offscreen videos
+- **LazySection** uses `content-visibility: auto` + `contain-intrinsic-size` for off-screen sections
+- **SettingRow rebuilt** without framer-motion — pure CSS transitions for snappy settings pages
+- **Removed `will-change: transform`** from video cards to reduce composited layers
+- **Native `@keyframes spin`** in CSS replacing JS-driven spinner animation
 
 ---
 

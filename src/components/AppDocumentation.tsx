@@ -151,6 +151,9 @@ export const changeLog = [
   { version: "1.26", phase: "Staff Portal Enhancement", items: ["StaffAttendance, StaffLeaves, StaffSalary", "Staff profile linking, 7 scrollable tabs"] },
   { version: "1.27", phase: "Wire Hooks into UI", items: ["SearchScreen wired to useSearch", "PropertyDetail wired to useSlotAvailability", "LiveOrderingSheet awards loyalty points"] },
   { version: "1.28", phase: "Mobile Blueprint & Documentation", items: ["Mobile & Responsive tab in easter egg docs — full mobile architecture reference", "Distribution strategy: PWA + Capacitor + GitHub Actions CI/CD", "Viewport, layout, touch, typography, aspect ratio, theme documentation", "AI prompts section for converting mobile-first design to desktop/web version", "PDF export includes Mobile & Responsive section"] },
+  { version: "1.29", phase: "Native Android Distribution", items: ["Capacitor 8 Android integration — WebView loads live published URL", "GitHub Actions CI/CD pipeline — auto-build debug APK on push to main", "Java 21 + Gradle 8.14 build config", "App ID: com.hushh.jeypore, loads live URL for instant web updates without APK rebuild", "capacitor.config.ts with server.url pointing to published domain"] },
+  { version: "1.30", phase: "Dark & Light Theme Polish", items: ["Light mode fixes — removed blur/white overlay on Trips property images", "Theme contrast improvements across both dark and light modes", "Refined card backgrounds, borders, and shadow tokens for light theme", "Ensured all screens render correctly in both themes"] },
+  { version: "1.31", phase: "Home Performance Optimization", items: ["Replaced framer-motion AnimatePresence with instant CSS renders on category tabs", "PullToRefresh rebuilt with native CSS transforms — eliminated layout thrashing", "Video carousel rootMargin reduced (400px→50px) to prevent GPU memory bloat", "LazySection uses content-visibility:auto + contain-intrinsic-size for off-screen sections", "SettingRow rebuilt without framer-motion — pure CSS transitions", "Removed will-change:transform from video cards to reduce composited layers", "Native @keyframes spin in CSS replacing JS-driven animation"] },
 ];
 
 // ─── TAB DEFINITIONS ─────────────────────────────────────────
@@ -1621,7 +1624,7 @@ li{font-size:10px;margin:2px 0;color:#444;}
 <div class="hero">
 <div class="emoji">🏡</div>
 <h1>HUSHH</h1>
-<div class="subtitle">Private Experience Marketplace · v1.28 · Made in Jeypore ❤️</div>
+<div class="subtitle">Private Experience Marketplace · v1.31 · Made in Jeypore ❤️</div>
 <div style="font-size:10px;color:#555;">Book private stays, curated experiences, and on-demand services — all in one app.</div>
 </div>
 
@@ -1808,7 +1811,7 @@ ${tables.map(([t, d]) => `<tr><td style="font-family:monospace;color:#7c3aed;fon
 ${changelog}
 
 <div class="footer">
-<p>🏡 Hushh v1.28 · Private Experience Marketplace · Made in Jeypore ❤️</p>
+<p>🏡 Hushh v1.31 · Private Experience Marketplace · Made in Jeypore ❤️</p>
 <p>80+ Components · 27 Hooks · 45 Tables · 6 Edge Functions · 15 Screens · 22 Admin Pages</p>
 <p>Generated ${new Date().toLocaleDateString()}</p>
 </div>
