@@ -691,12 +691,12 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
               <div className="grid grid-cols-2 gap-2.5">
                 {filteredSlots.map((slot) => {
                   const tagConfig: Record<string, { label: string; color: string; bg: string }> = {
-                    almost_full: { label: "Almost Full", color: "text-red-400", bg: "bg-red-500/15" },
-                    best_price: { label: "Best Price", color: "text-emerald-400", bg: "bg-emerald-500/15" },
-                    trending: { label: "Trending", color: "text-amber-400", bg: "bg-amber-500/15" },
-                    last_slot: { label: "Last Slot!", color: "text-red-400", bg: "bg-red-500/15" },
-                    couple_pick: { label: "Couple Pick", color: "text-pink-400", bg: "bg-pink-500/15" },
-                    work_best: { label: "Work Best", color: "text-blue-400", bg: "bg-blue-500/15" },
+                    almost_full: { label: "Almost Full", color: "text-red-700 dark:text-red-400", bg: "bg-red-500/15" },
+                    best_price: { label: "Best Price", color: "text-emerald-700 dark:text-emerald-400", bg: "bg-emerald-500/15" },
+                    trending: { label: "Trending", color: "text-amber-700 dark:text-amber-400", bg: "bg-amber-500/15" },
+                    last_slot: { label: "Last Slot!", color: "text-red-700 dark:text-red-400", bg: "bg-red-500/15" },
+                    couple_pick: { label: "Couple Pick", color: "text-pink-700 dark:text-pink-400", bg: "bg-pink-500/15" },
+                    work_best: { label: "Work Best", color: "text-blue-700 dark:text-blue-400", bg: "bg-blue-500/15" },
                   };
                   const slotTag = slot.tag ? tagConfig[slot.tag] : null;
 
