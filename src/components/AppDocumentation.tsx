@@ -1621,7 +1621,7 @@ li{font-size:10px;margin:2px 0;color:#444;}
 <div class="hero">
 <div class="emoji">🏡</div>
 <h1>HUSHH</h1>
-<div class="subtitle">Private Experience Marketplace · v1.27 · Made in Jeypore ❤️</div>
+<div class="subtitle">Private Experience Marketplace · v1.28 · Made in Jeypore ❤️</div>
 <div style="font-size:10px;color:#555;">Book private stays, curated experiences, and on-demand services — all in one app.</div>
 </div>
 
