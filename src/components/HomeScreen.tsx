@@ -240,7 +240,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 homeSections.push({ key: "packages", order: getSortOrder("packages"), node: (
                   <>
                     <SectionTitle title="BOOK YOUR EXPERIENCE" />
-                    <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4" style={{ touchAction: "pan-x", WebkitOverflowScrolling: "touch", overscrollBehaviorX: "contain" }}>
+                    <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-6" style={{ touchAction: "pan-x", WebkitOverflowScrolling: "touch", overscrollBehaviorX: "contain" }}>
                       {packages.map((pkg, i) => (
                         <PackageCard key={pkg.id} pkg={pkg} index={i} properties={properties} onPropertyTap={onPropertyTap} />
                       ))}
