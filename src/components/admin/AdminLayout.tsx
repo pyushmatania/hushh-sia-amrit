@@ -77,6 +77,7 @@ const navSections: { title: string; items: { id: AdminPage; label: string; icon:
   {
     title: "More",
     items: [
+      { id: "telegram", label: "Telegram Bot", icon: Send, color: "bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400", activeGlow: "shadow-blue-200/60" },
       { id: "notifications", label: "Notifications", icon: Bell, color: "bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400", activeGlow: "shadow-rose-200/60" },
       { id: "reports", label: "Reports", icon: FileSpreadsheet, color: "bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400", activeGlow: "shadow-violet-200/60" },
       { id: "achievements", label: "Achievements", icon: Trophy, color: "bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400", activeGlow: "shadow-amber-200/60" },
