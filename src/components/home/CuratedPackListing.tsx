@@ -205,14 +205,8 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
       style={{ animationDelay: `${index * 60}ms` }}
       onClick={() => { hapticSelection(); onTap(pack); }}
     >
-      {/* Video area - desktop: varied shapes based on index */}
-      <div className={`relative md:rounded-[20px] md:overflow-hidden md:hover:shadow-elevated md:transition-shadow h-[70vh] max-h-[520px] ${
-        index % 5 === 0 ? "md:h-[65vh] md:max-h-[560px]" :
-        index % 5 === 1 ? "md:h-[40vh] md:max-h-[320px]" :
-        index % 5 === 2 ? "md:h-[55vh] md:max-h-[480px]" :
-        index % 5 === 3 ? "md:h-[35vh] md:max-h-[280px]" :
-        "md:h-[60vh] md:max-h-[520px]"
-      }`}>
+      {/* Video area */}
+      <div className="relative md:rounded-[20px] md:overflow-hidden md:hover:shadow-elevated md:transition-shadow h-[70vh] max-h-[520px] md:h-[60vh] md:max-h-[500px]">
         <div className="md:hidden"><AccentFrame color={accent.color} radius="20px" glowAlpha={0.08} /></div>
         <div
           className="relative w-full h-full overflow-hidden rounded-[20px]"
