@@ -148,12 +148,12 @@ export default function AuthScreen() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-2 mb-6">
             <Sparkles size={28} className="text-primary" />
-            <h1 className="text-3xl font-bold text-foreground tracking-tight">{brandName}</h1>
+            <h1 className="text-3xl font-bold text-white tracking-tight">{brandName}</h1>
           </div>
-          <h2 className="text-2xl font-bold text-foreground leading-tight">
+          <h2 className="text-2xl font-bold text-white leading-tight">
             {mode === "login" ? "Welcome back" : mode === "signup" ? "Create account" : "Reset password"}
           </h2>
-          <p className="text-sm text-muted-foreground mt-2">
+          <p className="text-sm text-white/60 mt-2">
             {mode === "login" ? "Sign in to continue your journey" : mode === "signup" ? `Join ${brandName} and discover private experiences` : "Enter your email to receive a reset link"}
           </p>
           {mode === "forgot" && (
