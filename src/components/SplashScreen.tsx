@@ -81,7 +81,6 @@ function getTimeConfig() {
     hasTwinkle: true,
     particleColor: "hsla(55, 90%, 70%, 0.8)",
     glowColor: "hsla(45, 80%, 70%, 0.25)",
-    ambientSound: "/audio/crickets-night.wav",
   };
 }
 
