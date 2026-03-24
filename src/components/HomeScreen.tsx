@@ -532,15 +532,10 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
           )}
         </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="mx-5 mt-8 mb-4 flex items-center justify-center gap-2 glass rounded-2xl px-4 py-3"
-      >
+      <div className="mx-5 mt-8 mb-4 flex items-center justify-center gap-2 glass rounded-2xl px-4 py-3">
         <span className="text-lg">🏷️</span>
         <span className="text-sm font-medium text-foreground">Prices include all fees · No hidden charges</span>
-      </motion.div>
+      </div>
 
       <div className="h-20" />
     </div>
