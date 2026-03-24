@@ -1,6 +1,6 @@
 # 🏡 HUSHH — Private Experience Marketplace
 
-> **Made in Jeypore ❤️** | v1.27 | Internal Documentation & Blueprint
+> **Made in Jeypore ❤️** | v1.28 | Internal Documentation & Blueprint
 
 Hushh is a premium mobile-first marketplace for booking private experiences, stays, and curated lifestyle services in Jeypore, India. Think Airbnb meets a concierge — but hyper-local, with a focus on curated combos and on-demand add-ons.
 
@@ -29,8 +29,9 @@ Hushh is a premium mobile-first marketplace for booking private experiences, sta
 17. [App Blueprint](#-app-blueprint)
 18. [Wireframes](#-wireframes)
 19. [Change History](#-change-history)
-20. [Conventions & Guidelines](#-conventions--guidelines)
-18. [Easter Eggs](#-easter-eggs)
+20. [Mobile & Responsive Blueprint](#-mobile--responsive-blueprint)
+21. [Conventions & Guidelines](#-conventions--guidelines)
+22. [Easter Eggs](#-easter-eggs)
 
 ---
 
@@ -1422,6 +1423,154 @@ standalone: campaigns · coupons · expenses · budget_allocations · app_config
 - **Rate limit configs**: `RATE_LIMITS` constant with predefined limits for AUTH_LOGIN, AUTH_SIGNUP, AUTH_RESET, ORDER_SUBMIT, SPIN_WHEEL, REVIEW_SUBMIT, SEARCH_QUERY
 - **User-facing error messages**: Rate limit errors show human-readable retry times ("Try again in 3 minutes")
 - **Audit report resolved**: All 8 critical issues confirmed fixed, 20+ warnings addressed, remaining items documented
+
+---
+
+## 📱 Mobile & Responsive Blueprint
+
+> This section documents every mobile-specific decision so an AI can use it as a reference to build the web/desktop version.
+
+### Distribution Strategy
+
+| Channel | Technology | Details |
+|---------|-----------|---------|
+| **PWA** | VitePWA + Workbox | autoUpdate, standalone, portrait, installable from browser |
+| **Android APK** | Capacitor 8 | WebView loads live URL (`lovableproject.com`), instant updates without rebuild |
+| **CI/CD** | GitHub Actions | Auto-build debug APK on push to main, Java 21, Gradle 8.14 |
+
+### Viewport & Layout
+
+| Rule | Value | Purpose |
+|------|-------|---------|
+| Design target | 390×844px (iPhone 14/15) | Tested on 360px (Android) and 428px (Pro Max) |
+| `overflow-x: hidden` | `html, body, #root` | Prevent horizontal drift from 3D card transforms |
+| `overscroll-behavior-x: none` | `html, body, #root` | Disable rubber-band horizontal scroll |
+| Layout | Single column stack | All primary screens, 2-col grids for property cards |
+| Modals | Bottom sheets (Vaul) | Natural thumb reach zone instead of centered dialogs |
+| Sticky elements | Bottom nav, category bar, booking CTA | Fixed/sticky positioning for key interactive elements |
+
+### Responsive Layout Patterns
+
+| Pattern | Screens | Details |
+|---------|---------|---------|
+| Single Column Stack | Home, Profile, Trips, Messages | Vertical scroll, no side-by-side panels |
+| 2-Column Grid | Property cards, Stats, Wishlist | `grid-cols-2` at mobile width |
+| Horizontal Carousels | Spotlight, Foodie, Sports, Achievements | `embla-carousel` or CSS `overflow-x-auto` with snap |
+| Full-Screen Overlays | Search, Map, Documentation | Back navigation, no partial modals |
+| Bottom Sheet Modals | Settings, Edit Profile, Split Pay | Vaul drawer, swipe-to-dismiss |
+
+### Touch & Interaction
+
+| Feature | Implementation |
+|---------|---------------|
+| Touch targets | 44px minimum, bottom nav icons 48px zones |
+| Haptic feedback | `navigator.vibrate` on booking confirm, spin wheel, toggles |
+| Animations | Framer Motion springs (stiffness: 300, damping: 30), `whileTap={{ scale: 0.95 }}` |
+| Swipe gestures | Message conversations, pull-to-refresh (Home), gallery carousel |
+| Scroll snap | `scroll-snap-type: x mandatory` on horizontal carousels |
+
+### Mobile Typography Scale
+
+| Element | Size | Weight | Font |
+|---------|------|--------|------|
+| Page titles | `text-2xl` (24px) | 900 (black) | Space Grotesk |
+| Section headers | `text-base` (16px) | 900 (black) | Space Grotesk |
+| Card titles | `text-sm` (14px) | 700 (bold) | Space Grotesk |
+| Body text | `text-[13px]` | 500 (medium) | Space Grotesk |
+| Labels & badges | `text-[11px]` | 700 (bold) | DM Sans |
+| Micro text | `text-[9px]`–`text-[10px]` | 500 (medium) | DM Sans |
+| Editorial overlays | `text-lg`–`text-2xl` | 700 (bold) | Playfair Display |
+
+**Spacing:** Cards use `p-3` to `p-4` (12–16px). Section gaps: `space-y-4` to `space-y-6`. Screen horizontal padding: `px-4` (16px).
+
+### Aspect Ratios & Media
+
+| Element | Aspect Ratio | Details |
+|---------|-------------|---------|
+| Property card images | 16:10 (`aspect-[16/10]`) | `rounded-2xl`, `object-cover`, lazy loading |
+| Spotlight video cards | 16:9 | Autoplay, muted, loop, `playsInline`, poster fallback |
+| Gallery carousel | 4:3 | Full-width swipe, dot indicators |
+| Avatar images | 1:1 (`rounded-full`) | w-10 to w-20 depending on context |
+| Curated pack bg video | Full-screen | Absolute positioned, `object-cover`, z-0 |
+| Map view | Full-viewport | Leaflet takes remaining height after header |
+| Spin wheel | 1:1 (300×300) | Canvas-rendered, centered |
+
+### Dual Theme System
+
+All colors defined as HSL in `index.css` under `:root` (dark) and `.light`. Components use **semantic tokens only** — never hardcoded colors.
+
+| Token | Dark Mode | Light Mode |
+|-------|-----------|------------|
+| `--background` | 260 20% 6% | 260 20% 98% |
+| `--foreground` | 0 0% 96% | 260 25% 12% |
+| `--primary` | 270 80% 65% | 270 72% 52% |
+| `--card` | 260 18% 10% | 0 0% 100% |
+| `--muted` | 260 12% 16% | 260 14% 94% |
+| `--border` | 260 15% 16% | 260 16% 90% |
+
+Theme-aware utilities: `glass`/`glass-light`, `glow-sm/md/lg`, `shadow-card/elevated`, `text-gradient`. All transition in 0.4s.
+
+### Mobile Performance Optimizations
+
+| Optimization | Details |
+|-------------|---------|
+| Service Worker | Workbox: NetworkFirst for API, CacheFirst for static. 10MB max cache per file |
+| Font Loading | 4 Google Fonts via `rel="preload" as="style"` + `onload` pattern. Non-render-blocking |
+| LazySection | Home sections wrapped in `IntersectionObserver` — render only when in viewport |
+| OptimizedImage | Native lazy loading, blur-up placeholder, error fallback. `object-cover` |
+| Video Preloading | `lib/video-preloader.ts` preloads spotlight videos. `playsInline + muted + loop` for autoplay |
+| React Query Cache | 30s staleTime, 2× retry with exponential backoff |
+| Critical Preconnects | `fonts.googleapis.com`, `fonts.gstatic.com`, `supabase.co` |
+| Inline Splash | HTML-inline splash (no JS) for instant FCP, replaced by React `SplashScreen` |
+
+### Navigation Architecture
+
+**Bottom Navigation (5 tabs):**
+
+| Tab | Icon | Screen |
+|-----|------|--------|
+| Explore | 🏠 Home | HomeScreen — feed, search, categories |
+| Wishlists | ❤️ Heart | WishlistScreen — saved properties grid |
+| Trips | ✈️ Plane | TripsScreen — active/upcoming/past/cancelled |
+| Messages | 💬 Chat | MessagesScreen — conversations + chat |
+| Profile | 👤 User | ProfileScreen — settings, loyalty, host |
+
+**Patterns:** State machine navigation (not React Router for internal screens), back button via `onBack` prop, sheet/drawer for settings, full-screen for search/map, tab memory preserved.
+
+### Capacitor Configuration
+
+| Config | Value |
+|--------|-------|
+| appId | `app.lovable.hushhjeypore` |
+| appName | `hushh-jeypore` |
+| webDir | `dist` |
+| server.url | Lovable preview URL (live — instant updates) |
+| Build pipeline | GitHub Actions → npm install → build → cap add android → cap sync → gradlew assembleDebug → APK artifact |
+
+### PWA Configuration
+
+| Property | Value |
+|----------|-------|
+| name | Hushh Jeypore |
+| display | standalone |
+| orientation | portrait |
+| theme_color | #050505 |
+| registerType | autoUpdate |
+| icons | 192×192 + 512×512 (any maskable) |
+| navigateFallbackDenylist | /sw-push.js |
+
+### 🤖 AI Prompts for Web/Desktop Conversion
+
+Use these prompts when converting the mobile-first app to a responsive web/desktop version:
+
+1. **Layout Expansion**: Convert single-column mobile layout to multi-panel desktop: sidebar navigation (replace bottom nav), main content area, and optional right panel for details/chat. Use Tailwind `lg:` breakpoints.
+2. **Navigation Upgrade**: Replace BottomNav with a persistent left sidebar (collapsible) for desktop. Add breadcrumbs. Convert full-screen overlays (search, map) to panels within the main layout.
+3. **Grid Scaling**: Scale property card grids from 2-col (mobile) to 3-col (tablet) to 4-col (desktop). Increase card size proportionally. Add hover states (scale, shadow) that replace tap states.
+4. **Bottom Sheets → Modals**: Convert all Vaul bottom sheet dialogs to centered Dialog modals for desktop. Keep bottom sheet behavior for mobile using `useMobile()` hook conditional.
+5. **Table Views**: Admin panel: convert card-based mobile lists to full data tables with sorting, filtering, and pagination for desktop viewport. Use shadcn Table component.
+6. **Split View**: Messages: implement split-pane layout — conversation list on left (300px), chat thread on right. Property Detail: sticky image gallery on left, info/booking on right.
+7. **Responsive Typography**: Scale up: page titles to `text-3xl`, section headers to `text-xl`, body to `text-sm`. Increase spacing: `px-8` on desktop, `max-w-7xl` container.
+8. **Mouse Interactions**: Add `hover:scale-105`, `hover:shadow-lg` on property cards. Replace `whileTap` with `whileHover`. Add keyboard shortcuts (Esc to close, Enter to confirm).
 
 ---
 
