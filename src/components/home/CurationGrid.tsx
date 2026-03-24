@@ -91,7 +91,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
 
       {/* Pair — side-by-side landscape cards */}
       {pair.length > 0 && (
-        <div className="grid grid-cols-2 gap-3 px-4">
+        <div className="grid grid-cols-2 gap-3 px-4 md:grid-cols-3 md:gap-6 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
           {pair.map((combo, i) => (
             <motion.div
               key={combo.id}
