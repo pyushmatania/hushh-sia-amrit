@@ -333,7 +333,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                   <h2 className="text-lg font-bold text-foreground">⭐ Top Rated Stays</h2>
                   <span className="text-xs text-muted-foreground">{stayProperties.length} stays</span>
                 </div>
-                <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
+                <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5 md:grid md:grid-cols-3 lg:grid-cols-4 md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-6">
                   {topRated.map((p, i) => (
                     <PropertyCardSmall key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
                   ))}
