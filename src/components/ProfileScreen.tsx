@@ -82,6 +82,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
   const [showHelpCentre, setShowHelpCentre] = useState(false);
   const [showLegal, setShowLegal] = useState(false);
   const [showDocs, setShowDocs] = useState(false);
+  const [showWallpapers, setShowWallpapers] = useState(false);
   const versionTapCount = useRef(0);
   const versionTapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [showPastTrips, setShowPastTrips] = useState(false);
