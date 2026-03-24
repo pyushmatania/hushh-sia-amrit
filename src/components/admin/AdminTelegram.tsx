@@ -482,23 +482,80 @@ export default function AdminTelegram() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Test Notifications</CardTitle>
+              <CardTitle className="text-base">📋 Booking & Order Alerts</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              <p className="text-xs text-muted-foreground mb-3">
-                Send test notifications to verify each alert type works
-              </p>
               {[
-                { type: "new_booking", label: "🎫 Test Booking Alert", desc: "Simulates a new booking notification" },
-                { type: "new_order", label: "🛒 Test Order Alert", desc: "Simulates a new order notification" },
-                { type: "custom", label: "📢 Test Custom Message", desc: "Sends a generic test notification" },
+                { type: "new_booking", label: "🎫 New Booking", desc: "Simulates a new booking confirmation" },
+                { type: "booking_cancelled", label: "❌ Booking Cancelled", desc: "Simulates a booking cancellation" },
+                { type: "new_order", label: "🛒 New Order", desc: "Simulates a new in-stay order" },
+                { type: "order_status", label: "👨‍🍳 Order Status Update", desc: "Simulates order status → preparing" },
               ].map(({ type, label, desc }) => (
-                <Button
-                  key={type}
-                  variant="outline"
-                  className="w-full justify-between"
-                  onClick={() => sendNotifyTest(type)}
-                >
+                <Button key={type} variant="outline" className="w-full justify-between" onClick={() => sendNotifyTest(type)}>
+                  <div className="text-left">
+                    <p className="text-sm font-medium">{label}</p>
+                    <p className="text-xs text-muted-foreground">{desc}</p>
+                  </div>
+                  <ArrowUpRight size={14} />
+                </Button>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">💰 Finance & Payments</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {[
+                { type: "payment_received", label: "💳 Payment Received", desc: "Simulates a successful payment capture" },
+                { type: "refund_initiated", label: "🔄 Refund Initiated", desc: "Simulates a refund processing alert" },
+                { type: "daily_summary", label: "📊 Daily Summary", desc: "Revenue, bookings & orders digest" },
+              ].map(({ type, label, desc }) => (
+                <Button key={type} variant="outline" className="w-full justify-between" onClick={() => sendNotifyTest(type)}>
+                  <div className="text-left">
+                    <p className="text-sm font-medium">{label}</p>
+                    <p className="text-xs text-muted-foreground">{desc}</p>
+                  </div>
+                  <ArrowUpRight size={14} />
+                </Button>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">🏠 Operations & Staff</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {[
+                { type: "checkin_alert", label: "✅ Guest Check-in", desc: "Simulates a guest checking in" },
+                { type: "low_inventory", label: "📦 Low Inventory", desc: "Simulates low stock items alert" },
+                { type: "staff_alert", label: "👷 Staff Absent", desc: "Simulates staff absence notification" },
+                { type: "capacity_warning", label: "🔴 Capacity Warning", desc: "Simulates near-full slot warning" },
+              ].map(({ type, label, desc }) => (
+                <Button key={type} variant="outline" className="w-full justify-between" onClick={() => sendNotifyTest(type)}>
+                  <div className="text-left">
+                    <p className="text-sm font-medium">{label}</p>
+                    <p className="text-xs text-muted-foreground">{desc}</p>
+                  </div>
+                  <ArrowUpRight size={14} />
+                </Button>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">⭐ Guest & System</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {[
+                { type: "review_alert", label: "⭐ New Review", desc: "Simulates a 5-star guest review" },
+                { type: "system_health", label: "🟢 System Health", desc: "Simulates system health check report" },
+                { type: "custom", label: "📢 Custom Message", desc: "Sends a generic test notification" },
+              ].map(({ type, label, desc }) => (
+                <Button key={type} variant="outline" className="w-full justify-between" onClick={() => sendNotifyTest(type)}>
                   <div className="text-left">
                     <p className="text-sm font-medium">{label}</p>
                     <p className="text-xs text-muted-foreground">{desc}</p>
