@@ -30,6 +30,14 @@ import listingHushhRides from "@/assets/listing-hushh-rides.webp";
 import listingChefOnCall from "@/assets/listing-chef-on-call.webp";
 import listingPartyDecor from "@/assets/listing-party-decor.webp";
 import listingDjSound from "@/assets/listing-dj-sound.webp";
+import curationAfterHours from "@/assets/curation-after-hours.jpg";
+import curationPartyScene from "@/assets/curation-party-scene.jpg";
+import curationJustUsNight from "@/assets/curation-just-us-night.jpg";
+import curationBbqBonfire from "@/assets/curation-bbq-bonfire.jpg";
+import curationMovieNight from "@/assets/curation-movie-night.jpg";
+import curationGameNight from "@/assets/curation-game-night.jpg";
+import curationWorkEscape from "@/assets/curation-work-escape.jpg";
+import curationTeamWork from "@/assets/curation-team-work.jpg";
 
 export interface TimeSlot {
   id: string;
