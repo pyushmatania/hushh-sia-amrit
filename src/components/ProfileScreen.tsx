@@ -421,7 +421,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
       </motion.div>
 
       {/* Two Cards Grid */}
-      <div className="mx-5 mt-5 grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="mx-5 mt-5 grid grid-cols-2 md:grid-cols-2 gap-3">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
