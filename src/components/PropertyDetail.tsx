@@ -697,29 +697,6 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
             </div>
           </div>
 
-          {/* Branded watermark logo — blended into image */}
-          <div className="absolute top-16 right-4 z-[4] pointer-events-none">
-            <div className="relative w-12 h-12">
-              {/* Animated glow behind logo */}
-              <motion.div
-                className="absolute inset-0 rounded-full"
-                style={{
-                  background: "radial-gradient(circle, hsla(270,80%,65%,0.35) 0%, hsla(320,80%,55%,0.15) 50%, transparent 70%)",
-                  filter: "blur(8px)",
-                }}
-                animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0.7, 0.4] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              />
-              {/* Logo image */}
-              <img
-                src="/pwa-icon-192.png"
-                alt="hushh"
-                className="w-full h-full rounded-full object-cover"
-                style={{ opacity: 0.55, mixBlendMode: "screen", filter: "blur(0.3px)" }}
-              />
-            </div>
-          </div>
-
           {property.category && categoryLabels[Array.isArray(property.category) ? property.category[0] : property.category] && (
             <div className="absolute top-16 left-4 z-10">
               {(() => { const cat = Array.isArray(property.category) ? property.category[0] : property.category; return (
