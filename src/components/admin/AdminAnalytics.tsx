@@ -216,8 +216,8 @@ export default function AdminAnalytics() {
                 </span>
               )}
             </div>
-            <p className="text-xl font-bold text-foreground tabular-nums">{card.value}</p>
-            <p className="text-[10px] text-muted-foreground mt-0.5">{card.label} · {card.suffix}</p>
+            <p className="text-xl lg:text-2xl font-bold text-foreground tabular-nums">{card.value}</p>
+            <p className="text-[10px] lg:text-xs text-muted-foreground mt-0.5">{card.label} · {card.suffix}</p>
           </motion.div>
         ))}
       </div>
