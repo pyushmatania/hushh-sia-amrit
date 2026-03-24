@@ -150,7 +150,9 @@ function inventoryToAddons(rows: any[]): Record<string, Addon[]> {
 }
 
 function curationsToCombo(row: any, staticMatch: CuratedCombo | undefined, propertyImage?: string): CuratedCombo {
-  const resolvedImage = staticMatch?.image || propertyImage || "";
+  // Priority: curation's own image_urls > static match image > property image
+  const curationOwnImage = Array.isArray(row.image_urls) && row.image_urls.length > 0 ? row.image_urls[0] : null;
+  const resolvedImage = curationOwnImage || staticMatch?.image || propertyImage || "";
   return {
     id: staticMatch?.id || row.id,
     name: row.name,
