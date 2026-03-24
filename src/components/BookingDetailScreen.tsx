@@ -611,7 +611,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
       </div>
 
       {/* Bottom actions */}
-      <div className="fixed bottom-0 left-0 right-0 glass px-5 py-3.5 z-40">
+      <div className="fixed bottom-0 left-0 right-0 glass px-5 py-3.5 z-40 md:hidden">
         {isActive && !isCancelled ? (
           <div className="flex gap-3">
             <motion.button

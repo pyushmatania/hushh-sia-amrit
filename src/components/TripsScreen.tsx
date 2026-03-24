@@ -490,7 +490,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="mx-5 mt-1 mb-1 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20"
+          className="mx-5 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 mt-1 mb-1 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20"
         >
           <p className="text-[11px] text-primary font-medium text-center">✨ These are sample trips — book a venue to see your real trips here!</p>
         </motion.div>
