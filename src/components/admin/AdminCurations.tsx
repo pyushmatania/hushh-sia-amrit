@@ -278,6 +278,7 @@ export default function AdminCurations() {
               storagePath="curations"
               label="Curation Images"
               maxImages={8}
+              dimensionTip="Recommended: 1200×800px (3:2) or 800×800px (1:1), JPG/WebP, under 2MB"
             />
 
             {/* Linked Property Images (read-only preview) */}
