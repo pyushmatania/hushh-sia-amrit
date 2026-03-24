@@ -64,7 +64,7 @@ export default function PropertyCardSmall({ property, index, onTap, isWishlisted
       </div>
 
       <div className="pt-2 px-0.5">
-        <h3 className="font-semibold text-sm text-foreground truncate">{property.name}</h3>
+        <h3 className="font-semibold text-sm md:text-base text-foreground truncate">{property.name}</h3>
         <p className="text-sm text-muted-foreground">
           <span className="text-gradient-warm font-semibold">₹{property.basePrice.toLocaleString()}</span> for 2 hours ·{" "}
           <Star size={11} className="inline fill-primary text-primary mb-0.5" /> {property.rating}

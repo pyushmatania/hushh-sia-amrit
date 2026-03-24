@@ -172,7 +172,7 @@ export default function PropertyCard({ property, index, onTap, isWishlisted = fa
       <div className="pt-2.5 pb-1">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <h3 className="font-semibold text-[15px] text-foreground flex items-center gap-1">
+            <h3 className="font-semibold text-[15px] md:text-base text-foreground flex items-center gap-1">
               {property.name}
               {property.verified && <BadgeCheck size={14} className="text-primary shrink-0" />}
             </h3>

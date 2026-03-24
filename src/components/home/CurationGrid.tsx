@@ -56,7 +56,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
         {/* Bottom editorial */}
         <div className="absolute bottom-0 left-0 right-0 p-5">
           <span className="text-3xl">{hero.emoji}</span>
-          <h3 className="text-2xl font-bold text-white leading-tight mt-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+          <h3 className="text-2xl md:text-3xl font-bold text-white leading-tight mt-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
             {hero.name}
           </h3>
           <p className="text-sm text-white/65 mt-1 italic" style={{ fontFamily: "'Playfair Display', serif" }}>

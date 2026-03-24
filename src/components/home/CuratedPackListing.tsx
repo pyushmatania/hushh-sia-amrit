@@ -128,7 +128,7 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
       onClick={() => { hapticSelection(); onTap(pack); }}
     >
       {/* Video area — tall like stay listings */}
-      <div className="relative" style={{ height: "70vh", maxHeight: "520px" }}>
+      <div className="relative md:rounded-[20px] md:overflow-hidden md:hover:shadow-elevated md:transition-shadow" style={{ height: "70vh", maxHeight: "520px" }}>
         <AccentFrame color={accent.color} radius="20px" glowAlpha={0.08} />
         <div
           className="relative w-full h-full overflow-hidden rounded-[20px]"

@@ -42,7 +42,7 @@ export default function PackageCard({ pkg, index, properties, onPropertyTap }: P
             <span key={item} className="text-[11px] md:text-xs bg-secondary/80 text-muted-foreground px-2 py-0.5 rounded-full">{item}</span>
           ))}
         </div>
-        <button className="mt-3 w-full py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold glow-sm active:scale-95 transition-transform">
+        <button className="mt-3 w-full py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold glow-sm active:scale-95 transition-transform md:hover:bg-primary/90 md:cursor-pointer">
           Book Now
         </button>
       </div>

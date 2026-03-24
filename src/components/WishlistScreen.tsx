@@ -68,7 +68,7 @@ export default function WishlistScreen({ wishlist, onToggleWishlist, onPropertyT
               <div className="p-4">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <h3 className="font-semibold text-[15px] text-foreground flex items-center gap-1.5">
+                    <h3 className="font-semibold text-[15px] md:text-base text-foreground flex items-center gap-1.5">
                       {property.name}
                       {property.verified && <BadgeCheck size={14} className="text-primary shrink-0" />}
                     </h3>

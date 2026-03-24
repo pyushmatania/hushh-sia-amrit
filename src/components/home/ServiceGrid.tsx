@@ -102,7 +102,7 @@ export default function ServiceGrid({ services, onServiceTap }: ServiceGridProps
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: (i + 1) * 0.06, duration: 0.35 }}
               onClick={() => onServiceTap(service)}
-              className={`rounded-2xl overflow-hidden cursor-pointer active:scale-[0.97] transition-transform group relative ${isOdd ? "mt-4" : ""}`}
+              className={`rounded-2xl overflow-hidden cursor-pointer active:scale-[0.97] transition-all group relative md:hover:shadow-elevated ${isOdd ? "mt-4 md:mt-0" : ""}`}
               style={{ height: isOdd ? 200 : 220 }}
             >
               <img
