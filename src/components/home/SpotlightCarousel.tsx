@@ -93,7 +93,7 @@ const VideoCard = memo(function VideoCard({
           videoRef.current?.pause();
         }
       },
-      { threshold: 0.1, rootMargin: "200px" }
+      { threshold: 0.1, rootMargin: "50px" }
     );
     observer.observe(card);
     return () => observer.disconnect();
@@ -102,7 +102,7 @@ const VideoCard = memo(function VideoCard({
   return (
     <div
       ref={cardRef}
-      className="shrink-0 cursor-pointer will-change-transform"
+      className="shrink-0 cursor-pointer"
       style={{
         width: "85vw",
         maxWidth: "380px",

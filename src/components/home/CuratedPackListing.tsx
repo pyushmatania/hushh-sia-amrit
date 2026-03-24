@@ -136,7 +136,7 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
           videoRef.current?.pause();
         }
       },
-      { threshold: [0, 0.1], rootMargin: "400px" }
+      { threshold: [0, 0.1], rootMargin: "100px" }
     );
     observer.observe(card);
     return () => observer.disconnect();
