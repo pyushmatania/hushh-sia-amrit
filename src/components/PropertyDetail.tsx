@@ -548,6 +548,16 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
     animate(heroX, 0, { type: "spring", stiffness: 300, damping: 30 });
   }, [property.images.length, heroX]);
 
+  // Auto-slideshow every 4 seconds
+  useEffect(() => {
+    if (property.images.length <= 1) return;
+    const timer = setInterval(() => {
+      setImgIndex((i) => (i === property.images.length - 1 ? 0 : i + 1));
+      setImgLoaded(false);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [property.images.length]);
+
   const selectedSlotData = property.slots.find((s) => s.id === selectedSlot);
 
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
@@ -571,97 +581,115 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
       className="fixed inset-0 z-30 bg-mesh overflow-y-auto pb-28 md:pb-8"
     >
       {/* Hero — Mobile Cinematic */}
-      <div className="relative aspect-[4/3] overflow-hidden md:hidden">
-        {/* Skeleton loader */}
-        {!imgLoaded && (
-          <div className="absolute inset-0 bg-secondary">
-            <div className="absolute inset-0 shimmer-bg" />
-          </div>
-        )}
-
-        {/* Main image with drag */}
-        <motion.img
-          key={imgIndex}
-          src={property.images[imgIndex]}
-          alt={property.name}
-          className="w-full h-full object-cover touch-pan-y"
-          style={{ x: heroX, opacity: heroOpacity }}
-          drag="x"
-          dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={0.15}
-          onDragEnd={handleHeroDragEnd}
-          onLoad={() => setImgLoaded(true)}
-          initial={{ opacity: 0, scale: 1.04 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-        />
-
-        {/* Cinematic gradient overlay — bottom fade + vignette */}
-        <div className="absolute inset-0 pointer-events-none" style={{
-          background: "linear-gradient(0deg, hsl(var(--background)) 0%, hsl(var(--background) / 0.6) 12%, transparent 40%)",
+      <div className="relative overflow-hidden md:hidden">
+        {/* Animated gradient border frame */}
+        <div className="absolute inset-0 z-[5] pointer-events-none rounded-b-3xl" style={{
+          border: "2px solid transparent",
+          borderImage: "linear-gradient(135deg, hsla(270,80%,65%,0.4), hsla(320,80%,55%,0.2), hsla(270,80%,65%,0.4)) 1",
         }} />
-        {/* Top vignette */}
-        <div className="absolute inset-0 pointer-events-none" style={{
-          background: "linear-gradient(180deg, hsl(var(--background) / 0.4) 0%, transparent 25%)",
-        }} />
-        {/* Side vignette for depth */}
-        <div className="absolute inset-0 pointer-events-none" style={{
-          background: "radial-gradient(ellipse at center, transparent 50%, hsl(var(--background) / 0.3) 100%)",
-        }} />
-        {/* Subtle primary glow at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none" style={{
-          background: "linear-gradient(0deg, hsla(270, 80%, 65%, 0.08) 0%, transparent 100%)",
-        }} />
-
-        {/* Top bar — back + actions */}
-        <div className="absolute top-0 left-0 right-0 flex justify-between items-center p-4 z-10">
-          <motion.button onClick={onBack} className="w-10 h-10 rounded-full glass flex items-center justify-center" whileTap={{ scale: 0.85 }}>
-            <ArrowLeft size={18} className="text-foreground" />
-          </motion.button>
-          <div className="flex gap-2.5">
-            <motion.button className="w-10 h-10 rounded-full glass flex items-center justify-center" whileTap={{ scale: 0.85 }} onClick={async () => { await shareProperty(property); }}>
-              <Share2 size={16} className="text-foreground" />
-            </motion.button>
-            <motion.button onClick={() => { hapticMedium(); onToggleWishlist?.(property.id); }} className="w-10 h-10 rounded-full glass flex items-center justify-center" whileTap={{ scale: 1.2 }}>
-              <Heart size={16} className={`transition-colors duration-200 ${liked ? "fill-primary text-primary" : "text-foreground"}`} />
-            </motion.button>
-          </div>
+        <div className="absolute bottom-0 left-0 right-0 h-[2px] z-[5] pointer-events-none overflow-hidden">
+          <motion.div
+            className="h-full rounded-full"
+            style={{ background: "linear-gradient(90deg, hsl(var(--primary)), hsla(320, 80%, 55%, 1), hsl(var(--primary)))" }}
+            initial={{ width: "0%" }}
+            animate={{ width: "100%" }}
+            transition={{ duration: 4, ease: "linear", repeat: Infinity }}
+            key={imgIndex}
+          />
         </div>
 
-        {/* Category badge — top left */}
-        {property.category && categoryLabels[Array.isArray(property.category) ? property.category[0] : property.category] && (
-          <div className="absolute top-16 left-4 z-10">
-            {(() => { const cat = Array.isArray(property.category) ? property.category[0] : property.category; return (
-              <span className={`text-[10px] font-bold tracking-wider px-3 py-1 rounded-full border backdrop-blur-md ${categoryLabels[cat].bg}`}>
-                {categoryLabels[cat].emoji} {categoryLabels[cat].label}
-              </span>
-            ); })()}
-          </div>
-        )}
+        <div className="aspect-[4/3] relative overflow-hidden">
+          {/* Skeleton loader */}
+          {!imgLoaded && (
+            <div className="absolute inset-0 bg-secondary">
+              <div className="absolute inset-0 shimmer-bg" />
+            </div>
+          )}
 
-        {/* Bottom content overlay — dots + count */}
-        <div className="absolute bottom-0 left-0 right-0 px-5 pb-4 z-10 flex items-end justify-between">
-          {/* Dots indicator */}
-          <div className="flex gap-1.5">
-            {property.images.map((_, i) => (
-              <motion.button
-                key={i}
-                onClick={() => { setImgIndex(i); setImgLoaded(false); }}
-                className="rounded-full"
-                animate={{
-                  width: i === imgIndex ? 20 : 6,
-                  height: 6,
-                  backgroundColor: i === imgIndex ? "hsl(270 80% 65%)" : "hsla(0 0% 100% / 0.4)",
-                }}
-                transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              />
-            ))}
+          {/* Main image with drag */}
+          <motion.img
+            key={imgIndex}
+            src={property.images[imgIndex]}
+            alt={property.name}
+            className="w-full h-full object-cover touch-pan-y"
+            style={{ x: heroX, opacity: heroOpacity }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.15}
+            onDragEnd={handleHeroDragEnd}
+            onLoad={() => setImgLoaded(true)}
+            initial={{ opacity: 0, scale: 1.04 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+          />
+
+          {/* Cinematic gradient overlay — bottom fade + vignette */}
+          <div className="absolute inset-0 pointer-events-none" style={{
+            background: "linear-gradient(0deg, hsl(var(--background)) 0%, hsl(var(--background) / 0.6) 12%, transparent 40%)",
+          }} />
+          {/* Top vignette */}
+          <div className="absolute inset-0 pointer-events-none" style={{
+            background: "linear-gradient(180deg, hsl(var(--background) / 0.4) 0%, transparent 25%)",
+          }} />
+          {/* Side vignette for depth */}
+          <div className="absolute inset-0 pointer-events-none" style={{
+            background: "radial-gradient(ellipse at center, transparent 50%, hsl(var(--background) / 0.3) 100%)",
+          }} />
+          {/* Subtle primary glow at bottom */}
+          <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none" style={{
+            background: "linear-gradient(0deg, hsla(270, 80%, 65%, 0.08) 0%, transparent 100%)",
+          }} />
+
+          {/* Top bar — back + actions */}
+          <div className="absolute top-0 left-0 right-0 flex justify-between items-center p-4 z-10">
+            <motion.button onClick={onBack} className="w-10 h-10 rounded-full glass flex items-center justify-center" whileTap={{ scale: 0.85 }}>
+              <ArrowLeft size={18} className="text-foreground" />
+            </motion.button>
+            <div className="flex gap-2.5">
+              <motion.button className="w-10 h-10 rounded-full glass flex items-center justify-center" whileTap={{ scale: 0.85 }} onClick={async () => { await shareProperty(property); }}>
+                <Share2 size={16} className="text-foreground" />
+              </motion.button>
+              <motion.button onClick={() => { hapticMedium(); onToggleWishlist?.(property.id); }} className="w-10 h-10 rounded-full glass flex items-center justify-center" whileTap={{ scale: 1.2 }}>
+                <Heart size={16} className={`transition-colors duration-200 ${liked ? "fill-primary text-primary" : "text-foreground"}`} />
+              </motion.button>
+            </div>
           </div>
 
-          {/* Image count badge */}
-          <div className="glass rounded-full px-2.5 py-1 flex items-center gap-1.5">
-            <Camera size={11} className="text-foreground/70" />
-            <span className="text-[10px] font-medium text-foreground/80">{imgIndex + 1}/{property.images.length}</span>
+          {/* Category badge — top left */}
+          {property.category && categoryLabels[Array.isArray(property.category) ? property.category[0] : property.category] && (
+            <div className="absolute top-16 left-4 z-10">
+              {(() => { const cat = Array.isArray(property.category) ? property.category[0] : property.category; return (
+                <span className={`text-[10px] font-bold tracking-wider px-3 py-1 rounded-full border backdrop-blur-md ${categoryLabels[cat].bg}`}>
+                  {categoryLabels[cat].emoji} {categoryLabels[cat].label}
+                </span>
+              ); })()}
+            </div>
+          )}
+
+          {/* Bottom content overlay — dots + count */}
+          <div className="absolute bottom-0 left-0 right-0 px-5 pb-4 z-10 flex items-end justify-between">
+            {/* Dots indicator */}
+            <div className="flex gap-1.5">
+              {property.images.map((_, i) => (
+                <motion.button
+                  key={i}
+                  onClick={() => { setImgIndex(i); setImgLoaded(false); }}
+                  className="rounded-full"
+                  animate={{
+                    width: i === imgIndex ? 20 : 6,
+                    height: 6,
+                    backgroundColor: i === imgIndex ? "hsl(270 80% 65%)" : "hsla(0 0% 100% / 0.4)",
+                  }}
+                  transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                />
+              ))}
+            </div>
+
+            {/* Image count badge */}
+            <div className="glass rounded-full px-2.5 py-1 flex items-center gap-1.5">
+              <Camera size={11} className="text-foreground/70" />
+              <span className="text-[10px] font-medium text-foreground/80">{imgIndex + 1}/{property.images.length}</span>
+            </div>
           </div>
         </div>
       </div>
