@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useRef, useCallback, type ReactNode } from "react";
-import { Sparkles, TrendingUp, Award, MapPin, Heart, Star } from "lucide-react";
+import { Sparkles, TrendingUp, Award, MapPin, Heart, Star, ArrowRight, Clock } from "lucide-react";
 import type { Property } from "@/data/properties";
 import PropertyCard from "@/components/PropertyCard";
 import PropertyCardWide from "@/components/home/PropertyCardWide";
@@ -24,32 +24,152 @@ interface MixedListingFeedProps {
   onToggleWishlist?: (id: string) => void;
 }
 
-/** How many items to render initially — rest load on scroll */
 const INITIAL_BATCH = 4;
 const BATCH_SIZE = 3;
+
+/* ─── Desktop Card Variants ─── */
+
+function DesktopOverlayCard({ p, onTap, isWL, onToggleWishlist }: { p: Property; onTap: (p: Property) => void; isWL: boolean; onToggleWishlist?: (id: string) => void }) {
+  const cheapest = Math.min(...p.slots.filter(s => s.available).map(s => s.price));
+  return (
+    <div
+      onClick={() => onTap(p)}
+      className="rounded-2xl overflow-hidden cursor-pointer group relative"
+      style={{ height: 320, border: "1px solid hsl(var(--border) / 0.15)" }}
+    >
+      <img src={p.images[0]} alt={p.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/5 group-hover:from-black/95 transition-all duration-500" />
+      
+      <div className="absolute top-4 left-4 right-4 flex justify-between items-start z-10">
+        <span className="text-[10px] font-bold px-2.5 py-1 rounded-full text-primary-foreground" style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))" }}>✨ FEATURED</span>
+        {onToggleWishlist && (
+          <button onClick={(e) => { e.stopPropagation(); onToggleWishlist(p.id); }} className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "hsl(var(--foreground) / 0.2)", backdropFilter: "blur(10px)" }}>
+            <Heart size={16} className={isWL ? "fill-primary text-primary" : "text-white"} />
+          </button>
+        )}
+      </div>
+
+      <div className="absolute bottom-0 left-0 right-0 p-5 transition-transform duration-500 translate-y-6 group-hover:translate-y-0">
+        <h3 className="text-xl font-bold text-white leading-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{p.name}</h3>
+        <p className="text-sm text-white/55 mt-1 line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">{p.description}</p>
+        <div className="flex items-center gap-3 mt-3">
+          <span className="flex items-center gap-1"><Star size={12} className="fill-amber-400 text-amber-400" /><span className="text-sm font-bold text-white">{p.rating}</span></span>
+          <span className="text-xs text-white/50">{p.location}</span>
+          <span className="ml-auto flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold" style={{ background: "hsl(var(--primary))", color: "hsl(var(--primary-foreground))" }}>
+            ₹{cheapest.toLocaleString()}+ <ArrowRight size={13} />
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DesktopGlassCard({ p, onTap, isWL, onToggleWishlist }: { p: Property; onTap: (p: Property) => void; isWL: boolean; onToggleWishlist?: (id: string) => void }) {
+  const cheapest = Math.min(...p.slots.filter(s => s.available).map(s => s.price));
+  return (
+    <div
+      onClick={() => onTap(p)}
+      className="rounded-2xl overflow-hidden cursor-pointer group"
+      style={{ background: "hsl(var(--card) / 0.6)", backdropFilter: "blur(20px) saturate(1.5)", border: "1px solid hsl(var(--border) / 0.25)", boxShadow: "0 8px 32px hsl(var(--foreground) / 0.06)" }}
+    >
+      <div className="relative h-[180px] overflow-hidden">
+        <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+        {onToggleWishlist && (
+          <button onClick={(e) => { e.stopPropagation(); onToggleWishlist(p.id); }} className="absolute top-3 right-3">
+            <Heart size={18} className={isWL ? "fill-primary text-primary" : "fill-foreground/20 text-background"} />
+          </button>
+        )}
+        <div className="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl text-sm font-bold" style={{ background: "hsl(var(--primary) / 0.9)", color: "hsl(var(--primary-foreground))" }}>
+          ₹{cheapest.toLocaleString()}+
+        </div>
+      </div>
+      <div className="p-4">
+        <span className="text-[9px] font-bold tracking-[0.15em] text-primary uppercase">{Array.isArray(p.category) ? p.category[0] : p.category}</span>
+        <h4 className="text-base font-bold text-foreground leading-tight mt-1">{p.name}</h4>
+        <div className="flex items-center gap-2 mt-2">
+          <Star size={11} className="fill-amber-400 text-amber-400" />
+          <span className="text-xs font-bold text-foreground">{p.rating}</span>
+          <span className="text-xs text-muted-foreground ml-auto">{p.location}</span>
+        </div>
+        <div className="mt-3 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold opacity-0 group-hover:opacity-100 -translate-y-1 group-hover:translate-y-0 transition-all duration-300" style={{ background: "hsl(var(--primary) / 0.1)", color: "hsl(var(--primary))" }}>
+          View Details <ArrowRight size={12} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DesktopPanoCard({ p, onTap, isWL, onToggleWishlist }: { p: Property; onTap: (p: Property) => void; isWL: boolean; onToggleWishlist?: (id: string) => void }) {
+  const cheapest = Math.min(...p.slots.filter(s => s.available).map(s => s.price));
+  return (
+    <div
+      onClick={() => onTap(p)}
+      className="col-span-2 lg:col-span-3 xl:col-span-4 rounded-2xl overflow-hidden cursor-pointer group relative"
+      style={{ height: 200, border: "1px solid hsl(var(--border) / 0.2)" }}
+    >
+      <img src={p.images[0]} alt={p.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+      <div className="absolute inset-0" style={{ background: "linear-gradient(90deg, hsl(var(--background) / 0.95) 0%, hsl(var(--background) / 0.7) 45%, transparent 100%)" }} />
+      {onToggleWishlist && (
+        <button onClick={(e) => { e.stopPropagation(); onToggleWishlist(p.id); }} className="absolute top-4 right-4 z-10">
+          <Heart size={20} className={isWL ? "fill-primary text-primary" : "fill-foreground/20 text-foreground/40"} />
+        </button>
+      )}
+      <div className="absolute inset-0 flex items-center p-6">
+        <div className="flex-1 max-w-[55%]">
+          <span className="text-[9px] font-bold tracking-[0.15em] text-primary uppercase">{Array.isArray(p.category) ? p.category[0] : p.category}</span>
+          <h3 className="text-xl font-bold text-foreground leading-tight mt-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{p.name}</h3>
+          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{p.description}</p>
+          <div className="flex items-center gap-4 mt-3">
+            <div className="flex items-center gap-1"><Star size={12} className="fill-amber-400 text-amber-400" /><span className="text-sm font-bold text-foreground">{p.rating}</span></div>
+            <span className="text-xs text-muted-foreground">{p.location}</span>
+            <div className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold ml-auto group-hover:scale-105 transition-transform" style={{ background: "hsl(var(--primary))", color: "hsl(var(--primary-foreground))" }}>
+              ₹{cheapest.toLocaleString()}+ <ArrowRight size={13} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DesktopMinimalCard({ p, onTap, isWL, onToggleWishlist }: { p: Property; onTap: (p: Property) => void; isWL: boolean; onToggleWishlist?: (id: string) => void }) {
+  const cheapest = Math.min(...p.slots.filter(s => s.available).map(s => s.price));
+  return (
+    <div onClick={() => onTap(p)} className="rounded-2xl overflow-hidden cursor-pointer group" style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border) / 0.3)" }}>
+      <div className="relative h-[160px] overflow-hidden">
+        <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        {onToggleWishlist && (
+          <button onClick={(e) => { e.stopPropagation(); onToggleWishlist(p.id); }} className="absolute top-3 right-3">
+            <Heart size={16} className={isWL ? "fill-primary text-primary" : "fill-foreground/20 text-background"} />
+          </button>
+        )}
+      </div>
+      <div className="p-3.5">
+        <h4 className="text-sm font-bold text-foreground leading-tight line-clamp-1">{p.name}</h4>
+        <div className="flex items-center justify-between mt-2">
+          <div className="flex items-center gap-1"><Star size={10} className="fill-amber-400 text-amber-400" /><span className="text-xs font-medium text-foreground">{p.rating}</span></div>
+          <span className="text-sm font-bold text-primary">₹{cheapest.toLocaleString()}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function MixedListingFeed({ properties, onPropertyTap, wishlist, onToggleWishlist }: MixedListingFeedProps) {
   const [visibleCount, setVisibleCount] = useState(INITIAL_BATCH);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
 
-  // Reset visible count when properties change
-  useEffect(() => {
-    setVisibleCount(INITIAL_BATCH);
-  }, [properties]);
+  useEffect(() => { setVisibleCount(INITIAL_BATCH); }, [properties]);
 
-  // IntersectionObserver to load more items as user scrolls
   useEffect(() => {
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisibleCount(prev => Math.min(prev + BATCH_SIZE, properties.length));
-        }
-      },
-      { rootMargin: "400px" }
-    );
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) setVisibleCount(prev => Math.min(prev + BATCH_SIZE, properties.length));
+    }, { rootMargin: "400px" });
     observer.observe(sentinel);
     return () => observer.disconnect();
   }, [properties.length]);
@@ -60,39 +180,34 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
     let cycle = 0;
     let rendered = 0;
 
-    // Desktop: creative bento grid with varied card sizes
+    // Desktop: varied card types in a repeating pattern
     if (!isMobile) {
       while (i < properties.length && rendered < visibleCount) {
-        const pos = i % 8;
+        const pos = i % 12;
         const p = properties[i];
         const isWL = wishlist.includes(p.id);
 
-        // Pos 0: Hero wide card spanning 2 cols
-        if (pos === 0 && i + 1 < properties.length) {
+        // Pos 0: Hero bento (3 cards in mosaic)
+        if (pos === 0 && i + 2 < properties.length) {
           const p2 = properties[i + 1];
+          const p3 = properties[i + 2];
           items.push(
             <div key={`hero-${p.id}`} className="col-span-2 lg:col-span-3 xl:col-span-4">
-              <div className="grid grid-cols-5 gap-4" style={{ height: 360 }}>
-                {/* Large left */}
-                <div
-                  className="col-span-3 relative rounded-2xl overflow-hidden cursor-pointer group"
-                  onClick={() => onPropertyTap(p)}
-                >
-                  <img src={p.images[0]} alt={p.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+              <div className="grid grid-cols-5 gap-4" style={{ height: 340 }}>
+                <div className="col-span-3 relative rounded-2xl overflow-hidden cursor-pointer group" onClick={() => onPropertyTap(p)}>
+                  <img src={p.images[0]} alt={p.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/5 group-hover:from-black/95 transition-all duration-500" />
                   <div className="absolute top-4 left-4">
-                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-full text-primary-foreground" style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))" }}>
-                      ✨ FEATURED
-                    </span>
+                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-full text-primary-foreground" style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))" }}>✨ FEATURED</span>
                   </div>
                   {onToggleWishlist && (
-                    <button onClick={(e) => { e.stopPropagation(); onToggleWishlist(p.id); }} className="absolute top-4 right-4">
-                      <Heart size={22} className={isWL ? "fill-primary text-primary" : "fill-foreground/20 text-background"} />
+                    <button onClick={(e) => { e.stopPropagation(); onToggleWishlist(p.id); }} className="absolute top-4 right-4 w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "hsl(var(--foreground) / 0.2)", backdropFilter: "blur(10px)" }}>
+                      <Heart size={16} className={isWL ? "fill-primary text-primary" : "text-white"} />
                     </button>
                   )}
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <div className="absolute bottom-0 left-0 right-0 p-6 transition-transform duration-500 translate-y-4 group-hover:translate-y-0">
                     <h3 className="text-2xl font-bold text-white leading-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{p.name}</h3>
-                    <p className="text-sm text-white/65 mt-1">{p.description}</p>
+                    <p className="text-sm text-white/55 mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-400">{p.description}</p>
                     <div className="flex items-center gap-3 mt-3">
                       <span className="flex items-center gap-1"><Star size={13} className="fill-amber-400 text-amber-400" /><span className="text-sm font-bold text-white">{p.rating}</span></span>
                       <span className="text-sm text-white/50">{p.location}</span>
@@ -100,95 +215,61 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
                     </div>
                   </div>
                 </div>
-                {/* Right stack */}
                 <div className="col-span-2 flex flex-col gap-4">
-                  <div
-                    className="flex-1 relative rounded-2xl overflow-hidden cursor-pointer group"
-                    onClick={() => onPropertyTap(p2)}
-                  >
-                    <img src={p2.images[0]} alt={p2.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-                    {onToggleWishlist && (
-                      <button onClick={(e) => { e.stopPropagation(); onToggleWishlist(p2.id); }} className="absolute top-3 right-3">
-                        <Heart size={20} className={wishlist.includes(p2.id) ? "fill-primary text-primary" : "fill-foreground/20 text-background"} />
-                      </button>
-                    )}
-                    <div className="absolute bottom-0 left-0 right-0 p-4">
-                      <h4 className="text-base font-bold text-white">{p2.name}</h4>
-                      <div className="flex items-center justify-between mt-1">
-                        <span className="text-xs text-white/60">{p2.location}</span>
-                        <span className="text-sm font-bold text-white">₹{Math.min(...p2.slots.filter(s => s.available).map(s => s.price)).toLocaleString()}</span>
-                      </div>
-                    </div>
-                  </div>
-                  {i + 2 < properties.length && (
-                    <div
-                      className="flex-1 relative rounded-2xl overflow-hidden cursor-pointer group"
-                      onClick={() => onPropertyTap(properties[i + 2])}
-                    >
-                      <img src={properties[i + 2].images[0]} alt={properties[i + 2].name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+                  {[p2, p3].map((px) => (
+                    <div key={px.id} className="flex-1 relative rounded-2xl overflow-hidden cursor-pointer group" onClick={() => onPropertyTap(px)}>
+                      <img src={px.images[0]} alt={px.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 to-transparent" />
+                      {onToggleWishlist && (
+                        <button onClick={(e) => { e.stopPropagation(); onToggleWishlist(px.id); }} className="absolute top-3 right-3">
+                          <Heart size={18} className={wishlist.includes(px.id) ? "fill-primary text-primary" : "fill-foreground/20 text-background"} />
+                        </button>
+                      )}
                       <div className="absolute bottom-0 left-0 right-0 p-4">
-                        <h4 className="text-base font-bold text-white">{properties[i + 2].name}</h4>
+                        <h4 className="text-base font-bold text-white">{px.name}</h4>
                         <div className="flex items-center justify-between mt-1">
-                          <span className="text-xs text-white/60">{properties[i + 2].location}</span>
-                          <span className="text-sm font-bold text-white">₹{Math.min(...properties[i + 2].slots.filter(s => s.available).map(s => s.price)).toLocaleString()}</span>
+                          <span className="text-xs text-white/60">{px.location}</span>
+                          <span className="text-sm font-bold text-white">₹{Math.min(...px.slots.filter(s => s.available).map(s => s.price)).toLocaleString()}</span>
                         </div>
                       </div>
                     </div>
-                  )}
+                  ))}
                 </div>
               </div>
             </div>
           );
-          i += Math.min(3, properties.length - i);
-          rendered += 3;
+          i += 3; rendered += 3;
           continue;
         }
 
-        // Pos 3-4: Horizontal editorial row with image left, info right
+        // Pos 3: Panoramic wide card
         if (pos === 3) {
-          items.push(
-            <div key={`editorial-${p.id}`} className="col-span-2 lg:col-span-3 xl:col-span-4">
-              <div
-                className="flex gap-5 rounded-2xl overflow-hidden cursor-pointer group hover:shadow-elevated transition-all"
-                style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border) / 0.3)", height: 200 }}
-                onClick={() => onPropertyTap(p)}
-              >
-                <div className="relative w-[320px] shrink-0 overflow-hidden">
-                  <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/10" />
-                </div>
-                <div className="flex-1 p-5 flex flex-col justify-center">
-                  <span className="text-[9px] font-bold tracking-widest text-primary uppercase">{Array.isArray(p.category) ? p.category[0] : p.category}</span>
-                  <h3 className="text-xl font-bold text-foreground mt-1 leading-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{p.name}</h3>
-                  <p className="text-sm text-muted-foreground mt-1.5 line-clamp-2">{p.description}</p>
-                  <div className="flex items-center gap-3 mt-auto pt-3">
-                    <span className="flex items-center gap-1"><Star size={12} className="fill-primary text-primary" /><span className="text-sm font-medium text-foreground">{p.rating}</span></span>
-                    <span className="text-xs text-muted-foreground">{p.location}</span>
-                    <span className="ml-auto text-lg font-bold text-foreground">₹{Math.min(...p.slots.filter(s => s.available).map(s => s.price)).toLocaleString()}<span className="text-xs text-muted-foreground"> onwards</span></span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
+          items.push(<DesktopPanoCard key={`pano-${p.id}`} p={p} onTap={onPropertyTap} isWL={isWL} onToggleWishlist={onToggleWishlist} />);
           i++; rendered++;
           continue;
         }
 
-        // Default: standard card
-        items.push(
-          <PropertyCard
-            key={p.id}
-            property={p}
-            index={i}
-            onTap={onPropertyTap}
-            isWishlisted={isWL}
-            onToggleWishlist={onToggleWishlist}
-          />
-        );
-        i++;
-        rendered++;
+        // Pos 4-5: Overlay reveal cards
+        if (pos === 4 || pos === 8) {
+          items.push(<DesktopOverlayCard key={`overlay-${p.id}`} p={p} onTap={onPropertyTap} isWL={isWL} onToggleWishlist={onToggleWishlist} />);
+          i++; rendered++;
+          continue;
+        }
+
+        // Pos 7: Another pano
+        if (pos === 7) {
+          items.push(<DesktopPanoCard key={`pano2-${p.id}`} p={p} onTap={onPropertyTap} isWL={isWL} onToggleWishlist={onToggleWishlist} />);
+          i++; rendered++;
+          continue;
+        }
+
+        // Even positions: Glass cards, odd: Minimal
+        if (pos % 2 === 0) {
+          items.push(<DesktopGlassCard key={`glass-${p.id}`} p={p} onTap={onPropertyTap} isWL={isWL} onToggleWishlist={onToggleWishlist} />);
+        } else {
+          items.push(<DesktopMinimalCard key={`min-${p.id}`} p={p} onTap={onPropertyTap} isWL={isWL} onToggleWishlist={onToggleWishlist} />);
+        }
+        i++; rendered++;
       }
       return items;
     }
@@ -219,12 +300,10 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
       switch (pos) {
         case 0:
           items.push(<PropertyCard key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={isWL} onToggleWishlist={onToggleWishlist} />);
-          i++; rendered++;
-          break;
+          i++; rendered++; break;
         case 1:
           items.push(<PropertyCardWide key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={isWL} onToggleWishlist={onToggleWishlist} />);
-          i++; rendered++;
-          break;
+          i++; rendered++; break;
         case 2:
           if (i + 1 < properties.length) {
             items.push(<PropertyDuoRow key={`duo-${p.id}`} properties={[p, properties[i + 1]]} startIndex={i} onTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} />);
@@ -236,12 +315,10 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
           break;
         case 4:
           items.push(<PropertyCardCinematic key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={isWL} onToggleWishlist={onToggleWishlist} />);
-          i++; rendered++;
-          break;
+          i++; rendered++; break;
         case 5:
           items.push(<PropertyCardPolaroid key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={isWL} onToggleWishlist={onToggleWishlist} />);
-          i++; rendered++;
-          break;
+          i++; rendered++; break;
         case 6:
           if (i + 2 < properties.length) {
             items.push(<PropertyCardStack key={`stack-${p.id}`} properties={[p, properties[i + 1], properties[i + 2]]} startIndex={i} onTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} />);
@@ -253,12 +330,10 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
           break;
         case 9:
           items.push(<PropertyCardFeatured key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={isWL} onToggleWishlist={onToggleWishlist} />);
-          i++; rendered++;
-          break;
+          i++; rendered++; break;
         default:
           items.push(<PropertyCard key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={isWL} onToggleWishlist={onToggleWishlist} />);
-          i++; rendered++;
-          break;
+          i++; rendered++; break;
       }
     }
 
