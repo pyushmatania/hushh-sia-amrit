@@ -161,13 +161,13 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
     >
       {/* ─── Header ─── */}
       <div className="sticky top-0 z-20 bg-background/80 backdrop-blur-xl border-b border-border/30">
-        <div className="flex items-center gap-3 px-4 pt-[max(12px,env(safe-area-inset-top))] pb-3">
+        <div className="flex items-center gap-3 px-4 pt-[max(12px,env(safe-area-inset-top))] pb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:pt-6">
           <motion.button whileTap={{ scale: 0.9 }} onClick={onBack}
             className="w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center">
             <ArrowLeft size={18} className="text-foreground" />
           </motion.button>
           <div className="flex-1">
-            <h1 className="text-base font-bold text-foreground">Rewards</h1>
+            <h1 className="text-base font-bold text-foreground md:text-xl">Rewards</h1>
           </div>
           <motion.div
             className="flex items-center gap-1.5 rounded-full px-3.5 py-2"
@@ -189,7 +189,7 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1, duration: 0.5 }}
-        className="mx-4 mt-4 rounded-3xl overflow-hidden relative"
+        className="mx-4 mt-4 rounded-3xl overflow-hidden relative md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 md:max-w-3xl"
         style={{
           background: "linear-gradient(145deg, hsl(var(--card)), hsl(var(--secondary)))",
           border: "1px solid hsl(var(--border) / 0.5)",
@@ -296,7 +296,7 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
       </motion.div>
 
       {/* ─── Tabs (scrollable) ─── */}
-      <div className="mx-4 mt-4 mb-3 flex gap-1 p-1 rounded-full bg-card border border-border/50 overflow-x-auto no-scrollbar">
+      <div className="mx-4 mt-4 mb-3 flex gap-1 p-1 rounded-full bg-card border border-border/50 overflow-x-auto no-scrollbar md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 md:max-w-3xl md:flex-wrap md:overflow-visible">
         <TabChip active={tab === "rewards"} label="Rewards" icon="🎁" onClick={() => setTab("rewards")} />
         <TabChip active={tab === "spin"} label="Spin" icon="🎰" onClick={() => setTab("spin")} />
         <TabChip active={tab === "milestones"} label="Quests" icon="🏆" onClick={() => setTab("milestones")} />
@@ -306,11 +306,11 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
       </div>
 
       {/* ─── Tab Content ─── */}
-      <div className="pb-[max(32px,env(safe-area-inset-bottom))]">
+      <div className="pb-[max(32px,env(safe-area-inset-bottom))] md:px-8 lg:px-16 xl:px-24 2xl:px-32">
         <AnimatePresence mode="wait">
           {/* REWARDS */}
           {tab === "rewards" && (
-            <motion.div key="rewards" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="px-4 space-y-3">
+            <motion.div key="rewards" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="px-4 space-y-3 md:px-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4 md:space-y-0">
               {rewards.map((r, i) => {
                 const canAfford = points >= r.cost;
                 const isRedeemed = redeemed.has(r.id);
@@ -399,7 +399,7 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
 
           {/* MILESTONES / QUESTS */}
           {tab === "milestones" && (
-            <motion.div key="milestones" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="px-4 space-y-3">
+            <motion.div key="milestones" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="px-4 space-y-3 md:px-0 md:grid md:grid-cols-2 md:gap-4 md:space-y-0">
               <p className="text-xs text-muted-foreground mb-1">Complete quests to earn bonus rewards 🗡️</p>
               {milestones.map((ms, i) => {
                 const progressPercent = ms.achieved ? 100 : Math.floor(Math.random() * 70 + 10);
@@ -467,7 +467,7 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
 
           {/* EARN */}
           {tab === "earn" && (
-            <motion.div key="earn" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="px-4 space-y-3">
+            <motion.div key="earn" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="px-4 space-y-3 md:px-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4 md:space-y-0">
               <p className="text-xs text-muted-foreground mb-1">Ways to stack more points 🚀</p>
               {earnMethods.map((m, i) => (
                 <motion.div

@@ -53,15 +53,15 @@ export default function ReferralScreen({ onBack }: ReferralScreenProps) {
     >
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-md border-b border-border">
-        <div className="flex items-center gap-3 px-4 py-3">
+        <div className="flex items-center gap-3 px-4 py-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
           <button onClick={onBack} className="text-foreground active:scale-90 transition-transform">
             <ArrowLeft size={22} />
           </button>
-          <h1 className="text-lg font-bold text-foreground">Refer & Earn</h1>
+          <h1 className="text-lg font-bold text-foreground md:text-2xl">Refer & Earn</h1>
         </div>
       </div>
 
-      <div className="px-5 py-6">
+      <div className="px-5 py-6 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:max-w-4xl md:mx-auto">
         {/* Hero */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -71,7 +71,7 @@ export default function ReferralScreen({ onBack }: ReferralScreenProps) {
           <div className="w-20 h-20 rounded-full bg-primary/10 mx-auto mb-4 flex items-center justify-center">
             <Gift size={36} className="text-primary" />
           </div>
-          <h2 className="text-2xl font-bold text-foreground mb-2">Share the Love</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-2 md:text-3xl">Share the Love</h2>
           <p className="text-sm text-muted-foreground max-w-[280px] mx-auto">
             Invite friends to Hushh and you both earn reward points on their first booking!
           </p>
