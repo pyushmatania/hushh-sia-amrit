@@ -149,7 +149,7 @@ export default function AuthScreen() {
       </motion.div>
 
       {/* Content */}
-      <div className="relative z-10 flex-1 flex flex-col justify-center px-8 pt-16 pb-8">
+      <div className="relative z-10 flex-1 flex flex-col justify-center px-8 pt-16 pb-8 md:items-center">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-2 mb-6">
             <Sparkles size={28} className="text-primary" />
