@@ -188,22 +188,8 @@ function DesktopCurationCard({ combo, onTap, index }: { combo: CuratedCombo; onT
       </div>
 
       <div className="p-4">
-        <div className="flex flex-wrap gap-1 mb-2">
-          {combo.tags.slice(0, 2).map((tag, i) => (
-            <span key={i} className="text-[9px] font-medium px-2 py-0.5 rounded-full bg-muted text-muted-foreground">{tag}</span>
-          ))}
-        </div>
         <h4 className="text-base font-bold text-foreground leading-tight">{combo.name}</h4>
         <p className="text-xs text-muted-foreground mt-1 line-clamp-1 italic" style={{ fontFamily: "'Playfair Display', serif" }}>{combo.tagline}</p>
-
-        <div className="flex flex-wrap gap-1.5 mt-2">
-          {combo.includes.slice(0, 3).map((item, i) => (
-            <span key={i} className="text-[9px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border/50">{item}</span>
-          ))}
-          {combo.includes.length > 3 && (
-            <span className="text-[9px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-bold">+{combo.includes.length - 3}</span>
-          )}
-        </div>
 
         <div className="flex items-center justify-between mt-3">
           <div>
@@ -212,6 +198,63 @@ function DesktopCurationCard({ combo, onTap, index }: { combo: CuratedCombo; onT
           </div>
           <div className="flex items-center gap-1 bg-primary/10 text-primary px-3 py-1.5 rounded-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors text-xs font-bold">
             Book <ArrowRight size={12} />
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ─── Desktop: Wide editorial curation card ─── */
+function DesktopCurationWide({ combo, onTap, index }: { combo: CuratedCombo; onTap: (c: CuratedCombo) => void; index: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.04, duration: 0.35 }}
+      onClick={() => onTap(combo)}
+      className="col-span-2 rounded-2xl overflow-hidden cursor-pointer group relative hover:shadow-elevated transition-all duration-300 flex"
+      style={{
+        background: "hsl(var(--card))",
+        border: "1px solid hsl(var(--border) / 0.3)",
+        height: 220,
+      }}
+    >
+      <div className="relative w-[300px] shrink-0 overflow-hidden">
+        <img src={combo.image} alt={combo.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+        <div className={`absolute inset-0 bg-gradient-to-r ${combo.gradient} to-transparent opacity-30`} />
+        <div className="absolute bottom-4 left-4">
+          <span className="text-3xl">{combo.emoji}</span>
+        </div>
+        {combo.popular && (
+          <div className="absolute top-4 left-4 text-[10px] font-bold px-2.5 py-1 rounded-full bg-primary/90 text-primary-foreground flex items-center gap-1">
+            <Crown size={10} /> Editor's Pick
+          </div>
+        )}
+      </div>
+      <div className="flex-1 p-5 flex flex-col justify-center">
+        <div className="flex items-center gap-2">
+          {combo.tags.slice(0, 2).map((tag, i) => (
+            <span key={i} className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-muted text-muted-foreground">{tag}</span>
+          ))}
+        </div>
+        <h4 className="text-xl font-bold text-foreground leading-tight mt-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{combo.name}</h4>
+        <p className="text-sm text-muted-foreground mt-1 italic" style={{ fontFamily: "'Playfair Display', serif" }}>{combo.tagline}</p>
+        <div className="flex flex-wrap gap-1.5 mt-2.5">
+          {combo.includes.slice(0, 4).map((item, i) => (
+            <span key={i} className="text-[9px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border/50">{item}</span>
+          ))}
+          {combo.includes.length > 4 && (
+            <span className="text-[9px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-bold">+{combo.includes.length - 4}</span>
+          )}
+        </div>
+        <div className="flex items-center justify-between mt-auto pt-3">
+          <div>
+            <span className="text-lg font-bold text-foreground">₹{combo.priceRange[0].toLocaleString()}</span>
+            <span className="text-xs text-muted-foreground"> – ₹{combo.priceRange[1].toLocaleString()}</span>
+          </div>
+          <div className="flex items-center gap-1.5 bg-primary/10 text-primary px-4 py-2 rounded-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors text-sm font-bold">
+            Quick Book <ArrowRight size={13} />
           </div>
         </div>
       </div>
