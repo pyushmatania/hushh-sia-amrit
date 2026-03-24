@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, animate } from "framer-motion";
 import {
   MessageCircle, Bell, Clock, ChevronRight, Sparkles, Calendar,
   CheckCircle2, Send, ArrowLeft, Phone, MoreVertical, Search,
@@ -333,19 +333,21 @@ function ThreadCard({ thread, index, onClick, onPin, onArchive }: {
   const constraintsRef = useRef<HTMLDivElement>(null);
 
   const SWIPE_THRESHOLD = 80;
+  const dragX = useMotionValue(0);
 
   const handleDragEnd = (_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
-    const swipedFar = Math.abs(info.offset.x) > SWIPE_THRESHOLD || Math.abs(info.velocity.x) > 500;
+    const swipedFar = Math.abs(info.offset.x) > SWIPE_THRESHOLD || Math.abs(info.velocity.x) > 600;
     if (swipedFar && info.offset.x > 0) {
-      // Swiped right → pin/unpin
       onPin?.(thread.id);
-      setSwipeState("idle");
     } else if (swipedFar && info.offset.x < 0) {
-      // Swiped left → archive
       setDismissed(true);
       setTimeout(() => onArchive?.(thread.id), 300);
     }
     setSwipeState("idle");
+    // Always snap back to center unless archived
+    if (!(swipedFar && info.offset.x < 0)) {
+      animate(dragX, 0, { type: "spring", stiffness: 500, damping: 35 });
+    }
   };
 
   if (dismissed) {
@@ -400,8 +402,10 @@ function ThreadCard({ thread, index, onClick, onPin, onArchive }: {
       {/* Draggable card foreground */}
       <motion.div
         drag="x"
-        dragConstraints={{ left: -120, right: 120 }}
-        dragElastic={0.15}
+        dragConstraints={{ left: -100, right: 100 }}
+        dragElastic={0.08}
+        dragMomentum={false}
+        style={{ x: dragX }}
         onDrag={(_, info) => {
           if (info.offset.x > SWIPE_THRESHOLD) setSwipeState("pin");
           else if (info.offset.x < -SWIPE_THRESHOLD) setSwipeState("archive");
@@ -412,10 +416,6 @@ function ThreadCard({ thread, index, onClick, onPin, onArchive }: {
         className={`relative z-10 rounded-2xl cursor-pointer transition-shadow ${
           thread.unread > 0 ? "bg-primary/[0.04]" : "bg-secondary/30"
         }`}
-        style={{
-          border: thread.unread > 0 ? "1px solid hsl(var(--primary) / 0.15)" : "1px solid hsl(var(--border))",
-          backgroundColor: "hsl(var(--background))",
-        }}
         whileTap={{ scale: 0.98 }}
       >
         <div className="p-3.5">
