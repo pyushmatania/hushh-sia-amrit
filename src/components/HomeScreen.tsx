@@ -26,6 +26,7 @@ import FoodieCarousel from "./home/FoodieCarousel";
 import ServiceGrid from "./home/ServiceGrid";
 import CurationGrid from "./home/CurationGrid";
 import ActiveTripCard from "./home/ActiveTripCard";
+import OscarRedCarpetSection from "./home/OscarRedCarpetSection";
 
 /** Wraps a home feed section so a crash in one section doesn't kill the whole feed */
 function SectionBoundary({ children, name }: { children: ReactNode; name: string }) {
