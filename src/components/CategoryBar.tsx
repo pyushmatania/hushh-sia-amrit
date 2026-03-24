@@ -78,7 +78,8 @@ export default memo(function CategoryBar({ active, onChange }: CategoryBarProps)
               {cat.label}
             </span>
             {isActive && (
-              <div className="absolute bottom-0 left-2 right-2 h-[2px] bg-primary rounded-full glow-sm cat-underline" />
+              <div className="absolute bottom-0 left-2 right-2 h-[2.5px] rounded-full cat-underline glow-radiate"
+                style={{ background: "hsl(var(--primary))" }} />
             )}
           </button>
         );

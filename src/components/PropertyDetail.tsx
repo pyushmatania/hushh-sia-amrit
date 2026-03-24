@@ -1314,7 +1314,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
             </div>
             <motion.button
               onClick={() => onBook(property, selectedSlot!, guests, selectedDate, addedExtras.length > 0 ? addedExtras : undefined, isStayProp ? roomsCount : undefined, isStayProp ? extraMattressCount : undefined)}
-              className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold text-sm glow-primary"
+              className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold text-sm glow-radiate"
               whileTap={{ scale: 0.93 }}
               transition={{ type: "spring", stiffness: 400 }}
             >
