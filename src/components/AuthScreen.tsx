@@ -140,7 +140,7 @@ export default function AuthScreen() {
         transition={{ duration: 8, ease: "easeOut" }}
       >
         <img src={authBg} alt="" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/55 to-black/85" />
       </motion.div>
 
       {/* Content */}
@@ -148,16 +148,16 @@ export default function AuthScreen() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-2 mb-6">
             <Sparkles size={28} className="text-primary" />
-            <h1 className="text-3xl font-bold text-foreground tracking-tight">{brandName}</h1>
+            <h1 className="text-3xl font-bold text-white tracking-tight">{brandName}</h1>
           </div>
-          <h2 className="text-2xl font-bold text-foreground leading-tight">
+          <h2 className="text-2xl font-bold text-white leading-tight">
             {mode === "login" ? "Welcome back" : mode === "signup" ? "Create account" : "Reset password"}
           </h2>
-          <p className="text-sm text-muted-foreground mt-2">
+          <p className="text-sm text-white/60 mt-2">
             {mode === "login" ? "Sign in to continue your journey" : mode === "signup" ? `Join ${brandName} and discover private experiences` : "Enter your email to receive a reset link"}
           </p>
           {mode === "forgot" && (
-            <button onClick={() => { setMode("login"); setError(""); }} className="flex items-center gap-1 text-xs text-primary font-semibold mt-2">
+            <button onClick={() => { setMode("login"); setError(""); }} className="flex items-center gap-1 text-xs text-primary font-semibold mt-2 drop-shadow-sm">
               <ArrowLeft size={14} /> Back to login
             </button>
           )}
@@ -178,12 +178,12 @@ export default function AuthScreen() {
                 exit={{ height: 0, opacity: 0 }}
               >
                 <div className="relative mb-4">
-                  <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                   <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50" />
                    <input
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Full name"
-                    className="w-full bg-white/10 backdrop-blur-md border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-sm text-foreground placeholder:text-foreground/40 outline-none focus:ring-1 focus:ring-primary/40"
+                    className="w-full bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl pl-12 pr-4 py-3.5 text-sm text-white placeholder:text-white/40 outline-none focus:ring-1 focus:ring-primary/40 focus:border-white/30"
                   />
                 </div>
               </motion.div>
@@ -191,30 +191,30 @@ export default function AuthScreen() {
           </AnimatePresence>
 
           <div className="relative">
-            <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/50" />
+            <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50" />
             <input
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               type="email"
               placeholder="Email address"
-              className="w-full bg-white/10 backdrop-blur-md border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-sm text-foreground placeholder:text-foreground/40 outline-none focus:ring-1 focus:ring-primary/40"
+              className="w-full bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl pl-12 pr-4 py-3.5 text-sm text-white placeholder:text-white/40 outline-none focus:ring-1 focus:ring-primary/40 focus:border-white/30"
             />
           </div>
 
           {mode !== "forgot" && (
             <div className="relative">
-              <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/50" />
+              <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50" />
               <input
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-                className="w-full bg-white/10 backdrop-blur-md border border-white/10 rounded-xl pl-12 pr-12 py-3.5 text-sm text-foreground placeholder:text-foreground/40 outline-none focus:ring-1 focus:ring-primary/40"
+                className="w-full bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl pl-12 pr-12 py-3.5 text-sm text-white placeholder:text-white/40 outline-none focus:ring-1 focus:ring-primary/40 focus:border-white/30"
               />
               <button
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground/50"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -255,9 +255,9 @@ export default function AuthScreen() {
           {mode !== "forgot" && (
             <>
               <div className="flex items-center gap-3 my-1">
-                <div className="flex-1 h-px bg-border" />
-                <span className="text-xs text-muted-foreground">or</span>
-                <div className="flex-1 h-px bg-border" />
+                <div className="flex-1 h-px bg-white/15" />
+                <span className="text-xs text-white/40">or</span>
+                <div className="flex-1 h-px bg-white/15" />
               </div>
 
               <motion.button
@@ -272,7 +272,7 @@ export default function AuthScreen() {
                   setLoading(false);
                 }}
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-3 bg-white/10 backdrop-blur-md border border-white/10 rounded-xl py-3.5 text-sm font-semibold text-foreground hover:bg-white/15 transition-all disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-3 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl py-3.5 text-sm font-semibold text-white hover:bg-white/15 transition-all disabled:opacity-50"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
@@ -290,7 +290,7 @@ export default function AuthScreen() {
       {/* Toggle mode */}
       {mode !== "forgot" && (
         <div className="relative z-10 pb-[max(2rem,env(safe-area-inset-bottom))] text-center">
-          <p className="text-sm text-foreground/70">
+          <p className="text-sm text-white/70">
             {mode === "login" ? "Don't have an account?" : "Already have an account?"}{" "}
             <button
               onClick={() => { setMode(mode === "login" ? "signup" : "login"); setError(""); }}
