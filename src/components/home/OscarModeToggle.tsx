@@ -436,29 +436,56 @@ export function OscarThemedListing({ properties, onPropertyTap, wishlist, onTogg
         aria-label="Red Carpet Premium Collection"
       >
         <TheaterBackground />
-        <AmbientParticles count={25} />
+        <AmbientParticles count={isMobile ? 15 : 25} />
         <SpotlightBeam x="5%" delay={0} />
         <SpotlightBeam x="70%" delay={3} />
-        <VelvetCurtain side="left" />
-        <VelvetCurtain side="right" />
 
-        <div className="relative z-[9] px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-8 pb-12 md:pt-12 md:pb-16">
-          {/* Header */}
-          <motion.div className="text-center py-6 md:py-10"
+        {/* Cinematic top curtain drape — mobile only */}
+        {isMobile && (
+          <div className="absolute top-0 left-0 right-0 h-24 z-[8] pointer-events-none" style={{
+            background: "linear-gradient(180deg, #3D0000 0%, #1a0404 40%, transparent 100%)",
+          }}>
+            <div className="absolute bottom-0 left-0 right-0 h-[3px]" style={{
+              background: "linear-gradient(90deg, transparent, #FFD700 30%, #DAA520 50%, #FFD700 70%, transparent)",
+              boxShadow: "0 0 12px rgba(255,215,0,0.3)",
+            }} />
+          </div>
+        )}
+
+        {!isMobile && (
+          <>
+            <VelvetCurtain side="left" />
+            <VelvetCurtain side="right" />
+          </>
+        )}
+
+        {/* Side gold trim lines — mobile */}
+        {isMobile && (
+          <>
+            <div className="absolute top-24 bottom-0 left-0 w-[2px] z-[8] pointer-events-none" style={{
+              background: "linear-gradient(180deg, #FFD700, #B8860B 30%, rgba(184,134,11,0.1) 80%, transparent)",
+              boxShadow: "0 0 8px rgba(255,215,0,0.2)",
+            }} />
+            <div className="absolute top-24 bottom-0 right-0 w-[2px] z-[8] pointer-events-none" style={{
+              background: "linear-gradient(180deg, #FFD700, #B8860B 30%, rgba(184,134,11,0.1) 80%, transparent)",
+              boxShadow: "0 0 8px rgba(255,215,0,0.2)",
+            }} />
+          </>
+        )}
+
+        <div className="relative z-[9] px-4 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-6 pb-12 md:pt-12 md:pb-16">
+          {/* Header — compact on mobile */}
+          <motion.div className="text-center py-4 md:py-10"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}>
 
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="h-px w-10 md:w-16" style={{ background: "linear-gradient(90deg, transparent, #FFD700)" }} />
-              <motion.img src={oscarTrophy} alt="" className="w-12 h-12 md:w-16 md:h-16 object-contain"
-                animate={{ y: [0, -5, 0] }}
-                transition={{ duration: 3, repeat: Infinity }}
-                style={{ filter: "drop-shadow(0 6px 20px rgba(255,215,0,0.4))" }} />
-              <div className="h-px w-10 md:w-16" style={{ background: "linear-gradient(90deg, #FFD700, transparent)" }} />
-            </div>
+            <motion.img src={oscarTrophy} alt="" className="w-10 h-10 md:w-16 md:h-16 object-contain mx-auto mb-3"
+              animate={{ y: [0, -4, 0], rotateZ: [0, 2, -2, 0] }}
+              transition={{ duration: 4, repeat: Infinity }}
+              style={{ filter: "drop-shadow(0 6px 20px rgba(255,215,0,0.5))" }} />
 
-            <h2 className="text-2xl md:text-4xl lg:text-5xl font-black tracking-tight"
+            <h2 className="text-xl md:text-4xl lg:text-5xl font-black tracking-tight"
               style={{
                 fontFamily: "'Playfair Display', serif",
                 backgroundImage: "linear-gradient(135deg, #FFD700 0%, #FFFFFF 40%, #FFD700 70%, #DAA520 100%)",
@@ -470,36 +497,38 @@ export function OscarThemedListing({ properties, onPropertyTap, wishlist, onTogg
               The Red Carpet
             </h2>
 
-            <p className="text-sm md:text-base mt-2 max-w-md mx-auto"
-              style={{ color: "rgba(255,228,181,0.5)", fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
+            <p className="text-xs md:text-base mt-1.5 max-w-md mx-auto"
+              style={{ color: "rgba(255,228,181,0.4)", fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
               Our most exclusive, award-worthy experiences
             </p>
-
-            <div className="flex items-center justify-center gap-2 mt-4">
-              <div className="h-px w-12 md:w-20" style={{ background: "linear-gradient(90deg, transparent, #DC143C)" }} />
-              <img src={oscarStar} alt="" className="w-4 h-4 object-contain" style={{ filter: "drop-shadow(0 0 6px rgba(255,215,0,0.5))" }} />
-              <div className="h-px w-12 md:w-20" style={{ background: "linear-gradient(90deg, #DC143C, transparent)" }} />
-            </div>
           </motion.div>
 
           {/* Mobile: Single big card with swipe */}
           {isMobile ? (
             <div className="relative">
-              {/* Total count badge */}
-              <div className="flex justify-center mb-4">
-                <div className="flex items-center gap-2 px-4 py-1.5 rounded-full"
-                  style={{ background: "rgba(30,10,0,0.7)", border: "1px solid rgba(255,215,0,0.3)", backdropFilter: "blur(8px)" }}>
-                  <img src={oscarTrophy} alt="" className="w-4 h-4 object-contain" />
-                  <span className="text-[11px] font-bold tracking-wide" style={{ color: "#FFD700" }}>
-                    {currentIndex + 1} of {premiumPicks.length} Premium Picks
+              {/* Counter pill */}
+              <div className="flex justify-center mb-3">
+                <motion.div className="flex items-center gap-2 px-4 py-1.5 rounded-full"
+                  style={{
+                    background: "linear-gradient(135deg, rgba(139,0,0,0.4), rgba(30,10,0,0.6))",
+                    border: "1px solid rgba(255,215,0,0.25)",
+                    backdropFilter: "blur(12px)",
+                    boxShadow: "0 4px 16px rgba(0,0,0,0.3)",
+                  }}
+                  animate={{ scale: [1, 1.02, 1] }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                >
+                  <img src={oscarTrophy} alt="" className="w-3.5 h-3.5 object-contain" />
+                  <span className="text-[10px] font-black tracking-widest uppercase" style={{ color: "#FFD700" }}>
+                    {currentIndex + 1} / {premiumPicks.length}
                   </span>
-                  <img src={oscarStar} alt="" className="w-3 h-3 object-contain" />
-                </div>
+                  <span className="text-[9px] font-medium" style={{ color: "rgba(255,228,181,0.5)" }}>Premium</span>
+                </motion.div>
               </div>
 
-              {/* Swipeable single card */}
+              {/* Swipeable card */}
               <div
-                className="overflow-hidden"
+                className="overflow-hidden rounded-2xl"
                 style={{ touchAction: "pan-y" }}
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
@@ -509,10 +538,10 @@ export function OscarThemedListing({ properties, onPropertyTap, wishlist, onTogg
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={premiumPicks[currentIndex].id}
-                    initial={{ opacity: 0, x: 80, scale: 0.95 }}
+                    initial={{ opacity: 0, x: 80, scale: 0.96 }}
                     animate={{ opacity: 1, x: 0, scale: 1 }}
-                    exit={{ opacity: 0, x: -80, scale: 0.95 }}
-                    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                    exit={{ opacity: 0, x: -80, scale: 0.96 }}
+                    transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
                   >
                     <OscarPropertyCard
                       property={premiumPicks[currentIndex]}
@@ -526,30 +555,34 @@ export function OscarThemedListing({ properties, onPropertyTap, wishlist, onTogg
                 </AnimatePresence>
               </div>
 
-              {/* Dot indicators */}
-              <div className="flex justify-center gap-2 mt-4">
+              {/* Progress bar style dots */}
+              <div className="flex justify-center gap-1.5 mt-5 px-8">
                 {premiumPicks.map((_, i) => (
                   <button key={i} onClick={() => { setCurrentIndex(i); hapticSelection(); }}
-                    className="rounded-full transition-all duration-300"
+                    className="h-[3px] rounded-full transition-all duration-500 flex-1"
                     style={{
-                      width: i === currentIndex ? 24 : 8,
-                      height: 8,
                       background: i === currentIndex
-                        ? "linear-gradient(90deg, #FFD700, #DAA520)"
-                        : "rgba(255,215,0,0.2)",
-                      boxShadow: i === currentIndex ? "0 0 10px rgba(255,215,0,0.4)" : "none",
+                        ? "linear-gradient(90deg, #FFD700, #FFF, #FFD700)"
+                        : i < currentIndex
+                          ? "rgba(255,215,0,0.35)"
+                          : "rgba(255,215,0,0.1)",
+                      boxShadow: i === currentIndex ? "0 0 8px rgba(255,215,0,0.5)" : "none",
+                      maxWidth: 40,
                     }}
                   />
                 ))}
               </div>
 
               {/* Swipe hint */}
-              <motion.p className="text-center mt-3 text-[10px] font-medium tracking-wide"
-                style={{ color: "rgba(255,228,181,0.3)" }}
-                animate={{ opacity: [0.3, 0.6, 0.3] }}
-                transition={{ duration: 2, repeat: Infinity }}>
-                ← SWIPE TO EXPLORE →
-              </motion.p>
+              <motion.div className="flex items-center justify-center gap-3 mt-4"
+                animate={{ opacity: [0.3, 0.5, 0.3] }}
+                transition={{ duration: 2.5, repeat: Infinity }}>
+                <ChevronLeft size={12} style={{ color: "rgba(255,215,0,0.3)" }} />
+                <span className="text-[9px] font-bold tracking-[0.25em] uppercase" style={{ color: "rgba(255,228,181,0.25)" }}>
+                  Swipe to explore
+                </span>
+                <ChevronRight size={12} style={{ color: "rgba(255,215,0,0.3)" }} />
+              </motion.div>
             </div>
           ) : (
             /* Desktop: Grid with arrow navigation */
