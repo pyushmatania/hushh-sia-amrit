@@ -22,8 +22,8 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
         onClick={() => onComboTap(hero)}
-        className="mx-4 rounded-3xl overflow-hidden cursor-pointer active:scale-[0.98] transition-transform group relative md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 md:hover:shadow-xl md:transition-shadow"
-        style={{ height: 280 }}
+        className="mx-4 rounded-3xl overflow-hidden cursor-pointer active:scale-[0.98] transition-all group relative md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 md:hover:shadow-xl md:transition-shadow"
+        style={{ height: 280, minHeight: 280 }}
       >
         <img
           src={hero.image}
