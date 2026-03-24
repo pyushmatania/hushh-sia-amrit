@@ -500,10 +500,11 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
 
       {/* ID Verification Banner */}
       {idVerified === false && (
+        <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mx-5 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 mt-2 mb-1 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 md:max-w-2xl md:self-center"
+          className="mt-2 mb-1 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 md:max-w-4xl md:mx-auto"
         >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-amber-500/15 flex items-center justify-center shrink-0">
