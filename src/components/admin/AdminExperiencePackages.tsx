@@ -285,7 +285,7 @@ export default function AdminExperiencePackages() {
                     {pkg.active ? "Active" : "Inactive"}
                   </button>
                   <button
-                    onClick={() => { setEditing({ ...pkg, image_urls: pkg.image_urls || (pkg.image_url ? [pkg.image_url] : []) }); setIsCreating(false); setIncludeInput(""); setPreviewMode(false); }}
+                    onClick={() => { setEditing({ ...pkg, image_urls: pkg.image_urls || (pkg.image_url ? [pkg.image_url] : []), video_url: pkg.video_url || null }); setIsCreating(false); setIncludeInput(""); setPreviewMode(false); }}
                     className="p-1.5 rounded-lg hover:bg-secondary transition"
                   >
                     <Pencil size={13} className="text-muted-foreground" />
