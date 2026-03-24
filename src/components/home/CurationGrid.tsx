@@ -392,8 +392,8 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
               {combos.slice(6).map((c, i) => <MobileNeonCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
             </div>
           ) : (
-            <div className="grid grid-cols-3 lg:grid-cols-4 gap-5 pb-6">
-              {combos.slice(6).map((c, i) => <DesktopCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
+            <div className="grid grid-cols-4 gap-5 pb-6">
+              {combos.slice(6).map((c, i) => i % 5 === 0 ? <DesktopCurationWide key={c.id} combo={c} onTap={onComboTap} index={i} /> : <DesktopCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
             </div>
           )}
         </>
