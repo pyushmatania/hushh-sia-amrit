@@ -354,35 +354,6 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
   if (properties.length === 0) return null;
 
   /* ─── Desktop: 3-row grid + swipeable overflow row + Show More ─── */
-  const COLS = 4;
-  const ROWS_INITIAL = 3;
-  const overflowScrollRef = useRef<HTMLDivElement>(null);
-  const [overflowCanLeft, setOverflowCanLeft] = useState(false);
-  const [overflowCanRight, setOverflowCanRight] = useState(false);
-
-  const updateOverflowArrows = useCallback(() => {
-    const el = overflowScrollRef.current;
-    if (!el) return;
-    setOverflowCanLeft(el.scrollLeft > 10);
-    setOverflowCanRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10);
-  }, []);
-
-  useEffect(() => {
-    const el = overflowScrollRef.current;
-    if (!el || isMobile || desktopShowAll) return;
-    updateOverflowArrows();
-    el.addEventListener("scroll", updateOverflowArrows, { passive: true });
-    const ro = new ResizeObserver(updateOverflowArrows);
-    ro.observe(el);
-    return () => { el.removeEventListener("scroll", updateOverflowArrows); ro.disconnect(); };
-  }, [updateOverflowArrows, isMobile, desktopShowAll, properties]);
-
-  const scrollOverflow = (dir: "left" | "right") => {
-    const el = overflowScrollRef.current;
-    if (!el) return;
-    const cardW = el.querySelector("[data-overflow-card]")?.getBoundingClientRect().width || 260;
-    el.scrollBy({ left: dir === "left" ? -cardW * 2 : cardW * 2, behavior: "smooth" });
-  };
 
   if (!isMobile) {
     const gridItems = properties.slice(0, COLS * ROWS_INITIAL);
