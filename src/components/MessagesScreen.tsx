@@ -659,9 +659,9 @@ export default function MessagesScreen() {
   return (
     <div className="pb-24 min-h-screen bg-background">
       {/* Header */}
-      <div className="px-5 pt-8 pb-4">
+      <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-8 pb-4">
         <div className="flex items-center justify-between mb-5">
-          <motion.h1 initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} className="text-[26px] font-bold text-foreground tracking-tight">
+          <motion.h1 initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} className="text-[26px] md:text-3xl lg:text-4xl font-bold text-foreground tracking-tight">
             Messages
           </motion.h1>
           <motion.button initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} onClick={() => setShowSearch(!showSearch)}
@@ -674,7 +674,7 @@ export default function MessagesScreen() {
         <AnimatePresence>
           {showSearch && (
             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden mb-4">
-              <div className="relative">
+              <div className="relative md:max-w-md">
                 <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/50" />
                 <input autoFocus value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search…"
                   className="w-full bg-card border border-border/50 rounded-full pl-10 pr-4 py-2.5 text-[13px] text-foreground placeholder:text-muted-foreground/40 outline-none focus:border-primary/30 transition-colors" />
@@ -692,7 +692,7 @@ export default function MessagesScreen() {
       </div>
 
       {/* Concierge CTA */}
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="mx-5 mb-5 flex gap-2">
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="mx-5 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 mb-5 flex gap-2 md:max-w-xl">
         <button onClick={() => {
           setTab("chats");
           if (user && conversations.length > 0) setActiveConvo(conversations[0]);
@@ -705,7 +705,6 @@ export default function MessagesScreen() {
         </button>
       </motion.div>
 
-      {/* Desktop: wrap chats in a container */}
       <div className="md:px-8 lg:px-16 xl:px-24 2xl:px-32">
       <AnimatePresence mode="wait">
         {tab === "chats" && (
