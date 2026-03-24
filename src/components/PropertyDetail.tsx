@@ -1184,7 +1184,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
             initial={{ y: 80 }}
             animate={{ y: 0 }}
             exit={{ y: 80 }}
-            className="fixed bottom-0 left-0 right-0 glass px-5 py-3.5 flex items-center justify-between z-40"
+            className="fixed bottom-0 left-0 right-0 glass border-t border-border/50 px-5 py-3.5 flex items-center justify-between z-40 backdrop-blur-xl bg-card/90 dark:bg-card/70"
           >
             <div>
               <span className="font-semibold text-gradient-warm text-lg">₹{selectedSlotData.price.toLocaleString()}</span>
