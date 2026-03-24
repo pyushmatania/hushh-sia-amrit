@@ -484,6 +484,11 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 </p>
               </div>
 
+              <OscarToggle isOn={oscarMode} onToggle={() => setOscarMode(!oscarMode)} />
+              {oscarMode ? (
+                <OscarThemedListing properties={filteredProperties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
+              ) : (
+              <>
               <div className="px-4 pt-2 pb-3 flex gap-2 overflow-x-auto hide-scrollbar md:justify-center md:flex-wrap md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-3 md:pt-4 md:pb-6">
                 {curationFilters.map(tag => (
                   <button
@@ -524,6 +529,8 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 </div>
                 <p className="text-xs text-muted-foreground md:text-sm">Work & Chill, Day Escape, Game Night — perfect for weekdays!</p>
               </div>
+              </>
+              )}
             </>
           )}
 
@@ -566,11 +573,13 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               </div>
             </LazySection>
           )}
-              </div>
-              <OscarToggle isOn={oscarMode} onToggle={() => setOscarMode(!oscarMode)} />
-              {oscarMode ? (
-                <OscarThemedListing properties={properties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
-              ) : null}
+
+        </div>
+
+      <OscarToggle isOn={oscarMode} onToggle={() => setOscarMode(!oscarMode)} />
+      {oscarMode ? (
+        <OscarThemedListing properties={properties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
+      ) : null}
 
       <div className="mx-5 mt-8 mb-4 flex items-center justify-center gap-2 glass rounded-2xl px-4 py-3 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32">
         <span className="text-lg">🏷️</span>
