@@ -224,14 +224,8 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
         <CategoryBar active={activeCategory} onChange={handleCategoryChange} />
       </div>
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={activeCategory}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.3, ease: "easeOut" }}
-        >
+
+        <div key={activeCategory}>
 
           {/* ═══════ HOME TAB ═══════ */}
           {activeCategory === "home" && (() => {
