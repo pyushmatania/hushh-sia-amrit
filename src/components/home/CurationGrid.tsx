@@ -332,7 +332,9 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
         <>
           <SectionHeader icon={Star} title="✨ All Curations" subtitle={`${combos.length} bundles`} />
           {isMobile ? (
-            <MobileCurationGrid combos={combos.slice(6)} onComboTap={onComboTap} rows={3} />
+            <div className="px-4 grid grid-cols-2 gap-3 pb-4">
+              {combos.slice(6).map((c, i) => <MobileNeonCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
+            </div>
           ) : (
             <div className="grid grid-cols-4 gap-5 pb-6">
               {combos.slice(6).map((c, i) => <DesktopCurationCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
