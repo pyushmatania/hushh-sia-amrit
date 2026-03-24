@@ -129,7 +129,7 @@ export default function PropertyCard({ property, index, onTap, isWishlisted = fa
           src={property.images[imgIndex]}
           alt={property.name}
           fill
-          className="object-cover touch-pan-y"
+          className="object-cover touch-pan-y group-hover:scale-105 transition-transform duration-500"
           sizes="(max-width: 640px) 90vw, 380px"
           onImageLoad={() => setImgLoaded(true)}
           showSkeleton={false}
