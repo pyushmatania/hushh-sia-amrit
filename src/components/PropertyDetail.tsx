@@ -591,7 +591,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
 
         {/* Amenities */}
         <h3 className="text-lg font-semibold text-foreground mb-4">What this place offers</h3>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {property.amenities.map((amenity) => (
             <div key={amenity} className="flex items-center gap-3 glass rounded-xl px-3 py-3">
               <span className="text-foreground shrink-0">
