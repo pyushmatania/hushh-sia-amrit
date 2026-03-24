@@ -34,7 +34,7 @@ export default function PropertyCardSmall({ property, index, onTap, isWishlisted
           src={property.images[0]}
           alt={property.name}
           fill
-          className="object-cover"
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
           sizes="260px"
           onImageLoad={() => setImgLoaded(true)}
           showSkeleton={false}
