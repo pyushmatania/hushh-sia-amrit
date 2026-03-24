@@ -522,6 +522,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
             </button>
           </div>
         </motion.div>
+        </div>
       )}
 
       <IdentityUploadSheet open={idSheetOpen} onClose={() => setIdSheetOpen(false)} />
