@@ -1146,6 +1146,296 @@ function WireframesTab() {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// TAB: MOBILE & RESPONSIVE
+// ═══════════════════════════════════════════════════════════════
+function MobileTab() {
+  return (
+    <div className="space-y-6">
+      {/* Hero */}
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="rounded-3xl p-6 text-center relative overflow-hidden" style={{ background: "linear-gradient(160deg, hsl(var(--primary) / 0.12) 0%, hsl(270 60% 50% / 0.08) 100%)", border: "1px solid hsl(var(--primary) / 0.15)" }}>
+        <p className="text-4xl mb-3">📱</p>
+        <h2 className="text-xl font-black text-foreground tracking-tight">Mobile & Responsive Blueprint</h2>
+        <p className="text-[11px] text-muted-foreground mt-2 max-w-[300px] mx-auto leading-relaxed">Everything done to make Hushh a native-quality mobile experience — use this as the reference for building the web/desktop version.</p>
+        <div className="flex justify-center gap-2 mt-4 flex-wrap">
+          {["Mobile-First", "PWA", "Capacitor", "Touch-Optimized", "Offline-Ready"].map(tag => (
+            <span key={tag} className="text-[9px] font-bold px-2.5 py-1 rounded-full" style={{ background: "hsl(var(--primary) / 0.1)", color: "hsl(var(--primary))", border: "1px solid hsl(var(--primary) / 0.15)" }}>{tag}</span>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Distribution Strategy */}
+      <div>
+        <SectionHeader title="Distribution Strategy" subtitle="How users access the app on mobile" />
+        <div className="space-y-2">
+          <FeatureRow icon={<Globe size={13} className="text-blue-400" />} title="PWA (Progressive Web App)" desc="VitePWA with autoUpdate, service worker caching, installable from browser. Manifest: standalone, portrait, icons 192+512." badge="Primary" />
+          <FeatureRow icon={<Smartphone size={13} className="text-green-400" />} title="Capacitor Native Shell" desc="appId: app.lovable.hushhjeypore. WebView loads live URL — changes deploy instantly without rebuilding APK." badge="Android" />
+          <FeatureRow icon={<Zap size={13} className="text-amber-400" />} title="GitHub Actions CI/CD" desc="Automated APK builds on push to main. Java 21, Gradle 8.14, debug APK artifact upload." />
+          <FeatureRow icon={<Wifi size={13} className="text-cyan-400" />} title="Live-Reload Dev Mode" desc="server.url points to Lovable preview for hot-reload during development. Stripped at build time for standalone APK." />
+        </div>
+      </div>
+
+      {/* Viewport & Layout */}
+      <DocSection title="Viewport & Layout Strategy" icon={<Layout size={15} className="text-primary" />} defaultOpen>
+        <div className="space-y-3">
+          <div>
+            <p className="font-bold text-foreground text-xs mb-1.5">Core Viewport Rules</p>
+            <DataTable headers={["Rule", "Value", "Why"]} rows={[
+              ["viewport meta", "width=device-width, initial-scale=1.0", "Proper scaling on all devices"],
+              ["max-width: 100%", "html, body, #root", "Prevent horizontal overflow"],
+              ["overflow-x: hidden", "html, body, #root", "Block sideways drift from 3D transforms"],
+              ["overscroll-behavior-x: none", "html, body, #root", "Disable rubber-band horizontal scroll"],
+              ["orientation", "portrait (manifest)", "Lock PWA to portrait"],
+              ["display", "standalone (manifest)", "Full-screen app experience"],
+            ]} />
+          </div>
+          <div>
+            <p className="font-bold text-foreground text-xs mb-1.5">Primary Design Target</p>
+            <div className="p-3 rounded-xl" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border) / 0.3)" }}>
+              <p className="text-[11px] text-muted-foreground"><strong className="text-foreground">390 × 844px</strong> (iPhone 14/15 logical) — all components designed for this viewport first, then tested on 360px (Android) and 428px (iPhone Pro Max).</p>
+              <p className="text-[11px] text-muted-foreground mt-1"><strong className="text-foreground">Safe areas:</strong> Bottom nav accounts for iOS home indicator. Status bar uses <code className="text-primary">apple-mobile-web-app-status-bar-style: black-translucent</code>.</p>
+            </div>
+          </div>
+        </div>
+      </DocSection>
+
+      {/* Responsive Patterns */}
+      <DocSection title="Responsive Layout Patterns" icon={<Layers size={15} className="text-primary" />} defaultOpen>
+        <div className="space-y-2">
+          {[
+            { title: "Single Column Stack", desc: "All primary screens use a single-column vertical scroll. No side-by-side panels on mobile.", screens: "Home, Profile, Trips, Messages, Booking Detail" },
+            { title: "Grid Adapts to 2-col", desc: "Property cards, stats grids, Four Pillars all use grid-cols-2 at mobile. Curation cards use horizontal scroll.", screens: "Home cards, Profile stats, Wishlist grid" },
+            { title: "Bottom Sheet Pattern", desc: "All modals use Vaul drawer (bottom sheet) instead of centered dialogs. Natural thumb-reach zone.", screens: "Settings, Edit Profile, Split Pay, Live Ordering, Identity Upload" },
+            { title: "Sticky Elements", desc: "Bottom nav (fixed), sticky category bar (top), sticky booking CTA bar (bottom) on Property Detail.", screens: "BottomNav, CategoryBar, PropertyDetail" },
+            { title: "Full-Screen Overlays", desc: "Search, Map View, Documentation all render as full-screen overlays with back navigation.", screens: "SearchScreen, MapViewScreen, AppDocumentation" },
+            { title: "Horizontal Scroll Carousels", desc: "Spotlight, Foodie, Sports, Achievements, Curations all use embla-carousel or CSS overflow-x-auto snap scrolling.", screens: "SpotlightCarousel, FoodieCarousel, Achievements" },
+          ].map(p => (
+            <div key={p.title} className="p-3 rounded-xl" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border) / 0.3)" }}>
+              <p className="font-bold text-foreground text-xs">{p.title}</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">{p.desc}</p>
+              <p className="text-[9px] text-primary mt-1 font-medium">Used in: {p.screens}</p>
+            </div>
+          ))}
+        </div>
+      </DocSection>
+
+      {/* Touch & Interaction */}
+      <DocSection title="Touch & Interaction Design" icon={<PenTool size={15} className="text-primary" />}>
+        <div className="space-y-2">
+          {[
+            { title: "44px Minimum Touch Targets", desc: "All buttons, nav items, and interactive elements meet the 44×44px minimum. Bottom nav icons are 48px zones." },
+            { title: "Haptic Feedback", desc: "lib/haptics.ts provides vibration on booking confirm, spin wheel, toggle switches, and pull-to-refresh. Uses navigator.vibrate API." },
+            { title: "Swipe Gestures", desc: "Message conversations support swipe-to-archive. Property gallery uses touch-drag carousel. Pull-to-refresh on Home screen." },
+            { title: "Tap-Hold Actions", desc: "Property cards support long-press for quick preview. Admin SwipeableRow for delete/edit actions." },
+            { title: "Framer Motion Springs", desc: "All animations use spring physics (stiffness: 300, damping: 30) for natural iOS-like motion. whileTap={{ scale: 0.95 }} on all buttons." },
+            { title: "Scroll Snap", desc: "Horizontal carousels use CSS scroll-snap-type: x mandatory for card-by-card paging feel." },
+          ].map(p => (
+            <div key={p.title} className="flex gap-2 p-2.5 rounded-xl" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border) / 0.3)" }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0 mt-1.5" />
+              <div>
+                <p className="font-bold text-foreground text-xs">{p.title}</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{p.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </DocSection>
+
+      {/* Typography & Spacing */}
+      <DocSection title="Mobile Typography Scale" icon={<PenTool size={15} className="text-primary" />}>
+        <DataTable headers={["Element", "Size", "Weight", "Font"]} rows={[
+          ["Page titles", "text-2xl (24px)", "font-black (900)", "Space Grotesk"],
+          ["Section headers", "text-base (16px)", "font-black (900)", "Space Grotesk"],
+          ["Card titles", "text-sm (14px)", "font-bold (700)", "Space Grotesk"],
+          ["Body text", "text-[13px]", "font-medium (500)", "Space Grotesk"],
+          ["Labels & badges", "text-[11px]", "font-bold (700)", "DM Sans"],
+          ["Micro text", "text-[9px]–text-[10px]", "font-medium (500)", "DM Sans"],
+          ["Editorial overlays", "text-lg–text-2xl", "font-bold (700)", "Playfair Display"],
+        ]} />
+        <div className="mt-2 p-2.5 rounded-xl" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border) / 0.3)" }}>
+          <p className="text-[10px] text-muted-foreground"><strong className="text-foreground">Spacing system:</strong> Tailwind default scale. Cards use p-3 to p-4 (12–16px). Gaps between sections use space-y-4 to space-y-6. Horizontal padding on screens: px-4 (16px).</p>
+        </div>
+      </DocSection>
+
+      {/* Aspect Ratios & Media */}
+      <DocSection title="Aspect Ratios & Media" icon={<Eye size={15} className="text-primary" />}>
+        <DataTable headers={["Element", "Aspect Ratio", "Details"]} rows={[
+          ["Property card images", "16:10 (aspect-[16/10])", "Rounded-2xl, object-cover, lazy loading"],
+          ["Spotlight video cards", "16:9", "Autoplay, muted, loop, playsInline, poster fallback"],
+          ["Gallery carousel", "4:3", "Full-width swipe, dot indicators"],
+          ["Avatar images", "1:1 (rounded-full)", "w-10 to w-20 depending on context"],
+          ["Curated pack bg video", "Full-screen", "Absolute positioned, object-cover, z-0"],
+          ["Map view", "Full-viewport", "Leaflet container takes remaining height after header"],
+          ["Spin wheel", "1:1 (300×300)", "Canvas-rendered, centered"],
+        ]} />
+      </DocSection>
+
+      {/* Theme System */}
+      <DocSection title="Dual Theme System" icon={<Palette size={15} className="text-primary" />}>
+        <div className="space-y-3">
+          <div>
+            <p className="font-bold text-foreground text-xs mb-1.5">HSL-Based CSS Variables</p>
+            <p className="text-[11px] text-muted-foreground">All colors defined as HSL in <code className="text-primary">index.css</code> under <code className="text-primary">:root</code> (dark) and <code className="text-primary">.light</code>. Components use semantic tokens only — never hardcoded colors.</p>
+          </div>
+          <DataTable headers={["Token", "Dark Mode", "Light Mode"]} rows={[
+            ["--background", "260 20% 6%", "260 20% 98%"],
+            ["--foreground", "0 0% 96%", "260 25% 12%"],
+            ["--primary", "270 80% 65%", "270 72% 52%"],
+            ["--card", "260 18% 10%", "0 0% 100%"],
+            ["--muted", "260 12% 16%", "260 14% 94%"],
+            ["--border", "260 15% 16%", "260 16% 90%"],
+          ]} />
+          <div>
+            <p className="font-bold text-foreground text-xs mb-1.5">Theme-Aware Effects</p>
+            <div className="flex flex-wrap gap-1.5">
+              {[
+                "glass / glass-light classes",
+                "glow-sm/md/lg adapts",
+                "shadow-card/elevated adapts",
+                "Gradient text adjusts",
+                "0.4s transition on switch",
+              ].map(e => (
+                <span key={e} className="text-[9px] px-2 py-1 rounded-full font-medium" style={{ background: "hsl(var(--primary) / 0.08)", color: "hsl(var(--primary))" }}>{e}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </DocSection>
+
+      {/* Performance */}
+      <DocSection title="Mobile Performance Optimizations" icon={<Zap size={15} className="text-primary" />}>
+        <div className="space-y-2">
+          {[
+            { title: "Service Worker Caching", desc: "Workbox with NetworkFirst for API, CacheFirst for static assets. 10MB max cache per file. Auto-update on new deploy." },
+            { title: "Font Loading Strategy", desc: "4 Google Fonts preloaded with rel='preload' as='style' + onload pattern. Non-render-blocking with <noscript> fallback." },
+            { title: "LazySection Component", desc: "Home screen sections wrapped in IntersectionObserver — only render when scrolled into viewport. Reduces initial DOM size." },
+            { title: "Image Optimization", desc: "OptimizedImage component with native lazy loading, blur-up placeholder, error fallback. All images use object-cover." },
+            { title: "Video Preloading", desc: "lib/video-preloader.ts preloads spotlight videos. All videos use playsInline + muted + loop for autoplay policy compliance." },
+            { title: "React Query Cache", desc: "30s staleTime, 2× retry with exponential backoff. Prevents waterfall re-fetches on tab switches." },
+            { title: "Critical Preconnects", desc: "fonts.googleapis.com, fonts.gstatic.com, supabase.co — DNS prefetch + preconnect in <head>." },
+            { title: "Inline Splash", desc: "HTML-inline splash screen (no JS needed) for instant FCP. Replaced by React SplashScreen component." },
+          ].map(p => (
+            <div key={p.title} className="flex gap-2 p-2.5 rounded-xl" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border) / 0.3)" }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0 mt-1.5" />
+              <div>
+                <p className="font-bold text-foreground text-xs">{p.title}</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{p.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </DocSection>
+
+      {/* Capacitor Config */}
+      <DocSection title="Capacitor Native Configuration" icon={<Smartphone size={15} className="text-primary" />}>
+        <DataTable headers={["Config", "Value", "Notes"]} rows={[
+          ["appId", "app.lovable.hushhjeypore", "Java package format for Android"],
+          ["appName", "hushh-jeypore", "Display name on device"],
+          ["webDir", "dist", "Vite build output"],
+          ["server.url", "lovableproject.com preview", "Live URL — instant updates"],
+          ["server.cleartext", "true", "Allow HTTP during dev"],
+        ]} />
+        <div className="mt-2 p-2.5 rounded-xl" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border) / 0.3)" }}>
+          <p className="text-[10px] text-muted-foreground"><strong className="text-foreground">Build pipeline:</strong> GitHub Actions → npm install → npm run build → cap add android → cap sync → gradlew assembleDebug → upload APK artifact</p>
+        </div>
+      </DocSection>
+
+      {/* PWA Manifest */}
+      <DocSection title="PWA Configuration" icon={<Globe size={15} className="text-primary" />}>
+        <DataTable headers={["Property", "Value"]} rows={[
+          ["name", "Hushh Jeypore"],
+          ["short_name", "Hushh"],
+          ["display", "standalone"],
+          ["orientation", "portrait"],
+          ["theme_color", "#050505"],
+          ["background_color", "#050505"],
+          ["start_url", "/"],
+          ["scope", "/"],
+          ["registerType", "autoUpdate"],
+          ["icons", "192×192 + 512×512 (any maskable)"],
+          ["navigateFallbackDenylist", "/sw-push.js"],
+        ]} />
+      </DocSection>
+
+      {/* Offline Behavior */}
+      <DocSection title="Offline & Resilience" icon={<Wifi size={15} className="text-primary" />}>
+        <div className="space-y-2">
+          {[
+            { title: "OfflineBanner", desc: "Animated banner appears when navigator.onLine is false. Uses useOnlineStatus hook with event listeners." },
+            { title: "Error Boundaries", desc: "Per-route React Error Boundaries catch component crashes without killing the whole app." },
+            { title: "Graceful Degradation", desc: "Guest mode works entirely offline with mock data. Auth features show friendly error messages." },
+            { title: "Retry Strategy", desc: "React Query retries failed requests 2× with exponential backoff before showing error state." },
+          ].map(p => (
+            <div key={p.title} className="flex gap-2 p-2.5 rounded-xl" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border) / 0.3)" }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0 mt-1.5" />
+              <div>
+                <p className="font-bold text-foreground text-xs">{p.title}</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{p.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </DocSection>
+
+      {/* Component Navigation */}
+      <DocSection title="Mobile Navigation Architecture" icon={<MapPin size={15} className="text-primary" />}>
+        <div className="space-y-3">
+          <div>
+            <p className="font-bold text-foreground text-xs mb-1.5">Bottom Navigation (5 tabs)</p>
+            <DataTable headers={["Tab", "Icon", "Screen"]} rows={[
+              ["Explore", "🏠 Home", "HomeScreen — feed, search, categories"],
+              ["Wishlists", "❤️ Heart", "WishlistScreen — saved properties grid"],
+              ["Trips", "✈️ Plane", "TripsScreen — active/upcoming/past/cancelled"],
+              ["Messages", "💬 Chat", "MessagesScreen — conversations + chat"],
+              ["Profile", "👤 User", "ProfileScreen — settings, loyalty, host"],
+            ]} />
+          </div>
+          <div>
+            <p className="font-bold text-foreground text-xs mb-1.5">Navigation Patterns</p>
+            <div className="flex flex-wrap gap-1.5">
+              {[
+                "State machine (not router)",
+                "Back button via onBack prop",
+                "Sheet/drawer for settings",
+                "Full-screen for search/map",
+                "Nested detail views",
+                "Tab memory preserved",
+              ].map(e => (
+                <span key={e} className="text-[9px] px-2 py-1 rounded-full font-medium" style={{ background: "hsl(var(--primary) / 0.08)", color: "hsl(var(--primary))" }}>{e}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </DocSection>
+
+      {/* Web Version Prompts */}
+      <DocSection title="🤖 AI Prompts for Web/Desktop Version" icon={<Cpu size={15} className="text-primary" />}>
+        <div className="space-y-2">
+          {[
+            { title: "Layout Expansion", prompt: "Convert single-column mobile layout to multi-panel desktop: sidebar navigation (replace bottom nav), main content area, and optional right panel for details/chat. Use Tailwind lg: breakpoints." },
+            { title: "Navigation Upgrade", prompt: "Replace BottomNav with a persistent left sidebar (collapsible) for desktop. Add breadcrumbs. Convert full-screen overlays (search, map) to panels within the main layout." },
+            { title: "Grid Scaling", prompt: "Scale property card grids from 2-col (mobile) to 3-col (tablet) to 4-col (desktop). Increase card size proportionally. Add hover states (scale, shadow) that replace tap states." },
+            { title: "Bottom Sheets → Modals", prompt: "Convert all Vaul bottom sheet dialogs to centered Dialog modals for desktop. Keep bottom sheet behavior for mobile using useMobile() hook conditional." },
+            { title: "Table Views", prompt: "Admin panel: convert card-based mobile lists to full data tables with sorting, filtering, and pagination for desktop viewport. Use shadcn Table component." },
+            { title: "Split View", prompt: "Messages: implement split-pane layout — conversation list on left (300px), chat thread on right. Property Detail: sticky image gallery on left, info/booking on right." },
+            { title: "Responsive Typography", prompt: "Scale up: page titles to text-3xl, section headers to text-xl, body to text-sm. Increase spacing: px-8 on desktop, max-w-7xl container. Keep mobile sizes at current scale." },
+            { title: "Mouse Interactions", prompt: "Add hover:scale-105, hover:shadow-lg on property cards. Replace whileTap with whileHover. Add keyboard shortcuts (Esc to close, Enter to confirm). Cursor: pointer on clickables." },
+          ].map(p => (
+            <div key={p.title} className="p-3 rounded-xl" style={{ background: "hsl(var(--primary) / 0.04)", border: "1px solid hsl(var(--primary) / 0.1)" }}>
+              <p className="font-bold text-foreground text-xs mb-1">{p.title}</p>
+              <p className="text-[10px] text-muted-foreground leading-relaxed font-mono">{p.prompt}</p>
+            </div>
+          ))}
+        </div>
+      </DocSection>
+
+      <div className="text-center py-4">
+        <p className="text-[10px] text-muted-foreground"><Smartphone size={10} className="inline text-primary mr-1" />Mobile Blueprint v1.28 · Reference for web expansion</p>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
 // TAB: CHANGELOG
 // ═══════════════════════════════════════════════════════════════
 function ChangelogTab() {
