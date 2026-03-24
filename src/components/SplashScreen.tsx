@@ -34,11 +34,12 @@ const isDesktop = typeof window !== "undefined" && window.matchMedia("(min-width
 
 function getTimeConfig() {
   const hour = new Date().getHours();
+  const isDarkTime = hour >= 17 || hour < 5;
   if (hour >= 5 && hour < 12) return {
     greeting: "Good Morning",
     emoji: "☀️",
     bg: isDesktop ? splashMorningDesktop : splashMorning,
-    overlay: "linear-gradient(180deg, hsla(0,0%,0%,0.25) 0%, hsla(0,0%,0%,0.05) 40%, hsla(0,0%,0%,0.4) 100%)",
+    overlay: "linear-gradient(180deg, hsla(0,0%,0%,0.35) 0%, hsla(0,0%,0%,0.1) 40%, hsla(0,0%,0%,0.5) 100%)",
     hasFireflies: false,
     hasShootingStars: false,
     hasBirds: true,
@@ -47,12 +48,19 @@ function getTimeConfig() {
     hasTwinkle: false,
     particleColor: "hsla(45, 90%, 70%, 0.5)",
     glowColor: "hsla(40, 100%, 65%, 0.3)",
+    isDark: false,
+    textColor: "hsla(0,0%,100%,1)",
+    textShadow: "0 2px 24px hsla(0,0%,0%,0.7), 0 0 60px hsla(0,0%,0%,0.3)",
+    brandGradient: "linear-gradient(180deg, hsla(0,0%,100%,1) 0%, hsla(45,90%,85%,1) 50%, hsla(35,100%,70%,0.95) 100%)",
+    brandGlow: "drop-shadow(0 0 25px hsla(35,100%,50%,0.6)) drop-shadow(0 4px 35px hsla(0,0%,0%,0.7))",
+    taglineColor: "hsla(0,0%,100%,0.85)",
+    taglineGlow: "0 0 16px hsla(35,100%,60%,0.5), 0 2px 8px hsla(0,0%,0%,0.6)",
   };
   if (hour >= 12 && hour < 17) return {
     greeting: "Good Afternoon",
     emoji: "🌤️",
     bg: isDesktop ? splashAfternoonDesktop : splashAfternoon,
-    overlay: "linear-gradient(180deg, hsla(0,0%,0%,0.2) 0%, hsla(0,0%,0%,0.0) 40%, hsla(0,0%,0%,0.35) 100%)",
+    overlay: "linear-gradient(180deg, hsla(0,0%,0%,0.3) 0%, hsla(0,0%,0%,0.05) 40%, hsla(0,0%,0%,0.45) 100%)",
     hasFireflies: false,
     hasShootingStars: false,
     hasBirds: true,
@@ -61,6 +69,13 @@ function getTimeConfig() {
     hasTwinkle: false,
     particleColor: "hsla(45, 80%, 75%, 0.4)",
     glowColor: "hsla(45, 90%, 60%, 0.25)",
+    isDark: false,
+    textColor: "hsla(0,0%,100%,1)",
+    textShadow: "0 2px 24px hsla(0,0%,0%,0.7), 0 0 60px hsla(0,0%,0%,0.3)",
+    brandGradient: "linear-gradient(180deg, hsla(0,0%,100%,1) 0%, hsla(40,95%,80%,1) 50%, hsla(25,100%,65%,0.95) 100%)",
+    brandGlow: "drop-shadow(0 0 25px hsla(30,100%,55%,0.5)) drop-shadow(0 4px 35px hsla(0,0%,0%,0.7))",
+    taglineColor: "hsla(0,0%,100%,0.85)",
+    taglineGlow: "0 0 16px hsla(40,90%,60%,0.5), 0 2px 8px hsla(0,0%,0%,0.6)",
   };
   if (hour >= 17 && hour < 21) return {
     greeting: "Good Evening",
@@ -75,12 +90,19 @@ function getTimeConfig() {
     hasTwinkle: true,
     particleColor: "hsla(35, 100%, 65%, 0.7)",
     glowColor: "hsla(20, 100%, 55%, 0.3)",
+    isDark: true,
+    textColor: "hsla(0,0%,100%,1)",
+    textShadow: "0 2px 20px hsla(0,0%,0%,0.5), 0 0 40px hsla(270,80%,50%,0.3)",
+    brandGradient: "linear-gradient(180deg, hsla(0,0%,100%,1) 0%, hsla(0,0%,100%,0.9) 40%, hsla(270,80%,85%,1) 100%)",
+    brandGlow: "drop-shadow(0 0 30px hsla(270,80%,65%,0.7)) drop-shadow(0 4px 40px hsla(0,0%,0%,0.6))",
+    taglineColor: "hsla(0,0%,100%,0.8)",
+    taglineGlow: "0 0 18px hsla(270,80%,65%,0.5), 0 2px 8px hsla(0,0%,0%,0.5)",
   };
   return {
     greeting: "Good Night",
     emoji: "🌙",
     bg: isDesktop ? splashNightDesktop : splashNight,
-    overlay: "linear-gradient(180deg, hsla(0,0%,0%,0.15) 0%, hsla(0,0%,0%,0.05) 40%, hsla(0,0%,0%,0.55) 100%)",
+    overlay: "linear-gradient(180deg, hsla(0,0%,0%,0.2) 0%, hsla(0,0%,0%,0.05) 40%, hsla(0,0%,0%,0.55) 100%)",
     hasFireflies: true,
     hasShootingStars: true,
     hasBirds: false,
@@ -89,6 +111,13 @@ function getTimeConfig() {
     hasTwinkle: true,
     particleColor: "hsla(55, 90%, 70%, 0.8)",
     glowColor: "hsla(45, 80%, 70%, 0.25)",
+    isDark: true,
+    textColor: "hsla(0,0%,100%,1)",
+    textShadow: "0 2px 20px hsla(0,0%,0%,0.6), 0 0 50px hsla(220,80%,60%,0.3)",
+    brandGradient: "linear-gradient(180deg, hsla(0,0%,100%,1) 0%, hsla(220,70%,90%,1) 50%, hsla(270,80%,80%,1) 100%)",
+    brandGlow: "drop-shadow(0 0 30px hsla(270,80%,65%,0.7)) drop-shadow(0 4px 40px hsla(0,0%,0%,0.7))",
+    taglineColor: "hsla(0,0%,100%,0.85)",
+    taglineGlow: "0 0 20px hsla(270,80%,65%,0.6), 0 2px 10px hsla(0,0%,0%,0.5)",
   };
 }
 
