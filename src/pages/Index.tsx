@@ -4,6 +4,7 @@ import { useAppConfig } from "@/hooks/use-app-config";
 import SplashScreen from "@/components/SplashScreen";
 
 import BottomNav from "@/components/BottomNav";
+import DesktopTopNav from "@/components/DesktopTopNav";
 import HomeScreen from "@/components/HomeScreen";
 import NotificationToastProvider from "@/components/NotificationToastProvider";
 import NotificationPermissionBanner from "@/components/NotificationPermissionBanner";
