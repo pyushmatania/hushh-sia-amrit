@@ -213,7 +213,7 @@ export default function PublicProfileScreen({ userId, onBack, onMessage }: Publi
               <Star size={16} className="text-primary" /> Reviews ({reviews.length})
             </h3>
             {reviews.length > 0 ? (
-              <div className="space-y-3">
+              <div className="space-y-3 md:grid md:grid-cols-2 md:gap-4 md:space-y-0">
                 {reviews.map((review, i) => (
                   <motion.div
                     key={review.id}
