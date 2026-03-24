@@ -143,7 +143,6 @@ export default function AdminSettings() {
         { key: "app_tagline", label: "Tagline", description: "Short tagline shown on splash/header", icon: "✏️" },
         { key: "logo_url", label: "Logo URL", description: "URL to logo image (PNG/SVG)", icon: "🖼️" },
         { key: "favicon_url", label: "Favicon URL", description: "URL to favicon/app icon", icon: "⭐" },
-        { key: "splash_variant", label: "Splash Variant (1 or 2)", description: "1=Classic, 2=Cinematic Glass H", icon: "🎬" },
       ],
     },
     {
@@ -295,6 +294,52 @@ export default function AdminSettings() {
             </div>
           </motion.div>
         ))}
+
+        {/* Splash variant toggle on branding tab */}
+        {activeTab === "branding" && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-2xl bg-card border border-border/80 overflow-hidden"
+          >
+            <div className="flex items-center gap-3 p-4 border-b border-border/60">
+              <div className="w-8 h-8 rounded-lg text-purple-600 bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center">
+                <Palette size={16} />
+              </div>
+              <span className="text-sm font-semibold text-foreground">Splash Screen</span>
+            </div>
+            <div className="px-4 py-4">
+              <p className="text-sm font-medium text-foreground mb-1">Active Variant</p>
+              <p className="text-[11px] text-muted-foreground mb-3">Choose between Classic or Cinematic Island splash</p>
+              <div className="flex gap-2">
+                {[
+                  { val: "1", label: "🎨 Classic", desc: "3D Typography" },
+                  { val: "2", label: "🏝️ Cinematic", desc: "Island Paradise" },
+                ].map(opt => (
+                  <motion.button
+                    key={opt.val}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => saveConfigValue("splash_variant", opt.val)}
+                    className={`flex-1 py-3 px-3 rounded-xl border text-center transition-all ${
+                      (appConfig as any).splash_variant === opt.val || (!((appConfig as any).splash_variant) && opt.val === "2")
+                        ? "bg-primary/10 border-primary text-primary font-semibold"
+                        : "bg-card border-border text-muted-foreground hover:border-primary/40"
+                    }`}
+                  >
+                    <span className="text-lg block">{opt.label.split(" ")[0]}</span>
+                    <span className="text-xs font-semibold block mt-0.5">{opt.label.split(" ")[1]}</span>
+                    <span className="text-[10px] text-muted-foreground block">{opt.desc}</span>
+                  </motion.button>
+                ))}
+              </div>
+              {saving === "splash_variant" && (
+                <div className="flex items-center gap-1.5 mt-2 text-xs text-primary">
+                  <Loader2 size={12} className="animate-spin" /> Saving...
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
 
         {/* Toggle sections only on general tab */}
         {activeTab === "general" && toggleSections.map((section, si) => (
