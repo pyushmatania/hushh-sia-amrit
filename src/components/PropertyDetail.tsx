@@ -411,11 +411,10 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -40 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      className="fixed inset-0 z-30 bg-mesh overflow-y-auto pb-28"
+      className="fixed inset-0 z-30 bg-mesh overflow-y-auto pb-28 md:pb-8"
     >
-      {/* Hero */}
-      <div className="relative aspect-[4/3] overflow-hidden">
-        {/* Skeleton */}
+      {/* Hero — Mobile Carousel */}
+      <div className="relative aspect-[4/3] overflow-hidden md:hidden">
         {!imgLoaded && (
           <div className="absolute inset-0 bg-secondary animate-pulse">
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-muted/50 to-transparent animate-[shimmer_1.5s_infinite]" />
@@ -437,58 +436,65 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
           transition={{ duration: 0.4 }}
         />
         <div className="absolute top-0 left-0 right-0 flex justify-between items-center p-4">
-          <motion.button
-            onClick={onBack}
-            className="w-9 h-9 rounded-full glass flex items-center justify-center"
-            whileTap={{ scale: 0.85 }}
-          >
+          <motion.button onClick={onBack} className="w-9 h-9 rounded-full glass flex items-center justify-center" whileTap={{ scale: 0.85 }}>
             <ArrowLeft size={18} className="text-foreground" />
           </motion.button>
           <div className="flex gap-2">
-            <motion.button
-              className="w-9 h-9 rounded-full glass flex items-center justify-center"
-              whileTap={{ scale: 0.85 }}
-              onClick={async () => {
-                const shared = await shareProperty(property);
-                if (shared && !navigator.share) {
-                  // clipboard fallback used
-                }
-              }}
-            >
+            <motion.button className="w-9 h-9 rounded-full glass flex items-center justify-center" whileTap={{ scale: 0.85 }} onClick={async () => { await shareProperty(property); }}>
               <Share2 size={16} className="text-foreground" />
             </motion.button>
-            <motion.button
-              onClick={() => { hapticMedium(); onToggleWishlist?.(property.id); }}
-              className="w-9 h-9 rounded-full glass flex items-center justify-center"
-              whileTap={{ scale: 1.2 }}
-            >
+            <motion.button onClick={() => { hapticMedium(); onToggleWishlist?.(property.id); }} className="w-9 h-9 rounded-full glass flex items-center justify-center" whileTap={{ scale: 1.2 }}>
               <Heart size={16} className={`transition-colors duration-200 ${liked ? "fill-primary text-primary" : "text-foreground"}`} />
             </motion.button>
           </div>
         </div>
-        {/* Animated dots */}
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
           {property.images.map((_, i) => (
-            <motion.button
-              key={i}
-              onClick={() => { setImgIndex(i); setImgLoaded(false); }}
-              className="rounded-full"
-              animate={{
-                width: i === imgIndex ? 18 : 6,
-                height: 6,
-                backgroundColor: i === imgIndex ? "hsl(0 0% 96%)" : "hsla(0 0% 96% / 0.5)",
-              }}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            />
+            <motion.button key={i} onClick={() => { setImgIndex(i); setImgLoaded(false); }} className="rounded-full" animate={{ width: i === imgIndex ? 18 : 6, height: 6, backgroundColor: i === imgIndex ? "hsl(0 0% 96%)" : "hsla(0 0% 96% / 0.5)" }} transition={{ type: "spring", stiffness: 300, damping: 25 }} />
           ))}
         </div>
-        {/* Tags overlay */}
         {property.tags.length > 0 && (
           <div className="absolute bottom-10 left-4 flex gap-2">
             {property.tags.map((tag) => (
-              <span key={tag} className="text-[11px] font-semibold glass px-3 py-1.5 rounded-full text-foreground">
-                {tag}
-              </span>
+              <span key={tag} className="text-[11px] font-semibold glass px-3 py-1.5 rounded-full text-foreground">{tag}</span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Hero — Desktop Bento Grid */}
+      <div className="hidden md:block md:pt-20 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+        <div className="flex items-center gap-4 mb-4">
+          <button onClick={onBack} className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-secondary transition-colors">
+            <ArrowLeft size={18} className="text-foreground" />
+          </button>
+          <h1 className="text-2xl lg:text-3xl font-bold text-foreground flex-1 truncate">{property.name}</h1>
+          <div className="flex gap-2">
+            <button onClick={async () => { await shareProperty(property); }} className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-secondary transition-colors">
+              <Share2 size={16} className="text-foreground" />
+            </button>
+            <button onClick={() => { hapticMedium(); onToggleWishlist?.(property.id); }} className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-secondary transition-colors">
+              <Heart size={16} className={`transition-colors duration-200 ${liked ? "fill-primary text-primary" : "text-foreground"}`} />
+            </button>
+          </div>
+        </div>
+        <div className="grid grid-cols-4 grid-rows-2 gap-2 rounded-2xl overflow-hidden max-h-[480px] lg:max-h-[540px] 2xl:max-h-[600px]">
+          <div className="col-span-2 row-span-2 relative group cursor-pointer" onClick={() => setImgIndex(0)}>
+            <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover group-hover:brightness-110 transition-all duration-300" />
+          </div>
+          {property.images.slice(1, 5).map((img, i) => (
+            <div key={i} className="relative group cursor-pointer" onClick={() => setImgIndex(i + 1)}>
+              <img src={img} alt={`${property.name} ${i + 2}`} className="w-full h-full object-cover group-hover:brightness-110 transition-all duration-300" loading="lazy" />
+            </div>
+          ))}
+          <button className="absolute bottom-4 right-4 bg-background/80 backdrop-blur-sm border border-border rounded-full px-4 py-2 text-sm font-medium text-foreground hover:bg-background transition-colors z-10">
+            Show all {property.images.length} photos
+          </button>
+        </div>
+        {property.tags.length > 0 && (
+          <div className="flex gap-2 mt-3">
+            {property.tags.map((tag) => (
+              <span key={tag} className="text-xs font-semibold px-3 py-1.5 rounded-full bg-secondary text-foreground border border-border">{tag}</span>
             ))}
           </div>
         )}
