@@ -284,12 +284,12 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               <SectionTitle title="🏡 FEATURED STAYS" />
               <SpotlightCarousel properties={stayProperties} onPropertyTap={onPropertyTap} category="stay" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
 
-              <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar">
+              <div className="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar md:justify-center md:flex-wrap md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-3">
                 {stayFilters.map(type => (
                   <button
                     key={type}
                     onClick={() => handleSubFilter(type)}
-                    className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 ${
+                    className={`text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 md:text-sm md:px-5 md:py-2.5 md:cursor-pointer md:hover:bg-muted/50 ${
                       subFilter === type
                         ? "bg-primary text-primary-foreground font-semibold shadow-md"
                         : "bg-foreground/5 text-foreground/80 border border-foreground/10"
