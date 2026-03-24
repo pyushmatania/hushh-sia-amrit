@@ -487,21 +487,24 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
       </div>
 
       {isDemo && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="mx-5 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 mt-1 mb-1 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20"
-        >
-          <p className="text-[11px] text-primary font-medium text-center">✨ These are sample trips — book a venue to see your real trips here!</p>
-        </motion.div>
+        <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="mt-1 mb-1 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20 md:max-w-4xl md:mx-auto"
+          >
+            <p className="text-[11px] md:text-xs text-primary font-medium text-center">✨ These are sample trips — book a venue to see your real trips here!</p>
+          </motion.div>
+        </div>
       )}
 
       {/* ID Verification Banner */}
       {idVerified === false && (
+        <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mx-5 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 mt-2 mb-1 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 md:max-w-2xl md:self-center"
+          className="mt-2 mb-1 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 md:max-w-4xl md:mx-auto"
         >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-amber-500/15 flex items-center justify-center shrink-0">
@@ -519,6 +522,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
             </button>
           </div>
         </motion.div>
+        </div>
       )}
 
       <IdentityUploadSheet open={idSheetOpen} onClose={() => setIdSheetOpen(false)} />
@@ -533,7 +537,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
             : `You don't have any ${activeFilter} trips right now.`}
         />
       ) : (
-        <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-4 space-y-6 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0">
+        <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-4 space-y-6 md:max-w-6xl md:mx-auto md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0">
           {filteredBookings.map((trip, i) => (
             <SwipeableCard
               key={trip.id}
