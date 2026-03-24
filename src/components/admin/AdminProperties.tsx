@@ -1002,8 +1002,8 @@ export default function AdminProperties() {
 
 /* ─── Subcomponents ─── */
 
-function EditSection({ title, icon, id, expanded, onToggle, children, badge }: {
-  title: string; icon: React.ReactNode; id: string; expanded: string; onToggle: (id: string) => void; children: React.ReactNode; badge?: string;
+function EditSection({ title, icon, id, expanded, onToggle, children, badge, collapsedImages }: {
+  title: string; icon: React.ReactNode; id: string; expanded: string; onToggle: (id: string) => void; children: React.ReactNode; badge?: string; collapsedImages?: string[];
 }) {
   const isOpen = expanded === id;
   return (
@@ -1024,28 +1024,24 @@ function EditSection({ title, icon, id, expanded, onToggle, children, badge }: {
           </motion.div>
         )}
       </AnimatePresence>
-      {/* Show collapsed thumbnail strip for media section */}
-      {!isOpen && id === "images" && collapsedPreview}
-    </div>
-  );
-}
-
-function CollapsedImageStrip({ images }: { images: string[] }) {
-  if (!images || images.length === 0) return null;
-  return (
-    <div className="px-3.5 pb-3 flex gap-1.5 overflow-x-auto hide-scrollbar">
-      {images.slice(0, 6).map((url, i) => (
-        <div key={i} className="shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-border">
-          <img src={url} alt="" className="w-full h-full object-cover" />
-        </div>
-      ))}
-      {images.length > 6 && (
-        <div className="shrink-0 w-12 h-12 rounded-lg bg-secondary flex items-center justify-center text-[10px] text-muted-foreground font-bold">
-          +{images.length - 6}
+      {/* Collapsed thumbnail strip */}
+      {!isOpen && collapsedImages && collapsedImages.length > 0 && (
+        <div className="px-3.5 pb-3 flex gap-1.5 overflow-x-auto hide-scrollbar">
+          {collapsedImages.slice(0, 6).map((url, i) => (
+            <div key={i} className="shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-border">
+              <img src={url} alt="" className="w-full h-full object-cover" />
+            </div>
+          ))}
+          {collapsedImages.length > 6 && (
+            <div className="shrink-0 w-12 h-12 rounded-lg bg-secondary flex items-center justify-center text-[10px] text-muted-foreground font-bold">
+              +{collapsedImages.length - 6}
+            </div>
+          )}
         </div>
       )}
     </div>
   );
+}
 }
 
 function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
