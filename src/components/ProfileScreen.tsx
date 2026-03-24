@@ -337,7 +337,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
         <h3 className="text-base font-bold text-foreground mb-3 flex items-center gap-2">
           <Award size={16} className="text-primary" /> Achievements
         </h3>
-        <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-1">
+        <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-1 md:grid md:grid-cols-4 md:overflow-visible">
           {achievements.map((a, i) => (
             <motion.div
               key={i}
