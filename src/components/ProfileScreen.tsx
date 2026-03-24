@@ -10,7 +10,7 @@ import {
   Award, Zap, Calendar, TrendingUp, Crown, Pencil, LogIn, EyeOff,
   MapPin, Clock, Users, ArrowLeft, ChevronLeft, HardDrive
 } from "lucide-react";
-import { useState, useCallback, useRef, useMemo } from "react";
+import { useState, useCallback, useRef, useMemo, lazy, Suspense } from "react";
 import type { Booking } from "@/pages/Index";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { useTheme } from "@/hooks/use-theme";
