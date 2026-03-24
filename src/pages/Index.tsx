@@ -68,6 +68,7 @@ export default function Index() {
   const appConfig = useAppConfig();
   const bookingPrefix = (appConfig.app_name || "HUSHH").toUpperCase();
   const { user, loading } = useAuth();
+  const { properties: liveProperties } = usePropertiesData();
 
   // Dynamic page title from admin config
   useEffect(() => {
