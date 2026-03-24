@@ -99,7 +99,7 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.15 + i * 0.08, duration: 0.4 }}
               onClick={() => onComboTap(combo)}
-              className="rounded-2xl overflow-hidden cursor-pointer active:scale-[0.97] transition-transform group relative"
+              className="rounded-2xl overflow-hidden cursor-pointer active:scale-[0.97] transition-all group relative md:hover:shadow-elevated"
               style={{ height: 200 }}
             >
               <img
