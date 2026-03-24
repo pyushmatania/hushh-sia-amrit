@@ -96,7 +96,7 @@ export default function HostDashboard({
         transition={{ delay: 0.25 }}
         whileTap={{ scale: 0.97 }}
         onClick={onAnalytics}
-        className="mx-5 mb-6 w-[calc(100%-2.5rem)] rounded-2xl glass p-4 flex items-center gap-3 active:scale-[0.98] transition-transform"
+        className="mx-5 mb-6 w-[calc(100%-2.5rem)] rounded-2xl glass p-4 flex items-center gap-3 active:scale-[0.98] transition-transform md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 md:w-auto md:max-w-xl"
       >
         <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
           <BarChart3 size={18} className="text-primary" />
