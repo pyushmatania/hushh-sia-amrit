@@ -49,7 +49,7 @@ export default function HostDashboard({
             <motion.h1
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-2xl font-bold text-foreground"
+              className="text-2xl font-bold text-foreground md:text-3xl"
             >
               Host Dashboard
             </motion.h1>
