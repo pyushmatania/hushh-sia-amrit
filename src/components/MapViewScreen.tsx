@@ -563,7 +563,7 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
             if (next) {
               setSelectedPin(next);
               clearRoute();
-              mapRef.current?.panTo([next.lat, next.lng], { animate: true });
+              mapInstanceRef.current?.panTo([next.lat, next.lng], { animate: true });
             }
           };
           return (
