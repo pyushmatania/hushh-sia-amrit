@@ -147,7 +147,7 @@ export default function HostAnalyticsScreen({ onBack }: HostAnalyticsScreenProps
           </motion.div>
 
           {/* Category Breakdown + Occupancy */}
-          <div className="px-5 grid grid-cols-2 gap-3 mb-6">
+          <div className="px-5 grid grid-cols-2 gap-3 mb-6 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-4">
             {analytics.categoryBreakdown.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 12 }}
