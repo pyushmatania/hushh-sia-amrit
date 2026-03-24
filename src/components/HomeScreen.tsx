@@ -260,7 +260,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 homeSections.push({ key: "curated_packs", order: getSortOrder("curated_packs"), node: (
                   <LazySection minHeight="400px">
                     <SectionTitle title="✨ CURATED PACKS" />
-                    <div className="space-y-5 pb-2">
+                    <div className="space-y-5 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
                       {filteredPacks.slice(0, 4).map((pack, i) => (
                         <CuratedPackListing key={pack.id} pack={pack} index={i} onTap={handlePackTap} />
                       ))}
