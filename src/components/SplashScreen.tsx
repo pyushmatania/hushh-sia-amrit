@@ -469,9 +469,10 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
             <div className="flex-1 flex flex-col justify-center items-center px-8 pt-16 md:pt-24 lg:pt-32">
               {/* Date */}
               <motion.p
-                className="text-[11px] md:text-sm lg:text-base font-semibold tracking-[0.2em] uppercase text-white/50"
+                className="text-[11px] md:text-sm lg:text-base font-semibold tracking-[0.2em] uppercase"
+                style={{ color: config.textColor, opacity: 0.6, textShadow: config.textShadow }}
                 initial={{ opacity: 0, y: -15 }}
-                animate={phase >= 2 ? { opacity: 1, y: 0 } : { opacity: 0, y: -15 }}
+                animate={phase >= 2 ? { opacity: 0.6, y: 0 } : { opacity: 0, y: -15 }}
                 transition={{ duration: 0.4 }}
               >
                 {new Date().toLocaleDateString("en-US", {
