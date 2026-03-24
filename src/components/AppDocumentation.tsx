@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronDown, ChevronRight, BookOpen, Layers, MapPin, Users, Palette, Database, History, Sparkles, Shield, Zap, Copy, Check, FileText, Target, Layout, PenTool, TrendingUp, AlertTriangle, Clock, Server, Download, Home, Settings, BarChart3, Package, Globe, Cpu, Lock, Code, Monitor, Smartphone, Star, Heart, MessageSquare, Bell, CreditCard, Gift, Award, Search, Map, ShoppingCart, Calendar, UserCheck, Briefcase, Megaphone, Tag, Eye, Wifi, Activity, Boxes, ChevronUp, Image as ImageIcon } from "lucide-react";
 import { useState, useCallback, useRef, useMemo } from "react";
+import { wallpapers, appIconAsset, type WallpaperItem } from "@/data/wallpapers";
 
 // ─── MERMAID DIAGRAM ─────────────────────────────────────────
 function MermaidDiagram({ chart, title }: { chart: string; title: string }) {
@@ -162,7 +163,7 @@ export const changeLog = [
 ];
 
 // ─── TAB DEFINITIONS ─────────────────────────────────────────
-type TabId = "overview" | "features" | "architecture" | "database" | "wireframes" | "desktop" | "mobile" | "changelog";
+type TabId = "overview" | "features" | "architecture" | "database" | "wireframes" | "desktop" | "mobile" | "wallpapers" | "changelog";
 const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: "overview", label: "Overview", icon: <Home size={14} /> },
   { id: "features", label: "Features", icon: <Star size={14} /> },
@@ -171,6 +172,7 @@ const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: "wireframes", label: "Wireframes", icon: <Monitor size={14} /> },
   { id: "desktop", label: "Desktop", icon: <Monitor size={14} /> },
   { id: "mobile", label: "Mobile", icon: <Smartphone size={14} /> },
+  { id: "wallpapers", label: "Walls", icon: <ImageIcon size={14} /> },
   { id: "changelog", label: "Log", icon: <History size={14} /> },
 ];
 
@@ -353,6 +355,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
             {activeTab === "wireframes" && <WireframesTab />}
             {activeTab === "desktop" && <DesktopTab />}
             {activeTab === "mobile" && <MobileTab />}
+            {activeTab === "wallpapers" && <WallpapersTab />}
             {activeTab === "changelog" && <ChangelogTab />}
           </motion.div>
         </AnimatePresence>
@@ -1630,6 +1633,138 @@ function MobileTab() {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// TAB: WALLPAPERS
+// ═══════════════════════════════════════════════════════════════
+function WallpapersTab() {
+  const [filter, setFilter] = useState<"all" | "classic" | "cinematic">("all");
+  const [format, setFormat] = useState<"all" | "phone" | "desktop">("all");
+
+  const filtered = wallpapers.filter(
+    (w) => (filter === "all" || w.variant === filter) && (format === "all" || w.format === format)
+  );
+  const phoneItems = filtered.filter((w) => w.format === "phone");
+  const desktopItems = filtered.filter((w) => w.format === "desktop");
+
+  const downloadImage = async (src: string, filename: string) => {
+    try {
+      const resp = await fetch(src);
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch {
+      window.open(src, "_blank");
+    }
+  };
+
+  const pillClass = (active: boolean) =>
+    `px-3 py-1.5 rounded-full text-[10px] font-semibold transition-all ${
+      active ? "bg-primary text-primary-foreground shadow-lg" : "text-muted-foreground hover:text-foreground"
+    }`;
+
+  return (
+    <div className="space-y-6">
+      <SectionHeader title="Hushh Wallpapers" subtitle="Download splash screens and app assets" />
+
+      {/* Filters */}
+      <div className="flex flex-wrap gap-1.5" style={{ background: "hsl(var(--primary) / 0.04)", borderRadius: "16px", padding: "8px" }}>
+        <button className={pillClass(filter === "all")} onClick={() => setFilter("all")}>All</button>
+        <button className={pillClass(filter === "classic")} onClick={() => setFilter("classic")}>🎨 Classic</button>
+        <button className={pillClass(filter === "cinematic")} onClick={() => setFilter("cinematic")}>🏝️ Cinematic</button>
+        <div className="w-px h-5 self-center mx-1" style={{ background: "hsl(var(--border))" }} />
+        <button className={pillClass(format === "all")} onClick={() => setFormat("all")}>All</button>
+        <button className={pillClass(format === "phone")} onClick={() => setFormat("phone")}>📱</button>
+        <button className={pillClass(format === "desktop")} onClick={() => setFormat("desktop")}>🖥️</button>
+      </div>
+
+      {/* App Icon */}
+      <div>
+        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-2">
+          <ImageIcon size={12} /> App Icon
+        </p>
+        <div
+          className="w-24 h-24 rounded-[20px] overflow-hidden shadow-2xl cursor-pointer group relative"
+          onClick={() => downloadImage(appIconAsset.src, "hushh-app-icon.png")}
+        >
+          <img src={appIconAsset.src} alt="Hushh Icon" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <Download size={18} className="text-white" />
+          </div>
+        </div>
+      </div>
+
+      {/* Phone Wallpapers */}
+      {(format === "all" || format === "phone") && phoneItems.length > 0 && (
+        <div>
+          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-2">
+            <Smartphone size={12} /> Phone Wallpapers
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            {phoneItems.map((w) => (
+              <div
+                key={w.id}
+                className="group relative rounded-xl overflow-hidden cursor-pointer aspect-[9/16]"
+                onClick={() => downloadImage(w.src, `hushh-${w.id}.${w.src.includes(".webp") ? "webp" : "jpg"}`)}
+              >
+                <img src={w.src} alt={w.label} className="w-full h-full object-cover" loading="lazy" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute bottom-0 inset-x-0 p-2 flex items-end justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div>
+                    <p className="text-[10px] font-semibold text-white">{w.emoji} {w.label}</p>
+                    <p className="text-[8px] text-white/60">{w.variant}</p>
+                  </div>
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: "hsla(0,0%,100%,0.2)", backdropFilter: "blur(4px)" }}>
+                    <Download size={10} className="text-white" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Desktop Wallpapers */}
+      {(format === "all" || format === "desktop") && desktopItems.length > 0 && (
+        <div>
+          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-2">
+            <Monitor size={12} /> Desktop Wallpapers
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {desktopItems.map((w) => (
+              <div
+                key={w.id}
+                className="group relative rounded-xl overflow-hidden cursor-pointer aspect-video"
+                onClick={() => downloadImage(w.src, `hushh-${w.id}.${w.src.includes(".webp") ? "webp" : "jpg"}`)}
+              >
+                <img src={w.src} alt={w.label} className="w-full h-full object-cover" loading="lazy" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute bottom-0 inset-x-0 p-2 flex items-end justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div>
+                    <p className="text-[10px] font-semibold text-white">{w.emoji} {w.label}</p>
+                    <p className="text-[8px] text-white/60">{w.variant}</p>
+                  </div>
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: "hsla(0,0%,100%,0.2)", backdropFilter: "blur(4px)" }}>
+                    <Download size={10} className="text-white" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <p className="text-center text-[10px] text-muted-foreground py-4">
+        🤫 Tap any wallpaper to download
+      </p>
+    </div>
+  );
+}
+
 // TAB: CHANGELOG
 // ═══════════════════════════════════════════════════════════════
 function ChangelogTab() {
