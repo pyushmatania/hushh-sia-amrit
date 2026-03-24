@@ -669,7 +669,7 @@ function InsightsTab({ bookings, slotPopularity, topProperties, topClients, onNa
   }, [bookings]);
 
   return (
-    <motion.div {...fadeUp} className="space-y-4">
+    <motion.div {...fadeUp} className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
       {/* Bookings by Day of Week */}
       <div className="rounded-2xl bg-card border border-border/60 p-4">
         <p className="text-sm font-semibold text-foreground mb-3">Bookings by Day</p>
