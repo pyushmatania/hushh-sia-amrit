@@ -378,7 +378,10 @@ export function OscarThemedListing({ properties, onPropertyTap, wishlist, onTogg
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
   const touchEndX = useRef(0);
+  const isSwiping = useRef(false);
+  const swipeHandled = useRef(false);
 
   const handlePrev = useCallback(() => {
     setCurrentIndex(i => Math.max(0, i - 1));
@@ -392,15 +395,28 @@ export function OscarThemedListing({ properties, onPropertyTap, wishlist, onTogg
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+    touchEndX.current = e.touches[0].clientX;
+    isSwiping.current = false;
+    swipeHandled.current = false;
   }, []);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     touchEndX.current = e.touches[0].clientX;
+    const dx = Math.abs(touchEndX.current - touchStartX.current);
+    const dy = Math.abs(e.touches[0].clientY - touchStartY.current);
+    // If horizontal movement dominates, it's a swipe — prevent vertical scroll
+    if (dx > 15 && dx > dy * 1.5) {
+      isSwiping.current = true;
+      e.preventDefault();
+    }
   }, []);
 
   const handleTouchEnd = useCallback(() => {
+    if (!isSwiping.current) return;
+    swipeHandled.current = true;
     const diff = touchStartX.current - touchEndX.current;
-    if (Math.abs(diff) > 50) {
+    if (Math.abs(diff) > 40) {
       if (diff > 0) handleNext();
       else handlePrev();
     }
@@ -484,9 +500,11 @@ export function OscarThemedListing({ properties, onPropertyTap, wishlist, onTogg
               {/* Swipeable single card */}
               <div
                 className="overflow-hidden"
+                style={{ touchAction: "pan-y" }}
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
+                onClickCapture={(e) => { if (swipeHandled.current) { e.stopPropagation(); e.preventDefault(); } }}
               >
                 <AnimatePresence mode="wait">
                   <motion.div
