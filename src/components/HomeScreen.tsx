@@ -18,6 +18,7 @@ import { useNotifications } from "@/hooks/use-notifications";
 import { useHomepageSections } from "@/hooks/use-homepage-sections";
 import { useAppConfig } from "@/hooks/use-app-config";
 import { useHomepageFilters } from "@/hooks/use-homepage-filters";
+import ErrorBoundary from "@/components/shared/ErrorBoundary";
 import profileAvatar from "@/assets/profile-avatar.webp";
 
 import RotatingSearchBar from "./home/RotatingSearchBar";
@@ -26,6 +27,11 @@ import FoodieCarousel from "./home/FoodieCarousel";
 import ServiceGrid from "./home/ServiceGrid";
 import CurationGrid from "./home/CurationGrid";
 import ActiveTripCard from "./home/ActiveTripCard";
+
+/** Wraps a home feed section so a crash in one section doesn't kill the whole feed */
+function SectionBoundary({ children, name }: { children: ReactNode; name: string }) {
+  return <ErrorBoundary fallbackTitle={`Failed to load ${name}`}>{children}</ErrorBoundary>;
+}
 
 /* Lightweight section title — replaces deleted SectionDivider component */
 function SectionTitle({ title }: { title: string }) {
@@ -279,7 +285,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
 
               return (
                 <>
-                  {homeSections.map(s => <div key={s.key}>{s.node}</div>)}
+                  {homeSections.map(s => <SectionBoundary key={s.key} name={s.key}>{s.node}</SectionBoundary>)}
                 </>
               );
             })()}

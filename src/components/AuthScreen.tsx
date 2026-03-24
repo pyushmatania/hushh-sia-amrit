@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useAppConfig } from "@/hooks/use-app-config";
+import { checkRateLimit, resetRateLimit, formatRetryTime, RATE_LIMITS } from "@/lib/rate-limiter";
 import authBg from "@/assets/auth-bg-night.webp";
 
 export default function AuthScreen() {
@@ -33,15 +34,29 @@ export default function AuthScreen() {
       return;
     }
 
+    // Rate limit check
+    const rlConfig = mode === "login" ? RATE_LIMITS.AUTH_LOGIN : RATE_LIMITS.AUTH_SIGNUP;
+    const rlKey = mode === "login" ? `auth:login:${email}` : `auth:signup:${email}`;
+    const { allowed, retryAfterMs } = checkRateLimit(rlKey, rlConfig.maxAttempts, rlConfig.windowMs);
+    if (!allowed) {
+      setError(`Too many attempts. Try again in ${formatRetryTime(retryAfterMs)}`);
+      return;
+    }
+
     setLoading(true);
     if (mode === "login") {
       const { error } = await signIn(email, password);
-      if (error) setError(error);
+      if (error) {
+        setError(error);
+      } else {
+        resetRateLimit(rlKey);
+      }
     } else {
       const { error } = await signUp(email, password, name);
       if (error) {
         setError(error);
       } else {
+        resetRateLimit(rlKey);
         setSignupSuccess(true);
       }
     }
@@ -52,6 +67,11 @@ export default function AuthScreen() {
     setError("");
     if (!email.trim()) {
       setError("Please enter your email address");
+      return;
+    }
+    const { allowed, retryAfterMs } = checkRateLimit(`auth:reset:${email}`, RATE_LIMITS.AUTH_RESET.maxAttempts, RATE_LIMITS.AUTH_RESET.windowMs);
+    if (!allowed) {
+      setError(`Too many reset requests. Try again in ${formatRetryTime(retryAfterMs)}`);
       return;
     }
     setLoading(true);
