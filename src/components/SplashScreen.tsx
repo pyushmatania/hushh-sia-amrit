@@ -446,7 +446,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
               {/* Greeting */}
               <motion.h1
-                className="text-[32px] font-extrabold text-white text-center mt-2 leading-tight"
+                className="text-[32px] md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-white text-center mt-2 md:mt-4 leading-tight"
                 style={{
                   textShadow: "0 2px 20px hsla(0,0%,0%,0.5)",
                   fontFamily: "'Playfair Display', serif",
