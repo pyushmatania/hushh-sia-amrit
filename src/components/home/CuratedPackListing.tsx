@@ -315,15 +315,20 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
             </div>
 
             {/* Price + CTA */}
-            <div className="flex items-center justify-between mt-3 md:mt-4">
+            <div className="flex items-center justify-between mt-3 md:mt-3">
               <div className="flex items-baseline gap-2">
-                <span className="text-2xl md:text-3xl font-extrabold text-white" style={{ textShadow: "0 1px 4px rgba(0,0,0,0.4)" }}>₹{pack.price}</span>
+                <span className="text-2xl md:text-xl font-extrabold text-white" style={{ textShadow: "0 1px 4px rgba(0,0,0,0.4)" }}>₹{pack.price}</span>
                 {pack.originalPrice && (
-                  <span className="text-[12px] md:text-sm text-white/50 line-through font-medium">₹{pack.originalPrice}</span>
+                  <span className="text-[12px] md:text-xs text-white/50 line-through font-medium">₹{pack.originalPrice}</span>
+                )}
+                {savings > 0 && (
+                  <span className="hidden md:inline-flex text-[10px] px-2 py-0.5 rounded-full font-bold text-white" style={{ background: "hsl(160 84% 39% / 0.85)" }}>
+                    Save ₹{savings}
+                  </span>
                 )}
               </div>
-              <div className="flex items-center gap-1.5 bg-primary text-primary-foreground px-5 py-2.5 md:px-6 md:py-3 rounded-full text-[13px] md:text-sm font-bold active:scale-95 transition-transform shadow-lg md:hover:bg-primary/90 md:cursor-pointer" style={{ boxShadow: "0 4px 16px hsl(var(--primary) / 0.4)" }}>
-                Book Now <ArrowRight size={13} className="md:w-4 md:h-4" />
+              <div className="flex items-center gap-1.5 bg-primary text-primary-foreground px-5 py-2.5 md:px-4 md:py-2 rounded-full text-[13px] md:text-xs font-bold active:scale-95 transition-transform shadow-lg md:hover:bg-primary/90 md:cursor-pointer" style={{ boxShadow: "0 4px 16px hsl(var(--primary) / 0.4)" }}>
+                Book Now <ArrowRight size={13} className="md:w-3.5 md:h-3.5" />
               </div>
             </div>
           </div>
