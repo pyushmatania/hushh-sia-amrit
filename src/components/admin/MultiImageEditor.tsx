@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { X, Upload, ChevronLeft, ChevronRight, Image } from "lucide-react";
+import { X, Upload, ChevronLeft, ChevronRight, Image, Info } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -10,6 +9,7 @@ interface MultiImageEditorProps {
   storagePath?: string;
   label?: string;
   maxImages?: number;
+  dimensionTip?: string;
 }
 
 export default function MultiImageEditor({
@@ -18,6 +18,7 @@ export default function MultiImageEditor({
   storagePath = "misc",
   label = "Images",
   maxImages = 10,
+  dimensionTip = "Recommended: 1200×800px (3:2 ratio), JPG/WebP, under 2MB",
 }: MultiImageEditorProps) {
   const [uploading, setUploading] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -49,9 +50,13 @@ export default function MultiImageEditor({
 
   return (
     <div>
-      <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
+      <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1 block">
         {label} ({images.length}/{maxImages})
       </label>
+      {/* Dimension tip */}
+      <p className="text-[10px] text-muted-foreground/70 flex items-center gap-1 mb-2">
+        <Info size={9} className="shrink-0" /> {dimensionTip}
+      </p>
 
       {/* Main preview with carousel */}
       {images.length > 0 ? (
