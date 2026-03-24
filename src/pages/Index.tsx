@@ -359,5 +359,6 @@ export default function Index() {
       <NotificationToastProvider />
       <NotificationPermissionBanner />
     </div>
+    </div>
   );
 }
