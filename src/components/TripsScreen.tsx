@@ -309,10 +309,6 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
     checkVerification();
   }, [user]);
 
-  const handleRefresh = useCallback(async () => {
-    await new Promise((r) => setTimeout(r, 800));
-    setRefreshKey((k) => k + 1);
-  }, []);
 
   // bookings already includes demo data for guests (from useBookings hook)
   const isDemo = bookings.some((b) => b.id.startsWith("demo-"));
