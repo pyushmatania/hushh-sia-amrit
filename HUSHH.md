@@ -29,8 +29,9 @@ Hushh is a premium mobile-first marketplace for booking private experiences, sta
 17. [App Blueprint](#-app-blueprint)
 18. [Wireframes](#-wireframes)
 19. [Change History](#-change-history)
-20. [Conventions & Guidelines](#-conventions--guidelines)
-18. [Easter Eggs](#-easter-eggs)
+20. [Mobile & Responsive Blueprint](#-mobile--responsive-blueprint)
+21. [Conventions & Guidelines](#-conventions--guidelines)
+22. [Easter Eggs](#-easter-eggs)
 
 ---
 
