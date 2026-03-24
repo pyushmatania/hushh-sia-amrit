@@ -72,6 +72,16 @@ export default function SpinWheel({ onWin, disabled }: SpinWheelProps) {
 
   const handleSpin = useCallback(() => {
     if (spinning || disabled) return;
+
+    const { allowed, retryAfterMs } = checkRateLimit(
+      "spin:wheel",
+      RATE_LIMITS.SPIN_WHEEL.maxAttempts,
+      RATE_LIMITS.SPIN_WHEEL.windowMs
+    );
+    if (!allowed) {
+      toast.error(`Come back later! Try again in ${formatRetryTime(retryAfterMs)}`);
+      return;
+    }
     setSpinning(true);
     setResult(null);
     setShowConfetti(false);
