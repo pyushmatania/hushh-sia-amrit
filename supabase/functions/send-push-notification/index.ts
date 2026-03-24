@@ -112,7 +112,18 @@ Deno.serve(async (req) => {
     const { data: subscriptions } = await supabase.from('push_subscriptions').select('*').eq('user_id', user_id);
     if (!subscriptions?.length) return new Response(JSON.stringify({ message: 'No subscriptions', sent: 0 }), { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
-    const notificationPayload = JSON.stringify({ title: payload.title || 'Notification', body: payload.body || 'New notification', icon: payload.icon || '/icon-192.png', badge: '/icon-192.png', url: payload.url || '/' });
+    const notificationPayload = JSON.stringify({
+      title: payload.title || 'Notification',
+      body: payload.body || 'New notification',
+      icon: payload.icon || '/icon-192.png',
+      badge: '/icon-192.png',
+      url: payload.url || '/',
+      image: payload.image || null,
+      actions: payload.actions || [],
+      tag: payload.tag || 'hushh-notification',
+      silent: payload.silent || false,
+      vibrate: payload.vibrate || [200, 100, 200],
+    });
 
     let successCount = 0;
     for (const sub of subscriptions) {
