@@ -204,7 +204,7 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden border-b border-border bg-background/80 backdrop-blur-md"
           >
-            <div className="px-5 py-3 flex flex-wrap gap-2">
+            <div className="px-5 py-3 flex flex-wrap gap-2 md:max-w-3xl md:mx-auto">
               {(Object.keys(sortLabels) as SortOption[]).map((key) => (
                 <button
                   key={key}
