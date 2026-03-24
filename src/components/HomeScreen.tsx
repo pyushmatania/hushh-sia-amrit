@@ -445,11 +445,11 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
           {/* ═══════ CURATIONS TAB ═══════ */}
           {activeCategory === "curation" && (
             <>
-              <div className="px-5 pt-6 pb-2">
-                <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+              <div className="px-5 pt-6 pb-2 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+                <h1 className="text-2xl font-bold text-foreground md:text-3xl lg:text-4xl" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                   Curated for You ✨
                 </h1>
-                <p className="text-sm text-muted-foreground mt-1" style={{ fontFamily: "'Playfair Display', serif" }}>
+                <p className="text-sm text-muted-foreground mt-1 md:text-base lg:text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>
                   One-tap bundles, crafted by locals
                 </p>
               </div>
