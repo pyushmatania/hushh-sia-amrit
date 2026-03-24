@@ -135,6 +135,9 @@ export function MobilePropertyGrid({ properties, onPropertyTap, wishlist, onTogg
   const [showAll, setShowAll] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Apply 3D gallery effect
+  use3DScrollEffect(scrollRef);
+
   if (properties.length === 0) return null;
 
   // For swipe mode: arrange in columns of `rows` items
