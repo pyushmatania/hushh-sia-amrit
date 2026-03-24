@@ -266,13 +266,13 @@ export default function FinanceHub() {
       {/* ─── Header ─── */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
+          <h1 className="text-xl lg:text-2xl font-bold text-foreground flex items-center gap-2">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500/20 to-primary/20 flex items-center justify-center">
               <CircleDollarSign size={18} className="text-emerald-500" />
             </div>
             Finance Hub
           </h1>
-          <p className="text-xs text-muted-foreground mt-0.5">{currentMonth} {currentYear} • Revenue, Expenses & Budgets</p>
+          <p className="text-xs lg:text-sm text-muted-foreground mt-0.5">{currentMonth} {currentYear} • Revenue, Expenses & Budgets</p>
         </div>
         <Button size="sm" onClick={() => { setEditingExpense({ ...emptyExpense }); setShowForm(true); }} className="gap-1.5 rounded-xl text-xs">
           <Plus size={14} /> Expense
