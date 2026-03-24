@@ -321,16 +321,20 @@ export default function ServiceGrid({ services, onServiceTap }: ServiceGridProps
         </>
       )}
 
-      {/* ━━ ALL SERVICES ━━ */}
-      <SectionHeader icon={Sparkles} title="✨ All Services" subtitle={`${services.length} available`} />
-      {isMobile ? (
-        <div className="px-4 grid grid-cols-2 gap-3 pb-4">
-          {services.slice(0, 12).map((s, i) => <MobileGameCard key={s.id} service={s} onTap={onServiceTap} index={i} />)}
-        </div>
-      ) : (
-        <div className="grid grid-cols-4 gap-5 pb-6">
-          {services.map((s, i) => <DesktopServiceCard key={s.id} service={s} onTap={onServiceTap} index={i} />)}
-        </div>
+      {/* ━━ POPULAR PICKS ━━ */}
+      {popular.length > 0 && (
+        <>
+          <SectionHeader icon={Crown} title="👑 Popular Picks" subtitle="Guest favorites" accent="hsl(280 70% 50% / 0.15)" />
+          {isMobile ? (
+            <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2" style={{ WebkitOverflowScrolling: "touch" }}>
+              {popular.slice(0, 6).map((s, i) => <MobileHoloCard key={s.id} service={s} onTap={onServiceTap} index={i} />)}
+            </div>
+          ) : (
+            <div className="grid grid-cols-4 gap-5 pb-6">
+              {popular.map((s, i) => <DesktopServiceCard key={s.id} service={s} onTap={onServiceTap} index={i} />)}
+            </div>
+          )}
+        </>
       )}
     </div>
   );

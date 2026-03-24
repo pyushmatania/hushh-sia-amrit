@@ -327,13 +327,13 @@ export default function CurationGrid({ combos, onComboTap }: CurationGridProps) 
         </div>
       )}
 
-      {/* ━━ ALL CURATIONS ━━ */}
+      {/* ━━ MUST TRY ━━ */}
       {combos.length > 6 && (
         <>
-          <SectionHeader icon={Star} title="✨ All Curations" subtitle={`${combos.length} bundles`} />
+          <SectionHeader icon={Crown} title="👑 Must Try" subtitle="Handpicked for you" accent="hsl(280 70% 50% / 0.15)" />
           {isMobile ? (
-            <div className="px-4 grid grid-cols-2 gap-3 pb-4">
-              {combos.slice(6).map((c, i) => <MobileNeonCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
+            <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-4" style={{ WebkitOverflowScrolling: "touch" }}>
+              {combos.slice(6, 12).map((c, i) => <MobilePrismCard key={c.id} combo={c} onTap={onComboTap} index={i} />)}
             </div>
           ) : (
             <div className="grid grid-cols-4 gap-5 pb-6">
