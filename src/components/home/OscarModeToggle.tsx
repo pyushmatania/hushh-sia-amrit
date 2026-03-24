@@ -401,13 +401,24 @@ export function OscarThemedListing({ properties, onPropertyTap, wishlist, onTogg
             </div>
           </motion.div>
 
-          {/* Mobile: Swipeable single card */}
+          {/* Mobile: Horizontal swipeable row */}
           {isMobile ? (
-            <div className="grid grid-cols-2 gap-3">
-              {premiumPicks.map((p, i) => (
-                <OscarPropertyCard key={p.id} property={p} onTap={onPropertyTap} index={i}
-                  isWL={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
-              ))}
+            <div className="relative">
+              <div
+                ref={scrollRef}
+                className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4 -mx-5 px-5"
+                style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none" }}
+              >
+                {premiumPicks.map((p, i) => (
+                  <div key={p.id} className="snap-start shrink-0" style={{ width: "calc(33.333% - 8px)", minWidth: "120px" }}>
+                    <OscarPropertyCard property={p} onTap={onPropertyTap} index={i}
+                      isWL={wishlist.includes(p.id)} onToggleWishlist={onToggleWishlist} />
+                  </div>
+                ))}
+              </div>
+              {/* Scroll hint gradient */}
+              <div className="absolute right-0 top-0 bottom-4 w-8 pointer-events-none z-10"
+                style={{ background: "linear-gradient(270deg, rgba(10,2,2,0.9), transparent)" }} />
             </div>
           ) : (
             /* Desktop: Grid with arrow navigation */
