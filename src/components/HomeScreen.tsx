@@ -189,7 +189,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
     <div ref={contentRef} key={refreshKey} className="pb-24 md:pb-8 min-h-screen overflow-y-auto overflow-x-hidden bg-mesh smooth-main-scroll" style={{ overscrollBehaviorX: "none", WebkitOverflowScrolling: "touch" }}>
 
       {/* Header */}
-      <div className="px-5 pt-5 pb-2 flex items-center justify-between">
+      <div className="px-5 pt-5 pb-2 flex items-center justify-between md:hidden">
         <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/40 glow-sm">
             <img src={profileAvatar} alt="Profile" className="w-full h-full object-cover" />
