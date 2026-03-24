@@ -1413,7 +1413,7 @@ export const curatedCombos: CuratedCombo[] = [
     time: "6 PM – 10 PM",
     priceRange: [1499, 2999],
     includes: ["BBQ platter 🍗", "Bonfire 🔥", "Drinks 🍺", "Stargazing 🌌", "Marshmallows"],
-    image: listingFireflyVilla,
+    image: curationBbqBonfire,
     gradient: "from-red-600/80 to-orange-900/60",
     tags: ["🔥 Hot", "🍗 Foodie"],
   },
