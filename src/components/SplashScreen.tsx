@@ -51,7 +51,7 @@ function getTimeConfig(variant: string = "1") {
   if (hour >= 5 && hour < 12) return {
     greeting: "Good Morning",
     emoji: "☀️",
-    bg: isV2 ? splash2Dawn : (isDesktop ? splashMorningDesktop : splashMorning),
+    bg: isV2 ? (isDesktop ? splash2DawnDesktop : splash2Dawn) : (isDesktop ? splashMorningDesktop : splashMorning),
     overlay: "linear-gradient(180deg, hsla(0,0%,0%,0.35) 0%, hsla(0,0%,0%,0.1) 40%, hsla(0,0%,0%,0.5) 100%)",
     hasFireflies: false,
     hasShootingStars: false,
