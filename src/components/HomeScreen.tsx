@@ -526,12 +526,12 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
           )}
         </div>
 
-      <div className="mx-5 mt-8 mb-4 flex items-center justify-center gap-2 glass rounded-2xl px-4 py-3">
+      <div className="mx-5 mt-8 mb-4 flex items-center justify-center gap-2 glass rounded-2xl px-4 py-3 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32">
         <span className="text-lg">🏷️</span>
-        <span className="text-sm font-medium text-foreground">Prices include all fees · No hidden charges</span>
+        <span className="text-sm font-medium text-foreground md:text-base">Prices include all fees · No hidden charges</span>
       </div>
 
-      <div className="h-20" />
+      <div className="h-20 md:h-8" />
     </div>
   );
 }
