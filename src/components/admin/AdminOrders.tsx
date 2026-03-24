@@ -221,7 +221,7 @@ export default function AdminOrders() {
           </div>
         ) : (
           <AnimatePresence mode="popLayout">
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3">
               {filtered.map((order, i) => {
                 const StatusIcon = statusIcons[order.status] || Clock;
                 const sc = statusColors[order.status] || statusColors.pending;
