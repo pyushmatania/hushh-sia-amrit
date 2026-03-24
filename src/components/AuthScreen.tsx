@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useAppConfig } from "@/hooks/use-app-config";
+import { checkRateLimit, resetRateLimit, formatRetryTime, RATE_LIMITS } from "@/lib/rate-limiter";
 import authBg from "@/assets/auth-bg-night.webp";
 
 export default function AuthScreen() {
