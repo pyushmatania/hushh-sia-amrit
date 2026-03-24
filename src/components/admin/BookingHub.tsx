@@ -550,7 +550,7 @@ function OverviewTab({ stats, revenueTrend, statusDistribution, topProperties, t
   return (
     <motion.div {...fadeUp} className="space-y-4">
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <StatCard label="Total Revenue" value={`₹${stats.totalRevenue.toLocaleString("en-IN")}`} icon={IndianRupee} color="text-emerald-600 dark:text-emerald-400" bg="bg-emerald-50 dark:bg-emerald-500/10" />
         <StatCard label="Active Bookings" value={stats.activeCount.toString()} icon={Activity} color="text-blue-600 dark:text-blue-400" bg="bg-blue-50 dark:bg-blue-500/10" />
         <StatCard label="Avg Booking Value" value={`₹${stats.avgBookingValue.toLocaleString("en-IN")}`} icon={TrendingUp} color="text-violet-600 dark:text-violet-400" bg="bg-violet-50 dark:bg-violet-500/10" />
