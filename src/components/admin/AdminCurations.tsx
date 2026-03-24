@@ -230,7 +230,16 @@ export default function AdminCurations() {
             <Sparkles size={20} className="text-primary" />
             {editingId ? "Edit Curation" : "Create Curation"}
           </h1>
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
+            {editingId && autoSaveStatus !== "idle" && (
+              <span className={`px-2 py-1 rounded-lg text-[10px] font-semibold ${
+                autoSaveStatus === "saving" ? "bg-amber-500/15 text-amber-500" :
+                autoSaveStatus === "saved" ? "bg-emerald-500/15 text-emerald-500" :
+                "bg-destructive/15 text-destructive"
+              }`}>
+                {autoSaveStatus === "saving" ? "⏳ Saving..." : autoSaveStatus === "saved" ? "✓ Saved" : "⚠ Error"}
+              </span>
+            )}
             <button onClick={() => setPreviewMode(!previewMode)}
               className="px-3 py-1.5 rounded-lg text-xs font-medium bg-secondary text-foreground flex items-center gap-1">
               <Eye size={12} /> {previewMode ? "Edit" : "Preview"}
