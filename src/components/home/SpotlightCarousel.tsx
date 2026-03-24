@@ -98,15 +98,18 @@ const VideoCard = memo(function VideoCard({
   }, []);
 
   useEffect(() => {
-    if (!isVisible || !videoRef.current) return;
+    const v = videoRef.current;
+    if (!v || !isVisible) return;
 
     if (isActive) {
-      videoRef.current.play().catch(() => {});
+      // Force load + play for first card
+      if (isFirst && v.readyState < 2) v.load();
+      v.play().catch(() => {});
       return;
     }
 
-    videoRef.current.pause();
-  }, [isVisible, isActive]);
+    v.pause();
+  }, [isVisible, isActive, isFirst]);
 
   return (
     <div
