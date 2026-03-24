@@ -784,7 +784,73 @@ export default function MessagesScreen() {
               </div>
             )}
 
-            {filteredChats.length === 0 && !loading && (
+            {/* Archived button */}
+            {archivedChats.length > 0 && !showArchived && (
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                onClick={() => setShowArchived(true)}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-card border border-border/50 active:scale-[0.98] transition-transform mb-4"
+              >
+                <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
+                  <Archive size={16} className="text-muted-foreground" />
+                </div>
+                <div className="flex-1 text-left">
+                  <p className="text-[13px] font-medium text-foreground">Archived</p>
+                  <p className="text-[11px] text-muted-foreground">{archivedChats.length} conversation{archivedChats.length !== 1 ? "s" : ""}</p>
+                </div>
+                <ChevronRight size={16} className="text-muted-foreground" />
+              </motion.button>
+            )}
+
+            {/* Archived messages view (inline) */}
+            <AnimatePresence>
+              {showArchived && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="overflow-hidden mb-5"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <SectionLabel icon={Archive} label="Archived" />
+                    <button onClick={() => setShowArchived(false)} className="text-[10px] font-semibold text-primary px-2 py-1 rounded-full" style={{ background: "hsl(var(--primary) / 0.1)" }}>
+                      Hide
+                    </button>
+                  </div>
+                  <div className="space-y-2">
+                    {archivedChats.map((t, i) => (
+                      <motion.div
+                        key={t.id}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.03 }}
+                        className="relative rounded-2xl bg-card border border-border/50 overflow-hidden"
+                      >
+                        <div className="px-4 py-3.5 flex gap-3 items-center">
+                          <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-xl opacity-60">
+                            {t.avatar}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-[14px] font-medium text-foreground/70 truncate">{t.name}</h4>
+                            <p className="text-[12px] text-muted-foreground truncate mt-0.5">{t.lastMessage}</p>
+                          </div>
+                          <button
+                            onClick={() => handleUnarchive(t.id)}
+                            className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-[11px] font-semibold active:scale-95 transition-transform"
+                          >
+                            <ArchiveRestore size={12} />
+                            Unarchive
+                          </button>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {filteredChats.length === 0 && archivedChats.length === 0 && !loading && (
               <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-20">
                 <div className="w-16 h-16 rounded-full bg-secondary/50 mx-auto mb-4 flex items-center justify-center">
                   <MessageCircle size={28} className="text-muted-foreground/30" />
