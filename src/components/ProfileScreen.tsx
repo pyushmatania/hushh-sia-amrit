@@ -137,11 +137,11 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
   return (
     <div className="pb-24 bg-mesh min-h-screen">
       {/* Header */}
-      <div className="px-5 pt-6 pb-1 flex items-center justify-between">
+      <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-6 pb-1 flex items-center justify-between">
         <motion.h1
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-[28px] font-bold text-foreground"
+          className="text-[28px] md:text-3xl lg:text-4xl font-bold text-foreground"
         >
           Profile
         </motion.h1>
@@ -155,12 +155,15 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
         </motion.button>
       </div>
 
+      {/* Desktop responsive wrapper */}
+      <div className="md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+
       {/* Profile Hero Card — reimagined */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1, type: "spring", stiffness: 200, damping: 22 }}
-        className="mx-5 mt-5 rounded-[28px] overflow-hidden relative"
+        className="mx-5 md:mx-0 mt-5 rounded-[28px] overflow-hidden relative md:max-w-2xl"
         style={{
           background: "linear-gradient(145deg, hsl(var(--primary) / 0.12) 0%, hsl(var(--primary) / 0.04) 50%, hsl(var(--background)) 100%)",
           border: "1px solid hsl(var(--primary) / 0.15)",
@@ -304,7 +307,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
       </motion.div>
 
       {/* Quick Stats Row */}
-      <div className="mx-5 mt-4 grid grid-cols-3 gap-3">
+      <div className="mx-5 mt-4 grid grid-cols-3 md:grid-cols-6 gap-3">
           {[
             { icon: Calendar, value: String(bookings.filter(b => b.status !== "cancelled").length), label: "Bookings", color: "text-primary" },
             { icon: Heart, value: "8", label: "Wishlisted", color: "text-primary" },
@@ -334,7 +337,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
         <h3 className="text-base font-bold text-foreground mb-3 flex items-center gap-2">
           <Award size={16} className="text-primary" /> Achievements
         </h3>
-        <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-1">
+        <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-1 md:grid md:grid-cols-4 md:overflow-visible">
           {achievements.map((a, i) => (
             <motion.div
               key={i}
@@ -418,7 +421,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
       </motion.div>
 
       {/* Two Cards Grid */}
-      <div className="mx-5 mt-5 grid grid-cols-2 gap-3">
+      <div className="mx-5 mt-5 grid grid-cols-2 md:grid-cols-4 gap-3">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -618,6 +621,8 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
       >
         {appConfig.app_name || "Hushh"} v1.0 · Made in Jeypore ❤️
       </p>
+
+      </div>{/* close desktop responsive wrapper */}
 
       {/* Sheets */}
       <EditProfileSheet

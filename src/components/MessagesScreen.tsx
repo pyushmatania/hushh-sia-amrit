@@ -382,7 +382,7 @@ function MockChatView({ threadId, thread, onBack }: { threadId: string; thread: 
   }, [messages]);
 
   return (
-    <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", damping: 30, stiffness: 300 }} className="fixed inset-0 z-50 bg-background flex flex-col">
+    <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", damping: 30, stiffness: 300 }} className="fixed inset-0 z-50 bg-background flex flex-col md:relative md:inset-auto md:z-auto md:h-full">
       {/* Header */}
       <div className="flex items-center gap-3 px-4 py-3 border-b border-border/50 bg-background">
         <button onClick={onBack} className="text-foreground active:scale-90 transition-transform"><ArrowLeft size={20} /></button>
@@ -659,9 +659,9 @@ export default function MessagesScreen() {
   return (
     <div className="pb-24 min-h-screen bg-background">
       {/* Header */}
-      <div className="px-5 pt-8 pb-4">
+      <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-8 pb-4">
         <div className="flex items-center justify-between mb-5">
-          <motion.h1 initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} className="text-[26px] font-bold text-foreground tracking-tight">
+          <motion.h1 initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} className="text-[26px] md:text-3xl lg:text-4xl font-bold text-foreground tracking-tight">
             Messages
           </motion.h1>
           <motion.button initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} onClick={() => setShowSearch(!showSearch)}
@@ -674,7 +674,7 @@ export default function MessagesScreen() {
         <AnimatePresence>
           {showSearch && (
             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden mb-4">
-              <div className="relative">
+              <div className="relative md:max-w-md">
                 <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/50" />
                 <input autoFocus value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search…"
                   className="w-full bg-card border border-border/50 rounded-full pl-10 pr-4 py-2.5 text-[13px] text-foreground placeholder:text-muted-foreground/40 outline-none focus:border-primary/30 transition-colors" />
@@ -692,7 +692,7 @@ export default function MessagesScreen() {
       </div>
 
       {/* Concierge CTA */}
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="mx-5 mb-5 flex gap-2">
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="mx-5 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 mb-5 flex gap-2 md:max-w-xl">
         <button onClick={() => {
           setTab("chats");
           if (user && conversations.length > 0) setActiveConvo(conversations[0]);
@@ -705,9 +705,10 @@ export default function MessagesScreen() {
         </button>
       </motion.div>
 
+      <div className="md:px-8 lg:px-16 xl:px-24 2xl:px-32">
       <AnimatePresence mode="wait">
         {tab === "chats" && (
-          <motion.div key="chats" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="px-5">
+          <motion.div key="chats" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="px-5 md:px-0">
 
             {pinnedChats.length > 0 && (
               <div className="mb-5">
@@ -863,16 +864,16 @@ export default function MessagesScreen() {
         )}
 
         {tab === "notifications" && (
-          <motion.div key="notifs" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="px-5 space-y-2">
+          <motion.div key="notifs" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="px-5 md:px-0 space-y-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-3 md:space-y-0">
             {notifications.filter(n => !n.read && !readNotifications.has(n.id)).length > 0 && (
-              <p className="text-[10px] uppercase tracking-[0.1em] font-semibold text-muted-foreground mb-1">New</p>
+              <p className="text-[10px] uppercase tracking-[0.1em] font-semibold text-muted-foreground mb-1 md:col-span-full">New</p>
             )}
             {notifications.map((notif, i) => {
               const isRead = notif.read || readNotifications.has(notif.id);
               const prevIsUnread = i > 0 && !notifications[i - 1].read && !readNotifications.has(notifications[i - 1].id);
               return (
                 <div key={notif.id}>
-                  {isRead && prevIsUnread && <p className="text-[10px] uppercase tracking-[0.1em] font-semibold text-muted-foreground mt-4 mb-1">Earlier</p>}
+                  {isRead && prevIsUnread && <p className="text-[10px] uppercase tracking-[0.1em] font-semibold text-muted-foreground mt-4 mb-1 md:col-span-full">Earlier</p>}
                   <NotificationCard notif={notif} index={i} isRead={isRead} onRead={() => markRead(notif.id)} />
                 </div>
               );
@@ -880,6 +881,7 @@ export default function MessagesScreen() {
           </motion.div>
         )}
       </AnimatePresence>
+      </div>
 
       <AnimatePresence>
         {activeConvo && <RealtimeChatView conversation={activeConvo} onBack={() => setActiveConvo(null)} />}
