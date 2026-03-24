@@ -163,7 +163,7 @@ export const changeLog = [
 ];
 
 // ─── TAB DEFINITIONS ─────────────────────────────────────────
-type TabId = "overview" | "features" | "architecture" | "database" | "wireframes" | "desktop" | "mobile" | "changelog";
+type TabId = "overview" | "features" | "architecture" | "database" | "wireframes" | "desktop" | "mobile" | "wallpapers" | "changelog";
 const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: "overview", label: "Overview", icon: <Home size={14} /> },
   { id: "features", label: "Features", icon: <Star size={14} /> },
@@ -172,6 +172,7 @@ const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: "wireframes", label: "Wireframes", icon: <Monitor size={14} /> },
   { id: "desktop", label: "Desktop", icon: <Monitor size={14} /> },
   { id: "mobile", label: "Mobile", icon: <Smartphone size={14} /> },
+  { id: "wallpapers", label: "Walls", icon: <ImageIcon size={14} /> },
   { id: "changelog", label: "Log", icon: <History size={14} /> },
 ];
 
