@@ -420,7 +420,7 @@ export default function NotificationSettings() {
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={startPushTimer}
-              disabled={pushTimer === 0 || !isSubscribed}
+              disabled={pushTimer === 0}
               className="flex-1 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 bg-emerald-500 text-white shadow-md disabled:opacity-40"
             >
               <Play size={14} /> Start Timer ({pushTimer}s)
