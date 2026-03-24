@@ -574,6 +574,8 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
             </LazySection>
           )}
 
+        </div>
+
       <OscarToggle isOn={oscarMode} onToggle={() => setOscarMode(!oscarMode)} />
       {oscarMode ? (
         <OscarThemedListing properties={properties} onPropertyTap={onPropertyTap} wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
