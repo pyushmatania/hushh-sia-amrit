@@ -503,7 +503,7 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
             <motion.div key="referral" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="px-4">
               <div className="rounded-3xl p-6 text-center relative overflow-hidden"
                 style={{
-                  background: "linear-gradient(160deg, hsl(260 18% 12%), hsl(260 20% 8%))",
+                  background: "linear-gradient(160deg, hsl(var(--card)), hsl(var(--secondary)))",
                   border: "1px solid hsl(var(--border) / 0.5)",
                 }}>
                 <div className="absolute -top-16 -right-16 w-40 h-40 rounded-full opacity-10"
