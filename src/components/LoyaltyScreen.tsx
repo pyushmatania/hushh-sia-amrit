@@ -383,7 +383,7 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
             <motion.div key="spin" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="px-4 py-4">
               <div className="rounded-3xl p-6 flex flex-col items-center relative overflow-hidden"
                 style={{
-                  background: "linear-gradient(180deg, hsl(260 18% 11%), hsl(260 20% 7%))",
+                  background: "linear-gradient(180deg, hsl(var(--card)), hsl(var(--secondary)))",
                   border: "1px solid hsl(var(--border) / 0.5)",
                 }}>
                 {/* Decorative glow */}
