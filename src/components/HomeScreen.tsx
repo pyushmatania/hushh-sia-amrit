@@ -531,16 +531,6 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 </div>
               )}
 
-              {isMobile && (
-                <MobilePropertyGrid
-                  properties={filteredProperties}
-                  onPropertyTap={onPropertyTap}
-                  wishlist={wishlist}
-                  onToggleWishlist={onToggleWishlist}
-                  rows={2}
-                  title="All Services"
-                />
-              )}
               </>
               )}
             </>
