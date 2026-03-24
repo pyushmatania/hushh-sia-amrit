@@ -622,6 +622,8 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
         {appConfig.app_name || "Hushh"} v1.0 · Made in Jeypore ❤️
       </p>
 
+      </div>{/* close desktop responsive wrapper */}
+
       {/* Sheets */}
       <EditProfileSheet
         open={showEditProfile}
