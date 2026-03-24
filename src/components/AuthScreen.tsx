@@ -34,15 +34,29 @@ export default function AuthScreen() {
       return;
     }
 
+    // Rate limit check
+    const rlConfig = mode === "login" ? RATE_LIMITS.AUTH_LOGIN : RATE_LIMITS.AUTH_SIGNUP;
+    const rlKey = mode === "login" ? `auth:login:${email}` : `auth:signup:${email}`;
+    const { allowed, retryAfterMs } = checkRateLimit(rlKey, rlConfig.maxAttempts, rlConfig.windowMs);
+    if (!allowed) {
+      setError(`Too many attempts. Try again in ${formatRetryTime(retryAfterMs)}`);
+      return;
+    }
+
     setLoading(true);
     if (mode === "login") {
       const { error } = await signIn(email, password);
-      if (error) setError(error);
+      if (error) {
+        setError(error);
+      } else {
+        resetRateLimit(rlKey);
+      }
     } else {
       const { error } = await signUp(email, password, name);
       if (error) {
         setError(error);
       } else {
+        resetRateLimit(rlKey);
         setSignupSuccess(true);
       }
     }
