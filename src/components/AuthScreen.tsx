@@ -157,7 +157,7 @@ export default function AuthScreen() {
             {mode === "login" ? "Sign in to continue your journey" : mode === "signup" ? `Join ${brandName} and discover private experiences` : "Enter your email to receive a reset link"}
           </p>
           {mode === "forgot" && (
-            <button onClick={() => { setMode("login"); setError(""); }} className="flex items-center gap-1 text-xs text-primary font-semibold mt-2">
+            <button onClick={() => { setMode("login"); setError(""); }} className="flex items-center gap-1 text-xs text-primary font-semibold mt-2 drop-shadow-sm">
               <ArrowLeft size={14} /> Back to login
             </button>
           )}
