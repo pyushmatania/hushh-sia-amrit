@@ -33,6 +33,7 @@ import AdminReports from "@/components/admin/AdminReports";
 import AdminNotifications from "@/components/admin/AdminNotifications";
 import AdminSettings from "@/components/admin/AdminSettings";
 import AdminHomepage from "@/components/admin/AdminHomepage";
+import AdminTelegram from "@/components/admin/AdminTelegram";
 import AuthScreen from "@/components/AuthScreen";
 import { Shield, Loader2 } from "lucide-react";
 
@@ -56,7 +57,7 @@ export default function Admin() {
     requests: "Requests", history: "Property History", inventory: "Inventory",
     "staff-mgmt": "Staff Mgmt", budget: "Budget",
     checkin: "Check-in", reports: "Reports", notifications: "Notifications",
-    settings: "Settings", homepage: "Homepage Manager",
+    settings: "Settings", homepage: "Homepage Manager", telegram: "Telegram Bot",
   };
 
   const navigateTo = (target: AdminPage, ctx?: { propertyId?: string; userId?: string; bookingId?: string }) => {
@@ -162,6 +163,7 @@ export default function Admin() {
       case "reports": return <AdminReports />;
       case "notifications": return <AdminNotifications />;
       case "settings": return <AdminSettings />;
+      case "telegram": return <AdminTelegram />;
       default: return <CommandCenter onNavigate={setPage} />;
     }
   };

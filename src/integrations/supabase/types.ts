@@ -1850,6 +1850,126 @@ export type Database = {
           },
         ]
       }
+      telegram_bot_state: {
+        Row: {
+          admin_chat_id: string | null
+          auto_reply_enabled: boolean | null
+          auto_reply_message: string | null
+          booking_alerts: boolean | null
+          bot_username: string | null
+          daily_summary: boolean | null
+          group_chat_id: string | null
+          id: number
+          notifications_enabled: boolean | null
+          order_alerts: boolean | null
+          update_offset: number
+          updated_at: string
+        }
+        Insert: {
+          admin_chat_id?: string | null
+          auto_reply_enabled?: boolean | null
+          auto_reply_message?: string | null
+          booking_alerts?: boolean | null
+          bot_username?: string | null
+          daily_summary?: boolean | null
+          group_chat_id?: string | null
+          id: number
+          notifications_enabled?: boolean | null
+          order_alerts?: boolean | null
+          update_offset?: number
+          updated_at?: string
+        }
+        Update: {
+          admin_chat_id?: string | null
+          auto_reply_enabled?: boolean | null
+          auto_reply_message?: string | null
+          booking_alerts?: boolean | null
+          bot_username?: string | null
+          daily_summary?: boolean | null
+          group_chat_id?: string | null
+          id?: number
+          notifications_enabled?: boolean | null
+          order_alerts?: boolean | null
+          update_offset?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      telegram_messages: {
+        Row: {
+          chat_id: number
+          created_at: string
+          from_first_name: string | null
+          from_username: string | null
+          id: string
+          is_command: boolean | null
+          message_text: string | null
+          message_type: string | null
+          raw_update: Json
+          replied: boolean | null
+          reply_text: string | null
+          update_id: number
+        }
+        Insert: {
+          chat_id: number
+          created_at?: string
+          from_first_name?: string | null
+          from_username?: string | null
+          id?: string
+          is_command?: boolean | null
+          message_text?: string | null
+          message_type?: string | null
+          raw_update?: Json
+          replied?: boolean | null
+          reply_text?: string | null
+          update_id: number
+        }
+        Update: {
+          chat_id?: number
+          created_at?: string
+          from_first_name?: string | null
+          from_username?: string | null
+          id?: string
+          is_command?: boolean | null
+          message_text?: string | null
+          message_type?: string | null
+          raw_update?: Json
+          replied?: boolean | null
+          reply_text?: string | null
+          update_id?: number
+        }
+        Relationships: []
+      }
+      telegram_sent_log: {
+        Row: {
+          chat_id: string
+          created_at: string
+          error: string | null
+          id: string
+          message_text: string
+          message_type: string | null
+          status: string | null
+        }
+        Insert: {
+          chat_id: string
+          created_at?: string
+          error?: string | null
+          id?: string
+          message_text: string
+          message_type?: string | null
+          status?: string | null
+        }
+        Update: {
+          chat_id?: string
+          created_at?: string
+          error?: string | null
+          id?: string
+          message_text?: string
+          message_type?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
       user_milestones: {
         Row: {
           achieved_at: string
