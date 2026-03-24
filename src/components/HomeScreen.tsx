@@ -148,6 +148,30 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
 
   const stayProperties = useMemo(() => properties.filter(p => p.primaryCategory === "stay"), [properties]);
   const experienceProperties = useMemo(() => properties.filter(p => p.primaryCategory === "experience"), [properties]);
+  const serviceProperties = useMemo(() => properties.filter(p => p.primaryCategory === "service"), [properties]);
+
+  // Convert curated combos to Property objects for the "All Curations" grid
+  const curationAsProperties = useMemo(() => {
+    return curatedCombos.map(combo => comboToProperty(combo));
+  }, [curatedCombos, comboToProperty]);
+
+  // Per-category data for the "All ___" section
+  const allSectionData = useMemo((): { properties: Property[]; title: string } => {
+    switch (activeCategory) {
+      case "home":
+        return { properties: activeMood ? moodFilteredProperties : properties, title: activeMood ? `${activeMood.charAt(0).toUpperCase() + activeMood.slice(1)} Vibes` : "All Listings" };
+      case "stay":
+        return { properties: stayProperties, title: "All Stays" };
+      case "experience":
+        return { properties: experienceProperties, title: "All Experiences" };
+      case "service":
+        return { properties: serviceProperties, title: "All Services" };
+      case "curation":
+        return { properties: curationAsProperties, title: "All Curations" };
+      default:
+        return { properties: filteredProperties, title: "All Listings" };
+    }
+  }, [activeCategory, activeMood, properties, moodFilteredProperties, stayProperties, experienceProperties, serviceProperties, curationAsProperties, filteredProperties]);
 
   const topRated = useMemo(() => [...filteredProperties].sort((a, b) => b.rating - a.rating).slice(0, 6), [filteredProperties]);
   const trendingNow = useMemo(() => filteredProperties.filter(p => p.slotsLeft > 0 && p.slotsLeft <= 3), [filteredProperties]);
