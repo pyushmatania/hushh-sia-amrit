@@ -229,6 +229,23 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
         <CategoryBar active={activeCategory} onChange={handleCategoryChange} />
       </div>
 
+  // Per-category data for the "All ___" section
+  const allSectionData = useMemo((): { properties: Property[]; title: string } => {
+    switch (activeCategory) {
+      case "home":
+        return { properties: activeMood ? moodFilteredProperties : properties, title: activeMood ? `${activeMood.charAt(0).toUpperCase() + activeMood.slice(1)} Vibes` : "All Listings" };
+      case "stay":
+        return { properties: stayProperties, title: "All Stays" };
+      case "experience":
+        return { properties: experienceProperties, title: "All Experiences" };
+      case "service":
+        return { properties: serviceProperties, title: "All Services" };
+      case "curation":
+        return { properties: curationAsProperties, title: "All Curations" };
+      default:
+        return { properties: filteredProperties, title: "All Listings" };
+    }
+  }, [activeCategory, activeMood, properties, moodFilteredProperties, stayProperties, experienceProperties, serviceProperties, curationAsProperties, filteredProperties]);
 
         <div key={activeCategory}>
 
