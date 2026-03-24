@@ -144,7 +144,6 @@ const VideoCard = memo(function VideoCard({
               className="absolute inset-0 w-full h-full object-cover z-[1]"
               style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.4s", filter: "blur(0.6px)" }}
             />
-            />
           )}
 
           {/* Tag + mute button — ALWAYS visible */}
