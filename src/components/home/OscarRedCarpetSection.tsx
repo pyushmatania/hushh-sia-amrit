@@ -182,7 +182,7 @@ export default function OscarRedCarpetSection({ properties, onPropertyTap, wishl
 
   const premiumPicks = useMemo(() => {
     const sorted = [...properties].sort((a, b) => b.rating - a.rating);
-    return sorted.slice(0, 3);
+    return sorted.slice(0, 6);
   }, [properties]);
 
   if (premiumPicks.length === 0) return null;
