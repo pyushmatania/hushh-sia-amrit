@@ -405,11 +405,11 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
           {/* ═══════ SERVICES TAB ═══════ */}
           {activeCategory === "service" && (
             <>
-              <div className="px-5 pt-6 pb-1">
-                <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+              <div className="px-5 pt-6 pb-1 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+                <h1 className="text-2xl font-bold text-foreground md:text-3xl lg:text-4xl" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                   Services 🛎️
                 </h1>
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className="text-sm text-muted-foreground mt-1 md:text-base lg:text-lg">
                   Add to any booking, or book standalone
                 </p>
               </div>
