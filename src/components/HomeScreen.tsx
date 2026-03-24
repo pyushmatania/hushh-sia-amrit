@@ -210,7 +210,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
       </div>
 
       {/* Search + Categories */}
-      <div className="mx-0 pb-1 pt-2" style={{
+      <div className="mx-0 pb-1 pt-2 md:px-8 lg:px-16 xl:px-24 2xl:px-32" style={{
         background: "linear-gradient(135deg, rgba(120,80,220,0.15) 0%, rgba(60,40,140,0.08) 50%, rgba(180,100,255,0.12) 100%)",
         borderBottom: "1px solid rgba(255,255,255,0.08)",
       }}>
