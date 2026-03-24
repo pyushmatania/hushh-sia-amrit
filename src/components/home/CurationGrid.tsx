@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Clock, Sparkles, ArrowRight, TrendingUp, Heart, Star, Crown, Zap, Flame, MapPin, Users } from "lucide-react";
 import type { CuratedCombo } from "@/data/properties";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { MobileCurationGrid } from "./MobileCompactGrid";
 
 interface CurationGridProps {
   combos: CuratedCombo[];
