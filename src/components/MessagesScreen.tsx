@@ -1,7 +1,7 @@
 import { motion, AnimatePresence, useMotionValue, animate } from "framer-motion";
 import {
   MessageCircle, Bell, ChevronRight, Send, ArrowLeft, Phone, MoreVertical, Search,
-  Image, Smile, Mic, Check, CheckCheck, Pin, Archive,
+  Image, Smile, Mic, Check, CheckCheck, Pin, Archive, ArchiveRestore,
   HeadphonesIcon, ShieldCheck, X, Loader2,
   MapPin, History, Calendar,
 } from "lucide-react";
