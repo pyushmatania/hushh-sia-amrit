@@ -447,11 +447,7 @@ export default function ServiceGrid({ services, onServiceTap }: ServiceGridProps
             </div>
           ) : (
             <div className="grid grid-cols-4 gap-5">
-              {trending.map((s, i) => {
-                if (i === 0) return <DesktopPanoCard key={s.id} service={s} onTap={onServiceTap} index={i} />;
-                if (i % 3 === 0) return <DesktopOverlayCard key={s.id} service={s} onTap={onServiceTap} index={i} />;
-                return <DesktopGlassCard key={s.id} service={s} onTap={onServiceTap} index={i} />;
-              })}
+              {trending.map((s, i) => <DesktopServiceCard key={s.id} service={s} onTap={onServiceTap} index={i} />)}
             </div>
           )}
         </>
