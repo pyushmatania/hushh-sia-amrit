@@ -159,7 +159,7 @@ export default function ExperienceBuilder({ property, slotId, guests, date, onBa
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-30 flex flex-col"
-      style={{ background: "linear-gradient(180deg, hsl(var(--background)) 0%, hsl(260 20% 8%) 100%)" }}
+      style={{ background: "linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--secondary)) 100%)" }}
     >
       {/* Ambient glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] h-[200px] rounded-full pointer-events-none opacity-30"
