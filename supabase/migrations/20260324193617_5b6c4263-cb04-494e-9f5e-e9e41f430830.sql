@@ -1,0 +1,1 @@
+INSERT INTO app_config (key, value, label, description, category) VALUES ('splash_variant', '1', 'Splash Variant', 'Choose splash screen variant (1=Classic, 2=Cinematic)', 'branding') ON CONFLICT (key) DO NOTHING;

@@ -51,6 +51,8 @@ export interface AppConfig {
   // Notifications
   booking_reminder_hours: number;
   review_prompt_hours: number;
+  // Splash
+  splash_variant: string;
 }
 
 const defaults: AppConfig = {
@@ -96,6 +98,7 @@ const defaults: AppConfig = {
   damage_deposit: 1000,
   booking_reminder_hours: 24,
   review_prompt_hours: 48,
+  splash_variant: "1",
 };
 
 const stringKeys = new Set([
@@ -103,6 +106,7 @@ const stringKeys = new Set([
   "app_name", "app_tagline", "logo_url", "favicon_url",
   "instagram_url", "facebook_url", "youtube_url", "twitter_url",
   "terms_url", "privacy_url", "refund_policy_url",
+  "splash_variant",
 ]);
 
 let cachedConfig: AppConfig | null = null;

@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { useAppConfig } from "@/hooks/use-app-config";
 
-// Time-of-day splash backgrounds
+// Time-of-day splash backgrounds — Variant 1 (Classic)
 import splashMorning from "@/assets/splash-morning.webp";
 import splashAfternoon from "@/assets/splash-afternoon.webp";
 import splashEvening from "@/assets/splash-evening.webp";
@@ -13,6 +13,12 @@ import splashMorningDesktop from "@/assets/splash-morning-desktop.webp";
 import splashAfternoonDesktop from "@/assets/splash-afternoon-desktop.webp";
 import splashEveningDesktop from "@/assets/splash-evening-desktop.webp";
 import splashNightDesktop from "@/assets/splash-night-desktop.webp";
+
+// Time-of-day splash backgrounds — Variant 2 (Cinematic Glass H)
+import splash2Dawn from "@/assets/splash2-dawn-v4.jpg";
+import splash2Day from "@/assets/splash2-day-v4.jpg";
+import splash2Dusk from "@/assets/splash2-dusk-v4.jpg";
+import splash2Night from "@/assets/splash2-night-v4.jpg";
 
 // Preload 3D category icons during splash
 import iconHome from "@/assets/icon-home.webp";
@@ -32,13 +38,14 @@ const preloadIcons = [
 
 const isDesktop = typeof window !== "undefined" && window.matchMedia("(min-width: 768px)").matches;
 
-function getTimeConfig() {
+function getTimeConfig(variant: string = "1") {
   const hour = new Date().getHours();
   const isDarkTime = hour >= 17 || hour < 5;
+  const isV2 = variant === "2";
   if (hour >= 5 && hour < 12) return {
     greeting: "Good Morning",
     emoji: "☀️",
-    bg: isDesktop ? splashMorningDesktop : splashMorning,
+    bg: isV2 ? splash2Dawn : (isDesktop ? splashMorningDesktop : splashMorning),
     overlay: "linear-gradient(180deg, hsla(0,0%,0%,0.35) 0%, hsla(0,0%,0%,0.1) 40%, hsla(0,0%,0%,0.5) 100%)",
     hasFireflies: false,
     hasShootingStars: false,
@@ -59,7 +66,7 @@ function getTimeConfig() {
   if (hour >= 12 && hour < 17) return {
     greeting: "Good Afternoon",
     emoji: "🌤️",
-    bg: isDesktop ? splashAfternoonDesktop : splashAfternoon,
+    bg: isV2 ? splash2Day : (isDesktop ? splashAfternoonDesktop : splashAfternoon),
     overlay: "linear-gradient(180deg, hsla(0,0%,0%,0.3) 0%, hsla(0,0%,0%,0.05) 40%, hsla(0,0%,0%,0.45) 100%)",
     hasFireflies: false,
     hasShootingStars: false,
@@ -80,7 +87,7 @@ function getTimeConfig() {
   if (hour >= 17 && hour < 21) return {
     greeting: "Good Evening",
     emoji: "🌅",
-    bg: isDesktop ? splashEveningDesktop : splashEvening,
+    bg: isV2 ? splash2Dusk : (isDesktop ? splashEveningDesktop : splashEvening),
     overlay: "linear-gradient(180deg, hsla(0,0%,0%,0.3) 0%, hsla(0,0%,0%,0.1) 35%, hsla(0,0%,0%,0.5) 100%)",
     hasFireflies: true,
     hasShootingStars: true,
@@ -101,7 +108,7 @@ function getTimeConfig() {
   return {
     greeting: "Good Night",
     emoji: "🌙",
-    bg: isDesktop ? splashNightDesktop : splashNight,
+    bg: isV2 ? splash2Night : (isDesktop ? splashNightDesktop : splashNight),
     overlay: "linear-gradient(180deg, hsla(0,0%,0%,0.2) 0%, hsla(0,0%,0%,0.05) 40%, hsla(0,0%,0%,0.55) 100%)",
     hasFireflies: true,
     hasShootingStars: true,
@@ -360,8 +367,10 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
   const [show, setShow] = useState(true);
   const [phase, setPhase] = useState(0);
   const [imgReady, setImgReady] = useState(false);
-  const config = useMemo(getTimeConfig, []);
   const appConfig = useAppConfig();
+  const splashVariant = appConfig.splash_variant || "1";
+  const config = useMemo(() => getTimeConfig(splashVariant), [splashVariant]);
+  const isV2 = splashVariant === "2";
   const brandName = appConfig.app_name || "hushh";
   const tagline = appConfig.app_tagline || "Private experiences await";
   const letters = useMemo(() => brandName.split(""), [brandName]);
@@ -435,13 +444,13 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           />
 
-          {/* ─── Layer 3: Floating particles ─── */}
+          {/* ─── Layer 3: Floating particles (fireflies) ─── */}
           {phase >= 1 && (
-            <FloatingParticles color={config.particleColor} count={config.hasFireflies ? 16 : 8} />
+            <FloatingParticles color={config.particleColor} count={isV2 ? 20 : (config.hasFireflies ? 16 : 8)} />
           )}
 
-          {/* ─── Layer 4: Shooting stars (evening/night) ─── */}
-          {config.hasShootingStars && phase >= 1 && (
+          {/* ─── Layer 4: Shooting stars ─── */}
+          {(config.hasShootingStars || isV2) && phase >= 1 && (
             <>
               <ShootingStar delay={1.2} />
               <ShootingStar delay={2.4} />
@@ -452,17 +461,17 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
           {/* ─── Layer 4b: Sun rays (morning) ─── */}
           {config.hasBirds && phase >= 1 && <SunRays />}
 
-          {/* ─── Layer 4c: Flying birds (morning/afternoon) ─── */}
-          {config.hasBirds && phase >= 1 && <FlyingBirds />}
+          {/* ─── Layer 4c: Flying birds ─── */}
+          {(config.hasBirds || isV2) && phase >= 1 && <FlyingBirds />}
 
-          {/* ─── Layer 4d: Drifting clouds (morning/afternoon) ─── */}
+          {/* ─── Layer 4d: Drifting clouds ─── */}
           {config.hasClouds && phase >= 1 && <DriftingClouds />}
 
-          {/* ─── Layer 4e: Floating lanterns (evening/night) ─── */}
-          {config.hasLanterns && phase >= 1 && <FloatingLanterns />}
+          {/* ─── Layer 4e: Floating lanterns ─── */}
+          {(config.hasLanterns || isV2) && phase >= 1 && <FloatingLanterns />}
 
-          {/* ─── Layer 4f: Twinkling stars (evening/night) ─── */}
-          {config.hasTwinkle && phase >= 1 && <TwinklingStars />}
+          {/* ─── Layer 4f: Twinkling stars ─── */}
+          {(config.hasTwinkle || isV2) && phase >= 1 && <TwinklingStars />}
           <div className="absolute inset-0 flex flex-col z-10">
 
             {/* Top — Greeting area */}

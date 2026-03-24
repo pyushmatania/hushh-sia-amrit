@@ -143,6 +143,7 @@ export default function AdminSettings() {
         { key: "app_tagline", label: "Tagline", description: "Short tagline shown on splash/header", icon: "✏️" },
         { key: "logo_url", label: "Logo URL", description: "URL to logo image (PNG/SVG)", icon: "🖼️" },
         { key: "favicon_url", label: "Favicon URL", description: "URL to favicon/app icon", icon: "⭐" },
+        { key: "splash_variant", label: "Splash Variant (1 or 2)", description: "1=Classic, 2=Cinematic Glass H", icon: "🎬" },
       ],
     },
     {
