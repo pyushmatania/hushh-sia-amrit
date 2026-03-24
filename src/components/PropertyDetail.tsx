@@ -293,7 +293,7 @@ function PropertyLocationMap({ property }: { property: Property }) {
   );
 }
 
-
+function getFaqs(category: string) {
   if (category === "service") return [
     { q: "How do I book this service?", a: "Select a slot and the service team will arrive at your venue." },
     { q: "Can I cancel or reschedule?", a: "Free cancellation up to 24 hours before. Reschedule anytime." },
