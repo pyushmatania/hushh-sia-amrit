@@ -128,24 +128,24 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
     >
       {/* Search Header */}
       <div className="sticky top-0 z-10 glass px-5 pt-4 pb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
-        <div className="flex items-center gap-3">
-          <div className="flex-1 flex items-center gap-3 rounded-xl bg-secondary px-4 py-3">
-            <Search size={18} className="text-muted-foreground shrink-0" />
+        <div className="flex items-center gap-3 md:max-w-3xl md:mx-auto">
+          <div className="flex-1 flex items-center gap-3 rounded-xl bg-secondary px-4 py-3 md:py-3.5">
+            <Search size={18} className="text-muted-foreground shrink-0 md:w-5 md:h-5" />
             <input
               type="text"
               value={query}
               onChange={(e) => handleQueryChange(e.target.value)}
               placeholder="Search villas, venues, experiences..."
-              className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
+              className="flex-1 bg-transparent text-sm md:text-base text-foreground placeholder:text-muted-foreground outline-none"
               autoFocus
             />
             {query && (
-              <button onClick={() => handleQueryChange("")}>
-                <X size={16} className="text-muted-foreground" />
+              <button onClick={() => handleQueryChange("")} className="md:cursor-pointer hover:opacity-70 transition-opacity">
+                <X size={16} className="text-muted-foreground md:w-5 md:h-5" />
               </button>
             )}
           </div>
-          <button onClick={onClose} className="text-sm font-medium text-primary shrink-0">
+          <button onClick={onClose} className="text-sm md:text-base font-medium text-primary shrink-0 md:cursor-pointer md:hover:text-primary/80 transition-colors">
             Cancel
           </button>
         </div>
