@@ -500,12 +500,12 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
           {/* ═══════ ALL LISTINGS ═══════ */}
           {activeCategory !== "experience" && activeCategory !== "curation" && activeCategory !== "service" && (activeCategory !== "home" || isSectionVisible("all_listings")) && (
             <LazySection minHeight="400px" rootMargin="300px">
-              <div className="mt-7">
-                <div className="flex items-center justify-between px-5 mb-3">
-                  <h2 className="text-lg font-bold text-foreground">
+              <div className="mt-7 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+                <div className="flex items-center justify-between px-5 md:px-0 mb-3 md:mb-6">
+                  <h2 className="text-lg font-bold text-foreground md:text-2xl lg:text-3xl">
                     {activeCategory === "home" ? (activeMood ? `${activeMood.charAt(0).toUpperCase() + activeMood.slice(1)} Vibes` : "All Listings") : `All ${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)}s`}
                   </h2>
-                  <span className="text-xs text-muted-foreground">{(activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties).length} found</span>
+                  <span className="text-xs text-muted-foreground md:text-sm">{(activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties).length} found</span>
                 </div>
                 {(activeCategory === "home" && activeMood ? moodFilteredProperties : filteredProperties).length > 0 ? (
                   <MixedListingFeed
