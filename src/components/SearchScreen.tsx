@@ -427,7 +427,7 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
       </AnimatePresence>
 
       {/* Results */}
-      <div className="px-5 pt-4">
+      <div className="px-5 pt-4 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
         {/* DB results when searching */}
         {query.trim() && dbResults.length > 0 && (
           <div className="mb-4">
