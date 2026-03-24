@@ -26,6 +26,7 @@ import FoodieCarousel from "./home/FoodieCarousel";
 import ServiceGrid from "./home/ServiceGrid";
 import CurationGrid from "./home/CurationGrid";
 import ActiveTripCard from "./home/ActiveTripCard";
+import OscarRedCarpetSection from "./home/OscarRedCarpetSection";
 
 /** Wraps a home feed section so a crash in one section doesn't kill the whole feed */
 function SectionBoundary({ children, name }: { children: ReactNode; name: string }) {
@@ -544,6 +545,16 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
             </LazySection>
           )}
         </div>
+
+      {/* ═══════ OSCAR RED CARPET SECTION ═══════ */}
+      <LazySection minHeight="400px" rootMargin="300px">
+        <OscarRedCarpetSection
+          properties={properties}
+          onPropertyTap={onPropertyTap}
+          wishlist={wishlist}
+          onToggleWishlist={onToggleWishlist}
+        />
+      </LazySection>
 
       <div className="mx-5 mt-8 mb-4 flex items-center justify-center gap-2 glass rounded-2xl px-4 py-3 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32">
         <span className="text-lg">🏷️</span>
