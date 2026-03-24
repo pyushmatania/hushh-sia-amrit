@@ -694,15 +694,15 @@ export default function MessagesScreen() {
       </div>
 
       {/* Concierge CTA */}
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="mx-5 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 mb-5 flex gap-2 md:max-w-xl">
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="mx-5 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32 mb-5 flex gap-2 md:max-w-xl md:mx-auto">
         <button onClick={() => {
           setTab("chats");
           if (user && conversations.length > 0) setActiveConvo(conversations[0]);
           else if (!user) setActiveMockThread(dynamicMockThreads[0]);
-        }} className="flex-1 flex items-center justify-center gap-2 py-3 rounded-full bg-primary text-primary-foreground text-[13px] font-medium active:scale-[0.97] transition-transform">
+        }} className="flex-1 flex items-center justify-center gap-2 py-3 rounded-full bg-primary text-primary-foreground text-[13px] font-medium active:scale-[0.97] transition-transform md:cursor-pointer md:hover:bg-primary/90">
           <HeadphonesIcon size={15} /> Chat with Concierge
         </button>
-        <button className="flex items-center justify-center gap-2 px-5 py-3 rounded-full border border-border text-foreground text-[13px] font-medium bg-card active:scale-[0.97] transition-transform">
+        <button className="flex items-center justify-center gap-2 px-5 py-3 rounded-full border border-border text-foreground text-[13px] font-medium bg-card active:scale-[0.97] transition-transform md:cursor-pointer md:hover:bg-muted/50">
           <Phone size={14} /> Call
         </button>
       </motion.div>
