@@ -150,7 +150,7 @@ export const changeLog = [
   { version: "1.25", phase: "v2.0 Hooks", items: ["usePayments, useSlotAvailability, useInvoices, useOrders, useSearch", "Total hooks: 27"] },
   { version: "1.26", phase: "Staff Portal Enhancement", items: ["StaffAttendance, StaffLeaves, StaffSalary", "Staff profile linking, 7 scrollable tabs"] },
   { version: "1.27", phase: "Wire Hooks into UI", items: ["SearchScreen wired to useSearch", "PropertyDetail wired to useSlotAvailability", "LiveOrderingSheet awards loyalty points"] },
-];
+  { version: "1.28", phase: "Mobile Blueprint & Documentation", items: ["Mobile & Responsive tab in easter egg docs — full mobile architecture reference", "Distribution strategy: PWA + Capacitor + GitHub Actions CI/CD", "Viewport, layout, touch, typography, aspect ratio, theme documentation", "AI prompts section for converting mobile-first design to desktop/web version", "PDF export includes Mobile & Responsive section"] },
 
 // ─── TAB DEFINITIONS ─────────────────────────────────────────
 type TabId = "overview" | "features" | "architecture" | "database" | "wireframes" | "mobile" | "changelog";
