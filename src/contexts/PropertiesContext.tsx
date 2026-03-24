@@ -59,10 +59,17 @@ function mergeDbRow(row: any, staticMatch: Property | undefined): Property {
 
   const dbImages = Array.isArray(row.image_urls) ? row.image_urls.filter(Boolean) : [];
   const staticImages = staticMatch?.images?.filter(Boolean) || [];
-  const mappedThumb = getListingThumbnail(row.name || "", dbImages, { preferMapped: true });
-  const guaranteedFallback = staticProperties[0]?.images?.[0] || "";
-  const primaryImage = mappedThumb || staticImages[0] || dbImages[0] || guaranteedFallback;
-  const images = Array.from(new Set([primaryImage, ...dbImages, ...staticImages].filter(Boolean)));
+
+  // If DB has images, use ONLY those (admin-managed). Otherwise fall back to static/mapped.
+  let images: string[];
+  if (dbImages.length > 0) {
+    images = dbImages;
+  } else {
+    const mappedThumb = getListingThumbnail(row.name || "", [], { preferMapped: true });
+    const guaranteedFallback = staticProperties[0]?.images?.[0] || "";
+    const primaryImage = mappedThumb || staticImages[0] || guaranteedFallback;
+    images = Array.from(new Set([primaryImage, ...staticImages].filter(Boolean)));
+  }
 
   return {
     id: staticMatch?.id || row.id,
