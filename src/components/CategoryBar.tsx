@@ -62,7 +62,7 @@ export default memo(function CategoryBar({ active, onChange }: CategoryBarProps)
           <button
             key={cat.id}
             onClick={() => handleClick(cat.id)}
-            className="relative flex flex-col items-center gap-1 px-1.5 pt-2 pb-2.5 shrink-0 group min-w-0 flex-1"
+            className="relative flex flex-col items-center gap-1 px-1.5 pt-2 pb-2.5 shrink-0 group min-w-0 flex-1 md:flex-none md:px-4 md:rounded-xl md:hover:bg-muted/50 md:transition-colors md:cursor-pointer"
           >
             <div className="relative h-14 flex items-center justify-center">
               <AnimatedIcon cat={cat} isActive={isActive} />
