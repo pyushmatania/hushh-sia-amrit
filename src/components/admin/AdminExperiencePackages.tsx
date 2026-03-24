@@ -22,6 +22,7 @@ interface PackageRow {
   active: boolean;
   image_url: string | null;
   image_urls: string[];
+  video_url: string | null;
 }
 
 const GRADIENT_OPTIONS = [
