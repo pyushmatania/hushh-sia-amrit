@@ -137,11 +137,11 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
   return (
     <div className="pb-24 bg-mesh min-h-screen">
       {/* Header */}
-      <div className="px-5 pt-6 pb-1 flex items-center justify-between">
+      <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-6 pb-1 flex items-center justify-between">
         <motion.h1
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-[28px] font-bold text-foreground"
+          className="text-[28px] md:text-3xl lg:text-4xl font-bold text-foreground"
         >
           Profile
         </motion.h1>
@@ -154,6 +154,9 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
           <span className="absolute top-2 right-2.5 w-2 h-2 bg-primary rounded-full" />
         </motion.button>
       </div>
+
+      {/* Desktop two-column layout */}
+      <div className="md:flex md:gap-8 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:mt-4">
 
       {/* Profile Hero Card — reimagined */}
       <motion.div

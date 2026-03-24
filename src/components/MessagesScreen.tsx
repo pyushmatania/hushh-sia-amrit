@@ -863,16 +863,16 @@ export default function MessagesScreen() {
         )}
 
         {tab === "notifications" && (
-          <motion.div key="notifs" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="px-5 space-y-2">
+          <motion.div key="notifs" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="px-5 md:px-0 space-y-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-3 md:space-y-0">
             {notifications.filter(n => !n.read && !readNotifications.has(n.id)).length > 0 && (
-              <p className="text-[10px] uppercase tracking-[0.1em] font-semibold text-muted-foreground mb-1">New</p>
+              <p className="text-[10px] uppercase tracking-[0.1em] font-semibold text-muted-foreground mb-1 md:col-span-full">New</p>
             )}
             {notifications.map((notif, i) => {
               const isRead = notif.read || readNotifications.has(notif.id);
               const prevIsUnread = i > 0 && !notifications[i - 1].read && !readNotifications.has(notifications[i - 1].id);
               return (
                 <div key={notif.id}>
-                  {isRead && prevIsUnread && <p className="text-[10px] uppercase tracking-[0.1em] font-semibold text-muted-foreground mt-4 mb-1">Earlier</p>}
+                  {isRead && prevIsUnread && <p className="text-[10px] uppercase tracking-[0.1em] font-semibold text-muted-foreground mt-4 mb-1 md:col-span-full">Earlier</p>}
                   <NotificationCard notif={notif} index={i} isRead={isRead} onRead={() => markRead(notif.id)} />
                 </div>
               );
@@ -880,6 +880,8 @@ export default function MessagesScreen() {
           </motion.div>
         )}
       </AnimatePresence>
+        </div>
+      </div>
 
       <AnimatePresence>
         {activeConvo && <RealtimeChatView conversation={activeConvo} onBack={() => setActiveConvo(null)} />}
