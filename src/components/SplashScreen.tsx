@@ -548,62 +548,89 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                 />
               ) : (
                 <div className="relative flex flex-col items-center">
-                  {/* Main brand name */}
-                  <div className="flex items-center relative" style={{ perspective: "1000px" }}>
+                  {/* Main brand name — 3D glossy PIXIA-style */}
+                  <div className="flex items-center relative" style={{ perspective: "1200px" }}>
                     {letters.map((letter, i) => (
                       <motion.span
                         key={i}
-                        className="inline-block relative text-[56px] md:text-[80px] lg:text-[100px] xl:text-[120px]"
+                        className="inline-block relative text-[58px] md:text-[84px] lg:text-[104px] xl:text-[124px]"
                         style={{
                           lineHeight: 1,
-                          color: "transparent",
-                          backgroundImage: config.brandGradient,
+                          fontFamily: "'Space Grotesk', sans-serif",
+                          fontWeight: 900,
+                          fontStyle: "normal",
+                          textTransform: "uppercase",
+                          color: "hsla(220,60%,92%,1)",
+                          backgroundImage: "linear-gradient(180deg, hsla(200,100%,95%,1) 0%, hsla(220,80%,85%,1) 25%, hsla(240,70%,75%,1) 50%, hsla(220,80%,65%,1) 75%, hsla(200,90%,80%,1) 100%)",
                           WebkitBackgroundClip: "text",
                           backgroundClip: "text",
-                          fontFamily: "'Playfair Display', serif",
-                          fontWeight: 900,
-                          fontStyle: "italic",
-                          filter: config.brandGlow,
+                          WebkitTextStroke: "2.5px hsla(230,60%,18%,0.95)",
+                          paintOrder: "stroke fill",
+                          filter: "drop-shadow(0 2px 0 hsla(230,60%,15%,0.9)) drop-shadow(0 4px 0 hsla(230,50%,12%,0.8)) drop-shadow(0 6px 0 hsla(230,40%,10%,0.6)) drop-shadow(0 8px 16px hsla(230,60%,10%,0.5)) drop-shadow(0 0 30px hsla(220,80%,60%,0.4))",
+                          letterSpacing: "-0.02em",
                         }}
-                        initial={{ y: 60, opacity: 0, rotateX: 90, scale: 0.3 }}
-                        animate={phase >= 3 ? { y: 0, opacity: 1, rotateX: 0, scale: 1 } : { y: 60, opacity: 0, rotateX: 90, scale: 0.3 }}
+                        initial={{ y: 80, opacity: 0, rotateX: 90, scale: 0.2 }}
+                        animate={phase >= 3 ? { y: 0, opacity: 1, rotateX: 0, scale: 1 } : { y: 80, opacity: 0, rotateX: 90, scale: 0.2 }}
                         transition={{
-                          delay: i * 0.1,
+                          delay: i * 0.08,
                           type: "spring",
-                          stiffness: 250,
-                          damping: 14,
+                          stiffness: 280,
+                          damping: 16,
                         }}
                       >
                         {letter}
+                        {/* Glossy highlight overlay */}
+                        <span
+                          className="absolute inset-0 pointer-events-none"
+                          style={{
+                            backgroundImage: "linear-gradient(180deg, hsla(0,0%,100%,0.5) 0%, hsla(0,0%,100%,0.15) 35%, transparent 55%, hsla(220,80%,90%,0.1) 100%)",
+                            WebkitBackgroundClip: "text",
+                            backgroundClip: "text",
+                            color: "transparent",
+                            fontFamily: "inherit",
+                            fontWeight: "inherit",
+                            fontSize: "inherit",
+                            lineHeight: "inherit",
+                            textTransform: "inherit",
+                            WebkitTextStroke: "0px transparent",
+                          }}
+                          aria-hidden="true"
+                        >
+                          {letter}
+                        </span>
                       </motion.span>
                     ))}
 
                     {/* Shush emoji with bounce */}
                     <motion.span
-                      className="text-[38px] md:text-[54px] lg:text-[68px] xl:text-[80px] ml-2 md:ml-4 inline-block"
+                      className="text-[38px] md:text-[54px] lg:text-[68px] xl:text-[80px] ml-1 md:ml-3 inline-block"
+                      style={{
+                        filter: "drop-shadow(0 4px 8px hsla(230,60%,10%,0.5)) drop-shadow(0 0 20px hsla(220,80%,60%,0.3))",
+                      }}
                       initial={{ scale: 0, rotate: -60, y: 20 }}
                       animate={phase >= 3 ? { scale: [0, 1.6, 0.9, 1.15, 1], rotate: [-60, 15, -5, 0], y: [20, -8, 2, 0] } : { scale: 0 }}
-                      transition={{ delay: letters.length * 0.1 + 0.15, duration: 0.7, ease: "easeOut" }}
+                      transition={{ delay: letters.length * 0.08 + 0.12, duration: 0.7, ease: "easeOut" }}
                     >
                       🤫
                     </motion.span>
 
-                    {/* Sparkle accents around the name */}
+                    {/* Sparkle accents — brighter, more dramatic */}
                     {phase >= 3 && [
-                      { x: -12, y: -8, delay: 0.6, size: 6 },
-                      { x: "calc(100% + 8px)", y: 4, delay: 0.8, size: 5 },
-                      { x: "30%", y: -14, delay: 1, size: 4 },
+                      { x: -16, y: -12, delay: 0.5, size: 8 },
+                      { x: "calc(100% + 10px)", y: 0, delay: 0.7, size: 7 },
+                      { x: "25%", y: -18, delay: 0.9, size: 5 },
+                      { x: "65%", y: -10, delay: 1.1, size: 6 },
                     ].map((spark, si) => (
                       <motion.div
                         key={si}
                         className="absolute pointer-events-none"
                         style={{ left: spark.x, top: spark.y }}
                         initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: [0, 1.5, 0], opacity: [0, 1, 0], rotate: [0, 180] }}
-                        transition={{ delay: spark.delay, duration: 0.8, ease: "easeOut" }}
+                        animate={{ scale: [0, 1.8, 0], opacity: [0, 1, 0], rotate: [0, 180] }}
+                        transition={{ delay: spark.delay, duration: 0.9, ease: "easeOut" }}
                       >
                         <svg width={spark.size * 2} height={spark.size * 2} viewBox="0 0 12 12" fill="none">
-                          <path d="M6 0 L7 4.5 L12 6 L7 7.5 L6 12 L5 7.5 L0 6 L5 4.5 Z" fill="hsla(0,0%,100%,0.9)" />
+                          <path d="M6 0 L7 4.5 L12 6 L7 7.5 L6 12 L5 7.5 L0 6 L5 4.5 Z" fill="hsla(210,100%,95%,0.95)" />
                         </svg>
                       </motion.div>
                     ))}
