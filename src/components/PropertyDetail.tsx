@@ -663,7 +663,7 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
           <div className="mt-2 px-3 py-2 rounded-xl bg-primary/[0.06] border border-primary/20">
             <p className="text-[11px] text-foreground">
               <span className="font-semibold">{nightCount} night{nightCount !== 1 ? "s" : ""}</span>
-              <span className="text-muted-foreground"> × ₹{selectedSlotData.price.toLocaleString()} = </span>
+              <span className="text-muted-foreground"> × ₹{selectedSlotData?.price.toLocaleString()} = </span>
               <span className="font-bold text-primary">₹{(selectedSlotData.price * nightCount).toLocaleString()}</span>
             </p>
           </div>
