@@ -20,7 +20,8 @@ export default function ReferralScreen({ onBack }: ReferralScreenProps) {
   const handleCopy = async () => {
     if (!referralCode) return;
     try {
-      await navigator.clipboard.writeText(referralCode.code);
+      const { nativeCopy } = await import("@/lib/native-share");
+      await nativeCopy(referralCode.code);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {}

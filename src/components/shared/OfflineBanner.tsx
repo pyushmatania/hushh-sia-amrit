@@ -1,9 +1,9 @@
-import { WifiOff } from "lucide-react";
-import { useOnlineStatus } from "@/hooks/use-online-status";
+import { WifiOff, Wifi } from "lucide-react";
+import { useNativeOnlineStatus } from "@/lib/native-network";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function OfflineBanner() {
-  const isOnline = useOnlineStatus();
+  const { isOnline, connectionType } = useNativeOnlineStatus();
 
   return (
     <AnimatePresence>
