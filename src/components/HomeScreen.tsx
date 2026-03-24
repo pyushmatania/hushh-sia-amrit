@@ -467,6 +467,9 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                   <button onClick={() => handleSubFilter("All")} className="text-xs text-primary mt-2 font-medium">Show all services</button>
                 </div>
               )}
+              )}
+              </>
+              )}
             </>
           )}
 
