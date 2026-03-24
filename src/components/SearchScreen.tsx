@@ -124,7 +124,7 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      className="fixed inset-0 z-50 bg-mesh overflow-y-auto pb-24"
+      className="fixed inset-0 z-50 bg-mesh overflow-y-auto pb-24 md:pt-4"
     >
       {/* Search Header */}
       <div className="sticky top-0 z-10 glass px-5 pt-4 pb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
