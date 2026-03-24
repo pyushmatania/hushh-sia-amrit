@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useRef, useCallback, type ReactNode } from "react";
-import { Sparkles, TrendingUp, Award, MapPin } from "lucide-react";
+import { Sparkles, TrendingUp, Award, MapPin, Heart, Star } from "lucide-react";
 import type { Property } from "@/data/properties";
 import PropertyCard from "@/components/PropertyCard";
 import PropertyCardWide from "@/components/home/PropertyCardWide";
