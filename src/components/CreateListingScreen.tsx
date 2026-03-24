@@ -122,7 +122,7 @@ export default function CreateListingScreen({ onBack, onSubmit, initialData }: C
       </div>
 
       {/* Step Content */}
-      <div className="px-5">
+      <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:max-w-3xl">
         <AnimatePresence mode="wait">
           {step === 0 && (
             <motion.div key="step0" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="space-y-5">

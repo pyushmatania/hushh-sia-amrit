@@ -173,7 +173,7 @@ export default function AuthScreen() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="mt-8 space-y-4"
+          className="mt-8 space-y-4 md:w-full md:max-w-md"
         >
           <AnimatePresence>
             {mode === "signup" && (
