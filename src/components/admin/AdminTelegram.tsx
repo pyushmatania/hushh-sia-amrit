@@ -207,12 +207,11 @@ export default function AdminTelegram() {
           ? "custom"
           : eventType;
 
-        const { error } = await supabase.functions.invoke("telegram-notify", {
+        const { error: notifyErr } = await supabase.functions.invoke("telegram-notify", {
           body: { event_type: actualEventType, data: eventData },
         });
-        if (error) throw error;
+        if (notifyErr) throw notifyErr;
       }
-      if (err) throw err;
       toast.success(`${eventType} notification sent! ✅`);
       loadAll();
     } catch (e: any) {
