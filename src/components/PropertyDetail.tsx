@@ -563,10 +563,11 @@ export default function PropertyDetail({ property, onBack, onBook, onPropertyTap
         <div className="border-b border-border my-5" />
 
         {/* Description */}
-        <p className="text-[15px] text-foreground leading-relaxed">
-          {expanded ? property.fullDescription : property.fullDescription.slice(0, 150) + "..."}
+        <p className="text-[15px] text-foreground leading-relaxed md:text-base lg:text-lg">
+          <span className="md:hidden">{expanded ? property.fullDescription : property.fullDescription.slice(0, 150) + "..."}</span>
+          <span className="hidden md:inline">{property.fullDescription}</span>
         </p>
-        <button onClick={() => setExpanded(!expanded)} className="text-foreground underline underline-offset-2 text-sm font-semibold mt-2 flex items-center gap-1">
+        <button onClick={() => setExpanded(!expanded)} className="text-foreground underline underline-offset-2 text-sm font-semibold mt-2 flex items-center gap-1 md:hidden">
           {expanded ? <>Show less <ChevronUp size={14} /></> : <>Show more <ChevronDown size={14} /></>}
         </button>
 
