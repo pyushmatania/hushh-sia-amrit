@@ -236,6 +236,7 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
   const isMobile = useIsMobile();
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [desktopShowAll, setDesktopShowAll] = useState(false);
   const CARDS_PER_PAGE = 4;
 
   useEffect(() => { setVisibleCount(INITIAL_BATCH); }, [properties]);
@@ -347,50 +348,24 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
 
   if (properties.length === 0) return null;
 
-  /* ─── Desktop: Clean Airbnb-style horizontal scroll with arrows ─── */
+  /* ─── Desktop: 3-row grid with Show More ─── */
+  const COLS = 4;
+  const ROWS_INITIAL = 3;
+
   if (!isMobile) {
+    const desktopVisible = desktopShowAll ? properties : properties.slice(0, COLS * ROWS_INITIAL);
     return (
-      <div className="relative md:px-8 lg:px-16 xl:px-24 2xl:px-32">
-        {/* Left arrow */}
-        {canScrollLeft && (
-          <button
-            onClick={() => scrollDesktop("left")}
-            className="absolute left-2 lg:left-10 xl:left-18 2xl:left-26 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full flex items-center justify-center border border-border/40 shadow-lg transition-all hover:scale-110 hover:shadow-xl cursor-pointer"
-            style={{ background: "hsl(var(--background))", color: "hsl(var(--foreground))" }}
-          >
-            <ChevronLeft size={20} />
-          </button>
-        )}
-
-        {/* Right arrow */}
-        {canScrollRight && (
-          <button
-            onClick={() => scrollDesktop("right")}
-            className="absolute right-2 lg:right-10 xl:right-18 2xl:right-26 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full flex items-center justify-center border border-border/40 shadow-lg transition-all hover:scale-110 hover:shadow-xl cursor-pointer"
-            style={{ background: "hsl(var(--background))", color: "hsl(var(--foreground))" }}
-          >
-            <ChevronRight size={20} />
-          </button>
-        )}
-
-        {/* Scrollable card row */}
-        <div
-          ref={desktopScrollRef}
-          className="flex gap-6 overflow-x-auto hide-scrollbar pb-4"
-          style={{ scrollSnapType: "x mandatory", scrollBehavior: "smooth" }}
-        >
-          {properties.map((p) => {
+      <div className="md:px-8 lg:px-16 xl:px-24 2xl:px-32">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-8">
+          {desktopVisible.map((p) => {
             const isWL = wishlist.includes(p.id);
             const cheapest = Math.min(...p.slots.filter(s => s.available).map(s => s.price));
             return (
               <div
                 key={p.id}
-                data-listing-card
-                className="shrink-0 cursor-pointer group"
-                style={{ width: "calc((100% - 72px) / 4)", minWidth: 240, scrollSnapAlign: "start" }}
+                className="cursor-pointer group"
                 onClick={() => onPropertyTap(p)}
               >
-                {/* Image with carousel dot placeholder */}
                 <div className="relative aspect-[4/3] rounded-xl overflow-hidden">
                   <img
                     src={p.images[0]}
@@ -400,13 +375,11 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
                   {onToggleWishlist && (
                     <button
                       onClick={(e) => { e.stopPropagation(); onToggleWishlist(p.id); }}
-                      className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-transform hover:scale-110"
-                      style={{ background: "transparent" }}
+                      className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center"
                     >
                       <Heart size={20} className={isWL ? "fill-primary text-primary" : "fill-foreground/30 text-white"} strokeWidth={isWL ? 0 : 2} />
                     </button>
                   )}
-                  {/* Image dots */}
                   {p.images.length > 1 && (
                     <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
                       {p.images.slice(0, 5).map((_, di) => (
@@ -415,8 +388,6 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
                     </div>
                   )}
                 </div>
-
-                {/* Info — clean Airbnb style */}
                 <div className="mt-3">
                   <div className="flex items-center justify-between">
                     <h4 className="text-sm font-semibold text-foreground leading-tight line-clamp-1 flex-1">{p.name}</h4>
@@ -426,9 +397,6 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground mt-0.5 line-clamp-1">{p.location}</p>
-                  <p className="text-sm text-muted-foreground mt-0.5">
-                    {p.slots.filter(s => s.available).length} slots available
-                  </p>
                   <p className="text-sm text-foreground mt-1">
                     <span className="font-semibold">₹{cheapest.toLocaleString()}</span>
                     <span className="text-muted-foreground"> per slot</span>
@@ -438,6 +406,17 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
             );
           })}
         </div>
+
+        {!desktopShowAll && properties.length > COLS * ROWS_INITIAL && (
+          <div className="flex justify-center mt-8">
+            <button
+              onClick={() => setDesktopShowAll(true)}
+              className="px-8 py-3 rounded-full border border-border text-sm font-semibold text-foreground hover:bg-accent transition-colors"
+            >
+              Show more ({properties.length - COLS * ROWS_INITIAL} more)
+            </button>
+          </div>
+        )}
       </div>
     );
   }
