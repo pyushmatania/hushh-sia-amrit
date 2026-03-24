@@ -5,8 +5,10 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useAppConfig } from "@/hooks/use-app-config";
+import { useTheme } from "@/hooks/use-theme";
 import { checkRateLimit, resetRateLimit, formatRetryTime, RATE_LIMITS } from "@/lib/rate-limiter";
-import authBg from "@/assets/auth-bg-night.webp";
+import authBgDark from "@/assets/auth-bg-night.webp";
+import authBgLight from "@/assets/auth-bg-light.webp";
 
 export default function AuthScreen() {
   const [mode, setMode] = useState<"login" | "signup" | "forgot">("login");
