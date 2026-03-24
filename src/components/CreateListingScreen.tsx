@@ -102,7 +102,7 @@ export default function CreateListingScreen({ onBack, onSubmit, initialData }: C
       className="min-h-screen bg-mesh"
     >
       {/* Header */}
-      <div className="px-5 pt-6 pb-4 flex items-center gap-3">
+      <div className="px-5 pt-6 pb-4 flex items-center gap-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
         <motion.button whileTap={{ scale: 0.9 }} onClick={onBack} className="w-9 h-9 rounded-full glass flex items-center justify-center">
           <ArrowLeft size={18} className="text-foreground" />
         </motion.button>
