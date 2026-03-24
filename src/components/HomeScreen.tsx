@@ -186,7 +186,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
-    <div ref={contentRef} data-pull-scroll-container="true" key={refreshKey} className="pb-24 min-h-screen overflow-y-auto overflow-x-hidden bg-mesh" style={{ overscrollBehaviorX: "none" }}>
+    <div ref={contentRef} data-pull-scroll-container="true" key={refreshKey} className="pb-24 min-h-screen overflow-y-auto overflow-x-hidden bg-mesh smooth-main-scroll" style={{ overscrollBehaviorX: "none", WebkitOverflowScrolling: "touch" }}>
 
       {/* Header */}
       <div className="px-5 pt-5 pb-2 flex items-center justify-between">
