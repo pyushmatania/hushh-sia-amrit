@@ -753,7 +753,7 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
           <div className="absolute bottom-0 left-0 right-0 px-5 pb-4 z-10 flex items-end justify-between">
             {/* Dots indicator */}
             <div className="flex gap-1.5">
-              {property.images.map((_, i) => (
+              {heroImages.map((_, i) => (
                 <motion.button
                   key={i}
                   onClick={() => { setImgIndex(i); setImgLoaded(false); }}
