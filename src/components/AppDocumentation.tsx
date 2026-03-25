@@ -1306,8 +1306,7 @@ function DesktopTab() {
       {/* Easter Eggs */}
       <DocSection title="Easter Eggs & Hidden Features" icon={<Award size={15} className="text-primary" />}>
         <DataTable headers={["Trigger", "Location", "Result"]} rows={[
-          ["Tap version 5× in 2s", "Profile tab, bottom", "Full in-app documentation overlay"],
-          ["Tap version 7× in 2s", "Profile tab, bottom", "Wallpaper gallery with downloadable assets"],
+          ["Tap version 5× in 2s", "Profile tab, bottom", "Full in-app documentation overlay with wallpaper gallery"],
           ["Visit /wallpapers", "Direct URL", "Public wallpaper download page"],
         ]} />
       </DocSection>
