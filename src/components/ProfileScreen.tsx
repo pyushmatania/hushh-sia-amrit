@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Phone, Mail, MessageCircle as WhatsAppIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import PublicProfileScreen from "./PublicProfileScreen";
-const WallpapersPage = lazy(() => import("@/pages/Wallpapers"));
+
 import {
   ChevronRight, Bell, Settings, HelpCircle, LogOut,
   Shield, Gift, Star, Sun, Moon, Monitor, BadgeCheck,
