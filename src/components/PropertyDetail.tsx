@@ -795,15 +795,15 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
         </div>
         <div className="relative grid grid-cols-4 grid-rows-2 gap-2 rounded-2xl overflow-hidden max-h-[480px] lg:max-h-[540px] 2xl:max-h-[600px]">
           <div className="col-span-2 row-span-2 relative group cursor-pointer" onClick={() => setImgIndex(0)}>
-            <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover group-hover:brightness-110 transition-all duration-300" />
+            <img src={heroImages[0]} alt={property.name} className="w-full h-full object-cover group-hover:brightness-110 transition-all duration-300" />
           </div>
-          {property.images.slice(1, 5).map((img, i) => (
+          {heroImages.slice(1, 5).map((img, i) => (
             <div key={i} className="relative group cursor-pointer" onClick={() => setImgIndex(i + 1)}>
               <img src={img} alt={`${property.name} ${i + 2}`} className="w-full h-full object-cover group-hover:brightness-110 transition-all duration-300" loading="lazy" />
             </div>
           ))}
           <button className="absolute bottom-4 right-4 bg-background/80 backdrop-blur-sm border border-border rounded-full px-4 py-2 text-sm font-medium text-foreground hover:bg-background transition-colors z-10">
-            Show all {property.images.length} photos
+            Show all {heroImages.length} photos
           </button>
         </div>
         {property.tags.length > 0 && (
