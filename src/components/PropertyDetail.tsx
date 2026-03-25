@@ -693,7 +693,7 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
           {/* Main image with drag */}
           <motion.img
             key={imgIndex}
-            src={property.images[imgIndex]}
+            src={heroImages[imgIndex] || heroImages[0]}
             alt={property.name}
             className="w-full h-full object-cover touch-pan-y"
             style={{ x: heroX, opacity: heroOpacity }}
