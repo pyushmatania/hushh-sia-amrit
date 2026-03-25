@@ -581,24 +581,24 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
   const handleHeroDragEnd = useCallback((_: any, info: PanInfo) => {
     const threshold = 50;
     if (info.offset.x < -threshold) {
-      setImgIndex((i) => (i === property.images.length - 1 ? 0 : i + 1));
+      setImgIndex((i) => (i === heroImages.length - 1 ? 0 : i + 1));
       setImgLoaded(false);
     } else if (info.offset.x > threshold) {
-      setImgIndex((i) => (i === 0 ? property.images.length - 1 : i - 1));
+      setImgIndex((i) => (i === 0 ? heroImages.length - 1 : i - 1));
       setImgLoaded(false);
     }
     animate(heroX, 0, { type: "spring", stiffness: 300, damping: 30 });
-  }, [property.images.length, heroX]);
+  }, [heroImages.length, heroX]);
 
   // Auto-slideshow every 4 seconds
   useEffect(() => {
-    if (property.images.length <= 1) return;
+    if (heroImages.length <= 1) return;
     const timer = setInterval(() => {
-      setImgIndex((i) => (i === property.images.length - 1 ? 0 : i + 1));
+      setImgIndex((i) => (i === heroImages.length - 1 ? 0 : i + 1));
       setImgLoaded(false);
     }, 4000);
     return () => clearInterval(timer);
-  }, [property.images.length]);
+  }, [heroImages.length]);
 
   const selectedSlotData = property.slots.find((s) => s.id === selectedSlot);
 
