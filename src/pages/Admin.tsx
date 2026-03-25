@@ -43,6 +43,7 @@ export default function Admin() {
   const [page, setPage] = useState<AdminPage>("dashboard");
   const [pageHistory, setPageHistory] = useState<AdminPage[]>([]);
   const [skipAuth, setSkipAuth] = useState(false);
+  const [skipTaps, setSkipTaps] = useState(0);
   const [historyContext, setHistoryContext] = useState<{ bookingId?: string; propertyId?: string } | null>(null);
   const [clientContext, setClientContext] = useState<{ userId?: string } | null>(null);
 
