@@ -1888,7 +1888,7 @@ React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion
 }
 
 // ═══════════════════════════════════════════════════════════════
-// GENERATE PDF HTML (beautiful styled PDF)
+// GENERATE PDF HTML (beautiful styled PDF matching app dark theme)
 // ═══════════════════════════════════════════════════════════════
 function generatePDFHtml(): string {
   const tables = [
@@ -1912,45 +1912,72 @@ function generatePDFHtml(): string {
 
   const changelog = changeLog.map(p => `<div class="version-block"><div class="version-badge">v${p.version}</div><div class="version-title">${p.phase}</div><ul>${p.items.map(i => `<li>${i}</li>`).join("")}</ul></div>`).join("");
 
-  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Hushh Documentation v1.35</title>
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Hushh Documentation v1.36</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:wght@700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;900&family=Pacifico&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Space Grotesk',sans-serif;color:#1a1a2e;background:#fff;padding:40px;font-size:11px;line-height:1.6;}
-h1{font-family:'Playfair Display',serif;font-size:36px;font-weight:900;color:#1a1a2e;margin-bottom:4px;}
-h2{font-size:20px;font-weight:700;color:#7c3aed;margin:28px 0 12px;border-bottom:2px solid #7c3aed20;padding-bottom:6px;}
-h3{font-size:14px;font-weight:700;color:#1a1a2e;margin:16px 0 8px;}
-.subtitle{color:#666;font-size:13px;margin-bottom:20px;}
-.hero{background:linear-gradient(135deg,#f3f0ff 0%,#e8e0ff 50%,#f8f6ff 100%);border-radius:16px;padding:32px;text-align:center;margin-bottom:32px;border:1px solid #e2d5f0;}
-.hero h1{font-size:42px;background:linear-gradient(135deg,#7c3aed,#9b5de5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+body{font-family:'Space Grotesk',sans-serif;color:#e2e1f0;background:#0a0918;padding:40px;font-size:11px;line-height:1.6;}
+h1{font-family:'Playfair Display',serif;font-size:36px;font-weight:900;color:#fff;margin-bottom:4px;}
+h2{font-size:18px;font-weight:700;color:#a78bfa;margin:32px 0 14px;padding-bottom:8px;border-bottom:2px solid rgba(167,139,250,0.2);letter-spacing:-0.3px;}
+h3{font-size:13px;font-weight:700;color:#e2e1f0;margin:18px 0 8px;letter-spacing:-0.2px;}
+.subtitle{color:#8b8aa0;font-size:13px;margin-bottom:20px;}
+.hero{background:linear-gradient(160deg,rgba(124,58,237,0.2) 0%,rgba(139,92,246,0.08) 50%,rgba(15,12,40,0.9) 100%);border-radius:20px;padding:36px;text-align:center;margin-bottom:36px;border:1px solid rgba(167,139,250,0.2);position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-50px;right:-50px;width:200px;height:200px;background:radial-gradient(circle,rgba(167,139,250,0.15),transparent 70%);border-radius:50%;}
+.hero::after{content:'';position:absolute;bottom:-40px;left:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(139,92,246,0.1),transparent 70%);border-radius:50%;}
+.hero h1{font-size:42px;background:linear-gradient(135deg,#a78bfa,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero .brand-name{font-family:'Pacifico',cursive;font-size:48px;color:#a78bfa;display:block;margin-bottom:4px;}
 .hero .emoji{font-size:48px;margin-bottom:8px;}
-.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0;}
-.stat-card{background:#f8f6ff;border:1px solid #e2d5f0;border-radius:12px;padding:12px;text-align:center;}
-.stat-card .value{font-size:24px;font-weight:800;color:#7c3aed;}
-.stat-card .label{font-size:9px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
-.pillar{display:inline-block;background:#f3f0ff;border:1px solid #e2d5f0;border-radius:10px;padding:8px 12px;margin:4px;font-size:10px;}
-.pillar strong{color:#7c3aed;}
-table{width:100%;border-collapse:collapse;margin:8px 0;font-size:10px;}
-th{background:#7c3aed;color:#fff;padding:6px 10px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:0.5px;}
-td{padding:5px 10px;border-bottom:1px solid #eee;}
-tr:nth-child(even){background:#faf8ff;}
-.feature-row{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #f0eef5;}
-.feature-dot{width:6px;height:6px;border-radius:50%;background:#7c3aed;margin-top:4px;flex-shrink:0;}
-.version-block{margin-bottom:12px;padding:10px;background:#faf8ff;border-radius:8px;border-left:3px solid #7c3aed;}
-.version-badge{display:inline-block;background:#7c3aed;color:#fff;font-size:9px;font-weight:700;padding:2px 8px;border-radius:6px;margin-bottom:4px;}
-.version-title{font-weight:700;font-size:12px;display:inline;margin-left:6px;}
-ul{margin:4px 0;padding-left:16px;}
-li{font-size:10px;margin:2px 0;color:#444;}
-.wireframe{font-family:monospace;font-size:8px;background:#1a1a2e;color:#a78bfa;padding:12px;border-radius:8px;margin:8px 0;white-space:pre;overflow-x:auto;line-height:1.3;}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0;}
+.stat-card{background:rgba(167,139,250,0.06);border:1px solid rgba(167,139,250,0.15);border-radius:14px;padding:14px;text-align:center;position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:-10px;right:-10px;width:40px;height:40px;background:radial-gradient(circle,rgba(167,139,250,0.1),transparent 70%);border-radius:50%;}
+.stat-card .value{font-size:26px;font-weight:800;background:linear-gradient(135deg,#a78bfa,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.stat-card .label{font-size:8px;color:#8b8aa0;text-transform:uppercase;letter-spacing:1.2px;margin-top:3px;font-weight:600;}
+.pillar{display:inline-block;background:rgba(167,139,250,0.06);border:1px solid rgba(167,139,250,0.12);border-radius:10px;padding:8px 14px;margin:4px;font-size:10px;}
+.pillar strong{color:#a78bfa;}
+table{width:100%;border-collapse:separate;border-spacing:0;margin:10px 0;font-size:10px;border-radius:10px;overflow:hidden;border:1px solid rgba(167,139,250,0.12);}
+th{background:rgba(124,58,237,0.3);color:#c4b5fd;padding:8px 12px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:0.8px;font-weight:700;}
+td{padding:6px 12px;border-bottom:1px solid rgba(167,139,250,0.06);color:#c7c6d7;}
+tr:nth-child(even){background:rgba(167,139,250,0.03);}
+tr:hover{background:rgba(167,139,250,0.06);}
+code{font-family:'Space Grotesk',monospace;color:#a78bfa;background:rgba(167,139,250,0.1);padding:1px 5px;border-radius:4px;font-size:9px;}
+.feature-row{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid rgba(167,139,250,0.06);border-radius:8px;margin:3px 0;}
+.feature-row:hover{background:rgba(167,139,250,0.04);}
+.feature-dot{width:7px;height:7px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a78bfa);margin-top:4px;flex-shrink:0;box-shadow:0 0 6px rgba(167,139,250,0.3);}
+.feature-title{font-weight:700;color:#e2e1f0;font-size:11px;}
+.feature-desc{color:#8b8aa0;font-size:10px;margin-top:1px;}
+.feature-badge{display:inline-block;background:rgba(167,139,250,0.15);color:#a78bfa;font-size:8px;font-weight:700;padding:1px 6px;border-radius:6px;margin-left:6px;}
+.version-block{margin-bottom:14px;padding:12px 14px;background:rgba(167,139,250,0.04);border-radius:10px;border-left:3px solid #7c3aed;position:relative;}
+.version-badge{display:inline-block;background:linear-gradient(135deg,#7c3aed,#9b5de5);color:#fff;font-size:9px;font-weight:700;padding:2px 10px;border-radius:8px;margin-bottom:4px;}
+.version-title{font-weight:700;font-size:12px;display:inline;margin-left:8px;color:#e2e1f0;}
+ul{margin:6px 0;padding-left:16px;}
+li{font-size:10px;margin:2px 0;color:#9d9cb2;}
+li::marker{color:#7c3aed;}
+.wireframe{font-family:'Space Grotesk',monospace;font-size:8px;background:linear-gradient(180deg,#0f0d24 0%,#12102a 100%);color:#a78bfa;padding:14px;border-radius:10px;margin:10px 0;white-space:pre;overflow-x:auto;line-height:1.3;border:1px solid rgba(167,139,250,0.1);}
 .section{page-break-inside:avoid;}
-.footer{text-align:center;margin-top:40px;padding-top:16px;border-top:1px solid #eee;color:#999;font-size:9px;}
-@media print{body{padding:20px;font-size:10px;}h1{font-size:28px;}.hero{padding:20px;}}
+.section-card{background:rgba(167,139,250,0.04);border:1px solid rgba(167,139,250,0.1);border-radius:14px;padding:16px;margin:12px 0;}
+.section-card h3{margin-top:0;color:#c4b5fd;}
+.tag{display:inline-block;background:rgba(167,139,250,0.1);color:#a78bfa;font-size:9px;font-weight:600;padding:3px 10px;border-radius:20px;margin:2px;border:1px solid rgba(167,139,250,0.15);}
+.page-break{page-break-before:always;margin-top:24px;}
+.footer{text-align:center;margin-top:48px;padding-top:20px;border-top:1px solid rgba(167,139,250,0.15);color:#5a5970;font-size:9px;}
+.footer strong{color:#a78bfa;}
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(167,139,250,0.2),transparent);margin:24px 0;}
+@media print{
+  body{padding:20px;font-size:9px;-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#0a0918 !important;}
+  h1{font-size:28px;}
+  .hero{padding:24px;}
+  .stats-grid{grid-template-columns:repeat(3,1fr);}
+  .page-break{page-break-before:always;}
+}
 </style></head><body>
+
 <div class="hero">
 <div class="emoji">🏡</div>
-<h1>HUSHH</h1>
-<div class="subtitle">Private Experience Marketplace · v1.35 · Made in Jeypore ❤️</div>
-<div style="font-size:10px;color:#555;">Book private stays, curated experiences, and on-demand services — all in one app.</div>
+<span class="brand-name">Hushh</span>
+<div class="subtitle">Private Experience Marketplace · v1.36 · Made in Jeypore ❤️</div>
+<div style="font-size:10px;color:#8b8aa0;max-width:400px;margin:0 auto;">Book private stays, curated experiences, and on-demand services — all in one app.</div>
+<div style="margin-top:16px;">
+${["Mobile-First", "Real-Time", "AI-Powered", "PWA + Native", "Offline-Ready"].map(t => `<span class="tag">${t}</span>`).join(" ")}
+</div>
 </div>
 
 <div class="stats-grid">
@@ -1982,7 +2009,7 @@ li{font-size:10px;margin:2px 0;color:#444;}
 
 <h2>📱 User App — 15 Screens</h2>
 <table><tr><th>Screen</th><th>Description</th></tr>
-<tr><td>Splash</td><td>Animated logo, dynamic branding from config</td></tr>
+<tr><td>Splash</td><td>Animated logo, cinematic island villa, time-of-day backgrounds</td></tr>
 <tr><td>Home/Explore</td><td>Search, Active Trip, Categories, Spotlight, Cards, Sports, Foodie, Curations</td></tr>
 <tr><td>Property Detail</td><td>Gallery, slot picker, reviews, sticky book bar</td></tr>
 <tr><td>Experience Builder</td><td>4 category tabs, quantity selectors, smart nudges</td></tr>
@@ -2014,19 +2041,25 @@ li{font-size:10px;margin:2px 0;color:#444;}
 <tr><td>Campaigns + Coupons</td><td>Marketing + discount engine</td></tr>
 <tr><td>Staff Management</td><td>Directory, attendance, leaves, payroll</td></tr>
 <tr><td>Finance Hub</td><td>Expenses, budgets, receipts</td></tr>
+<tr><td>Reports & Exports</td><td>CSV reports, data exports, audit trail</td></tr>
 <tr><td>Homepage Manager</td><td>Sections, Videos, Filters, Tags</td></tr>
 <tr><td>Settings</td><td>General, Branding, Advanced</td></tr>
-<tr><td>Exports + Audit</td><td>CSV exports, activity log</td></tr>
 </table>
+
+<div class="divider"></div>
 
 <h2>🗄 Database Schema (45 Tables)</h2>
 <table><tr><th>Table</th><th>Purpose</th></tr>
-${tables.map(([t, d]) => `<tr><td style="font-family:monospace;color:#7c3aed;font-weight:600;">${t}</td><td>${d}</td></tr>`).join("")}
+${tables.map(([t, d]) => `<tr><td><code>${t}</code></td><td>${d}</td></tr>`).join("")}
 </table>
 
+<div class="page-break"></div>
+
 <h2>🏗 Architecture</h2>
+<div class="section-card">
 <h3>Tech Stack</h3>
-<p>React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion 12 · React Query · React Router v6 · Lovable Cloud · Recharts · React Hook Form + Zod</p>
+<p style="color:#c7c6d7;">React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion 12 · React Query · React Router v6 · Lovable Cloud · Recharts · React Hook Form + Zod · Capacitor 8</p>
+</div>
 
 <h3>Security Layers</h3>
 <table><tr><th>#</th><th>Layer</th><th>Implementation</th></tr>
@@ -2038,16 +2071,22 @@ ${tables.map(([t, d]) => `<tr><td style="font-family:monospace;color:#7c3aed;fon
 
 <h3>Edge Functions</h3>
 <table><tr><th>Function</th><th>Purpose</th></tr>
-<tr><td>admin-ai</td><td>Natural language admin queries</td></tr>
-<tr><td>smart-alerts</td><td>Automated alert generation</td></tr>
-<tr><td>auto-notifications</td><td>DB webhook → user alerts</td></tr>
-<tr><td>property-history-ai</td><td>AI search booking history</td></tr>
-<tr><td>weekly-digest</td><td>Weekly summary email</td></tr>
-<tr><td>staff-report</td><td>Staff attendance report</td></tr>
+<tr><td><code>admin-ai</code></td><td>Natural language admin queries</td></tr>
+<tr><td><code>smart-alerts</code></td><td>Automated alert generation</td></tr>
+<tr><td><code>auto-notifications</code></td><td>DB webhook → user alerts</td></tr>
+<tr><td><code>property-history-ai</code></td><td>AI search booking history</td></tr>
+<tr><td><code>weekly-digest</code></td><td>Weekly summary email</td></tr>
+<tr><td><code>staff-report</code></td><td>Staff attendance report</td></tr>
 </table>
 
-<h3>Hooks (27)</h3>
-<p style="font-size:9px;color:#555;">useAuth · useAdmin · useBookings · useWishlists · useMessages · useNotifications · useLoyalty · useReferrals · useReviews · useHostListings · useHostAnalytics · useImageUpload · useTheme · usePrivacyMode · useCurations · useUnreadCount · useAppConfig · useHomepageSections · useHomepageFilters · useVideoCards · useDragReorder · useMobile · useOnlineStatus · usePayments · useSlotAvailability · useInvoices · useOrders · useSearch</p>
+<h3>Custom Hooks (27)</h3>
+<div class="section-card">
+<p style="font-size:9px;color:#8b8aa0;line-height:2;">
+${["useAuth","useAdmin","useBookings","useWishlists","useMessages","useNotifications","useLoyalty","useReferrals","useReviews","useHostListings","useHostAnalytics","useImageUpload","useTheme","usePrivacyMode","useCurations","useUnreadCount","useAppConfig","useHomepageSections","useHomepageFilters","useVideoCards","useDragReorder","useMobile","useOnlineStatus","usePayments","useSlotAvailability","useInvoices","useOrders","useSearch"].map(h => `<code>${h}</code>`).join("  ")}
+</p>
+</div>
+
+<div class="divider"></div>
 
 <h2>📐 Wireframes</h2>
 <div class="wireframe">┌─────────────────────────┐
@@ -2075,8 +2114,60 @@ ${tables.map(([t, d]) => `<tr><td style="font-family:monospace;color:#7c3aed;fon
 │ [Book→] │ │ [Next→] │ │ [Pay→]  │ │ [Trips] │
 └─────────┘ └─────────┘ └─────────┘ └─────────┘</div>
 
+<div class="page-break"></div>
+
+<h2>🖥️ Desktop & Web Blueprint</h2>
+
+<h3>Desktop Navigation</h3>
+<div class="section-card">
+${[
+  {t:"Top Navigation Bar (DesktopTopNav)", d:"Persistent horizontal nav replaces BottomNav at md+ breakpoint. Logo, search, category links, user avatar dropdown.", b:"md+"},
+  {t:"Multi-Panel Layouts", d:"Property detail uses side-by-side gallery + booking panel. Messages use split-pane.", b:"lg+"},
+  {t:"Admin Sidebar", d:"Collapsible sidebar with 22+ nav items, Command Palette (⌘K).", b:""},
+  {t:"Search Upgrade", d:"On desktop, search opens inline panel instead of full-screen overlay.", b:""},
+].map(f => `<div class="feature-row"><div class="feature-dot"></div><div><span class="feature-title">${f.t}</span>${f.b ? `<span class="feature-badge">${f.b}</span>` : ''}<div class="feature-desc">${f.d}</div></div></div>`).join("")}
+</div>
+
+<h3>Responsive Breakpoints</h3>
+<table><tr><th>Breakpoint</th><th>Width</th><th>Layout Changes</th></tr>
+<tr><td>sm</td><td>640px</td><td>2-col grids, larger touch targets</td></tr>
+<tr><td>md</td><td>768px</td><td>DesktopTopNav replaces BottomNav, wider cards</td></tr>
+<tr><td>lg</td><td>1024px</td><td>3-col property grids, split-view panels</td></tr>
+<tr><td>xl</td><td>1280px</td><td>4-col grids, max-width containers, sidebar expand</td></tr>
+<tr><td>2xl</td><td>1536px</td><td>Max content width, generous whitespace</td></tr>
+</table>
+
+<h3>Desktop Typography Scale</h3>
+<table><tr><th>Element</th><th>Mobile</th><th>Desktop (md+)</th><th>Font</th></tr>
+<tr><td>Page titles</td><td>text-2xl</td><td>text-3xl lg:text-4xl</td><td>Space Grotesk</td></tr>
+<tr><td>Section headers</td><td>text-base</td><td>text-lg lg:text-xl</td><td>Space Grotesk</td></tr>
+<tr><td>Splash brand</td><td>text-[58px]</td><td>md:text-[84px] xl:text-[124px]</td><td>Pacifico (cursive)</td></tr>
+<tr><td>Splash greeting</td><td>text-[32px]</td><td>md:text-5xl xl:text-7xl</td><td>Playfair Display</td></tr>
+</table>
+
+<h3>Sheet → Modal Adaptation</h3>
+<table><tr><th>Component</th><th>Mobile (&lt; md)</th><th>Desktop (md+)</th></tr>
+<tr><td>Settings</td><td>Bottom sheet (Vaul)</td><td>Side sheet / Dialog</td></tr>
+<tr><td>Edit Profile</td><td>Bottom sheet</td><td>Centered modal</td></tr>
+<tr><td>Live Ordering</td><td>Bottom sheet</td><td>Side panel</td></tr>
+<tr><td>Checkout</td><td>Full screen</td><td>Right panel + summary</td></tr>
+<tr><td>Search</td><td>Full screen overlay</td><td>Inline dropdown panel</td></tr>
+<tr><td>Map View</td><td>Full screen</td><td>Split-pane (list + map)</td></tr>
+</table>
+
+<h3>Desktop Grid Patterns</h3>
+<table><tr><th>Component</th><th>Mobile</th><th>Tablet (md)</th><th>Desktop (lg+)</th></tr>
+<tr><td>Property cards</td><td>grid-cols-2</td><td>grid-cols-3</td><td>grid-cols-4 lg:grid-cols-5</td></tr>
+<tr><td>Curation grid</td><td>scroll-x</td><td>grid-cols-3</td><td>grid-cols-4</td></tr>
+<tr><td>Wishlist grid</td><td>grid-cols-2</td><td>grid-cols-3</td><td>grid-cols-4</td></tr>
+<tr><td>Admin tables</td><td>card list</td><td>data table</td><td>data table + filters sidebar</td></tr>
+</table>
+
+<div class="page-break"></div>
+
 <h2>📱 Mobile & Responsive Blueprint</h2>
-<h3>Distribution</h3>
+
+<h3>Distribution Strategy</h3>
 <table><tr><th>Channel</th><th>Technology</th><th>Details</th></tr>
 <tr><td>PWA</td><td>VitePWA + Workbox</td><td>autoUpdate, standalone, portrait, installable from browser</td></tr>
 <tr><td>Android APK</td><td>Capacitor 8</td><td>WebView loads live URL, instant updates without rebuild</td></tr>
@@ -2095,7 +2186,7 @@ ${tables.map(([t, d]) => `<tr><td style="font-family:monospace;color:#7c3aed;fon
 <h3>Touch & Interaction</h3>
 <table><tr><th>Feature</th><th>Implementation</th></tr>
 <tr><td>Touch targets</td><td>44px minimum, bottom nav 48px zones</td></tr>
-<tr><td>Haptics</td><td>navigator.vibrate on booking, spin, toggle</td></tr>
+<tr><td>Haptics</td><td>Capacitor ImpactStyle + Web Vibration API fallback</td></tr>
 <tr><td>Animations</td><td>Framer Motion springs (stiffness 300, damping 30), whileTap scale 0.95</td></tr>
 <tr><td>Gestures</td><td>Swipe messages, pull-to-refresh, scroll-snap carousels</td></tr>
 </table>
@@ -2109,7 +2200,9 @@ ${tables.map(([t, d]) => `<tr><td style="font-family:monospace;color:#7c3aed;fon
 </table>
 
 <h3>Theme System</h3>
-<p>HSL CSS variables in :root (dark) and .light class. Semantic tokens only — no hardcoded colors. glass/glow/shadow utilities adapt per theme. 0.4s transition on switch.</p>
+<div class="section-card">
+<p style="color:#c7c6d7;font-size:10px;">HSL CSS variables in :root (dark) and .light class. Semantic tokens only — no hardcoded colors in components. glass/glow/shadow utilities adapt per theme. 0.5s ease transition on switch with programmatic morph.</p>
+</div>
 
 <h3>Performance</h3>
 <table><tr><th>Optimization</th><th>Details</th></tr>
@@ -2126,12 +2219,23 @@ ${tables.map(([t, d]) => `<tr><td style="font-family:monospace;color:#7c3aed;fon
 <tr><td>Prefetch on Launch</td><td>Listings, curations, packages, config cached on cold start</td></tr>
 <tr><td>CapacitorHttp</td><td>Native HTTP stack, bypasses WebView CORS overhead</td></tr>
 <tr><td>WebView Tuning</td><td>androidScheme:https, allowMixedContent, captureInput, bg:#050505</td></tr>
-<tr><td>Keyboard</td><td>resize:body, resizeOnFullScreen — no layout reflow on input focus</td></tr>
 <tr><td>Launch Flow</td><td>initNativePlugins → prefetchCriticalData → React render with cache</td></tr>
 </table>
 
+<h3>Native Capacitor Plugins</h3>
+<table><tr><th>Plugin</th><th>Usage</th></tr>
+<tr><td>@capacitor/share</td><td>Native share sheet for properties, referrals, bookings</td></tr>
+<tr><td>@capacitor/clipboard</td><td>Copy referral codes, booking IDs</td></tr>
+<tr><td>@capacitor/network</td><td>Connection detection (WiFi/cellular/none)</td></tr>
+<tr><td>@capacitor/browser</td><td>In-app browser for external links</td></tr>
+<tr><td>@capacitor/preferences</td><td>Native key-value storage replacing localStorage</td></tr>
+<tr><td>@capacitor/haptics</td><td>ImpactStyle feedback on interactions</td></tr>
+<tr><td>@capacitor/push-notifications</td><td>Native push with token storage</td></tr>
+<tr><td>@capacitor/camera</td><td>Photo capture for profile, reviews</td></tr>
+</table>
+
 <h3>AI Prompts for Web/Desktop Conversion</h3>
-<ol style="font-size:10px;line-height:1.8;">
+<ol style="font-size:10px;line-height:2;color:#c7c6d7;">
 <li>Convert single-column to multi-panel: sidebar nav + main content + detail panel</li>
 <li>Replace BottomNav with persistent left sidebar, add breadcrumbs</li>
 <li>Scale grids: 2→3→4 columns, add hover states replacing tap</li>
@@ -2142,13 +2246,54 @@ ${tables.map(([t, d]) => `<tr><td style="font-family:monospace;color:#7c3aed;fon
 <li>Add hover:scale-105, keyboard shortcuts, cursor:pointer</li>
 </ol>
 
+<div class="page-break"></div>
+
+<h2>🎨 Cinematic Splash Screen</h2>
+<div class="section-card">
+<h3>Two Variants (Admin Toggle)</h3>
+<table><tr><th>Variant</th><th>Style</th><th>Backgrounds</th></tr>
+<tr><td>1 — Classic</td><td>3D metallic typography, spring letter flip</td><td>4 time-of-day photos (mobile + desktop)</td></tr>
+<tr><td>2 — Cinematic (default)</td><td>Island villa with H silhouette, underwater typography</td><td>4 time-of-day illustrations (mobile 9:16 + desktop 16:9)</td></tr>
+</table>
+
+<h3>Time-of-Day Assets</h3>
+<table><tr><th>Time</th><th>Hours</th><th>Mobile Asset</th><th>Desktop Asset</th></tr>
+<tr><td>Dawn ☀️</td><td>05:00–11:59</td><td>splash2-dawn-v2.jpg</td><td>splash2-dawn-v2-desktop.jpg</td></tr>
+<tr><td>Day 🌤️</td><td>12:00–16:59</td><td>splash2-day-v2.jpg</td><td>splash2-day-v2-desktop.jpg</td></tr>
+<tr><td>Dusk 🌅</td><td>17:00–20:59</td><td>splash2-dusk-v2.jpg</td><td>splash2-dusk-v2-desktop.jpg</td></tr>
+<tr><td>Night 🌙</td><td>21:00–04:59</td><td>splash2-night-v2.jpg</td><td>splash2-night-v2-desktop.jpg</td></tr>
+</table>
+
+<h3>Atmospheric Animations</h3>
+<div>
+${["Fireflies (16-20 particles)", "Shooting Stars (3×)", "Flying Birds (5 SVG)", "Floating Lanterns (5×)", "Twinkling Stars (20×)", "Sun Rays", "Drifting Clouds"].map(e => `<span class="tag">${e}</span>`).join(" ")}
+</div>
+</div>
+
+<h2>🖼️ Wallpaper Gallery</h2>
+<div class="section-card">
+<p style="color:#c7c6d7;font-size:10px;margin-bottom:8px;">16 downloadable wallpapers: 8 phone (9:16) + 8 desktop (16:9), spanning Classic and Cinematic variants across all time-of-day themes. Accessible via <code>/wallpapers</code> route and Easter egg documentation.</p>
+<table><tr><th>Filter</th><th>Options</th></tr>
+<tr><td>Variant</td><td>All · Classic · Cinematic</td></tr>
+<tr><td>Format</td><td>All Sizes · Phone (9:16) · Desktop (16:9)</td></tr>
+</table>
+</div>
+
+<h2>🥚 Easter Eggs</h2>
+<table><tr><th>Trigger</th><th>Location</th><th>Result</th></tr>
+<tr><td>Tap version text 5× in 2s</td><td>Profile tab, bottom</td><td>Full in-app documentation overlay with wallpaper gallery</td></tr>
+<tr><td>Visit /wallpapers</td><td>Direct URL</td><td>Public wallpaper download page</td></tr>
+</table>
+
+<div class="page-break"></div>
+
 <h2>📋 Change History</h2>
 ${changelog}
 
 <div class="footer">
-<p>🏡 Hushh v1.35 · Private Experience Marketplace · Made in Jeypore ❤️</p>
-<p>80+ Components · 27 Hooks · 45 Tables · 6 Edge Functions · 15 Screens · 22 Admin Pages</p>
-<p>Generated ${new Date().toLocaleDateString()}</p>
+<p>🏡 <strong>Hushh</strong> v1.36 · Private Experience Marketplace · Made in Jeypore ❤️</p>
+<p style="margin-top:4px;">80+ Components · 27 Hooks · 45 Tables · 6 Edge Functions · 15 Screens · 22 Admin Pages</p>
+<p style="margin-top:8px;">Generated ${new Date().toLocaleDateString()} · Confidential Internal Document</p>
 </div>
 </body></html>`;
 }
