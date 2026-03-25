@@ -566,6 +566,10 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
   const liked = isWishlisted;
   const [imgLoaded, setImgLoaded] = useState(false);
 
+  // Filter out empty/invalid image URLs to prevent blank slideshow frames
+  const validImages = property.images.filter(img => img && img.trim().length > 0 && img !== "undefined" && img !== "null");
+  const heroImages = validImages.length > 0 ? validImages : [property.images[0] || "/placeholder.svg"];
+
   useEffect(() => {
     setImgIndex(0);
     setImgLoaded(false);
@@ -577,24 +581,24 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
   const handleHeroDragEnd = useCallback((_: any, info: PanInfo) => {
     const threshold = 50;
     if (info.offset.x < -threshold) {
-      setImgIndex((i) => (i === property.images.length - 1 ? 0 : i + 1));
+      setImgIndex((i) => (i === heroImages.length - 1 ? 0 : i + 1));
       setImgLoaded(false);
     } else if (info.offset.x > threshold) {
-      setImgIndex((i) => (i === 0 ? property.images.length - 1 : i - 1));
+      setImgIndex((i) => (i === 0 ? heroImages.length - 1 : i - 1));
       setImgLoaded(false);
     }
     animate(heroX, 0, { type: "spring", stiffness: 300, damping: 30 });
-  }, [property.images.length, heroX]);
+  }, [heroImages.length, heroX]);
 
   // Auto-slideshow every 4 seconds
   useEffect(() => {
-    if (property.images.length <= 1) return;
+    if (heroImages.length <= 1) return;
     const timer = setInterval(() => {
-      setImgIndex((i) => (i === property.images.length - 1 ? 0 : i + 1));
+      setImgIndex((i) => (i === heroImages.length - 1 ? 0 : i + 1));
       setImgLoaded(false);
     }, 4000);
     return () => clearInterval(timer);
-  }, [property.images.length]);
+  }, [heroImages.length]);
 
   const selectedSlotData = property.slots.find((s) => s.id === selectedSlot);
 
@@ -689,7 +693,7 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
           {/* Main image with drag */}
           <motion.img
             key={imgIndex}
-            src={property.images[imgIndex]}
+            src={heroImages[imgIndex] || heroImages[0]}
             alt={property.name}
             className="w-full h-full object-cover touch-pan-y"
             style={{ x: heroX, opacity: heroOpacity }}
@@ -749,7 +753,7 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
           <div className="absolute bottom-0 left-0 right-0 px-5 pb-4 z-10 flex items-end justify-between">
             {/* Dots indicator */}
             <div className="flex gap-1.5">
-              {property.images.map((_, i) => (
+              {heroImages.map((_, i) => (
                 <motion.button
                   key={i}
                   onClick={() => { setImgIndex(i); setImgLoaded(false); }}
@@ -767,7 +771,7 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
             {/* Image count badge */}
             <div className="glass rounded-full px-2.5 py-1 flex items-center gap-1.5">
               <Camera size={11} className="text-foreground/70" />
-              <span className="text-[10px] font-medium text-foreground/80">{imgIndex + 1}/{property.images.length}</span>
+              <span className="text-[10px] font-medium text-foreground/80">{imgIndex + 1}/{heroImages.length}</span>
             </div>
           </div>
         </div>
@@ -791,15 +795,15 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
         </div>
         <div className="relative grid grid-cols-4 grid-rows-2 gap-2 rounded-2xl overflow-hidden max-h-[480px] lg:max-h-[540px] 2xl:max-h-[600px]">
           <div className="col-span-2 row-span-2 relative group cursor-pointer" onClick={() => setImgIndex(0)}>
-            <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover group-hover:brightness-110 transition-all duration-300" />
+            <img src={heroImages[0]} alt={property.name} className="w-full h-full object-cover group-hover:brightness-110 transition-all duration-300" />
           </div>
-          {property.images.slice(1, 5).map((img, i) => (
+          {heroImages.slice(1, 5).map((img, i) => (
             <div key={i} className="relative group cursor-pointer" onClick={() => setImgIndex(i + 1)}>
               <img src={img} alt={`${property.name} ${i + 2}`} className="w-full h-full object-cover group-hover:brightness-110 transition-all duration-300" loading="lazy" />
             </div>
           ))}
           <button className="absolute bottom-4 right-4 bg-background/80 backdrop-blur-sm border border-border rounded-full px-4 py-2 text-sm font-medium text-foreground hover:bg-background transition-colors z-10">
-            Show all {property.images.length} photos
+            Show all {heroImages.length} photos
           </button>
         </div>
         {property.tags.length > 0 && (
