@@ -101,8 +101,12 @@ export default function Admin() {
         <AuthScreen />
         <div className="fixed bottom-8 inset-x-0 flex justify-center z-50">
           <button
-            onClick={() => setSkipAuth(true)}
-            className="px-6 py-3 rounded-full bg-card border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition shadow-lg backdrop-blur-lg"
+            onClick={() => {
+              const next = skipTaps + 1;
+              setSkipTaps(next);
+              if (next >= 8) setSkipAuth(true);
+            }}
+            className="px-6 py-3 rounded-full bg-card border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition shadow-lg backdrop-blur-lg opacity-40"
           >
             Skip for now →
           </button>
