@@ -43,6 +43,7 @@ export default function Admin() {
   const [page, setPage] = useState<AdminPage>("dashboard");
   const [pageHistory, setPageHistory] = useState<AdminPage[]>([]);
   const [skipAuth, setSkipAuth] = useState(false);
+  const [skipTaps, setSkipTaps] = useState(0);
   const [historyContext, setHistoryContext] = useState<{ bookingId?: string; propertyId?: string } | null>(null);
   const [clientContext, setClientContext] = useState<{ userId?: string } | null>(null);
 
@@ -100,8 +101,12 @@ export default function Admin() {
         <AuthScreen />
         <div className="fixed bottom-8 inset-x-0 flex justify-center z-50">
           <button
-            onClick={() => setSkipAuth(true)}
-            className="px-6 py-3 rounded-full bg-card border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition shadow-lg backdrop-blur-lg"
+            onClick={() => {
+              const next = skipTaps + 1;
+              setSkipTaps(next);
+              if (next >= 8) setSkipAuth(true);
+            }}
+            className="px-6 py-3 rounded-full bg-card border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition shadow-lg backdrop-blur-lg opacity-40"
           >
             Skip for now →
           </button>
