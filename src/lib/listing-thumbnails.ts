@@ -81,11 +81,7 @@ export function getListingThumbnail(
   const mapped = thumbnailMap[normalizedName] || null;
   const firstUrl = imageUrls?.find((url) => !!url) || null;
 
-  // If imageUrls is explicitly an empty array, respect that (user cleared images)
-  const explicitlyCleared = Array.isArray(imageUrls) && imageUrls.length === 0;
-
   if (options?.preferMapped) return mapped || firstUrl;
-  // Don't fall back to mapped asset if images were explicitly cleared in DB
-  if (explicitlyCleared) return firstUrl;
+  // Always try firstUrl first, then fall back to mapped asset for display
   return firstUrl || mapped;
 }
