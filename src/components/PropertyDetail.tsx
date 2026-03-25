@@ -566,6 +566,10 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
   const liked = isWishlisted;
   const [imgLoaded, setImgLoaded] = useState(false);
 
+  // Filter out empty/invalid image URLs to prevent blank slideshow frames
+  const validImages = property.images.filter(img => img && img.trim().length > 0 && img !== "undefined" && img !== "null");
+  const heroImages = validImages.length > 0 ? validImages : [property.images[0] || "/placeholder.svg"];
+
   useEffect(() => {
     setImgIndex(0);
     setImgLoaded(false);
