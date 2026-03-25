@@ -771,7 +771,7 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
             {/* Image count badge */}
             <div className="glass rounded-full px-2.5 py-1 flex items-center gap-1.5">
               <Camera size={11} className="text-foreground/70" />
-              <span className="text-[10px] font-medium text-foreground/80">{imgIndex + 1}/{property.images.length}</span>
+              <span className="text-[10px] font-medium text-foreground/80">{imgIndex + 1}/{heroImages.length}</span>
             </div>
           </div>
         </div>
