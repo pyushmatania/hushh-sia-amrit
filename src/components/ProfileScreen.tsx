@@ -507,7 +507,8 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.34 }}
         className="mx-5 mt-5"
-      >
+      >{false && (
+
         <button
           onClick={() => navigate("/admin")}
           className="w-full flex items-center gap-3.5 py-3.5 px-4 rounded-2xl border border-primary/20 bg-primary/5 hover:bg-primary/10 transition active:scale-[0.98]"
