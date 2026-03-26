@@ -61,11 +61,11 @@ export default defineConfig(({ mode }) => ({
     cssMinify: true,
     rollupOptions: {
       output: {
-        manualChunks: {
-          "vendor-react": ["react", "react-dom", "react-router-dom"],
-          "vendor-query": ["@tanstack/react-query"],
-          "vendor-framer": ["framer-motion"],
-          "vendor-supabase": ["@supabase/supabase-js"],
+        manualChunks(id: string) {
+          if (id.includes("react-dom") || id.includes("react-router-dom")) return "vendor-react";
+          if (id.includes("@tanstack/react-query")) return "vendor-query";
+          if (id.includes("framer-motion")) return "vendor-framer";
+          if (id.includes("@supabase/supabase-js")) return "vendor-supabase";
         },
       },
     },

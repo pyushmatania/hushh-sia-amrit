@@ -163,7 +163,7 @@ export const changeLog = [
 ];
 
 // ─── TAB DEFINITIONS ─────────────────────────────────────────
-type TabId = "overview" | "features" | "architecture" | "database" | "wireframes" | "desktop" | "mobile" | "wallpapers" | "changelog";
+type TabId = "overview" | "features" | "architecture" | "database" | "wireframes" | "desktop" | "mobile" | "wallpapers" | "credits" | "changelog";
 const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: "overview", label: "Overview", icon: <Home size={14} /> },
   { id: "features", label: "Features", icon: <Star size={14} /> },
@@ -173,6 +173,7 @@ const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: "desktop", label: "Desktop", icon: <Monitor size={14} /> },
   { id: "mobile", label: "Mobile", icon: <Smartphone size={14} /> },
   { id: "wallpapers", label: "Walls", icon: <ImageIcon size={14} /> },
+  { id: "credits", label: "Credits", icon: <Award size={14} /> },
   { id: "changelog", label: "Log", icon: <History size={14} /> },
 ];
 
@@ -356,6 +357,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
             {activeTab === "desktop" && <DesktopTab />}
             {activeTab === "mobile" && <MobileTab />}
             {activeTab === "wallpapers" && <WallpapersTab />}
+            {activeTab === "credits" && <CreditsTab />}
             {activeTab === "changelog" && <ChangelogTab />}
           </motion.div>
         </AnimatePresence>
