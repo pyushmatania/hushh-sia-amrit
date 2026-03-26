@@ -40,6 +40,15 @@ const GRADIENT_OPTIONS = [
   "from-violet-500/70 to-purple-600/40",
 ];
 
+const resolvePackageImages = (imageUrls?: string[] | null, imageUrl?: string | null): string[] => {
+  const normalized = (imageUrls ?? []).filter((url): url is string => Boolean(url));
+  return normalized.length > 0 ? normalized : imageUrl ? [imageUrl] : [];
+};
+
+const getPackageCover = (pkg: Pick<PackageRow, "image_urls" | "image_url">): string | null => {
+  return resolvePackageImages(pkg.image_urls, pkg.image_url)[0] ?? null;
+};
+
 export default function AdminExperiencePackages() {
   const { toast } = useToast();
   const [packages, setPackages] = useState<PackageRow[]>([]);
@@ -72,7 +81,17 @@ export default function AdminExperiencePackages() {
       .from("experience_packages")
       .select("*")
       .order("sort_order", { ascending: true });
-    setPackages((data as PackageRow[]) ?? []);
+
+    setPackages(
+      ((data as PackageRow[]) ?? []).map((pkg) => {
+        const resolvedImages = resolvePackageImages(pkg.image_urls, pkg.image_url);
+        return {
+          ...pkg,
+          image_urls: resolvedImages,
+          image_url: resolvedImages[0] ?? null,
+        };
+      })
+    );
     setLoading(false);
   };
 
@@ -90,6 +109,19 @@ export default function AdminExperiencePackages() {
       image_url: null, image_urls: [], video_url: null,
     });
     setIsCreating(true);
+    setIncludeInput("");
+    setPreviewMode(false);
+  };
+
+  const openEditPackage = (pkg: PackageRow) => {
+    const resolvedImages = resolvePackageImages(pkg.image_urls, pkg.image_url);
+    setEditing({
+      ...pkg,
+      image_urls: resolvedImages,
+      image_url: resolvedImages[0] ?? null,
+      video_url: pkg.video_url || null,
+    });
+    setIsCreating(false);
     setIncludeInput("");
     setPreviewMode(false);
   };
@@ -262,11 +294,14 @@ export default function AdminExperiencePackages() {
         </div>
       ) : (
         <div className="space-y-2">
-          {filtered.map((pkg) => (
+          {filtered.map((pkg) => {
+            const coverImage = getPackageCover(pkg);
+
+            return (
             <SwipeableRow
               key={pkg.id}
               showHint={pkg === filtered[0]}
-              onEdit={() => { setEditing({ ...pkg, image_urls: pkg.image_urls || (pkg.image_url ? [pkg.image_url] : []), video_url: pkg.video_url || null }); setIsCreating(false); setIncludeInput(""); setPreviewMode(false); }}
+              onEdit={() => openEditPackage(pkg)}
               onDelete={() => deletePackage(pkg.id)}
             >
               <div
@@ -288,7 +323,7 @@ export default function AdminExperiencePackages() {
                   </button>
                 )}
                 <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${pkg.gradient} flex items-center justify-center text-2xl shadow-sm shrink-0 overflow-hidden`}>
-                  {pkg.image_url ? <img src={pkg.image_url} alt="" className="w-full h-full object-cover" /> : pkg.emoji}
+                  {coverImage ? <img src={coverImage} alt="" className="w-full h-full object-cover" /> : pkg.emoji}
                 </div>
                 <div className="flex-1 min-w-0">
                   <h4 className="text-sm font-semibold text-foreground">{pkg.name}</h4>
@@ -312,7 +347,7 @@ export default function AdminExperiencePackages() {
                     {pkg.active ? "Active" : "Inactive"}
                   </button>
                   <button
-                    onClick={() => { setEditing({ ...pkg, image_urls: pkg.image_urls || (pkg.image_url ? [pkg.image_url] : []), video_url: pkg.video_url || null }); setIsCreating(false); setIncludeInput(""); setPreviewMode(false); }}
+                    onClick={() => openEditPackage(pkg)}
                     className="p-1.5 rounded-lg hover:bg-secondary transition"
                   >
                     <Pencil size={13} className="text-muted-foreground" />
@@ -333,7 +368,8 @@ export default function AdminExperiencePackages() {
                 </button>
               </div>
             </SwipeableRow>
-          ))}
+            );
+          })}
         </div>
       )}
 
@@ -351,9 +387,9 @@ export default function AdminExperiencePackages() {
         previewContent={editing ? (
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
             className="rounded-xl border border-border bg-background overflow-hidden">
-            {editing.image_url && (
+            {((editing.image_urls || []).find(Boolean) || editing.image_url) && (
               <div className="aspect-video w-full overflow-hidden">
-                <img src={editing.image_url} alt="" className="w-full h-full object-cover" />
+                <img src={(editing.image_urls || []).find(Boolean) || editing.image_url || ""} alt="" className="w-full h-full object-cover" />
               </div>
             )}
             <div className={`bg-gradient-to-br ${editing.gradient || "from-primary/80 to-primary/40"} p-6 text-center`}>

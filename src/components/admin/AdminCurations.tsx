@@ -237,12 +237,16 @@ export default function AdminCurations() {
         autoSaveStatus={editingId ? autoSaveStatus : undefined}
         previewContent={editing ? (() => {
           const propInfo = propertyMap.get(editing.property_id);
+          const propertyThumb = propInfo
+            ? getListingThumbnail(propInfo.name, propInfo.imageUrls, { preferMapped: true })
+            : null;
+
           return (
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
               className="rounded-2xl border border-border bg-card overflow-hidden shadow-lg">
               <div className="relative h-40 bg-gradient-to-br from-primary/20 to-accent/10 overflow-hidden">
-                {propInfo?.imageUrls?.[0] && (
-                  <img src={propInfo.imageUrls[0]} alt="" className="absolute inset-0 w-full h-full object-cover opacity-40" />
+                {propertyThumb && (
+                  <img src={propertyThumb} alt="" className="absolute inset-0 w-full h-full object-cover opacity-40" />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4">
@@ -280,6 +284,15 @@ export default function AdminCurations() {
       >
         {editing && (() => {
           const propInfo = propertyMap.get(editing.property_id);
+          const propertyThumb = propInfo
+            ? getListingThumbnail(propInfo.name, propInfo.imageUrls, { preferMapped: true })
+            : null;
+          const linkedPropertyImages = propInfo?.imageUrls?.length
+            ? propInfo.imageUrls
+            : propertyThumb
+            ? [propertyThumb]
+            : [];
+
           return (
             <>
               {/* Curation Images */}
@@ -290,20 +303,22 @@ export default function AdminCurations() {
                 label="Curation Images"
                 maxImages={8}
                 dimensionTip="Recommended: 1200×800px (3:2) or 800×800px (1:1), JPG/WebP, under 2MB"
+                fallbackImages={linkedPropertyImages}
+                fallbackHint="This curation is currently using the linked property's image. Upload custom curation images to override it."
               />
 
               {/* Linked Property Images (read-only preview) */}
-              {propInfo && propInfo.imageUrls.length > 0 && (
+              {propInfo && linkedPropertyImages.length > 0 && (
                 <div>
                   <label className="text-[10px] text-muted-foreground mb-2 block font-semibold uppercase tracking-wider">Linked Property Images (from {propInfo.name})</label>
                   <div className="grid grid-cols-4 gap-1.5">
-                    {propInfo.imageUrls.slice(0, 4).map((url, i) => (
+                    {linkedPropertyImages.slice(0, 4).map((url, i) => (
                       <div key={i} className="aspect-square rounded-lg overflow-hidden border border-border">
                         <img src={url} alt="" className="w-full h-full object-cover" />
                       </div>
                     ))}
-                    {propInfo.imageUrls.length > 4 && (
-                      <div className="aspect-square rounded-lg bg-secondary flex items-center justify-center text-xs text-muted-foreground font-medium">+{propInfo.imageUrls.length - 4}</div>
+                    {linkedPropertyImages.length > 4 && (
+                      <div className="aspect-square rounded-lg bg-secondary flex items-center justify-center text-xs text-muted-foreground font-medium">+{linkedPropertyImages.length - 4}</div>
                     )}
                   </div>
                 </div>
