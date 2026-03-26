@@ -21,17 +21,17 @@ interface MapViewScreenProps {
 const CENTER: [number, number] = [18.855, 82.575];
 const INITIAL_ZOOM = 14;
 
-// Using free tile providers (no API key required)
+// Theme-aware tile layers
 const TILE_LAYERS = {
-  default: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+  light: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+  dark: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
   satellite: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-  terrain: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
 };
 
-const TILE_OPTIONS = {
-  default: { subdomains: "abcd", maxZoom: 20, attribution: '&copy; CartoDB' },
+const TILE_OPTIONS: Record<string, any> = {
+  light: { subdomains: "abcd", maxZoom: 20, attribution: '&copy; CartoDB' },
+  dark: { subdomains: "abcd", maxZoom: 20, attribution: '&copy; CartoDB' },
   satellite: { maxZoom: 20, attribution: '&copy; Esri' },
-  terrain: { subdomains: "abcd", maxZoom: 20, attribution: '&copy; CartoDB' },
 };
 
 const CATEGORIES = [
