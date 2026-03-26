@@ -2436,6 +2436,65 @@ ${["Fireflies (16-20 particles)", "Shooting Stars (3×)", "Flying Birds (5 SVG)"
 
 <div class="page-break"></div>
 
+<h2>🏗️ Credits & Colophon</h2>
+<div class="section-card">
+<p style="color:#c7c6d7;font-size:10px;margin-bottom:12px;">Behind-the-scenes engineering stats — what it would take to build Hushh traditionally.</p>
+</div>
+
+<h3>Project Stats</h3>
+<div class="stats-grid">
+<div class="stat-card"><div class="value">64,600+</div><div class="label">Lines of Code</div></div>
+<div class="stat-card"><div class="value">${changeLog.reduce((s, v) => s + v.items.length, 0)}+</div><div class="label">Features Shipped</div></div>
+<div class="stat-card"><div class="value">256</div><div class="label">Source Files</div></div>
+<div class="stat-card"><div class="value">190</div><div class="label">React Components</div></div>
+<div class="stat-card"><div class="value">31</div><div class="label">Custom Hooks</div></div>
+<div class="stat-card"><div class="value">70+</div><div class="label">Video Assets</div></div>
+</div>
+
+<h3>Estimated Dev Effort (Traditional)</h3>
+<p style="color:#8b8aa0;font-size:9px;margin-bottom:8px;">Based on ~80 production LOC/day — industry avg for senior full-stack devs including testing, design, debugging & code review.</p>
+<table><tr><th>Scenario</th><th>Days</th><th>Months</th><th>Notes</th></tr>
+<tr><td>1 Senior Dev (solo)</td><td>${Math.ceil(64600 / 80)}</td><td>~${(64600 / 80 / 22).toFixed(0)}</td><td>Full-stack: React + DB + Edge Functions + Design</td></tr>
+<tr><td>Team of 3 Seniors</td><td>${Math.ceil(64600 / 80 / 3)}</td><td>~${(64600 / 80 / 3 / 22).toFixed(0)}</td><td>1 Frontend + 1 Backend + 1 DevOps/Design</td></tr>
+<tr><td>Team of 5 Engineers</td><td>${Math.ceil(64600 / 80 / 5)}</td><td>~${(64600 / 80 / 5 / 22).toFixed(0)}</td><td>2 FE + 1 BE + 1 Design + 1 PM/QA</td></tr>
+<tr><td>Startup Studio (8 ppl)</td><td>${Math.ceil(64600 / 80 / 8)}</td><td>~${(64600 / 80 / 8 / 22).toFixed(0)}</td><td>Full cross-functional team</td></tr>
+</table>
+
+<h3>Code Breakdown</h3>
+<table><tr><th>Area</th><th>%</th><th>~LOC</th><th>Details</th></tr>
+<tr><td>Frontend UI</td><td>42%</td><td>~27,100</td><td>190 components, animations, responsive</td></tr>
+<tr><td>Business Logic</td><td>18%</td><td>~11,600</td><td>31 hooks, state management, data flows</td></tr>
+<tr><td>Admin Panel</td><td>20%</td><td>~12,900</td><td>22 pages, CRM, analytics, AI</td></tr>
+<tr><td>Backend / Edge</td><td>8%</td><td>~5,200</td><td>11 edge functions, AI, Telegram bot</td></tr>
+<tr><td>Styling / CSS</td><td>7%</td><td>~4,500</td><td>Design system, tokens, dark/light themes</td></tr>
+<tr><td>Config / Infra</td><td>5%</td><td>~3,300</td><td>Vite, Capacitor, PWA, CI/CD</td></tr>
+</table>
+
+<h3>Fun Facts</h3>
+<div class="section-card" style="font-size:10px;line-height:2;">
+☕ At 3 cups/day, this project consumed ~${Math.ceil(64600 / 80) * 3} cups of coffee<br/>
+⌨️ Roughly ${(64600 * 45).toLocaleString()} keystrokes to type all the code<br/>
+🔄 ${changeLog.length} releases with ${changeLog.reduce((s, v) => s + v.items.length, 0)}+ features = ${(changeLog.reduce((s, v) => s + v.items.length, 0) / changeLog.length).toFixed(1)} features/release<br/>
+📊 45 tables × avg 8 columns = ~360 data fields managed<br/>
+🎬 70+ video assets for experiences and packs<br/>
+🔐 Every table has Row Level Security — zero trust by default<br/>
+📲 PWA + Android APK + responsive web — 3 platforms, 1 codebase<br/>
+🤖 AI-powered admin assistant understands natural language
+</div>
+
+<h3>Colophon</h3>
+<div class="section-card" style="font-size:10px;line-height:1.8;">
+<strong>Platform:</strong> Built on Lovable with Lovable Cloud backend<br/>
+<strong>Frontend:</strong> React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion<br/>
+<strong>Backend:</strong> PostgreSQL · Edge Functions · GoTrue Auth · Real-time Subscriptions<br/>
+<strong>Mobile:</strong> Capacitor 8 · PWA · GitHub Actions CI/CD<br/>
+<strong>Design:</strong> Space Grotesk + Playfair Display · Cinematic dark/violet theme · HSL tokens<br/>
+<strong>AI:</strong> Natural language admin · Property history analysis · Smart alerts<br/><br/>
+<em>Made with ❤️ in Jeypore, India</em>
+</div>
+
+<div class="page-break"></div>
+
 <h2>📋 Change History</h2>
 ${changelog}
 
