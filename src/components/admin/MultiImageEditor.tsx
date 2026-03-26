@@ -71,9 +71,10 @@ export default function MultiImageEditor({
 
       const { error } = await supabase.storage
         .from("listing-images")
-        .upload(path, file, { cacheControl: "3600", upsert: false });
+        .upload(path, file, { cacheControl: "3600", upsert: true });
 
       if (error) {
+        console.error("Upload error:", error.message, error);
         failed++;
         completed++;
         continue;
@@ -93,8 +94,8 @@ export default function MultiImageEditor({
 
     if (failed > 0) {
       toast({
-        title: "Some images could not upload",
-        description: `${failed} of ${totalFiles} uploads failed.`,
+        title: "Upload failed",
+        description: `${failed} of ${totalFiles} failed. Try Paste URL instead, or check file size (max 5MB).`,
         variant: "destructive",
       });
     }
@@ -115,7 +116,7 @@ export default function MultiImageEditor({
 
     const { error } = await supabase.storage
       .from("listing-images")
-      .upload(path, file, { cacheControl: "3600", upsert: false });
+      .upload(path, file, { cacheControl: "3600", upsert: true });
 
     if (!error) {
       const { data: urlData } = supabase.storage.from("listing-images").getPublicUrl(path);
