@@ -235,6 +235,11 @@ export default function AdminCurations() {
         previewMode={previewMode}
         onTogglePreview={() => setPreviewMode(!previewMode)}
         autoSaveStatus={editingId ? autoSaveStatus : undefined}
+        heroImage={editing ? (() => {
+          const propInfo = propertyMap.get(editing.property_id);
+          if (editing.image_urls?.length) return editing.image_urls[0];
+          return propInfo ? getListingThumbnail(propInfo.name, propInfo.imageUrls, { preferMapped: true }) : null;
+        })() : null}
         previewContent={editing ? (() => {
           const propInfo = propertyMap.get(editing.property_id);
           const propertyThumb = propInfo

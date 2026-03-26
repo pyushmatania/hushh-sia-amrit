@@ -384,6 +384,7 @@ export default function AdminExperiencePackages() {
         previewMode={previewMode}
         onTogglePreview={() => setPreviewMode(!previewMode)}
         autoSaveStatus={!isCreating ? autoSaveStatus : undefined}
+        heroImage={getPackageCover(editing as PackageRow) || null}
         previewContent={editing ? (
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
             className="rounded-xl border border-border bg-background overflow-hidden">
