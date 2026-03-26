@@ -20,6 +20,15 @@ interface InventoryItem {
   image_urls: string[];
 }
 
+const resolveInventoryImages = (imageUrls?: string[] | null, imageUrl?: string | null): string[] => {
+  const normalized = (imageUrls ?? []).filter((url): url is string => Boolean(url));
+  return normalized.length > 0 ? normalized : imageUrl ? [imageUrl] : [];
+};
+
+const getInventoryCover = (item: Pick<InventoryItem, "image_urls" | "image_url">): string | null => {
+  return resolveInventoryImages(item.image_urls, item.image_url)[0] ?? null;
+};
+
 const categoryOptions = ["food", "drinks", "decoration", "entertainment", "activity", "comfort", "work", "staff", "decor", "equipment"];
 const foodDrinksCategories = ["food", "drinks"];
 const addonsCategories = ["decoration", "decor", "entertainment", "activity", "comfort", "work", "staff", "equipment"];
@@ -56,7 +65,19 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
 
   const loadInventory = () => {
     supabase.from("inventory").select("*").order("sort_order").order("name")
-      .then(({ data }) => { setItems((data as InventoryItem[]) ?? []); setLoading(false); });
+      .then(({ data }) => {
+        setItems(
+          ((data as InventoryItem[]) ?? []).map((item) => {
+            const resolvedImages = resolveInventoryImages(item.image_urls, item.image_url);
+            return {
+              ...item,
+              image_urls: resolvedImages,
+              image_url: resolvedImages[0] ?? null,
+            };
+          })
+        );
+        setLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -87,6 +108,17 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
     const defaultCat = filterCategory === "food-drinks" ? "food" : filterCategory === "addons" ? "decoration" : "food";
     setEditing({ name: "", emoji: filterCategory === "addons" ? "🎉" : "🍽️", category: defaultCat, unit_price: 0, stock: 100, low_stock_threshold: 10, available: true, property_id: null, sort_order: 0, image_url: null, image_urls: [] });
     setIsCreating(true); setPreviewMode(false);
+  };
+
+  const openEditItem = (item: InventoryItem) => {
+    const resolvedImages = resolveInventoryImages(item.image_urls, item.image_url);
+    setEditing({
+      ...item,
+      image_urls: resolvedImages,
+      image_url: resolvedImages[0] ?? null,
+    });
+    setIsCreating(false);
+    setPreviewMode(false);
   };
 
   const save = async () => {
@@ -205,11 +237,14 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
           <div key={cat}>
             <h3 className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-2 capitalize">{cat}</h3>
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-1.5">
-              {catItems.map((item) => (
+              {catItems.map((item) => {
+                const coverImage = getInventoryCover(item);
+
+                return (
                 <SwipeableRow
                   key={item.id}
                   showHint={item === catItems[0]}
-                  onEdit={() => { setEditing({ ...item }); setIsCreating(false); setPreviewMode(false); }}
+                  onEdit={() => openEditItem(item)}
                   onDelete={() => deleteItem(item.id)}
                 >
                   <motion.div
@@ -230,7 +265,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
                       </button>
                     )}
                     <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-100 to-teal-50 dark:from-emerald-500/15 dark:to-teal-500/10 flex items-center justify-center text-xl shadow-sm shrink-0 overflow-hidden">
-                      {(item.image_urls?.length > 0 || item.image_url) ? <img src={item.image_urls?.[0] || item.image_url!} alt="" className="w-full h-full object-cover" /> : item.emoji}
+                      {coverImage ? <img src={coverImage} alt="" className="w-full h-full object-cover" /> : item.emoji}
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">{item.name}</h4>
@@ -241,7 +276,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
                         className={`px-2.5 py-1 rounded-xl text-[10px] font-semibold transition ${item.available ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600" : "bg-zinc-100 dark:bg-zinc-800 text-zinc-500"}`}>
                         {item.available ? "Available" : "Unavailable"}
                       </button>
-                      <button onClick={() => { setEditing({ ...item }); setIsCreating(false); setPreviewMode(false); }} className="p-1.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800 transition"><Pencil size={13} className="text-zinc-400" /></button>
+                      <button onClick={() => openEditItem(item)} className="p-1.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800 transition"><Pencil size={13} className="text-zinc-400" /></button>
                       <button onClick={() => deleteItem(item.id)} className="p-1.5 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-500/10 transition"><Trash2 size={13} className="text-rose-400" /></button>
                     </div>
                     <button type="button" {...getDragHandleProps(item)}
@@ -250,7 +285,8 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
                     </button>
                   </motion.div>
                 </SwipeableRow>
-              ))}
+                );
+              })}
             </div>
           </div>
         ))
@@ -269,9 +305,9 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
         previewContent={editing ? (
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
             className="rounded-2xl border border-border bg-secondary/50 overflow-hidden">
-            {(editing.image_urls?.length || 0) > 0 && (
+            {((editing.image_urls || []).find(Boolean) || editing.image_url) && (
               <div className="aspect-video w-full overflow-hidden">
-                <img src={editing.image_urls![0]} alt="" className="w-full h-full object-cover" />
+                <img src={(editing.image_urls || []).find(Boolean) || editing.image_url || ""} alt="" className="w-full h-full object-cover" />
               </div>
             )}
             <div className="p-4 flex items-center gap-3">
