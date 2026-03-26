@@ -214,16 +214,16 @@ async function executeTool(name: string, args: any): Promise<string> {
   if (name === "reorder_item") {
     const { table, item_name, target_position } = args;
     const nameCol = getNameColumn(table);
-    const { data: items } = await sb.from(table).select(`id, ${nameCol}, sort_order`).ilike(nameCol, `%${item_name}%`);
+    const { data: items } = await sb.from(table).select(`id, ${nameCol}, sort_order`).ilike(nameCol, `%${item_name}%`) as any;
     if (!items?.length) return JSON.stringify({ error: `No item matching "${item_name}" found in ${table}` });
-    const item = items[0];
-    const { data: allItems } = await sb.from(table).select(`id, ${nameCol}, sort_order`).order("sort_order", { ascending: true });
+    const item = items[0] as any;
+    const { data: allItems } = await sb.from(table).select(`id, ${nameCol}, sort_order`).order("sort_order", { ascending: true }) as any;
     if (!allItems) return JSON.stringify({ error: "Failed to fetch items" });
-    const filtered = allItems.filter(i => i.id !== item.id);
+    const filtered = (allItems as any[]).filter((i: any) => i.id !== item.id);
     const pos = Math.max(0, Math.min(target_position, filtered.length));
     filtered.splice(pos, 0, item);
     for (let i = 0; i < filtered.length; i++) {
-      await sb.from(table).update({ sort_order: i }).eq("id", filtered[i].id);
+      await sb.from(table).update({ sort_order: i }).eq("id", (filtered[i] as any).id);
     }
     return JSON.stringify({ success: true, message: `Moved "${(item as any)[nameCol]}" to position ${pos + 1} (of ${filtered.length})` });
   }
@@ -231,13 +231,13 @@ async function executeTool(name: string, args: any): Promise<string> {
   if (name === "update_item_field") {
     const { table, item_name, field, value } = args;
     const nameCol = getNameColumn(table);
-    const { data: items } = await sb.from(table).select(`id, ${nameCol}`).ilike(nameCol, `%${item_name}%`);
+    const { data: items } = await sb.from(table).select(`id, ${nameCol}`).ilike(nameCol, `%${item_name}%`) as any;
     if (!items?.length) return JSON.stringify({ error: `No item matching "${item_name}" found in ${table}` });
     let castValue: any = value;
     if (value === "true") castValue = true;
     else if (value === "false") castValue = false;
     else if (!isNaN(Number(value)) && value.trim() !== "") castValue = Number(value);
-    const { error } = await sb.from(table).update({ [field]: castValue }).eq("id", items[0].id);
+    const { error } = await sb.from(table).update({ [field]: castValue }).eq("id", (items[0] as any).id);
     if (error) return JSON.stringify({ error: error.message });
     return JSON.stringify({ success: true, message: `Updated "${(items[0] as any)[nameCol]}" → ${field} = ${castValue}` });
   }
@@ -245,9 +245,9 @@ async function executeTool(name: string, args: any): Promise<string> {
   if (name === "delete_item") {
     const { table, item_name } = args;
     const nameCol = getNameColumn(table);
-    const { data: items } = await sb.from(table).select(`id, ${nameCol}`).ilike(nameCol, `%${item_name}%`);
+    const { data: items } = await sb.from(table).select(`id, ${nameCol}`).ilike(nameCol, `%${item_name}%`) as any;
     if (!items?.length) return JSON.stringify({ error: `No item matching "${item_name}" found in ${table}` });
-    const { error } = await sb.from(table).delete().eq("id", items[0].id);
+    const { error } = await sb.from(table).delete().eq("id", (items[0] as any).id);
     if (error) return JSON.stringify({ error: error.message });
     return JSON.stringify({ success: true, message: `Deleted "${(items[0] as any)[nameCol]}" from ${table}` });
   }
