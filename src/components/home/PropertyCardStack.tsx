@@ -121,11 +121,11 @@ function PaperTexture() {
 /* ── Main component ─────────────────────────────────────── */
 
 export default function PropertyCardStack({ properties, startIndex, onTap, wishlist, onToggleWishlist }: PropertyCardStackProps) {
-  const SWIPE_DISTANCE = 18;
-  const FLICK_DISTANCE = 8;
-  const FLICK_TIME = 240;
-  const TAP_DISTANCE = 10;
-  const TAP_TIME = 220;
+  const SWIPE_DISTANCE = 12;
+  const FLICK_DISTANCE = 6;
+  const FLICK_TIME = 260;
+  const TAP_DISTANCE = 12;
+  const TAP_TIME = 300;
 
   const cards = properties.slice(0, 5).length >= 3 ? properties.slice(0, 5) : properties.slice(0, 3);
   const [active, setActive] = useState(0);
@@ -133,18 +133,23 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
   const [isDragging, setIsDragging] = useState(false);
   const [imgLoaded, setImgLoaded] = useState<Record<number, boolean>>({});
   const [entered, setEntered] = useState(false);
-  const [progress, setProgress] = useState(0);
   const touchRef = useRef<{ x: number; y: number; t: number; mode: "pending" | "horizontal" | "vertical" } | null>(null);
   const swipedRef = useRef(false);
   const blockTapUntilRef = useRef(0);
   const controlTapBlockUntilRef = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<number>(0);
+  const progressBarRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number>(0);
   const lastTickRef = useRef<number>(0);
 
-  const goNext = useCallback(() => { setActive(i => (i + 1) % cards.length); setProgress(0); progressRef.current = 0; }, [cards.length]);
-  const goPrev = useCallback(() => { setActive(i => (i - 1 + cards.length) % cards.length); setProgress(0); progressRef.current = 0; }, [cards.length]);
+  const resetProgress = useCallback(() => {
+    progressRef.current = 0;
+    if (progressBarRef.current) progressBarRef.current.style.width = "0%";
+  }, []);
+
+  const goNext = useCallback(() => { setActive(i => (i + 1) % cards.length); resetProgress(); }, [cards.length, resetProgress]);
+  const goPrev = useCallback(() => { setActive(i => (i - 1 + cards.length) % cards.length); resetProgress(); }, [cards.length, resetProgress]);
 
   const blockCardTapBriefly = useCallback((ms = 420) => {
     const until = Date.now() + ms;
@@ -158,9 +163,15 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
     const tick = (now: number) => {
       const dt = now - lastTickRef.current;
       lastTickRef.current = now;
-      progressRef.current += dt / 3000;
-      if (progressRef.current >= 1) { setActive(i => (i + 1) % cards.length); progressRef.current = 0; }
-      setProgress(progressRef.current);
+      progressRef.current += dt / 4000;
+      // Update progress bar directly via DOM — avoids 60fps React re-renders
+      if (progressBarRef.current) {
+        progressBarRef.current.style.width = `${Math.min(progressRef.current * 100, 100)}%`;
+      }
+      if (progressRef.current >= 1) {
+        setActive(i => (i + 1) % cards.length);
+        progressRef.current = 0;
+      }
       rafRef.current = requestAnimationFrame(tick);
     };
     rafRef.current = requestAnimationFrame(tick);
@@ -189,7 +200,7 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
     if (absDiff > 2) return { zIndex: 0, opacity: 0, transform: "scale(0.5)", pointerEvents: "none" };
 
     const xOffset = diff * 95 + extraX;
-    const scale = isFront ? 1.05 : 0.75 - absDiff * 0.03;
+    const scale = isFront ? 1.0 : 0.78 - absDiff * 0.03;
     const rotateY = isFront ? extraR : diff * -14;
     const zShift = isFront ? 80 : -50 * absDiff;
 
@@ -328,11 +339,15 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
       {/* 3D Carousel */}
       <div
         className="relative w-full flex items-center justify-center select-none"
-        style={{ height: "350px", transformStyle: "preserve-3d", cursor: isDragging ? "grabbing" : "grab" }}
+        style={{ height: "350px", transformStyle: "preserve-3d", cursor: isDragging ? "grabbing" : "grab", touchAction: "none" }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={() => { if (mouseRef.current) { mouseRef.current = null; setDragX(0); setIsDragging(false); } }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchCancel}
       >
         {cards.map((property, idx) => {
           const isFront = idx === active;
@@ -350,7 +365,7 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
                 height: "340px",
                 left: "50%",
                 marginLeft: "-115px",
-                transition: isDragging ? "none" : "all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                transition: isDragging ? "none" : "all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
                 transformStyle: "preserve-3d",
                 willChange: "transform, opacity",
               }}
@@ -360,10 +375,6 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
                 if (Date.now() < blockTapUntilRef.current || Date.now() < controlTapBlockUntilRef.current) return;
                 onTap(property);
               }}
-              onTouchStart={isFront ? handleTouchStart : undefined}
-              onTouchMove={isFront ? handleTouchMove : undefined}
-              onTouchEnd={isFront ? handleTouchEnd : undefined}
-              onTouchCancel={isFront ? handleTouchCancel : undefined}
             >
               {/* Main ticket body */}
               <div
@@ -551,7 +562,7 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
         <div className="flex gap-1.5 items-center">
           {cards.map((_, i) => (
             <div key={i} className="relative rounded-full overflow-hidden" style={{ width: i === active ? "24px" : "5px", height: "5px", background: "hsl(var(--muted-foreground) / 0.15)", transition: "width 0.4s ease" }}>
-              {i === active && <div className="absolute inset-y-0 left-0 rounded-full" style={{ width: `${progress * 100}%`, background: accentColor, transition: "none" }} />}
+              {i === active && <div ref={progressBarRef} className="absolute inset-y-0 left-0 rounded-full" style={{ width: "0%", background: accentColor, transition: "none" }} />}
               {i !== active && i < active && <div className="absolute inset-0 rounded-full" style={{ background: `${accentColor}50` }} />}
             </div>
           ))}
