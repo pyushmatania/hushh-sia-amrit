@@ -16,6 +16,8 @@ interface MultiImageEditorProps {
   label?: string;
   maxImages?: number;
   dimensionTip?: string;
+  fallbackImages?: string[];
+  fallbackHint?: string;
 }
 
 export default function MultiImageEditor({
@@ -25,6 +27,8 @@ export default function MultiImageEditor({
   label = "Images",
   maxImages = 10,
   dimensionTip = "Recommended: 1200×800px (3:2 ratio), JPG/WebP, under 2MB",
+  fallbackImages = [],
+  fallbackHint = "This item currently uses a linked/default image. Upload custom images to replace it.",
 }: MultiImageEditorProps) {
   const { toast } = useToast();
   const [uploading, setUploading] = useState(false);
@@ -193,6 +197,7 @@ export default function MultiImageEditor({
   };
 
   const safeActive = Math.min(activeIndex, Math.max(0, images.length - 1));
+  const fallbackPreview = fallbackImages.find((url) => !!url) || null;
 
   return (
     <div className="space-y-2">
@@ -331,6 +336,16 @@ export default function MultiImageEditor({
               </button>
             </>
           )}
+        </div>
+      ) : fallbackPreview ? (
+        <div className="space-y-2">
+          <div className="relative rounded-xl overflow-hidden border border-border aspect-video bg-secondary/30">
+            <img src={fallbackPreview} alt="Fallback preview" className="w-full h-full object-cover" />
+            <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-primary/15 text-primary text-[10px] font-semibold">
+              Fallback preview
+            </div>
+          </div>
+          <p className="text-[10px] text-muted-foreground">{fallbackHint}</p>
         </div>
       ) : (
         <div
