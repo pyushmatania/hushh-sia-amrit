@@ -29,8 +29,8 @@ const TILE_LAYERS = {
 };
 
 const TILE_OPTIONS: Record<string, any> = {
-  light: { subdomains: "abcd", maxZoom: 20, attribution: '&copy; CartoDB' },
-  dark: { subdomains: "abcd", maxZoom: 20, attribution: '&copy; CartoDB' },
+  light: { subdomains: "abcd", maxZoom: 20, attribution: '&copy; CartoDB', className: "map-tiles-light" },
+  dark: { subdomains: "abcd", maxZoom: 20, attribution: '&copy; CartoDB', className: "map-tiles-evening" },
   satellite: { maxZoom: 20, attribution: '&copy; Esri' },
 };
 
@@ -357,8 +357,8 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
               )}
             </motion.button>
 
-            <motion.button whileTap={{ scale: 0.9 }} onClick={cycleTile} className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-md border border-border flex items-center justify-center shadow-lg shrink-0">
-              <Layers size={16} className="text-foreground" />
+            <motion.button whileTap={{ scale: 0.9 }} onClick={cycleTile} className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-md border border-border flex items-center justify-center shadow-lg shrink-0" title={tileStyle === "light" ? "Light" : tileStyle === "dark" ? "Evening" : "Satellite"}>
+              {tileStyle === "light" ? <Sun size={16} className="text-amber-500" /> : tileStyle === "dark" ? <Moon size={16} className="text-blue-400" /> : <Layers size={16} className="text-foreground" />}
             </motion.button>
           </div>
 
