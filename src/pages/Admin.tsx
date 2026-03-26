@@ -40,11 +40,11 @@ import { Shield, Loader2 } from "lucide-react";
 // Admin panel — v2
 export default function Admin() {
   const { user, loading: authLoading } = useAuth();
-  const { hasAdminAccess, loading: roleLoading, roles } = useAdmin();
-  const [page, setPage] = useState<AdminPage>("dashboard");
-  const [pageHistory, setPageHistory] = useState<AdminPage[]>([]);
   const [skipAuth, setSkipAuth] = useState(false);
   const [skipTaps, setSkipTaps] = useState(0);
+  const { hasAdminAccess, loading: roleLoading, roles } = useAdmin(skipAuth);
+  const [page, setPage] = useState<AdminPage>("dashboard");
+  const [pageHistory, setPageHistory] = useState<AdminPage[]>([]);
   const [historyContext, setHistoryContext] = useState<{ bookingId?: string; propertyId?: string } | null>(null);
   const [clientContext, setClientContext] = useState<{ userId?: string } | null>(null);
 
