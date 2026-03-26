@@ -297,8 +297,9 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
         open={!!editing}
         onClose={() => setEditing(null)}
         title={isCreating ? "Add Item" : "Edit Item"}
-        icon={<Sparkles size={16} className="text-primary" />}
+        icon={<Package size={16} className="text-primary" />}
         onSave={save}
+        heroImage={getInventoryCover(editing as InventoryItem) || null}
         saveLabel={isCreating ? "✨ Add Item" : "💾 Save Changes"}
         previewMode={previewMode}
         onTogglePreview={() => setPreviewMode(!previewMode)}
