@@ -6,8 +6,9 @@ import {
   X, Upload, Image, MapPin, DollarSign, Users, Tag, Star,
   Clock, ChevronDown, ChevronRight, Eye, Copy, MoreHorizontal,
   Sparkles, Filter, LayoutGrid, LayoutList, Hash, GripVertical, CheckSquare,
-  Shield, Zap, Globe, Camera, Layers, BarChart3, Info
+  Shield, Zap, Globe, Camera, Layers, BarChart3, Info, Save
 } from "lucide-react";
+import CatalogEditSheet from "./CatalogEditSheet";
 import { useDragReorder } from "@/hooks/use-drag-reorder";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
