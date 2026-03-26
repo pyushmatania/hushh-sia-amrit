@@ -45,7 +45,8 @@ const resolvePackageImages = (imageUrls?: string[] | null, imageUrl?: string | n
   return normalized.length > 0 ? normalized : imageUrl ? [imageUrl] : [];
 };
 
-const getPackageCover = (pkg: Pick<PackageRow, "image_urls" | "image_url">): string | null => {
+const getPackageCover = (pkg: Pick<PackageRow, "image_urls" | "image_url"> | null | undefined): string | null => {
+  if (!pkg) return null;
   return resolvePackageImages(pkg.image_urls, pkg.image_url)[0] ?? null;
 };
 
