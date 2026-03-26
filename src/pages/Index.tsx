@@ -385,17 +385,15 @@ export default function Index() {
       </AnimatePresence>
 
       {/* Map overlay */}
-      <Suspense fallback={<ScreenSkeleton />}>
-        <AnimatePresence>
-          {showMap && (
-            <MapViewScreen
-              key="map"
-              onPropertyTap={(p) => { setShowMap(false); handlePropertyTap(p); }}
-              onClose={() => setShowMap(false)}
-            />
-          )}
-        </AnimatePresence>
-      </Suspense>
+      {showMap && (
+        <Suspense fallback={<ScreenSkeleton />}>
+          <MapViewScreen
+            key="map"
+            onPropertyTap={(p) => { setShowMap(false); handlePropertyTap(p); }}
+            onClose={() => setShowMap(false)}
+          />
+        </Suspense>
+      )}
 
       {/* Notification Center overlay */}
       <AnimatePresence>
