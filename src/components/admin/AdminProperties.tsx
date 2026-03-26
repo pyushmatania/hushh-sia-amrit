@@ -814,16 +814,34 @@ export default function AdminProperties() {
                 </EditSection>
 
                 {/* Media Gallery */}
-                <EditSection title="Media Gallery" icon={<Camera size={16} />} id="images" expanded={expandedSection} onToggle={setExpandedSection} badge={`${(editingListing.image_urls || []).length} photos`} collapsedImages={editingListing.image_urls || []}>
-                  <MultiImageEditor
-                    images={editingListing.image_urls || []}
-                    onChange={urls => setEditingListing(p => ({ ...p!, image_urls: urls }))}
-                    storagePath="properties"
-                    label="Property Images"
-                    maxImages={15}
-                    dimensionTip="Recommended: 1200×800px (3:2), JPG/WebP, under 2MB. First image is the cover."
-                  />
-                </EditSection>
+                {(() => {
+                  const dbImages = editingListing.image_urls || [];
+                  const fallbackThumb = dbImages.length === 0 ? getListingThumbnail(editingListing.name || "", []) : null;
+                  const displayCount = dbImages.length > 0 ? dbImages.length : (fallbackThumb ? 1 : 0);
+                  const badgeText = dbImages.length > 0 ? `${dbImages.length} photos` : (fallbackThumb ? "1 fallback" : "0 photos");
+                  const collapsedPreviews = dbImages.length > 0 ? dbImages : (fallbackThumb ? [fallbackThumb] : []);
+                  return (
+                    <EditSection title="Media Gallery" icon={<Camera size={16} />} id="images" expanded={expandedSection} onToggle={setExpandedSection} badge={badgeText} collapsedImages={collapsedPreviews}>
+                      {dbImages.length === 0 && fallbackThumb && (
+                        <div className="mb-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                          <p className="text-[11px] font-medium text-amber-600 dark:text-amber-400 mb-2">📷 Currently showing a default image on the listing page:</p>
+                          <div className="w-24 h-16 rounded-lg overflow-hidden">
+                            <img src={fallbackThumb} alt="Fallback" className="w-full h-full object-cover" />
+                          </div>
+                          <p className="text-[10px] text-muted-foreground mt-1.5">Upload custom photos below to replace it.</p>
+                        </div>
+                      )}
+                      <MultiImageEditor
+                        images={dbImages}
+                        onChange={urls => setEditingListing(p => ({ ...p!, image_urls: urls }))}
+                        storagePath="properties"
+                        label="Property Images"
+                        maxImages={15}
+                        dimensionTip="Recommended: 1200×800px (3:2), JPG/WebP, under 2MB. First image is the cover."
+                      />
+                    </EditSection>
+                  );
+                })()}
 
                 {/* Pricing & Capacity */}
                 <EditSection title="Pricing & Capacity" icon={<DollarSign size={16} />} id="pricing" expanded={expandedSection} onToggle={setExpandedSection}>
