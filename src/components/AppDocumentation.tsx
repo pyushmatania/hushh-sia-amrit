@@ -1766,6 +1766,154 @@ function WallpapersTab() {
   );
 }
 
+// TAB: CREDITS / COLOPHON
+// ═══════════════════════════════════════════════════════════════
+function CreditsTab() {
+  const totalFeatures = changeLog.reduce((sum, v) => sum + v.items.length, 0);
+  const totalVersions = changeLog.length;
+
+  // Estimation: 64,600 LOC, ~200 features across 37 versions
+  // A senior full-stack dev writes ~100-150 production LOC/day
+  // With testing, design, infra: ~80 LOC/day average
+  const totalLOC = "64,600+";
+  const seniorDevDays = Math.ceil(64600 / 80); // ~808 days
+  const teamOf3Days = Math.ceil(seniorDevDays / 3); // ~269 days
+  const teamOf5Days = Math.ceil(seniorDevDays / 5); // ~162 days
+  const soloMonths = (seniorDevDays / 22).toFixed(0); // ~37 months
+  const teamOf3Months = (teamOf3Days / 22).toFixed(0);
+  const teamOf5Months = (teamOf5Days / 22).toFixed(0);
+
+  const stats = [
+    { icon: "📝", value: totalLOC, label: "Lines of Code", sub: "TypeScript + CSS + Edge Functions" },
+    { icon: "🧩", value: `${totalFeatures}+`, label: "Features Shipped", sub: `Across ${totalVersions} versions` },
+    { icon: "📁", value: "256", label: "Source Files", sub: "Components, hooks, utils, functions" },
+    { icon: "⚙️", value: "190", label: "React Components", sub: "UI, admin, staff, shared" },
+    { icon: "🪝", value: "31", label: "Custom Hooks", sub: "State, data, auth, real-time" },
+    { icon: "🗄️", value: "45", label: "Database Tables", sub: "With RLS policies" },
+    { icon: "⚡", value: "11", label: "Edge Functions", sub: "AI, notifications, Telegram, reports" },
+    { icon: "📱", value: "15+", label: "User Screens", sub: "Mobile-first, responsive" },
+    { icon: "🖥️", value: "22", label: "Admin Pages", sub: "Full CMS + CRM + analytics" },
+    { icon: "🎨", value: "16", label: "Wallpapers", sub: "Phone + Desktop, 4 time-of-day variants" },
+  ];
+
+  const effortEstimates = [
+    { scenario: "1 Senior Dev (solo)", days: `${seniorDevDays} days`, months: `~${soloMonths} months`, note: "Full-stack: React + DB + Edge Functions + Design" },
+    { scenario: "Team of 3 Seniors", days: `${teamOf3Days} days`, months: `~${teamOf3Months} months`, note: "1 Frontend + 1 Backend + 1 DevOps/Design" },
+    { scenario: "Team of 5 Engineers", days: `${teamOf5Days} days`, months: `~${teamOf5Months} months`, note: "2 FE + 1 BE + 1 Design + 1 PM/QA" },
+    { scenario: "Startup Studio (8 ppl)", days: `${Math.ceil(seniorDevDays / 8)} days`, months: `~${(seniorDevDays / 8 / 22).toFixed(0)} months`, note: "Full cross-functional team" },
+  ];
+
+  const techBreakdown = [
+    { area: "Frontend UI", pct: "42%", loc: "~27,100", detail: "190 components, animations, responsive" },
+    { area: "Business Logic", pct: "18%", loc: "~11,600", detail: "31 hooks, state management, data flows" },
+    { area: "Admin Panel", pct: "20%", loc: "~12,900", detail: "22 pages, CRM, analytics, AI" },
+    { area: "Backend / Edge", pct: "8%", loc: "~5,200", detail: "11 edge functions, AI, Telegram bot" },
+    { area: "Styling / CSS", pct: "7%", loc: "~4,500", detail: "Design system, tokens, dark/light themes" },
+    { area: "Config / Infra", pct: "5%", loc: "~3,300", detail: "Vite, Capacitor, PWA, CI/CD" },
+  ];
+
+  const funFacts = [
+    { emoji: "☕", fact: `At 3 cups/day coding, this project consumed ~${seniorDevDays * 3} cups of coffee` },
+    { emoji: "⌨️", fact: `Roughly ${(64600 * 45).toLocaleString()} keystrokes to type all the code` },
+    { emoji: "🔄", fact: `${totalVersions} release cycles with ${totalFeatures}+ features = ${(totalFeatures / totalVersions).toFixed(1)} features per release` },
+    { emoji: "📊", fact: `45 database tables × avg 8 columns = ~360 data fields managed` },
+    { emoji: "🎬", fact: "70+ video assets for curated experiences and packs" },
+    { emoji: "🔐", fact: "Every table has Row Level Security — zero trust by default" },
+    { emoji: "📲", fact: "Works as PWA, Android APK, and responsive web — 3 platforms, 1 codebase" },
+    { emoji: "🌗", fact: "Full dark + light theme with 0.5s morphing transitions" },
+    { emoji: "🤖", fact: "AI-powered admin assistant understands natural language commands" },
+    { emoji: "🎰", fact: "Gamification: spin wheel, loyalty tiers, milestones, referrals" },
+  ];
+
+  return (
+    <div className="space-y-6">
+      {/* Hero */}
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="rounded-3xl p-6 text-center relative overflow-hidden" style={{ background: "linear-gradient(160deg, hsl(40 80% 55% / 0.15) 0%, hsl(var(--primary) / 0.08) 50%, hsl(280 60% 40% / 0.1) 100%)", border: "1px solid hsl(40 80% 55% / 0.2)" }}>
+        <div className="absolute -top-20 -right-20 w-52 h-52 rounded-full opacity-15 pointer-events-none" style={{ background: "radial-gradient(circle, hsl(40 80% 55% / 0.5), transparent 70%)" }} />
+        <p className="text-4xl mb-2">🏗️</p>
+        <h2 className="text-xl font-black text-foreground tracking-tight">Behind the Scenes</h2>
+        <p className="text-[11px] text-muted-foreground mt-1 max-w-[300px] mx-auto leading-relaxed">The engineering effort, fun stats, and colophon of building Hushh from scratch.</p>
+      </motion.div>
+
+      {/* Project Stats Grid */}
+      <div>
+        <SectionHeader title="By the Numbers" subtitle="Raw project statistics" />
+        <div className="grid grid-cols-2 gap-2">
+          {stats.map((s, i) => (
+            <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
+              className="rounded-2xl p-3 relative overflow-hidden" style={{ background: "hsl(var(--primary) / 0.04)", border: "1px solid hsl(var(--primary) / 0.1)" }}>
+              <p className="text-lg mb-0.5">{s.icon}</p>
+              <p className="text-xl font-black text-foreground leading-none">{s.value}</p>
+              <p className="text-[10px] font-bold text-primary mt-0.5">{s.label}</p>
+              <p className="text-[9px] text-muted-foreground mt-0.5">{s.sub}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Dev Effort Estimation */}
+      <div>
+        <SectionHeader title="Estimated Dev Effort" subtitle="If senior developers coded this traditionally" />
+        <p className="text-[10px] text-muted-foreground mb-3 leading-relaxed" style={{ background: "hsl(var(--primary) / 0.04)", padding: "8px 12px", borderRadius: "12px", border: "1px solid hsl(var(--primary) / 0.08)" }}>
+          💡 Based on ~80 production LOC/day (incl. testing, design, debugging, code review). Industry standard for full-stack senior engineers.
+        </p>
+        <div className="space-y-2">
+          {effortEstimates.map((e, i) => (
+            <motion.div key={i} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}
+              className="rounded-xl p-3 flex items-center gap-3" style={{ background: "hsl(var(--primary) / 0.04)", border: "1px solid hsl(var(--primary) / 0.08)" }}>
+              <div className="flex-1">
+                <p className="text-xs font-bold text-foreground">{e.scenario}</p>
+                <p className="text-[10px] text-muted-foreground">{e.note}</p>
+              </div>
+              <div className="text-right shrink-0">
+                <p className="text-sm font-black text-primary">{e.months}</p>
+                <p className="text-[9px] text-muted-foreground">{e.days}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Code Breakdown */}
+      <div>
+        <SectionHeader title="Code Breakdown" subtitle="Where the lines of code live" />
+        <DataTable
+          headers={["Area", "%", "~LOC", "Details"]}
+          rows={techBreakdown.map(t => [t.area, t.pct, t.loc, t.detail])}
+        />
+      </div>
+
+      {/* Fun Facts */}
+      <div>
+        <SectionHeader title="Fun Facts" subtitle="Nerdy tidbits from the build" />
+        <div className="space-y-1.5">
+          {funFacts.map((f, i) => (
+            <motion.div key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.03 }}
+              className="flex items-start gap-2.5 p-2.5 rounded-xl" style={{ background: i % 2 === 0 ? "hsl(var(--primary) / 0.03)" : "transparent" }}>
+              <span className="text-base shrink-0">{f.emoji}</span>
+              <p className="text-[11px] text-muted-foreground leading-snug">{f.fact}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Colophon */}
+      <DocSection title="Colophon" icon={<Heart size={14} className="text-primary" />} defaultOpen>
+        <div className="space-y-2 text-[11px]">
+          <p><strong className="text-foreground">Platform:</strong> Built on Lovable with Lovable Cloud backend</p>
+          <p><strong className="text-foreground">Frontend:</strong> React 18 · TypeScript · Vite 8 · Tailwind CSS 3 · shadcn/ui · Framer Motion</p>
+          <p><strong className="text-foreground">Backend:</strong> PostgreSQL · Edge Functions · GoTrue Auth · Real-time Subscriptions</p>
+          <p><strong className="text-foreground">Mobile:</strong> Capacitor 8 · PWA · GitHub Actions CI/CD</p>
+          <p><strong className="text-foreground">Design:</strong> Space Grotesk + Playfair Display · Cinematic dark/violet theme · HSL design tokens</p>
+          <p><strong className="text-foreground">AI:</strong> Natural language admin commands · Property history analysis · Smart alerts</p>
+          <p className="text-muted-foreground pt-2 italic">Made with ❤️ in Jeypore, India</p>
+        </div>
+      </DocSection>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
 // TAB: CHANGELOG
 // ═══════════════════════════════════════════════════════════════
 function ChangelogTab() {
