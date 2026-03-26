@@ -37,6 +37,7 @@ import AdminTelegram from "@/components/admin/AdminTelegram";
 import AuthScreen from "@/components/AuthScreen";
 import { Shield, Loader2 } from "lucide-react";
 
+// Admin panel — v2
 export default function Admin() {
   const { user, loading: authLoading } = useAuth();
   const { hasAdminAccess, loading: roleLoading, roles } = useAdmin();
