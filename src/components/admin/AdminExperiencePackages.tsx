@@ -11,6 +11,7 @@ import BatchOperationsBar from "./BatchOperationsBar";
 import MultiImageEditor from "./MultiImageEditor";
 import VideoEditor from "./VideoEditor";
 import { useAutoSave } from "@/hooks/use-auto-save";
+import CatalogEditSheet from "./CatalogEditSheet";
 
 interface PackageRow {
   id: string;
@@ -337,204 +338,119 @@ export default function AdminExperiencePackages() {
       )}
 
       {/* Edit/Create Sheet */}
-      <AnimatePresence>
-        {editing && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
-            onClick={() => setEditing(null)}
-          >
-            <motion.div
-              initial={{ y: 100, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 100, opacity: 0 }}
-              className="w-full max-w-md bg-card rounded-t-2xl sm:rounded-2xl border border-border p-5 space-y-4 max-h-[85vh] overflow-y-auto"
-              onClick={e => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold text-foreground">
-                  {isCreating ? "Add Package" : "Edit Package"}
-                </h2>
-                <div className="flex items-center gap-1">
-                  <button onClick={() => setPreviewMode(!previewMode)}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1 transition ${previewMode ? "bg-primary/15 text-primary" : "bg-secondary text-muted-foreground"}`}>
-                    <Eye size={12} /> {previewMode ? "Edit" : "Preview"}
-                  </button>
-                  <button onClick={() => setEditing(null)} className="p-1 rounded-lg hover:bg-secondary">
-                    <X size={18} className="text-muted-foreground" />
-                  </button>
-                </div>
+      <CatalogEditSheet
+        open={!!editing}
+        onClose={() => setEditing(null)}
+        title={isCreating ? "Add Package" : "Edit Package"}
+        icon={<Gift size={18} className="text-pink-500" />}
+        onSave={save}
+        saveLabel={isCreating ? "✨ Add Package" : "Save & Close"}
+        previewMode={previewMode}
+        onTogglePreview={() => setPreviewMode(!previewMode)}
+        autoSaveStatus={!isCreating ? autoSaveStatus : undefined}
+        previewContent={editing ? (
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+            className="rounded-xl border border-border bg-background overflow-hidden">
+            {editing.image_url && (
+              <div className="aspect-video w-full overflow-hidden">
+                <img src={editing.image_url} alt="" className="w-full h-full object-cover" />
               </div>
-
-              {previewMode ? (
-                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                  className="rounded-xl border border-border bg-background overflow-hidden">
-                  {editing.image_url && (
-                    <div className="aspect-video w-full overflow-hidden">
-                      <img src={editing.image_url} alt="" className="w-full h-full object-cover" />
-                    </div>
-                  )}
-                  <div className={`bg-gradient-to-br ${editing.gradient || "from-primary/80 to-primary/40"} p-6 text-center`}>
-                    <span className="text-4xl">{editing.emoji || "✨"}</span>
-                    <h3 className="text-lg font-bold text-white mt-2">{editing.name || "Package Name"}</h3>
-                    <p className="text-2xl font-bold text-white mt-1 tabular-nums">₹{(editing.price || 0).toLocaleString()}</p>
-                  </div>
-                  <div className="p-4 space-y-2">
-                    {(editing.includes || []).length > 0 ? (
-                      <div className="flex flex-wrap gap-1.5">
-                        {(editing.includes || []).map((inc, j) => (
-                          <span key={j} className="text-xs px-2 py-1 rounded-lg bg-secondary text-foreground">{inc}</span>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-sm text-muted-foreground">No inclusions added yet</p>
-                    )}
-                  </div>
-                </motion.div>
+            )}
+            <div className={`bg-gradient-to-br ${editing.gradient || "from-primary/80 to-primary/40"} p-6 text-center`}>
+              <span className="text-4xl">{editing.emoji || "✨"}</span>
+              <h3 className="text-lg font-bold text-white mt-2">{editing.name || "Package Name"}</h3>
+              <p className="text-2xl font-bold text-white mt-1 tabular-nums">₹{(editing.price || 0).toLocaleString()}</p>
+            </div>
+            <div className="p-4 space-y-2">
+              {(editing.includes || []).length > 0 ? (
+                <div className="flex flex-wrap gap-1.5">
+                  {(editing.includes || []).map((inc, j) => (
+                    <span key={j} className="text-xs px-2 py-1 rounded-lg bg-secondary text-foreground">{inc}</span>
+                  ))}
+                </div>
               ) : (
-                <>
-
-              <div className="grid grid-cols-[60px_1fr] gap-3">
-                <div>
-                  <label className="text-xs text-muted-foreground mb-1 block">Emoji</label>
-                  <Input
-                    value={editing.emoji || ""}
-                    onChange={e => setEditing(p => ({ ...p!, emoji: e.target.value }))}
-                    className="text-center text-lg"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-muted-foreground mb-1 block">Name</label>
-                  <Input
-                    value={editing.name || ""}
-                    onChange={e => setEditing(p => ({ ...p!, name: e.target.value }))}
-                    placeholder="Romantic Date"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs text-muted-foreground mb-1 block">Price (₹)</label>
-                  <Input
-                    type="number"
-                    value={editing.price ?? ""}
-                    onChange={e => setEditing(p => ({ ...p!, price: Number(e.target.value) }))}
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-muted-foreground mb-1 block">Sort Order</label>
-                  <Input
-                    type="number"
-                    value={editing.sort_order ?? ""}
-                    onChange={e => setEditing(p => ({ ...p!, sort_order: Number(e.target.value) }))}
-                  />
-                </div>
-              </div>
-
-              {/* Package Images */}
-              <MultiImageEditor
-                images={editing.image_urls || []}
-                onChange={urls => setEditing(p => ({ ...p!, image_urls: urls, image_url: urls[0] || null }))}
-                storagePath="packages"
-                label="Package Images"
-                maxImages={8}
-                dimensionTip="Recommended: 800×800px (1:1 square) or 1200×800px (3:2), JPG/WebP, under 2MB"
-              />
-
-              {/* Package Video (for vertical video cards) */}
-              <VideoEditor
-                videoUrl={editing.video_url || null}
-                onChange={url => setEditing(p => ({ ...p!, video_url: url }))}
-                storagePath="package-videos"
-                label="Vertical Video (for discovery cards)"
-                dimensionTip="Recommended: 1080×1920px (9:16 vertical), MP4, under 15MB, 5-15 seconds"
-              />
-
-              {/* Gradient picker */}
-              <div>
-                <label className="text-xs text-muted-foreground mb-1.5 block">Card Gradient</label>
-                <div className="flex flex-wrap gap-2">
-                  {GRADIENT_OPTIONS.map(g => (
-                    <button
-                      key={g}
-                      onClick={() => setEditing(p => ({ ...p!, gradient: g }))}
-                      className={`w-8 h-8 rounded-lg bg-gradient-to-br ${g} border-2 transition ${
-                        editing.gradient === g ? "border-primary scale-110" : "border-transparent"
-                      }`}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* Includes */}
-              <div>
-                <label className="text-xs text-muted-foreground mb-1.5 block">Includes</label>
-                <div className="flex flex-wrap gap-1.5 mb-2">
-                  {(editing.includes || []).map((inc, idx) => (
-                    <span
-                      key={idx}
-                      className="text-xs px-2 py-1 rounded-lg bg-secondary text-foreground flex items-center gap-1"
-                    >
-                      {inc}
-                      <button onClick={() => removeInclude(idx)}>
-                        <X size={10} className="text-muted-foreground" />
-                      </button>
-                    </span>
-                  ))}
-                </div>
-                <div className="flex gap-2">
-                  <Input
-                    value={includeInput}
-                    onChange={e => setIncludeInput(e.target.value)}
-                    placeholder="e.g. Dinner, DJ, Pool"
-                    onKeyDown={e => e.key === "Enter" && (e.preventDefault(), addInclude())}
-                    className="flex-1"
-                  />
-                  <button
-                    onClick={addInclude}
-                    className="px-3 py-2 rounded-lg bg-secondary text-foreground text-xs font-medium hover:bg-secondary/80 transition"
-                  >
-                    Add
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={editing.active ?? true}
-                  onChange={e => setEditing(p => ({ ...p!, active: e.target.checked }))}
-                  className="rounded border-input"
-                  id="pkg-active"
-                />
-                <label htmlFor="pkg-active" className="text-sm text-foreground">Active</label>
-              </div>
-
-              </>
+                <p className="text-sm text-muted-foreground">No inclusions added yet</p>
               )}
-
-              {!isCreating && autoSaveStatus !== "idle" && (
-                <div className={`text-center py-1.5 rounded-xl text-[11px] font-semibold ${
-                  autoSaveStatus === "saving" ? "bg-amber-500/15 text-amber-500" :
-                  autoSaveStatus === "saved" ? "bg-emerald-500/15 text-emerald-500" :
-                  "bg-destructive/15 text-destructive"
-                }`}>
-                  {autoSaveStatus === "saving" ? "⏳ Auto-saving..." : autoSaveStatus === "saved" ? "✓ Auto-saved" : "⚠ Save error"}
-                </div>
-              )}
-              <button
-                onClick={save}
-                className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 active:scale-[0.98] transition"
-              >
-                {isCreating ? "Add Package" : "Save & Close"}
-              </button>
-            </motion.div>
+            </div>
           </motion.div>
+        ) : undefined}
+      >
+        {editing && (
+          <>
+            <div className="grid grid-cols-[60px_1fr] gap-3">
+              <div>
+                <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Emoji</label>
+                <Input value={editing.emoji || ""} onChange={e => setEditing(p => ({ ...p!, emoji: e.target.value }))} className="text-center text-lg rounded-xl" />
+              </div>
+              <div>
+                <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Name</label>
+                <Input value={editing.name || ""} onChange={e => setEditing(p => ({ ...p!, name: e.target.value }))} placeholder="Romantic Date" className="rounded-xl" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Price (₹)</label>
+                <Input type="number" value={editing.price ?? ""} onChange={e => setEditing(p => ({ ...p!, price: Number(e.target.value) }))} className="rounded-xl" />
+              </div>
+              <div>
+                <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Sort Order</label>
+                <Input type="number" value={editing.sort_order ?? ""} onChange={e => setEditing(p => ({ ...p!, sort_order: Number(e.target.value) }))} className="rounded-xl" />
+              </div>
+            </div>
+
+            <MultiImageEditor
+              images={editing.image_urls || []}
+              onChange={urls => setEditing(p => ({ ...p!, image_urls: urls, image_url: urls[0] || null }))}
+              storagePath="packages"
+              label="Package Images"
+              maxImages={8}
+              dimensionTip="Recommended: 800×800px (1:1 square) or 1200×800px (3:2), JPG/WebP, under 2MB"
+            />
+
+            <VideoEditor
+              videoUrl={editing.video_url || null}
+              onChange={url => setEditing(p => ({ ...p!, video_url: url }))}
+              storagePath="package-videos"
+              label="Vertical Video (for discovery cards)"
+              dimensionTip="Recommended: 1080×1920px (9:16 vertical), MP4, under 15MB, 5-15 seconds"
+            />
+
+            <div>
+              <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Card Gradient</label>
+              <div className="flex flex-wrap gap-2">
+                {GRADIENT_OPTIONS.map(g => (
+                  <button key={g} onClick={() => setEditing(p => ({ ...p!, gradient: g }))}
+                    className={`w-8 h-8 rounded-lg bg-gradient-to-br ${g} border-2 transition ${editing.gradient === g ? "border-primary scale-110" : "border-transparent"}`} />
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Includes</label>
+              <div className="flex flex-wrap gap-1.5 mb-2">
+                {(editing.includes || []).map((inc, idx) => (
+                  <span key={idx} className="text-xs px-2 py-1 rounded-lg bg-secondary text-foreground flex items-center gap-1">
+                    {inc}
+                    <button onClick={() => removeInclude(idx)}><X size={10} className="text-muted-foreground" /></button>
+                  </span>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <Input value={includeInput} onChange={e => setIncludeInput(e.target.value)} placeholder="e.g. Dinner, DJ, Pool"
+                  onKeyDown={e => e.key === "Enter" && (e.preventDefault(), addInclude())} className="flex-1 rounded-xl" />
+                <button onClick={addInclude} className="px-3 py-2 rounded-xl bg-secondary text-foreground text-xs font-medium hover:bg-secondary/80 transition">Add</button>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input type="checkbox" checked={editing.active ?? true} onChange={e => setEditing(p => ({ ...p!, active: e.target.checked }))}
+                className="rounded border-input" id="pkg-active" />
+              <label htmlFor="pkg-active" className="text-sm text-foreground">Active</label>
+            </div>
+          </>
         )}
-      </AnimatePresence>
+      </CatalogEditSheet>
 
       <BatchOperationsBar
         selectedIds={selectedIds}

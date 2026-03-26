@@ -16,6 +16,7 @@ import BatchOperationsBar from "./BatchOperationsBar";
 import { getListingThumbnail } from "@/lib/listing-thumbnails";
 import MultiImageEditor from "./MultiImageEditor";
 import { useAutoSave } from "@/hooks/use-auto-save";
+import CatalogEditSheet from "./CatalogEditSheet";
 
 const MOOD_OPTIONS = ["Romantic", "Party", "Chill", "Adventure", "Work", "Celebration", "Family"];
 const INCLUDE_OPTIONS = [
@@ -220,239 +221,176 @@ export default function AdminCurations() {
     toast({ title: !current ? "Curation activated" : "Curation paused" });
   };
 
-  // ── Editor View ──
-  if (editing) {
-    const propInfo = propertyMap.get(editing.property_id);
-    return (
-      <div className="space-y-5">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <Sparkles size={20} className="text-primary" />
-            {editingId ? "Edit Curation" : "Create Curation"}
-          </h1>
-          <div className="flex gap-2 items-center">
-            {editingId && autoSaveStatus !== "idle" && (
-              <span className={`px-2 py-1 rounded-lg text-[10px] font-semibold ${
-                autoSaveStatus === "saving" ? "bg-amber-500/15 text-amber-500" :
-                autoSaveStatus === "saved" ? "bg-emerald-500/15 text-emerald-500" :
-                "bg-destructive/15 text-destructive"
-              }`}>
-                {autoSaveStatus === "saving" ? "⏳ Saving..." : autoSaveStatus === "saved" ? "✓ Saved" : "⚠ Error"}
-              </span>
-            )}
-            <button onClick={() => setPreviewMode(!previewMode)}
-              className="px-3 py-1.5 rounded-lg text-xs font-medium bg-secondary text-foreground flex items-center gap-1">
-              <Eye size={12} /> {previewMode ? "Edit" : "Preview"}
-            </button>
-            <button onClick={() => { setEditing(null); setEditingId(null); }}
-              className="px-3 py-1.5 rounded-lg text-xs font-medium bg-secondary text-muted-foreground">
-              <X size={14} />
-            </button>
-          </div>
-        </div>
-
-        {previewMode ? (
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-            className="max-w-sm mx-auto rounded-2xl border border-border bg-card overflow-hidden shadow-lg">
-            {/* Hero with property image */}
-            <div className="relative h-40 bg-gradient-to-br from-primary/20 to-accent/10 overflow-hidden">
-              {propInfo?.imageUrls?.[0] && (
-                <img src={propInfo.imageUrls[0]} alt="" className="absolute inset-0 w-full h-full object-cover opacity-40" />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
-              <div className="absolute bottom-4 left-4 right-4">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-3xl">{editing.emoji}</span>
-                  {editing.badge && (
-                    <span className="text-[10px] font-bold bg-primary text-primary-foreground px-2 py-0.5 rounded-full">{editing.badge}</span>
-                  )}
-                </div>
-                <h3 className="text-lg font-bold text-foreground">{editing.name || "Untitled"}</h3>
-                <p className="text-xs text-muted-foreground">{editing.tagline || "Add a tagline"}</p>
-              </div>
-            </div>
-            <div className="p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-xl font-bold text-foreground">₹{editing.price.toLocaleString()}</span>
-                  {editing.original_price && (
-                    <span className="text-sm text-muted-foreground line-through ml-2">₹{editing.original_price.toLocaleString()}</span>
-                  )}
-                </div>
-                {editing.original_price && editing.original_price > editing.price && (
-                  <span className="text-[10px] font-bold bg-emerald-500/15 text-emerald-500 px-2 py-0.5 rounded-full">
-                    {Math.round(((editing.original_price - editing.price) / editing.original_price) * 100)}% OFF
-                  </span>
+  // ── Render ──
+  return (
+    <motion.div className="space-y-5" initial="initial" animate="animate">
+      {/* Editor Sheet */}
+      <CatalogEditSheet
+        open={!!editing}
+        onClose={() => { setEditing(null); setEditingId(null); }}
+        title={editingId ? "Edit Curation" : "Create Curation"}
+        icon={<Sparkles size={18} className="text-primary" />}
+        onSave={saveCuration}
+        saveLabel={editingId ? "Save & Close" : "✨ Create Curation"}
+        previewMode={previewMode}
+        onTogglePreview={() => setPreviewMode(!previewMode)}
+        autoSaveStatus={editingId ? autoSaveStatus : undefined}
+        previewContent={editing ? (() => {
+          const propInfo = propertyMap.get(editing.property_id);
+          return (
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+              className="rounded-2xl border border-border bg-card overflow-hidden shadow-lg">
+              <div className="relative h-40 bg-gradient-to-br from-primary/20 to-accent/10 overflow-hidden">
+                {propInfo?.imageUrls?.[0] && (
+                  <img src={propInfo.imageUrls[0]} alt="" className="absolute inset-0 w-full h-full object-cover opacity-40" />
                 )}
+                <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-3xl">{editing.emoji}</span>
+                    {editing.badge && <span className="text-[10px] font-bold bg-primary text-primary-foreground px-2 py-0.5 rounded-full">{editing.badge}</span>}
+                  </div>
+                  <h3 className="text-lg font-bold text-foreground">{editing.name || "Untitled"}</h3>
+                  <p className="text-xs text-muted-foreground">{editing.tagline || "Add a tagline"}</p>
+                </div>
               </div>
-              {editing.slot && (
-                <p className="text-xs text-muted-foreground flex items-center gap-1"><Clock size={11} /> {editing.slot}</p>
-              )}
-              {propInfo && (
-                <div className="flex items-center gap-2 bg-secondary/50 rounded-xl p-2.5">
-                  {(() => {
-                    const thumb = getListingThumbnail(propInfo.name, propInfo.imageUrls, { preferMapped: true });
-                    return thumb ? (
-                      <img src={thumb} alt={propInfo.name} className="w-8 h-8 rounded-lg object-cover" />
-                    ) : (
-                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">{propInfo.name[0]}</div>
-                    );
-                  })()}
+              <div className="p-4 space-y-3">
+                <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-medium text-foreground">{propInfo.name}</p>
-                    <p className="text-[10px] text-muted-foreground flex items-center gap-0.5"><MapPin size={8} /> {propInfo.location}</p>
+                    <span className="text-xl font-bold text-foreground">₹{editing.price.toLocaleString()}</span>
+                    {editing.original_price && <span className="text-sm text-muted-foreground line-through ml-2">₹{editing.original_price.toLocaleString()}</span>}
+                  </div>
+                  {editing.original_price && editing.original_price > editing.price && (
+                    <span className="text-[10px] font-bold bg-emerald-500/15 text-emerald-500 px-2 py-0.5 rounded-full">
+                      {Math.round(((editing.original_price - editing.price) / editing.original_price) * 100)}% OFF
+                    </span>
+                  )}
+                </div>
+                {editing.slot && <p className="text-xs text-muted-foreground flex items-center gap-1"><Clock size={11} /> {editing.slot}</p>}
+                <div className="flex flex-wrap gap-1.5">
+                  {editing.includes.map(inc => <span key={inc} className="text-[11px] bg-secondary text-foreground px-2 py-1 rounded-lg">{inc}</span>)}
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {editing.mood.map(m => <span key={m} className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full">{m}</span>)}
+                </div>
+              </div>
+            </motion.div>
+          );
+        })() : undefined}
+      >
+        {editing && (() => {
+          const propInfo = propertyMap.get(editing.property_id);
+          return (
+            <>
+              {/* Curation Images */}
+              <MultiImageEditor
+                images={editing.image_urls || []}
+                onChange={urls => setEditing({ ...editing, image_urls: urls })}
+                storagePath="curations"
+                label="Curation Images"
+                maxImages={8}
+                dimensionTip="Recommended: 1200×800px (3:2) or 800×800px (1:1), JPG/WebP, under 2MB"
+              />
+
+              {/* Linked Property Images (read-only preview) */}
+              {propInfo && propInfo.imageUrls.length > 0 && (
+                <div>
+                  <label className="text-[10px] text-muted-foreground mb-2 block font-semibold uppercase tracking-wider">Linked Property Images (from {propInfo.name})</label>
+                  <div className="grid grid-cols-4 gap-1.5">
+                    {propInfo.imageUrls.slice(0, 4).map((url, i) => (
+                      <div key={i} className="aspect-square rounded-lg overflow-hidden border border-border">
+                        <img src={url} alt="" className="w-full h-full object-cover" />
+                      </div>
+                    ))}
+                    {propInfo.imageUrls.length > 4 && (
+                      <div className="aspect-square rounded-lg bg-secondary flex items-center justify-center text-xs text-muted-foreground font-medium">+{propInfo.imageUrls.length - 4}</div>
+                    )}
                   </div>
                 </div>
               )}
-              <div className="flex flex-wrap gap-1.5">
-                {editing.includes.map(inc => (
-                  <span key={inc} className="text-[11px] bg-secondary text-foreground px-2 py-1 rounded-lg">{inc}</span>
-                ))}
-              </div>
-              <div className="flex flex-wrap gap-1">
-                {editing.mood.map(m => (
-                  <span key={m} className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full">{m}</span>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        ) : (
-          <div className="space-y-4">
-            {/* Curation Images */}
-            <MultiImageEditor
-              images={editing.image_urls || []}
-              onChange={urls => setEditing({ ...editing, image_urls: urls })}
-              storagePath="curations"
-              label="Curation Images"
-              maxImages={8}
-              dimensionTip="Recommended: 1200×800px (3:2) or 800×800px (1:1), JPG/WebP, under 2MB"
-            />
 
-            {/* Linked Property Images (read-only preview) */}
-            {propInfo && propInfo.imageUrls.length > 0 && (
-              <div>
-                <label className="text-[10px] text-muted-foreground mb-2 block font-semibold uppercase tracking-wider">Linked Property Images (from {propInfo.name})</label>
-                <div className="grid grid-cols-4 gap-1.5">
-                  {propInfo.imageUrls.slice(0, 4).map((url, i) => (
-                    <div key={i} className="aspect-square rounded-lg overflow-hidden border border-border">
-                      <img src={url} alt="" className="w-full h-full object-cover" />
-                    </div>
-                  ))}
-                  {propInfo.imageUrls.length > 4 && (
-                    <div className="aspect-square rounded-lg bg-secondary flex items-center justify-center text-xs text-muted-foreground font-medium">
-                      +{propInfo.imageUrls.length - 4}
-                    </div>
-                  )}
+              <div className="grid grid-cols-[60px_1fr] gap-3">
+                <div>
+                  <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Emoji</label>
+                  <Input value={editing.emoji} onChange={e => setEditing({ ...editing, emoji: e.target.value })} className="text-center text-xl rounded-xl" />
+                </div>
+                <div>
+                  <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Name</label>
+                  <Input value={editing.name} onChange={e => setEditing({ ...editing, name: e.target.value })} placeholder="Experience name" className="rounded-xl" />
                 </div>
               </div>
-            )}
 
-            <div className="grid grid-cols-[60px_1fr] gap-3">
               <div>
-                <label className="text-[10px] text-muted-foreground mb-1 block">Emoji</label>
-                <Input value={editing.emoji} onChange={e => setEditing({ ...editing, emoji: e.target.value })} className="text-center text-xl" />
+                <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Tagline</label>
+                <Input value={editing.tagline} onChange={e => setEditing({ ...editing, tagline: e.target.value })} placeholder="Short catchy tagline" className="rounded-xl" />
               </div>
-              <div>
-                <label className="text-[10px] text-muted-foreground mb-1 block">Name</label>
-                <Input value={editing.name} onChange={e => setEditing({ ...editing, name: e.target.value })} placeholder="Experience name" />
-              </div>
-            </div>
 
-            <div>
-              <label className="text-[10px] text-muted-foreground mb-1 block">Tagline</label>
-              <Input value={editing.tagline} onChange={e => setEditing({ ...editing, tagline: e.target.value })} placeholder="Short catchy tagline" />
-            </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Price (₹)</label>
+                  <Input type="number" value={editing.price} onChange={e => setEditing({ ...editing, price: Number(e.target.value) })} className="rounded-xl" />
+                </div>
+                <div>
+                  <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Original Price</label>
+                  <Input type="number" value={editing.original_price ?? ""} onChange={e => setEditing({ ...editing, original_price: e.target.value ? Number(e.target.value) : null })} placeholder="For strike-through" className="rounded-xl" />
+                </div>
+              </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-[10px] text-muted-foreground mb-1 block">Price (₹)</label>
-                <Input type="number" value={editing.price} onChange={e => setEditing({ ...editing, price: Number(e.target.value) })} />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Slot / Timing</label>
+                  <Input value={editing.slot} onChange={e => setEditing({ ...editing, slot: e.target.value })} placeholder="e.g. 4 PM – 10 PM" className="rounded-xl" />
+                </div>
+                <div>
+                  <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Badge</label>
+                  <Input value={editing.badge} onChange={e => setEditing({ ...editing, badge: e.target.value })} placeholder="Popular, New, etc." className="rounded-xl" />
+                </div>
               </div>
-              <div>
-                <label className="text-[10px] text-muted-foreground mb-1 block">Original Price</label>
-                <Input type="number" value={editing.original_price || ""} onChange={e => setEditing({ ...editing, original_price: e.target.value ? Number(e.target.value) : null })} placeholder="Optional" />
-              </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-[10px] text-muted-foreground mb-1 block">Time Slot</label>
-                <Input value={editing.slot} onChange={e => setEditing({ ...editing, slot: e.target.value })} placeholder="e.g. 7 PM – 11 PM" />
-              </div>
-              <div>
-                <label className="text-[10px] text-muted-foreground mb-1 block">Property</label>
+                <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Property</label>
                 <select value={editing.property_id} onChange={e => setEditing({ ...editing, property_id: e.target.value })}
-                  className="w-full h-10 rounded-md border border-border bg-background px-3 text-sm text-foreground">
+                  className="w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm">
                   <option value="">Select property</option>
-                  {Array.from(propertyMap).map(([id, info]) => (
+                  {Array.from(propertyMap.entries()).map(([id, info]) => (
                     <option key={id} value={id}>{info.name}</option>
                   ))}
                 </select>
               </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-[10px] text-muted-foreground mb-1 block">Badge (optional)</label>
-                <Input value={editing.badge} onChange={e => setEditing({ ...editing, badge: e.target.value })} placeholder="e.g. Most Popular" />
+                <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">What's Included</label>
+                <div className="flex flex-wrap gap-1.5">
+                  {INCLUDE_OPTIONS.map(inc => (
+                    <button key={inc} onClick={() => toggleInclude(inc)}
+                      className={`text-[11px] px-2.5 py-1.5 rounded-xl transition font-medium ${
+                        editing.includes.includes(inc) ? "bg-primary/15 text-primary border border-primary/30" : "bg-secondary text-muted-foreground border border-transparent hover:border-border"
+                      }`}>{inc}</button>
+                  ))}
+                </div>
               </div>
-              <div className="flex items-end pb-1">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" checked={editing.active} onChange={() => setEditing({ ...editing, active: !editing.active })}
-                    className="w-4 h-4 rounded border-border accent-primary" />
-                  <span className="text-xs text-foreground">Active</span>
-                </label>
-              </div>
-            </div>
 
-            <div>
-              <label className="text-[10px] text-muted-foreground mb-2 block">What's Included</label>
-              <div className="flex flex-wrap gap-2">
-                {INCLUDE_OPTIONS.map(inc => (
-                  <button key={inc} onClick={() => toggleInclude(inc)}
-                    className={`text-xs px-3 py-1.5 rounded-lg font-medium transition ${
-                      editing.includes.includes(inc) ? "bg-primary/15 text-primary ring-1 ring-primary/30" : "bg-secondary text-muted-foreground"
-                    }`}>{inc}</button>
-                ))}
+              <div>
+                <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">Mood Tags</label>
+                <div className="flex flex-wrap gap-1.5">
+                  {MOOD_OPTIONS.map(m => (
+                    <button key={m} onClick={() => toggleMood(m)}
+                      className={`text-[11px] px-2.5 py-1.5 rounded-xl transition font-medium ${
+                        editing.mood.includes(m) ? "bg-primary/15 text-primary border border-primary/30" : "bg-secondary text-muted-foreground border border-transparent hover:border-border"
+                      }`}>{m}</button>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            <div>
-              <label className="text-[10px] text-muted-foreground mb-2 block">Mood Tags</label>
-              <div className="flex flex-wrap gap-2">
-                {MOOD_OPTIONS.map(m => (
-                  <button key={m} onClick={() => toggleMood(m)}
-                    className={`text-xs px-3 py-1.5 rounded-lg font-medium transition ${
-                      editing.mood.includes(m) ? "bg-primary/15 text-primary ring-1 ring-primary/30" : "bg-secondary text-muted-foreground"
-                    }`}>{m}</button>
-                ))}
+              <div className="flex items-center gap-2">
+                <input type="checkbox" checked={editing.active} onChange={e => setEditing({ ...editing, active: e.target.checked })} className="rounded border-input" id="cur-active" />
+                <label htmlFor="cur-active" className="text-sm text-foreground">Active</label>
               </div>
-            </div>
+            </>
+          );
+        })()}
+      </CatalogEditSheet>
 
-            {editingId && autoSaveStatus !== "idle" && (
-              <div className={`text-center py-1.5 rounded-xl text-[11px] font-semibold ${
-                autoSaveStatus === "saving" ? "bg-amber-500/15 text-amber-500" :
-                autoSaveStatus === "saved" ? "bg-emerald-500/15 text-emerald-500" :
-                "bg-destructive/15 text-destructive"
-              }`}>
-                {autoSaveStatus === "saving" ? "⏳ Auto-saving..." : autoSaveStatus === "saved" ? "✓ Auto-saved" : "⚠ Save error"}
-              </div>
-            )}
-            <motion.button whileTap={{ scale: 0.97 }} onClick={saveCuration}
-              disabled={saving || !editing.name || !editing.property_id}
-              className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-50">
-              {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-              {editingId ? "Save & Close" : "Create Curation"}
-            </motion.button>
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  // ── List View ──
-  return (
-    <motion.div className="space-y-5" initial="initial" animate="animate">
       {/* Hero Header */}
       <motion.div variants={fadeUp}>
         <div className="flex items-center justify-between">
