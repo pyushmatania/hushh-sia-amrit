@@ -124,7 +124,7 @@ const VideoCard = memo(function VideoCard({
           {isVisible && (
             <video ref={videoRef} src={videoSrc} muted={muted} loop playsInline preload={isFirst ? "auto" : "none"} onCanPlay={() => setVideoReady(true)}
               className="absolute inset-0 w-full h-full object-cover z-[1] pointer-events-none"
-              style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.4s", filter: "blur(0.6px)" }}
+              style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.4s", willChange: "transform" }}
             />
           )}
           <AccentTag tag={accent.tag} className="absolute top-4 left-4 z-10" />
@@ -258,7 +258,10 @@ export default function SpotlightCarousel({ properties, onPropertyTap, category 
             >
               <img src={p.images[0]} alt={p.name}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700"
-                style={{ transform: isHovered ? "scale(1.08)" : "scale(1)" }}
+                style={{ transform: isHovered ? "scale(1.08)" : "scale(1)", willChange: "transform" }}
+                loading={i === 0 ? "eager" : "lazy"}
+                decoding="async"
+                fetchPriority={i === 0 ? "high" : "auto"}
               />
               <div className="absolute inset-0 transition-all duration-500"
                 style={{ background: isHovered 

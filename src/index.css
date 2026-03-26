@@ -130,9 +130,15 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Smooth theme transition on all themed elements */
-  .light *, .dark * {
-    transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.3s ease;
+  /* Smooth theme transition — scoped to non-media elements to avoid GPU overhead */
+  .light *:not(video):not(img):not(canvas), .dark *:not(video):not(img):not(canvas) {
+    transition: background-color 0.35s ease, border-color 0.35s ease;
+  }
+
+  /* Promote video elements to GPU compositor layer */
+  video {
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
 }
 

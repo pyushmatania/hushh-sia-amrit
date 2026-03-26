@@ -115,7 +115,7 @@ export default function Admin() {
     );
   }
 
-  if (!hasAdminAccess && !skipAuth) {
+  if (!hasAdminAccess) {
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-background px-6 text-center">
         <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center mb-4">

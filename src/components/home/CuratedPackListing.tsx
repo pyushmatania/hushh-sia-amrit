@@ -248,7 +248,7 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
               preload={index === 0 ? "auto" : "none"}
               onCanPlay={() => setVideoReady(true)}
               className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-              style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.3s", filter: "blur(0.6px)" }}
+              style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.3s", willChange: "transform" }}
             />
           )}
 
