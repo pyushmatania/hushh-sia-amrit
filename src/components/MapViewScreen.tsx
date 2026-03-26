@@ -4,6 +4,8 @@ import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { properties, type Property } from "@/data/properties";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+// Ensure L is globally available for leaflet.markercluster
+(window as any).L = L;
 import "leaflet.markercluster";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
