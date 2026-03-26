@@ -1,12 +1,15 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Star, MapPin, Navigation, Layers, Search, SlidersHorizontal, List, Map as MapIcon, ArrowUpDown, Plus, Minus, Share2, LocateFixed, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, Star, MapPin, Navigation, Layers, Search, SlidersHorizontal, List, Map as MapIcon, ArrowUpDown, Plus, Minus, Share2, LocateFixed, Loader2, ChevronLeft, ChevronRight, Sun, Moon } from "lucide-react";
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { properties, type Property } from "@/data/properties";
+import { useTheme } from "@/hooks/use-theme";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 // Ensure L is globally available for leaflet.markercluster
 (window as any).L = L;
 import "leaflet.markercluster";
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
@@ -18,17 +21,17 @@ interface MapViewScreenProps {
 const CENTER: [number, number] = [18.855, 82.575];
 const INITIAL_ZOOM = 14;
 
-// Using free tile providers (no API key required)
+// Theme-aware tile layers
 const TILE_LAYERS = {
-  default: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+  light: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+  dark: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
   satellite: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-  terrain: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
 };
 
-const TILE_OPTIONS = {
-  default: { subdomains: "abcd", maxZoom: 20, attribution: '&copy; CartoDB' },
+const TILE_OPTIONS: Record<string, any> = {
+  light: { subdomains: "abcd", maxZoom: 20, attribution: '&copy; CartoDB', className: "map-tiles-light" },
+  dark: { subdomains: "abcd", maxZoom: 20, attribution: '&copy; CartoDB', className: "map-tiles-evening" },
   satellite: { maxZoom: 20, attribution: '&copy; Esri' },
-  terrain: { subdomains: "abcd", maxZoom: 20, attribution: '&copy; CartoDB' },
 };
 
 const CATEGORIES = [
@@ -83,8 +86,9 @@ function createPhotoIcon(imageUrl: string, isSelected: boolean, price: number) {
 }
 
 export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenProps) {
+  const { resolvedTheme } = useTheme();
   const [selectedPin, setSelectedPin] = useState<Property | null>(null);
-  const [tileStyle, setTileStyle] = useState<keyof typeof TILE_LAYERS>("default");
+  const [tileStyle, setTileStyle] = useState<keyof typeof TILE_LAYERS>(resolvedTheme === "dark" ? "dark" : "light");
   const [activeCategory, setActiveCategory] = useState("all");
   const [priceRange, setPriceRange] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -353,8 +357,8 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
               )}
             </motion.button>
 
-            <motion.button whileTap={{ scale: 0.9 }} onClick={cycleTile} className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-md border border-border flex items-center justify-center shadow-lg shrink-0">
-              <Layers size={16} className="text-foreground" />
+            <motion.button whileTap={{ scale: 0.9 }} onClick={cycleTile} className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-md border border-border flex items-center justify-center shadow-lg shrink-0" title={tileStyle === "light" ? "Light" : tileStyle === "dark" ? "Evening" : "Satellite"}>
+              {tileStyle === "light" ? <Sun size={16} className="text-amber-500" /> : tileStyle === "dark" ? <Moon size={16} className="text-blue-400" /> : <Layers size={16} className="text-foreground" />}
             </motion.button>
           </div>
 

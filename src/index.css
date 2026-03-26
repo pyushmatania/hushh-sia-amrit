@@ -611,6 +611,13 @@
 .leaflet-tile-pane {
   filter: none;
 }
+/* Blue evening tint for dark mode map */
+.map-tiles-evening {
+  filter: brightness(1.15) saturate(1.2) hue-rotate(10deg) sepia(0.15);
+}
+.map-tiles-light {
+  filter: none;
+}
 .custom-cluster-icon {
   background: none !important;
   border: none !important;
