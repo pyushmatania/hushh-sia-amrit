@@ -16,6 +16,7 @@ import BatchOperationsBar from "./BatchOperationsBar";
 import { getListingThumbnail } from "@/lib/listing-thumbnails";
 import MultiImageEditor from "./MultiImageEditor";
 import { useAutoSave } from "@/hooks/use-auto-save";
+import CatalogEditSheet from "./CatalogEditSheet";
 
 const MOOD_OPTIONS = ["Romantic", "Party", "Chill", "Adventure", "Work", "Celebration", "Family"];
 const INCLUDE_OPTIONS = [
