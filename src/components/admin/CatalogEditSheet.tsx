@@ -47,7 +47,7 @@ export default function CatalogEditSheet({
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="absolute right-0 top-0 bottom-0 w-full max-w-lg bg-card border-l border-border flex flex-col"
+            className="absolute right-0 top-0 bottom-0 w-full max-w-lg bg-card border-l border-border flex flex-col h-[100dvh]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Hero Image */}
