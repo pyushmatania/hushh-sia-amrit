@@ -59,6 +59,7 @@ export default function MultiImageEditor({
     const totalFiles = files.length;
     let completed = 0;
     let failed = 0;
+    let lastError = "";
 
     for (const file of Array.from(files)) {
       const ext = file.name.split(".").pop();
@@ -75,6 +76,7 @@ export default function MultiImageEditor({
 
       if (error) {
         console.error("Upload error:", error.message, error);
+        lastError = error.message;
         failed++;
         completed++;
         continue;
@@ -95,7 +97,9 @@ export default function MultiImageEditor({
     if (failed > 0) {
       toast({
         title: "Upload failed",
-        description: `${failed} of ${totalFiles} failed. Try Paste URL instead, or check file size (max 5MB).`,
+        description: lastError
+          ? `Error: ${lastError}`
+          : `${failed} of ${totalFiles} failed. Try Paste URL instead, or check file size (max 5MB).`,
         variant: "destructive",
       });
     }
