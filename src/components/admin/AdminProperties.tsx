@@ -215,11 +215,10 @@ export default function AdminProperties() {
   };
 
   const openEdit = (listing: Listing) => {
-    const fallbackThumb = getListingThumbnail(listing.name, listing.image_urls, { preferMapped: true });
-    const resolvedImages = listing.image_urls?.length
+    // Use only real DB images — never inject fallback thumbnails into image_urls,
+    // or they will get auto-saved back to the DB and overwrite the images column.
+    const resolvedImages = Array.isArray(listing.image_urls) && listing.image_urls.length > 0
       ? listing.image_urls
-      : fallbackThumb
-      ? [fallbackThumb]
       : [];
 
     setEditingListing({ ...listing, image_urls: resolvedImages });

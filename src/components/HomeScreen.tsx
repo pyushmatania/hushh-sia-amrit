@@ -263,7 +263,9 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 homeSections.push({ key: "spotlight", order: getSortOrder("spotlight"), node: (
                   <>
                     <SectionTitle title="🔥 TONIGHT'S VIBE" />
-                    <SpotlightCarousel properties={activeMood ? moodFilteredProperties : properties} onPropertyTap={onPropertyTap} category="home" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
+                    <Suspense fallback={<div style={{ height: "70vh", minHeight: 420 }} className="px-4" />}>
+                      <SpotlightCarousel properties={activeMood ? moodFilteredProperties : properties} onPropertyTap={onPropertyTap} category="home" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
+                    </Suspense>
                   </>
                 )});
               }
@@ -281,15 +283,17 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               }
               if (isSectionVisible("foodie")) {
                 homeSections.push({ key: "foodie", order: getSortOrder("foodie"), node: (
-                  <LazySection minHeight="500px">
+                  <LazySection minHeight="500px" rootMargin="400px">
                     <SectionTitle title="FOODIE FRONT ROW" />
-                    <FoodieCarousel properties={properties} onPropertyTap={onPropertyTap} />
+                    <Suspense fallback={<div style={{ height: 480 }} />}>
+                      <FoodieCarousel properties={properties} onPropertyTap={onPropertyTap} />
+                    </Suspense>
                   </LazySection>
                 )});
               }
               if (isSectionVisible("curated_packs")) {
                 homeSections.push({ key: "curated_packs", order: getSortOrder("curated_packs"), node: (
-                  <LazySection minHeight="400px">
+                  <LazySection minHeight="400px" rootMargin="500px">
               <SectionTitle title="✨ CURATED PACKS" />
                     {isMobile ? (
                       <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar px-4 pb-2" style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}>
@@ -313,12 +317,14 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 homeSections.push({ key: "mixed_feed", order: getSortOrder("curated_packs") + 1, node: (
                   <LazySection minHeight="400px" rootMargin="300px">
                     <SectionTitle title="🎯 DISCOVER MORE" />
-                    <MixedListingFeed
-                      properties={properties}
-                      onPropertyTap={onPropertyTap}
-                      wishlist={wishlist}
-                      onToggleWishlist={onToggleWishlist}
-                    />
+                    <Suspense fallback={<div style={{ height: 380 }} />}>
+                      <MixedListingFeed
+                        properties={properties}
+                        onPropertyTap={onPropertyTap}
+                        wishlist={wishlist}
+                        onToggleWishlist={onToggleWishlist}
+                      />
+                    </Suspense>
                   </LazySection>
                 )});
                 homeSections.push({ key: "discovery_1", order: getSortOrder("curated_packs") + 2, node: (
