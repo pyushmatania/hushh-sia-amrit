@@ -283,7 +283,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               }
               if (isSectionVisible("foodie")) {
                 homeSections.push({ key: "foodie", order: getSortOrder("foodie"), node: (
-                  <LazySection minHeight="500px">
+                  <LazySection minHeight="500px" rootMargin="400px">
                     <SectionTitle title="FOODIE FRONT ROW" />
                     <Suspense fallback={<div style={{ height: 480 }} />}>
                       <FoodieCarousel properties={properties} onPropertyTap={onPropertyTap} />
@@ -293,7 +293,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               }
               if (isSectionVisible("curated_packs")) {
                 homeSections.push({ key: "curated_packs", order: getSortOrder("curated_packs"), node: (
-                  <LazySection minHeight="400px">
+                  <LazySection minHeight="400px" rootMargin="500px">
               <SectionTitle title="✨ CURATED PACKS" />
                     {isMobile ? (
                       <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar px-4 pb-2" style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}>

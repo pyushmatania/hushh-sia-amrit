@@ -67,19 +67,24 @@ interface SpotlightCarouselProps {
 }
 
 const VideoCard = memo(function VideoCard({
-  property, videoSrc, overlayText, isActive, onTap, dateLabel, accent, isSaved, onToggleSave, isFirst,
+  property, videoSrc, overlayText, isActive, onTap, dateLabel, accent, isSaved, onToggleSave, isFirst, cardIndex,
 }: {
   property: Property; videoSrc: string; overlayText: string; isActive: boolean; onTap: () => void;
-  dateLabel: string; accent: VideoAccent; isSaved?: boolean; onToggleSave?: (id: string) => void; isFirst?: boolean;
+  dateLabel: string; accent: VideoAccent; isSaved?: boolean; onToggleSave?: (id: string) => void; isFirst?: boolean; cardIndex: number;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const [muted, setMuted] = useState(true);
   const saved = isSaved ?? false;
   const [videoReady, setVideoReady] = useState(false);
-  const [isVisible, setIsVisible] = useState(!!isFirst);
+  // Cards 0-2 are always immediately visible or one/two swipes away — render video eagerly
+  const [isVisible, setIsVisible] = useState(cardIndex <= 2);
+
+  // Preload strategy: card 0 gets full buffer, cards 1-2 get metadata, rest gets nothing until visible
+  const preloadAttr = cardIndex === 0 ? "auto" : cardIndex <= 2 ? "metadata" : "none";
 
   useEffect(() => {
+    if (cardIndex <= 2) return; // already visible from init
     const card = cardRef.current;
     if (!card) return;
     const observer = new IntersectionObserver(
@@ -88,22 +93,22 @@ const VideoCard = memo(function VideoCard({
         setIsVisible(vis);
         if (!vis) videoRef.current?.pause();
       },
-      { threshold: 0.1, rootMargin: "20px" }
+      { threshold: 0.1, rootMargin: "40px" }
     );
     observer.observe(card);
     return () => observer.disconnect();
-  }, []);
+  }, [cardIndex]);
 
   useEffect(() => {
     const v = videoRef.current;
     if (!v || !isVisible) return;
     if (isActive) {
-      if (isFirst && v.readyState < 2) v.load();
+      if (v.readyState < 2) v.load();
       v.play().catch(() => {});
       return;
     }
     v.pause();
-  }, [isVisible, isActive, isFirst]);
+  }, [isVisible, isActive]);
 
   return (
     <div
@@ -122,7 +127,15 @@ const VideoCard = memo(function VideoCard({
           <OptimizedImage src={property.images[0]} alt={property.name} fill className="object-cover" sizes="(max-width: 640px) 85vw, 380px" priority={isFirst} />
           {!videoReady && <div className="absolute inset-0 z-[2] pointer-events-none video-buffer-shimmer" />}
           {isVisible && (
-            <video ref={videoRef} src={videoSrc} muted={muted} loop playsInline preload={isFirst ? "auto" : "none"} onCanPlay={() => setVideoReady(true)}
+            <video
+              ref={videoRef}
+              src={videoSrc}
+              muted={muted}
+              loop
+              playsInline
+              preload={preloadAttr}
+              {...(cardIndex === 0 ? { autoPlay: true } : {})}
+              onCanPlay={() => setVideoReady(true)}
               className="absolute inset-0 w-full h-full object-cover z-[1] pointer-events-none"
               style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.4s", willChange: "transform" }}
             />
@@ -203,15 +216,39 @@ export default function SpotlightCarousel({ properties, onPropertyTap, category 
     [topProperties.length]
   );
 
+  // Proactively inject a <link rel="preload"> for the card two ahead of current.
+  // This way, by the time the user swipes there, the video has a head start buffering.
+  const preloadedNextRef = useRef<Set<number>>(new Set([0, 1, 2]));
+
+  const preloadCardVideo = useCallback((index: number) => {
+    if (preloadedNextRef.current.has(index)) return;
+    const cfg = getCardConfig(index);
+    if (!cfg.videoUrl) return;
+    const existing = document.head.querySelector(`link[rel="preload"][as="video"][href="${cfg.videoUrl}"]`);
+    if (!existing) {
+      const link = document.createElement("link");
+      link.rel = "preload";
+      link.as = "video";
+      link.href = cfg.videoUrl;
+      link.setAttribute("fetchpriority", "low");
+      document.head.appendChild(link);
+    }
+    preloadedNextRef.current.add(index);
+  }, [getCardConfig]);
+
   const handleScroll = useCallback(() => {
     cancelAnimationFrame(rafRef.current);
     rafRef.current = requestAnimationFrame(() => {
       if (!scrollRef.current) return;
       const el = scrollRef.current;
       const cardWidth = el.firstElementChild?.getBoundingClientRect().width || 300;
-      setActiveIndex(Math.round(el.scrollLeft / (cardWidth + 12)));
+      const next = Math.round(el.scrollLeft / (cardWidth + 12));
+      setActiveIndex(next);
+      // Preload 2 cards ahead so they're ready before the user swipes there
+      preloadCardVideo(next + 1);
+      preloadCardVideo(next + 2);
     });
-  }, []);
+  }, [preloadCardVideo]);
 
   return (
     <div>
@@ -226,7 +263,7 @@ export default function SpotlightCarousel({ properties, onPropertyTap, category 
           return (
             <VideoCard key={p.id} property={p} videoSrc={cfg.videoUrl} overlayText={cfg.overlayText}
               isActive={i === activeIndex} dateLabel={dateLabels[i]} accent={cfg.accent}
-              onTap={() => onPropertyTap(p)} isSaved={wishlist.includes(p.id)} onToggleSave={onToggleWishlist} isFirst={i === 0}
+              onTap={() => onPropertyTap(p)} isSaved={wishlist.includes(p.id)} onToggleSave={onToggleWishlist} isFirst={i === 0} cardIndex={i}
             />
           );
         })}

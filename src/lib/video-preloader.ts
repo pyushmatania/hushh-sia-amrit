@@ -21,19 +21,21 @@ import videoCurationParty from "@/assets/video-curation-party.mp4.asset.json";
 import videoCurationRomantic from "@/assets/video-curation-romantic.mp4.asset.json";
 import videoCurationBbq from "@/assets/video-curation-bbq.mp4.asset.json";
 
+// First 3 spotlight videos (cards 0-2) are always immediately visible or one swipe away.
+// First curated pack video is the first thing seen when scrolling to Curated Packs section.
 const PRIORITY_VIDEOS = [
-  videoBonfire.url,
-  videoPool.url,
-  videoBbq.url,
-  videoDj.url,
-  videoRooftop.url,
+  videoBonfire.url,   // spotlight card 0 — critical
+  videoPool.url,      // spotlight card 1 — one swipe away
+  videoBbq.url,       // spotlight card 2 — two swipes away
+  videoCurationChill.url, // first curated pack
 ];
 
 const SECONDARY_VIDEOS = [
+  videoDj.url,
+  videoRooftop.url,
   videoThali.url,
   videoCandlelight.url,
   videoChai.url,
-  videoCurationChill.url,
   videoCurationParty.url,
   videoCurationRomantic.url,
   videoCurationBbq.url,
@@ -68,24 +70,24 @@ export function preloadVideos() {
   preloaded = true;
 
   const isSlowConnection = hasSlowConnection();
-  const highPriorityCount = isSlowConnection ? 1 : 2;
 
-  // Keep startup extremely light on mobile webview: warm only the first visible cards.
-  PRIORITY_VIDEOS.slice(0, highPriorityCount).forEach((url) => appendVideoPreload(url, "high"));
+  if (isSlowConnection) {
+    // On slow connections, only preload the very first card to save bandwidth.
+    appendVideoPreload(PRIORITY_VIDEOS[0], "high");
+    return;
+  }
 
-  if (isSlowConnection) return;
+  // Fast connection: preload the first 3 spotlight + first curated pack with high priority.
+  // These are always the first things the user sees on home and on curated packs scroll.
+  PRIORITY_VIDEOS.forEach((url) => appendVideoPreload(url, "high"));
 
-  const deferredWarmups = [
-    ...PRIORITY_VIDEOS.slice(highPriorityCount, highPriorityCount + 2),
-    SECONDARY_VIDEOS[0],
-  ].filter(Boolean) as string[];
-
+  // Defer secondary warmups until the browser is idle so they don't compete with initial render.
   const schedule =
     typeof window !== "undefined" && "requestIdleCallback" in window
-      ? (cb: () => void) => (window as any).requestIdleCallback(cb, { timeout: 2500 })
-      : (cb: () => void) => window.setTimeout(cb, 1800);
+      ? (cb: () => void) => (window as any).requestIdleCallback(cb, { timeout: 3000 })
+      : (cb: () => void) => window.setTimeout(cb, 2000);
 
   schedule(() => {
-    deferredWarmups.forEach((url) => appendVideoPreload(url, "low"));
+    SECONDARY_VIDEOS.slice(0, 4).forEach((url) => appendVideoPreload(url, "low"));
   });
 }

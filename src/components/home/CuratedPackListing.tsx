@@ -183,7 +183,7 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
   useEffect(() => {
     const card = cardRef.current;
     if (!card) return;
-    // Anticipate: start loading video 300px before it enters viewport
+    // Anticipate: start loading video 600px before it enters viewport for smoother playback
     const loadObserver = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -191,7 +191,7 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
           loadObserver.disconnect();
         }
       },
-      { rootMargin: "300px" }
+      { rootMargin: "600px" }
     );
     // Play/pause: only when actually visible
     const playObserver = new IntersectionObserver(
@@ -231,6 +231,8 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
                 alt={pack.name}
                 className="absolute inset-0 w-full h-full object-cover"
                 loading={index === 0 ? "eager" : "lazy"}
+                decoding="async"
+                fetchPriority={index === 0 ? "high" : "auto"}
               />
               <div className="absolute inset-0 video-buffer-shimmer" />
             </div>
