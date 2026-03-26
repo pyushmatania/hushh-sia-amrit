@@ -1,5 +1,7 @@
 /**
  * Capacitor native platform detection & initialization.
+ * All plugin calls are wrapped in try/catch so a missing or misconfigured
+ * native dependency never crashes the app.
  */
 import { Capacitor } from "@capacitor/core";
 
@@ -10,13 +12,14 @@ export const isIOS = Capacitor.getPlatform() === "ios";
 export async function initNativePlugins() {
   if (!isNative) return;
 
-  // Hide Capacitor splash screen immediately (we use our own React splash)
+  // ── Splash screen ─────────────────────────────────────────────────────
+  // Hide immediately — the React SplashScreen component handles the branded splash.
   try {
     const { SplashScreen } = await import("@capacitor/splash-screen");
-    await SplashScreen.hide();
+    await SplashScreen.hide({ fadeOutDuration: 0 });
   } catch {}
 
-  // Status bar
+  // ── Status bar ────────────────────────────────────────────────────────
   try {
     const { StatusBar, Style } = await import("@capacitor/status-bar");
     await StatusBar.setStyle({ style: Style.Dark });
@@ -26,13 +29,13 @@ export async function initNativePlugins() {
     }
   } catch {}
 
-  // Lock portrait
+  // ── Portrait lock ─────────────────────────────────────────────────────
   try {
     const { ScreenOrientation } = await import("@capacitor/screen-orientation");
     await ScreenOrientation.lock({ orientation: "portrait" });
   } catch {}
 
-  // Keyboard on iOS
+  // ── Keyboard (iOS-specific) ───────────────────────────────────────────
   if (isIOS) {
     try {
       const { Keyboard, KeyboardResize } = await import("@capacitor/keyboard");
@@ -41,7 +44,7 @@ export async function initNativePlugins() {
     } catch {}
   }
 
-  // Android back button
+  // ── Android back button ───────────────────────────────────────────────
   if (isAndroid) {
     try {
       const { App: CapApp } = await import("@capacitor/app");
@@ -55,44 +58,115 @@ export async function initNativePlugins() {
     } catch {}
   }
 
-  // Deep links
+  // ── Deep links ────────────────────────────────────────────────────────
   try {
     const { App: CapApp } = await import("@capacitor/app");
     CapApp.addListener("appUrlOpen", (event) => {
-      const url = new URL(event.url);
-      const path = url.pathname + url.search;
-      if (path) {
-        window.location.hash = "";
-        window.history.pushState(null, "", path);
-        window.dispatchEvent(new PopStateEvent("popstate"));
+      try {
+        const url = new URL(event.url);
+        const path = url.pathname + url.search;
+        if (path && path !== "/") {
+          window.history.pushState(null, "", path);
+          window.dispatchEvent(new PopStateEvent("popstate"));
+        }
+      } catch {}
+    });
+  } catch {}
+
+  // ── Push notifications ────────────────────────────────────────────────
+  // Only register after the app is fully loaded to avoid startup crashes.
+  // The PushNotifications plugin requires Firebase (google-services.json).
+  // If Firebase is not configured, this silently fails.
+  setTimeout(async () => {
+    try {
+      const { PushNotifications } = await import("@capacitor/push-notifications");
+
+      const permResult = await PushNotifications.checkPermissions();
+
+      if (permResult.receive === "denied") {
+        console.warn("[Native Push] Permission denied by user.");
+        return;
       }
-    });
-  } catch {}
 
-  // Push notifications
-  try {
-    const { PushNotifications } = await import("@capacitor/push-notifications");
-    const permResult = await PushNotifications.checkPermissions();
-    if (permResult.receive === "prompt") {
-      await PushNotifications.requestPermissions();
+      if (permResult.receive === "prompt" || permResult.receive === "prompt-with-rationale") {
+        const requestResult = await PushNotifications.requestPermissions();
+        if (requestResult.receive !== "granted") {
+          console.warn("[Native Push] User declined permission.");
+          return;
+        }
+      }
+
+      await PushNotifications.register();
+
+      PushNotifications.addListener("registration", (token) => {
+        console.log("[Native Push] FCM token:", token.value.slice(0, 20) + "…");
+        localStorage.setItem("hushh_native_push_token", token.value);
+        // Dispatch event so the app can pick up the token for Supabase storage
+        window.dispatchEvent(new CustomEvent("hushh:push-token", { detail: token.value }));
+      });
+
+      PushNotifications.addListener("registrationError", (err) => {
+        console.warn("[Native Push] Registration error:", err.error);
+      });
+
+      PushNotifications.addListener("pushNotificationReceived", (notification) => {
+        console.log("[Native Push] Received:", notification.title);
+        window.dispatchEvent(new CustomEvent("hushh:notification", { detail: notification }));
+      });
+
+      PushNotifications.addListener("pushNotificationActionPerformed", (action) => {
+        console.log("[Native Push] Tapped:", action.notification.title);
+        // Navigate to the URL in the notification data if present
+        const url = action.notification.data?.url;
+        if (url) {
+          try {
+            const path = new URL(url).pathname;
+            window.history.pushState(null, "", path);
+            window.dispatchEvent(new PopStateEvent("popstate"));
+          } catch {}
+        }
+      });
+    } catch (err) {
+      // Firebase not configured or push not available — fail silently
+      console.warn("[Native Push] Not available:", err);
     }
-    await PushNotifications.register();
+  }, 3000); // Delay so startup is never blocked
+}
 
-    PushNotifications.addListener("registration", (token) => {
-      console.log("[Native Push] Token:", token.value);
-      localStorage.setItem("hushh_native_push_token", token.value);
-    });
+// ── Camera permission helper ──────────────────────────────────────────────
+export async function requestCameraPermission(): Promise<boolean> {
+  if (!isNative) return true;
+  try {
+    const { Camera } = await import("@capacitor/camera");
+    const result = await Camera.requestPermissions({ permissions: ["camera", "photos"] });
+    return result.camera === "granted" || result.camera === "limited";
+  } catch {
+    return false;
+  }
+}
 
-    PushNotifications.addListener("registrationError", (err) => {
-      console.warn("[Native Push] Registration error:", err.error);
-    });
+// ── Location permission helper ────────────────────────────────────────────
+export async function requestLocationPermission(): Promise<boolean> {
+  if (!isNative) return true;
+  try {
+    const { Geolocation } = await import("@capacitor/geolocation");
+    const result = await Geolocation.requestPermissions();
+    return result.location === "granted";
+  } catch {
+    return false;
+  }
+}
 
-    PushNotifications.addListener("pushNotificationReceived", (notification) => {
-      console.log("[Native Push] Received:", notification.title);
+// ── Current location ──────────────────────────────────────────────────────
+export async function getCurrentLocation(): Promise<{ lat: number; lng: number } | null> {
+  try {
+    const { Geolocation } = await import("@capacitor/geolocation");
+    const pos = await Geolocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 10000,
     });
-
-    PushNotifications.addListener("pushNotificationActionPerformed", (action) => {
-      console.log("[Native Push] Action:", action.notification.title);
-    });
-  } catch {}
+    return { lat: pos.coords.latitude, lng: pos.coords.longitude };
+  } catch {
+    return null;
+  }
 }

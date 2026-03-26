@@ -4,40 +4,50 @@ const config: CapacitorConfig = {
   appId: "com.hushh.jeypore",
   appName: "Hushh Jeypore",
   webDir: "dist",
+  // Live-update mode: loads the app from the Lovable deployment
+  // This lets the app update without a new APK release.
   server: {
     url: "https://hushh-jeypore.lovable.app?forceHideBadge=true",
-    cleartext: true,
+    cleartext: false,
     androidScheme: "https",
+    // Allow all origins for native plugin AJAX calls
+    allowNavigation: [
+      "*.supabase.co",
+      "*.supabase.in",
+      "hushh-jeypore.lovable.app",
+    ],
   },
   android: {
-    allowMixedContent: true,
+    allowMixedContent: false,
     captureInput: true,
-    webContentsDebuggingEnabled: true,
+    // Only enable debugging in dev — production APK should have this false
+    webContentsDebuggingEnabled: false,
     backgroundColor: "#050505",
-    buildOptions: {
-      keystorePath: undefined,
-      keystoreAlias: undefined,
-    },
   },
   plugins: {
     SplashScreen: {
-      launchAutoHide: false,
+      // We control the splash via our React SplashScreen component.
+      // Hide the native splash as fast as possible.
+      launchAutoHide: true,
       launchShowDuration: 0,
       backgroundColor: "#050505",
       androidScaleType: "CENTER_CROP",
       showSpinner: false,
+      splashFullScreen: true,
+      splashImmersive: true,
     },
     PushNotifications: {
       presentationOptions: ["badge", "sound", "alert"],
     },
     LocalNotifications: {
-      smallIcon: "ic_notification",
+      smallIcon: "ic_stat_icon_config_sample",
       iconColor: "#a65eed",
       sound: "default",
     },
     StatusBar: {
       style: "DARK",
       backgroundColor: "#050505",
+      overlaysWebView: false,
     },
     Keyboard: {
       resize: "body",
@@ -45,6 +55,12 @@ const config: CapacitorConfig = {
     },
     CapacitorHttp: {
       enabled: true,
+    },
+    Geolocation: {
+      // Request only "when in use" by default; background needs explicit ask
+    },
+    Camera: {
+      // Photo library and camera permission strings
     },
   },
 };

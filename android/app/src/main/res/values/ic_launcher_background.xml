@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launcher_background">#050505</color>
+    <!-- App brand colors -->
+    <color name="splashBackground">#050505</color>
+    <color name="colorPrimary">#a65eed</color>
+    <color name="colorPrimaryDark">#050505</color>
+    <color name="colorAccent">#a65eed</color>
+</resources>

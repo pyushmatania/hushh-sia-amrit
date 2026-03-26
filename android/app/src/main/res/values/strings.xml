@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Hushh Jeypore</string>
+    <string name="title_activity_main">Hushh Jeypore</string>
+    <string name="package_name">com.hushh.jeypore</string>
+    <string name="custom_url_scheme">com.hushh.jeypore</string>
+</resources>
