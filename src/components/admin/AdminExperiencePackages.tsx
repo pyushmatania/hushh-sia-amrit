@@ -11,6 +11,7 @@ import BatchOperationsBar from "./BatchOperationsBar";
 import MultiImageEditor from "./MultiImageEditor";
 import VideoEditor from "./VideoEditor";
 import { useAutoSave } from "@/hooks/use-auto-save";
+import CatalogEditSheet from "./CatalogEditSheet";
 
 interface PackageRow {
   id: string;

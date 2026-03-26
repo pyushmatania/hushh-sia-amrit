@@ -10,6 +10,7 @@ import SwipeableRow from "./SwipeableRow";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
 import BatchOperationsBar from "./BatchOperationsBar";
 import MultiImageEditor from "./MultiImageEditor";
+import CatalogEditSheet from "./CatalogEditSheet";
 
 interface InventoryItem {
   id: string; name: string; emoji: string; category: string; unit_price: number;
