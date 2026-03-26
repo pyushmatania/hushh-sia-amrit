@@ -312,11 +312,13 @@ export default function AdminProperties() {
       entry_instructions: data.entry_instructions || "", slots: data.slots || [], rules: data.rules || [],
     };
     const { error } = await supabase.from("host_listings").update(payload).eq("id", data.id);
-    if (!error) {
-      setListings(prev => prev.map(l => l.id === data.id ? { ...l, ...payload } as Listing : l));
-      notifyListingsUpdated();
+    if (error) {
+      console.error("Auto-save failed:", error.message, error);
+      return false;
     }
-    return !error;
+    setListings(prev => prev.map(l => l.id === data.id ? { ...l, ...payload } as Listing : l));
+    notifyListingsUpdated();
+    return true;
   }, []);
 
   const { status: autoSaveStatus } = useAutoSave({

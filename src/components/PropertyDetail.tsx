@@ -162,8 +162,10 @@ function PropertyLocationMap({ property }: { property: Property }) {
       scrollWheelZoom: false,
     });
 
-    L.tileLayer("https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
       maxZoom: 20,
+      subdomains: "abcd",
+      attribution: '&copy; <a href="https://carto.com/">CartoDB</a>',
     }).addTo(map);
 
     // Property marker with photo

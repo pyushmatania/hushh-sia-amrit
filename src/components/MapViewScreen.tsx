@@ -16,10 +16,17 @@ interface MapViewScreenProps {
 const CENTER: [number, number] = [18.855, 82.575];
 const INITIAL_ZOOM = 14;
 
+// Using free tile providers (no API key required)
 const TILE_LAYERS = {
-  default: "https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}",
-  satellite: "https://mt1.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}",
-  terrain: "https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}",
+  default: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+  satellite: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+  terrain: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+};
+
+const TILE_OPTIONS = {
+  default: { subdomains: "abcd", maxZoom: 20, attribution: '&copy; CartoDB' },
+  satellite: { maxZoom: 20, attribution: '&copy; Esri' },
+  terrain: { subdomains: "abcd", maxZoom: 20, attribution: '&copy; CartoDB' },
 };
 
 const CATEGORIES = [
@@ -136,7 +143,7 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
       attributionControl: false,
     });
 
-    L.tileLayer(TILE_LAYERS[tileStyle], { maxZoom: 20 }).addTo(map);
+    L.tileLayer(TILE_LAYERS[tileStyle], TILE_OPTIONS[tileStyle]).addTo(map);
     mapInstanceRef.current = map;
 
     clusterGroupRef.current = (L as any).markerClusterGroup({
@@ -203,7 +210,7 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
     map.eachLayer((layer) => {
       if (layer instanceof L.TileLayer) map.removeLayer(layer);
     });
-    L.tileLayer(TILE_LAYERS[tileStyle], { maxZoom: 20 }).addTo(map);
+    L.tileLayer(TILE_LAYERS[tileStyle], TILE_OPTIONS[tileStyle]).addTo(map);
   }, [tileStyle]);
 
   // Update selected marker style
