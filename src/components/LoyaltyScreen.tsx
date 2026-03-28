@@ -153,10 +153,10 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: "100%" }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: "100%" }}
-      transition={{ type: "spring", damping: 28, stiffness: 300 }}
+      initial={{ opacity: 0, x: "100%", filter: "blur(4px)" }}
+      animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+      exit={{ opacity: 0, x: "100%", filter: "blur(4px)" }}
+      transition={{ type: "spring", damping: 30, stiffness: 300, mass: 0.8 }}
       className="fixed inset-0 z-50 bg-background overflow-y-auto"
     >
       {/* ─── Header ─── */}

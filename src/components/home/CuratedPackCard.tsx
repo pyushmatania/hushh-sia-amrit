@@ -159,9 +159,9 @@ export default function CuratedPackCard({ pack, index, onTap }: CuratedPackCardP
 
   return (
     <motion.button
-      initial={{ opacity: 0, x: 30 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.08, type: "spring", stiffness: 200 }}
+      initial={{ opacity: 0, x: 30, filter: "blur(4px)" }}
+      animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+      transition={{ delay: index * 0.06, type: "spring", stiffness: 300, damping: 25 }}
       whileTap={{ scale: 0.96 }}
       onClick={() => { hapticSelection(); onTap(pack); }}
       className="shrink-0 w-[280px] rounded-[22px] overflow-hidden text-left relative"

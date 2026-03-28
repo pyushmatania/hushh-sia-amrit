@@ -486,9 +486,9 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
               <motion.p
                 className="text-[11px] md:text-sm lg:text-base font-semibold tracking-[0.2em] uppercase"
                 style={{ color: config.textColor, opacity: 0.6, textShadow: config.textShadow }}
-                initial={{ opacity: 0, y: -15 }}
-                animate={phase >= 2 ? { opacity: 0.6, y: 0 } : { opacity: 0, y: -15 }}
-                transition={{ duration: 0.4 }}
+                initial={{ opacity: 0, y: -15, filter: "blur(8px)" }}
+                animate={phase >= 2 ? { opacity: 0.6, y: 0, filter: "blur(0px)" } : { opacity: 0, y: -15, filter: "blur(8px)" }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               >
                 {new Date().toLocaleDateString("en-US", {
                   weekday: "long",
@@ -505,8 +505,8 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                   textShadow: config.textShadow,
                   fontFamily: "'Playfair Display', serif",
                 }}
-                initial={{ opacity: 0, y: 25, scale: 0.9 }}
-                animate={phase >= 2 ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 25, scale: 0.9 }}
+                initial={{ opacity: 0, y: 25, scale: 0.9, filter: "blur(10px)" }}
+                animate={phase >= 2 ? { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" } : { opacity: 0, y: 25, scale: 0.9, filter: "blur(10px)" }}
                 transition={{ delay: 0.1, type: "spring", stiffness: 120, damping: 14 }}
               >
                 {config.greeting} {config.emoji}

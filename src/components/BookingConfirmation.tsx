@@ -44,25 +44,25 @@ export default function BookingConfirmation({ property, slotId, guests, date, to
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      initial={{ opacity: 0, filter: "blur(6px)" }}
+      animate={{ opacity: 1, filter: "blur(0px)" }}
       className="fixed inset-0 z-30 bg-mesh overflow-y-auto"
     >
       <div className="flex flex-col items-center justify-start pt-20 px-6 md:max-w-xl md:mx-auto">
         {/* Success icon */}
         <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", stiffness: 260, damping: 15, delay: 0.2 }}
+          initial={{ scale: 0.3, opacity: 0, filter: "blur(8px)" }}
+          animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
+          transition={{ type: "spring", stiffness: 300, damping: 18, delay: 0.2 }}
           className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mb-5"
         >
           <Check size={32} className="text-success" strokeWidth={3} />
         </motion.div>
 
         <motion.h1
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+          initial={{ opacity: 0, y: 16, filter: "blur(6px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ delay: 0.4, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
           className="text-2xl font-semibold text-foreground text-center"
         >
           You're all set!
@@ -78,9 +78,9 @@ export default function BookingConfirmation({ property, slotId, guests, date, to
 
         {/* Booking card */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
+          initial={{ opacity: 0, y: 24, filter: "blur(6px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ delay: 0.7, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           className="w-full mt-8 rounded-2xl border border-border p-5 space-y-4"
         >
           <div className="flex items-center gap-3">

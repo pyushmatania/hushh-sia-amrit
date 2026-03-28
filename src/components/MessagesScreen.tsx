@@ -317,7 +317,7 @@ function ThreadCard({ thread, index, onClick, onPin, onArchive }: {
                   <p className={`text-[12px] truncate ${hasUnread ? "text-foreground/80" : "text-muted-foreground"}`}>{thread.lastMessage}</p>
                 )}
                 {hasUnread && (
-                  <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} className="shrink-0 w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">
+                  <motion.span initial={{ scale: 0, filter: "blur(4px)" }} animate={{ scale: 1, filter: "blur(0px)" }} transition={{ type: "spring", stiffness: 500, damping: 15 }} className="shrink-0 w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">
                     {thread.unread}
                   </motion.span>
                 )}
