@@ -2,6 +2,7 @@ import { motion, AnimatePresence, useMotionValue, animate } from "framer-motion"
 import { useState, useCallback, useRef, useEffect } from "react";
 import { hapticSuccess } from "@/lib/haptics";
 import { playTick, playWinJingle } from "@/lib/spin-sounds";
+import { fireSpinWin } from "@/lib/confetti";
 import { checkRateLimit, RATE_LIMITS, formatRetryTime } from "@/lib/rate-limiter";
 import { toast } from "sonner";
 
@@ -105,6 +106,7 @@ export default function SpinWheel({ onWin, disabled }: SpinWheelProps) {
         stopTicking();
         hapticSuccess();
         playWinJingle();
+        fireSpinWin();
         setResult(prizes[winIdx]);
         setSpinning(false);
         setShowConfetti(true);

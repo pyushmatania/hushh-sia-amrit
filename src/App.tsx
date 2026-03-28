@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useRef } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -40,10 +40,15 @@ const LoadingSpinner = () => (
 );
 
 const App = () => {
+  const lenisRef = useRef(false);
   useEffect(() => {
+    // Init Lenis smooth scroll
+    if (!lenisRef.current) {
+      lenisRef.current = true;
+      import("@/lib/lenis-init").then(({ initLenis }) => initLenis()).catch(() => {});
+    }
     import("@/lib/native").then(({ initNativePlugins, isNative }) => {
       initNativePlugins();
-      // On native, prefetch critical data into local cache for instant UI
       if (isNative) {
         import("@/lib/native-cache").then(({ prefetchCriticalData }) => prefetchCriticalData()).catch(() => {});
       }
