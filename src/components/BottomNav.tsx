@@ -35,9 +35,9 @@ export default function BottomNav({ active, onChange, messageBadge = 0 }: Bottom
       }}
     >
       <motion.div
-        initial={{ y: 30, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 300, damping: 28, delay: 0.1 }}
+        initial={{ y: 30, opacity: 0, filter: "blur(6px)" }}
+        animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
+        transition={{ type: "spring", stiffness: 300, damping: 30, mass: 0.8, delay: 0.08 }}
         style={{
           background: "hsl(var(--card))",
           borderTop: "1px solid hsl(var(--border))",
@@ -53,8 +53,8 @@ export default function BottomNav({ active, onChange, messageBadge = 0 }: Bottom
                 key={tab.id}
                 onClick={() => handleTabPress(tab.id)}
                 className="flex flex-col items-center gap-0.5 min-w-[56px] py-1 relative"
-                whileTap={{ scale: 0.75 }}
-                transition={{ type: "spring", stiffness: 600, damping: 20 }}
+                whileTap={{ scale: 0.88 }}
+                transition={{ type: "spring", stiffness: 400, damping: 22 }}
               >
                 {/* Active pill background */}
                 <AnimatePresence>
@@ -91,10 +91,10 @@ export default function BottomNav({ active, onChange, messageBadge = 0 }: Bottom
                 {/* Icon with bounce */}
                 <motion.div
                   animate={isActive
-                    ? { y: [0, -5, -2, 0], scale: [1, 1.2, 1.08, 1] }
+                    ? { y: [0, -4, -1, 0], scale: [1, 1.15, 1.05, 1] }
                     : { y: 0, scale: 1 }
                   }
-                  transition={{ duration: 0.4, ease: [0.34, 1.56, 0.64, 1] }}
+                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                   className="relative"
                 >
                   {/* Background glow for active icon */}

@@ -39,14 +39,15 @@ export default function CatalogEditSheet({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
           className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
           onClick={onClose}
         >
           <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", damping: 30, stiffness: 300 }}
+            initial={{ x: "100%", filter: "blur(4px)" }}
+            animate={{ x: 0, filter: "blur(0px)" }}
+            exit={{ x: "100%", filter: "blur(4px)" }}
+            transition={{ type: "spring", stiffness: 300, damping: 30, mass: 0.8 }}
             className="absolute right-0 top-0 bottom-0 w-full max-w-lg bg-card border-l border-border flex flex-col h-[100dvh]"
             onClick={(e) => e.stopPropagation()}
           >
