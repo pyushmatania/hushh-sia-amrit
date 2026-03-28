@@ -15,10 +15,10 @@ export default function NotificationCenter({ onBack }: NotificationCenterProps) 
       <>
         {/* Mobile: full screen */}
         <motion.div
-          initial={{ opacity: 0, x: "100%" }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: "100%" }}
-          transition={{ type: "spring", damping: 28, stiffness: 300 }}
+          initial={{ opacity: 0, x: "100%", filter: "blur(4px)" }}
+          animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+          exit={{ opacity: 0, x: "100%", filter: "blur(4px)" }}
+          transition={{ type: "spring", damping: 30, stiffness: 300, mass: 0.8 }}
           className="fixed inset-0 z-50 bg-background flex items-center justify-center md:hidden"
         >
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -84,9 +84,9 @@ export default function NotificationCenter({ onBack }: NotificationCenterProps) 
           {notifications.map((n, i) => (
             <motion.div
               key={n.id}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.03 }}
+              initial={{ opacity: 0, x: -12, filter: "blur(4px)" }}
+              animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+              transition={{ delay: i * 0.04, duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
               onClick={() => !n.read && markAsRead(n.id)}
               className={`glass rounded-2xl p-4 flex items-start gap-3 cursor-pointer transition-all md:hover:shadow-card md:hover:scale-[1.01] ${
                 !n.read ? "border-l-2 border-l-primary" : "opacity-70"
@@ -121,10 +121,10 @@ export default function NotificationCenter({ onBack }: NotificationCenterProps) 
     <>
       {/* Mobile: full-screen slide-in (unchanged) */}
       <motion.div
-        initial={{ opacity: 0, x: "100%" }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: "100%" }}
-        transition={{ type: "spring", damping: 28, stiffness: 300 }}
+        initial={{ opacity: 0, x: "100%", filter: "blur(4px)" }}
+        animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+        exit={{ opacity: 0, x: "100%", filter: "blur(4px)" }}
+        transition={{ type: "spring", damping: 30, stiffness: 300, mass: 0.8 }}
         className="fixed inset-0 z-50 bg-background overflow-y-auto pb-8 md:hidden overscroll-none touch-pan-y"
         style={{ WebkitOverflowScrolling: 'touch' }}
         onTouchMove={(e) => e.stopPropagation()}
@@ -141,9 +141,9 @@ export default function NotificationCenter({ onBack }: NotificationCenterProps) 
       >
         <div className="fixed inset-0 bg-black/30" onClick={onBack} />
         <motion.div
-          initial={{ opacity: 0, y: -10, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -10, scale: 0.95 }}
+          initial={{ opacity: 0, y: -10, scale: 0.95, filter: "blur(6px)" }}
+          animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+          exit={{ opacity: 0, y: -10, scale: 0.95, filter: "blur(4px)" }}
           transition={{ type: "spring", damping: 25, stiffness: 350 }}
           className="relative z-10 w-[420px] max-h-[70vh] rounded-2xl bg-background border border-border shadow-2xl overflow-y-auto pb-4"
         >

@@ -146,6 +146,7 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
                 y: -12,
                 scaleX: expr.scaleX,
                 scaleY: expr.scaleY,
+                filter: "brightness(1.15) drop-shadow(0 0 20px rgba(255,140,0,0.7))",
               }
             : {
                 scale: [1, 1.06, 1],
@@ -153,11 +154,12 @@ export default function HushhBot({ size = 80, state = "idle" }: HushhBotProps) {
                 y: [expr.y, expr.y - 4, expr.y],
                 scaleX: expr.scaleX,
                 scaleY: expr.scaleY,
+                filter: `brightness(${expr.brightness}) drop-shadow(0 0 14px rgba(255,140,0,0.6))`,
               }
         }
         transition={
           hovered
-            ? { duration: 0.5, type: "spring", stiffness: 280, damping: 14 }
+            ? { duration: 0.4, type: "spring", stiffness: 300, damping: 16 }
             : { duration: 2.8, repeat: Infinity, ease: "easeInOut" }
         }
         className="relative z-10"

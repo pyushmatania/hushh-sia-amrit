@@ -27,10 +27,11 @@ export default function PackageCard({ pkg, index, properties, onPropertyTap }: P
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.97 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay: index * 0.08 }}
-      className="shrink-0 w-[240px] md:w-full rounded-2xl overflow-hidden glass cursor-pointer active:scale-[0.97] transition-all md:hover:shadow-elevated md:hover:border-primary/20"
+      initial={{ opacity: 0, scale: 0.92, filter: "blur(4px)" }}
+      animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+      transition={{ delay: index * 0.06, duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      whileTap={{ scale: 0.97 }}
+      className="shrink-0 w-[240px] md:w-full rounded-2xl overflow-hidden glass cursor-pointer transition-all md:hover:shadow-elevated md:hover:border-primary/20 md:hover:-translate-y-1"
       onClick={handleTap}
     >
       <div className="p-5 space-y-2">

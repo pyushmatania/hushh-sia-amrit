@@ -141,15 +141,17 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
       {/* Header */}
       <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-6 pb-1 flex items-center justify-between md:max-w-4xl md:mx-auto">
         <motion.h1
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: -8, filter: "blur(6px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           className="text-[28px] md:text-3xl lg:text-4xl font-bold text-foreground"
         >
           Profile
         </motion.h1>
         <motion.button
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, scale: 0.6, filter: "blur(4px)" }}
+          animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+          transition={{ type: "spring", stiffness: 400, damping: 20 }}
           className="w-10 h-10 rounded-full glass flex items-center justify-center relative"
         >
           <Bell size={20} className="text-foreground" />
@@ -162,8 +164,8 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
 
       {/* Profile Hero Card — reimagined */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
+        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
         transition={{ delay: 0.1, type: "spring", stiffness: 200, damping: 22 }}
         className="mx-5 md:mx-auto mt-5 rounded-[28px] overflow-hidden relative md:max-w-2xl"
         style={{
@@ -198,9 +200,9 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
           {/* Avatar + Info — centered layout */}
           <div className="flex flex-col items-center text-center">
             <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.15, type: "spring", stiffness: 250 }}
+              initial={{ scale: 0.6, opacity: 0, filter: "blur(8px)" }}
+              animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
+              transition={{ delay: 0.15, type: "spring", stiffness: 300, damping: 20 }}
               className="relative mb-4"
             >
               <div
@@ -221,9 +223,9 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
             </motion.div>
 
             <motion.h3
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+              initial={{ opacity: 0, y: 8, filter: "blur(6px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ delay: 0.2, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
               className="text-xl font-bold text-foreground"
             >
               {profile.name}
@@ -264,8 +266,8 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
             ].map((stat, i) => (
               <motion.div
                 key={stat.label}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, scale: 0.85, filter: "blur(4px)" }}
+                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
                 transition={{ delay: 0.35 + i * 0.06 }}
                 className="rounded-2xl py-3 text-center"
                 style={{
@@ -343,8 +345,8 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
           {achievements.map((a, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, scale: 0.85, filter: "blur(4px)" }}
+              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
               transition={{ delay: 0.24 + i * 0.06 }}
               className="shrink-0 rounded-[20px] p-4 w-[140px] text-center relative overflow-hidden"
               style={{

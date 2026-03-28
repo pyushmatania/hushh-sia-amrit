@@ -153,10 +153,10 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: "100%" }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: "100%" }}
-      transition={{ type: "spring", damping: 28, stiffness: 300 }}
+      initial={{ opacity: 0, x: "100%", filter: "blur(4px)" }}
+      animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+      exit={{ opacity: 0, x: "100%", filter: "blur(4px)" }}
+      transition={{ type: "spring", damping: 30, stiffness: 300, mass: 0.8 }}
       className="fixed inset-0 z-50 bg-background overflow-y-auto"
     >
       {/* ─── Header ─── */}
@@ -186,9 +186,9 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
 
       {/* ─── Tier Hero Card ─── */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1, duration: 0.5 }}
+        initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
+        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        transition={{ delay: 0.1, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
         className="mx-4 mt-4 rounded-3xl overflow-hidden relative md:mx-auto md:max-w-3xl"
         style={{
           background: "linear-gradient(145deg, hsl(var(--card)), hsl(var(--secondary)))",
