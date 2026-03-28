@@ -5,12 +5,6 @@ import { properties, type Property } from "@/data/properties";
 import { useTheme } from "@/hooks/use-theme";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-
-// Ensure L is globally available BEFORE markercluster plugin loads
-if (typeof window !== "undefined") {
-  (window as any).L = L;
-}
-import "leaflet.markercluster";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
@@ -141,45 +135,63 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
 
   // Initialize map
   useEffect(() => {
-    if (!mapContainerRef.current || mapInstanceRef.current) return;
+    let cancelled = false;
 
-    const map = L.map(mapContainerRef.current, {
-      center: CENTER,
-      zoom: INITIAL_ZOOM,
-      zoomControl: false,
-      attributionControl: false,
+    const initMap = async () => {
+      if (!mapContainerRef.current || mapInstanceRef.current) return;
+
+      // markercluster expects a global Leaflet reference on Safari/iOS
+      (globalThis as any).L = L;
+      if (typeof window !== "undefined") {
+        (window as any).L = L;
+      }
+
+      await import("leaflet.markercluster");
+      if (cancelled || !mapContainerRef.current || mapInstanceRef.current) return;
+
+      const map = L.map(mapContainerRef.current, {
+        center: CENTER,
+        zoom: INITIAL_ZOOM,
+        zoomControl: false,
+        attributionControl: false,
+      });
+
+      L.tileLayer(TILE_LAYERS[tileStyle], TILE_OPTIONS[tileStyle]).addTo(map);
+      mapInstanceRef.current = map;
+
+      clusterGroupRef.current = (L as any).markerClusterGroup({
+        maxClusterRadius: 50,
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true,
+        iconCreateFunction: (cluster: any) => {
+          const count = cluster.getChildCount();
+          const size = count > 10 ? 52 : count > 5 ? 44 : 38;
+          return L.divIcon({
+            html: `<div style="
+              width:${size}px;height:${size}px;border-radius:50%;
+              background:hsl(var(--primary));color:#fff;
+              display:flex;align-items:center;justify-content:center;
+              font-weight:800;font-size:${size > 44 ? 16 : 13}px;
+              box-shadow:0 0 0 4px hsl(var(--primary)/0.25),0 4px 16px rgba(0,0,0,0.4);
+              font-family:inherit;
+            ">${count}</div>`,
+            className: "custom-cluster-icon",
+            iconSize: [size, size],
+            iconAnchor: [size / 2, size / 2],
+          });
+        },
+      });
+      map.addLayer(clusterGroupRef.current);
+    };
+
+    initMap().catch(() => {
+      // avoid crashing the screen if plugin loading fails
     });
-
-    L.tileLayer(TILE_LAYERS[tileStyle], TILE_OPTIONS[tileStyle]).addTo(map);
-    mapInstanceRef.current = map;
-
-    clusterGroupRef.current = (L as any).markerClusterGroup({
-      maxClusterRadius: 50,
-      spiderfyOnMaxZoom: true,
-      showCoverageOnHover: false,
-      zoomToBoundsOnClick: true,
-      iconCreateFunction: (cluster: any) => {
-        const count = cluster.getChildCount();
-        const size = count > 10 ? 52 : count > 5 ? 44 : 38;
-        return L.divIcon({
-          html: `<div style="
-            width:${size}px;height:${size}px;border-radius:50%;
-            background:hsl(var(--primary));color:#fff;
-            display:flex;align-items:center;justify-content:center;
-            font-weight:800;font-size:${size > 44 ? 16 : 13}px;
-            box-shadow:0 0 0 4px hsl(var(--primary)/0.25),0 4px 16px rgba(0,0,0,0.4);
-            font-family:inherit;
-          ">${count}</div>`,
-          className: "custom-cluster-icon",
-          iconSize: [size, size],
-          iconAnchor: [size / 2, size / 2],
-        });
-      },
-    });
-    map.addLayer(clusterGroupRef.current);
 
     return () => {
-      map.remove();
+      cancelled = true;
+      mapInstanceRef.current?.remove();
       mapInstanceRef.current = null;
       markersRef.current.clear();
       clusterGroupRef.current = null;
