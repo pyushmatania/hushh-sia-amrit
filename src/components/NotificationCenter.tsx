@@ -84,9 +84,9 @@ export default function NotificationCenter({ onBack }: NotificationCenterProps) 
           {notifications.map((n, i) => (
             <motion.div
               key={n.id}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.03 }}
+              initial={{ opacity: 0, x: -12, filter: "blur(4px)" }}
+              animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+              transition={{ delay: i * 0.04, duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
               onClick={() => !n.read && markAsRead(n.id)}
               className={`glass rounded-2xl p-4 flex items-start gap-3 cursor-pointer transition-all md:hover:shadow-card md:hover:scale-[1.01] ${
                 !n.read ? "border-l-2 border-l-primary" : "opacity-70"

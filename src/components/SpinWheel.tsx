@@ -133,8 +133,8 @@ export default function SpinWheel({ onWin, disabled }: SpinWheelProps) {
         {showConfetti && confettiParticles.map(p => (
           <motion.div
             key={p.id}
-            initial={{ opacity: 1, x: 0, y: 0, scale: 0, rotate: 0 }}
-            animate={{ opacity: 0, x: p.x, y: p.y, scale: p.scale, rotate: p.rotate }}
+            initial={{ opacity: 1, x: 0, y: 0, scale: 0, rotate: 0, filter: "blur(0px)" }}
+            animate={{ opacity: 0, x: p.x, y: p.y, scale: p.scale, rotate: p.rotate, filter: "blur(3px)" }}
             exit={{ opacity: 0 }}
             transition={{ duration: 1.5, delay: p.delay, ease: "easeOut" }}
             className="absolute top-1/2 left-1/2 z-20 pointer-events-none"

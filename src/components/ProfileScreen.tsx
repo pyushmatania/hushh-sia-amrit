@@ -266,8 +266,8 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
             ].map((stat, i) => (
               <motion.div
                 key={stat.label}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, scale: 0.85, filter: "blur(4px)" }}
+                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
                 transition={{ delay: 0.35 + i * 0.06 }}
                 className="rounded-2xl py-3 text-center"
                 style={{
@@ -345,8 +345,8 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
           {achievements.map((a, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, scale: 0.85, filter: "blur(4px)" }}
+              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
               transition={{ delay: 0.24 + i * 0.06 }}
               className="shrink-0 rounded-[20px] p-4 w-[140px] text-center relative overflow-hidden"
               style={{

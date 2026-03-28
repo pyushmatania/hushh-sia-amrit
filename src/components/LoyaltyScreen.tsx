@@ -186,9 +186,9 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
 
       {/* ─── Tier Hero Card ─── */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1, duration: 0.5 }}
+        initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
+        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        transition={{ delay: 0.1, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
         className="mx-4 mt-4 rounded-3xl overflow-hidden relative md:mx-auto md:max-w-3xl"
         style={{
           background: "linear-gradient(145deg, hsl(var(--card)), hsl(var(--secondary)))",

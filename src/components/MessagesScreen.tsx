@@ -159,9 +159,9 @@ function Tab({ active, label, count, onClick }: { active: boolean; label: string
 function NotificationCard({ notif, index, isRead, onRead }: { notif: Notification; index: number; isRead: boolean; onRead: () => void }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.03, duration: 0.3 }}
+      initial={{ opacity: 0, x: -12, filter: "blur(4px)" }}
+      animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+      transition={{ delay: index * 0.03, duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
       onClick={onRead}
       className={`relative rounded-2xl p-4 cursor-pointer transition-all active:scale-[0.98] ${
         isRead ? "bg-card" : "bg-card border-l-[3px] border-l-primary"
@@ -237,9 +237,9 @@ function ThreadCard({ thread, index, onClick, onPin, onArchive }: {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.02 + index * 0.03, duration: 0.3 }}
+      initial={{ opacity: 0, x: -10, filter: "blur(4px)" }}
+      animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+      transition={{ delay: 0.02 + index * 0.03, duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
       className="relative rounded-2xl overflow-hidden"
     >
       {/* Swipe reveal backgrounds */}
