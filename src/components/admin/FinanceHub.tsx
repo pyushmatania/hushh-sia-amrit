@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import NumberTicker from "@/components/shared/NumberTicker";
 import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -287,7 +288,7 @@ export default function FinanceHub() {
         <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold relative">Net Profit / Loss • {currentMonth}</p>
         <div className="flex items-end gap-3 mt-2 relative">
           <p className={`text-4xl font-black tracking-tight ${stats.profit >= 0 ? "text-emerald-500" : "text-destructive"}`}>
-            {stats.profit >= 0 ? "+" : ""}₹{Math.abs(stats.profit).toLocaleString()}
+            {stats.profit >= 0 ? "+" : "-"}₹<NumberTicker value={Math.abs(stats.profit)} locale="en-IN" />
           </p>
           <div className="flex items-center gap-1.5 mb-1">
             {stats.profit >= 0 ? <ArrowUpRight size={16} className="text-emerald-500" /> : <ArrowDownRight size={16} className="text-destructive" />}
@@ -297,15 +298,15 @@ export default function FinanceHub() {
         <div className="grid grid-cols-3 gap-3 mt-4 relative">
           <div>
             <p className="text-[10px] text-muted-foreground">Revenue</p>
-            <p className="text-lg font-bold text-emerald-500">₹{monthRevenue.total.toLocaleString()}</p>
+            <p className="text-lg font-bold text-emerald-500">₹<NumberTicker value={monthRevenue.total} locale="en-IN" /></p>
           </div>
           <div>
             <p className="text-[10px] text-muted-foreground">Expenses</p>
-            <p className="text-lg font-bold text-destructive">₹{stats.totalExpenses.toLocaleString()}</p>
+            <p className="text-lg font-bold text-destructive">₹<NumberTicker value={stats.totalExpenses} locale="en-IN" /></p>
           </div>
           <div>
             <p className="text-[10px] text-muted-foreground">Budget Left</p>
-            <p className="text-lg font-bold text-foreground">₹{Math.max(0, stats.totalBudget - stats.totalExpenses).toLocaleString()}</p>
+            <p className="text-lg font-bold text-foreground">₹<NumberTicker value={Math.max(0, stats.totalBudget - stats.totalExpenses)} locale="en-IN" /></p>
           </div>
         </div>
       </motion.div>

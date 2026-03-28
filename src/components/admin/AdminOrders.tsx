@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import NumberTicker from "@/components/shared/NumberTicker";
 import { ShoppingCart, Clock, CheckCircle2, Loader2, Search, UtensilsCrossed, MapPin, ChefHat, IndianRupee, Package, History, CalendarDays } from "lucide-react";
 import { getListingThumbnail } from "@/lib/listing-thumbnails";
 import { supabase } from "@/integrations/supabase/client";
@@ -169,7 +170,7 @@ export default function AdminOrders() {
                 </motion.span>
               )}
             </h1>
-            <p className="text-sm text-muted-foreground mt-1">{orders.length} total · ₹{totalRevenue.toLocaleString("en-IN")} revenue</p>
+            <p className="text-sm text-muted-foreground mt-1">{orders.length} total · ₹<NumberTicker value={totalRevenue} locale="en-IN" /> revenue</p>
           </div>
           <motion.div
             animate={{ scale: [1, 1.15, 1] }}
