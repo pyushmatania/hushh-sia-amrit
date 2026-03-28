@@ -315,7 +315,7 @@ export default function AppDocumentation({ open, onClose }: AppDocumentationProp
           </div>
           <div>
             <p className="text-sm font-black text-foreground tracking-tight">Hushh Docs</p>
-            <p className="text-[9px] text-muted-foreground font-medium">v1.37 · Internal</p>
+            <p className="text-[9px] text-muted-foreground font-medium">v1.38 · Internal</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
