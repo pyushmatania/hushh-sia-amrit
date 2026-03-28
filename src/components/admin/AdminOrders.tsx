@@ -169,7 +169,7 @@ export default function AdminOrders() {
                 </motion.span>
               )}
             </h1>
-            <p className="text-sm text-muted-foreground mt-1">{orders.length} total · ₹{totalRevenue.toLocaleString("en-IN")} revenue</p>
+            <p className="text-sm text-muted-foreground mt-1">{orders.length} total · ₹<NumberTicker value={totalRevenue} locale="en-IN" /> revenue</p>
           </div>
           <motion.div
             animate={{ scale: [1, 1.15, 1] }}
