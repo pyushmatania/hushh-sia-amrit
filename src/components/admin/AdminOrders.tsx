@@ -45,6 +45,7 @@ const statusSteps = ["pending", "preparing", "delivered", "completed"];
 const stepColors = ["bg-amber-400", "bg-blue-400", "bg-emerald-400", "bg-emerald-500"];
 
 export default function AdminOrders() {
+  const [animateParent] = useAutoAnimate();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("all");
@@ -222,7 +223,7 @@ export default function AdminOrders() {
           </div>
         ) : (
           <AnimatePresence mode="popLayout">
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3">
+            <div ref={animateParent} className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3">
               {filtered.map((order, i) => {
                 const StatusIcon = statusIcons[order.status] || Clock;
                 const sc = statusColors[order.status] || statusColors.pending;
