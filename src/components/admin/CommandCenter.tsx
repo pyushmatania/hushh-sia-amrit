@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import NumberTicker from "@/components/shared/NumberTicker";
 import {
   IndianRupee, CalendarCheck, Eye, Users, TrendingUp,
   ArrowUpRight, ArrowDownRight, Flame, Clock, Sparkles, Activity,
@@ -32,18 +33,7 @@ interface RecentReview { id: string; rating: number; content: string; propertyNa
 interface TodaySlot { id: string; propertyName: string; slot: string; guests: number; total: number; status: string; }
 
 function AnimatedCounter({ value, prefix = "" }: { value: number; prefix?: string }) {
-  const [display, setDisplay] = useState(0);
-  useEffect(() => {
-    let start = 0;
-    const step = Math.max(1, Math.floor(value / 40));
-    const timer = setInterval(() => {
-      start += step;
-      if (start >= value) { setDisplay(value); clearInterval(timer); }
-      else setDisplay(start);
-    }, 25);
-    return () => clearInterval(timer);
-  }, [value]);
-  return <span>{prefix}{display.toLocaleString("en-IN")}</span>;
+  return <NumberTicker value={value} prefix={prefix} className="" locale="en-IN" duration={1.4} />;
 }
 
 const smartCards = [

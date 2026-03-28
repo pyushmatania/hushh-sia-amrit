@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { CalendarCheck, Search, CheckCircle2, Clock, Ban, ChevronRight, Filter, Download, Users, IndianRupee } from "lucide-react";
+import NumberTicker from "@/components/shared/NumberTicker";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 
@@ -97,16 +98,16 @@ export default function AdminBookings({ onNavigate }: { onNavigate?: (page: stri
       {/* Quick Stats Row */}
       <motion.div variants={fadeUp} className="grid grid-cols-3 gap-3">
         {[
-          { label: "Total Revenue", value: `₹${totalRevenue.toLocaleString("en-IN")}`, icon: IndianRupee, color: "text-emerald-600", bg: "bg-emerald-50 dark:bg-emerald-500/10" },
-          { label: "Active Bookings", value: activeCount.toString(), icon: CalendarCheck, color: "text-blue-600", bg: "bg-blue-50 dark:bg-blue-500/10" },
-          { label: "Total Guests", value: totalGuests.toString(), icon: Users, color: "text-violet-600", bg: "bg-violet-50 dark:bg-violet-500/10" },
+          { label: "Total Revenue", value: totalRevenue, icon: IndianRupee, color: "text-emerald-600", bg: "bg-emerald-50 dark:bg-emerald-500/10", prefix: "₹" },
+          { label: "Active Bookings", value: activeCount, icon: CalendarCheck, color: "text-blue-600", bg: "bg-blue-50 dark:bg-blue-500/10", prefix: "" },
+          { label: "Total Guests", value: totalGuests, icon: Users, color: "text-violet-600", bg: "bg-violet-50 dark:bg-violet-500/10", prefix: "" },
         ].map(stat => (
           <div key={stat.label} className="rounded-xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm border border-zinc-100/80 dark:border-zinc-800/80 p-3.5 flex items-center gap-3">
             <div className={`w-9 h-9 rounded-lg ${stat.bg} flex items-center justify-center`}>
               <stat.icon size={16} className={stat.color} />
             </div>
             <div>
-              <p className="text-lg font-bold text-zinc-800 dark:text-zinc-100 tabular-nums">{stat.value}</p>
+              <p className="text-lg font-bold text-zinc-800 dark:text-zinc-100 tabular-nums"><NumberTicker value={stat.value} prefix={stat.prefix} locale="en-IN" /></p>
               <p className="text-[10px] text-zinc-400">{stat.label}</p>
             </div>
           </div>
