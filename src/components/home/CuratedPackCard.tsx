@@ -17,6 +17,7 @@ export interface ExperiencePack {
   propertyId: string; // maps to a property for booking
   gradient: string;
   badge?: string;
+  imageUrls?: string[];
 }
 
 // ─── CURATED EXPERIENCE PACKS ───
