@@ -3,6 +3,7 @@ import { useState, useCallback, useRef, useMemo } from "react";
 import type { Property } from "@/data/properties";
 import { AccentFrame, AccentTag } from "@/components/shared/AccentFrame";
 import OptimizedImage from "@/components/shared/OptimizedImage";
+import SpotlightCard from "@/components/shared/SpotlightCard";
 
 // Accent config — color + tag
 type CardAccent = {
@@ -106,8 +107,12 @@ export default function PropertyCard({ property, index, onTap, isWishlisted = fa
   }, [onTap, property]);
 
   return (
+    <SpotlightCard
+      className="cursor-pointer px-5 md:px-0 group active:scale-[0.97] transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] md:hover:opacity-95 md:hover:-translate-y-1 rounded-2xl"
+      spotlightColor="rgba(168, 85, 247, 0.06)"
+      borderColor="rgba(168, 85, 247, 0.12)"
+    >
     <div
-      className="cursor-pointer px-5 md:px-0 group active:scale-[0.97] transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] md:hover:opacity-95 md:hover:-translate-y-1"
       onClick={handleClick}
       style={{ animationDelay: `${index * 60}ms` }}
     >

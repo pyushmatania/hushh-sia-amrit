@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Check, MapPin, Calendar, Users, QrCode, Clock, ShoppingCart, Shield, Upload } from "lucide-react";
 import { useState, useEffect } from "react";
+import { fireCelebration } from "@/lib/confetti";
 import { format } from "date-fns";
 import type { Property } from "@/data/properties";
 import LiveOrderingSheet from "./LiveOrderingSheet";
@@ -27,6 +28,9 @@ export default function BookingConfirmation({ property, slotId, guests, date, to
   const [idSheetOpen, setIdSheetOpen] = useState(false);
   const [idVerified, setIdVerified] = useState<boolean | null>(null);
   const { user } = useAuth();
+
+  // 🎉 Fire confetti on mount
+  useEffect(() => { fireCelebration(); }, []);
 
   useEffect(() => {
     const check = async () => {
