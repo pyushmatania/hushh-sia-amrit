@@ -93,6 +93,7 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
   const [sortBy, setSortBy] = useState<"default" | "price_asc" | "price_desc" | "rating" | "distance">("default");
   const [routeLoading, setRouteLoading] = useState(false);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+  const [clusterReady, setClusterReady] = useState(false);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
@@ -183,6 +184,7 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
         },
       });
       map.addLayer(clusterGroupRef.current);
+      setClusterReady(true);
     };
 
     initMap().catch(() => {
@@ -195,6 +197,7 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
       mapInstanceRef.current = null;
       markersRef.current.clear();
       clusterGroupRef.current = null;
+      setClusterReady(false);
     };
   }, []);
 
@@ -220,7 +223,7 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
     if (selectedPin && !filteredProperties.find((p) => p.id === selectedPin.id)) {
       setSelectedPin(null);
     }
-  }, [filteredProperties]);
+  }, [filteredProperties, clusterReady]);
 
   // Update tile layer
   useEffect(() => {
