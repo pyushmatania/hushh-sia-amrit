@@ -2,7 +2,7 @@
  * TypeWriter — typed.js-style typewriter effect using pure React.
  * Cycles through an array of strings with typing/deleting animation.
  */
-import { useState, useEffect, useCallback, memo } from "react";
+import { useState, useEffect, memo } from "react";
 
 interface TypeWriterProps {
   strings: string[];
@@ -23,35 +23,39 @@ const TypeWriter = memo(function TypeWriter({
   const [stringIndex, setStringIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const tick = useCallback(() => {
-    const current = strings[stringIndex];
-    if (!isDeleting) {
-      if (text.length < current.length) {
-        setText(current.slice(0, text.length + 1));
-        return typingSpeed;
-      } else {
+  useEffect(() => {
+    if (!strings.length) return;
+
+    const current = strings[stringIndex] ?? "";
+    const delay = !isDeleting
+      ? text.length < current.length
+        ? typingSpeed
+        : pauseDuration
+      : text.length > 0
+        ? deletingSpeed
+        : typingSpeed;
+
+    const timer = setTimeout(() => {
+      if (!isDeleting) {
+        if (text.length < current.length) {
+          setText(current.slice(0, text.length + 1));
+          return;
+        }
         setIsDeleting(true);
-        return pauseDuration;
+        return;
       }
-    } else {
+
       if (text.length > 0) {
         setText(current.slice(0, text.length - 1));
-        return deletingSpeed;
-      } else {
-        setIsDeleting(false);
-        setStringIndex((i) => (i + 1) % strings.length);
-        return typingSpeed;
+        return;
       }
-    }
-  }, [text, stringIndex, isDeleting, strings, typingSpeed, deletingSpeed, pauseDuration]);
 
-  useEffect(() => {
-    const delay = tick();
-    const timer = setTimeout(() => {
-      tick(); // force re-render via state changes in tick
+      setIsDeleting(false);
+      setStringIndex((i) => (i + 1) % strings.length);
     }, delay);
+
     return () => clearTimeout(timer);
-  }, [text, isDeleting, stringIndex]);
+  }, [text, stringIndex, isDeleting, strings, typingSpeed, deletingSpeed, pauseDuration]);
 
   return (
     <span className={className}>
