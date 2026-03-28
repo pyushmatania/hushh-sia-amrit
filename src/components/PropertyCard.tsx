@@ -201,5 +201,6 @@ export default function PropertyCard({ property, index, onTap, isWishlisted = fa
         </p>
       </div>
     </div>
+    </SpotlightCard>
   );
 }
