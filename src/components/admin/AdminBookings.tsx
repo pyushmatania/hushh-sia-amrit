@@ -191,7 +191,7 @@ export default function AdminBookings({ onNavigate }: { onNavigate?: (page: stri
         </motion.div>
       ) : (
         <AnimatePresence mode="popLayout">
-          <div className="space-y-2">
+          <div ref={animateParent} className="space-y-2">
             {filtered.map((b, i) => {
               const sc = statusConfig[b.status] || statusConfig.pending;
               const StatusIcon = sc.icon;
