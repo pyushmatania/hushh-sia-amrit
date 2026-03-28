@@ -5,11 +5,12 @@ import { properties, type Property } from "@/data/properties";
 import { useTheme } from "@/hooks/use-theme";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-// Ensure L is globally available for leaflet.markercluster
-(window as any).L = L;
+
+// Ensure L is globally available BEFORE markercluster plugin loads
+if (typeof window !== "undefined") {
+  (window as any).L = L;
+}
 import "leaflet.markercluster";
-import "leaflet.markercluster/dist/MarkerCluster.css";
-import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 

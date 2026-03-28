@@ -34,9 +34,9 @@ export default function RotatingSearchBar({ onSearchTap, onMapTap }: RotatingSea
           <TypeWriter
             strings={placeholders}
             className="text-sm text-muted-foreground whitespace-nowrap md:text-base"
-            typingSpeed={55}
-            deletingSpeed={30}
-            pauseDuration={2200}
+            typingSpeed={80}
+            deletingSpeed={45}
+            pauseDuration={3000}
           />
         </div>
         {/* Desktop search button */}
