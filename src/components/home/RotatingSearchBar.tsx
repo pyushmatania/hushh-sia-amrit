@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Search, Map } from "lucide-react";
+import TypeWriter from "@/components/shared/TypeWriter";
 
 const placeholders = [
-  "Search for 'Bonfire Night'",
-  "Search for 'Romantic Date'",
-  "Search for 'Pickleball'",
-  "Search for 'Birthday Party'",
-  "Search for 'Movie Night'",
-  "Search for 'Tribal Thali'",
+  "Bonfire Night",
+  "Romantic Date",
+  "Pickleball",
+  "Birthday Party",
+  "Movie Night",
+  "Tribal Thali",
 ];
 
 interface RotatingSearchBarProps {
@@ -17,15 +17,6 @@ interface RotatingSearchBarProps {
 }
 
 export default function RotatingSearchBar({ onSearchTap, onMapTap }: RotatingSearchBarProps) {
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((i) => (i + 1) % placeholders.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <div className="flex gap-2 px-4 md:justify-center">
       <motion.div
@@ -40,18 +31,13 @@ export default function RotatingSearchBar({ onSearchTap, onMapTap }: RotatingSea
       >
         <Search size={18} className="text-muted-foreground shrink-0 md:w-5 md:h-5" />
         <div className="relative h-5 flex-1 overflow-hidden">
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={index}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="text-sm text-muted-foreground absolute inset-0 whitespace-nowrap md:text-base"
-            >
-              {placeholders[index]}
-            </motion.span>
-          </AnimatePresence>
+          <TypeWriter
+            strings={placeholders}
+            className="text-sm text-muted-foreground whitespace-nowrap md:text-base"
+            typingSpeed={55}
+            deletingSpeed={30}
+            pauseDuration={2200}
+          />
         </div>
         {/* Desktop search button */}
         <div className="hidden md:flex w-9 h-9 rounded-full bg-primary/20 items-center justify-center hover:bg-primary/30 transition-colors cursor-pointer">
