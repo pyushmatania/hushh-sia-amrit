@@ -30,6 +30,7 @@ export function useCurations() {
             propertyId: row.property_id,
             gradient: row.gradient,
             badge: row.badge ?? undefined,
+            imageUrls: row.image_urls ?? undefined,
           }))
         );
       }
