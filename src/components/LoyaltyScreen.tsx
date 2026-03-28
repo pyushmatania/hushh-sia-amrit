@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import SpinWheel, { milestones as defaultMilestones, type Prize, type Milestone } from "./SpinWheel";
+import NumberTicker from "@/components/shared/NumberTicker";
 
 interface LoyaltyScreenProps {
   onBack: () => void;
@@ -179,7 +180,7 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
             transition={{ duration: 2, repeat: Infinity }}
           >
             <Star size={13} className="text-gold fill-gold" style={{ color: "hsl(var(--gold))", fill: "hsl(var(--gold))" }} />
-            <span className="text-sm font-black" style={{ color: "hsl(var(--gold))" }}>{points}</span>
+            <NumberTicker value={points} className="text-sm font-black" prefix="" suffix="" />
           </motion.div>
         </div>
       </div>

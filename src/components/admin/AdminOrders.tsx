@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { ShoppingCart, Clock, CheckCircle2, Loader2, Search, UtensilsCrossed, MapPin, ChefHat, IndianRupee, Package, History, CalendarDays } from "lucide-react";
 import { getListingThumbnail } from "@/lib/listing-thumbnails";
 import { supabase } from "@/integrations/supabase/client";
