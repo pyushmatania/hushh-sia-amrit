@@ -197,7 +197,6 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
       mapInstanceRef.current = null;
       markersRef.current.clear();
       clusterGroupRef.current = null;
-      setClusterReady(false);
     };
   }, []);
 
