@@ -351,27 +351,36 @@ export default function ExperienceDetailScreen({ pack, property, onBack, onBook 
 
       {/* ── Sticky bottom CTA ── */}
       <div
-        className="fixed bottom-0 inset-x-0 z-30 px-5 pb-[max(env(safe-area-inset-bottom,16px),16px)] pt-3"
+        className="fixed bottom-0 inset-x-0 z-30 px-5 pb-[max(env(safe-area-inset-bottom,16px),16px)] pt-4"
         style={{
-          background: "linear-gradient(to top, hsl(var(--background)) 70%, hsl(var(--background) / 0))",
+          background: "linear-gradient(to top, hsl(var(--background)) 60%, hsl(var(--background) / 0.9) 80%, hsl(var(--background) / 0))",
         }}
       >
-        <div className="flex items-center gap-3">
-          <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-3 p-3 rounded-2xl" style={{
+          background: "hsl(var(--card) / 0.85)",
+          backdropFilter: "blur(20px) saturate(1.4)",
+          WebkitBackdropFilter: "blur(20px) saturate(1.4)",
+          border: "1px solid hsl(var(--border) / 0.4)",
+          boxShadow: "0 -2px 20px -4px hsl(var(--foreground) / 0.1)",
+        }}>
+          <div className="flex-1 min-w-0 pl-1">
             <div className="flex items-baseline gap-1.5">
               <span className="text-xl font-black text-foreground">₹{pack.price.toLocaleString("en-IN")}</span>
               {pack.originalPrice && (
                 <span className="text-xs text-muted-foreground line-through">₹{pack.originalPrice.toLocaleString("en-IN")}</span>
               )}
             </div>
-            <p className="text-[10px] text-muted-foreground">{pack.slot}</p>
+            <p className="text-[10px] text-muted-foreground mt-0.5">{pack.slot}</p>
           </div>
           <motion.button
             whileTap={{ scale: 0.94 }}
             onClick={() => { hapticMedium(); onBook(); }}
-            className="flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-primary text-primary-foreground font-bold text-sm glow-radiate active:scale-95 transition-transform"
+            className="flex items-center gap-2 px-7 py-3.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm active:scale-95 transition-transform"
+            style={{
+              boxShadow: "0 4px 16px -2px hsl(var(--primary) / 0.4), 0 0 0 1px hsl(var(--primary) / 0.2)",
+            }}
           >
-            <Zap size={16} />
+            <Zap size={15} />
             Book Now
           </motion.button>
         </div>

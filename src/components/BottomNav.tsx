@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Heart, MapPin, MessageCircle, User } from "lucide-react";
-import { hapticSelection, hapticLight, hapticMedium } from "@/lib/haptics";
+import { hapticLight, hapticMedium } from "@/lib/haptics";
 import { useCallback } from "react";
 
 const tabs = [
@@ -30,56 +30,64 @@ export default function BottomNav({ active, onChange, messageBadge = 0 }: Bottom
   return (
     <div
       className="fixed left-0 right-0 z-40 md:hidden"
-      style={{
-        bottom: "0px",
-      }}
+      style={{ bottom: 0 }}
     >
-      <motion.div
-        initial={{ y: 30, opacity: 0, filter: "blur(6px)" }}
-        animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
-        transition={{ type: "spring", stiffness: 300, damping: 30, mass: 0.8, delay: 0.08 }}
+      {/* Frosted glass top edge */}
+      <div
+        className="h-6 pointer-events-none"
         style={{
-          background: "hsl(var(--card))",
-          borderTop: "1px solid hsl(var(--border))",
-          boxShadow: "var(--shadow-card)",
+          background: "linear-gradient(to top, hsl(var(--card) / 0.95), hsl(var(--card) / 0))",
+        }}
+      />
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 350, damping: 32, delay: 0.06 }}
+        className="nav-glass-bar"
+        style={{
+          background: "hsl(var(--card) / 0.82)",
+          backdropFilter: "blur(24px) saturate(1.6)",
+          WebkitBackdropFilter: "blur(24px) saturate(1.6)",
+          borderTop: "1px solid hsl(var(--border) / 0.5)",
+          boxShadow: "0 -4px 24px -4px hsl(var(--foreground) / 0.08), 0 -1px 3px hsl(var(--foreground) / 0.04)",
         }}
       >
-
-        <div className="flex items-center justify-around pt-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom))] px-1">
+        <div className="flex items-center justify-around pt-2 pb-[max(0.65rem,env(safe-area-inset-bottom))] px-2">
           {tabs.map((tab) => {
             const isActive = active === tab.id;
             return (
               <motion.button
                 key={tab.id}
                 onClick={() => handleTabPress(tab.id)}
-                className="flex flex-col items-center gap-0.5 min-w-[56px] py-1 relative"
+                className="flex flex-col items-center gap-[3px] min-w-[52px] py-1 relative"
                 whileTap={{ scale: 0.88 }}
                 transition={{ type: "spring", stiffness: 400, damping: 22 }}
               >
-                {/* Active pill background */}
+                {/* Active pill */}
                 <AnimatePresence>
                   {isActive && (
                     <motion.div
                       layoutId="navActivePill"
-                      className="absolute inset-0 -mx-1 rounded-2xl glow-border-radiate"
-                      style={{
-                        background: "hsl(var(--primary) / 0.1)",
-                      }}
-                      initial={{ opacity: 0, scale: 0.8 }}
+                      className="absolute -inset-x-1.5 -inset-y-0.5 rounded-2xl"
+                      style={{ background: "hsl(var(--primary) / 0.08)" }}
+                      initial={{ opacity: 0, scale: 0.85 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.8 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 28 }}
+                      exit={{ opacity: 0, scale: 0.85 }}
+                      transition={{ type: "spring", stiffness: 450, damping: 28 }}
                     />
                   )}
                 </AnimatePresence>
 
-                {/* Active glow dot */}
+                {/* Active line indicator */}
                 <AnimatePresence>
                   {isActive && (
                     <motion.div
-                      layoutId="bottomNavGlow"
-                      className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-5 h-[2px] rounded-full"
-                      style={{ background: "hsl(var(--primary))", boxShadow: "0 0 8px hsl(var(--primary) / 0.6)" }}
+                      layoutId="bottomNavLine"
+                      className="absolute -top-[5px] left-1/2 -translate-x-1/2 w-8 h-[2.5px] rounded-full"
+                      style={{
+                        background: "linear-gradient(90deg, hsl(var(--primary) / 0.3), hsl(var(--primary)), hsl(var(--primary) / 0.3))",
+                        boxShadow: "0 0 12px 2px hsl(var(--primary) / 0.35)",
+                      }}
                       initial={{ opacity: 0, scaleX: 0 }}
                       animate={{ opacity: 1, scaleX: 1 }}
                       exit={{ opacity: 0, scaleX: 0 }}
@@ -88,43 +96,40 @@ export default function BottomNav({ active, onChange, messageBadge = 0 }: Bottom
                   )}
                 </AnimatePresence>
 
-                {/* Icon with bounce */}
                 <motion.div
                   animate={isActive
-                    ? { y: [0, -4, -1, 0], scale: [1, 1.15, 1.05, 1] }
+                    ? { y: [0, -3, 0], scale: [1, 1.12, 1] }
                     : { y: 0, scale: 1 }
                   }
-                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                   className="relative"
                 >
-                  {/* Background glow for active icon */}
                   <AnimatePresence>
                     {isActive && (
                       <motion.div
                         initial={{ opacity: 0, scale: 0 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0 }}
-                        className="absolute inset-0 -m-3 rounded-full"
-                        style={{ background: "hsl(var(--primary) / 0.12)", filter: "blur(8px)" }}
+                        className="absolute inset-0 -m-2.5 rounded-full"
+                        style={{ background: "hsl(var(--primary) / 0.1)", filter: "blur(6px)" }}
                       />
                     )}
                   </AnimatePresence>
 
                   <tab.icon
-                    size={23}
+                    size={22}
                     className={`relative transition-colors duration-200 ${isActive ? "text-primary" : "text-muted-foreground"}`}
-                    style={isActive ? { filter: "drop-shadow(0 0 6px hsl(var(--primary) / 0.5))" } : undefined}
-                    strokeWidth={isActive ? 2.5 : 1.5}
+                    style={isActive ? { filter: "drop-shadow(0 0 5px hsl(var(--primary) / 0.45))" } : undefined}
+                    strokeWidth={isActive ? 2.5 : 1.6}
                     fill={isActive && tab.id === "wishlists" ? "currentColor" : "none"}
                   />
 
-                  {/* Message badge */}
                   {tab.id === "messages" && messageBadge > 0 && (
                     <motion.span
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ type: "spring", stiffness: 500, damping: 15 }}
-                      className="absolute -top-1.5 -right-2.5 min-w-[16px] h-4 rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold flex items-center justify-center px-1"
+                      className="absolute -top-1.5 -right-2.5 min-w-[15px] h-[15px] rounded-full bg-destructive text-destructive-foreground text-[8px] font-bold flex items-center justify-center px-1"
                       style={{ boxShadow: "0 0 6px hsl(var(--destructive) / 0.4)" }}
                     >
                       {messageBadge > 99 ? "99+" : messageBadge}
@@ -132,14 +137,13 @@ export default function BottomNav({ active, onChange, messageBadge = 0 }: Bottom
                   )}
                 </motion.div>
 
-                {/* Label */}
                 <motion.span
                   animate={{
                     color: isActive ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
-                    fontWeight: isActive ? 700 : 500,
+                    fontWeight: isActive ? 700 : 400,
                   }}
                   transition={{ duration: 0.2 }}
-                  className="text-[10px] relative z-10"
+                  className="text-[9px] relative z-10 tracking-wide"
                 >
                   {tab.label}
                 </motion.span>

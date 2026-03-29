@@ -62,7 +62,7 @@ export default memo(function CategoryBar({ active, onChange }: CategoryBarProps)
           <button
             key={cat.id}
             onClick={() => handleClick(cat.id)}
-            className="relative flex flex-col items-center gap-1 px-1.5 pt-2 pb-2.5 shrink-0 group min-w-0 flex-1 md:flex-none md:px-4 md:rounded-xl md:hover:bg-muted/50 md:transition-colors md:cursor-pointer"
+            className="relative flex flex-col items-center gap-0.5 px-1.5 pt-2 pb-2 shrink-0 group min-w-0 flex-1 md:flex-none md:px-4 md:rounded-xl md:hover:bg-muted/50 md:transition-colors md:cursor-pointer"
           >
             <div className="relative h-14 flex items-center justify-center">
               <AnimatedIcon cat={cat} isActive={isActive} />
@@ -72,14 +72,17 @@ export default memo(function CategoryBar({ active, onChange }: CategoryBarProps)
                 </span>
               )}
             </div>
-            <span className={`text-[10px] md:text-sm font-medium whitespace-nowrap transition-colors duration-200 ${
-              isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground/70"
+            <span className={`text-[10px] md:text-sm whitespace-nowrap transition-all duration-200 ${
+              isActive ? "text-foreground font-bold" : "text-muted-foreground font-medium group-hover:text-foreground/70"
             }`}>
               {cat.label}
             </span>
             {isActive && (
-              <div className="absolute bottom-0 left-2 right-2 h-[2.5px] rounded-full cat-underline glow-radiate"
-                style={{ background: "hsl(var(--primary))" }} />
+              <div className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full cat-underline"
+                style={{
+                  background: "linear-gradient(90deg, hsl(var(--primary) / 0.2), hsl(var(--primary)), hsl(var(--primary) / 0.2))",
+                  boxShadow: "0 0 8px 1px hsl(var(--primary) / 0.25)",
+                }} />
             )}
           </button>
         );

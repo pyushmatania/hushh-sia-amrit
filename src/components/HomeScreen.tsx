@@ -38,17 +38,18 @@ function SectionBoundary({ children, name }: { children: ReactNode; name: string
   return <ErrorBoundary fallbackTitle={`Failed to load ${name}`}>{children}</ErrorBoundary>;
 }
 
-/* Lightweight section title — replaces deleted SectionDivider component */
+/* Lightweight section title — refined editorial style */
 function SectionTitle({ title }: { title: string }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
-      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      initial={{ opacity: 0, y: 8 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-      className="px-5 pt-6 pb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:pt-10 md:pb-5"
+      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      className="px-5 pt-7 pb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:pt-10 md:pb-5"
     >
-      <h2 className="text-xs font-bold tracking-[0.15em] text-muted-foreground uppercase md:text-lg md:tracking-wider lg:text-xl">{title}</h2>
+      <h2 className="text-[11px] font-bold tracking-[0.18em] text-muted-foreground uppercase md:text-lg md:tracking-wider lg:text-xl">{title}</h2>
+      <div className="w-8 h-[2px] rounded-full bg-primary/40 mt-2 md:w-12" />
     </motion.div>
   );
 }
@@ -249,8 +250,8 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
 
       {/* Search + Categories */}
       <div className="mx-0 pb-1 pt-2 md:px-8 lg:px-16 xl:px-24 2xl:px-32" style={{
-        background: "linear-gradient(135deg, rgba(120,80,220,0.15) 0%, rgba(60,40,140,0.08) 50%, rgba(180,100,255,0.12) 100%)",
-        borderBottom: "1px solid rgba(255,255,255,0.08)",
+        background: "linear-gradient(180deg, hsl(var(--primary) / 0.06) 0%, hsl(var(--background) / 0) 100%)",
+        borderBottom: "1px solid hsl(var(--border) / 0.3)",
       }}>
         <RotatingSearchBar onSearchTap={onSearchTap} onMapTap={onMapTap} />
         <CategoryBar active={activeCategory} onChange={handleCategoryChange} />
@@ -510,7 +511,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 <div className="mt-4">
                   <div className="flex items-center justify-between px-5 mb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:mb-6">
                     <h2 className="text-lg font-bold text-foreground md:text-xl lg:text-2xl">⚡ Slots Filling Up</h2>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 font-semibold animate-pulse md:text-xs">LIVE</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-destructive/20 text-destructive font-semibold animate-pulse md:text-xs">LIVE</span>
                   </div>
                   <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5 md:grid md:grid-cols-3 lg:grid-cols-4 md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-6">
                     {trendingNow.slice(0, 4).map((p, i) => (
