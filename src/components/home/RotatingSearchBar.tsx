@@ -18,18 +18,23 @@ interface RotatingSearchBarProps {
 
 export default function RotatingSearchBar({ onSearchTap, onMapTap }: RotatingSearchBarProps) {
   return (
-    <div className="flex gap-2 px-4 md:justify-center">
+    <div className="flex gap-2.5 px-4 pb-1 md:justify-center">
       <motion.div
-        initial={{ opacity: 0, y: -8 }}
+        initial={{ opacity: 0, y: -6 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex-1 flex items-center gap-3 rounded-full px-5 py-3 cursor-pointer md:max-w-[680px] lg:max-w-[780px] md:h-[52px] md:shadow-lg md:hover:shadow-xl md:hover:shadow-primary/5 md:transition-shadow"
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+        className="flex-1 flex items-center gap-3 rounded-2xl px-4 py-3 cursor-pointer md:max-w-[680px] lg:max-w-[780px] md:h-[52px] md:rounded-full md:shadow-lg md:hover:shadow-xl md:hover:shadow-primary/5 md:transition-shadow active:scale-[0.98] transition-transform"
         style={{
-          background: "rgba(255,255,255,0.06)",
-          border: "1px solid rgba(255,255,255,0.1)",
+          background: "hsl(var(--card) / 0.6)",
+          border: "1px solid hsl(var(--border) / 0.4)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
         }}
         onClick={onSearchTap}
       >
-        <Search size={18} className="text-muted-foreground shrink-0 md:w-5 md:h-5" />
+        <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0" style={{ background: "hsl(var(--primary) / 0.12)" }}>
+          <Search size={15} className="text-primary" />
+        </div>
         <div className="relative h-5 flex-1 overflow-hidden">
           <TypeWriter
             strings={placeholders}
@@ -39,23 +44,24 @@ export default function RotatingSearchBar({ onSearchTap, onMapTap }: RotatingSea
             pauseDuration={3000}
           />
         </div>
-        {/* Desktop search button */}
-        <div className="hidden md:flex w-9 h-9 rounded-full bg-primary/20 items-center justify-center hover:bg-primary/30 transition-colors cursor-pointer">
-          <Search size={16} className="text-primary" />
+        <div className="hidden md:flex w-9 h-9 rounded-full bg-primary items-center justify-center hover:bg-primary/90 transition-colors cursor-pointer">
+          <Search size={14} className="text-primary-foreground" />
         </div>
       </motion.div>
       <motion.button
-        initial={{ opacity: 0, scale: 0.8 }}
+        initial={{ opacity: 0, scale: 0.85 }}
         animate={{ opacity: 1, scale: 1 }}
         whileTap={{ scale: 0.9 }}
         onClick={onMapTap}
-        className="w-[48px] h-[48px] rounded-2xl flex items-center justify-center shrink-0 md:hidden"
+        className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 md:hidden active:scale-95 transition-transform"
         style={{
-          background: "rgba(255,255,255,0.06)",
-          border: "1px solid rgba(255,255,255,0.1)",
+          background: "hsl(var(--card) / 0.6)",
+          border: "1px solid hsl(var(--border) / 0.4)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
         }}
       >
-        <Map size={20} className="text-primary" />
+        <Map size={18} className="text-primary" />
       </motion.button>
     </div>
   );
