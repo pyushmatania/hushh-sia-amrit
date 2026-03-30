@@ -334,16 +334,6 @@
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* Smooth horizontal scroll containers */
-.smooth-scroll-x {
-  -webkit-overflow-scrolling: touch;
-  scroll-snap-type: x mandatory;
-  overscroll-behavior-x: contain;
-  scroll-behavior: smooth;
-}
-.smooth-scroll-x > * {
-  scroll-snap-align: center;
-}
 
 /* Shimmer animation */
 @keyframes shimmer {
@@ -371,29 +361,6 @@
   animation: shimmer 1.8s infinite;
 }
 
-/* Smooth page transitions */
-.page-transition {
-  will-change: transform, opacity;
-}
-
-/* Auto content-visibility for off-screen cards */
-.card-lazy {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 380px;
-}
-
-/* GPU-layer promotion for scroll-intensive containers */
-.smooth-main-scroll > * {
-  contain: layout style;
-}
-
-/* Haptic press feedback */
-.haptic-press {
-  transition: transform 0.1s ease;
-}
-.haptic-press:active {
-  transform: scale(0.96);
-}
 
 /* Floating animation for decorative elements */
 @keyframes float {
