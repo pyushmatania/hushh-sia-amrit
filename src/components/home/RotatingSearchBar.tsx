@@ -31,7 +31,7 @@ export default function RotatingSearchBar({ onSearchTap, onMapTap }: RotatingSea
           backdropFilter: "blur(12px)",
           WebkitBackdropFilter: "blur(12px)",
         }}
-        onClick={onSearchTap}
+        onClick={() => { hapticLight(); onSearchTap?.(); }}
       >
         <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0" style={{ background: "hsl(var(--primary) / 0.12)" }}>
           <Search size={15} className="text-primary" />
@@ -52,9 +52,9 @@ export default function RotatingSearchBar({ onSearchTap, onMapTap }: RotatingSea
       <motion.button
         initial={{ opacity: 0, scale: 0.85 }}
         animate={{ opacity: 1, scale: 1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={onMapTap}
-        className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 md:hidden active:scale-95 transition-transform"
+        whileTap={{ scale: 0.85 }}
+        onClick={() => { hapticLight(); onMapTap?.(); }}
+        className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 md:hidden transition-transform"
         style={{
           background: "hsl(var(--card) / 0.6)",
           border: "1px solid hsl(var(--border) / 0.4)",
