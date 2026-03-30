@@ -363,29 +363,7 @@
 
 
 /* Floating animation for decorative elements */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
-}
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
 
-/* Subtle pulse glow for CTAs */
-@keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 15px -3px hsla(270, 80%, 65%, 0.3); }
-  50% { box-shadow: 0 0 25px -3px hsla(270, 80%, 65%, 0.6); }
-}
-.animate-pulse-glow {
-  animation: pulseGlow 2s ease-in-out infinite;
-}
-.light .animate-pulse-glow {
-  animation: pulseGlowLight 2s ease-in-out infinite;
-}
-@keyframes pulseGlowLight {
-  0%, 100% { box-shadow: 0 4px 12px -3px hsla(270, 60%, 50%, 0.12); }
-  50% { box-shadow: 0 4px 20px -3px hsla(270, 60%, 50%, 0.25); }
-}
 
 /* Radiating glow rotation */
 @keyframes glowRotate {
@@ -405,15 +383,6 @@
   overscroll-behavior-y: contain;
 }
 
-/* Sport icon float — pure CSS, no JS overhead */
-@keyframes sportFloat {
-  0%, 100% { transform: translateY(-3px); }
-  50% { transform: translateY(3px); }
-}
-.sport-icon-float {
-  animation: sportFloat 3s ease-in-out infinite;
-  will-change: transform;
-}
 
 @keyframes spring-settle {
   0% { transform: scale(1.04) rotate(0.8deg); opacity: 0.9; }
