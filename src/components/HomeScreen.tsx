@@ -238,7 +238,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
             <p className="text-sm font-semibold text-foreground flex items-center gap-1"><MapPin size={12} /> Jeypore, Odisha</p>
           </div>
         </motion.div>
-        <motion.button initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} onClick={onNotificationTap} className="w-10 h-10 rounded-full glass flex items-center justify-center relative">
+        <motion.button initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} whileTap={{ scale: 0.85 }} onClick={() => { hapticSelection(); onNotificationTap?.(); }} className="w-10 h-10 rounded-full glass flex items-center justify-center relative">
           <Bell size={18} className="text-foreground" />
           {notifCount > 0 && (
             <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} className="absolute top-1.5 right-1.5 min-w-[16px] h-4 rounded-full bg-primary text-primary-foreground text-[9px] font-bold flex items-center justify-center px-1">
