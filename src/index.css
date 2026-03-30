@@ -418,10 +418,6 @@
   from { transform: scaleX(0); }
   to { transform: scaleX(1); }
 }
-.shimmer-bg {
-  background: linear-gradient(90deg, transparent 0%, hsl(var(--foreground) / 0.06) 50%, transparent 100%);
-  animation: shimmer 1.5s infinite;
-}
 
 /* Video buffering shimmer overlay */
 .video-buffer-shimmer {
