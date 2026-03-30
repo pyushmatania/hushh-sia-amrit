@@ -183,24 +183,6 @@
   .light .glow-sm {
     box-shadow: 0 2px 8px -2px hsla(270, 60%, 50%, 0.12);
   }
-  .glow-md {
-    box-shadow: 0 0 25px -5px hsla(270, 80%, 65%, 0.4);
-  }
-  .light .glow-md {
-    box-shadow: 0 4px 16px -4px hsla(270, 60%, 50%, 0.16);
-  }
-  .glow-lg {
-    box-shadow: 0 0 40px -8px hsla(270, 80%, 65%, 0.5);
-  }
-  .light .glow-lg {
-    box-shadow: 0 8px 24px -6px hsla(270, 60%, 50%, 0.2);
-  }
-  .glow-primary {
-    box-shadow: 0 0 20px -4px hsla(270, 80%, 65%, 0.5), 0 0 6px -2px hsla(270, 80%, 65%, 0.3);
-  }
-  .light .glow-primary {
-    box-shadow: 0 4px 12px -3px hsla(270, 60%, 50%, 0.16), 0 0 4px -1px hsla(270, 60%, 50%, 0.08);
-  }
 
   /* Gradient text */
   .text-gradient {
@@ -242,13 +224,6 @@
       radial-gradient(ellipse at 50% 50%, hsl(260, 20%, 98%) 0%, hsl(260, 20%, 98%) 100%);
   }
 
-  /* Subtle surface elevation for light mode cards */
-  .light .surface-raised {
-    box-shadow: 0 1px 2px hsla(260,20%,50%,0.04), 0 2px 8px -2px hsla(260,20%,50%,0.06);
-  }
-  .surface-raised {
-    box-shadow: 0 2px 6px -1px hsla(0,0%,0%,0.3);
-  }
 
   /* ─── Radiating Glow System ─── */
   .glow-radiate {
@@ -359,16 +334,6 @@
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* Smooth horizontal scroll containers */
-.smooth-scroll-x {
-  -webkit-overflow-scrolling: touch;
-  scroll-snap-type: x mandatory;
-  overscroll-behavior-x: contain;
-  scroll-behavior: smooth;
-}
-.smooth-scroll-x > * {
-  scroll-snap-align: center;
-}
 
 /* Shimmer animation */
 @keyframes shimmer {
@@ -396,54 +361,9 @@
   animation: shimmer 1.8s infinite;
 }
 
-/* Smooth page transitions */
-.page-transition {
-  will-change: transform, opacity;
-}
-
-/* Auto content-visibility for off-screen cards */
-.card-lazy {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 380px;
-}
-
-/* GPU-layer promotion for scroll-intensive containers */
-.smooth-main-scroll > * {
-  contain: layout style;
-}
-
-/* Haptic press feedback */
-.haptic-press {
-  transition: transform 0.1s ease;
-}
-.haptic-press:active {
-  transform: scale(0.96);
-}
 
 /* Floating animation for decorative elements */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
-}
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
 
-/* Subtle pulse glow for CTAs */
-@keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 15px -3px hsla(270, 80%, 65%, 0.3); }
-  50% { box-shadow: 0 0 25px -3px hsla(270, 80%, 65%, 0.6); }
-}
-.animate-pulse-glow {
-  animation: pulseGlow 2s ease-in-out infinite;
-}
-.light .animate-pulse-glow {
-  animation: pulseGlowLight 2s ease-in-out infinite;
-}
-@keyframes pulseGlowLight {
-  0%, 100% { box-shadow: 0 4px 12px -3px hsla(270, 60%, 50%, 0.12); }
-  50% { box-shadow: 0 4px 20px -3px hsla(270, 60%, 50%, 0.25); }
-}
 
 /* Radiating glow rotation */
 @keyframes glowRotate {
@@ -463,15 +383,6 @@
   overscroll-behavior-y: contain;
 }
 
-/* Sport icon float — pure CSS, no JS overhead */
-@keyframes sportFloat {
-  0%, 100% { transform: translateY(-3px); }
-  50% { transform: translateY(3px); }
-}
-.sport-icon-float {
-  animation: sportFloat 3s ease-in-out infinite;
-  will-change: transform;
-}
 
 @keyframes spring-settle {
   0% { transform: scale(1.04) rotate(0.8deg); opacity: 0.9; }
@@ -506,10 +417,6 @@
 @keyframes catSlide {
   from { transform: scaleX(0); }
   to { transform: scaleX(1); }
-}
-.shimmer-bg {
-  background: linear-gradient(90deg, transparent 0%, hsl(var(--foreground) / 0.06) 50%, transparent 100%);
-  animation: shimmer 1.5s infinite;
 }
 
 /* Video buffering shimmer overlay */
