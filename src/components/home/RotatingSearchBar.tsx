@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Search, Map } from "lucide-react";
 import TypeWriter from "@/components/shared/TypeWriter";
+import { hapticLight } from "@/lib/haptics";
 
 const placeholders = [
   "Bonfire Night",
