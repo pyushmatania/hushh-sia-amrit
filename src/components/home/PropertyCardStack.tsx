@@ -336,7 +336,7 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
       {/* 3D Carousel */}
       <div
         className="relative w-full flex items-center justify-center select-none"
-        style={{ height: "350px", transformStyle: "preserve-3d", cursor: isDragging ? "grabbing" : "grab", touchAction: "none" }}
+        style={{ height: "350px", transformStyle: "preserve-3d", cursor: isDragging ? "grabbing" : "grab", touchAction: "pan-y" }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
