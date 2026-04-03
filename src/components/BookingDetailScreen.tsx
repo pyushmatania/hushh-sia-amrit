@@ -882,50 +882,46 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
         )}
       </AnimatePresence>
 
-      {/* Live Food Ordering Sheet */}
-      <LiveOrderingSheet
-        open={showFoodOrder}
-        onClose={() => setShowFoodOrder(false)}
-        propertyName={property.name}
-        propertyId={booking.propertyId}
-        bookingId={booking.bookingId}
-      />
-
-      {/* Booking Photos Gallery */}
-      <AnimatePresence>
-        {showPhotos && (
-          <BookingPhotosSheet
-            open={showPhotos}
-            onClose={() => setShowPhotos(false)}
-            bookingId={booking.bookingId}
-            propertyName={property.name}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Digital Receipt */}
-      <AnimatePresence>
-        {showReceipt && (
-          <ReceiptSheet
-            open={showReceipt}
-            onClose={() => setShowReceipt(false)}
-            booking={booking}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Split Payment */}
-      <AnimatePresence>
-        {showSplit && (
-          <SplitPaymentSheet
-            open={showSplit}
-            onClose={() => setShowSplit(false)}
-            bookingId={booking.bookingId}
-            totalAmount={booking.total}
-            propertyName={property.name}
-          />
-        )}
-      </AnimatePresence>
+      {/* Lazy-loaded sheets */}
+      <Suspense fallback={null}>
+        <LiveOrderingSheet
+          open={showFoodOrder}
+          onClose={() => setShowFoodOrder(false)}
+          propertyName={property.name}
+          propertyId={booking.propertyId}
+          bookingId={booking.bookingId}
+        />
+        <AnimatePresence>
+          {showPhotos && (
+            <BookingPhotosSheet
+              open={showPhotos}
+              onClose={() => setShowPhotos(false)}
+              bookingId={booking.bookingId}
+              propertyName={property.name}
+            />
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {showReceipt && (
+            <ReceiptSheet
+              open={showReceipt}
+              onClose={() => setShowReceipt(false)}
+              booking={booking}
+            />
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {showSplit && (
+            <SplitPaymentSheet
+              open={showSplit}
+              onClose={() => setShowSplit(false)}
+              bookingId={booking.bookingId}
+              totalAmount={booking.total}
+              propertyName={property.name}
+            />
+          )}
+        </AnimatePresence>
+      </Suspense>
     </motion.div>
   );
 }
