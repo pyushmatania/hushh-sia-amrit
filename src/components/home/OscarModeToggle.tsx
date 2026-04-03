@@ -228,9 +228,9 @@ function OscarPropertyCard({ property, onTap, index, isWL, onToggleWishlist, tot
 
       {/* Card frame */}
       <div className={`relative overflow-hidden ${isSingle ? "rounded-[28px]" : "rounded-2xl"} ${isSingle ? "" : "mt-2"}`}
-        style={isSingle ? {
+         style={isSingle ? {
           border: "none",
-          boxShadow: "0 0 60px rgba(255,215,0,0.2), 0 24px 80px rgba(0,0,0,0.5)",
+          boxShadow: podiumGlows[index] || podiumGlows[0],
         } : {
           backgroundImage: `url(${oscarWoodTexture})`,
           backgroundSize: "cover",
