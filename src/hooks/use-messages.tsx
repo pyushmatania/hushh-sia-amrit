@@ -50,7 +50,7 @@ export function useMessages() {
           .from("profiles")
           .select("display_name, avatar_url")
           .eq("user_id", otherId)
-          .single();
+          .maybeSingle();
 
         // Get last message
         const { data: lastMsg } = await supabase
@@ -59,7 +59,7 @@ export function useMessages() {
           .eq("conversation_id", c.id)
           .order("created_at", { ascending: false })
           .limit(1)
-          .single();
+          .maybeSingle();
 
         // Get unread count
         const { count } = await supabase
@@ -156,7 +156,7 @@ export function useMessages() {
       .or(
         `and(participant_1.eq.${user.id},participant_2.eq.${otherUserId}),and(participant_1.eq.${otherUserId},participant_2.eq.${user.id})`
       )
-      .single();
+      .maybeSingle();
 
     if (existing) return existing.id;
 

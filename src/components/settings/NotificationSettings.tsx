@@ -142,7 +142,7 @@ export default function NotificationSettings() {
   // Fetch profile data
   useEffect(() => {
     if (!user) return;
-    supabase.from("profiles").select("display_name, location").eq("user_id", user.id).single()
+    supabase.from("profiles").select("display_name, location").eq("user_id", user.id).maybeSingle()
       .then(({ data }) => {
         if (data?.display_name) setDisplayName(data.display_name);
         if (data?.location) setUserLocation(data.location);

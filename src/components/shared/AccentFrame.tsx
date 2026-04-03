@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from "react";
+import { forwardRef, type CSSProperties, type ReactNode } from "react";
 
 export interface AccentTagConfig {
   label: string;
@@ -84,9 +84,10 @@ interface AccentTagProps {
   className?: string;
 }
 
-export function AccentTag({ tag, className = "absolute top-3 left-3 z-10" }: AccentTagProps) {
+export const AccentTag = forwardRef<HTMLSpanElement, AccentTagProps>(function AccentTag({ tag, className = "absolute top-3 left-3 z-10" }, ref) {
   return (
     <span
+      ref={ref}
       className={`${className} text-[10px] font-bold tracking-wider pl-3 pr-4 py-1.5 flex items-center gap-1 shadow-lg`}
       style={{
         background: tag.bg,
@@ -100,4 +101,4 @@ export function AccentTag({ tag, className = "absolute top-3 left-3 z-10" }: Acc
       {tag.label}
     </span>
   );
-}
+});

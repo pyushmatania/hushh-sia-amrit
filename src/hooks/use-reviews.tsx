@@ -44,7 +44,7 @@ export function useReviews(propertyId: string) {
           .from("profiles")
           .select("display_name, avatar_url")
           .eq("user_id", r.user_id)
-          .single();
+          .maybeSingle();
 
         const { data: resp } = await supabase
           .from("review_responses")
@@ -59,7 +59,7 @@ export function useReviews(propertyId: string) {
             .from("profiles")
             .select("display_name")
             .eq("user_id", resp.host_id)
-            .single();
+            .maybeSingle();
           hostName = hostProfile?.display_name || "Host";
         }
 
@@ -114,7 +114,7 @@ export function useReviews(propertyId: string) {
         .select("id")
         .eq("id", bookingId)
         .eq("user_id", user.id)
-        .single();
+        .maybeSingle();
       verified = !!booking;
     }
 
