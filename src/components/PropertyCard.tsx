@@ -73,7 +73,7 @@ interface PropertyCardProps {
   onToggleWishlist?: (id: string) => void;
 }
 
-export default function PropertyCard({ property, index, onTap, isWishlisted = false, onToggleWishlist }: PropertyCardProps) {
+export default memo(function PropertyCard({ property, index, onTap, isWishlisted = false, onToggleWishlist }: PropertyCardProps) {
   const [imgIndex, setImgIndex] = useState(0);
   const liked = isWishlisted;
   const [imgLoaded, setImgLoaded] = useState(false);
