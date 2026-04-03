@@ -1,6 +1,6 @@
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring, useAnimation, useScroll, PanInfo } from "framer-motion";
 import { MapPin, Calendar as CalendarIcon, Clock, ChevronRight, Ticket, QrCode, Users, X, Utensils, ShoppingCart, Shield, Upload, ChevronDown, ChevronUp } from "lucide-react";
-import { useRef, useState, useCallback, useMemo, useEffect, Suspense } from "react";
+import { useRef, useState, useCallback, useMemo, useEffect } from "react";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { Calendar } from "@/components/ui/calendar";
 import type { Booking } from "@/pages/Index";
@@ -11,9 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import EmptyState from "./shared/EmptyState";
 import BookingQRCode from "./shared/BookingQRCode";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { RoundedBox, Float, Environment } from "@react-three/drei";
-import * as THREE from "three";
+import QRCodeModal from "./shared/QRCodeModal";
 import { format } from "date-fns";
 
 interface TripsScreenProps {
@@ -50,31 +48,6 @@ const statusConfig: Record<string, { gradient: string; glow: string; label: stri
   },
 };
 
-/* ── 3D Floating QR Card ── */
-function FloatingQRCard() {
-  const groupRef = useRef<THREE.Group>(null);
-  useFrame((state) => {
-    if (!groupRef.current) return;
-    groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.15;
-    groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.3) * 0.05;
-  });
-
-  return (
-    <Float speed={2} rotationIntensity={0.3} floatIntensity={0.5}>
-      <group ref={groupRef}>
-        <RoundedBox args={[3.2, 3.2, 0.08]} radius={0.15} smoothness={4}>
-          <meshPhysicalMaterial color="#f8f5ff" roughness={0.15} metalness={0.05} clearcoat={1} clearcoatRoughness={0.1} />
-        </RoundedBox>
-        <RoundedBox args={[3.3, 3.3, 0.06]} radius={0.16} smoothness={4} position={[0, 0, -0.02]}>
-          <meshStandardMaterial color="#d4a853" roughness={0.3} metalness={0.7} />
-        </RoundedBox>
-        <RoundedBox args={[3.4, 3.4, 0.04]} radius={0.17} smoothness={4} position={[0, 0, -0.04]}>
-          <meshStandardMaterial color="#9333ea" roughness={0.4} metalness={0.5} transparent opacity={0.6} />
-        </RoundedBox>
-      </group>
-    </Float>
-  );
-}
 
 function SwipeableCard({
   booking,
@@ -607,108 +580,25 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
       })()}
 
       {/* Full-screen 3D QR modal */}
-      <AnimatePresence>
-        {qrBookingId && (() => {
-          const qrBooking = bookings.find(b => b.bookingId === qrBookingId);
-          const qrProperty = qrBooking ? properties.find(p => p.id === qrBooking.propertyId) : null;
-          const slot = qrProperty?.slots.find(s => s.id === qrBooking?.slot);
-
-          return (
-            <motion.div
-              key="qr-modal"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex flex-col items-center justify-center"
-              onClick={() => setQrBookingId(null)}
-            >
-              {/* Background */}
-              <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" />
-
-              {/* Close button */}
-              <button
-                onClick={() => setQrBookingId(null)}
-                className="absolute top-12 right-5 z-10 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center"
-              >
-                <X size={20} className="text-white" />
-              </button>
-
-              {/* 3D Canvas behind QR */}
-              <div className="absolute inset-0 pointer-events-none">
-                <Suspense fallback={null}>
-                  <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
-                    <ambientLight intensity={0.4} />
-                    <pointLight position={[5, 5, 5]} intensity={0.8} color="#d4a853" />
-                    <pointLight position={[-5, -3, 3]} intensity={0.5} color="#9333ea" />
-                    <spotLight position={[0, 5, 5]} angle={0.3} penumbra={1} intensity={0.6} color="#ffffff" />
-                    <FloatingQRCard />
-                    <Environment preset="city" />
-                  </Canvas>
-                </Suspense>
-              </div>
-
-              {/* QR Code overlay */}
-              <motion.div
-                initial={{ scale: 0.5, opacity: 0, rotateY: -90 }}
-                animate={{ scale: 1, opacity: 1, rotateY: 0 }}
-                exit={{ scale: 0.5, opacity: 0, rotateY: 90 }}
-                transition={{ type: "spring", damping: 20, stiffness: 200 }}
-                onClick={(e) => e.stopPropagation()}
-                className="relative z-10"
-                style={{ perspective: "1000px" }}
-              >
-                <BookingQRCode bookingId={qrBookingId} size={180} />
-              </motion.div>
-
-              {/* Booking info card below QR */}
-              {qrBooking && qrProperty && (
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  onClick={(e) => e.stopPropagation()}
-                  className="relative z-10 mt-6 mx-6 w-full max-w-sm rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-4 space-y-3"
-                >
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={qrProperty.images[0]}
-                      alt={qrProperty.name}
-                      className="w-12 h-12 rounded-xl object-cover ring-1 ring-white/20"
-                    />
-                    <div className="min-w-0">
-                      <h4 className="font-bold text-white text-sm truncate">{qrProperty.name}</h4>
-                      <p className="text-white/50 text-xs flex items-center gap-1">
-                        <MapPin size={10} /> {qrProperty.location}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="flex items-center gap-1.5 text-white/70">
-                      <CalendarIcon size={12} className="text-[#d4a853]" />
-                      {format(new Date(qrBooking.date), "d MMM yyyy")}
-                    </div>
-                    <div className="flex items-center gap-1.5 text-white/70">
-                      <Clock size={12} className="text-[#9333ea]" />
-                      {slot?.label || "Confirmed"}
-                    </div>
-                    <div className="flex items-center gap-1.5 text-white/70">
-                      <Users size={12} className="text-[#d4a853]" />
-                      {qrBooking.guests} guests
-                    </div>
-                    <div className="flex items-center gap-1.5 text-white/70">
-                      <Ticket size={12} className="text-[#9333ea]" />
-                      ₹{qrBooking.total.toLocaleString()}
-                    </div>
-                  </div>
-                  <div className="pt-2 border-t border-white/10 text-center">
-                    <span className="text-[10px] font-mono text-white/40 tracking-wider">{qrBookingId}</span>
-                  </div>
-                </motion.div>
-              )}
-            </motion.div>
-          );
-        })()}
-      </AnimatePresence>
+      {(() => {
+        const qrBooking = qrBookingId ? bookings.find(b => b.bookingId === qrBookingId) : null;
+        const qrProperty = qrBooking ? properties.find(p => p.id === qrBooking.propertyId) : null;
+        const slot = qrProperty?.slots.find(s => s.id === qrBooking?.slot);
+        return (
+          <QRCodeModal
+            open={!!qrBookingId}
+            onClose={() => setQrBookingId(null)}
+            bookingId={qrBookingId || ""}
+            propertyName={qrProperty?.name}
+            propertyImage={qrProperty?.images[0]}
+            propertyLocation={qrProperty?.location}
+            date={qrBooking?.date}
+            slotLabel={slot?.label}
+            guests={qrBooking?.guests}
+            total={qrBooking?.total}
+          />
+        );
+      })()}
     </div>
   );
 }

@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { useState, useMemo, lazy, Suspense } from "react";
 import BookingQRCode from "./shared/BookingQRCode";
+import QRCodeModal from "./shared/QRCodeModal";
 import type { Addon } from "@/data/properties";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { useToast } from "@/hooks/use-toast";
@@ -34,6 +35,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
   const [showPhotos, setShowPhotos] = useState(false);
   const [showReceipt, setShowReceipt] = useState(false);
   const [showSplit, setShowSplit] = useState(false);
+  const [showQRModal, setShowQRModal] = useState(false);
   const [addonSelections, setAddonSelections] = useState<Record<string, number>>({});
   const [orderedAddons, setOrderedAddons] = useState<{ name: string; qty: number; price: number }[]>([]);
   const [cancelling, setCancelling] = useState(false);
@@ -458,12 +460,13 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="rounded-2xl border border-border p-5 flex flex-col items-center"
+            className="rounded-2xl border border-border p-5 flex flex-col items-center cursor-pointer active:scale-[0.98] transition-transform"
+            onClick={() => setShowQRModal(true)}
           >
             <h4 className="font-semibold text-sm text-foreground mb-4">Entry QR Code</h4>
             <BookingQRCode bookingId={booking.bookingId} size={120} />
             <p className="text-[11px] font-mono text-muted-foreground mt-3">{booking.bookingId}</p>
-            <p className="text-xs text-muted-foreground mt-1">Show this at the venue entrance</p>
+            <p className="text-xs text-muted-foreground mt-1">Tap to expand · Show at venue entrance</p>
           </motion.div>
         )}
 
@@ -551,10 +554,13 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
 
           {/* QR Code */}
           {(isUpcoming || isActive) && !isCancelled && (
-            <div className="flex flex-col items-center pt-4 border-t border-border">
+            <div
+              className="flex flex-col items-center pt-4 border-t border-border cursor-pointer active:scale-[0.98] transition-transform"
+              onClick={() => setShowQRModal(true)}
+            >
               <BookingQRCode bookingId={booking.bookingId} size={112} />
               <p className="text-[11px] font-mono text-muted-foreground mt-2">{booking.bookingId}</p>
-              <p className="text-xs text-muted-foreground mt-1">Show at venue entrance</p>
+              <p className="text-xs text-muted-foreground mt-1">Tap to expand</p>
             </div>
           )}
 
@@ -921,6 +927,20 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
           )}
         </AnimatePresence>
       </Suspense>
+
+      {/* 3D QR Modal */}
+      <QRCodeModal
+        open={showQRModal}
+        onClose={() => setShowQRModal(false)}
+        bookingId={booking.bookingId}
+        propertyName={property?.name}
+        propertyImage={property?.images[0]}
+        propertyLocation={property?.location}
+        date={booking.date}
+        slotLabel={property?.slots.find(s => s.id === booking.slot)?.label}
+        guests={booking.guests}
+        total={booking.total}
+      />
     </motion.div>
   );
 }
