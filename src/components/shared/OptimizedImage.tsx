@@ -1,4 +1,4 @@
-import { useState, memo, type ImgHTMLAttributes } from "react";
+import { useState, memo, forwardRef, type ImgHTMLAttributes } from "react";
 
 interface OptimizedImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, "src"> {
   src: string;
@@ -18,7 +18,7 @@ interface OptimizedImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 
  * - `decoding="async"` for non-blocking decode
  * - Proper `fetchPriority` for above-the-fold images
  */
-const OptimizedImage = memo(function OptimizedImage({
+const OptimizedImage = memo(forwardRef<HTMLImageElement, OptimizedImageProps>(function OptimizedImage({
   src,
   alt,
   fill = false,
