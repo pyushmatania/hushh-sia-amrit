@@ -298,6 +298,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
   const [idSheetOpen, setIdSheetOpen] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [selectedCalDate, setSelectedCalDate] = useState<Date | undefined>(undefined);
+  const [qrBookingId, setQrBookingId] = useState<string | null>(null);
   const { user } = useAuth();
 
   useEffect(() => {
