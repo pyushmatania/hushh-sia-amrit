@@ -927,6 +927,20 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
           )}
         </AnimatePresence>
       </Suspense>
+
+      {/* 3D QR Modal */}
+      <QRCodeModal
+        open={showQRModal}
+        onClose={() => setShowQRModal(false)}
+        bookingId={booking.bookingId}
+        propertyName={property?.name}
+        propertyImage={property?.images[0]}
+        propertyLocation={property?.location}
+        date={booking.date}
+        slotLabel={property?.slots.find(s => s.id === booking.slot)?.label}
+        guests={booking.guests}
+        total={booking.total}
+      />
     </motion.div>
   );
 }
