@@ -1,6 +1,6 @@
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring, useAnimation, useScroll, PanInfo } from "framer-motion";
 import { MapPin, Calendar as CalendarIcon, Clock, ChevronRight, Ticket, QrCode, Users, X, Utensils, ShoppingCart, Shield, Upload, ChevronDown, ChevronUp } from "lucide-react";
-import { useRef, useState, useCallback, useMemo, useEffect } from "react";
+import { useRef, useState, useCallback, useMemo, useEffect, Suspense } from "react";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { Calendar } from "@/components/ui/calendar";
 import type { Booking } from "@/pages/Index";
@@ -11,6 +11,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import EmptyState from "./shared/EmptyState";
 import BookingQRCode from "./shared/BookingQRCode";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { RoundedBox, Float, Environment } from "@react-three/drei";
+import * as THREE from "three";
+import { format } from "date-fns";
 
 interface TripsScreenProps {
   bookings: Booking[];
