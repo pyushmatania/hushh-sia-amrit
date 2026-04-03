@@ -243,9 +243,9 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
         return;
       }
 
-      // Any horizontal component at all → treat as swipe
       if (absX >= 6 || (absX >= 4 && absX >= absY * 0.4)) {
         touchRef.current.mode = "horizontal";
+        setIsDragging(true);
       } else {
         return;
       }
