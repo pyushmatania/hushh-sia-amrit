@@ -1,41 +1,42 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useAdmin } from "@/hooks/use-admin";
 import AdminLayout, { type AdminPage } from "@/components/admin/AdminLayout";
-import CommandCenter from "@/components/admin/CommandCenter";
-import AdminCatalog from "@/components/admin/AdminCatalog";
-import AdminProperties from "@/components/admin/AdminProperties";
-import BookingHub from "@/components/admin/BookingHub";
-import AdminUsers from "@/components/admin/AdminUsers";
-import AdminClients from "@/components/admin/AdminClients";
-import AdminAnalytics from "@/components/admin/AdminAnalytics";
-import AdminCurations from "@/components/admin/AdminCurations";
-import AdminOrders from "@/components/admin/AdminOrders";
-import AdminCampaigns from "@/components/admin/AdminCampaigns";
-import AdminCoupons from "@/components/admin/AdminCoupons";
-import AdminTags from "@/components/admin/AdminTags";
-import AdminExports from "@/components/admin/AdminExports";
-import AdminAI from "@/components/admin/AdminAI";
-import AdminAlerts from "@/components/admin/AdminAlerts";
-import BusinessIntelligence from "@/components/admin/BusinessIntelligence";
-import AdminAuditLog from "@/components/admin/AdminAuditLog";
-import FinanceHub from "@/components/admin/FinanceHub";
-import AdminAchievements from "@/components/admin/AdminAchievements";
-import AdminLoyaltyReferrals from "@/components/admin/AdminLoyaltyReferrals";
-import HostCalendar from "@/components/admin/HostCalendar";
-// BookingRequests merged into BookingHub
-import AdminPropertyHistory from "@/components/admin/AdminPropertyHistory";
-import AdminInventory from "@/components/admin/AdminInventory";
-import AdminStaffManagement from "@/components/admin/AdminStaffManagement";
-import AdminBudgetTracker from "@/components/admin/AdminBudgetTracker";
-import AdminCheckin from "@/components/admin/AdminCheckin";
-import AdminReports from "@/components/admin/AdminReports";
-import AdminNotifications from "@/components/admin/AdminNotifications";
-import AdminSettings from "@/components/admin/AdminSettings";
-import AdminHomepage from "@/components/admin/AdminHomepage";
-import AdminTelegram from "@/components/admin/AdminTelegram";
 import AuthScreen from "@/components/AuthScreen";
 import { Shield, Loader2 } from "lucide-react";
+
+// Lazy-load every admin sub-page to split the 769KB mega-chunk
+const CommandCenter = lazy(() => import("@/components/admin/CommandCenter"));
+const AdminCatalog = lazy(() => import("@/components/admin/AdminCatalog"));
+const AdminProperties = lazy(() => import("@/components/admin/AdminProperties"));
+const BookingHub = lazy(() => import("@/components/admin/BookingHub"));
+const AdminUsers = lazy(() => import("@/components/admin/AdminUsers"));
+const AdminClients = lazy(() => import("@/components/admin/AdminClients"));
+const AdminAnalytics = lazy(() => import("@/components/admin/AdminAnalytics"));
+const AdminCurations = lazy(() => import("@/components/admin/AdminCurations"));
+const AdminOrders = lazy(() => import("@/components/admin/AdminOrders"));
+const AdminCampaigns = lazy(() => import("@/components/admin/AdminCampaigns"));
+const AdminCoupons = lazy(() => import("@/components/admin/AdminCoupons"));
+const AdminTags = lazy(() => import("@/components/admin/AdminTags"));
+const AdminExports = lazy(() => import("@/components/admin/AdminExports"));
+const AdminAI = lazy(() => import("@/components/admin/AdminAI"));
+const AdminAlerts = lazy(() => import("@/components/admin/AdminAlerts"));
+const BusinessIntelligence = lazy(() => import("@/components/admin/BusinessIntelligence"));
+const AdminAuditLog = lazy(() => import("@/components/admin/AdminAuditLog"));
+const FinanceHub = lazy(() => import("@/components/admin/FinanceHub"));
+const AdminAchievements = lazy(() => import("@/components/admin/AdminAchievements"));
+const AdminLoyaltyReferrals = lazy(() => import("@/components/admin/AdminLoyaltyReferrals"));
+const HostCalendar = lazy(() => import("@/components/admin/HostCalendar"));
+const AdminPropertyHistory = lazy(() => import("@/components/admin/AdminPropertyHistory"));
+const AdminInventory = lazy(() => import("@/components/admin/AdminInventory"));
+const AdminStaffManagement = lazy(() => import("@/components/admin/AdminStaffManagement"));
+const AdminBudgetTracker = lazy(() => import("@/components/admin/AdminBudgetTracker"));
+const AdminCheckin = lazy(() => import("@/components/admin/AdminCheckin"));
+const AdminReports = lazy(() => import("@/components/admin/AdminReports"));
+const AdminNotifications = lazy(() => import("@/components/admin/AdminNotifications"));
+const AdminSettings = lazy(() => import("@/components/admin/AdminSettings"));
+const AdminHomepage = lazy(() => import("@/components/admin/AdminHomepage"));
+const AdminTelegram = lazy(() => import("@/components/admin/AdminTelegram"));
 
 // Admin panel — v2
 export default function Admin() {
