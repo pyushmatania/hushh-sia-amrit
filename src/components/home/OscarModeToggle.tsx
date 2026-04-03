@@ -202,7 +202,12 @@ function OscarPropertyCard({ property, onTap, index, isWL, onToggleWishlist, tot
   property: Property; onTap: (p: Property) => void; index: number; isWL: boolean; onToggleWishlist?: (id: string) => void; totalCount?: number; isSingle?: boolean;
 }) {
   const cheapest = Math.min(...property.slots.filter(s => s.available).map(s => s.price));
-  const badges = ["🏆 BEST PICK", "⭐ TOP RATED", "👑 PREMIUM", "💎 EXCLUSIVE", "🌟 FEATURED", "🎭 CURATED"];
+  const podiumTitles = ["🏆 WINNER", "🥈 RUNNER UP", "🥉 EDITORS' PICK"];
+  const podiumGlows = [
+    "0 0 50px rgba(255,215,0,0.35), 0 24px 80px rgba(0,0,0,0.5)",
+    "0 0 40px rgba(192,192,192,0.25), 0 20px 60px rgba(0,0,0,0.5)",
+    "0 0 35px rgba(205,127,50,0.25), 0 16px 50px rgba(0,0,0,0.5)",
+  ];
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -223,9 +228,9 @@ function OscarPropertyCard({ property, onTap, index, isWL, onToggleWishlist, tot
 
       {/* Card frame */}
       <div className={`relative overflow-hidden ${isSingle ? "rounded-[28px]" : "rounded-2xl"} ${isSingle ? "" : "mt-2"}`}
-        style={isSingle ? {
+         style={isSingle ? {
           border: "none",
-          boxShadow: "0 0 60px rgba(255,215,0,0.2), 0 24px 80px rgba(0,0,0,0.5)",
+          boxShadow: podiumGlows[index] || podiumGlows[0],
         } : {
           backgroundImage: `url(${oscarWoodTexture})`,
           backgroundSize: "cover",
@@ -284,7 +289,7 @@ function OscarPropertyCard({ property, onTap, index, isWL, onToggleWishlist, tot
             <img src={oscarTrophy} alt="" className="w-4 h-4 object-contain" />
             <span className={`${isSingle ? "text-[10px]" : "text-[9px]"} font-black tracking-wider`}
               style={{ backgroundImage: "linear-gradient(135deg, #FFD700, #FFF, #FFD700)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              {badges[index % badges.length]}
+              {podiumTitles[index] || "✦ PREMIUM"}
             </span>
           </div>
 
@@ -390,7 +395,8 @@ interface OscarThemedListingProps {
 }
 
 export function OscarThemedListing({ properties, onPropertyTap, wishlist, onToggleWishlist }: OscarThemedListingProps) {
-  const premiumPicks = [...properties].sort((a, b) => b.rating - a.rating);
+  // Only show top 3 premium picks — the award podium
+  const premiumPicks = [...properties].sort((a, b) => b.rating - a.rating).slice(0, 3);
   const isMobile = useIsMobile();
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -448,7 +454,7 @@ export function OscarThemedListing({ properties, onPropertyTap, wishlist, onTogg
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.6 }}
-        className="relative overflow-hidden min-h-screen"
+        className="relative overflow-hidden"
         role="region"
         aria-label="Red Carpet Premium Collection"
       >
