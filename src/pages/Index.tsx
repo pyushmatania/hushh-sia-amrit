@@ -203,7 +203,7 @@ export default function Index() {
           title: "🎉 Booking Confirmed!",
           description: `${property.name} on ${bookingData.date} · +${earnedPts} pts`,
         });
-        setScreen({ type: "confirmation", property, slotId, guests, date, total: finalTotal });
+        setScreen({ type: "confirmation", property, slotId, guests, date, total: finalTotal, bookingId: bookingData.bookingId });
       },
     [createBooking, awardPoints, toast]
   );
