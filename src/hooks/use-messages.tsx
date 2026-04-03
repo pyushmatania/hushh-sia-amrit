@@ -50,7 +50,7 @@ export function useMessages() {
           .from("profiles")
           .select("display_name, avatar_url")
           .eq("user_id", otherId)
-          .single();
+          .maybeSingle();
 
         // Get last message
         const { data: lastMsg } = await supabase
