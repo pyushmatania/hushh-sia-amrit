@@ -6,15 +6,17 @@ import {
   Utensils, Star, Shield, Wifi, Music, Flame, Home, Info,
   Camera, Receipt, Split
 } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, lazy, Suspense } from "react";
 import type { Addon } from "@/data/properties";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { useToast } from "@/hooks/use-toast";
 import type { Booking } from "@/pages/Index";
-import LiveOrderingSheet from "./LiveOrderingSheet";
-import BookingPhotosSheet from "./BookingPhotosSheet";
-import ReceiptSheet from "./ReceiptSheet";
-import SplitPaymentSheet from "./SplitPaymentSheet";
+
+// Lazy-load heavy sheets only opened on user action
+const LiveOrderingSheet = lazy(() => import("./LiveOrderingSheet"));
+const BookingPhotosSheet = lazy(() => import("./BookingPhotosSheet"));
+const ReceiptSheet = lazy(() => import("./ReceiptSheet"));
+const SplitPaymentSheet = lazy(() => import("./SplitPaymentSheet"));
 
 interface BookingDetailScreenProps {
   booking: Booking;
@@ -880,50 +882,46 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
         )}
       </AnimatePresence>
 
-      {/* Live Food Ordering Sheet */}
-      <LiveOrderingSheet
-        open={showFoodOrder}
-        onClose={() => setShowFoodOrder(false)}
-        propertyName={property.name}
-        propertyId={booking.propertyId}
-        bookingId={booking.bookingId}
-      />
-
-      {/* Booking Photos Gallery */}
-      <AnimatePresence>
-        {showPhotos && (
-          <BookingPhotosSheet
-            open={showPhotos}
-            onClose={() => setShowPhotos(false)}
-            bookingId={booking.bookingId}
-            propertyName={property.name}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Digital Receipt */}
-      <AnimatePresence>
-        {showReceipt && (
-          <ReceiptSheet
-            open={showReceipt}
-            onClose={() => setShowReceipt(false)}
-            booking={booking}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Split Payment */}
-      <AnimatePresence>
-        {showSplit && (
-          <SplitPaymentSheet
-            open={showSplit}
-            onClose={() => setShowSplit(false)}
-            bookingId={booking.bookingId}
-            totalAmount={booking.total}
-            propertyName={property.name}
-          />
-        )}
-      </AnimatePresence>
+      {/* Lazy-loaded sheets */}
+      <Suspense fallback={null}>
+        <LiveOrderingSheet
+          open={showFoodOrder}
+          onClose={() => setShowFoodOrder(false)}
+          propertyName={property.name}
+          propertyId={booking.propertyId}
+          bookingId={booking.bookingId}
+        />
+        <AnimatePresence>
+          {showPhotos && (
+            <BookingPhotosSheet
+              open={showPhotos}
+              onClose={() => setShowPhotos(false)}
+              bookingId={booking.bookingId}
+              propertyName={property.name}
+            />
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {showReceipt && (
+            <ReceiptSheet
+              open={showReceipt}
+              onClose={() => setShowReceipt(false)}
+              booking={booking}
+            />
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {showSplit && (
+            <SplitPaymentSheet
+              open={showSplit}
+              onClose={() => setShowSplit(false)}
+              bookingId={booking.bookingId}
+              totalAmount={booking.total}
+              propertyName={property.name}
+            />
+          )}
+        </AnimatePresence>
+      </Suspense>
     </motion.div>
   );
 }
