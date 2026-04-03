@@ -172,7 +172,14 @@ export default function BookingConfirmation({ property, slotId, guests, date, to
           >
             Go to My Trips
           </motion.button>
-          <button className="w-full py-3 rounded-lg border border-foreground text-foreground font-medium text-sm">
+          <button
+            onClick={() => nativeShare({
+              title: `Booking at ${property.name}`,
+              text: `🎉 I just booked ${property.name} on ${format(date, "d MMM yyyy")}! Join me!`,
+              url: window.location.href,
+            })}
+            className="w-full py-3 rounded-lg border border-foreground text-foreground font-medium text-sm"
+          >
             Share with Friends
           </button>
         </div>
