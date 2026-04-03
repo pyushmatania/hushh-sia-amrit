@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useAppConfig } from "@/hooks/use-app-config";
 import BookingQRCode from "./shared/BookingQRCode";
+import { nativeShare } from "@/lib/native-share";
 
 interface BookingConfirmationProps {
   property: Property;
@@ -18,13 +19,15 @@ interface BookingConfirmationProps {
   date: Date;
   total: number;
   onDone: () => void;
+  bookingId?: string;
 }
 
-export default function BookingConfirmation({ property, slotId, guests, date, total, onDone }: BookingConfirmationProps) {
+export default function BookingConfirmation({ property, slotId, guests, date, total, onDone, bookingId: passedBookingId }: BookingConfirmationProps) {
   const appConfig = useAppConfig();
   const prefix = (appConfig.app_name || "HUSHH").toUpperCase();
-  const slot = property.slots.find((s) => s.id === slotId)!;
-  const bookingId = `${prefix}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+  const slot = property.slots.find((s) => s.id === slotId);
+  // Use the real booking ID from the DB if available, otherwise generate a display-only fallback
+  const [bookingId] = useState(() => passedBookingId || `${prefix}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`);
   const [orderingOpen, setOrderingOpen] = useState(false);
   const [idSheetOpen, setIdSheetOpen] = useState(false);
   const [idVerified, setIdVerified] = useState<boolean | null>(null);
@@ -97,7 +100,7 @@ export default function BookingConfirmation({ property, slotId, guests, date, to
           </div>
           <div className="grid grid-cols-1 gap-2 text-sm text-muted-foreground">
             <span className="flex items-center gap-2"><Calendar size={14} /> {format(date, "EEEE, d MMMM yyyy")}</span>
-            <span className="flex items-center gap-2"><Clock size={14} /> {slot.label} · {slot.time}</span>
+            <span className="flex items-center gap-2"><Clock size={14} /> {slot ? `${slot.label} · ${slot.time}` : "Confirmed slot"}</span>
             <span className="flex items-center gap-2"><Users size={14} /> {guests} guests</span>
           </div>
           <div className="flex items-center justify-between pt-3 border-t border-border">
@@ -169,7 +172,14 @@ export default function BookingConfirmation({ property, slotId, guests, date, to
           >
             Go to My Trips
           </motion.button>
-          <button className="w-full py-3 rounded-lg border border-foreground text-foreground font-medium text-sm">
+          <button
+            onClick={() => nativeShare({
+              title: `Booking at ${property.name}`,
+              text: `🎉 I just booked ${property.name} on ${format(date, "d MMM yyyy")}! Join me!`,
+              url: window.location.href,
+            })}
+            className="w-full py-3 rounded-lg border border-foreground text-foreground font-medium text-sm"
+          >
             Share with Friends
           </button>
         </div>

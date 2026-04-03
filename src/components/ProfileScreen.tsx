@@ -32,6 +32,8 @@ const AppDocumentation = lazy(() => import("./AppDocumentation"));
 const IdentityUploadSheet = lazy(() => import("./IdentityUploadSheet"));
 const PublicProfileScreen = lazy(() => import("./PublicProfileScreen"));
 
+import { useLoyalty } from "@/hooks/use-loyalty";
+
 const themeOptions = [
   { id: "light" as const, label: "Light", icon: Sun },
   { id: "dark" as const, label: "Dark", icon: Moon },
@@ -76,6 +78,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
   const appConfig = useAppConfig();
   const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
+  const { points: loyaltyPoints, tier: loyaltyTier } = useLoyalty();
   const [showAuth, setShowAuth] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [activeSetting, setActiveSetting] = useState("");
@@ -307,8 +310,8 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
           <Crown size={22} className="text-primary" />
         </div>
         <div className="flex-1">
-          <p className="text-sm font-bold text-foreground">Gold Member</p>
-          <p className="text-xs text-muted-foreground">320 loyalty points · ₹200 cashback available</p>
+          <p className="text-sm font-bold text-foreground">{loyaltyTier} Member</p>
+          <p className="text-xs text-muted-foreground">{loyaltyPoints} loyalty points</p>
         </div>
         <ChevronRight size={18} className="text-muted-foreground" />
       </motion.div>

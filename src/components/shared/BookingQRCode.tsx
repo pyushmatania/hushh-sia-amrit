@@ -7,11 +7,10 @@ interface BookingQRCodeProps {
 }
 
 export default function BookingQRCode({ bookingId, size = 128, className = "" }: BookingQRCodeProps) {
-  // Encode booking ID as a unique QR payload
+  // Encode booking ID as a stable, scannable QR payload (no timestamp — must be deterministic)
   const qrPayload = JSON.stringify({
     type: "hushh_checkin",
     bid: bookingId,
-    ts: Date.now(),
   });
 
   return (
