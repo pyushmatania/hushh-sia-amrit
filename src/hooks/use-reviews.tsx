@@ -44,7 +44,7 @@ export function useReviews(propertyId: string) {
           .from("profiles")
           .select("display_name, avatar_url")
           .eq("user_id", r.user_id)
-          .single();
+          .maybeSingle();
 
         const { data: resp } = await supabase
           .from("review_responses")
