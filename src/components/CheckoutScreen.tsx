@@ -398,10 +398,13 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
                 <button onClick={() => { setCouponApplied(false); setCoupon(""); setCouponError(""); }} className="ml-auto text-xs text-muted-foreground underline">Remove</button>
               </div>
             ) : (
-              <div className="flex gap-2 md:max-w-sm">
-                <input type="text" value={coupon} onChange={(e) => setCoupon(e.target.value)} placeholder="Enter code (try HUSHH10)"
-                  className="flex-1 bg-secondary rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none border border-transparent focus:border-primary/30 transition-colors md:focus:ring-2 md:focus:ring-primary/20" />
-                <button onClick={handleApplyCoupon} className="bg-foreground text-background px-4 py-2.5 rounded-xl text-sm font-semibold shrink-0 md:hover:brightness-110 transition">Apply</button>
+              <div className="space-y-2">
+                <div className="flex gap-2 md:max-w-sm">
+                  <input type="text" value={coupon} onChange={(e) => { setCoupon(e.target.value); setCouponError(""); }} placeholder="Enter coupon code"
+                    className="flex-1 bg-secondary rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none border border-transparent focus:border-primary/30 transition-colors md:focus:ring-2 md:focus:ring-primary/20" />
+                  <button onClick={handleApplyCoupon} className="bg-foreground text-background px-4 py-2.5 rounded-xl text-sm font-semibold shrink-0 md:hover:brightness-110 transition">Apply</button>
+                </div>
+                {couponError && <p className="text-xs text-destructive font-medium">{couponError}</p>}
               </div>
             )}
           </motion.div>
