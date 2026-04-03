@@ -1231,8 +1231,10 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
         </h3>
         <p className="text-sm text-muted-foreground mb-3">{property.location}</p>
 
-        {/* Map Card — Leaflet with route */}
-        <PropertyLocationMap property={property} />
+        {/* Map Card — Leaflet with route (lazy-loaded) */}
+        <Suspense fallback={<div className="w-full aspect-[16/9] rounded-2xl bg-secondary animate-pulse" />}>
+          <PropertyLocationMap property={property} />
+        </Suspense>
 
         {/* How to get there */}
         <div className="glass rounded-2xl p-4 mb-3 border border-border">
