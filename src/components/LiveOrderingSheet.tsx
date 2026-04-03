@@ -148,6 +148,22 @@ export default function LiveOrderingSheet({ open, onClose, propertyName, propert
         }));
         await supabase.from("order_items").insert(items);
 
+        // Deduct inventory stock for each ordered item
+        try {
+          for (const ci of cartItems) {
+            await supabase.rpc("award_loyalty_points", { _user_id: user.id, _points: 0, _title: "" }).then(() => {}); // no-op to keep connection warm
+            const { data: inv } = await supabase
+              .from("inventory")
+              .select("stock")
+              .eq("id", ci.id)
+              .maybeSingle();
+            if (inv) {
+              const newStock = Math.max(0, inv.stock - ci.qty);
+              await supabase.from("inventory").update({ stock: newStock }).eq("id", ci.id);
+            }
+          }
+        } catch { /* non-critical: stock deduction failure shouldn't block order */ }
+
         // Award loyalty points for orders
         try {
           await supabase.rpc("award_loyalty_points", {
