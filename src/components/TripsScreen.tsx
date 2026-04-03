@@ -606,34 +606,108 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
         );
       })()}
 
-      {/* Full-screen QR modal */}
+      {/* Full-screen 3D QR modal */}
       <AnimatePresence>
-        {qrBookingId && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-6"
-            onClick={() => setQrBookingId(null)}
-          >
+        {qrBookingId && (() => {
+          const qrBooking = bookings.find(b => b.bookingId === qrBookingId);
+          const qrProperty = qrBooking ? properties.find(p => p.id === qrBooking.propertyId) : null;
+          const slot = qrProperty?.slots.find(s => s.id === qrBooking?.slotId);
+
+          return (
             <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ type: "spring", damping: 22 }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative"
+              key="qr-modal"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex flex-col items-center justify-center"
+              onClick={() => setQrBookingId(null)}
             >
+              {/* Background */}
+              <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" />
+
+              {/* Close button */}
               <button
                 onClick={() => setQrBookingId(null)}
-                className="absolute -top-12 right-0 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center"
+                className="absolute top-12 right-5 z-10 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center"
               >
                 <X size={20} className="text-white" />
               </button>
-              <BookingQRCode bookingId={qrBookingId} size={200} />
+
+              {/* 3D Canvas behind QR */}
+              <div className="absolute inset-0 pointer-events-none">
+                <Suspense fallback={null}>
+                  <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
+                    <ambientLight intensity={0.4} />
+                    <pointLight position={[5, 5, 5]} intensity={0.8} color="#d4a853" />
+                    <pointLight position={[-5, -3, 3]} intensity={0.5} color="#9333ea" />
+                    <spotLight position={[0, 5, 5]} angle={0.3} penumbra={1} intensity={0.6} color="#ffffff" />
+                    <FloatingQRCard />
+                    <Environment preset="city" />
+                  </Canvas>
+                </Suspense>
+              </div>
+
+              {/* QR Code overlay */}
+              <motion.div
+                initial={{ scale: 0.5, opacity: 0, rotateY: -90 }}
+                animate={{ scale: 1, opacity: 1, rotateY: 0 }}
+                exit={{ scale: 0.5, opacity: 0, rotateY: 90 }}
+                transition={{ type: "spring", damping: 20, stiffness: 200 }}
+                onClick={(e) => e.stopPropagation()}
+                className="relative z-10"
+                style={{ perspective: "1000px" }}
+              >
+                <BookingQRCode bookingId={qrBookingId} size={180} />
+              </motion.div>
+
+              {/* Booking info card below QR */}
+              {qrBooking && qrProperty && (
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="relative z-10 mt-6 mx-6 w-full max-w-sm rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-4 space-y-3"
+                >
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={qrProperty.images[0]}
+                      alt={qrProperty.name}
+                      className="w-12 h-12 rounded-xl object-cover ring-1 ring-white/20"
+                    />
+                    <div className="min-w-0">
+                      <h4 className="font-bold text-white text-sm truncate">{qrProperty.name}</h4>
+                      <p className="text-white/50 text-xs flex items-center gap-1">
+                        <MapPin size={10} /> {qrProperty.location}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="flex items-center gap-1.5 text-white/70">
+                      <CalendarIcon size={12} className="text-[#d4a853]" />
+                      {format(new Date(qrBooking.date), "d MMM yyyy")}
+                    </div>
+                    <div className="flex items-center gap-1.5 text-white/70">
+                      <Clock size={12} className="text-[#9333ea]" />
+                      {slot?.label || "Confirmed"}
+                    </div>
+                    <div className="flex items-center gap-1.5 text-white/70">
+                      <Users size={12} className="text-[#d4a853]" />
+                      {qrBooking.guests} guests
+                    </div>
+                    <div className="flex items-center gap-1.5 text-white/70">
+                      <Ticket size={12} className="text-[#9333ea]" />
+                      ₹{qrBooking.total.toLocaleString()}
+                    </div>
+                  </div>
+                  <div className="pt-2 border-t border-white/10 text-center">
+                    <span className="text-[10px] font-mono text-white/40 tracking-wider">{qrBookingId}</span>
+                  </div>
+                </motion.div>
+              )}
             </motion.div>
-          </motion.div>
-        )}
+          );
+        })()}
       </AnimatePresence>
     </div>
   );
