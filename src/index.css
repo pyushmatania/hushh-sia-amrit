@@ -264,6 +264,7 @@
     filter: blur(4px);
     opacity: 0.4;
     animation: glowRotate 6s linear infinite reverse;
+    will-change: transform;
   }
   .light .glow-radiate::before {
     opacity: 0.3;
