@@ -40,6 +40,9 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
   const slot = property.slots.find((s) => s.id === slotId)!;
   const [coupon, setCoupon] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
+  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [couponDiscountType, setCouponDiscountType] = useState<"percentage" | "flat">("percentage");
+  const [couponError, setCouponError] = useState("");
   const [selectedPayment, setSelectedPayment] = useState("upi");
   const [extras, setExtras] = useState<Property[]>(initialExtras || []);
   const [liveSelections, setLiveSelections] = useState<Record<string, number>>(initialSelections);
