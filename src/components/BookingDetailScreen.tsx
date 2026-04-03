@@ -460,12 +460,13 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="rounded-2xl border border-border p-5 flex flex-col items-center"
+            className="rounded-2xl border border-border p-5 flex flex-col items-center cursor-pointer active:scale-[0.98] transition-transform"
+            onClick={() => setShowQRModal(true)}
           >
             <h4 className="font-semibold text-sm text-foreground mb-4">Entry QR Code</h4>
             <BookingQRCode bookingId={booking.bookingId} size={120} />
             <p className="text-[11px] font-mono text-muted-foreground mt-3">{booking.bookingId}</p>
-            <p className="text-xs text-muted-foreground mt-1">Show this at the venue entrance</p>
+            <p className="text-xs text-muted-foreground mt-1">Tap to expand · Show at venue entrance</p>
           </motion.div>
         )}
 
