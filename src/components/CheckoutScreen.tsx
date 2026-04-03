@@ -377,7 +377,7 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
             </div>
             {couponApplied && (
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="flex justify-between text-sm">
-                <span className="text-success font-medium">Coupon discount (10%)</span>
+                <span className="text-success font-medium">Coupon discount ({couponDiscountType === "percentage" ? `${couponDiscount}%` : `₹${couponDiscount}`})</span>
                 <span className="text-success font-medium">-₹{discount.toLocaleString()}</span>
               </motion.div>
             )}
