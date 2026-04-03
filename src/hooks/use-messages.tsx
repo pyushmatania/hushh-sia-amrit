@@ -156,7 +156,7 @@ export function useMessages() {
       .or(
         `and(participant_1.eq.${user.id},participant_2.eq.${otherUserId}),and(participant_1.eq.${otherUserId},participant_2.eq.${user.id})`
       )
-      .single();
+      .maybeSingle();
 
     if (existing) return existing.id;
 

@@ -97,7 +97,7 @@ export default function PublicProfileScreen({ userId, onBack, onMessage }: Publi
     }
 
     const [{ data: prof }, { data: revs }, { count: bookings }, { count: wishlists }] = await Promise.all([
-      supabase.from("profiles").select("*").eq("user_id", userId).single(),
+      supabase.from("profiles").select("*").eq("user_id", userId).maybeSingle(),
       supabase.from("reviews").select("*").eq("user_id", userId).order("created_at", { ascending: false }).limit(10),
       supabase.from("bookings").select("*", { count: "exact", head: true }).eq("user_id", userId),
       supabase.from("wishlists").select("*", { count: "exact", head: true }).eq("user_id", userId),
