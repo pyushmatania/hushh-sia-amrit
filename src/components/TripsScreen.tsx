@@ -320,42 +320,6 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
     };
     checkVerification();
   }, [user]);
-/* ── 3D Floating QR Card ── */
-function FloatingQRCard() {
-  const meshRef = useRef<THREE.Mesh>(null);
-  useFrame((state) => {
-    if (!meshRef.current) return;
-    meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.15;
-    meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.3) * 0.05;
-  });
-
-  return (
-    <Float speed={2} rotationIntensity={0.3} floatIntensity={0.5}>
-      <group ref={meshRef}>
-        {/* Main card */}
-        <RoundedBox args={[3.2, 3.2, 0.08]} radius={0.15} smoothness={4}>
-          <meshPhysicalMaterial
-            color="#f8f5ff"
-            roughness={0.15}
-            metalness={0.05}
-            clearcoat={1}
-            clearcoatRoughness={0.1}
-          />
-        </RoundedBox>
-        {/* Gold accent border */}
-        <RoundedBox args={[3.3, 3.3, 0.06]} radius={0.16} smoothness={4} position={[0, 0, -0.02]}>
-          <meshStandardMaterial color="#d4a853" roughness={0.3} metalness={0.7} />
-        </RoundedBox>
-        {/* Purple glow layer */}
-        <RoundedBox args={[3.4, 3.4, 0.04]} radius={0.17} smoothness={4} position={[0, 0, -0.04]}>
-          <meshStandardMaterial color="#9333ea" roughness={0.4} metalness={0.5} transparent opacity={0.6} />
-        </RoundedBox>
-      </group>
-    </Float>
-  );
-}
-
-
   // bookings already includes demo data for guests (from useBookings hook)
   const isDemo = bookings.some((b) => b.id.startsWith("demo-"));
 
