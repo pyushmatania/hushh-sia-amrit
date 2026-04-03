@@ -223,7 +223,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
 
       {/* Header */}
       <div className="px-5 pt-5 pb-2 flex items-center justify-between md:hidden">
-        <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-3">
+        <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/40 glow-sm">
             <img src={profileAvatar} alt="Profile" className="w-full h-full object-cover" />
           </div>
@@ -231,15 +231,15 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
             <p className="text-xs text-muted-foreground">Hey, Amrit!</p>
             <p className="text-sm font-semibold text-foreground flex items-center gap-1"><MapPin size={12} /> Jeypore, Odisha</p>
           </div>
-        </motion.div>
-        <motion.button initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} whileTap={{ scale: 0.85 }} onClick={() => { hapticSelection(); onNotificationTap?.(); }} className="w-10 h-10 rounded-full glass flex items-center justify-center relative">
+        </div>
+        <button onClick={() => { hapticSelection(); onNotificationTap?.(); }} className="w-10 h-10 rounded-full glass flex items-center justify-center relative active:scale-90 transition-transform">
           <Bell size={18} className="text-foreground" />
           {notifCount > 0 && (
-            <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} className="absolute top-1.5 right-1.5 min-w-[16px] h-4 rounded-full bg-primary text-primary-foreground text-[9px] font-bold flex items-center justify-center px-1">
+            <span className="absolute top-1.5 right-1.5 min-w-[16px] h-4 rounded-full bg-primary text-primary-foreground text-[9px] font-bold flex items-center justify-center px-1">
               {notifCount > 9 ? "9+" : notifCount}
-            </motion.span>
+            </span>
           )}
-        </motion.button>
+        </button>
       </div>
 
       {/* Search + Categories */}
