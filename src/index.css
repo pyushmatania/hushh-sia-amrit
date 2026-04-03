@@ -362,9 +362,6 @@
 }
 
 
-/* Floating animation for decorative elements */
-
-
 /* Radiating glow rotation */
 @keyframes glowRotate {
   from { transform: rotate(0deg); }
