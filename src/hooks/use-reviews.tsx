@@ -114,7 +114,7 @@ export function useReviews(propertyId: string) {
         .select("id")
         .eq("id", bookingId)
         .eq("user_id", user.id)
-        .single();
+        .maybeSingle();
       verified = !!booking;
     }
 
