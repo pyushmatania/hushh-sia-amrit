@@ -246,6 +246,7 @@
     filter: blur(8px);
     opacity: 0.6;
     animation: glowRotate 4s linear infinite;
+    will-change: transform;
   }
   .glow-radiate::after {
     content: "";
