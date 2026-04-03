@@ -59,7 +59,7 @@ export function useMessages() {
           .eq("conversation_id", c.id)
           .order("created_at", { ascending: false })
           .limit(1)
-          .single();
+          .maybeSingle();
 
         // Get unread count
         const { count } = await supabase
