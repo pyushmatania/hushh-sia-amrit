@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { useState, useMemo, lazy, Suspense } from "react";
 import BookingQRCode from "./shared/BookingQRCode";
+import QRCodeModal from "./shared/QRCodeModal";
 import type { Addon } from "@/data/properties";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { useToast } from "@/hooks/use-toast";
