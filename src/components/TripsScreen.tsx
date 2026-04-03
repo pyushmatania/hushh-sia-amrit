@@ -10,6 +10,7 @@ import IdentityUploadSheet from "./IdentityUploadSheet";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import EmptyState from "./shared/EmptyState";
+import BookingQRCode from "./shared/BookingQRCode";
 
 interface TripsScreenProps {
   bookings: Booking[];
@@ -52,6 +53,7 @@ function SwipeableCard({
   onRebook,
   onCancel,
   onOrderFood,
+  onShowQR,
 }: {
   booking: Booking;
   index: number;
@@ -59,6 +61,7 @@ function SwipeableCard({
   onRebook: (id: string) => void;
   onCancel?: (id: string) => void;
   onOrderFood?: (b: Booking) => void;
+  onShowQR?: (bookingId: string) => void;
 }) {
   const controls = useAnimation();
   const swipeX = useMotionValue(0);
@@ -101,7 +104,7 @@ function SwipeableCard({
         dragElastic={0.1}
         onDragEnd={handleDragEnd}
       >
-        <TiltCard booking={booking} index={index} onViewDetail={onViewDetail} onRebook={onRebook} onOrderFood={onOrderFood} />
+        <TiltCard booking={booking} index={index} onViewDetail={onViewDetail} onRebook={onRebook} onOrderFood={onOrderFood} onShowQR={onShowQR} />
       </motion.div>
     </div>
   );
@@ -113,12 +116,14 @@ function TiltCard({
   onViewDetail,
   onRebook,
   onOrderFood,
+  onShowQR,
 }: {
   booking: Booking;
   index: number;
   onViewDetail: (b: Booking) => void;
   onRebook: (id: string) => void;
   onOrderFood?: (b: Booking) => void;
+  onShowQR?: (bookingId: string) => void;
 }) {
   const { properties } = usePropertiesData();
   const cardRef = useRef<HTMLDivElement>(null);
@@ -190,14 +195,16 @@ function TiltCard({
 
             {/* QR badge for upcoming/active */}
             {(booking.status === "upcoming" || booking.status === "active") && (
-              <motion.div
-                className="absolute top-4 left-4 w-10 h-10 glass rounded-xl flex items-center justify-center"
+              <motion.button
+                className="absolute top-4 left-4 w-10 h-10 glass rounded-xl flex items-center justify-center z-10"
                 style={{ transform: "translateZ(25px)", boxShadow: "0 4px 16px hsla(0,0%,0%,0.3)" }}
                 animate={{ rotate: [0, 2, -2, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                onClick={(e) => { e.stopPropagation(); onShowQR?.(booking.bookingId); }}
+                whileTap={{ scale: 0.9 }}
               >
                 <QrCode size={18} className="text-foreground" />
-              </motion.div>
+              </motion.button>
             )}
           </div>
 
@@ -293,6 +300,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
   const [idSheetOpen, setIdSheetOpen] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [selectedCalDate, setSelectedCalDate] = useState<Date | undefined>(undefined);
+  const [qrBookingId, setQrBookingId] = useState<string | null>(null);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -547,6 +555,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
               onRebook={onRebook}
               onCancel={isDemo ? undefined : onCancel}
               onOrderFood={trip.status === "active" ? handleOrderFood : undefined}
+              onShowQR={(bid) => setQrBookingId(bid)}
             />
           ))}
         </div>
@@ -568,6 +577,36 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
           />
         );
       })()}
+
+      {/* Full-screen QR modal */}
+      <AnimatePresence>
+        {qrBookingId && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-6"
+            onClick={() => setQrBookingId(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: "spring", damping: 22 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative"
+            >
+              <button
+                onClick={() => setQrBookingId(null)}
+                className="absolute -top-12 right-0 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center"
+              >
+                <X size={20} className="text-white" />
+              </button>
+              <BookingQRCode bookingId={qrBookingId} size={200} />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
