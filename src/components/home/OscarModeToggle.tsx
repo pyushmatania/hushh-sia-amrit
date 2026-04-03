@@ -454,7 +454,7 @@ export function OscarThemedListing({ properties, onPropertyTap, wishlist, onTogg
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.6 }}
-        className="relative overflow-hidden min-h-screen"
+        className="relative overflow-hidden"
         role="region"
         aria-label="Red Carpet Premium Collection"
       >
