@@ -101,7 +101,7 @@ export default function Admin() {
   if (!user && !skipAuth) {
     return (
       <div className="relative">
-        <AuthScreen />
+        <AuthScreen onBack={() => window.history.back()} />
         <div className="fixed bottom-24 inset-x-0 flex justify-center z-50">
           <motion.button
             initial={{ opacity: 0, y: 10 }}
