@@ -58,6 +58,14 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
 
   const roomsForConfirm = propRoomsCount ?? null;
 
+  // Slot capacity enforcement
+  const dateStr = format(liveDate, "yyyy-MM-dd");
+  const { slots: dbSlots, getSlotAvailability, loading: slotsLoading } = useSlotAvailability(property.id, dateStr);
+  const matchedDbSlot = dbSlots.find(s => s.label === slot?.label);
+  const slotCapacity = matchedDbSlot ? getSlotAvailability(matchedDbSlot.id) : null;
+  const isSlotFull = slotCapacity ? !slotCapacity.isAvailable || slotCapacity.remainingCapacity <= 0 : false;
+  const spotsLeft = slotCapacity?.remainingCapacity ?? null;
+
   // Check for booking conflicts when date or slot changes
   useEffect(() => {
     const check = async () => {
