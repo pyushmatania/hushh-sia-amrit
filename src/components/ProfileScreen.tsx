@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Phone, Mail, MessageCircle as WhatsAppIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
+import ConnectionsScreen from "./ConnectionsScreen";
 
 import {
   ChevronRight, Bell, Settings, HelpCircle, LogOut,
