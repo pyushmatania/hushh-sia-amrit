@@ -40,7 +40,7 @@ export function useLoyalty(): LoyaltyData {
     }
 
     const [profileRes, txRes] = await Promise.all([
-      supabase.from("profiles").select("loyalty_points, tier").eq("user_id", user.id).single(),
+      supabase.from("profiles").select("loyalty_points, tier").eq("user_id", user.id).maybeSingle(),
       supabase.from("loyalty_transactions").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(50),
     ]);
 
