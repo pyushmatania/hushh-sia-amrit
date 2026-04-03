@@ -1,6 +1,5 @@
-import { motion } from "framer-motion";
 import { Heart, Star } from "lucide-react";
-import { useState } from "react";
+import { useState, memo } from "react";
 import type { Property } from "@/data/properties";
 import OptimizedImage from "@/components/shared/OptimizedImage";
 
@@ -12,15 +11,12 @@ interface PropertyCardSmallProps {
   onToggleWishlist?: (id: string) => void;
 }
 
-export default function PropertyCardSmall({ property, index, onTap, isWishlisted = false, onToggleWishlist }: PropertyCardSmallProps) {
+export default memo(function PropertyCardSmall({ property, index, onTap, isWishlisted = false, onToggleWishlist }: PropertyCardSmallProps) {
   const liked = isWishlisted;
   const [imgLoaded, setImgLoaded] = useState(false);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05 }}
+    <div
       className="shrink-0 w-[260px] md:w-full cursor-pointer group"
       onClick={() => onTap(property)}
     >
@@ -40,21 +36,19 @@ export default function PropertyCardSmall({ property, index, onTap, isWishlisted
           showSkeleton={false}
         />
 
-        <motion.button
+        <button
           onClick={(e) => {
             e.stopPropagation();
             onToggleWishlist?.(property.id);
           }}
-          className="absolute top-2.5 right-2.5"
-          whileTap={{ scale: 1.3 }}
-          transition={{ type: "spring", stiffness: 500 }}
+          className="absolute top-2.5 right-2.5 active:scale-125 transition-transform"
         >
           <Heart
             size={22}
             className={`transition-colors duration-200 ${liked ? "fill-primary text-primary" : "fill-foreground/20 text-background"}`}
             strokeWidth={2}
           />
-        </motion.button>
+        </button>
 
         {property.rating >= 4.8 && (
           <span className="absolute top-2.5 left-2.5 text-[11px] font-semibold glass px-2.5 py-1 rounded-full text-foreground">
@@ -70,6 +64,6 @@ export default function PropertyCardSmall({ property, index, onTap, isWishlisted
           <Star size={11} className="inline fill-primary text-primary mb-0.5" /> {property.rating}
         </p>
       </div>
-    </motion.div>
+    </div>
   );
-}
+});
