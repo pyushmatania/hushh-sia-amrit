@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Phone, Mail, MessageCircle as WhatsAppIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import PublicProfileScreen from "./PublicProfileScreen";
+import { lazy, Suspense } from "react";
 
 import {
   ChevronRight, Bell, Settings, HelpCircle, LogOut,
@@ -20,14 +20,17 @@ import profileAvatar from "@/assets/profile-avatar.webp";
 import pastTripsImg from "@/assets/past-trips-card.webp";
 import connectionsImg from "@/assets/connections-card.webp";
 import becomeHostImg from "@/assets/become-host.webp";
-import EditProfileSheet from "./EditProfileSheet";
-import SettingsSheet from "./SettingsSheet";
-import LoyaltyScreen from "./LoyaltyScreen";
-import ReferralScreen from "./ReferralScreen";
-import AppDocumentation from "./AppDocumentation";
-import IdentityUploadSheet from "./IdentityUploadSheet";
 import { useAppConfig } from "@/hooks/use-app-config";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+
+// Lazy-load heavy sub-screens to reduce ProfileScreen chunk
+const EditProfileSheet = lazy(() => import("./EditProfileSheet"));
+const SettingsSheet = lazy(() => import("./SettingsSheet"));
+const LoyaltyScreen = lazy(() => import("./LoyaltyScreen"));
+const ReferralScreen = lazy(() => import("./ReferralScreen"));
+const AppDocumentation = lazy(() => import("./AppDocumentation"));
+const IdentityUploadSheet = lazy(() => import("./IdentityUploadSheet"));
+const PublicProfileScreen = lazy(() => import("./PublicProfileScreen"));
 
 const themeOptions = [
   { id: "light" as const, label: "Light", icon: Sun },
@@ -628,29 +631,31 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
 
       </div>{/* close desktop responsive wrapper */}
 
-      {/* Sheets */}
-      <EditProfileSheet
-        open={showEditProfile}
-        onClose={() => setShowEditProfile(false)}
-        profile={profile}
-        onSave={handleSaveProfile}
-      />
-      <SettingsSheet
-        open={!!activeSetting}
-        onClose={() => setActiveSetting("")}
-        settingType={activeSetting}
-      />
-      <AnimatePresence>
-        {showLoyalty && (
-          <LoyaltyScreen onBack={() => setShowLoyalty(false)} />
-        )}
-      </AnimatePresence>
-      <AnimatePresence>
-        {showReferral && (
-          <ReferralScreen onBack={() => setShowReferral(false)} />
-        )}
-      </AnimatePresence>
-      <IdentityUploadSheet open={showIdentityUpload} onClose={() => setShowIdentityUpload(false)} />
+      {/* Sheets — lazy-loaded */}
+      <Suspense fallback={null}>
+        <EditProfileSheet
+          open={showEditProfile}
+          onClose={() => setShowEditProfile(false)}
+          profile={profile}
+          onSave={handleSaveProfile}
+        />
+        <SettingsSheet
+          open={!!activeSetting}
+          onClose={() => setActiveSetting("")}
+          settingType={activeSetting}
+        />
+        <AnimatePresence>
+          {showLoyalty && (
+            <LoyaltyScreen onBack={() => setShowLoyalty(false)} />
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {showReferral && (
+            <ReferralScreen onBack={() => setShowReferral(false)} />
+          )}
+        </AnimatePresence>
+        <IdentityUploadSheet open={showIdentityUpload} onClose={() => setShowIdentityUpload(false)} />
+      </Suspense>
 
       {/* Help Centre Sheet */}
       <Sheet open={showHelpCentre} onOpenChange={setShowHelpCentre}>
@@ -765,16 +770,18 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
           </div>
         </SheetContent>
       </Sheet>
-      <AnimatePresence>
-        {showPublicProfile && (
-          <PublicProfileScreen userId={user?.id || "mock-guest"} onBack={() => setShowPublicProfile(false)} />
-        )}
-      </AnimatePresence>
-      <AnimatePresence>
-        {showDocs && (
-          <AppDocumentation open={showDocs} onClose={() => setShowDocs(false)} />
-        )}
-      </AnimatePresence>
+      <Suspense fallback={null}>
+        <AnimatePresence>
+          {showPublicProfile && (
+            <PublicProfileScreen userId={user?.id || "mock-guest"} onBack={() => setShowPublicProfile(false)} />
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {showDocs && (
+            <AppDocumentation open={showDocs} onClose={() => setShowDocs(false)} />
+          )}
+        </AnimatePresence>
+      </Suspense>
 
 
       {/* Past Trips Full Screen */}
