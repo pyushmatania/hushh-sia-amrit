@@ -8,6 +8,7 @@ import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { Calendar } from "@/components/ui/calendar";
 import { checkBookingConflict, type ConflictResult } from "@/hooks/use-bookings";
 import { useAppConfig } from "@/hooks/use-app-config";
+import { useSlotAvailability } from "@/hooks/use-slot-availability";
 
 interface CheckoutScreenProps {
   property: Property;
