@@ -1,5 +1,5 @@
 import { Heart, Star, BadgeCheck, Zap, Flame, Sparkles } from "lucide-react";
-import { useState, useCallback, useRef, useMemo } from "react";
+import { useState, useCallback, useRef, useMemo, memo } from "react";
 import type { Property } from "@/data/properties";
 import { AccentFrame, AccentTag } from "@/components/shared/AccentFrame";
 import OptimizedImage from "@/components/shared/OptimizedImage";
