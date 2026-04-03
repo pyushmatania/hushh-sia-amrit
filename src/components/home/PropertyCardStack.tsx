@@ -214,7 +214,6 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    e.stopPropagation();
     touchRef.current = {
       x: e.touches[0].clientX,
       y: e.touches[0].clientY,
@@ -222,7 +221,6 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
       mode: "pending",
     };
     swipedRef.current = false;
-    setIsDragging(true);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
