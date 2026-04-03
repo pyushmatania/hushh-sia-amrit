@@ -34,6 +34,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
   const [showPhotos, setShowPhotos] = useState(false);
   const [showReceipt, setShowReceipt] = useState(false);
   const [showSplit, setShowSplit] = useState(false);
+  const [showQRModal, setShowQRModal] = useState(false);
   const [addonSelections, setAddonSelections] = useState<Record<string, number>>({});
   const [orderedAddons, setOrderedAddons] = useState<{ name: string; qty: number; price: number }[]>([]);
   const [cancelling, setCancelling] = useState(false);
