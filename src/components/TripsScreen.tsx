@@ -193,14 +193,16 @@ function TiltCard({
 
             {/* QR badge for upcoming/active */}
             {(booking.status === "upcoming" || booking.status === "active") && (
-              <motion.div
-                className="absolute top-4 left-4 w-10 h-10 glass rounded-xl flex items-center justify-center"
+              <motion.button
+                className="absolute top-4 left-4 w-10 h-10 glass rounded-xl flex items-center justify-center z-10"
                 style={{ transform: "translateZ(25px)", boxShadow: "0 4px 16px hsla(0,0%,0%,0.3)" }}
                 animate={{ rotate: [0, 2, -2, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                onClick={(e) => { e.stopPropagation(); onShowQR?.(booking.bookingId); }}
+                whileTap={{ scale: 0.9 }}
               >
                 <QrCode size={18} className="text-foreground" />
-              </motion.div>
+              </motion.button>
             )}
           </div>
 
