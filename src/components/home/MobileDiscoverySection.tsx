@@ -169,7 +169,7 @@ const VerticalVideoCard = memo(function VerticalVideoCard({
         <button
           onClick={(e) => { e.stopPropagation(); setMuted(!muted); }}
           className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center z-10"
-          style={{ background: "hsl(var(--foreground) / 0.3)", backdropFilter: "blur(4px)" }}
+          style={{ background: "hsl(var(--foreground) / 0.5)" }}
         >
           {muted ? <VolumeX size={10} className="text-white/80" /> : <Volume2 size={10} className="text-white/80" />}
         </button>
