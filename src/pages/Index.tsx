@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, lazy, Suspense, startTransition } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { AnimatePresence } from "framer-motion";
 import { useAppConfig } from "@/hooks/use-app-config";
 import SplashScreen from "@/components/SplashScreen";
