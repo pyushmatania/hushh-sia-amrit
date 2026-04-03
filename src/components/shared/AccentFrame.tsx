@@ -32,7 +32,7 @@ const edgeBaseStyle: CSSProperties = {
 
 export const AccentFrame = forwardRef<HTMLDivElement, AccentFrameProps>(function AccentFrame({ color, radius = "1rem", glowAlpha = 0.08 }: AccentFrameProps, ref) {
   return (
-    <>
+    <div ref={ref}>
       {/* Left edge – fades downward */}
       <div
         style={{
