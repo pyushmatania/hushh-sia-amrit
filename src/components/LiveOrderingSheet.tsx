@@ -148,9 +148,9 @@ export default function LiveOrderingSheet({ open, onClose, propertyName, propert
         }));
         await supabase.from("order_items").insert(items);
 
+        // Deduct inventory stock for each ordered item
         try {
           for (const ci of cartItems) {
-            await supabase.rpc("award_loyalty_points", { _user_id: user.id, _points: 0, _title: "" }).then(() => {}); // no-op to keep connection warm
             const { data: inv } = await supabase
               .from("inventory")
               .select("stock")
