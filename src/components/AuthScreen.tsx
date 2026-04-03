@@ -241,8 +241,9 @@ export default function AuthScreen({ onBack }: { onBack?: () => void } = {}) {
           {mode === "login" && (
             <button
               onClick={() => { setMode("forgot"); setError(""); }}
-              className="text-xs text-primary font-medium self-end -mt-1"
+              className="flex items-center gap-1.5 text-xs text-primary font-medium self-end -mt-1"
             >
+              <img src="/app-icon.png" alt="" className="w-4 h-4 rounded-sm" />
               Forgot password?
             </button>
           )}
