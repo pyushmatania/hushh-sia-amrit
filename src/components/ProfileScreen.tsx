@@ -451,7 +451,8 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="rounded-2xl glass p-4 cursor-pointer relative"
+          onClick={() => setShowConnections(true)}
+          className="rounded-2xl glass p-4 cursor-pointer relative active:scale-[0.97] transition-transform"
         >
           <span className="absolute top-3 right-3 text-[9px] font-bold bg-primary text-primary-foreground px-2 py-0.5 rounded-full">NEW</span>
           <div className="h-28 flex items-center justify-center mb-2">
