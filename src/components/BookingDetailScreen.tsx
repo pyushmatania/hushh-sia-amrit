@@ -1,12 +1,13 @@
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowLeft, MapPin, Calendar, Clock, Users, QrCode,
+  ArrowLeft, MapPin, Calendar, Clock, Users,
   Phone, MessageCircle, X, AlertTriangle, Check, ChevronRight,
   Navigation, Share2, Plus, Minus, Sparkles, ShoppingBag,
   Utensils, Star, Shield, Wifi, Music, Flame, Home, Info,
   Camera, Receipt, Split
 } from "lucide-react";
 import { useState, useMemo, lazy, Suspense } from "react";
+import BookingQRCode from "./shared/BookingQRCode";
 import type { Addon } from "@/data/properties";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { useToast } from "@/hooks/use-toast";
@@ -460,10 +461,9 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
             className="rounded-2xl border border-border p-5 flex flex-col items-center"
           >
             <h4 className="font-semibold text-sm text-foreground mb-4">Entry QR Code</h4>
-            <div className="w-32 h-32 bg-secondary rounded-2xl flex items-center justify-center mb-3">
-              <QrCode size={64} className="text-muted-foreground" />
-            </div>
-            <p className="text-xs text-muted-foreground">Show this at the venue entrance</p>
+            <BookingQRCode bookingId={booking.bookingId} size={120} />
+            <p className="text-[11px] font-mono text-muted-foreground mt-3">{booking.bookingId}</p>
+            <p className="text-xs text-muted-foreground mt-1">Show this at the venue entrance</p>
           </motion.div>
         )}
 
@@ -552,10 +552,9 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
           {/* QR Code */}
           {(isUpcoming || isActive) && !isCancelled && (
             <div className="flex flex-col items-center pt-4 border-t border-border">
-              <div className="w-28 h-28 bg-secondary rounded-2xl flex items-center justify-center mb-2">
-                <QrCode size={56} className="text-muted-foreground" />
-              </div>
-              <p className="text-xs text-muted-foreground">Show at venue entrance</p>
+              <BookingQRCode bookingId={booking.bookingId} size={112} />
+              <p className="text-[11px] font-mono text-muted-foreground mt-2">{booking.bookingId}</p>
+              <p className="text-xs text-muted-foreground mt-1">Show at venue entrance</p>
             </div>
           )}
 
