@@ -611,7 +611,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
         {qrBookingId && (() => {
           const qrBooking = bookings.find(b => b.bookingId === qrBookingId);
           const qrProperty = qrBooking ? properties.find(p => p.id === qrBooking.propertyId) : null;
-          const slot = qrProperty?.slots.find(s => s.id === qrBooking?.slotId);
+          const slot = qrProperty?.slots.find(s => s.id === qrBooking?.slot);
 
           return (
             <motion.div
