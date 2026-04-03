@@ -38,7 +38,15 @@ export default function AdminCheckin() {
   const [scanResult, setScanResult] = useState<{ success: boolean; message: string; guest?: string } | null>(null);
   const qrInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => { loadData(); }, []);
+  useEffect(() => {
+    loadData();
+    // Realtime sync so check-in/out reflects instantly
+    const ch = supabase
+      .channel("admin-checkin-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "bookings" }, () => loadData())
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, []);
 
   const loadData = async () => {
     setLoading(true);
