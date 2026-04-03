@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useAppConfig } from "@/hooks/use-app-config";
 import BookingQRCode from "./shared/BookingQRCode";
+import { nativeShare } from "@/lib/native-share";
 
 interface BookingConfirmationProps {
   property: Property;
@@ -18,13 +19,15 @@ interface BookingConfirmationProps {
   date: Date;
   total: number;
   onDone: () => void;
+  bookingId?: string;
 }
 
-export default function BookingConfirmation({ property, slotId, guests, date, total, onDone }: BookingConfirmationProps) {
+export default function BookingConfirmation({ property, slotId, guests, date, total, onDone, bookingId: passedBookingId }: BookingConfirmationProps) {
   const appConfig = useAppConfig();
   const prefix = (appConfig.app_name || "HUSHH").toUpperCase();
-  const slot = property.slots.find((s) => s.id === slotId)!;
-  const bookingId = `${prefix}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+  const slot = property.slots.find((s) => s.id === slotId);
+  // Use the real booking ID from the DB if available, otherwise generate a display-only fallback
+  const [bookingId] = useState(() => passedBookingId || `${prefix}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`);
   const [orderingOpen, setOrderingOpen] = useState(false);
   const [idSheetOpen, setIdSheetOpen] = useState(false);
   const [idVerified, setIdVerified] = useState<boolean | null>(null);
