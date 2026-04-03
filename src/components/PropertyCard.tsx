@@ -203,4 +203,4 @@ export default memo(function PropertyCard({ property, index, onTap, isWishlisted
     </div>
     </SpotlightCard>
   );
-}
+});
