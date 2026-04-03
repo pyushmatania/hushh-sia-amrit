@@ -1,12 +1,13 @@
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowLeft, MapPin, Calendar, Clock, Users, QrCode,
+  ArrowLeft, MapPin, Calendar, Clock, Users,
   Phone, MessageCircle, X, AlertTriangle, Check, ChevronRight,
   Navigation, Share2, Plus, Minus, Sparkles, ShoppingBag,
   Utensils, Star, Shield, Wifi, Music, Flame, Home, Info,
   Camera, Receipt, Split
 } from "lucide-react";
 import { useState, useMemo, lazy, Suspense } from "react";
+import BookingQRCode from "./shared/BookingQRCode";
 import type { Addon } from "@/data/properties";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { useToast } from "@/hooks/use-toast";
