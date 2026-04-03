@@ -104,9 +104,7 @@ export default function BookingConfirmation({ property, slotId, guests, date, to
             <span className="text-foreground font-semibold text-lg">₹{total.toLocaleString()}</span>
           </div>
           <div className="flex flex-col items-center pt-3 border-t border-border">
-            <div className="w-24 h-24 bg-secondary rounded-xl flex items-center justify-center">
-              <QrCode size={48} className="text-muted-foreground" />
-            </div>
+            <BookingQRCode bookingId={bookingId} size={96} />
             <p className="text-xs text-muted-foreground mt-2">Show this at entry</p>
           </div>
         </motion.div>
