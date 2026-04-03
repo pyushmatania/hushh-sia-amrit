@@ -233,45 +233,57 @@ export function useBookings() {
 
   const isDemo = !user;
 
+  const loadBookings = useCallback(async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from("bookings")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    if (data && data.length > 0) {
+      const mapped = data.map((b) =>
+        normalizeBooking({
+          id: b.id,
+          propertyId: b.property_id,
+          date: b.date,
+          slot: b.slot,
+          guests: b.guests,
+          total: Number(b.total),
+          status: b.status as Booking["status"],
+          bookingId: b.booking_id,
+          roomsCount: b.rooms_count ?? null,
+          extraMattresses: b.extra_mattresses ?? 0,
+        })
+      );
+      setBookings(sortBookings(mapped));
+    } else {
+      setBookings([]);
+    }
+    setLoading(false);
+  }, [user]);
+
   useEffect(() => {
     if (user) {
-      const load = async () => {
-        const { data } = await supabase
-          .from("bookings")
-          .select("*")
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: false });
+      loadBookings();
 
-        if (data && data.length > 0) {
-          const mapped = data.map((b) =>
-            normalizeBooking({
-              id: b.id,
-              propertyId: b.property_id,
-              date: b.date,
-              slot: b.slot,
-              guests: b.guests,
-              total: Number(b.total),
-              status: b.status as Booking["status"],
-              bookingId: b.booking_id,
-              roomsCount: b.rooms_count ?? null,
-              extraMattresses: b.extra_mattresses ?? 0,
-            })
-          );
-          setBookings(sortBookings(mapped));
-        } else {
-          setBookings([]);
-        }
-        setLoading(false);
-      };
+      // Realtime: re-fetch when admin updates booking status (e.g. check-in)
+      const channel = supabase
+        .channel(`user-bookings-${user.id}`)
+        .on(
+          "postgres_changes",
+          { event: "UPDATE", schema: "public", table: "bookings", filter: `user_id=eq.${user.id}` },
+          () => loadBookings()
+        )
+        .subscribe();
 
-      load();
-      return;
+      return () => { supabase.removeChannel(channel); };
     }
 
     const local = getLocalBookings();
     setBookings(mergeGuestBookings(local));
     setLoading(false);
-  }, [user]);
+  }, [user, loadBookings]);
 
   const createBooking = useCallback(
     async (booking: Omit<Booking, "id">) => {
