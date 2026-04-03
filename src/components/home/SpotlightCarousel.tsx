@@ -142,8 +142,8 @@ const VideoCard = memo(function VideoCard({
           )}
           <AccentTag tag={accent.tag} className="absolute top-4 left-4 z-10" />
           <button onClick={(e) => { e.stopPropagation(); setMuted(!muted); }}
-            className="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md z-10"
-            style={{ background: "hsl(var(--foreground) / 0.36)" }}
+            className="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center z-10"
+            style={{ background: "hsl(var(--foreground) / 0.5)" }}
           >
             {muted ? <VolumeX size={18} className="text-white" /> : <Volume2 size={18} className="text-white" />}
           </button>
@@ -162,8 +162,8 @@ const VideoCard = memo(function VideoCard({
                 <p className="text-[13px] text-white/75 font-medium mt-1">{property.location}</p>
               </div>
               <button onClick={(e) => { e.stopPropagation(); onToggleSave?.(property.id); }}
-                className="w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md ml-3 shrink-0 active:scale-110 transition-transform"
-                style={{ background: "hsl(var(--foreground) / 0.36)" }}
+                className="w-10 h-10 rounded-full flex items-center justify-center ml-3 shrink-0 active:scale-110 transition-transform"
+                style={{ background: "hsl(var(--foreground) / 0.5)" }}
               >
                 <Bookmark size={18} className={saved ? "text-primary fill-primary" : "text-white"} />
               </button>

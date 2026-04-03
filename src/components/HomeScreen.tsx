@@ -38,19 +38,13 @@ function SectionBoundary({ children, name }: { children: ReactNode; name: string
   return <ErrorBoundary fallbackTitle={`Failed to load ${name}`}>{children}</ErrorBoundary>;
 }
 
-/* Lightweight section title — refined editorial style */
+/* Lightweight section title — no animation on scroll to avoid layout thrashing */
 function SectionTitle({ title }: { title: string }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      className="px-5 pt-7 pb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:pt-10 md:pb-5"
-    >
+    <div className="px-5 pt-7 pb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:pt-10 md:pb-5">
       <h2 className="text-[11px] font-bold tracking-[0.18em] text-muted-foreground uppercase md:text-lg md:tracking-wider lg:text-xl">{title}</h2>
       <div className="w-8 h-[2px] rounded-full bg-primary/40 mt-2 md:w-12" />
-    </motion.div>
+    </div>
   );
 }
 

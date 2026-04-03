@@ -70,7 +70,7 @@ function DesktopGlassCard({ p, onTap, isWL, onToggleWishlist }: { p: Property; o
     <div
       onClick={() => onTap(p)}
       className="rounded-2xl overflow-hidden cursor-pointer group"
-      style={{ background: "hsl(var(--card) / 0.6)", backdropFilter: "blur(20px) saturate(1.5)", border: "1px solid hsl(var(--border) / 0.25)", boxShadow: "0 8px 32px hsl(var(--foreground) / 0.06)" }}
+      style={{ background: "hsl(var(--card) / 0.8)", border: "1px solid hsl(var(--border) / 0.25)", boxShadow: "0 8px 32px hsl(var(--foreground) / 0.06)" }}
     >
       <div className="relative h-[180px] overflow-hidden">
         <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />

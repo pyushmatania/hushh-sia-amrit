@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./use-auth";
 import { mockNotifications } from "@/data/mock-users";
@@ -19,7 +19,7 @@ export function useNotifications() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const unreadCount = useMemo(() => notifications.filter((n) => !n.read).length, [notifications]);
 
   const fetch = useCallback(async () => {
     if (!user) {

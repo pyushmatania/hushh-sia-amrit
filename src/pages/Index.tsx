@@ -242,7 +242,7 @@ export default function Index() {
       />
       <div className="md:pt-16">
       <Suspense fallback={lazyFallback}>
-      <AnimatePresence mode="wait">
+      {/* Removed AnimatePresence mode="wait" — it was forcing full re-mounts on every tab switch, destroying scroll state and causing crashes */}
         {screen.type === "home" && activeTab === "home" && (
           <HomeScreen key="home" onPropertyTap={handlePropertyTap} onExperienceTap={handleExperienceTap} onSearchTap={() => setShowSearch(true)} onMapTap={() => startTransition(() => setShowMap(true))} onNotificationTap={() => setShowNotifications(true)} wishlist={wishlist} onToggleWishlist={toggleWishlist} />
         )}
@@ -369,7 +369,7 @@ export default function Index() {
             onSubmit={handleCreateListingSubmit}
           />
         )}
-      </AnimatePresence>
+      {/* End of screen router */}
       </Suspense>
       </div>
 
