@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, lazy, Suspense, startTransition } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { AnimatePresence } from "framer-motion";
 import { useAppConfig } from "@/hooks/use-app-config";
 import SplashScreen from "@/components/SplashScreen";
@@ -152,10 +153,40 @@ export default function Index() {
   const handleCheckoutConfirm = useCallback(
     (property: Property, slotId: string, guests: number, date: Date) =>
       async (finalTotal: number, roomsCount?: number, extraMattresses?: number) => {
+        // Server-side slot capacity check before confirming
+        const dateStr = date.toISOString().split("T")[0];
+        const slotMeta = property.slots.find(s => s.id === slotId);
+        if (slotMeta) {
+          const { data: dbSlots } = await supabase
+            .from("property_slots")
+            .select("id, capacity")
+            .eq("property_id", property.id)
+            .eq("label", slotMeta.label)
+            .eq("is_blocked", false)
+            .limit(1);
+
+          const dbSlot = dbSlots?.[0];
+          if (dbSlot) {
+            const { data: avail } = await supabase
+              .from("slot_availability")
+              .select("booked_count, is_available")
+              .eq("slot_id", dbSlot.id)
+              .eq("date", dateStr)
+              .maybeSingle();
+
+            const bookedCount = avail?.booked_count ?? 0;
+            const isAvailable = avail?.is_available ?? true;
+            if (!isAvailable || bookedCount >= dbSlot.capacity) {
+              toast({ title: "Slot Fully Booked", description: "This slot is no longer available. Please pick a different date or slot.", variant: "destructive" });
+              return;
+            }
+          }
+        }
+
         const bookingData = {
           propertyId: property.id,
           date: date.toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" }),
-          slot: `${property.slots.find(s => s.id === slotId)?.label} · ${property.slots.find(s => s.id === slotId)?.time}`,
+          slot: `${slotMeta?.label} · ${slotMeta?.time}`,
           guests,
           total: finalTotal,
           status: "upcoming" as const,

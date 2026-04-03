@@ -8,6 +8,7 @@ import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { Calendar } from "@/components/ui/calendar";
 import { checkBookingConflict, type ConflictResult } from "@/hooks/use-bookings";
 import { useAppConfig } from "@/hooks/use-app-config";
+import { useSlotAvailability } from "@/hooks/use-slot-availability";
 
 interface CheckoutScreenProps {
   property: Property;
@@ -56,6 +57,14 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
   const isStay = property.primaryCategory === "stay";
 
   const roomsForConfirm = propRoomsCount ?? null;
+
+  // Slot capacity enforcement
+  const dateStr = format(liveDate, "yyyy-MM-dd");
+  const { slots: dbSlots, getSlotAvailability, loading: slotsLoading } = useSlotAvailability(property.id, dateStr);
+  const matchedDbSlot = dbSlots.find(s => s.label === slot?.label);
+  const slotCapacity = matchedDbSlot ? getSlotAvailability(matchedDbSlot.id) : null;
+  const isSlotFull = slotCapacity ? !slotCapacity.isAvailable || slotCapacity.remainingCapacity <= 0 : false;
+  const spotsLeft = slotCapacity?.remainingCapacity ?? null;
 
   // Check for booking conflicts when date or slot changes
   useEffect(() => {
@@ -506,16 +515,30 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
               </div>
             </div>
 
+            {isSlotFull && (
+              <div className="flex items-center gap-2 p-3 rounded-xl bg-destructive/10 border border-destructive/20">
+                <AlertTriangle size={16} className="text-destructive shrink-0" />
+                <p className="text-xs text-destructive font-medium">This slot is fully booked for the selected date. Please choose a different date or slot.</p>
+              </div>
+            )}
+
+            {!isSlotFull && spotsLeft !== null && spotsLeft <= 5 && (
+              <div className="flex items-center gap-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                <AlertTriangle size={16} className="text-amber-500 shrink-0" />
+                <p className="text-xs text-amber-600 dark:text-amber-400 font-medium">Only {spotsLeft} spot{spotsLeft !== 1 ? 's' : ''} left for this slot!</p>
+              </div>
+            )}
+
             <motion.button
               onClick={() => {
                 if (liveGuests < 1) { setEditingGuests(true); return; }
                 onConfirm(finalTotal, roomsForConfirm ?? undefined, isStay ? extraMattressCount : undefined);
               }}
-              disabled={liveGuests < 1}
+              disabled={liveGuests < 1 || isSlotFull}
               className="w-full bg-primary text-primary-foreground py-4 rounded-xl font-semibold text-lg hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 glow-radiate-pulse"
               whileTap={{ scale: 0.97 }}
             >
-              Pay ₹{finalTotal.toLocaleString()} → 
+              {isSlotFull ? "Slot Fully Booked" : `Pay ₹${finalTotal.toLocaleString()} →`}
             </motion.button>
 
             <div className="flex items-center justify-center gap-3 pt-1">
@@ -541,7 +564,7 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
               if (liveGuests < 1) { setEditingGuests(true); return; }
               onConfirm(finalTotal, roomsForConfirm ?? undefined, isStay ? extraMattressCount : undefined);
             }}
-            disabled={liveGuests < 1}
+            disabled={liveGuests < 1 || isSlotFull}
             className="bg-primary text-primary-foreground px-8 py-3.5 rounded-xl font-semibold text-sm flex items-center gap-2 glow-radiate disabled:opacity-50"
           >
             Pay Now <ChevronRight size={16} />
