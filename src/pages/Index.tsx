@@ -362,6 +362,7 @@ export default function Index() {
             guests={screen.guests}
             date={screen.date}
             total={screen.total}
+            bookingId={screen.bookingId}
             onDone={handleDone}
           />
         )}
