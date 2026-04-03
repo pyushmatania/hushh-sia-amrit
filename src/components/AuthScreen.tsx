@@ -163,8 +163,8 @@ export default function AuthScreen({ onBack }: { onBack?: () => void } = {}) {
       {/* Content */}
       <div className="relative z-10 flex-1 flex flex-col justify-center px-8 pt-16 pb-8 md:items-center">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="md:w-full md:max-w-md">
-          <div className="flex items-center gap-2 mb-6">
-            <Sparkles size={28} className="text-primary" />
+          <div className="flex items-center gap-3 mb-6">
+            <img src="/app-icon.png" alt={brandName} className="w-10 h-10 rounded-xl shadow-lg" />
             <h1 className={`text-3xl font-bold tracking-tight ${isDark ? "text-white" : "text-foreground"}`}>{brandName}</h1>
           </div>
           <h2 className={`text-2xl font-bold leading-tight ${isDark ? "text-white" : "text-foreground"}`}>
@@ -241,8 +241,9 @@ export default function AuthScreen({ onBack }: { onBack?: () => void } = {}) {
           {mode === "login" && (
             <button
               onClick={() => { setMode("forgot"); setError(""); }}
-              className="text-xs text-primary font-medium self-end -mt-1"
+              className="flex items-center gap-1.5 text-xs text-primary font-medium self-end -mt-1"
             >
+              <img src="/app-icon.png" alt="" className="w-4 h-4 rounded-sm" />
               Forgot password?
             </button>
           )}
