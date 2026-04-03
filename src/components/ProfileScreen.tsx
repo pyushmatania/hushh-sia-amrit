@@ -94,6 +94,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
   const versionTapCount = useRef(0);
   const versionTapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [showPastTrips, setShowPastTrips] = useState(false);
+  const [showConnections, setShowConnections] = useState(false);
   const [profile, setProfile] = useState({
     name: user?.user_metadata?.full_name || "Amrit",
     location: "Jeypore, India",
