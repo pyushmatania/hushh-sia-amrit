@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { memo, useCallback } from "react";
 import type { ExperiencePackage, Property } from "@/data/properties";
 
 // Map packages to property categories for smart matching
@@ -18,20 +18,16 @@ interface PackageCardProps {
   onPropertyTap: (property: Property) => void;
 }
 
-export default function PackageCard({ pkg, index, properties, onPropertyTap }: PackageCardProps) {
-  const handleTap = () => {
+export default memo(function PackageCard({ pkg, index, properties, onPropertyTap }: PackageCardProps) {
+  const handleTap = useCallback(() => {
     const matcher = packagePropertyMap[pkg.id];
     const match = matcher ? properties.find(matcher) : properties[0];
     if (match) onPropertyTap(match);
-  };
+  }, [pkg.id, properties, onPropertyTap]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.92, filter: "blur(4px)" }}
-      animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-      transition={{ delay: index * 0.06, duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-      whileTap={{ scale: 0.97 }}
-      className="shrink-0 w-[240px] md:w-full rounded-2xl overflow-hidden glass cursor-pointer transition-all md:hover:shadow-elevated md:hover:border-primary/20 md:hover:-translate-y-1"
+    <div
+      className="shrink-0 w-[240px] md:w-full rounded-2xl overflow-hidden glass cursor-pointer transition-all active:scale-[0.97] md:hover:shadow-elevated md:hover:border-primary/20 md:hover:-translate-y-1"
       onClick={handleTap}
     >
       <div className="p-5 space-y-2">
@@ -47,6 +43,6 @@ export default function PackageCard({ pkg, index, properties, onPropertyTap }: P
           Book Now
         </button>
       </div>
-    </motion.div>
+    </div>
   );
-}
+});
