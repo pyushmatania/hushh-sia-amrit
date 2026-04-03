@@ -148,6 +148,18 @@ export default function AuthScreen({ onBack }: { onBack?: () => void } = {}) {
         <div className={`absolute inset-0 ${isDark ? "bg-gradient-to-b from-black/70 via-black/55 to-black/85" : "bg-gradient-to-b from-white/60 via-white/50 to-white/80"}`} />
       </motion.div>
 
+      {/* Back button */}
+      {onBack && (
+        <motion.button
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          onClick={onBack}
+          className={`absolute top-[max(1rem,env(safe-area-inset-top))] left-4 z-20 w-10 h-10 rounded-full backdrop-blur-xl flex items-center justify-center ${isDark ? "bg-white/10 border border-white/20 text-white" : "bg-background/80 border border-border text-foreground"}`}
+        >
+          <ArrowLeft size={20} />
+        </motion.button>
+      )}
+
       {/* Content */}
       <div className="relative z-10 flex-1 flex flex-col justify-center px-8 pt-16 pb-8 md:items-center">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="md:w-full md:max-w-md">

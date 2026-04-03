@@ -101,17 +101,17 @@ export default function Admin() {
     return (
       <div className="relative">
         <AuthScreen />
-        <div className="fixed bottom-8 inset-x-0 flex justify-center z-50">
-          <button
-            onClick={() => {
-              const next = skipTaps + 1;
-              setSkipTaps(next);
-              if (next >= 8) setSkipAuth(true);
-            }}
-            className="px-6 py-3 rounded-full bg-card border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition shadow-lg backdrop-blur-lg opacity-40"
+        <div className="fixed bottom-24 inset-x-0 flex justify-center z-50">
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setSkipAuth(true)}
+            className="px-8 py-3 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-sm font-medium text-white/80 hover:text-white hover:bg-white/15 transition-all shadow-lg"
           >
             Skip for now →
-          </button>
+          </motion.button>
         </div>
       </div>
     );
