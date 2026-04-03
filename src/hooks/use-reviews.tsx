@@ -59,7 +59,7 @@ export function useReviews(propertyId: string) {
             .from("profiles")
             .select("display_name")
             .eq("user_id", resp.host_id)
-            .single();
+            .maybeSingle();
           hostName = hostProfile?.display_name || "Host";
         }
 
