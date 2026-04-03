@@ -494,7 +494,7 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
 
             {couponApplied && (
               <div className="flex justify-between text-sm">
-                <span className="text-success font-medium">Discount (10%)</span>
+                <span className="text-success font-medium">Discount ({couponDiscountType === "percentage" ? `${couponDiscount}%` : `₹${couponDiscount}`})</span>
                 <span className="text-success font-medium">-₹{discount.toLocaleString()}</span>
               </div>
             )}
