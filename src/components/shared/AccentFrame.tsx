@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from "react";
+import { forwardRef, type CSSProperties, type ReactNode } from "react";
 
 export interface AccentTagConfig {
   label: string;
