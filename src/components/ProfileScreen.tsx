@@ -887,6 +887,11 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
           </motion.div>
         )}
       </AnimatePresence>
+      <AnimatePresence>
+        {showConnections && (
+          <ConnectionsScreen onBack={() => setShowConnections(false)} />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
