@@ -40,7 +40,7 @@ const STATUS_ORDER: Record<Booking["status"], number> = {
 const guestDemoBookings: Booking[] = [
   {
     id: "demo-active",
-    propertyId: "c68aa3b0-4db8-41c8-9938-8b17ef628605",
+    propertyId: "1",
     date: "Mar 20, 2026",
     slot: "Evening · 6 PM – 11 PM",
     guests: 4,
@@ -50,7 +50,7 @@ const guestDemoBookings: Booking[] = [
   },
   {
     id: "demo-up-1",
-    propertyId: "664088f8-de6f-4806-8129-a074008d80bf",
+    propertyId: "5",
     date: "Mar 25, 2026",
     slot: "Night · 7 PM – 11 PM",
     guests: 2,
@@ -60,8 +60,8 @@ const guestDemoBookings: Booking[] = [
   },
   {
     id: "demo-up-2",
-    propertyId: "9f53b02c-03b3-4975-85da-fc670583ff8a",
-    date: "Apr 2, 2026",
+    propertyId: "3",
+    date: "Apr 10, 2026",
     slot: "Full Day · 10 AM – 10 PM",
     guests: 12,
     total: 18500,
@@ -70,8 +70,8 @@ const guestDemoBookings: Booking[] = [
   },
   {
     id: "demo-up-3",
-    propertyId: "4394a035-b49d-43ec-824b-0ca2ac4ea63d",
-    date: "Apr 10, 2026",
+    propertyId: "8",
+    date: "Apr 15, 2026",
     slot: "Morning · 9 AM – 1 PM",
     guests: 8,
     total: 6400,
@@ -80,7 +80,7 @@ const guestDemoBookings: Booking[] = [
   },
   {
     id: "demo-comp-1",
-    propertyId: "fdc64fb0-8c00-47a1-8d3d-f1804528b3b7",
+    propertyId: "2",
     date: "Mar 10, 2026",
     slot: "Full Day · 10 AM – 10 PM",
     guests: 8,
@@ -90,7 +90,7 @@ const guestDemoBookings: Booking[] = [
   },
   {
     id: "demo-comp-2",
-    propertyId: "260921b0-6a08-42ab-8af7-4b09abec8053",
+    propertyId: "4",
     date: "Feb 28, 2026",
     slot: "Evening · 5 PM – 10 PM",
     guests: 6,
@@ -100,7 +100,7 @@ const guestDemoBookings: Booking[] = [
   },
   {
     id: "demo-comp-3",
-    propertyId: "635c4a53-a83a-43c4-9bb6-057c0f67b6f2",
+    propertyId: "6",
     date: "Feb 14, 2026",
     slot: "Night · 8 PM – 12 AM",
     guests: 2,
@@ -110,7 +110,7 @@ const guestDemoBookings: Booking[] = [
   },
   {
     id: "demo-comp-4",
-    propertyId: "d0ace255-6252-4d32-bc08-a3808df64d34",
+    propertyId: "7",
     date: "Jan 26, 2026",
     slot: "Full Day · 10 AM – 10 PM",
     guests: 15,
@@ -120,7 +120,7 @@ const guestDemoBookings: Booking[] = [
   },
   {
     id: "demo-comp-5",
-    propertyId: "9bc305ac-0f90-49d3-a169-731e11acf801",
+    propertyId: "9",
     date: "Jan 1, 2026",
     slot: "Night · 9 PM – 2 AM",
     guests: 10,
@@ -130,7 +130,7 @@ const guestDemoBookings: Booking[] = [
   },
   {
     id: "demo-comp-6",
-    propertyId: "6a9747b5-d786-41d1-9911-bbe92c292cf2",
+    propertyId: "10",
     date: "Dec 25, 2025",
     slot: "Evening · 5 PM – 11 PM",
     guests: 4,
@@ -140,7 +140,7 @@ const guestDemoBookings: Booking[] = [
   },
   {
     id: "demo-cancel-1",
-    propertyId: "eb407558-e858-4745-9685-9e3618ee0d16",
+    propertyId: "11",
     date: "Feb 20, 2026",
     slot: "Night · 8 PM – 1 AM",
     guests: 2,
@@ -150,7 +150,7 @@ const guestDemoBookings: Booking[] = [
   },
   {
     id: "demo-cancel-2",
-    propertyId: "cb3a8358-59b0-4273-bfe1-88c6d553d15f",
+    propertyId: "12",
     date: "Jan 15, 2026",
     slot: "Morning · 10 AM – 2 PM",
     guests: 4,
