@@ -177,7 +177,9 @@ export default function Admin() {
 
   return (
     <AdminLayout activePage={page} onNavigate={directNav} breadcrumb={breadcrumb}>
-      {renderPage()}
+      <Suspense fallback={<div className="flex items-center justify-center h-64"><Loader2 className="animate-spin text-primary" size={24} /></div>}>
+        {renderPage()}
+      </Suspense>
     </AdminLayout>
   );
 }
