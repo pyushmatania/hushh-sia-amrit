@@ -369,7 +369,7 @@ export default function Index() {
             onSubmit={handleCreateListingSubmit}
           />
         )}
-      </AnimatePresence>
+      {/* End of screen router */}
       </Suspense>
       </div>
 
