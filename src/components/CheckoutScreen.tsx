@@ -394,8 +394,8 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
             </h4>
             {couponApplied ? (
               <div className="flex items-center gap-2 bg-success/10 rounded-xl px-4 py-3">
-                <span className="text-success text-sm font-medium">✓ Coupon applied — 10% off!</span>
-                <button onClick={() => { setCouponApplied(false); setCoupon(""); }} className="ml-auto text-xs text-muted-foreground underline">Remove</button>
+                <span className="text-success text-sm font-medium">✓ Coupon applied — {couponDiscountType === "percentage" ? `${couponDiscount}%` : `₹${couponDiscount}`} off!</span>
+                <button onClick={() => { setCouponApplied(false); setCoupon(""); setCouponError(""); }} className="ml-auto text-xs text-muted-foreground underline">Remove</button>
               </div>
             ) : (
               <div className="flex gap-2 md:max-w-sm">
