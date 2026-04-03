@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Check, MapPin, Calendar, Users, QrCode, Clock, ShoppingCart, Shield, Upload } from "lucide-react";
+import { Check, MapPin, Calendar, Users, Clock, ShoppingCart, Shield, Upload } from "lucide-react";
 import { useState, useEffect } from "react";
 import { fireCelebration } from "@/lib/confetti";
 import { format } from "date-fns";
