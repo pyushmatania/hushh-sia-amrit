@@ -564,7 +564,7 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
               if (liveGuests < 1) { setEditingGuests(true); return; }
               onConfirm(finalTotal, roomsForConfirm ?? undefined, isStay ? extraMattressCount : undefined);
             }}
-            disabled={liveGuests < 1}
+            disabled={liveGuests < 1 || isSlotFull}
             className="bg-primary text-primary-foreground px-8 py-3.5 rounded-xl font-semibold text-sm flex items-center gap-2 glow-radiate disabled:opacity-50"
           >
             Pay Now <ChevronRight size={16} />
