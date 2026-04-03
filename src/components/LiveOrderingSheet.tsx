@@ -136,7 +136,7 @@ export default function LiveOrderingSheet({ open, onClose, propertyName, propert
           status: "pending",
         })
         .select()
-        .single();
+        .maybeSingle();
 
       if (order) {
         const items = cartItems.map(ci => ({

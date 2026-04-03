@@ -61,7 +61,7 @@ export function useHostListings() {
           status: listing.status,
         })
         .select()
-        .single();
+        .maybeSingle();
 
       if (data) {
         const newListing = mapRow(data);

@@ -164,7 +164,7 @@ export function useMessages() {
       .from("conversations")
       .insert({ participant_1: user.id, participant_2: otherUserId })
       .select("id")
-      .single();
+      .maybeSingle();
 
     if (newConvo) {
       fetchConversations();

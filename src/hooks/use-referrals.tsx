@@ -47,7 +47,7 @@ export function useReferrals() {
       .from("referral_codes")
       .insert({ user_id: user.id, code })
       .select()
-      .single();
+      .maybeSingle();
 
     if (data) {
       setReferralCode(data as ReferralCode);

@@ -194,7 +194,7 @@ export default function AdminProperties() {
     const { id, created_at, ...rest } = listing;
     const { data, error } = await supabase.from("host_listings")
       .insert({ ...rest, name: `${rest.name} (Copy)`, status: "draft" })
-      .select().single();
+      .select().maybeSingle();
 
     if (error) {
       toast({ title: "Duplicate failed", description: error.message, variant: "destructive" });

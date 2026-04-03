@@ -45,7 +45,7 @@ export default function StaffInventory() {
     const { data } = await supabase.from("inventory").insert({
       name: form.name, category: form.category, emoji: form.emoji,
       unit_price: form.unit_price, stock: form.stock,
-    } as any).select().single();
+    } as any).select().maybeSingle();
     if (data) setItems(prev => [...prev, data as any]);
     setShowAdd(false);
     setForm({ name: "", category: "food", emoji: "🍔", unit_price: 0, stock: 100 });
