@@ -29,7 +29,7 @@ const OptimizedImage = memo(forwardRef<HTMLImageElement, OptimizedImageProps>(fu
   className = "",
   style,
   ...rest
-}: OptimizedImageProps) {
+}, ref) {
   const [loaded, setLoaded] = useState(false);
 
   const handleLoad = () => {
