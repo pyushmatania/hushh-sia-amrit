@@ -30,9 +30,9 @@ const edgeBaseStyle: CSSProperties = {
   zIndex: 3,
 };
 
-export function AccentFrame({ color, radius = "1rem", glowAlpha = 0.08 }: AccentFrameProps) {
+export const AccentFrame = forwardRef<HTMLDivElement, AccentFrameProps>(function AccentFrame({ color, radius = "1rem", glowAlpha = 0.08 }: AccentFrameProps, ref) {
   return (
-    <>
+    <div ref={ref}>
       {/* Left edge – fades downward */}
       <div
         style={{
@@ -75,9 +75,9 @@ export function AccentFrame({ color, radius = "1rem", glowAlpha = 0.08 }: Accent
           background: `radial-gradient(ellipse at top left, ${withAlpha(color, glowAlpha)} 0%, transparent 55%)`,
         }}
       />
-    </>
+    </div>
   );
-}
+});
 
 interface AccentTagProps {
   tag: AccentTagConfig;

@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Tag, CreditCard, Smartphone, Banknote, ChevronRight, Shield, Clock, Users, MapPin, CalendarIcon, X, Heart, Bookmark, Pencil, Minus, Plus, Check as CheckIcon, AlertTriangle, BedDouble, Layers } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import type { Property } from "@/data/properties";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
@@ -39,6 +40,9 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
   const slot = property.slots.find((s) => s.id === slotId)!;
   const [coupon, setCoupon] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
+  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [couponDiscountType, setCouponDiscountType] = useState<"percentage" | "flat">("percentage");
+  const [couponError, setCouponError] = useState("");
   const [selectedPayment, setSelectedPayment] = useState("upi");
   const [extras, setExtras] = useState<Property[]>(initialExtras || []);
   const [liveSelections, setLiveSelections] = useState<Record<string, number>>(initialSelections);
@@ -94,7 +98,11 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
 
   const mattressTotal = isStay ? extraMattressCount * EXTRA_MATTRESS_PRICE : 0;
   const baseTotal = slot.price + addonTotal;
-  const discount = couponApplied ? Math.round((baseTotal + extrasTotal + mattressTotal) * appConfig.coupon_discount_percent / 100) : 0;
+  const discount = couponApplied
+    ? couponDiscountType === "percentage"
+      ? Math.round((baseTotal + extrasTotal + mattressTotal) * couponDiscount / 100)
+      : couponDiscount
+    : 0;
   const platformFee = appConfig.platform_fee;
   const finalTotal = baseTotal + extrasTotal + mattressTotal - discount + platformFee;
 
@@ -110,11 +118,48 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
     }
   });
 
-  const handleApplyCoupon = () => {
-    if (coupon.toLowerCase() === "hushh10" || coupon.toLowerCase() === "welcome") {
-      setCouponApplied(true);
+  const handleApplyCoupon = useCallback(async () => {
+    if (!coupon.trim()) return;
+    setCouponError("");
+    const { data } = await supabase
+      .from("coupons")
+      .select("*")
+      .ilike("code", coupon.trim())
+      .eq("active", true)
+      .maybeSingle();
+
+    if (!data) {
+      setCouponError("Invalid or expired coupon");
+      setCouponApplied(false);
+      return;
     }
-  };
+
+    // Check expiry
+    if (data.expires_at && new Date(data.expires_at) < new Date()) {
+      setCouponError("This coupon has expired");
+      setCouponApplied(false);
+      return;
+    }
+
+    // Check usage limit
+    if (data.max_uses && data.uses >= data.max_uses) {
+      setCouponError("This coupon has reached its usage limit");
+      setCouponApplied(false);
+      return;
+    }
+
+    // Check minimum order
+    const subtotal = baseTotal + extrasTotal + mattressTotal;
+    if (data.min_order && subtotal < Number(data.min_order)) {
+      setCouponError(`Minimum order ₹${Number(data.min_order).toLocaleString()} required`);
+      setCouponApplied(false);
+      return;
+    }
+
+    setCouponDiscountType(data.discount_type === "flat" ? "flat" : "percentage");
+    setCouponDiscount(Number(data.discount_value));
+    setCouponApplied(true);
+  }, [coupon, baseTotal, extrasTotal, mattressTotal]);
 
   return (
     <motion.div
@@ -332,7 +377,7 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
             </div>
             {couponApplied && (
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="flex justify-between text-sm">
-                <span className="text-success font-medium">Coupon discount (10%)</span>
+                <span className="text-success font-medium">Coupon discount ({couponDiscountType === "percentage" ? `${couponDiscount}%` : `₹${couponDiscount}`})</span>
                 <span className="text-success font-medium">-₹{discount.toLocaleString()}</span>
               </motion.div>
             )}
@@ -349,14 +394,17 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
             </h4>
             {couponApplied ? (
               <div className="flex items-center gap-2 bg-success/10 rounded-xl px-4 py-3">
-                <span className="text-success text-sm font-medium">✓ Coupon applied — 10% off!</span>
-                <button onClick={() => { setCouponApplied(false); setCoupon(""); }} className="ml-auto text-xs text-muted-foreground underline">Remove</button>
+                <span className="text-success text-sm font-medium">✓ Coupon applied — {couponDiscountType === "percentage" ? `${couponDiscount}%` : `₹${couponDiscount}`} off!</span>
+                <button onClick={() => { setCouponApplied(false); setCoupon(""); setCouponError(""); }} className="ml-auto text-xs text-muted-foreground underline">Remove</button>
               </div>
             ) : (
-              <div className="flex gap-2 md:max-w-sm">
-                <input type="text" value={coupon} onChange={(e) => setCoupon(e.target.value)} placeholder="Enter code (try HUSHH10)"
-                  className="flex-1 bg-secondary rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none border border-transparent focus:border-primary/30 transition-colors md:focus:ring-2 md:focus:ring-primary/20" />
-                <button onClick={handleApplyCoupon} className="bg-foreground text-background px-4 py-2.5 rounded-xl text-sm font-semibold shrink-0 md:hover:brightness-110 transition">Apply</button>
+              <div className="space-y-2">
+                <div className="flex gap-2 md:max-w-sm">
+                  <input type="text" value={coupon} onChange={(e) => { setCoupon(e.target.value); setCouponError(""); }} placeholder="Enter coupon code"
+                    className="flex-1 bg-secondary rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none border border-transparent focus:border-primary/30 transition-colors md:focus:ring-2 md:focus:ring-primary/20" />
+                  <button onClick={handleApplyCoupon} className="bg-foreground text-background px-4 py-2.5 rounded-xl text-sm font-semibold shrink-0 md:hover:brightness-110 transition">Apply</button>
+                </div>
+                {couponError && <p className="text-xs text-destructive font-medium">{couponError}</p>}
               </div>
             )}
           </motion.div>
@@ -446,7 +494,7 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
 
             {couponApplied && (
               <div className="flex justify-between text-sm">
-                <span className="text-success font-medium">Discount (10%)</span>
+                <span className="text-success font-medium">Discount ({couponDiscountType === "percentage" ? `${couponDiscount}%` : `₹${couponDiscount}`})</span>
                 <span className="text-success font-medium">-₹{discount.toLocaleString()}</span>
               </div>
             )}
@@ -484,7 +532,7 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
       <div className="fixed bottom-0 left-0 right-0 glass px-5 py-3.5 z-40 md:hidden">
         <div className="flex items-center justify-between mb-1.5">
           <span className="text-xs text-muted-foreground">{paymentMethods.find(m => m.id === selectedPayment)?.label}</span>
-          {couponApplied && <span className="text-xs text-success font-medium">10% off applied</span>}
+          {couponApplied && <span className="text-xs text-success font-medium">{couponDiscountType === "percentage" ? `${couponDiscount}%` : `₹${couponDiscount}`} off applied</span>}
         </div>
         <div className="flex items-center justify-between">
           <span className="font-bold text-xl text-gradient-warm">₹{finalTotal.toLocaleString()}</span>
