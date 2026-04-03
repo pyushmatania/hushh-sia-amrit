@@ -289,7 +289,7 @@ function OscarPropertyCard({ property, onTap, index, isWL, onToggleWishlist, tot
             <img src={oscarTrophy} alt="" className="w-4 h-4 object-contain" />
             <span className={`${isSingle ? "text-[10px]" : "text-[9px]"} font-black tracking-wider`}
               style={{ backgroundImage: "linear-gradient(135deg, #FFD700, #FFF, #FFD700)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              {badges[index % badges.length]}
+              {podiumTitles[index] || "✦ PREMIUM"}
             </span>
           </div>
 
