@@ -70,6 +70,6 @@ const OptimizedImage = memo(forwardRef<HTMLImageElement, OptimizedImageProps>(fu
       />
     </>
   );
-});
+}));
 
 export default OptimizedImage;
