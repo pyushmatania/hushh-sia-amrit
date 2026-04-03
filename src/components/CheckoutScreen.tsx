@@ -515,16 +515,30 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
               </div>
             </div>
 
+            {isSlotFull && (
+              <div className="flex items-center gap-2 p-3 rounded-xl bg-destructive/10 border border-destructive/20">
+                <AlertTriangle size={16} className="text-destructive shrink-0" />
+                <p className="text-xs text-destructive font-medium">This slot is fully booked for the selected date. Please choose a different date or slot.</p>
+              </div>
+            )}
+
+            {!isSlotFull && spotsLeft !== null && spotsLeft <= 5 && (
+              <div className="flex items-center gap-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                <AlertTriangle size={16} className="text-amber-500 shrink-0" />
+                <p className="text-xs text-amber-600 dark:text-amber-400 font-medium">Only {spotsLeft} spot{spotsLeft !== 1 ? 's' : ''} left for this slot!</p>
+              </div>
+            )}
+
             <motion.button
               onClick={() => {
                 if (liveGuests < 1) { setEditingGuests(true); return; }
                 onConfirm(finalTotal, roomsForConfirm ?? undefined, isStay ? extraMattressCount : undefined);
               }}
-              disabled={liveGuests < 1}
+              disabled={liveGuests < 1 || isSlotFull}
               className="w-full bg-primary text-primary-foreground py-4 rounded-xl font-semibold text-lg hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 glow-radiate-pulse"
               whileTap={{ scale: 0.97 }}
             >
-              Pay ₹{finalTotal.toLocaleString()} → 
+              {isSlotFull ? "Slot Fully Booked" : `Pay ₹${finalTotal.toLocaleString()} →`}
             </motion.button>
 
             <div className="flex items-center justify-center gap-3 pt-1">
