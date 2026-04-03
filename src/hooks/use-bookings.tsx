@@ -291,7 +291,7 @@ export function useBookings() {
             extra_mattresses: booking.extraMattresses ?? 0,
           })
           .select()
-          .single();
+          .maybeSingle();
 
         if (data) {
           const newBooking: Booking = normalizeBooking({
