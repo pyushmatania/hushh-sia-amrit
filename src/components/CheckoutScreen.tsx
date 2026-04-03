@@ -532,7 +532,7 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
       <div className="fixed bottom-0 left-0 right-0 glass px-5 py-3.5 z-40 md:hidden">
         <div className="flex items-center justify-between mb-1.5">
           <span className="text-xs text-muted-foreground">{paymentMethods.find(m => m.id === selectedPayment)?.label}</span>
-          {couponApplied && <span className="text-xs text-success font-medium">10% off applied</span>}
+          {couponApplied && <span className="text-xs text-success font-medium">{couponDiscountType === "percentage" ? `${couponDiscount}%` : `₹${couponDiscount}`} off applied</span>}
         </div>
         <div className="flex items-center justify-between">
           <span className="font-bold text-xl text-gradient-warm">₹{finalTotal.toLocaleString()}</span>
