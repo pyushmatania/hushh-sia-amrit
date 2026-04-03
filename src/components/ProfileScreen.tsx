@@ -133,13 +133,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
   if (showAuth) {
     return (
       <div className="min-h-screen relative">
-        <AuthScreen />
-        <button
-          onClick={() => setShowAuth(false)}
-          className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white text-sm font-medium"
-        >
-          ✕
-        </button>
+        <AuthScreen onBack={() => setShowAuth(false)} />
       </div>
     );
   }
