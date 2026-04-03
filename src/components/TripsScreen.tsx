@@ -50,6 +50,32 @@ const statusConfig: Record<string, { gradient: string; glow: string; label: stri
   },
 };
 
+/* ── 3D Floating QR Card ── */
+function FloatingQRCard() {
+  const groupRef = useRef<THREE.Group>(null);
+  useFrame((state) => {
+    if (!groupRef.current) return;
+    groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.15;
+    groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.3) * 0.05;
+  });
+
+  return (
+    <Float speed={2} rotationIntensity={0.3} floatIntensity={0.5}>
+      <group ref={groupRef}>
+        <RoundedBox args={[3.2, 3.2, 0.08]} radius={0.15} smoothness={4}>
+          <meshPhysicalMaterial color="#f8f5ff" roughness={0.15} metalness={0.05} clearcoat={1} clearcoatRoughness={0.1} />
+        </RoundedBox>
+        <RoundedBox args={[3.3, 3.3, 0.06]} radius={0.16} smoothness={4} position={[0, 0, -0.02]}>
+          <meshStandardMaterial color="#d4a853" roughness={0.3} metalness={0.7} />
+        </RoundedBox>
+        <RoundedBox args={[3.4, 3.4, 0.04]} radius={0.17} smoothness={4} position={[0, 0, -0.04]}>
+          <meshStandardMaterial color="#9333ea" roughness={0.4} metalness={0.5} transparent opacity={0.6} />
+        </RoundedBox>
+      </group>
+    </Float>
+  );
+}
+
 function SwipeableCard({
   booking,
   index,
