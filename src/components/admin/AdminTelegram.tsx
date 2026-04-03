@@ -78,7 +78,7 @@ export default function AdminTelegram() {
   const loadAll = async () => {
     setLoading(true);
     const [configRes, msgsRes, logsRes] = await Promise.all([
-      supabase.from("telegram_bot_state").select("*").eq("id", 1).single(),
+      supabase.from("telegram_bot_state").select("*").eq("id", 1).maybeSingle(),
       supabase.from("telegram_messages").select("*").order("created_at", { ascending: false }).limit(50),
       supabase.from("telegram_sent_log").select("*").order("created_at", { ascending: false }).limit(50),
     ]);

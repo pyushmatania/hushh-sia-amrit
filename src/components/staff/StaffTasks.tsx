@@ -34,7 +34,7 @@ export default function StaffTasks() {
     const { data } = await supabase.from("staff_tasks").insert({
       title: form.title, description: form.description, priority: form.priority,
       assigned_to: user.id, created_by: user.id,
-    } as any).select().single();
+    } as any).select().maybeSingle();
     if (data) setTasks(prev => [data as any, ...prev]);
     setShowCreate(false);
     setForm({ title: "", description: "", priority: "medium" });
