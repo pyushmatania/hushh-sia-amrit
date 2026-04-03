@@ -631,29 +631,31 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
 
       </div>{/* close desktop responsive wrapper */}
 
-      {/* Sheets */}
-      <EditProfileSheet
-        open={showEditProfile}
-        onClose={() => setShowEditProfile(false)}
-        profile={profile}
-        onSave={handleSaveProfile}
-      />
-      <SettingsSheet
-        open={!!activeSetting}
-        onClose={() => setActiveSetting("")}
-        settingType={activeSetting}
-      />
-      <AnimatePresence>
-        {showLoyalty && (
-          <LoyaltyScreen onBack={() => setShowLoyalty(false)} />
-        )}
-      </AnimatePresence>
-      <AnimatePresence>
-        {showReferral && (
-          <ReferralScreen onBack={() => setShowReferral(false)} />
-        )}
-      </AnimatePresence>
-      <IdentityUploadSheet open={showIdentityUpload} onClose={() => setShowIdentityUpload(false)} />
+      {/* Sheets — lazy-loaded */}
+      <Suspense fallback={null}>
+        <EditProfileSheet
+          open={showEditProfile}
+          onClose={() => setShowEditProfile(false)}
+          profile={profile}
+          onSave={handleSaveProfile}
+        />
+        <SettingsSheet
+          open={!!activeSetting}
+          onClose={() => setActiveSetting("")}
+          settingType={activeSetting}
+        />
+        <AnimatePresence>
+          {showLoyalty && (
+            <LoyaltyScreen onBack={() => setShowLoyalty(false)} />
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {showReferral && (
+            <ReferralScreen onBack={() => setShowReferral(false)} />
+          )}
+        </AnimatePresence>
+        <IdentityUploadSheet open={showIdentityUpload} onClose={() => setShowIdentityUpload(false)} />
+      </Suspense>
 
       {/* Help Centre Sheet */}
       <Sheet open={showHelpCentre} onOpenChange={setShowHelpCentre}>
