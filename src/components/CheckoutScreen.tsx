@@ -118,11 +118,48 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
     }
   });
 
-  const handleApplyCoupon = () => {
-    if (coupon.toLowerCase() === "hushh10" || coupon.toLowerCase() === "welcome") {
-      setCouponApplied(true);
+  const handleApplyCoupon = useCallback(async () => {
+    if (!coupon.trim()) return;
+    setCouponError("");
+    const { data } = await supabase
+      .from("coupons")
+      .select("*")
+      .ilike("code", coupon.trim())
+      .eq("active", true)
+      .maybeSingle();
+
+    if (!data) {
+      setCouponError("Invalid or expired coupon");
+      setCouponApplied(false);
+      return;
     }
-  };
+
+    // Check expiry
+    if (data.expires_at && new Date(data.expires_at) < new Date()) {
+      setCouponError("This coupon has expired");
+      setCouponApplied(false);
+      return;
+    }
+
+    // Check usage limit
+    if (data.max_uses && data.uses >= data.max_uses) {
+      setCouponError("This coupon has reached its usage limit");
+      setCouponApplied(false);
+      return;
+    }
+
+    // Check minimum order
+    const subtotal = baseTotal + extrasTotal + mattressTotal;
+    if (data.min_order && subtotal < Number(data.min_order)) {
+      setCouponError(`Minimum order ₹${Number(data.min_order).toLocaleString()} required`);
+      setCouponApplied(false);
+      return;
+    }
+
+    setCouponDiscountType(data.discount_type === "flat" ? "flat" : "percentage");
+    setCouponDiscount(Number(data.discount_value));
+    setCouponApplied(true);
+  }, [coupon, baseTotal, extrasTotal, mattressTotal]);
 
   return (
     <motion.div
