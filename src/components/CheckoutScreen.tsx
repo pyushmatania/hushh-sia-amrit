@@ -98,7 +98,11 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
 
   const mattressTotal = isStay ? extraMattressCount * EXTRA_MATTRESS_PRICE : 0;
   const baseTotal = slot.price + addonTotal;
-  const discount = couponApplied ? Math.round((baseTotal + extrasTotal + mattressTotal) * appConfig.coupon_discount_percent / 100) : 0;
+  const discount = couponApplied
+    ? couponDiscountType === "percentage"
+      ? Math.round((baseTotal + extrasTotal + mattressTotal) * couponDiscount / 100)
+      : couponDiscount
+    : 0;
   const platformFee = appConfig.platform_fee;
   const finalTotal = baseTotal + extrasTotal + mattressTotal - discount + platformFee;
 
