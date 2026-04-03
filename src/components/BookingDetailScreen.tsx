@@ -461,10 +461,9 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
             className="rounded-2xl border border-border p-5 flex flex-col items-center"
           >
             <h4 className="font-semibold text-sm text-foreground mb-4">Entry QR Code</h4>
-            <div className="w-32 h-32 bg-secondary rounded-2xl flex items-center justify-center mb-3">
-              <QrCode size={64} className="text-muted-foreground" />
-            </div>
-            <p className="text-xs text-muted-foreground">Show this at the venue entrance</p>
+            <BookingQRCode bookingId={booking.bookingId} size={120} />
+            <p className="text-[11px] font-mono text-muted-foreground mt-3">{booking.bookingId}</p>
+            <p className="text-xs text-muted-foreground mt-1">Show this at the venue entrance</p>
           </motion.div>
         )}
 
