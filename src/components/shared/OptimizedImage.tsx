@@ -52,6 +52,7 @@ const OptimizedImage = memo(forwardRef<HTMLImageElement, OptimizedImageProps>(fu
         </div>
       )}
       <img
+        ref={ref}
         src={src}
         alt={alt}
         className={`${className} ${loaded ? "" : "opacity-0"}`}
