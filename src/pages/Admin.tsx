@@ -1,4 +1,5 @@
 import { useState, lazy, Suspense } from "react";
+import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/use-auth";
 import { useAdmin } from "@/hooks/use-admin";
 import AdminLayout, { type AdminPage } from "@/components/admin/AdminLayout";
