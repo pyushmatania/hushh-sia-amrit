@@ -279,20 +279,12 @@ export function PropertiesProvider({ children }: { children: ReactNode }) {
     load();
   }, [load, refreshKey]);
 
+  // Only refetch on explicit listing updates — NOT on every tab focus/visibility change
+  // This was causing 4 parallel Supabase queries every time user switched browser tabs
   useEffect(() => {
-    const onVisible = () => {
-      if (document.visibilityState === "visible") load();
-    };
-    const onFocus = () => load();
     const onListingsUpdated = () => load();
-
-    document.addEventListener("visibilitychange", onVisible);
-    window.addEventListener("focus", onFocus);
     window.addEventListener("hushh:listings-updated", onListingsUpdated);
-
     return () => {
-      document.removeEventListener("visibilitychange", onVisible);
-      window.removeEventListener("focus", onFocus);
       window.removeEventListener("hushh:listings-updated", onListingsUpdated);
     };
   }, [load]);
