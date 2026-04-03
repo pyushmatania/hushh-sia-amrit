@@ -214,7 +214,6 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    e.stopPropagation();
     touchRef.current = {
       x: e.touches[0].clientX,
       y: e.touches[0].clientY,
@@ -222,7 +221,6 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
       mode: "pending",
     };
     swipedRef.current = false;
-    setIsDragging(true);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
@@ -245,9 +243,9 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
         return;
       }
 
-      // Any horizontal component at all → treat as swipe
       if (absX >= 6 || (absX >= 4 && absX >= absY * 0.4)) {
         touchRef.current.mode = "horizontal";
+        setIsDragging(true);
       } else {
         return;
       }
@@ -261,7 +259,6 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    e.stopPropagation();
     if (!touchRef.current) { setDragX(0); setIsDragging(false); return; }
 
     const dx = e.changedTouches[0].clientX - touchRef.current.x;
@@ -339,7 +336,7 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
       {/* 3D Carousel */}
       <div
         className="relative w-full flex items-center justify-center select-none"
-        style={{ height: "350px", transformStyle: "preserve-3d", cursor: isDragging ? "grabbing" : "grab", touchAction: "none" }}
+        style={{ height: "350px", transformStyle: "preserve-3d", cursor: isDragging ? "grabbing" : "grab", touchAction: "pan-y" }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
