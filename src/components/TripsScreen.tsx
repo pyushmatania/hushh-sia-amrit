@@ -53,6 +53,7 @@ function SwipeableCard({
   onRebook,
   onCancel,
   onOrderFood,
+  onShowQR,
 }: {
   booking: Booking;
   index: number;
@@ -60,6 +61,7 @@ function SwipeableCard({
   onRebook: (id: string) => void;
   onCancel?: (id: string) => void;
   onOrderFood?: (b: Booking) => void;
+  onShowQR?: (bookingId: string) => void;
 }) {
   const controls = useAnimation();
   const swipeX = useMotionValue(0);
