@@ -6,15 +6,17 @@ import {
   Utensils, Star, Shield, Wifi, Music, Flame, Home, Info,
   Camera, Receipt, Split
 } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, lazy, Suspense } from "react";
 import type { Addon } from "@/data/properties";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { useToast } from "@/hooks/use-toast";
 import type { Booking } from "@/pages/Index";
-import LiveOrderingSheet from "./LiveOrderingSheet";
-import BookingPhotosSheet from "./BookingPhotosSheet";
-import ReceiptSheet from "./ReceiptSheet";
-import SplitPaymentSheet from "./SplitPaymentSheet";
+
+// Lazy-load heavy sheets only opened on user action
+const LiveOrderingSheet = lazy(() => import("./LiveOrderingSheet"));
+const BookingPhotosSheet = lazy(() => import("./BookingPhotosSheet"));
+const ReceiptSheet = lazy(() => import("./ReceiptSheet"));
+const SplitPaymentSheet = lazy(() => import("./SplitPaymentSheet"));
 
 interface BookingDetailScreenProps {
   booking: Booking;
