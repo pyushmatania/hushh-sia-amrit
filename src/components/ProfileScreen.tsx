@@ -78,6 +78,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
   const appConfig = useAppConfig();
   const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
+  const { points: loyaltyPoints, tier: loyaltyTier } = useLoyalty();
   const [showAuth, setShowAuth] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [activeSetting, setActiveSetting] = useState("");
