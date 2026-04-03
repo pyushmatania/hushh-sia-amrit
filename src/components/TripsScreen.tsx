@@ -116,12 +116,14 @@ function TiltCard({
   onViewDetail,
   onRebook,
   onOrderFood,
+  onShowQR,
 }: {
   booking: Booking;
   index: number;
   onViewDetail: (b: Booking) => void;
   onRebook: (id: string) => void;
   onOrderFood?: (b: Booking) => void;
+  onShowQR?: (bookingId: string) => void;
 }) {
   const { properties } = usePropertiesData();
   const cardRef = useRef<HTMLDivElement>(null);
