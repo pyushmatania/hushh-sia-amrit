@@ -84,9 +84,12 @@ interface AccentTagProps {
   className?: string;
 }
 
-export function AccentTag({ tag, className = "absolute top-3 left-3 z-10" }: AccentTagProps) {
+import { forwardRef } from "react";
+
+export const AccentTag = forwardRef<HTMLSpanElement, AccentTagProps>(function AccentTag({ tag, className = "absolute top-3 left-3 z-10" }, ref) {
   return (
     <span
+      ref={ref}
       className={`${className} text-[10px] font-bold tracking-wider pl-3 pr-4 py-1.5 flex items-center gap-1 shadow-lg`}
       style={{
         background: tag.bg,
