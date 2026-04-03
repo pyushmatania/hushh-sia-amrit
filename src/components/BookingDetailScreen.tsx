@@ -554,10 +554,13 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
 
           {/* QR Code */}
           {(isUpcoming || isActive) && !isCancelled && (
-            <div className="flex flex-col items-center pt-4 border-t border-border">
+            <div
+              className="flex flex-col items-center pt-4 border-t border-border cursor-pointer active:scale-[0.98] transition-transform"
+              onClick={() => setShowQRModal(true)}
+            >
               <BookingQRCode bookingId={booking.bookingId} size={112} />
               <p className="text-[11px] font-mono text-muted-foreground mt-2">{booking.bookingId}</p>
-              <p className="text-xs text-muted-foreground mt-1">Show at venue entrance</p>
+              <p className="text-xs text-muted-foreground mt-1">Tap to expand</p>
             </div>
           )}
 
