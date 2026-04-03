@@ -75,9 +75,9 @@ export const AccentFrame = forwardRef<HTMLDivElement, AccentFrameProps>(function
           background: `radial-gradient(ellipse at top left, ${withAlpha(color, glowAlpha)} 0%, transparent 55%)`,
         }}
       />
-    </>
+    </div>
   );
-}
+});
 
 interface AccentTagProps {
   tag: AccentTagConfig;
