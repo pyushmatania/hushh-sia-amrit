@@ -104,7 +104,7 @@ function SwipeableCard({
         dragElastic={0.1}
         onDragEnd={handleDragEnd}
       >
-        <TiltCard booking={booking} index={index} onViewDetail={onViewDetail} onRebook={onRebook} onOrderFood={onOrderFood} />
+        <TiltCard booking={booking} index={index} onViewDetail={onViewDetail} onRebook={onRebook} onOrderFood={onOrderFood} onShowQR={onShowQR} />
       </motion.div>
     </div>
   );
