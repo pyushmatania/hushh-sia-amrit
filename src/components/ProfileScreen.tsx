@@ -310,8 +310,8 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
           <Crown size={22} className="text-primary" />
         </div>
         <div className="flex-1">
-          <p className="text-sm font-bold text-foreground">Gold Member</p>
-          <p className="text-xs text-muted-foreground">320 loyalty points · ₹200 cashback available</p>
+          <p className="text-sm font-bold text-foreground">{loyaltyTier} Member</p>
+          <p className="text-xs text-muted-foreground">{loyaltyPoints} loyalty points</p>
         </div>
         <ChevronRight size={18} className="text-muted-foreground" />
       </motion.div>
