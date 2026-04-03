@@ -246,6 +246,7 @@
     filter: blur(8px);
     opacity: 0.6;
     animation: glowRotate 4s linear infinite;
+    will-change: transform;
   }
   .glow-radiate::after {
     content: "";
@@ -263,6 +264,7 @@
     filter: blur(4px);
     opacity: 0.4;
     animation: glowRotate 6s linear infinite reverse;
+    will-change: transform;
   }
   .light .glow-radiate::before {
     opacity: 0.3;
@@ -362,9 +364,6 @@
 }
 
 
-/* Floating animation for decorative elements */
-
-
 /* Radiating glow rotation */
 @keyframes glowRotate {
   from { transform: rotate(0deg); }
@@ -376,13 +375,6 @@
   0%, 100% { opacity: 0.4; transform: scale(1); }
   50% { opacity: 0.8; transform: scale(1.08); }
 }
-
-/* GPU-accelerated smooth scrolling for main page */
-.smooth-main-scroll {
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior-y: contain;
-}
-
 
 @keyframes spring-settle {
   0% { transform: scale(1.04) rotate(0.8deg); opacity: 0.9; }
@@ -437,79 +429,7 @@
   100% { background-position: -200% 0; }
 }
 
-/* Game card floating particles */
-@keyframes floatUp {
-  0% { transform: translateY(0) scale(1); opacity: 0; }
-  10% { opacity: 1; }
-  80% { opacity: 0.6; }
-  100% { transform: translateY(-320px) scale(0.3); opacity: 0; }
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@keyframes spinSlow {
-  0% { transform: translate(-50%, -50%) rotate(0deg); }
-  100% { transform: translate(-50%, -50%) rotate(360deg); }
-}
-
-@keyframes borderPulse {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
-}
-
-/* Energy pulse on stat bar tips */
-@keyframes energyPulse {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.3); }
-}
-
-/* Reveal burst — radial energy explosion */
-@keyframes revealBurst {
-  0% { transform: scale(0.3); opacity: 1; }
-  60% { transform: scale(1.2); opacity: 0.6; }
-  100% { transform: scale(2); opacity: 0; }
-}
-
-/* Flash overlay on reveal */
-@keyframes revealFlash {
-  0% { opacity: 0.8; }
-  100% { opacity: 0; }
-}
-
-/* Pulsing glow for hold indicator */
-@keyframes pulseGlow {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.05); }
-}
-
-/* Float animation for swipe hints */
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
-}
-
-/* Smoke rise effect for card hold */
-@keyframes smokeRise {
-  0% { transform: translateY(0) scale(1); opacity: 0.4; }
-  50% { transform: translateY(-15px) scale(1.1); opacity: 0.8; }
-  100% { transform: translateY(0) scale(1); opacity: 0.4; }
-}
-
-/* Sci-fi scan line animation */
-@keyframes scanDown {
-  0% { top: -2px; }
-  100% { top: 100%; }
-}
-
-/* Glitch flicker */
-@keyframes glitchFlicker {
-  0%, 92%, 94%, 96%, 100% { opacity: 1; }
-  93% { opacity: 0.6; transform: translateX(1px); }
-  95% { opacity: 0.8; transform: translateX(-1px); }
-}
+/* Game-card keyframes moved to src/components/home/cinematic-card.css */
 
 /* Leaflet overrides */
 .custom-photo-marker {

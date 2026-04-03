@@ -1,3 +1,4 @@
+import "./cinematic-card.css";
 import { Heart, Star, Zap, Shield, Flame, Swords, Crown, ChevronUp, ChevronDown, MapPin, Users, Sparkles } from "lucide-react";
 import { useState, useRef, useCallback, useEffect } from "react";
 import type { Property } from "@/data/properties";
