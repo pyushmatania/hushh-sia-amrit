@@ -202,7 +202,12 @@ function OscarPropertyCard({ property, onTap, index, isWL, onToggleWishlist, tot
   property: Property; onTap: (p: Property) => void; index: number; isWL: boolean; onToggleWishlist?: (id: string) => void; totalCount?: number; isSingle?: boolean;
 }) {
   const cheapest = Math.min(...property.slots.filter(s => s.available).map(s => s.price));
-  const badges = ["🏆 BEST PICK", "⭐ TOP RATED", "👑 PREMIUM", "💎 EXCLUSIVE", "🌟 FEATURED", "🎭 CURATED"];
+  const podiumTitles = ["🏆 WINNER", "🥈 RUNNER UP", "🥉 EDITORS' PICK"];
+  const podiumGlows = [
+    "0 0 50px rgba(255,215,0,0.35), 0 24px 80px rgba(0,0,0,0.5)",
+    "0 0 40px rgba(192,192,192,0.25), 0 20px 60px rgba(0,0,0,0.5)",
+    "0 0 35px rgba(205,127,50,0.25), 0 16px 50px rgba(0,0,0,0.5)",
+  ];
   const [hovered, setHovered] = useState(false);
 
   return (
