@@ -11,9 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import EmptyState from "./shared/EmptyState";
 import BookingQRCode from "./shared/BookingQRCode";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { RoundedBox, Float, Environment } from "@react-three/drei";
-import * as THREE from "three";
+import QRCodeModal from "./shared/QRCodeModal";
 import { format } from "date-fns";
 
 interface TripsScreenProps {
