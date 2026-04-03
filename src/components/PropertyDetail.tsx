@@ -1,7 +1,9 @@
 import { motion, AnimatePresence, useMotionValue, useTransform, animate, PanInfo } from "framer-motion";
 import { useAppConfig } from "@/hooks/use-app-config";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
+import { lazy, Suspense } from "react";
+
+// Lazy-load Leaflet map to keep it out of PropertyDetail's chunk
+const PropertyLocationMap = lazy(() => import("./PropertyLocationMap"));
 import {
   ArrowLeft, Share2, Heart, Star, BadgeCheck, MapPin,
   ChevronDown, ChevronUp, Minus, Plus, Droplets, Flame,
