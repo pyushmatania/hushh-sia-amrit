@@ -10,7 +10,7 @@ import { checkRateLimit, resetRateLimit, formatRetryTime, RATE_LIMITS } from "@/
 import authBgDark from "@/assets/auth-bg-night.webp";
 import authBgLight from "@/assets/auth-bg-light.webp";
 
-export default function AuthScreen() {
+export default function AuthScreen({ onBack }: { onBack?: () => void } = {}) {
   const [mode, setMode] = useState<"login" | "signup" | "forgot">("login");
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
