@@ -32,6 +32,8 @@ const AppDocumentation = lazy(() => import("./AppDocumentation"));
 const IdentityUploadSheet = lazy(() => import("./IdentityUploadSheet"));
 const PublicProfileScreen = lazy(() => import("./PublicProfileScreen"));
 
+import { useLoyalty } from "@/hooks/use-loyalty";
+
 const themeOptions = [
   { id: "light" as const, label: "Light", icon: Sun },
   { id: "dark" as const, label: "Dark", icon: Moon },
