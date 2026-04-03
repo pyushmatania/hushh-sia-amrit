@@ -263,9 +263,9 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
 
   // Phase 5: Role-based quick actions
   const allActions = [
+    { label: "Check-in", icon: UserCheck, page: "checkin" as AdminPage, roles: ["super_admin", "ops_manager", "staff"] },
     { label: "Bookings", icon: CalendarCheck, page: "bookings" as AdminPage, roles: ["super_admin", "ops_manager", "host"] },
     { label: "Orders", icon: ShoppingCart, page: "orders" as AdminPage, roles: ["super_admin", "ops_manager", "staff"] },
-    { label: "Check-in", icon: UserCheck, page: "checkin" as AdminPage, roles: ["super_admin", "ops_manager", "staff"] },
     { label: "Calendar", icon: Calendar, page: "calendar" as AdminPage, roles: ["super_admin", "ops_manager", "host"] },
     { label: "Analytics", icon: BarChart3, page: "analytics" as AdminPage, roles: ["super_admin", "ops_manager"] },
     { label: "Clients", icon: Users, page: "clients" as AdminPage, roles: ["super_admin", "ops_manager"] },
