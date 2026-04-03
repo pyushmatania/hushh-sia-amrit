@@ -1,6 +1,6 @@
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring, useAnimation, useScroll, PanInfo } from "framer-motion";
 import { MapPin, Calendar as CalendarIcon, Clock, ChevronRight, Ticket, QrCode, Users, X, Utensils, ShoppingCart, Shield, Upload, ChevronDown, ChevronUp } from "lucide-react";
-import { useRef, useState, useCallback, useMemo, useEffect, Suspense } from "react";
+import { useRef, useState, useCallback, useMemo, useEffect } from "react";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { Calendar } from "@/components/ui/calendar";
 import type { Booking } from "@/pages/Index";
