@@ -17,6 +17,8 @@ import { getListingThumbnail } from "@/lib/listing-thumbnails";
 import MultiImageEditor from "./MultiImageEditor";
 import { useAutoSave } from "@/hooks/use-auto-save";
 import CatalogEditSheet from "./CatalogEditSheet";
+import { DEMO_CURATIONS, DEMO_LISTINGS, DEMO_BOOKINGS, DEMO_ORDERS } from "./admin-demo-data";
+import DemoDataBanner from "./DemoDataBanner";
 
 const MOOD_OPTIONS = ["Romantic", "Party", "Chill", "Adventure", "Work", "Celebration", "Family"];
 const INCLUDE_OPTIONS = [
@@ -60,6 +62,7 @@ export default function AdminCurations() {
   const [bookingCounts, setBookingCounts] = useState(new Map<string, number>());
   const [revenueMap, setRevenueMap] = useState(new Map<string, { bookingRev: number; orderRev: number; totalBookings: number }>());
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [isDemo, setIsDemo] = useState(false);
 
   const toggleSelect = (id: string) => {
     setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
@@ -89,6 +92,33 @@ export default function AdminCurations() {
 
       setCurations(curRes.data ?? []);
 
+      if ((curRes.data ?? []).length === 0) {
+        setIsDemo(true);
+        setCurations(DEMO_CURATIONS as any[]);
+
+        const pMap = new Map<string, PropertyInfo>();
+        DEMO_LISTINGS.forEach((l: any) => pMap.set(l.id, { name: l.name, imageUrls: l.image_urls || [], location: l.location, rating: l.rating }));
+        setPropertyMap(pMap);
+
+        const bMap = new Map<string, number>();
+        const rMap = new Map<string, { bookingRev: number; orderRev: number; totalBookings: number }>();
+        DEMO_BOOKINGS.forEach((b: any) => {
+          bMap.set(b.property_id, (bMap.get(b.property_id) || 0) + 1);
+          const prev = rMap.get(b.property_id) || { bookingRev: 0, orderRev: 0, totalBookings: 0 };
+          prev.bookingRev += Number(b.total);
+          prev.totalBookings += 1;
+          rMap.set(b.property_id, prev);
+        });
+        DEMO_ORDERS.forEach((o: any) => {
+          const prev = rMap.get(o.property_id) || { bookingRev: 0, orderRev: 0, totalBookings: 0 };
+          prev.orderRev += Number(o.total);
+          rMap.set(o.property_id, prev);
+        });
+        setBookingCounts(bMap);
+        setRevenueMap(rMap);
+      } else {
+        setIsDemo(false);
+
       const pMap = new Map<string, PropertyInfo>();
       (listRes.data ?? []).forEach(l => pMap.set(l.id, { name: l.name, imageUrls: l.image_urls || [], location: l.location, rating: l.rating }));
       setPropertyMap(pMap);
@@ -109,6 +139,7 @@ export default function AdminCurations() {
       });
       setBookingCounts(bMap);
       setRevenueMap(rMap);
+      }
     } catch (err) {
       console.error("Curations load error:", err);
     } finally {
@@ -410,6 +441,8 @@ export default function AdminCurations() {
           );
         })()}
       </CatalogEditSheet>
+
+      {isDemo && <DemoDataBanner entityName="curations" />}
 
       {/* Hero Header */}
       <motion.div variants={fadeUp}>

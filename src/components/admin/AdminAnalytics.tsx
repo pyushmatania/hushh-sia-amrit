@@ -6,6 +6,8 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { getListingThumbnail } from "@/lib/listing-thumbnails";
+import { DEMO_BOOKINGS, DEMO_ORDERS, DEMO_ORDER_ITEMS, DEMO_LISTINGS, DEMO_PROFILES } from "./admin-demo-data";
+import DemoDataBanner from "./DemoDataBanner";
 import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip,
   PieChart, Pie, Cell, AreaChart, Area, CartesianGrid, LineChart, Line
@@ -32,6 +34,7 @@ export default function AdminAnalytics() {
     thisWeekRev: 0, lastWeekRev: 0, thisWeekBookings: 0, lastWeekBookings: 0
   });
   const [propertyMap, setPropertyMap] = useState(new Map<string, PropertyInfo>());
+  const [isDemo, setIsDemo] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -43,11 +46,13 @@ export default function AdminAnalytics() {
         supabase.from("profiles").select("user_id, tier, loyalty_points"),
       ]);
 
-      const bookings = bookingsRes.data || [];
-      const orders = ordersRes.data || [];
-      const items = itemsRes.data || [];
-      const listings = listingsRes.data || [];
-      const profiles = profilesRes.data || [];
+      const hasRealData = (bookingsRes.data && bookingsRes.data.length > 0);
+      const bookings = hasRealData ? bookingsRes.data! : DEMO_BOOKINGS as any[];
+      const orders = hasRealData ? (ordersRes.data || []) : DEMO_ORDERS as any[];
+      const items = hasRealData ? (itemsRes.data || []) : DEMO_ORDER_ITEMS as any[];
+      const listings = hasRealData ? (listingsRes.data || []) : DEMO_LISTINGS as any[];
+      const profiles = hasRealData ? (profilesRes.data || []) : DEMO_PROFILES as any[];
+      if (!hasRealData) setIsDemo(true);
 
       // Property map
       const pMap = new Map<string, PropertyInfo>();
@@ -175,6 +180,7 @@ export default function AdminAnalytics() {
 
   return (
     <motion.div className="space-y-5" variants={stagger} initial="initial" animate="animate">
+      {isDemo && <DemoDataBanner entityName="analytics" />}
       {/* Header */}
       <motion.div variants={fadeUp}>
         <h1 className="text-2xl lg:text-3xl font-bold text-foreground flex items-center gap-2.5">

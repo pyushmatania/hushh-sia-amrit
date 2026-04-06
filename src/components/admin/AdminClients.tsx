@@ -14,6 +14,8 @@ import { Textarea } from "@/components/ui/textarea";
 import NeuralSearchWidget from "./NeuralSearchWidget";
 import { getListingThumbnail } from "@/lib/listing-thumbnails";
 import { useAuth } from "@/hooks/use-auth";
+import { DEMO_PROFILES, DEMO_BOOKINGS, DEMO_ORDERS, DEMO_ORDER_ITEMS, DEMO_REVIEWS, buildDemoListingMap } from "./admin-demo-data";
+import DemoDataBanner from "./DemoDataBanner";
 
 /* ─── Types ─── */
 interface BookingRecord {
@@ -922,6 +924,7 @@ export default function AdminClients({ initialUserId, onContextConsumed, onBack 
   const [selectedClient, setSelectedClient] = useState<ClientProfile | null>(null);
   const [listingMap, setListingMap] = useState<Map<string, string>>(new Map());
   const [listingInfoMap, setListingInfoMap] = useState<Map<string, ListingInfo>>(new Map());
+  const [isDemo, setIsDemo] = useState(false);
 
   useEffect(() => {
     if (initialUserId && !loading && clients.length > 0) {
@@ -998,6 +1001,43 @@ export default function AdminClients({ initialUserId, onContextConsumed, onBack 
         const list = verifByUser.get(v.user_id) || [];
         list.push(v); verifByUser.set(v.user_id, list);
       });
+
+      /* ── Demo-data fallback when Supabase returns nothing ── */
+      const rawProfiles = profilesRes.data ?? [];
+      if (rawProfiles.length === 0) {
+        const demoLMap = buildDemoListingMap();
+        setListingMap(demoLMap);
+        const demoLInfoMap = new Map<string, ListingInfo>();
+        demoLMap.forEach((name, id) => demoLInfoMap.set(id, { id, name, image_urls: [], location: "", category: "" }));
+        setListingInfoMap(demoLInfoMap);
+
+        const demoOiMap = new Map<string, any[]>();
+        DEMO_ORDER_ITEMS.forEach(item => {
+          const list = demoOiMap.get(item.order_id) || [];
+          list.push(item); demoOiMap.set(item.order_id, list);
+        });
+
+        const now = Date.now();
+        setClients(DEMO_PROFILES.map(p => {
+          const bookings: BookingRecord[] = DEMO_BOOKINGS.filter(b => b.user_id === p.user_id).map(b => ({ ...b, propertyName: demoLMap.get(b.property_id) }));
+          const orders: OrderRecord[] = DEMO_ORDERS.filter(o => o.user_id === p.user_id).map(o => ({
+            ...o, assigned_name: null, items: demoOiMap.get(o.id) || [], propertyName: demoLMap.get(o.property_id),
+          }));
+          const reviews: ReviewRecord[] = DEMO_REVIEWS.filter(r => r.user_id === p.user_id).map(r => ({ ...r, propertyName: demoLMap.get(r.property_id) }));
+          const totalSpend = bookings.reduce((s, b) => s + Number(b.total), 0);
+          const orderSpend = orders.reduce((s, o) => s + Number(o.total), 0);
+          const daysSinceJoin = Math.floor((now - new Date(p.created_at).getTime()) / 86400000);
+          return {
+            ...p, bio: null, bookings, orders, reviews, verifications: [],
+            wishlistCount: 0, referralCount: 0, totalSpend, orderSpend,
+            segment: assignSegment(bookings.length, totalSpend + orderSpend, daysSinceJoin, reviews.length, orders.length),
+            engagementScore: calcEngagement(bookings.length, orders.length, reviews.length, 0, 0, p.loyalty_points),
+          };
+        }));
+        setIsDemo(true);
+        setLoading(false);
+        return;
+      }
 
       const now = Date.now();
       setClients((profilesRes.data ?? []).map(p => {
@@ -1093,6 +1133,8 @@ export default function AdminClients({ initialUserId, onContextConsumed, onBack 
           <Download size={14} /> Export
         </button>
       </div>
+
+      {isDemo && <DemoDataBanner entityName="clients" />}
 
       {/* Stats row */}
       <div className="grid grid-cols-5 gap-2">

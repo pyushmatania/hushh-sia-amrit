@@ -7,6 +7,8 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
+import { DEMO_CAMPAIGNS } from "./admin-demo-data";
+import DemoDataBanner from "./DemoDataBanner";
 
 interface Campaign {
   id: string; title: string; description: string; type: string;
@@ -29,6 +31,7 @@ const fadeUp = { initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 } }
 export default function AdminCampaigns() {
   const { user } = useAuth();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [isDemo, setIsDemo] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState({
@@ -39,7 +42,12 @@ export default function AdminCampaigns() {
 
   useEffect(() => {
     supabase.from("campaigns").select("*").order("created_at", { ascending: false })
-      .then(({ data }) => { setCampaigns((data as any) ?? []); setLoading(false); });
+      .then(({ data }) => {
+        const rows = (data as any) ?? [];
+        if (rows.length === 0) { setCampaigns(DEMO_CAMPAIGNS as any); setIsDemo(true); }
+        else { setCampaigns(rows); setIsDemo(false); }
+        setLoading(false);
+      });
   }, []);
 
   const create = async () => {
@@ -71,6 +79,7 @@ export default function AdminCampaigns() {
 
   return (
     <motion.div className="space-y-5" initial="initial" animate="animate">
+      {isDemo && <DemoDataBanner entityName="campaigns" />}
       <motion.div variants={fadeUp} className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-zinc-800 dark:text-zinc-100 flex items-center gap-2.5">
