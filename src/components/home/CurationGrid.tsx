@@ -30,7 +30,7 @@ function MobilePrismCard({ combo, onTap, index }: { combo: CuratedCombo; onTap: 
     <motion.div
       initial={{ opacity: 0, y: 16, rotateX: 5 }}
       animate={{ opacity: 1, y: 0, rotateX: 0 }}
-      transition={{ delay: index * 0.06, duration: 0.45 }}
+      transition={{ duration: 0.3 }}
       onClick={() => onTap(combo)}
       className="shrink-0 w-[220px] cursor-pointer active:scale-[0.95] transition-transform select-none"
     >
@@ -73,7 +73,7 @@ function MobileNeonCard({ combo, onTap, index }: { combo: CuratedCombo; onTap: (
     <motion.div
       initial={{ opacity: 0, scale: 0.92 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay: index * 0.06, duration: 0.4 }}
+      transition={{ duration: 0.3 }}
       onClick={() => onTap(combo)}
       className="rounded-2xl overflow-hidden cursor-pointer active:scale-[0.96] transition-transform relative"
       style={{ height: 220, border: "1px solid hsl(var(--border) / 0.2)", boxShadow: "0 4px 20px hsl(var(--primary) / 0.1)" }}
@@ -124,7 +124,7 @@ function DesktopCurationCard({ combo, onTap, index }: { combo: CuratedCombo; onT
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.03, duration: 0.35 }}
+      transition={{ duration: 0.3 }}
       onClick={() => onTap(combo)}
       className="rounded-2xl overflow-hidden cursor-pointer group"
       style={{

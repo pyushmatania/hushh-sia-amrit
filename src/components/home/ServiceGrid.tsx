@@ -25,12 +25,11 @@ function MobileHoloCard({ service, onTap, index }: { service: Property; onTap: (
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20, rotateY: -8 }}
-      animate={{ opacity: 1, y: 0, rotateY: 0 }}
-      transition={{ delay: index * 0.07, duration: 0.5 }}
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
       onClick={() => onTap(service)}
       className="shrink-0 w-[200px] cursor-pointer active:scale-[0.95] transition-transform select-none"
-      style={{ perspective: "800px" }}
     >
       <div
         className="relative rounded-2xl overflow-hidden"
@@ -81,7 +80,7 @@ function MobileGameCard({ service, onTap, index }: { service: Property; onTap: (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay: index * 0.06, duration: 0.4 }}
+      transition={{ duration: 0.3 }}
       onClick={() => onTap(service)}
       className="rounded-2xl overflow-hidden cursor-pointer active:scale-[0.96] transition-transform relative"
       style={{ height: 200, background: "linear-gradient(160deg, hsl(var(--card)) 0%, hsl(var(--muted) / 0.8) 100%)", border: "1px solid hsl(var(--border) / 0.3)" }}
@@ -133,7 +132,7 @@ function DesktopServiceCard({ service, onTap, index }: { service: Property; onTa
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.03, duration: 0.35 }}
+      transition={{ duration: 0.3 }}
       onClick={() => onTap(service)}
       className="rounded-2xl overflow-hidden cursor-pointer group"
       style={{

@@ -46,6 +46,69 @@ const smartCards = [
 const emptyChartData: { day: string; revenue: number }[] = [];
 const emptyWeeklyData: { day: string; value: number }[] = [];
 
+// ── Demo data for when Supabase returns empty results ──
+const DEMO_STATS: Stats = {
+  revenue: 159100, bookings: 31, activeListings: 33, totalUsers: 48,
+  pendingOrders: 5, todayBookings: 4, avgRating: 4.7, lowStock: 2, conflicts: 0,
+};
+
+const DEMO_TOP_PROPERTIES: TopProperty[] = [
+  { name: "The Firefly Villa", bookings: 8, revenue: 68000 },
+  { name: "Anniversary Garden", bookings: 6, revenue: 42000 },
+  { name: "Smash Pickleball Club", bookings: 5, revenue: 19995 },
+  { name: "Blue Lagoon Pool", bookings: 4, revenue: 15200 },
+  { name: "Stargazer Rooftop", bookings: 3, revenue: 8400 },
+];
+
+const DEMO_REVIEWS: RecentReview[] = [
+  { id: "r1", rating: 5, content: "Absolutely magical evening! The bonfire setup was perfect.", propertyName: "The Firefly Villa", time: new Date(Date.now() - 86400000).toISOString() },
+  { id: "r2", rating: 5, content: "Rose petals, live music, and the best dinner we've had.", propertyName: "Anniversary Garden", time: new Date(Date.now() - 172800000).toISOString() },
+  { id: "r3", rating: 4, content: "Great pickleball courts, snacks were on point!", propertyName: "Smash Pickleball Club", time: new Date(Date.now() - 259200000).toISOString() },
+];
+
+const DEMO_TODAY_SCHEDULE: TodaySlot[] = [
+  { id: "ts1", propertyName: "The Firefly Villa", slot: "Evening · 6 PM – 11 PM", guests: 4, total: 8500, status: "active" },
+  { id: "ts2", propertyName: "Anniversary Garden", slot: "Evening · 7 PM – 11 PM", guests: 2, total: 7000, status: "upcoming" },
+  { id: "ts3", propertyName: "Smash Pickleball Club", slot: "Afternoon · 3 PM – 6 PM", guests: 6, total: 1999, status: "upcoming" },
+  { id: "ts4", propertyName: "Blue Lagoon Pool", slot: "Night · 8 PM – 12 AM", guests: 8, total: 3800, status: "upcoming" },
+];
+
+function buildDemoChartData(): { day: string; revenue: number }[] {
+  const data: { day: string; revenue: number }[] = [];
+  const now = new Date();
+  const revenues = [4200, 8500, 6100, 12300, 9800, 15600, 7200, 11400, 18900, 5300, 14700, 8600, 16200, 10500];
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date(now.getTime() - i * 86400000);
+    data.push({ day: d.toISOString().slice(5, 10), revenue: revenues[13 - i] });
+  }
+  return data;
+}
+
+function buildDemoWeeklyData(): { day: string; value: number }[] {
+  return [
+    { day: "Sun", value: 3 }, { day: "Mon", value: 2 }, { day: "Tue", value: 4 },
+    { day: "Wed", value: 3 }, { day: "Thu", value: 5 }, { day: "Fri", value: 7 },
+    { day: "Sat", value: 7 },
+  ];
+}
+
+const DEMO_CATEGORY_DATA = [
+  { name: "couples", value: 10 }, { name: "party", value: 7 },
+  { name: "sports", value: 5 }, { name: "pool", value: 4 }, { name: "service", value: 5 },
+];
+
+const DEMO_FINANCIAL_DATA = (() => {
+  const months: { month: string; expenses: number; revenue: number }[] = [];
+  const now = new Date();
+  const revs = [42000, 58000, 71000, 65000, 89000, 159100];
+  const exps = [15000, 18000, 22000, 19000, 24000, 28000];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({ month: d.toLocaleDateString("en-US", { month: "short" }), revenue: revs[5 - i], expenses: exps[5 - i] });
+  }
+  return months;
+})();
+
 const commandCenterExamples = [
   "What was our busiest day this month?",
   "Which property generates the most revenue?",
@@ -126,6 +189,20 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
       const bookings = bookingsRes.data ?? []; const listings = listingsRes.data ?? [];
       const users = usersRes.data ?? []; const orders = ordersRes.data ?? [];
       const reviews = reviewsRes.data ?? []; const inventory = inventoryRes.data ?? [];
+
+      // If Supabase returned no data (empty DB or query error), use demo data
+      const hasRealData = bookings.length > 0 || listings.length > 0 || users.length > 0;
+      if (!hasRealData) {
+        setStats(DEMO_STATS);
+        setTopProperties(DEMO_TOP_PROPERTIES);
+        setRecentReviews(DEMO_REVIEWS);
+        setTodaySchedule(DEMO_TODAY_SCHEDULE);
+        setRevenueChartData(buildDemoChartData());
+        setWeeklyPerfData(buildDemoWeeklyData());
+        setCategoryData(DEMO_CATEGORY_DATA);
+        setPrevMonthStats({ revenue: 24, bookings: 18, listings: 33, users: 48 });
+        return;
+      }
       const listingMap = new Map<string, string>(); listings.forEach(l => listingMap.set(l.id, l.name));
       const pendingOrders = orders.filter(o => o.status === "pending").length;
       const todayBk = bookings.filter(b => b.date === today);
@@ -194,6 +271,11 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
       supabase.from("expenses").select("amount, date, category"),
       supabase.from("bookings").select("total, date"),
     ]).then(([expRes, revRes]) => {
+      // If no financial data, use demo
+      if (!(expRes.data?.length) && !(revRes.data?.length)) {
+        setFinancialData(DEMO_FINANCIAL_DATA);
+        return;
+      }
       const monthMap = new Map<string, { expenses: number; revenue: number }>();
       const now = new Date();
       for (let i = 5; i >= 0; i--) {

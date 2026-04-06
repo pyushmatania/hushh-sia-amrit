@@ -250,7 +250,14 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
     const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) setVisibleCount(prev => Math.min(prev + BATCH_SIZE, properties.length));
+      if (entry.isIntersecting) {
+        setVisibleCount(prev => {
+          const next = Math.min(prev + BATCH_SIZE, properties.length);
+          // Disconnect once all items are visible
+          if (next >= properties.length) observer.disconnect();
+          return next;
+        });
+      }
     }, { rootMargin: "400px" });
     observer.observe(sentinel);
     return () => observer.disconnect();
@@ -350,10 +357,12 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
           }
           break;
         case 4:
-          items.push(<PropertyCardCinematic key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={isWL} onToggleWishlist={onToggleWishlist} />);
+          // Replaced Cinematic (game-rarity UI) with simpler card for performance
+          items.push(<PropertyCardFeatured key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={isWL} onToggleWishlist={onToggleWishlist} />);
           i++; rendered++; break;
         case 5:
-          items.push(<PropertyCardPolaroid key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={isWL} onToggleWishlist={onToggleWishlist} />);
+          // Replaced Polaroid (heavy SVG textures) with simpler card for performance
+          items.push(<PropertyCardWide key={p.id} property={p} index={i} onTap={onPropertyTap} isWishlisted={isWL} onToggleWishlist={onToggleWishlist} />);
           i++; rendered++; break;
         case 6:
           if (i + 2 < properties.length) {

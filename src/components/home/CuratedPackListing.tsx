@@ -180,34 +180,28 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
   const [videoReady, setVideoReady] = useState(false);
   const [shouldLoad, setShouldLoad] = useState(index === 0);
 
+  // Single IntersectionObserver handles both loading and play/pause
   useEffect(() => {
     const card = cardRef.current;
     if (!card) return;
-    // Anticipate: start loading video 600px before it enters viewport for smoother playback
-    const loadObserver = new IntersectionObserver(
+    let hasLoaded = index === 0;
+    const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setShouldLoad(true);
-          loadObserver.disconnect();
-        }
-      },
-      { rootMargin: "600px" }
-    );
-    // Play/pause: only when actually visible
-    const playObserver = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
+          // Start loading when within 400px of viewport
+          if (!hasLoaded) { hasLoaded = true; setShouldLoad(true); }
+          // Play when visible
           if (videoRef.current) videoRef.current.play().catch(() => {});
         } else {
+          // Pause when not visible
           videoRef.current?.pause();
         }
       },
-      { threshold: 0.1 }
+      { rootMargin: "400px", threshold: 0.1 }
     );
-    loadObserver.observe(card);
-    playObserver.observe(card);
-    return () => { loadObserver.disconnect(); playObserver.disconnect(); };
-  }, []);
+    observer.observe(card);
+    return () => observer.disconnect();
+  }, [index]);
 
   return (
     <div
@@ -244,13 +238,12 @@ export default function CuratedPackListing({ pack, index, onTap }: CuratedPackLi
               ref={videoRef}
               src={media.video}
               muted={muted}
-              autoPlay
               loop
               playsInline
               preload={index === 0 ? "auto" : "none"}
               onCanPlay={() => setVideoReady(true)}
               className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-              style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.3s", willChange: "transform" }}
+              style={{ opacity: videoReady ? 1 : 0, transition: "opacity 0.3s" }}
             />
           )}
 

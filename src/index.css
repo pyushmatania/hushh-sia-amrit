@@ -143,23 +143,23 @@
 }
 
 @layer utilities {
-  /* Glassmorphism */
+  /* Glassmorphism — reduced blur for better performance on low-end devices */
   .glass {
-    background: hsla(260, 18%, 12%, 0.6);
-    backdrop-filter: blur(20px) saturate(1.4);
-    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    background: hsla(260, 18%, 12%, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border: 1px solid hsla(260, 20%, 30%, 0.3);
   }
   .glass-light {
-    background: hsla(0, 0%, 100%, 0.72);
-    backdrop-filter: blur(20px) saturate(1.6);
-    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+    background: hsla(0, 0%, 100%, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border: 1px solid hsla(260, 16%, 90%, 0.6);
   }
   .light .glass {
-    background: hsla(0, 0%, 100%, 0.72);
-    backdrop-filter: blur(20px) saturate(1.6);
-    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+    background: hsla(0, 0%, 100%, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border: 1px solid hsla(260, 16%, 90%, 0.6);
   }
   .light .nav-glass-bar {
