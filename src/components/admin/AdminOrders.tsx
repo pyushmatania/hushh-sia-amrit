@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import OrderNotes from "@/components/shared/OrderNotes";
+import { DEMO_ORDERS, DEMO_ORDER_ITEMS, DEMO_LISTINGS, DEMO_PROFILES, buildDemoListingMap, buildDemoProfileMap } from "./admin-demo-data";
+import DemoDataBanner from "./DemoDataBanner";
 
 interface Order {
   id: string; user_id: string; property_id: string; booking_id: string | null;
@@ -55,6 +57,7 @@ export default function AdminOrders() {
   const [detailTab, setDetailTab] = useState<"details" | "history" | "timeline">("details");
   const [clientHistory, setClientHistory] = useState<ClientHistory | null>(null);
   const [historyLoading, setHistoryLoading] = useState(false);
+  const [isDemo, setIsDemo] = useState(false);
   const [listingMap] = useState(() => new Map<string, { name: string; imageUrls: string[] }>());
 
   const load = async () => {
@@ -70,6 +73,27 @@ export default function AdminOrders() {
     const profileMap = new Map<string, string>();
     (profilesRes.data ?? []).forEach(p => profileMap.set(p.user_id, p.display_name || "Guest"));
     (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, { name: l.name, imageUrls: l.image_urls || [] }));
+
+    // Demo data fallback when Supabase returns no orders
+    if (ordersRes.data.length === 0) {
+      DEMO_LISTINGS.forEach(l => listingMap.set(l.id, { name: l.name, imageUrls: l.image_urls || [] }));
+      const demoProfileMap = buildDemoProfileMap();
+      const demoItemMap = new Map<string, any[]>();
+      DEMO_ORDER_ITEMS.forEach(item => { const list = demoItemMap.get(item.order_id) || []; list.push(item); demoItemMap.set(item.order_id, list); });
+      setOrders(DEMO_ORDERS.map(o => {
+        const listing = listingMap.get(o.property_id);
+        return {
+          ...o, assigned_name: null,
+          items: demoItemMap.get(o.id) || [], guestName: demoProfileMap.get(o.user_id) || "Unknown Guest",
+          propertyName: listing?.name || "Property", propertyImageUrls: listing?.imageUrls || [],
+        };
+      }));
+      setIsDemo(true);
+      setLoading(false);
+      return;
+    }
+
+    setIsDemo(false);
     setOrders(ordersRes.data.map(o => {
       const listing = listingMap.get(o.property_id);
       return {
@@ -152,6 +176,7 @@ export default function AdminOrders() {
   return (
     <>
       <motion.div className="space-y-5" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        {isDemo && <DemoDataBanner entityName="orders" />}
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>

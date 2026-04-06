@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { DEMO_INVENTORY } from "./admin-demo-data";
+import DemoDataBanner from "./DemoDataBanner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Package, Search, Plus, Trash2, Pencil, X, AlertTriangle, Eye, GripVertical, Sparkles, CheckSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -48,6 +50,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [bulkMode, setBulkMode] = useState(false);
+  const [isDemo, setIsDemo] = useState(false);
 
   const toggleSelect = (id: string) => {
     setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
@@ -66,16 +69,21 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
   const loadInventory = () => {
     supabase.from("inventory").select("*").order("sort_order").order("name")
       .then(({ data }) => {
-        setItems(
-          ((data as InventoryItem[]) ?? []).map((item) => {
-            const resolvedImages = resolveInventoryImages(item.image_urls, item.image_url);
-            return {
-              ...item,
-              image_urls: resolvedImages,
-              image_url: resolvedImages[0] ?? null,
-            };
-          })
-        );
+        const rows = ((data as InventoryItem[]) ?? []).map((item) => {
+          const resolvedImages = resolveInventoryImages(item.image_urls, item.image_url);
+          return {
+            ...item,
+            image_urls: resolvedImages,
+            image_url: resolvedImages[0] ?? null,
+          };
+        });
+        if (rows.length === 0) {
+          setItems(DEMO_INVENTORY as InventoryItem[]);
+          setIsDemo(true);
+        } else {
+          setItems(rows);
+          setIsDemo(false);
+        }
         setLoading(false);
       });
   };
@@ -148,6 +156,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
 
   return (
     <motion.div className="space-y-5" initial="initial" animate="animate">
+      {isDemo && <DemoDataBanner entityName="inventory items" />}
       <motion.div variants={fadeUp} className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-zinc-800 dark:text-zinc-100 flex items-center gap-2.5">

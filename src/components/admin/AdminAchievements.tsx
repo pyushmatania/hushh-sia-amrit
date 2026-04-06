@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trophy, Star, Target, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { DEMO_BOOKINGS, DEMO_PROFILES } from "./admin-demo-data";
+import DemoDataBanner from "./DemoDataBanner";
 
 interface Milestone {
   id: string; icon: string; title: string; description: string;
@@ -30,6 +32,7 @@ function ConfettiBurst() {
 export default function AdminAchievements() {
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isDemo, setIsDemo] = useState(false);
   const [celebrateId, setCelebrateId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -38,10 +41,15 @@ export default function AdminAchievements() {
         supabase.from("bookings").select("total, status").neq("status", "cancelled"),
         supabase.from("profiles").select("id"),
       ]);
-      const bookings = bookingsRes.data ?? [];
+      const bookingsRaw = bookingsRes.data ?? [];
+      const profilesRaw = profilesRes.data ?? [];
+      const usingDemo = bookingsRaw.length === 0 && profilesRaw.length === 0;
+      setIsDemo(usingDemo);
+
+      const bookings = usingDemo ? DEMO_BOOKINGS.filter(b => b.status !== "cancelled") : bookingsRaw;
       const totalRevenue = bookings.reduce((s, b) => s + Number(b.total), 0);
       const totalBookings = bookings.length;
-      const totalUsers = (profilesRes.data ?? []).length;
+      const totalUsers = usingDemo ? DEMO_PROFILES.length : profilesRaw.length;
 
       setMilestones([
         { id: "rev-10k", icon: "💰", title: "First ₹10K", description: "Earned ₹10,000 in total revenue", target: 10000, current: totalRevenue, type: "revenue", achieved: totalRevenue >= 10000 },
@@ -66,6 +74,7 @@ export default function AdminAchievements() {
 
   return (
     <motion.div className="space-y-6" initial="initial" animate="animate">
+      {isDemo && <DemoDataBanner entityName="achievements" />}
       <motion.div variants={fadeUp}>
         <h1 className="text-2xl font-bold text-zinc-800 dark:text-zinc-100 flex items-center gap-2.5">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-500/10 dark:to-yellow-500/10 flex items-center justify-center shadow-sm">

@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { DEMO_BOOKINGS, DEMO_LISTINGS, DEMO_PROFILES, buildDemoListingMap, buildDemoProfileMap } from "./admin-demo-data";
+import DemoDataBanner from "./DemoDataBanner";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -67,6 +69,7 @@ export default function BookingHub({
   const [bulkUpdating, setBulkUpdating] = useState(false);
   const [propertyMap, setPropertyMap] = useState<Map<string, { name: string; image: string; location: string; capacity: number; category: string }>>(new Map());
   const [profileMap, setProfileMap] = useState<Map<string, string>>(new Map());
+  const [isDemo, setIsDemo] = useState(false);
 
   const load = useCallback(async () => {
     const [bookingsRes, listingsRes, profilesRes] = await Promise.all([
@@ -93,7 +96,27 @@ export default function BookingHub({
         userName: pMap.get(b.user_id) || "Guest",
       };
     });
-    setBookings(data);
+    if (data.length === 0) {
+      const demoLMap = buildDemoListingMap();
+      const demoPMap = buildDemoProfileMap();
+      setPropertyMap(demoLMap);
+      setProfileMap(demoPMap);
+      const demoData = DEMO_BOOKINGS.map(b => {
+        const prop = demoLMap.get(b.property_id);
+        return {
+          ...b,
+          propertyName: prop?.name || `Property ${b.property_id.slice(0, 6)}`,
+          propertyImage: prop?.image || "",
+          propertyLocation: prop?.location || "",
+          userName: demoPMap.get(b.user_id) || "Guest",
+        };
+      });
+      setBookings(demoData);
+      setIsDemo(true);
+    } else {
+      setBookings(data);
+      setIsDemo(false);
+    }
     setLoading(false);
   }, []);
 
@@ -347,6 +370,8 @@ export default function BookingHub({
         </h1>
         <p className="text-sm text-muted-foreground mt-1">{bookings.length} total bookings · ₹{stats.totalRevenue.toLocaleString("en-IN")} revenue</p>
       </motion.div>
+
+      {isDemo && <DemoDataBanner entityName="bookings" />}
 
       {/* Tab Navigation */}
       <motion.div {...fadeUp} className="flex gap-1 bg-secondary/50 rounded-2xl p-1">

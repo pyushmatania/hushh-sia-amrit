@@ -16,6 +16,8 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
+import { DEMO_EXPENSES, DEMO_BOOKINGS, DEMO_ORDERS } from "./admin-demo-data";
+import DemoDataBanner from "./DemoDataBanner";
 import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip,
   BarChart, Bar, PieChart as RePieChart, Pie, Cell
@@ -79,6 +81,7 @@ export default function FinanceHub() {
   const [showBudgetForm, setShowBudgetForm] = useState(false);
   const [editingBudget, setEditingBudget] = useState<Partial<BudgetAllocation> | null>(null);
   const [revPeriod, setRevPeriod] = useState<"week" | "month" | "all">("month");
+  const [isDemo, setIsDemo] = useState(false);
 
   const loadData = async () => {
     setLoading(true);
@@ -88,10 +91,21 @@ export default function FinanceHub() {
       supabase.from("bookings").select("total,status,date,created_at,slot,property_id,guests").neq("status", "cancelled"),
       supabase.from("orders").select("total,status,created_at"),
     ]);
-    setExpenses((e.data as any[]) ?? []);
+    const expensesData = (e.data as any[]) ?? [];
+    const bookingsData = (bk.data as any[]) ?? [];
+    const ordersData = (o.data as any[]) ?? [];
+    if (expensesData.length === 0 && bookingsData.length === 0) {
+      setExpenses(DEMO_EXPENSES as any);
+      setBookings(DEMO_BOOKINGS as any);
+      setOrders(DEMO_ORDERS as any);
+      setIsDemo(true);
+    } else {
+      setExpenses(expensesData);
+      setBookings(bookingsData);
+      setOrders(ordersData);
+      setIsDemo(false);
+    }
     setBudgets((b.data as any[]) ?? []);
-    setBookings((bk.data as any[]) ?? []);
-    setOrders((o.data as any[]) ?? []);
     setLoading(false);
   };
 
@@ -264,6 +278,7 @@ export default function FinanceHub() {
 
   return (
     <div className="space-y-4 pb-24">
+      {isDemo && <DemoDataBanner entityName="finance" />}
       {/* ─── Header ─── */}
       <div className="flex items-center justify-between">
         <div>

@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Ticket, Plus, Trash2, Power, Copy, X, Percent, IndianRupee, Sparkles, Check, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
+import { DEMO_COUPONS } from "./admin-demo-data";
+import DemoDataBanner from "./DemoDataBanner";
 
 interface Coupon {
   id: string; code: string; description: string; discount_type: string;
@@ -15,6 +17,7 @@ const fadeUp = { initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 } }
 
 export default function AdminCoupons() {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
+  const [isDemo, setIsDemo] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
@@ -22,7 +25,12 @@ export default function AdminCoupons() {
 
   useEffect(() => {
     supabase.from("coupons").select("*").order("created_at", { ascending: false })
-      .then(({ data }) => { setCoupons((data as any) ?? []); setLoading(false); });
+      .then(({ data }) => {
+        const rows = (data as any) ?? [];
+        if (rows.length === 0) { setCoupons(DEMO_COUPONS as any); setIsDemo(true); }
+        else { setCoupons(rows); setIsDemo(false); }
+        setLoading(false);
+      });
   }, []);
 
   const genCode = () => "HUSHH" + Array.from({ length: 5 }, () => "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[Math.floor(Math.random() * 36)]).join("");
@@ -57,6 +65,7 @@ export default function AdminCoupons() {
 
   return (
     <motion.div className="space-y-5" initial="initial" animate="animate">
+      {isDemo && <DemoDataBanner entityName="coupons" />}
       <motion.div variants={fadeUp} className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-zinc-800 dark:text-zinc-100 flex items-center gap-2.5">

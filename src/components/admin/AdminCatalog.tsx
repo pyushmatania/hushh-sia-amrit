@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Building2, Sparkles, UtensilsCrossed, Wrench, Gift, Package, RefreshCw, History } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { DEMO_LISTINGS, DEMO_CURATIONS, DEMO_INVENTORY } from "./admin-demo-data";
+import DemoDataBanner from "./DemoDataBanner";
 import AdminProperties from "./AdminProperties";
 import AdminCurations from "./AdminCurations";
 import AdminInventory from "./AdminInventory";
@@ -35,6 +37,7 @@ export default function AdminCatalog() {
     inventoryItems: 0, lowStockItems: 0,
   });
   const [loadingStats, setLoadingStats] = useState(true);
+  const [isDemo, setIsDemo] = useState(false);
 
   const fetchStats = async () => {
     setLoadingStats(true);
@@ -46,6 +49,23 @@ export default function AdminCatalog() {
     ]);
     const props = propRes.data ?? [];
     const inv = invRes.data ?? [];
+
+    /* ── Demo-data fallback when Supabase returns nothing ── */
+    if (props.length === 0 && (pkgRes.data ?? []).length === 0 && (curRes.data ?? []).length === 0 && inv.length === 0) {
+      const demoInv = DEMO_INVENTORY;
+      setStats({
+        properties: DEMO_LISTINGS.length,
+        liveProperties: DEMO_LISTINGS.filter(l => l.status === "published").length,
+        packages: 0,
+        curations: DEMO_CURATIONS.length,
+        inventoryItems: demoInv.length,
+        lowStockItems: demoInv.filter(i => i.stock <= i.low_stock_threshold && i.available).length,
+      });
+      setIsDemo(true);
+      setLoadingStats(false);
+      return;
+    }
+
     setStats({
       properties: props.length,
       liveProperties: props.filter(p => p.status === "published").length,
@@ -54,6 +74,7 @@ export default function AdminCatalog() {
       inventoryItems: inv.length,
       lowStockItems: inv.filter(i => (i as any).stock <= (i as any).low_stock_threshold && (i as any).available).length,
     });
+    setIsDemo(false);
     setLoadingStats(false);
   };
 
@@ -78,6 +99,7 @@ export default function AdminCatalog() {
 
   return (
     <div className="space-y-5">
+      {isDemo && <DemoDataBanner entityName="catalog" />}
       {/* Compact Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">

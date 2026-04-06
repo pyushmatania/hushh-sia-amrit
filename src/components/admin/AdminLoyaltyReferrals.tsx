@@ -5,6 +5,8 @@ import {
   Award, Loader2, UserPlus, Link2
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { DEMO_PROFILES, DEMO_REFERRAL_CODES, DEMO_LOYALTY_TRANSACTIONS } from "./admin-demo-data";
+import DemoDataBanner from "./DemoDataBanner";
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 
 interface TierStats { tier: string; count: number; }
@@ -20,6 +22,7 @@ export default function AdminLoyaltyReferrals() {
   const [referralStats, setReferralStats] = useState<ReferralStats | null>(null);
   const [loyaltyOverview, setLoyaltyOverview] = useState<LoyaltyOverview | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isDemo, setIsDemo] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -29,16 +32,23 @@ export default function AdminLoyaltyReferrals() {
         supabase.from("referral_uses").select("*"),
         supabase.from("loyalty_transactions").select("type, points"),
       ]);
-      const profiles = profilesRes.data ?? [];
+      let profiles = profilesRes.data ?? [];
+      let codes = referralCodesRes.data ?? [];
+      const uses = referralUsesRes.data ?? [];
+      let transactions = loyaltyRes.data ?? [];
+
+      if (profiles.length === 0) {
+        profiles = DEMO_PROFILES as any;
+        codes = DEMO_REFERRAL_CODES as any;
+        transactions = DEMO_LOYALTY_TRANSACTIONS as any;
+        setIsDemo(true);
+      }
+
       const tierMap: Record<string, number> = {};
-      profiles.forEach(p => { tierMap[p.tier] = (tierMap[p.tier] || 0) + 1; });
+      profiles.forEach((p: any) => { tierMap[p.tier] = (tierMap[p.tier] || 0) + 1; });
       setTierStats(Object.entries(tierMap).map(([tier, count]) => ({ tier, count })));
 
-      const codes = referralCodesRes.data ?? [];
-      const uses = referralUsesRes.data ?? [];
-      setReferralStats({ totalCodes: codes.length, totalUses: uses.length, topReferrers: codes.sort((a, b) => b.uses - a.uses).slice(0, 5).map(c => ({ user_id: c.user_id, code: c.code, uses: c.uses })) });
-
-      const transactions = loyaltyRes.data ?? [];
+      setReferralStats({ totalCodes: codes.length, totalUses: uses.length, topReferrers: codes.sort((a: any, b: any) => b.uses - a.uses).slice(0, 5).map((c: any) => ({ user_id: c.user_id, code: c.code, uses: c.uses })) });
       const earned = transactions.filter(t => t.type === "earn");
       const redeemed = transactions.filter(t => t.type === "redeem");
       setLoyaltyOverview({
@@ -58,6 +68,7 @@ export default function AdminLoyaltyReferrals() {
 
   return (
     <motion.div className="space-y-6" variants={stagger} initial="initial" animate="animate">
+      {isDemo && <DemoDataBanner />}
       <motion.div variants={fadeUp}>
         <h1 className="text-2xl font-bold text-zinc-800 dark:text-zinc-100 flex items-center gap-2.5">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-50 to-rose-50 dark:from-pink-500/10 dark:to-rose-500/10 flex items-center justify-center shadow-sm">

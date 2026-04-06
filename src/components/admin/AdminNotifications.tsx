@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Bell, BellOff, Check, CheckCheck, Clock, Filter, Loader2, Package, ShoppingCart, CalendarCheck, AlertTriangle, Users, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
+import { DEMO_NOTIFICATIONS } from "./admin-demo-data";
+import DemoDataBanner from "./DemoDataBanner";
 
 interface AdminNotification {
   id: string;
@@ -28,6 +30,7 @@ export default function AdminNotifications() {
   const [notifications, setNotifications] = useState<AdminNotification[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "unread" | "booking" | "order" | "alert">("all");
+  const [isDemo, setIsDemo] = useState(false);
 
   useEffect(() => {
     loadNotifications();
@@ -37,7 +40,13 @@ export default function AdminNotifications() {
 
   const loadNotifications = async () => {
     const { data } = await supabase.from("notifications").select("*").order("created_at", { ascending: false }).limit(100);
-    setNotifications(data ?? []);
+    const notifications = data ?? [];
+    if (notifications.length === 0) {
+      setNotifications(DEMO_NOTIFICATIONS as AdminNotification[]);
+      setIsDemo(true);
+    } else {
+      setNotifications(notifications);
+    }
     setLoading(false);
   };
 
@@ -75,6 +84,7 @@ export default function AdminNotifications() {
 
   return (
     <motion.div className="space-y-5" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+      {isDemo && <DemoDataBanner />}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2.5">

@@ -6,6 +6,8 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { getListingThumbnail } from "@/lib/listing-thumbnails";
+import { DEMO_BOOKINGS, DEMO_LISTINGS, DEMO_PROFILES } from "./admin-demo-data";
+import DemoDataBanner from "./DemoDataBanner";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -31,6 +33,7 @@ interface GuestCheckin {
 export default function AdminCheckin() {
   const [entries, setEntries] = useState<GuestCheckin[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isDemo, setIsDemo] = useState(false);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "checked-in" | "expected" | "unverified">("all");
   const [qrSheet, setQrSheet] = useState(false);
@@ -57,14 +60,26 @@ export default function AdminCheckin() {
       supabase.from("identity_verifications").select("user_id, status"),
     ]);
 
-    const profileMap = new Map<string, string>();
-    (profilesRes.data ?? []).forEach(p => profileMap.set(p.user_id, p.display_name || "Guest"));
-    const listingMap = new Map<string, { name: string; imageUrls: string[] }>();
-    (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, { name: l.name, imageUrls: l.image_urls || [] }));
-    const verificationMap = new Map<string, string>();
-    (verificationsRes.data ?? []).forEach(v => verificationMap.set(v.user_id, v.status));
+    const bookingsRaw = bookingsRes.data ?? [];
+    const profilesRaw = profilesRes.data ?? [];
+    const listingsRaw = listingsRes.data ?? [];
+    const verificationsRaw = verificationsRes.data ?? [];
 
-    const checkins: GuestCheckin[] = (bookingsRes.data ?? []).map(b => {
+    const usingDemo = bookingsRaw.length === 0;
+    setIsDemo(usingDemo);
+
+    const bookingsData = usingDemo ? DEMO_BOOKINGS : bookingsRaw;
+    const profilesData = usingDemo ? DEMO_PROFILES : profilesRaw;
+    const listingsData = usingDemo ? DEMO_LISTINGS : listingsRaw;
+
+    const profileMap = new Map<string, string>();
+    profilesData.forEach(p => profileMap.set(p.user_id, p.display_name || "Guest"));
+    const listingMap = new Map<string, { name: string; imageUrls: string[] }>();
+    listingsData.forEach(l => listingMap.set(l.id, { name: l.name, imageUrls: (l as any).image_urls || [] }));
+    const verificationMap = new Map<string, string>();
+    verificationsRaw.forEach(v => verificationMap.set(v.user_id, v.status));
+
+    const checkins: GuestCheckin[] = bookingsData.map(b => {
       const listing = listingMap.get(b.property_id);
       const thumb = getListingThumbnail(listing?.name || "", listing?.imageUrls || [], { preferMapped: true });
       return {
@@ -160,6 +175,7 @@ export default function AdminCheckin() {
   return (
     <>
       <motion.div className="space-y-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        {isDemo && <DemoDataBanner entityName="check-in entries" />}
         {/* Hero Header */}
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 dark:from-emerald-600 dark:to-teal-700 p-6 xl:p-8 text-white">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA4KSIvPjwvc3ZnPg==')] opacity-60" />

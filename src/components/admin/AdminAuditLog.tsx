@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { ScrollText, Search, Shield, UserCheck, Pencil, Trash2, LogIn, Download, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
+import { DEMO_AUDIT_LOGS } from "./admin-demo-data";
+import DemoDataBanner from "./DemoDataBanner";
 
 interface AuditLog {
   id: string; user_id: string | null; action: string;
@@ -26,10 +28,20 @@ export default function AdminAuditLog() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [filterAction, setFilterAction] = useState("all");
+  const [isDemo, setIsDemo] = useState(false);
 
   useEffect(() => {
     supabase.from("audit_logs").select("*").order("created_at", { ascending: false }).limit(100)
-      .then(({ data }) => { setLogs((data as any) ?? []); setLoading(false); });
+      .then(({ data }) => {
+        const logs = (data as any) ?? [];
+        if (logs.length === 0) {
+          setLogs(DEMO_AUDIT_LOGS as AuditLog[]);
+          setIsDemo(true);
+        } else {
+          setLogs(logs);
+        }
+        setLoading(false);
+      });
   }, []);
 
   const filtered = logs.filter(l =>
@@ -41,6 +53,7 @@ export default function AdminAuditLog() {
 
   return (
     <motion.div className="space-y-5" initial="initial" animate="animate">
+      {isDemo && <DemoDataBanner />}
       <motion.div variants={fadeUp}>
         <h1 className="text-2xl font-bold text-zinc-800 dark:text-zinc-100 flex items-center gap-2.5">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-neutral-50 to-zinc-50 dark:from-neutral-500/10 dark:to-zinc-500/10 flex items-center justify-center shadow-sm">
