@@ -1,6 +1,6 @@
-import { motion, AnimatePresence, useMotionValue, useTransform, useSpring, useAnimation, useScroll, PanInfo } from "framer-motion";
-import { MapPin, Calendar as CalendarIcon, Clock, ChevronRight, Ticket, QrCode, Users, X, Utensils, ShoppingCart, Shield, Upload, ChevronDown, ChevronUp } from "lucide-react";
-import { useRef, useState, useCallback, useMemo, useEffect } from "react";
+import { motion, AnimatePresence, useMotionValue, useTransform, useAnimation, PanInfo } from "framer-motion";
+import { MapPin, Calendar as CalendarIcon, Clock, ChevronRight, QrCode, Users, X, Utensils, Shield, Upload, ArrowLeft } from "lucide-react";
+import { useRef, useState, useCallback, useMemo, useEffect, memo } from "react";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { Calendar } from "@/components/ui/calendar";
 import type { Booking } from "@/pages/Index";
@@ -10,15 +10,14 @@ import IdentityUploadSheet from "./IdentityUploadSheet";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import EmptyState from "./shared/EmptyState";
-import BookingQRCode from "./shared/BookingQRCode";
 import QRCodeModal from "./shared/QRCodeModal";
-import { format } from "date-fns";
 
 interface TripsScreenProps {
   bookings: Booking[];
   onViewDetail: (booking: Booking) => void;
   onRebook: (propertyId: string) => void;
   onCancel?: (bookingId: string) => void;
+  onBack?: () => void;
 }
 
 const statusConfig: Record<string, { gradient: string; glow: string; label: string; dotColor: string }> = {
@@ -49,7 +48,7 @@ const statusConfig: Record<string, { gradient: string; glow: string; label: stri
 };
 
 
-function SwipeableCard({
+const SwipeableCard = memo(function SwipeableCard({
   booking,
   index,
   onViewDetail,
@@ -107,13 +106,14 @@ function SwipeableCard({
         dragElastic={0.1}
         onDragEnd={handleDragEnd}
       >
-        <TiltCard booking={booking} index={index} onViewDetail={onViewDetail} onRebook={onRebook} onOrderFood={onOrderFood} onShowQR={onShowQR} />
+        <TripCard booking={booking} index={index} onViewDetail={onViewDetail} onRebook={onRebook} onOrderFood={onOrderFood} onShowQR={onShowQR} />
       </motion.div>
     </div>
   );
-}
+});
 
-function TiltCard({
+/** Simplified trip card — no 3D tilt, no parallax, no glare. Clean and fast. */
+const TripCard = memo(function TripCard({
   booking,
   index,
   onViewDetail,
@@ -129,67 +129,33 @@ function TiltCard({
   onShowQR?: (bookingId: string) => void;
 }) {
   const { properties } = usePropertiesData();
-  const cardRef = useRef<HTMLDivElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  const { scrollYProgress } = useScroll({
-    target: cardRef,
-    offset: ["start end", "end start"],
-  });
-  const imgY = useTransform(scrollYProgress, [0, 1], [-20, 20]);
-
-  const rotateX = useSpring(useTransform(y, [-150, 150], [12, -12]), { stiffness: 300, damping: 30 });
-  const rotateY = useSpring(useTransform(x, [-150, 150], [-12, 12]), { stiffness: 300, damping: 30 });
-  const glareOpacity = useTransform(x, [-150, 0, 150], [0.15, 0, 0.15]);
-
   const property = properties.find((p) => p.id === booking.propertyId);
   if (!property) return null;
 
   const status = statusConfig[booking.status] || statusConfig.upcoming;
 
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    x.set(e.clientX - (rect.left + rect.width / 2));
-    y.set(e.clientY - (rect.top + rect.height / 2));
-  };
-
-  const handlePointerLeave = () => { x.set(0); y.set(0); };
-
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30, rotateX: 15 }}
-      animate={{ opacity: 1, y: 0, rotateX: 0 }}
-      transition={{ delay: index * 0.12, type: "spring", stiffness: 200, damping: 20 }}
-      style={{ perspective: 800 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.08, duration: 0.3, ease: "easeOut" }}
       className="w-full"
     >
-      <motion.div
-        ref={cardRef}
-        style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-        onPointerMove={handlePointerMove}
-        onPointerLeave={handlePointerLeave}
+      <div
         onClick={() => onViewDetail(booking)}
-        className="relative rounded-3xl overflow-hidden cursor-pointer transition-shadow duration-300"
-        whileHover={{ y: -4 }}
+        className="relative rounded-3xl overflow-hidden cursor-pointer transition-shadow duration-200 hover:shadow-lg active:scale-[0.98]"
       >
-        {/* Multi-layer depth shadow — light-mode-aware */}
-        <div className="absolute -inset-[1px] rounded-3xl pointer-events-none shadow-[0_2px_8px_hsla(260,20%,20%,0.08),0_8px_24px_hsla(260,20%,20%,0.10),0_16px_40px_hsla(270,60%,50%,0.08)] dark:shadow-[0_2px_4px_hsla(0,0%,0%,0.3),0_8px_16px_hsla(0,0%,0%,0.25),0_16px_32px_hsla(0,0%,0%,0.2),0_24px_48px_-8px_hsla(270,60%,50%,0.15)]" />
+        {/* Shadow layer */}
+        <div className="absolute -inset-[1px] rounded-3xl pointer-events-none shadow-[0_2px_8px_hsla(260,20%,20%,0.08),0_8px_24px_hsla(260,20%,20%,0.10)] dark:shadow-[0_2px_4px_hsla(0,0%,0%,0.3),0_8px_16px_hsla(0,0%,0%,0.25)]" />
 
         <div className="relative bg-card rounded-3xl overflow-hidden border border-border">
-          {/* Background image */}
+          {/* Background image — no parallax for performance */}
           <div className="relative h-[220px] overflow-hidden">
-            <motion.img src={property.images[0]} alt={property.name} className="w-full h-[260px] object-cover" style={{ y: imgY }} />
+            <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover" loading="lazy" />
             <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
 
-            <motion.div className="absolute inset-0 pointer-events-none" style={{
-              background: `radial-gradient(ellipse at 30% 20%, hsla(270, 80%, 75%, 0.2) 0%, transparent 50%)`,
-              opacity: glareOpacity,
-            }} />
-
             {/* Status pill */}
-            <div className="absolute top-4 right-4" style={{ transform: "translateZ(30px)" }}>
+            <div className="absolute top-4 right-4">
               <div className={`flex items-center gap-1.5 bg-gradient-to-r ${status.gradient} backdrop-blur-md px-3 py-1.5 rounded-full`} style={{ boxShadow: "0 4px 12px hsla(0,0%,0%,0.3)" }}>
                 <span className={`w-1.5 h-1.5 rounded-full ${status.dotColor} ${booking.status === "active" ? "animate-pulse" : ""}`} />
                 <span className="text-[11px] font-semibold text-primary-foreground">{status.label}</span>
@@ -198,21 +164,17 @@ function TiltCard({
 
             {/* QR badge for upcoming/active */}
             {(booking.status === "upcoming" || booking.status === "active") && (
-              <motion.button
-                className="absolute top-4 left-4 w-10 h-10 glass rounded-xl flex items-center justify-center z-10"
-                style={{ transform: "translateZ(25px)", boxShadow: "0 4px 16px hsla(0,0%,0%,0.3)" }}
-                animate={{ rotate: [0, 2, -2, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              <button
+                className="absolute top-4 left-4 w-10 h-10 bg-card/80 backdrop-blur-sm rounded-xl flex items-center justify-center z-10 border border-border/50 active:scale-90 transition-transform"
                 onClick={(e) => { e.stopPropagation(); onShowQR?.(booking.bookingId); }}
-                whileTap={{ scale: 0.9 }}
               >
                 <QrCode size={18} className="text-foreground" />
-              </motion.button>
+              </button>
             )}
           </div>
 
           {/* Card content */}
-          <div className="relative px-5 pb-5 -mt-8" style={{ transform: "translateZ(20px)" }}>
+          <div className="relative px-5 pb-5 -mt-8">
             <div className="rounded-2xl p-4 space-y-3 border border-border bg-card">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
@@ -221,7 +183,7 @@ function TiltCard({
                     <MapPin size={11} /> {property.location}
                   </p>
                 </div>
-                <span className="text-foreground font-bold text-lg shrink-0 text-gradient-warm">
+                <span className="text-foreground font-bold text-lg shrink-0">
                   ₹{booking.total.toLocaleString()}
                 </span>
               </div>
@@ -238,12 +200,12 @@ function TiltCard({
                 </span>
                 {booking.roomsCount && booking.roomsCount > 0 && (
                   <span className="flex items-center gap-1.5 bg-secondary rounded-lg px-2.5 py-1.5 text-xs text-foreground">
-                    🛏️ {booking.roomsCount} {booking.roomsCount === 1 ? "room" : "rooms"}
+                    {booking.roomsCount} {booking.roomsCount === 1 ? "room" : "rooms"}
                   </span>
                 )}
                 {booking.extraMattresses && booking.extraMattresses > 0 && (
                   <span className="flex items-center gap-1.5 bg-primary/10 rounded-lg px-2.5 py-1.5 text-xs text-primary font-medium">
-                    🛏️ +{booking.extraMattresses} mattress
+                    +{booking.extraMattresses} mattress
                   </span>
                 )}
               </div>
@@ -281,10 +243,10 @@ function TiltCard({
           </div>
 
         </div>
-      </motion.div>
+      </div>
     </motion.div>
   );
-}
+});
 
 const filterTabs = [
   { value: "all", label: "All", dotColor: "" },
@@ -294,7 +256,7 @@ const filterTabs = [
   { value: "cancelled", label: "Cancelled", dotColor: "bg-destructive" },
 ] as const;
 
-export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel }: TripsScreenProps) {
+export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel, onBack }: TripsScreenProps) {
   const { properties } = usePropertiesData();
   const [refreshKey, setRefreshKey] = useState(0);
   const [activeFilter, setActiveFilter] = useState<string>("all");
@@ -375,32 +337,33 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
     <div key={refreshKey} className="pb-24 bg-mesh min-h-screen md:h-[calc(100vh-4rem)] md:overflow-y-auto">
       <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32 pt-6 pb-2">
         <div className="flex items-center justify-between md:max-w-3xl md:mx-auto">
-          <div>
-            <motion.h1
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground"
-            >
-              Your Trips
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.1 }}
-              className="text-sm md:text-base text-muted-foreground mt-1"
-            >
-              {onCancel ? "Swipe left on upcoming trips to cancel" : "Manage your bookings"}
-            </motion.p>
+          <div className="flex items-center gap-3">
+            {/* Back button */}
+            {onBack && (
+              <button
+                onClick={onBack}
+                className="w-10 h-10 rounded-xl flex items-center justify-center border border-border bg-secondary text-foreground active:scale-90 transition-transform md:hidden"
+              >
+                <ArrowLeft size={18} />
+              </button>
+            )}
+            <div>
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground">
+                Your Trips
+              </h1>
+              <p className="text-sm md:text-base text-muted-foreground mt-1">
+                {onCancel ? "Swipe left on upcoming trips to cancel" : "Manage your bookings"}
+              </p>
+            </div>
           </div>
-          <motion.button
-            whileTap={{ scale: 0.9 }}
+          <button
             onClick={() => { setCalendarOpen(!calendarOpen); setSelectedCalDate(undefined); }}
             className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all md:cursor-pointer ${
               calendarOpen ? "bg-primary/10 border-primary/30 text-primary" : "bg-secondary border-border text-muted-foreground md:hover:bg-muted/50"
             }`}
           >
             <CalendarIcon size={18} />
-          </motion.button>
+          </button>
         </div>
       </div>
 
@@ -430,15 +393,13 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
                   {selectedDateBookings.map(b => {
                     const prop = properties.find(p => p.id === b.propertyId);
                     return (
-                      <motion.div
+                      <div
                         key={b.id}
-                        initial={{ opacity: 0, x: -8 }}
-                        animate={{ opacity: 1, x: 0 }}
                         onClick={() => onViewDetail(b)}
                         className="flex items-center gap-3 p-2.5 rounded-xl bg-secondary/50 border border-border/50 cursor-pointer active:scale-[0.98] transition-transform"
                       >
                         {prop && (
-                          <img src={prop.images[0]} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
+                          <img src={prop.images[0]} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" loading="lazy" />
                         )}
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-semibold text-foreground truncate">{prop?.name || "Property"}</p>
@@ -451,7 +412,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
                         }`}>
                           {b.status}
                         </span>
-                      </motion.div>
+                      </div>
                     );
                   })}
                 </div>
@@ -497,24 +458,16 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
 
       {isDemo && (
         <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="mt-1 mb-1 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20 md:max-w-3xl md:mx-auto"
-          >
-            <p className="text-[11px] md:text-xs text-primary font-medium text-center">✨ These are sample trips — book a venue to see your real trips here!</p>
-          </motion.div>
+          <div className="mt-1 mb-1 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20 md:max-w-3xl md:mx-auto">
+            <p className="text-[11px] md:text-xs text-primary font-medium text-center">These are sample trips — book a venue to see your real trips here!</p>
+          </div>
         </div>
       )}
 
       {/* ID Verification Banner */}
       {idVerified === false && (
         <div className="px-5 md:px-8 lg:px-16 xl:px-24 2xl:px-32">
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-2 mb-1 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 md:max-w-3xl md:mx-auto"
-          >
+          <div className="mt-2 mb-1 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 md:max-w-3xl md:mx-auto">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-amber-500/15 flex items-center justify-center shrink-0">
                 <Shield size={20} className="text-amber-400" />
@@ -530,7 +483,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
                 <Upload size={10} /> Verify
               </button>
             </div>
-          </motion.div>
+          </div>
         </div>
       )}
 
@@ -539,7 +492,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
       {filteredBookings.length === 0 ? (
         <EmptyState
           icon={MapPin}
-          emoji={activeFilter === "cancelled" ? "🚫" : activeFilter === "completed" ? "✅" : "🗺️"}
+          emoji={activeFilter === "cancelled" ? "" : activeFilter === "completed" ? "" : ""}
           title={`No ${activeFilter === "all" ? "" : activeFilter + " "}trips`}
           description={activeFilter === "all"
             ? "Your adventures will show up here once you book a property. Start exploring!"
@@ -579,7 +532,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
         );
       })()}
 
-      {/* Full-screen 3D QR modal */}
+      {/* Full-screen QR modal */}
       {(() => {
         const qrBooking = qrBookingId ? bookings.find(b => b.bookingId === qrBookingId) : null;
         const qrProperty = qrBooking ? properties.find(p => p.id === qrBooking.propertyId) : null;

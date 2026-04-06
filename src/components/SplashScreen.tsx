@@ -403,11 +403,11 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
   useEffect(() => {
     if (!imgReady) return;
     const timers = [
-      setTimeout(() => setPhase(1), 150),     // image revealed
-      setTimeout(() => setPhase(2), 700),     // greeting appears
-      setTimeout(() => setPhase(3), 1800),    // brand name types in
-      setTimeout(() => setPhase(4), 4200),    // begin exit
-      setTimeout(() => { setShow(false); setTimeout(onComplete, 500); }, 4800),
+      setTimeout(() => setPhase(1), 100),     // image revealed
+      setTimeout(() => setPhase(2), 400),     // greeting appears
+      setTimeout(() => setPhase(3), 1200),    // brand name types in
+      setTimeout(() => setPhase(4), 2800),    // begin exit
+      setTimeout(() => { setShow(false); setTimeout(onComplete, 300); }, 3200),
     ];
     return () => timers.forEach(clearTimeout);
   }, [onComplete, imgReady]);
@@ -450,34 +450,12 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           />
 
-          {/* ─── Layer 3: Floating particles (fireflies) ─── */}
+          {/* ─── Layer 3: Minimal floating particles ─── */}
           {phase >= 1 && (
-            <FloatingParticles color={config.particleColor} count={isV2 ? 20 : (config.hasFireflies ? 16 : 8)} />
+            <FloatingParticles color={config.particleColor} count={5} />
           )}
 
-          {/* ─── Layer 4: Shooting stars ─── */}
-          {(config.hasShootingStars || isV2) && phase >= 1 && (
-            <>
-              <ShootingStar delay={1.2} />
-              <ShootingStar delay={2.4} />
-              <ShootingStar delay={3.6} />
-            </>
-          )}
-
-          {/* ─── Layer 4b: Sun rays (morning) ─── */}
-          {config.hasBirds && phase >= 1 && <SunRays />}
-
-          {/* ─── Layer 4c: Flying birds ─── */}
-          {(config.hasBirds || isV2) && phase >= 1 && <FlyingBirds />}
-
-          {/* ─── Layer 4d: Drifting clouds ─── */}
-          {config.hasClouds && phase >= 1 && <DriftingClouds />}
-
-          {/* ─── Layer 4e: Floating lanterns ─── */}
-          {(config.hasLanterns || isV2) && phase >= 1 && <FloatingLanterns />}
-
-          {/* ─── Layer 4f: Twinkling stars ─── */}
-          {(config.hasTwinkle || isV2) && phase >= 1 && <TwinklingStars />}
+          {/* Heavy particle effects removed for performance on low-end devices */}
           <div className="absolute inset-0 flex flex-col z-10">
 
             {/* Top — Greeting area */}
