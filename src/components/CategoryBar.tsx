@@ -17,7 +17,7 @@ const categories: Category[] = [
   { id: "stay", label: "Stays", icon: iconStays },
   { id: "experience", label: "Experiences", icon: iconExperiences },
   { id: "service", label: "Services", icon: iconServices },
-  { id: "curation", label: "Curations", icon: iconCurations, badge: "🔥" },
+  { id: "curation", label: "Curations", icon: iconCurations },
 ];
 
 const AnimatedIcon = memo(function AnimatedIcon({ cat, isActive }: { cat: Category; isActive: boolean }) {

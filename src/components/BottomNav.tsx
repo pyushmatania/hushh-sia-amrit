@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
-import { Search, Heart, MapPin, MessageCircle, User } from "lucide-react";
+import { Compass, Heart, Map, MessageCircle, User } from "lucide-react";
 import { hapticLight, hapticMedium } from "@/lib/haptics";
 import { useCallback, memo } from "react";
 
 const tabs = [
-  { id: "home", icon: Search, label: "Explore" },
+  { id: "home", icon: Compass, label: "Explore" },
   { id: "wishlists", icon: Heart, label: "Wishlists" },
-  { id: "bookings", icon: MapPin, label: "Trips" },
+  { id: "bookings", icon: Map, label: "Trips" },
   { id: "messages", icon: MessageCircle, label: "Messages" },
   { id: "profile", icon: User, label: "Profile" },
 ];
@@ -69,8 +69,7 @@ export default memo(function BottomNav({ active, onChange, messageBadge = 0 }: B
                   <div
                     className="absolute -top-[5px] left-1/2 -translate-x-1/2 w-8 h-[2.5px] rounded-full"
                     style={{
-                      background: "linear-gradient(90deg, hsl(var(--primary) / 0.3), hsl(var(--primary)), hsl(var(--primary) / 0.3))",
-                      boxShadow: "0 0 12px 2px hsl(var(--primary) / 0.35)",
+                      background: "hsl(var(--primary))",
                     }}
                   />
                 )}
@@ -79,7 +78,6 @@ export default memo(function BottomNav({ active, onChange, messageBadge = 0 }: B
                   <tab.icon
                     size={22}
                     className={`relative transition-colors duration-200 ${isActive ? "text-primary" : "text-muted-foreground"}`}
-                    style={isActive ? { filter: "drop-shadow(0 0 5px hsl(var(--primary) / 0.45))" } : undefined}
                     strokeWidth={isActive ? 2.5 : 1.6}
                     fill={isActive && tab.id === "wishlists" ? "currentColor" : "none"}
                   />

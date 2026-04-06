@@ -13,6 +13,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
       - name: Checkout code
@@ -29,17 +30,22 @@ jobs:
 
       - name: Build web app
         run: npm run build
+        env:
+          NODE_OPTIONS: "--max-old-space-size=4096"
 
       - name: Remove live-reload server config
         run: |
           node -e "
           const fs = require('fs');
-          let content = fs.readFileSync('capacitor.config.ts', 'utf8');
-          // Remove entire server block from config
-          content = content.replace(/server:\s*\{[^}]*\},?\s*/s, '');
-          fs.writeFileSync('capacitor.config.ts', content);
-          console.log('Server config removed');
-          console.log(content);
+          const path = 'capacitor.config.ts';
+          if (fs.existsSync(path)) {
+            let content = fs.readFileSync(path, 'utf8');
+            content = content.replace(/server:\s*\{[^}]*\},?\s*/s, '');
+            fs.writeFileSync(path, content);
+            console.log('Server config removed');
+          } else {
+            console.log('capacitor.config.ts not found, skipping');
+          }
           "
 
       - name: Add Android platform
@@ -52,34 +58,45 @@ jobs:
         run: npx cap sync android
 
       - name: Install ImageMagick
-        run: sudo apt-get install -y imagemagick
+        run: sudo apt-get update && sudo apt-get install -y imagemagick
 
       - name: Replace app icon and splash screen
         run: |
           ICONS_DIR="android/app/src/main/res"
-          
-          # Generate launcher icons from PWA icon (latest branding)
-          ICON_SRC="public/pwa-icon-512.png"
-          if [ ! -f "$ICON_SRC" ]; then ICON_SRC="public/app-icon.png"; fi
-          for size_dir in mdpi:48 hdpi:72 xhdpi:96 xxhdpi:144 xxxhdpi:192; do
-            dir=$(echo $size_dir | cut -d: -f1)
-            size=$(echo $size_dir | cut -d: -f2)
-            mkdir -p "$ICONS_DIR/mipmap-$dir"
-            convert "$ICON_SRC" -resize ${size}x${size} "$ICONS_DIR/mipmap-$dir/ic_launcher.png"
-            convert "$ICON_SRC" -resize ${size}x${size} "$ICONS_DIR/mipmap-$dir/ic_launcher_round.png"
-            convert "$ICON_SRC" -resize ${size}x${size} "$ICONS_DIR/mipmap-$dir/ic_launcher_foreground.png"
+
+          # Find best available icon source
+          ICON_SRC=""
+          for candidate in "public/pwa-icon-512.png" "public/app-icon.png" "public/favicon.png"; do
+            if [ -f "$candidate" ]; then
+              ICON_SRC="$candidate"
+              break
+            fi
           done
-          
+
+          if [ -z "$ICON_SRC" ]; then
+            echo "Warning: No icon source found, skipping icon generation"
+          else
+            echo "Using icon source: $ICON_SRC"
+            for size_dir in mdpi:48 hdpi:72 xhdpi:96 xxhdpi:144 xxxhdpi:192; do
+              dir=$(echo $size_dir | cut -d: -f1)
+              size=$(echo $size_dir | cut -d: -f2)
+              mkdir -p "$ICONS_DIR/mipmap-$dir"
+              convert "$ICON_SRC" -resize ${size}x${size} "$ICONS_DIR/mipmap-$dir/ic_launcher.png" || true
+              convert "$ICON_SRC" -resize ${size}x${size} "$ICONS_DIR/mipmap-$dir/ic_launcher_round.png" || true
+              convert "$ICON_SRC" -resize ${size}x${size} "$ICONS_DIR/mipmap-$dir/ic_launcher_foreground.png" || true
+            done
+          fi
+
           # Create a solid dark splash screen (no Capacitor logo)
           for size_dir in mdpi:480x800 hdpi:720x1280 xhdpi:960x1600 xxhdpi:1440x2560 xxxhdpi:1440x2560; do
             dir=$(echo $size_dir | cut -d: -f1)
             dims=$(echo $size_dir | cut -d: -f2)
             mkdir -p "$ICONS_DIR/drawable-$dir"
-            convert -size $dims xc:"#050505" "$ICONS_DIR/drawable-$dir/splash.png"
+            convert -size $dims xc:"#050505" "$ICONS_DIR/drawable-$dir/splash.png" || true
           done
           mkdir -p "$ICONS_DIR/drawable"
-          convert -size 1440x2560 xc:"#050505" "$ICONS_DIR/drawable/splash.png"
-          
+          convert -size 1440x2560 xc:"#050505" "$ICONS_DIR/drawable/splash.png" || true
+
           echo "App icons and splash screens configured"
 
       - name: Patch Android theme for dark splash
@@ -101,12 +118,21 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Make gradlew executable
+        run: |
+          if [ -f "android/gradlew" ]; then
+            chmod +x android/gradlew
+          fi
+
       - name: Build debug APK
         working-directory: android
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
+        env:
+          GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx2048m -Dorg.gradle.daemon=false"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: hushh-jeypore-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error

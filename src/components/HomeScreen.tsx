@@ -8,7 +8,7 @@ import { type Property } from "@/data/properties";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
 import CuratedPackCard, { tonightTags, type ExperiencePack } from "./home/CuratedPackCard";
 import CuratedPackListing from "./home/CuratedPackListing";
-import { useState, useMemo, useCallback, useRef, type ReactNode, lazy, Suspense } from "react";
+import { useState, useMemo, useCallback, useRef, memo, type ReactNode, lazy, Suspense } from "react";
 import { useCurations } from "@/hooks/use-curations";
 import { useNotifications } from "@/hooks/use-notifications";
 import { useHomepageSections } from "@/hooks/use-homepage-sections";
@@ -38,15 +38,15 @@ function SectionBoundary({ children, name }: { children: ReactNode; name: string
   return <ErrorBoundary fallbackTitle={`Failed to load ${name}`}>{children}</ErrorBoundary>;
 }
 
-/* Lightweight section title — no animation on scroll to avoid layout thrashing */
-function SectionTitle({ title }: { title: string }) {
+/* Lightweight section title — memoized to prevent re-renders */
+const SectionTitle = memo(function SectionTitle({ title }: { title: string }) {
   return (
     <div className="px-5 pt-7 pb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:pt-10 md:pb-5">
       <h2 className="text-[11px] font-bold tracking-[0.18em] text-muted-foreground uppercase md:text-lg md:tracking-wider lg:text-xl">{title}</h2>
       <div className="w-8 h-[2px] rounded-full bg-primary/40 mt-2 md:w-12" />
     </div>
   );
-}
+});
 
 interface HomeScreenProps {
   onPropertyTap: (property: Property) => void;
@@ -224,7 +224,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
       {/* Header */}
       <div className="px-5 pt-5 pb-2 flex items-center justify-between md:hidden">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/40 glow-sm">
+          <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/40">
             <img src={profileAvatar} alt="Profile" className="w-full h-full object-cover" />
           </div>
           <div>
@@ -263,7 +263,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               if (isSectionVisible("spotlight")) {
                 homeSections.push({ key: "spotlight", order: getSortOrder("spotlight"), node: (
                   <>
-                    <SectionTitle title="🔥 TONIGHT'S VIBE" />
+                    <SectionTitle title="TONIGHT'S VIBE" />
                     <Suspense fallback={<div style={{ height: "70vh", minHeight: 420 }} className="px-4" />}>
                       <SpotlightCarousel properties={activeMood ? moodFilteredProperties : properties} onPropertyTap={onPropertyTap} category="home" wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
                     </Suspense>
@@ -295,7 +295,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               if (isSectionVisible("curated_packs")) {
                 homeSections.push({ key: "curated_packs", order: getSortOrder("curated_packs"), node: (
                   <LazySection minHeight="400px" rootMargin="500px">
-              <SectionTitle title="✨ CURATED PACKS" />
+              <SectionTitle title="CURATED PACKS" />
                     {isMobile ? (
                       <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar px-4 pb-2" style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}>
                         {filteredPacks.slice(0, 12).map((pack, i) => (
@@ -317,7 +317,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               if (isMobile) {
                 homeSections.push({ key: "mixed_feed", order: getSortOrder("curated_packs") + 1, node: (
                   <LazySection minHeight="400px" rootMargin="300px">
-                    <SectionTitle title="🎯 DISCOVER MORE" />
+                    <SectionTitle title="DISCOVER MORE" />
                     <Suspense fallback={<div style={{ height: 380 }} />}>
                       <MixedListingFeed
                         properties={properties}
@@ -374,7 +374,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
           {/* ═══════ STAYS TAB ═══════ */}
           {activeCategory === "stay" && (
             <>
-              <SectionTitle title="🏡 FEATURED STAYS" />
+              <SectionTitle title="FEATURED STAYS" />
               <OscarToggle isOn={oscarMode} onToggle={() => setOscarMode(!oscarMode)} />
               <AnimatePresence mode="wait">
               {oscarMode ? (
@@ -405,7 +405,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 <>
                 <div className="mt-4">
                   <div className="flex items-center justify-between px-4 mb-3">
-                    <h2 className="text-base font-bold text-foreground">🏡 Featured Stays</h2>
+                    <h2 className="text-base font-bold text-foreground">Featured Stays</h2>
                     <span className="text-[10px] text-muted-foreground">{filteredProperties.length} stays</span>
                   </div>
                   <MixedListingFeed
@@ -423,7 +423,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               {trendingNow.length > 0 && (
                 <div className="mt-4">
                   <div className="flex items-center justify-between px-5 mb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:mb-6">
-                    <h2 className="text-lg font-bold text-foreground md:text-xl lg:text-2xl">🔥 Trending Stays</h2>
+                    <h2 className="text-lg font-bold text-foreground md:text-xl lg:text-2xl">Trending Stays</h2>
                     <button onClick={() => handleSubFilter("All")} className="text-xs text-primary font-medium flex items-center gap-1 md:text-sm">View all <ArrowRight size={12} /></button>
                   </div>
                   <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5 md:grid md:grid-cols-3 lg:grid-cols-4 md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-6">
@@ -437,7 +437,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               {budgetPicks.length > 0 && (
                 <div className="mt-6">
                   <div className="flex items-center justify-between px-5 mb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:mb-6">
-                    <h2 className="text-lg font-bold text-foreground md:text-xl lg:text-2xl">💸 Budget Friendly</h2>
+                    <h2 className="text-lg font-bold text-foreground md:text-xl lg:text-2xl">Budget Friendly</h2>
                     <button onClick={() => handleSubFilter("All")} className="text-xs text-primary font-medium flex items-center gap-1 md:text-sm">View all <ArrowRight size={12} /></button>
                   </div>
                   <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5 md:grid md:grid-cols-3 lg:grid-cols-4 md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-6">
@@ -450,7 +450,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
 
               <div className="mt-6">
                 <div className="flex items-center justify-between px-5 mb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:mb-6">
-                  <h2 className="text-lg font-bold text-foreground md:text-xl lg:text-2xl">⭐ Top Rated Stays</h2>
+                  <h2 className="text-lg font-bold text-foreground md:text-xl lg:text-2xl">Top Rated Stays</h2>
                   <span className="text-xs text-muted-foreground md:text-sm">{stayProperties.length} stays</span>
                 </div>
                 <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5 md:grid md:grid-cols-3 lg:grid-cols-4 md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-6">
@@ -472,7 +472,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
             <>
               <div className="px-5 pt-6 pb-2 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:pt-10 md:pb-4 md:text-center">
                 <h1 className="text-2xl font-bold text-foreground md:text-4xl lg:text-5xl" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                  Experiences 🎉
+                  Experiences
                 </h1>
                 <p className="text-sm text-muted-foreground mt-1 md:text-lg lg:text-xl md:mt-2 md:max-w-2xl md:mx-auto" style={{ fontFamily: "'Playfair Display', serif" }}>
                   Unforgettable moments, handpicked for you
@@ -504,7 +504,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               {trendingNow.length > 0 && (
                 <div className="mt-4">
                   <div className="flex items-center justify-between px-5 mb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:mb-6">
-                    <h2 className="text-lg font-bold text-foreground md:text-xl lg:text-2xl">⚡ Slots Filling Up</h2>
+                    <h2 className="text-lg font-bold text-foreground md:text-xl lg:text-2xl">Slots Filling Up</h2>
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-destructive/20 text-destructive font-semibold animate-pulse md:text-xs">LIVE</span>
                   </div>
                   <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5 md:grid md:grid-cols-3 lg:grid-cols-4 md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-6">
@@ -520,7 +520,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 <>
                 <div className="mt-4">
                   <div className="flex items-center justify-between px-4 mb-3">
-                    <h2 className="text-base font-bold text-foreground">🔥 All Experiences</h2>
+                    <h2 className="text-base font-bold text-foreground">All Experiences</h2>
                     <span className="text-[10px] text-muted-foreground">{filteredProperties.length} found</span>
                   </div>
                   <MixedListingFeed
@@ -536,7 +536,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               ) : (
               <div className="mt-6">
                 <div className="flex items-center justify-between px-5 mb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:mb-6">
-                  <h2 className="text-lg font-bold text-foreground md:text-xl lg:text-2xl">🔥 All Experiences</h2>
+                  <h2 className="text-lg font-bold text-foreground md:text-xl lg:text-2xl">All Experiences</h2>
                   <span className="text-xs text-muted-foreground md:text-sm">{filteredProperties.length} found</span>
                 </div>
                 <MixedListingFeed
@@ -566,7 +566,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
             <>
               <div className="px-5 pt-6 pb-1 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:pt-10 md:pb-4 md:text-center">
                 <h1 className="text-2xl font-bold text-foreground md:text-4xl lg:text-5xl" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                  Premium Services 🛎️
+                  Premium Services
                 </h1>
                 <p className="text-sm text-muted-foreground mt-1 md:text-lg lg:text-xl md:mt-2 md:max-w-2xl md:mx-auto" style={{ fontFamily: "'Playfair Display', serif" }}>
                   Elevate your experience with curated add-ons
@@ -625,7 +625,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
             <>
               <div className="px-5 pt-6 pb-2 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:pt-10 md:pb-4 md:text-center">
                 <h1 className="text-2xl font-bold text-foreground md:text-4xl lg:text-5xl" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                  Curated for You ✨
+                  Curated for You
                 </h1>
                 <p className="text-sm text-muted-foreground mt-1 md:text-lg lg:text-xl md:mt-2 md:max-w-2xl md:mx-auto" style={{ fontFamily: "'Playfair Display', serif" }}>
                   One-tap bundles, crafted by locals
@@ -674,7 +674,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
   </>
 )}
 
-              <SectionTitle title="✨ EXPERIENCE PACKS" />
+              <SectionTitle title="EXPERIENCE PACKS" />
               <div className={isMobile ? "flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar px-4 pb-2" : "space-y-5 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0 md:px-8 lg:px-16 xl:px-24 2xl:px-32"} style={isMobile ? { WebkitOverflowScrolling: "touch", scrollbarWidth: "none" } : undefined}>
                 {experiencePacks.slice(0, isMobile ? 6 : experiencePacks.length).map((pack, i) => (
                   isMobile ? (
@@ -704,7 +704,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
           {/* ═══════ HOME: CURATIONS DISCOVERY ═══════ */}
           {activeCategory === "home" && curatedCombos.length > 0 && (
             <LazySection minHeight="300px" rootMargin="300px">
-              <SectionTitle title="🎨 POPULAR CURATIONS" />
+              <SectionTitle title="POPULAR CURATIONS" />
               {isMobile ? (
                 <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar px-4 pb-2" style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}>
                   {curatedCombos.slice(0, 10).map((combo) => (
@@ -752,7 +752,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
           {/* ═══════ HOME: CURATED EXPERIENCES ═══════ */}
           {activeCategory === "home" && experiencePacks.length > 0 && (
             <LazySection minHeight="400px" rootMargin="300px">
-              <SectionTitle title="🎯 CURATED EXPERIENCES" />
+              <SectionTitle title="CURATED EXPERIENCES" />
               <div className={isMobile ? "flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar px-4 pb-2" : "space-y-5 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0 md:px-8 lg:px-16 xl:px-24 2xl:px-32"} style={isMobile ? { WebkitOverflowScrolling: "touch", scrollbarWidth: "none" } : undefined}>
                 {experiencePacks.slice(0, 12).map((pack, i) => (
                   isMobile ? (
@@ -809,9 +809,8 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
         </div>
 
 
-      <div className="mx-5 mt-8 mb-4 flex items-center justify-center gap-2 glass rounded-2xl px-4 py-3 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32">
-        <span className="text-lg">🏷️</span>
-        <span className="text-sm font-medium text-foreground md:text-base">Prices include all fees · No hidden charges</span>
+      <div className="mx-5 mt-8 mb-4 flex items-center justify-center gap-2 rounded-2xl border border-border/50 bg-card/50 px-4 py-3 md:mx-8 lg:mx-16 xl:mx-24 2xl:mx-32">
+        <span className="text-sm font-medium text-muted-foreground md:text-base">Prices include all fees · No hidden charges</span>
       </div>
 
       <div className="h-20 md:h-8" />

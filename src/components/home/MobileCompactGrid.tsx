@@ -4,56 +4,11 @@ import type { Property } from "@/data/properties";
 import type { CuratedCombo } from "@/data/properties";
 import OptimizedImage from "@/components/shared/OptimizedImage";
 
-/* ─── 3D Scroll Effect Hook (throttled to avoid jank) ─── */
-function use3DScrollEffect(scrollRef: React.RefObject<HTMLDivElement | null>) {
-  const rafId = useRef(0);
-  const lastApply = useRef(0);
-
-  const applyEffects = useCallback(() => {
-    const container = scrollRef.current;
-    if (!container) return;
-
-    // Throttle to max ~30fps to avoid scroll jank
-    const now = performance.now();
-    if (now - lastApply.current < 33) return;
-    lastApply.current = now;
-
-    const containerRect = container.getBoundingClientRect();
-    const centerX = containerRect.left + containerRect.width / 2;
-    const halfWidth = containerRect.width / 2;
-
-    const columns = container.children;
-    for (let i = 0; i < columns.length; i++) {
-      const col = columns[i] as HTMLElement;
-      const colRect = col.getBoundingClientRect();
-      const colCenterX = colRect.left + colRect.width / 2;
-      const dist = Math.max(-1, Math.min(1, (colCenterX - centerX) / halfWidth));
-
-      const rotateY = dist * -8;
-      const scale = 1 - Math.abs(dist) * 0.06;
-      const brightness = 1 - Math.abs(dist) * 0.15;
-
-      col.style.transform = `perspective(800px) rotateY(${rotateY}deg) scale(${scale})`;
-      col.style.filter = `brightness(${brightness})`;
-    }
-  }, [scrollRef]);
-
-  useEffect(() => {
-    const container = scrollRef.current;
-    if (!container) return;
-
-    const onScroll = () => {
-      cancelAnimationFrame(rafId.current);
-      rafId.current = requestAnimationFrame(applyEffects);
-    };
-
-    requestAnimationFrame(applyEffects);
-    container.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      container.removeEventListener("scroll", onScroll);
-      cancelAnimationFrame(rafId.current);
-    };
-  }, [applyEffects]);
+/* ─── 3D Scroll Effect Hook — disabled on low-end devices for performance ─── */
+function use3DScrollEffect(_scrollRef: React.RefObject<HTMLDivElement | null>) {
+  // Disabled: perspective transforms and per-frame filter recalculations
+  // cause significant scroll jank on low-end mobile devices.
+  // Native scroll with CSS snap points provides a smoother experience.
 }
 
 /* ─── Compact Property Card for grid ─── */

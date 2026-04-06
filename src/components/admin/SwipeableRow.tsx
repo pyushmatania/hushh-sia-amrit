@@ -81,11 +81,12 @@ interface SwipeableRowProps {
   onEdit?: () => void;
   onDelete?: () => void;
   className?: string;
+  showHint?: boolean;
 }
 
 const HINT_KEY = "swipeable-row-hint-shown";
 
-export default function SwipeableRow({ children, onEdit, onDelete, className = "", showHint = false }: SwipeableRowProps & { showHint?: boolean }) {
+export default function SwipeableRow({ children, onEdit, onDelete, className = "", showHint = false }: SwipeableRowProps) {
   const x = useMotionValue(0);
   const [swiped, setSwiped] = useState<"none" | "left">("none");
   const [hinting, setHinting] = useState(false);
@@ -192,14 +193,15 @@ export default function SwipeableRow({ children, onEdit, onDelete, className = "
       {/* Main content */}
       <motion.div
         drag="x"
+        dragDirectionLock
         dragConstraints={{ left: -ACTION_WIDTH, right: 0 }}
         dragElastic={0.1}
         onDrag={handleDrag}
         onDragEnd={handleDragEnd}
         animate={{ x: hinting ? -60 : swiped === "left" ? -ACTION_WIDTH : 0 }}
         transition={{ type: "spring", damping: 25, stiffness: 300 }}
-        style={{ x: hinting ? undefined : x }}
-        className="relative z-10 bg-card touch-pan-y"
+        style={{ x: hinting ? undefined : x, touchAction: "pan-y" }}
+        className="relative z-10 bg-card"
         onClick={() => { if (swiped === "left") { close(); } }}
       >
         {children}
