@@ -114,7 +114,6 @@ export default memo(function PropertyCard({ property, index, onTap, isWishlisted
     >
     <div
       onClick={handleClick}
-      style={{ animationDelay: `${index * 60}ms` }}
     >
       {/* Image */}
       <div className="relative aspect-[4/3]">
