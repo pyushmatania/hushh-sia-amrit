@@ -90,18 +90,18 @@ export const DEMO_REVIEWS = [
 // ─── Inventory ───
 
 export const DEMO_INVENTORY = [
-  { id: "inv1", name: "Paneer Tikka", emoji: "🧀", stock: 45, low_stock_threshold: 10, available: true, category: "food", unit_price: 250, unit: "plate" },
-  { id: "inv2", name: "Butter Naan", emoji: "🫓", stock: 120, low_stock_threshold: 20, available: true, category: "food", unit_price: 50, unit: "piece" },
-  { id: "inv3", name: "Tribal Thali", emoji: "🍛", stock: 30, low_stock_threshold: 5, available: true, category: "food", unit_price: 350, unit: "plate" },
-  { id: "inv4", name: "BBQ Platter", emoji: "🍖", stock: 15, low_stock_threshold: 5, available: true, category: "food", unit_price: 850, unit: "platter" },
-  { id: "inv5", name: "Masala Chai", emoji: "🍵", stock: 200, low_stock_threshold: 30, available: true, category: "beverage", unit_price: 80, unit: "cup" },
-  { id: "inv6", name: "Cold Coffee", emoji: "☕", stock: 80, low_stock_threshold: 15, available: true, category: "beverage", unit_price: 200, unit: "glass" },
-  { id: "inv7", name: "Mocktails", emoji: "🍹", stock: 60, low_stock_threshold: 10, available: true, category: "beverage", unit_price: 100, unit: "glass" },
-  { id: "inv8", name: "Party Platter", emoji: "🎉", stock: 8, low_stock_threshold: 3, available: true, category: "food", unit_price: 1500, unit: "platter" },
-  { id: "inv9", name: "Fairy Lights Set", emoji: "✨", stock: 3, low_stock_threshold: 5, available: true, category: "decor", unit_price: 500, unit: "set" },
-  { id: "inv10", name: "Bonfire Kit", emoji: "🔥", stock: 12, low_stock_threshold: 3, available: true, category: "supplies", unit_price: 300, unit: "kit" },
-  { id: "inv11", name: "Rose Petals Bag", emoji: "🌹", stock: 25, low_stock_threshold: 5, available: true, category: "decor", unit_price: 150, unit: "bag" },
-  { id: "inv12", name: "Dal Fry", emoji: "🫘", stock: 50, low_stock_threshold: 10, available: true, category: "food", unit_price: 180, unit: "bowl" },
+  { id: "inv1", name: "Paneer Tikka", emoji: "🧀", stock: 45, low_stock_threshold: 10, available: true, category: "food", unit_price: 250, unit: "plate", property_id: null, sort_order: 1, created_at: daysAgo(30).toISOString(), image_url: null, image_urls: [] },
+  { id: "inv2", name: "Butter Naan", emoji: "🫓", stock: 120, low_stock_threshold: 20, available: true, category: "food", unit_price: 50, unit: "piece", property_id: null, sort_order: 2, created_at: daysAgo(30).toISOString(), image_url: null, image_urls: [] },
+  { id: "inv3", name: "Tribal Thali", emoji: "🍛", stock: 30, low_stock_threshold: 5, available: true, category: "food", unit_price: 350, unit: "plate", property_id: null, sort_order: 3, created_at: daysAgo(30).toISOString(), image_url: null, image_urls: [] },
+  { id: "inv4", name: "BBQ Platter", emoji: "🍖", stock: 15, low_stock_threshold: 5, available: true, category: "food", unit_price: 850, unit: "platter", property_id: null, sort_order: 4, created_at: daysAgo(30).toISOString(), image_url: null, image_urls: [] },
+  { id: "inv5", name: "Masala Chai", emoji: "🍵", stock: 200, low_stock_threshold: 30, available: true, category: "beverage", unit_price: 80, unit: "cup", property_id: null, sort_order: 5, created_at: daysAgo(30).toISOString(), image_url: null, image_urls: [] },
+  { id: "inv6", name: "Cold Coffee", emoji: "☕", stock: 80, low_stock_threshold: 15, available: true, category: "beverage", unit_price: 200, unit: "glass", property_id: null, sort_order: 6, created_at: daysAgo(30).toISOString(), image_url: null, image_urls: [] },
+  { id: "inv7", name: "Mocktails", emoji: "🍹", stock: 60, low_stock_threshold: 10, available: true, category: "beverage", unit_price: 100, unit: "glass", property_id: null, sort_order: 7, created_at: daysAgo(30).toISOString(), image_url: null, image_urls: [] },
+  { id: "inv8", name: "Party Platter", emoji: "🎉", stock: 8, low_stock_threshold: 3, available: true, category: "food", unit_price: 1500, unit: "platter", property_id: null, sort_order: 8, created_at: daysAgo(30).toISOString(), image_url: null, image_urls: [] },
+  { id: "inv9", name: "Fairy Lights Set", emoji: "✨", stock: 3, low_stock_threshold: 5, available: true, category: "decor", unit_price: 500, unit: "set", property_id: null, sort_order: 9, created_at: daysAgo(30).toISOString(), image_url: null, image_urls: [] },
+  { id: "inv10", name: "Bonfire Kit", emoji: "🔥", stock: 12, low_stock_threshold: 3, available: true, category: "supplies", unit_price: 300, unit: "kit", property_id: null, sort_order: 10, created_at: daysAgo(30).toISOString(), image_url: null, image_urls: [] },
+  { id: "inv11", name: "Rose Petals Bag", emoji: "🌹", stock: 25, low_stock_threshold: 5, available: true, category: "decor", unit_price: 150, unit: "bag", property_id: null, sort_order: 11, created_at: daysAgo(30).toISOString(), image_url: null, image_urls: [] },
+  { id: "inv12", name: "Dal Fry", emoji: "🫘", stock: 50, low_stock_threshold: 10, available: true, category: "food", unit_price: 180, unit: "bowl", property_id: null, sort_order: 12, created_at: daysAgo(30).toISOString(), image_url: null, image_urls: [] },
 ];
 
 // ─── Curations ───

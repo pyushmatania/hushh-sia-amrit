@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import AutoActionsPanel from "./AutoActionsPanel";
+import DemoDataBanner from "./DemoDataBanner";
 
 interface SmartAlert {
   id: string;
@@ -56,6 +57,7 @@ export default function AdminAlerts({ onNavigate }: Props) {
   const [alerts, setAlerts] = useState<SmartAlert[]>([]);
   const [predictions, setPredictions] = useState<Predictions | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isDemo, setIsDemo] = useState(false);
 
   useEffect(() => {
     const fetchAlerts = async () => {
@@ -66,13 +68,23 @@ export default function AdminAlerts({ onNavigate }: Props) {
         setPredictions(data.predictions || null);
       } catch (e) {
         console.error("Failed to fetch smart alerts:", e);
-        // Fallback: generate client-side
-        setAlerts([{
-          id: "fallback", type: "insight", severity: "info",
-          title: "Smart alerts loading",
-          description: "Could not reach the analytics engine. Showing cached insights.",
-        }]);
       }
+      // Demo fallback: if no real alerts returned, populate with realistic demo data
+      setAlerts(prev => {
+        if (prev.length === 0) {
+          setIsDemo(true);
+          setPredictions({
+            peakDay: "Saturday", peakDayBookings: 14, slowDay: "Tuesday",
+            peakSlot: "7 PM – 11 PM", avgBookingValue: 6800, weeklyTrend: 9,
+          });
+          return [
+            { id: "demo-a1", type: "warning", severity: "high", title: "7–11 PM slots 85% full tonight", description: "Evening slots are nearly sold out. Consider adding surge pricing or opening overflow capacity.", action: "View Slots", actionTarget: "bookings" },
+            { id: "demo-a2", type: "opportunity", severity: "medium", title: "Low bookings tomorrow afternoon", description: "12–4 PM slots have only 1 booking for tomorrow. A flash discount could fill empty slots.", action: "Create Discount", actionTarget: "campaigns" },
+            { id: "demo-a3", type: "insight", severity: "medium", title: "Couple experiences trending +40%", description: "Romantic packages saw 40% more bookings this week vs last. Consider featuring them on the homepage.", action: "View Curations", actionTarget: "curations" },
+          ];
+        }
+        return prev;
+      });
       setLoading(false);
     };
     fetchAlerts();
@@ -93,6 +105,8 @@ export default function AdminAlerts({ onNavigate }: Props) {
         </div>
       ) : (
         <>
+          {isDemo && <DemoDataBanner entityName="alerts" />}
+
           {/* Auto Actions */}
           <AutoActionsPanel />
 

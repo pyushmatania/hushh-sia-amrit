@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { DEMO_BOOKINGS, DEMO_LISTINGS } from "./admin-demo-data";
+import DemoDataBanner from "./DemoDataBanner";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, Cell } from "recharts";
 
 /* ─── Types ─── */
@@ -107,6 +109,7 @@ export default function BusinessIntelligence({ onNavigate }: { onNavigate?: (pag
   const [loadingAlerts, setLoadingAlerts] = useState(true);
   const [loadingPricing, setLoadingPricing] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [isDemo, setIsDemo] = useState(false);
   const [actionResults, setActionResults] = useState<string[]>([]);
   const [actions, setActions] = useState<AutoAction[]>([
     { id: "low-stock", icon: Package, title: "Check Low Stock", description: "Scan inventory & auto-disable out-of-stock items", color: "text-amber-500", bg: "bg-amber-500/10", running: false },
@@ -123,11 +126,24 @@ export default function BusinessIntelligence({ onNavigate }: { onNavigate?: (pag
       setAlerts(data.alerts || []);
       setPredictions(data.predictions || null);
     } catch {
-      setAlerts([{
-        id: "fallback", type: "insight", severity: "info",
-        title: "Analytics engine loading", description: "Showing cached insights while connecting.",
-      }]);
+      // will be populated by demo fallback below
     }
+    // Demo fallback: if no real alerts, populate with realistic demo alerts
+    setAlerts(prev => {
+      if (prev.length === 0 || (prev.length === 1 && prev[0].id === "fallback")) {
+        setIsDemo(true);
+        setPredictions({
+          peakDay: "Saturday", peakDayBookings: 14, slowDay: "Tuesday",
+          peakSlot: "7 PM – 11 PM", avgBookingValue: 6800, weeklyTrend: 9,
+        });
+        return [
+          { id: "demo-a1", type: "warning", severity: "high", title: "7–11 PM slots 85% full tonight", description: "Evening slots are nearly sold out. Consider adding surge pricing or opening overflow capacity.", action: "View Slots", actionTarget: "bookings" },
+          { id: "demo-a2", type: "opportunity", severity: "medium", title: "Low bookings tomorrow afternoon", description: "12–4 PM slots have only 1 booking for tomorrow. A flash discount could fill empty slots.", action: "Create Discount", actionTarget: "campaigns" },
+          { id: "demo-a3", type: "insight", severity: "medium", title: "Couple experiences trending +40%", description: "Romantic packages saw 40% more bookings this week vs last. Consider featuring them on the homepage.", action: "View Curations", actionTarget: "curations" },
+        ];
+      }
+      return prev;
+    });
     setLoadingAlerts(false);
   };
 
@@ -137,13 +153,22 @@ export default function BusinessIntelligence({ onNavigate }: { onNavigate?: (pag
       supabase.from("bookings").select("slot, total, date, created_at, status, property_id").neq("status", "cancelled"),
       supabase.from("host_listings").select("id, name"),
     ]);
-    const bookings = bookingsRes.data ?? [];
-    if (!bookings.length) { setLoadingPricing(false); return; }
+    let bookings = bookingsRes.data ?? [];
+    let usingDemoListings = false;
+    if (!bookings.length) {
+      // Use demo data as fallback
+      bookings = DEMO_BOOKINGS.filter(b => b.status !== "cancelled").map(b => ({
+        slot: b.slot, total: b.total, date: b.date, created_at: b.created_at, status: b.status, property_id: b.property_id,
+      }));
+      usingDemoListings = true;
+      setIsDemo(true);
+    }
 
     const now = Date.now();
     const weekMs = 7 * 86400000;
     const listingMap = new Map<string, string>();
-    (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, l.name));
+    const listingsData = (listingsRes.data ?? []).length > 0 ? listingsRes.data! : usingDemoListings ? DEMO_LISTINGS : [];
+    listingsData.forEach(l => listingMap.set(l.id, l.name));
 
     // Slot demand
     const slotMap = new Map<string, { total: number; count: number; recent: number; older: number }>();
@@ -325,6 +350,8 @@ export default function BusinessIntelligence({ onNavigate }: { onNavigate?: (pag
           {[1, 2, 3, 4].map(i => <div key={i} className="h-24 rounded-2xl bg-secondary animate-pulse" />)}
         </div>
       ) : (
+        <>
+        {isDemo && <DemoDataBanner entityName="intelligence data" />}
         <AnimatePresence mode="wait">
           {/* ─── OVERVIEW TAB ─── */}
           {tab === "overview" && (
@@ -720,6 +747,7 @@ export default function BusinessIntelligence({ onNavigate }: { onNavigate?: (pag
             </motion.div>
           )}
         </AnimatePresence>
+        </>
       )}
     </div>
   );

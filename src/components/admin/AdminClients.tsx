@@ -473,7 +473,7 @@ function ClientDetailDrawer({ client, onClose, listingMap, listingInfoMap }: {
           {topProperty ? (
             <div className="h-44 relative overflow-hidden">
               <img
-                src={getListingThumbnail(topProperty.name, topProperty.image_urls, { preferMapped: true }) || ""}
+                src={getListingThumbnail(topProperty.name, topProperty?.image_urls || [], { preferMapped: true }) || ""}
                 alt="" className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-card" />
@@ -570,7 +570,7 @@ function ClientDetailDrawer({ client, onClose, listingMap, listingInfoMap }: {
         <div className="px-4 pb-3 space-y-2">
           {topProperty && (
             <div className="rounded-xl bg-secondary/40 border border-border/50 p-3 flex items-center gap-3">
-              <PropertyThumb name={topProperty.name} imageUrls={topProperty.image_urls} size={48} />
+              <PropertyThumb name={topProperty.name} imageUrls={topProperty?.image_urls || []} size={48} />
               <div className="flex-1 min-w-0">
                 <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Favourite Venue</p>
                 <p className="text-xs font-semibold text-foreground truncate">{topProperty.name}</p>

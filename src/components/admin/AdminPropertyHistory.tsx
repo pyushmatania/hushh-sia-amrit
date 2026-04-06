@@ -312,7 +312,7 @@ function PropertyDetailDrawer({ property, users, onClose, onUserClick }: {
       >
         {/* ── Hero Header with Real Thumbnail ── */}
         <div className="relative">
-          <PropertyThumbnail name={property.name} imageUrls={property.imageUrls} size="hero" className="w-full h-44" />
+          <PropertyThumbnail name={property.name} imageUrls={property?.imageUrls || []} size="hero" className="w-full h-44" />
           <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent" />
 
@@ -945,7 +945,7 @@ export default function AdminPropertyHistory({ onNavigateToClient, initialProper
             >
               {/* Thumbnail + overlay */}
               <div className="relative h-24 overflow-hidden">
-                <PropertyThumbnail name={prop.name} imageUrls={prop.imageUrls} size="hero" className="w-full h-24" />
+                <PropertyThumbnail name={prop.name} imageUrls={prop?.imageUrls || []} size="hero" className="w-full h-24" />
                 <div className="absolute inset-0 bg-gradient-to-t from-card via-card/30 to-transparent" />
                 <div className="absolute top-2 right-2 flex items-center gap-1">
                   {prop.avgRating > 0 && (
