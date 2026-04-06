@@ -304,7 +304,7 @@ export default function AdminAnalytics() {
               {topProperties.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-8">No data yet</p>
               ) : topProperties.map((p, i) => {
-                const thumb = getListingThumbnail(p.property, p.imageUrls, { preferMapped: true });
+                const thumb = getListingThumbnail(p.property, p?.imageUrls || [], { preferMapped: true });
                 const maxRev = topProperties[0]?.revenue || 1;
                 return (
                   <div key={p.id} className="flex items-center gap-3">
@@ -509,7 +509,7 @@ export default function AdminAnalytics() {
             </h3>
             <div className="space-y-3">
               {Array.from(propertyMap).slice(0, 8).map(([id, info]) => {
-                const thumb = getListingThumbnail(info.name, info.imageUrls, { preferMapped: true });
+                const thumb = getListingThumbnail(info.name, info?.imageUrls || [], { preferMapped: true });
                 return (
                   <div key={id} className="flex items-center gap-3">
                     {thumb ? (

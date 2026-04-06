@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart, ChefHat, MapPin, ChevronRight, Clock, Package, History, CalendarDays, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { getListingThumbnail } from "@/lib/listing-thumbnails";
+import { DEMO_ORDERS, DEMO_ORDER_ITEMS, DEMO_LISTINGS, DEMO_PROFILES } from "./admin-demo-data";
+import DemoDataBanner from "./DemoDataBanner";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import OrderNotes from "@/components/shared/OrderNotes";
@@ -31,6 +33,7 @@ const statusConfig: Record<string, { color: string; bg: string; label: string }>
 export default function LiveOrdersWidget({ onViewAll }: { onViewAll: () => void }) {
   const [orders, setOrders] = useState<LiveOrder[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isDemo, setIsDemo] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<LiveOrder | null>(null);
   const [detailTab, setDetailTab] = useState<"details" | "history" | "timeline">("details");
   const [clientHistory, setClientHistory] = useState<ClientHistory | null>(null);
@@ -40,7 +43,27 @@ export default function LiveOrdersWidget({ onViewAll }: { onViewAll: () => void 
   const loadOrders = async () => {
     const { data: ordersData } = await supabase.from("orders").select("*")
       .in("status", ["pending", "preparing"]).order("created_at", { ascending: false }).limit(5);
-    if (!ordersData?.length) { setOrders([]); setLoading(false); return; }
+    if (!ordersData?.length) {
+      // Fallback to demo data
+      const demoActive = DEMO_ORDERS.filter(o => o.status === "pending" || o.status === "preparing");
+      const demoLive: LiveOrder[] = demoActive.map(o => {
+        const listing = DEMO_LISTINGS.find(l => l.id === o.property_id);
+        const profile = DEMO_PROFILES.find(p => p.user_id === o.user_id);
+        const items = DEMO_ORDER_ITEMS.filter(i => i.order_id === o.id).map(i => ({
+          item_name: i.item_name, item_emoji: i.item_emoji, quantity: i.quantity, unit_price: i.unit_price,
+        }));
+        return {
+          id: o.id, user_id: o.user_id, property_id: o.property_id, total: o.total,
+          status: o.status, created_at: o.created_at, assigned_name: null, booking_id: o.booking_id,
+          items, guestName: profile?.display_name || "Guest",
+          propertyName: listing?.name || "Property", propertyImageUrls: listing?.image_urls || [],
+        };
+      });
+      setIsDemo(true);
+      setOrders(demoLive);
+      setLoading(false);
+      return;
+    }
 
     const [itemsRes, profilesRes, listingsRes] = await Promise.all([
       supabase.from("order_items").select("*").in("order_id", ordersData.map(o => o.id)),
@@ -123,6 +146,7 @@ export default function LiveOrdersWidget({ onViewAll }: { onViewAll: () => void 
   return (
     <>
       <div className="rounded-2xl bg-card border border-border/60 p-4">
+        {isDemo && <DemoDataBanner entityName="orders" />}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <ShoppingCart size={14} className="text-primary" />

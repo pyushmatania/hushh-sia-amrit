@@ -6,6 +6,7 @@ import {
   Package, ShieldCheck, Calendar, Users
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { DEMO_ORDERS, DEMO_BOOKINGS, DEMO_LISTINGS, DEMO_ORDER_ITEMS, buildDemoListingMap, buildDemoProfileMap } from "./admin-demo-data";
 
 interface PendingItem {
   id: string;
@@ -134,6 +135,51 @@ export default function FloatingChecklist() {
         urgency: i.stock === 0 ? "critical" : "medium",
       });
     });
+
+    // Fallback to demo data when Supabase returns nothing
+    if (pending.length === 0) {
+      const demoListingMap = buildDemoListingMap();
+      const demoProfileMap = buildDemoProfileMap();
+
+      const demoOrderItemMap = new Map<string, { label: string; count: number }>();
+      DEMO_ORDER_ITEMS.forEach(item => {
+        const existing = demoOrderItemMap.get(item.order_id);
+        if (existing) {
+          demoOrderItemMap.set(item.order_id, { label: `${existing.label}, ${item.item_emoji}${item.item_name}`, count: existing.count + item.quantity });
+        } else {
+          demoOrderItemMap.set(item.order_id, { label: `${item.item_emoji}${item.item_name}`, count: item.quantity });
+        }
+      });
+
+      DEMO_ORDERS.filter(o => o.status === "pending").forEach(o => {
+        const info = demoOrderItemMap.get(o.id);
+        pending.push({
+          id: o.id,
+          type: "order",
+          title: info ? info.label : `₹${Number(o.total).toLocaleString()} order`,
+          subtitle: `${demoProfileMap.get(o.user_id) || "Guest"} · ${demoListingMap.get(o.property_id) || "Property"}`,
+          time: timeAgo(o.created_at),
+          status: o.status,
+          emoji: "⏳",
+          urgency: getOrderUrgency(o.created_at, o.status),
+          amount: Number(o.total),
+        });
+      });
+
+      DEMO_BOOKINGS.filter(b => b.status === "upcoming").forEach(b => {
+        pending.push({
+          id: b.id,
+          type: "booking",
+          title: `${demoListingMap.get(b.property_id) || "Property"} · ${b.slot}`,
+          subtitle: `${demoProfileMap.get(b.user_id) || "Guest"} · ${b.guests} guests`,
+          time: b.date,
+          status: b.status,
+          emoji: "📅",
+          urgency: "medium",
+          amount: Number(b.total),
+        });
+      });
+    }
 
     // Sort by urgency
     const urgencyOrder: Record<string, number> = { critical: 0, high: 1, medium: 2, low: 3 };
