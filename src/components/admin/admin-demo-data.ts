@@ -189,7 +189,13 @@ export const DEMO_AUDIT_LOGS = [
 
 // ─── Helper: build listing map from demo data ───
 
-export function buildDemoListingMap(): Map<string, { name: string; image: string; location: string; capacity: number; category: string }> {
+export function buildDemoListingMap(): Map<string, string> {
+  const map = new Map<string, string>();
+  DEMO_LISTINGS.forEach(l => map.set(l.id, l.name));
+  return map;
+}
+
+export function buildDemoListingMapRich(): Map<string, { name: string; image: string; location: string; capacity: number; category: string }> {
   const map = new Map<string, { name: string; image: string; location: string; capacity: number; category: string }>();
   DEMO_LISTINGS.forEach(l => map.set(l.id, { name: l.name, image: l.image_urls?.[0] || "", location: l.location, capacity: l.capacity, category: l.category }));
   return map;
