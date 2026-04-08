@@ -27,18 +27,18 @@ export const DEMO_LISTINGS = [
 // ─── Bookings data (matches user-side demo bookings) ───
 
 export const DEMO_BOOKINGS = [
-  { id: "demo-b1", property_id: "demo-l1", booking_id: "HUSHH-ACT001", date: fmt(daysAgo(0)), slot: "Evening · 6 PM – 11 PM", guests: 4, total: 8500, status: "active", user_id: "demo-u1", created_at: daysAgo(2).toISOString() },
-  { id: "demo-b2", property_id: "demo-l5", booking_id: "HUSHH-UP0025", date: fmt(daysFromNow(5)), slot: "Night · 7 PM – 11 PM", guests: 2, total: 4200, status: "upcoming", user_id: "demo-u2", created_at: daysAgo(1).toISOString() },
-  { id: "demo-b3", property_id: "demo-l3", booking_id: "HUSHH-UP0026", date: fmt(daysFromNow(10)), slot: "Full Day · 10 AM – 10 PM", guests: 12, total: 18500, status: "upcoming", user_id: "demo-u3", created_at: daysAgo(3).toISOString() },
-  { id: "demo-b4", property_id: "demo-l8", booking_id: "HUSHH-UP0027", date: fmt(daysFromNow(15)), slot: "Morning · 9 AM – 1 PM", guests: 8, total: 6400, status: "upcoming", user_id: "demo-u4", created_at: daysAgo(5).toISOString() },
-  { id: "demo-b5", property_id: "demo-l2", booking_id: "HUSHH-CP0012", date: fmt(daysAgo(10)), slot: "Full Day · 10 AM – 10 PM", guests: 8, total: 15200, status: "completed", user_id: "demo-u1", created_at: daysAgo(15).toISOString() },
-  { id: "demo-b6", property_id: "demo-l4", booking_id: "HUSHH-CP0011", date: fmt(daysAgo(20)), slot: "Evening · 5 PM – 10 PM", guests: 6, total: 9800, status: "completed", user_id: "demo-u5", created_at: daysAgo(25).toISOString() },
-  { id: "demo-b7", property_id: "demo-l6", booking_id: "HUSHH-CP0010", date: fmt(daysAgo(30)), slot: "Night · 8 PM – 12 AM", guests: 2, total: 3500, status: "completed", user_id: "demo-u2", created_at: daysAgo(35).toISOString() },
-  { id: "demo-b8", property_id: "demo-l7", booking_id: "HUSHH-CP0009", date: fmt(daysAgo(45)), slot: "Full Day · 10 AM – 10 PM", guests: 15, total: 22000, status: "completed", user_id: "demo-u3", created_at: daysAgo(50).toISOString() },
-  { id: "demo-b9", property_id: "demo-l3", booking_id: "HUSHH-CP0008", date: fmt(daysAgo(60)), slot: "Night · 9 PM – 2 AM", guests: 10, total: 14500, status: "completed", user_id: "demo-u6", created_at: daysAgo(65).toISOString() },
-  { id: "demo-b10", property_id: "demo-l1", booking_id: "HUSHH-CP0007", date: fmt(daysAgo(75)), slot: "Evening · 5 PM – 11 PM", guests: 4, total: 7200, status: "completed", user_id: "demo-u4", created_at: daysAgo(80).toISOString() },
-  { id: "demo-b11", property_id: "demo-l5", booking_id: "HUSHH-CX0005", date: fmt(daysAgo(15)), slot: "Night · 8 PM – 1 AM", guests: 2, total: 6000, status: "cancelled", user_id: "demo-u7", created_at: daysAgo(20).toISOString() },
-  { id: "demo-b12", property_id: "demo-l9", booking_id: "HUSHH-CX0004", date: fmt(daysAgo(50)), slot: "Morning · 10 AM – 2 PM", guests: 4, total: 2800, status: "cancelled", user_id: "demo-u8", created_at: daysAgo(55).toISOString() },
+  { id: "demo-b1", property_id: "demo-l1", booking_id: "HUSHH-ACT001", date: fmt(daysAgo(0)), slot: "Evening · 6 PM – 11 PM", guests: 4, total: 8500, status: "active", user_id: "demo-u1", created_at: daysAgo(2).toISOString(), updated_at: daysAgo(0).toISOString() },
+  { id: "demo-b2", property_id: "demo-l5", booking_id: "HUSHH-UP0025", date: fmt(daysFromNow(5)), slot: "Night · 7 PM – 11 PM", guests: 2, total: 4200, status: "upcoming", user_id: "demo-u2", created_at: daysAgo(1).toISOString(), updated_at: daysAgo(1).toISOString() },
+  { id: "demo-b3", property_id: "demo-l3", booking_id: "HUSHH-UP0026", date: fmt(daysFromNow(10)), slot: "Full Day · 10 AM – 10 PM", guests: 12, total: 18500, status: "upcoming", user_id: "demo-u3", created_at: daysAgo(3).toISOString(), updated_at: daysAgo(3).toISOString() },
+  { id: "demo-b4", property_id: "demo-l8", booking_id: "HUSHH-UP0027", date: fmt(daysFromNow(15)), slot: "Morning · 9 AM – 1 PM", guests: 8, total: 6400, status: "upcoming", user_id: "demo-u4", created_at: daysAgo(5).toISOString(), updated_at: daysAgo(5).toISOString() },
+  { id: "demo-b5", property_id: "demo-l2", booking_id: "HUSHH-CP0012", date: fmt(daysAgo(10)), slot: "Full Day · 10 AM – 10 PM", guests: 8, total: 15200, status: "completed", user_id: "demo-u1", created_at: daysAgo(15).toISOString(), updated_at: daysAgo(10).toISOString() },
+  { id: "demo-b6", property_id: "demo-l4", booking_id: "HUSHH-CP0011", date: fmt(daysAgo(20)), slot: "Evening · 5 PM – 10 PM", guests: 6, total: 9800, status: "completed", user_id: "demo-u5", created_at: daysAgo(25).toISOString(), updated_at: daysAgo(20).toISOString() },
+  { id: "demo-b7", property_id: "demo-l6", booking_id: "HUSHH-CP0010", date: fmt(daysAgo(30)), slot: "Night · 8 PM – 12 AM", guests: 2, total: 3500, status: "completed", user_id: "demo-u2", created_at: daysAgo(35).toISOString(), updated_at: daysAgo(30).toISOString() },
+  { id: "demo-b8", property_id: "demo-l7", booking_id: "HUSHH-CP0009", date: fmt(daysAgo(45)), slot: "Full Day · 10 AM – 10 PM", guests: 15, total: 22000, status: "completed", user_id: "demo-u3", created_at: daysAgo(50).toISOString(), updated_at: daysAgo(45).toISOString() },
+  { id: "demo-b9", property_id: "demo-l3", booking_id: "HUSHH-CP0008", date: fmt(daysAgo(60)), slot: "Night · 9 PM – 2 AM", guests: 10, total: 14500, status: "completed", user_id: "demo-u6", created_at: daysAgo(65).toISOString(), updated_at: daysAgo(60).toISOString() },
+  { id: "demo-b10", property_id: "demo-l1", booking_id: "HUSHH-CP0007", date: fmt(daysAgo(75)), slot: "Evening · 5 PM – 11 PM", guests: 4, total: 7200, status: "completed", user_id: "demo-u4", created_at: daysAgo(80).toISOString(), updated_at: daysAgo(75).toISOString() },
+  { id: "demo-b11", property_id: "demo-l5", booking_id: "HUSHH-CX0005", date: fmt(daysAgo(15)), slot: "Night · 8 PM – 1 AM", guests: 2, total: 6000, status: "cancelled", user_id: "demo-u7", created_at: daysAgo(20).toISOString(), updated_at: daysAgo(15).toISOString() },
+  { id: "demo-b12", property_id: "demo-l9", booking_id: "HUSHH-CX0004", date: fmt(daysAgo(50)), slot: "Morning · 10 AM – 2 PM", guests: 4, total: 2800, status: "cancelled", user_id: "demo-u8", created_at: daysAgo(55).toISOString(), updated_at: daysAgo(50).toISOString() },
 ];
 
 // ─── Profiles / Users ───
@@ -180,11 +180,11 @@ export const DEMO_REFERRAL_CODES = [
 // ─── Audit Logs ───
 
 export const DEMO_AUDIT_LOGS = [
-  { id: "al1", action: "booking.created", actor: "demo-u1", details: "Booking HUSHH-ACT001 created for The Firefly Villa", created_at: daysAgo(0).toISOString() },
-  { id: "al2", action: "order.placed", actor: "demo-u1", details: "Food order ₹1,250 placed for booking HUSHH-ACT001", created_at: daysAgo(0).toISOString() },
-  { id: "al3", action: "review.created", actor: "demo-u2", details: "5-star review for Anniversary Garden", created_at: daysAgo(1).toISOString() },
-  { id: "al4", action: "curation.updated", actor: "admin", details: "Updated price for After Hours Chills", created_at: daysAgo(3).toISOString() },
-  { id: "al5", action: "inventory.low_stock", actor: "system", details: "Fairy Lights Set below threshold (3 remaining)", created_at: daysAgo(2).toISOString() },
+  { id: "al1", action: "create", user_id: "demo-u1", entity_type: "booking", entity_id: "demo-b1", details: "Booking HUSHH-ACT001 created for The Firefly Villa", created_at: daysAgo(0).toISOString() },
+  { id: "al2", action: "create", user_id: "demo-u1", entity_type: "order", entity_id: "demo-o1", details: "Food order ₹1,250 placed for booking HUSHH-ACT001", created_at: daysAgo(0).toISOString() },
+  { id: "al3", action: "create", user_id: "demo-u2", entity_type: "review", entity_id: "demo-r1", details: "5-star review for Anniversary Garden", created_at: daysAgo(1).toISOString() },
+  { id: "al4", action: "update", user_id: null, entity_type: "curation", entity_id: "demo-c1", details: "Updated price for After Hours Chills", created_at: daysAgo(3).toISOString() },
+  { id: "al5", action: "view", user_id: null, entity_type: "inventory", entity_id: "demo-i1", details: "Fairy Lights Set below threshold (3 remaining)", created_at: daysAgo(2).toISOString() },
 ];
 
 // ─── Helper: build listing map from demo data ───
@@ -192,6 +192,12 @@ export const DEMO_AUDIT_LOGS = [
 export function buildDemoListingMap(): Map<string, string> {
   const map = new Map<string, string>();
   DEMO_LISTINGS.forEach(l => map.set(l.id, l.name));
+  return map;
+}
+
+export function buildDemoListingMapRich(): Map<string, { name: string; image: string; location: string; capacity: number; category: string }> {
+  const map = new Map<string, { name: string; image: string; location: string; capacity: number; category: string }>();
+  DEMO_LISTINGS.forEach(l => map.set(l.id, { name: l.name, image: l.image_urls?.[0] || "", location: l.location, capacity: l.capacity, category: l.category }));
   return map;
 }
 

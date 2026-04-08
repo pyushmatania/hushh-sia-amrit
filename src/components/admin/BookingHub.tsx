@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { DEMO_BOOKINGS, DEMO_LISTINGS, DEMO_PROFILES, buildDemoListingMap, buildDemoProfileMap } from "./admin-demo-data";
+import { DEMO_BOOKINGS, DEMO_LISTINGS, DEMO_PROFILES, buildDemoListingMapRich, buildDemoProfileMap } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -97,7 +97,7 @@ export default function BookingHub({
       };
     });
     if (data.length === 0) {
-      const demoLMap = buildDemoListingMap();
+      const demoLMap = buildDemoListingMapRich();
       const demoPMap = buildDemoProfileMap();
       setPropertyMap(demoLMap);
       setProfileMap(demoPMap);

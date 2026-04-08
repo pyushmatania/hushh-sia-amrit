@@ -126,6 +126,7 @@ export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenPro
       exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
       transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
       className="fixed inset-0 z-50 bg-mesh overflow-y-auto pb-24 md:pt-4"
+      style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}
     >
       {/* Search Header */}
       <div className="sticky top-0 z-10 glass px-5 pt-4 pb-3 md:px-8 lg:px-16 xl:px-24 2xl:px-32">

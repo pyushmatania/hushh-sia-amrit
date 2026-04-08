@@ -109,6 +109,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
       exit={{ opacity: 0, x: -40 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       className="fixed inset-0 z-30 bg-mesh overflow-y-auto pb-32"
+      style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}
     >
       {/* Header */}
       <div className="sticky top-0 z-10 glass px-5 md:px-8 py-3">

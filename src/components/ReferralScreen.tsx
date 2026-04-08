@@ -50,6 +50,7 @@ export default function ReferralScreen({ onBack }: ReferralScreenProps) {
       animate="animate"
       exit="exit"
       className="fixed inset-0 z-50 bg-background overflow-y-auto"
+      style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}
     >
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-md border-b border-border">

@@ -55,6 +55,7 @@ export default function BookingConfirmation({ property, slotId, guests, date, to
       initial={{ opacity: 0, filter: "blur(6px)" }}
       animate={{ opacity: 1, filter: "blur(0px)" }}
       className="fixed inset-0 z-30 bg-mesh overflow-y-auto"
+      style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}
     >
       <div className="flex flex-col items-center justify-start pt-20 px-6 md:max-w-xl md:mx-auto">
         {/* Success icon */}
