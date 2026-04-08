@@ -159,6 +159,7 @@ export default function LoyaltyScreen({ onBack }: LoyaltyScreenProps) {
       exit={{ opacity: 0, x: "100%", filter: "blur(4px)" }}
       transition={{ type: "spring", damping: 30, stiffness: 300, mass: 0.8 }}
       className="fixed inset-0 z-50 bg-background overflow-y-auto"
+      style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}
     >
       {/* ─── Header ─── */}
       <div className="sticky top-0 z-20 bg-background/80 backdrop-blur-xl border-b border-border/30">

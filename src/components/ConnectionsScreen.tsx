@@ -35,6 +35,7 @@ export default function ConnectionsScreen({ onBack }: ConnectionsScreenProps) {
       exit={{ opacity: 0, x: 40 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       className="fixed inset-0 z-50 bg-background overflow-y-auto"
+      style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}
     >
       {/* Header */}
       <div className="sticky top-0 z-10 backdrop-blur-xl bg-background/80 border-b border-border/50">

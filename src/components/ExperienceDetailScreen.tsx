@@ -85,7 +85,7 @@ export default function ExperienceDetailScreen({ pack, property, onBack, onBook 
       exit={{ opacity: 0, y: 30 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       className="fixed inset-0 z-50 bg-background overflow-y-auto overflow-x-hidden"
-      style={{ WebkitOverflowScrolling: "touch" }}
+      style={{ WebkitOverflowScrolling: "touch", overscrollBehavior: "contain" }}
     >
       {/* ── Hero Gallery ── */}
       <div ref={heroRef} className="relative w-full" style={{ height: "56vh", minHeight: "340px" }}>
