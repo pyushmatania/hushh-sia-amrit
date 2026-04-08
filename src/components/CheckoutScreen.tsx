@@ -176,6 +176,7 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
       className="fixed inset-0 z-30 bg-mesh overflow-y-auto pb-36 md:pb-8"
+      style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}
     >
       {/* Header with progress */}
       <div className="sticky top-0 z-10 glass px-5 py-3 space-y-2.5 md:pt-20">

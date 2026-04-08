@@ -470,6 +470,7 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
       exit={{ opacity: 0, x: -40 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       className="fixed inset-0 z-30 bg-mesh overflow-y-auto pb-28 md:pb-8"
+      style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}
     >
       {/* Hero — Mobile Cinematic */}
       <div className="relative overflow-hidden md:hidden">

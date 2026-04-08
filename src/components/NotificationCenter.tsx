@@ -125,9 +125,8 @@ export default function NotificationCenter({ onBack }: NotificationCenterProps) 
         animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
         exit={{ opacity: 0, x: "100%", filter: "blur(4px)" }}
         transition={{ type: "spring", damping: 30, stiffness: 300, mass: 0.8 }}
-        className="fixed inset-0 z-50 bg-background overflow-y-auto pb-8 md:hidden overscroll-none touch-pan-y"
-        style={{ WebkitOverflowScrolling: 'touch' }}
-        onTouchMove={(e) => e.stopPropagation()}
+        className="fixed inset-0 z-50 bg-background overflow-y-auto pb-8 md:hidden overscroll-none"
+        style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y', overscrollBehavior: 'contain' }}
       >
         {content}
       </motion.div>
