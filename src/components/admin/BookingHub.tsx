@@ -97,7 +97,7 @@ export default function BookingHub({
       };
     });
     if (data.length === 0) {
-      const demoLMap = buildDemoListingMap();
+      const demoLMap = buildDemoListingMapRich();
       const demoPMap = buildDemoProfileMap();
       setPropertyMap(demoLMap);
       setProfileMap(demoPMap);
