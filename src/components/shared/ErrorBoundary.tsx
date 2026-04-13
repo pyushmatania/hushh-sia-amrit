@@ -30,6 +30,12 @@ export default class ErrorBoundary extends Component<Props, State> {
   }
 
   handleReset = () => {
+    const { error } = this.state;
+    // If it's a dynamic import failure (stale cache), hard-reload to get fresh chunks
+    if (error?.message?.includes("dynamically imported module") || error?.message?.includes("Importing a module script failed")) {
+      window.location.reload();
+      return;
+    }
     this.setState({ hasError: false, error: null, errorInfo: null, copied: false });
     this.props.onReset?.();
   };
