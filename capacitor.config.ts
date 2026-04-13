@@ -50,7 +50,7 @@ const config: CapacitorConfig = {
       overlaysWebView: false,
     },
     Keyboard: {
-      resize: "body",
+      resize: "ionic",
       resizeOnFullScreen: true,
     },
     CapacitorHttp: {

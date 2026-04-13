@@ -219,7 +219,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
   }, [activeCategory, activeMood, properties, moodFilteredProperties, stayProperties, experienceProperties, serviceProperties, curationAsProperties, filteredProperties]);
 
   return (
-    <div ref={contentRef} key={refreshKey} className="pb-24 md:pb-8 min-h-screen md:h-[calc(100vh-4rem)] md:overflow-y-auto overflow-x-hidden bg-mesh" style={{ overscrollBehaviorX: "none", WebkitOverflowScrolling: "touch", overscrollBehaviorY: "contain" }}>
+    <div ref={contentRef} key={refreshKey} className="pb-24 md:pb-8 min-h-screen md:h-[calc(100vh-4rem)] md:overflow-y-auto overflow-x-hidden bg-mesh" style={{ overscrollBehaviorX: "none", WebkitOverflowScrolling: "touch" }}>
 
       {/* Header */}
       <div className="px-5 pt-5 pb-2 flex items-center justify-between md:hidden">
@@ -274,7 +274,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                 homeSections.push({ key: "packages", order: getSortOrder("packages"), node: (
                   <>
                     <SectionTitle title="BOOK YOUR EXPERIENCE" />
-                    <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-6" style={{ touchAction: "pan-x", WebkitOverflowScrolling: "touch", overscrollBehaviorX: "contain" }}>
+                    <div className="flex gap-3 overflow-x-auto hide-scrollbar px-4 md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 md:overflow-visible md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:gap-6" style={{ touchAction: "pan-x pan-y", WebkitOverflowScrolling: "touch", overscrollBehaviorX: "contain" }}>
                       {packages.map((pkg, i) => (
                         <PackageCard key={pkg.id} pkg={pkg} index={i} properties={properties} onPropertyTap={onPropertyTap} />
                       ))}
@@ -297,7 +297,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
                   <LazySection minHeight="400px" rootMargin="500px">
               <SectionTitle title="CURATED PACKS" />
                     {isMobile ? (
-                      <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar px-4 pb-2" style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}>
+                      <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar px-4 pb-2" style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none", touchAction: "pan-x pan-y", overscrollBehaviorX: "contain" }}>
                         {filteredPacks.slice(0, 12).map((pack, i) => (
                           <div key={pack.id} className="snap-start shrink-0 w-[85vw]">
                             <CuratedPackListing pack={pack} index={i} onTap={handlePackTap} />
@@ -675,7 +675,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
 )}
 
               <SectionTitle title="EXPERIENCE PACKS" />
-              <div className={isMobile ? "flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar px-4 pb-2" : "space-y-5 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0 md:px-8 lg:px-16 xl:px-24 2xl:px-32"} style={isMobile ? { WebkitOverflowScrolling: "touch", scrollbarWidth: "none" } : undefined}>
+              <div className={isMobile ? "flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar px-4 pb-2" : "space-y-5 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0 md:px-8 lg:px-16 xl:px-24 2xl:px-32"} style={isMobile ? { WebkitOverflowScrolling: "touch", scrollbarWidth: "none", touchAction: "pan-x pan-y", overscrollBehaviorX: "contain" } : undefined}>
                 {experiencePacks.slice(0, isMobile ? 6 : experiencePacks.length).map((pack, i) => (
                   isMobile ? (
                     <div key={pack.id} className="snap-start shrink-0 w-[85vw]">
@@ -706,7 +706,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
             <LazySection minHeight="300px" rootMargin="300px">
               <SectionTitle title="POPULAR CURATIONS" />
               {isMobile ? (
-                <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar px-4 pb-2" style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}>
+                <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar px-4 pb-2" style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none", touchAction: "pan-x pan-y", overscrollBehaviorX: "contain" }}>
                   {curatedCombos.slice(0, 10).map((combo) => (
                     <div key={combo.id} className="snap-start shrink-0 w-[70vw]">
                       <div className="relative aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer active:scale-[0.97] transition-transform" onClick={() => onPropertyTap(comboToProperty(combo))}>
@@ -753,7 +753,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
           {activeCategory === "home" && experiencePacks.length > 0 && (
             <LazySection minHeight="400px" rootMargin="300px">
               <SectionTitle title="CURATED EXPERIENCES" />
-              <div className={isMobile ? "flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar px-4 pb-2" : "space-y-5 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0 md:px-8 lg:px-16 xl:px-24 2xl:px-32"} style={isMobile ? { WebkitOverflowScrolling: "touch", scrollbarWidth: "none" } : undefined}>
+              <div className={isMobile ? "flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar px-4 pb-2" : "space-y-5 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0 md:px-8 lg:px-16 xl:px-24 2xl:px-32"} style={isMobile ? { WebkitOverflowScrolling: "touch", scrollbarWidth: "none", touchAction: "pan-x pan-y", overscrollBehaviorX: "contain" } : undefined}>
                 {experiencePacks.slice(0, 12).map((pack, i) => (
                   isMobile ? (
                     <div key={pack.id} className="snap-start shrink-0 w-[85vw]">

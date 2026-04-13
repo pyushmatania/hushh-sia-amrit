@@ -545,9 +545,10 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
             key={imgIndex}
             src={heroImages[imgIndex] || heroImages[0]}
             alt={property.name}
-            className="w-full h-full object-cover touch-pan-y"
-            style={{ x: heroX, opacity: heroOpacity }}
+            className="w-full h-full object-cover"
+            style={{ x: heroX, opacity: heroOpacity, touchAction: "pan-y" }}
             drag="x"
+            dragDirectionLock
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.15}
             onDragEnd={handleHeroDragEnd}

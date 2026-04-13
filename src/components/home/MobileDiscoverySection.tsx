@@ -245,7 +245,7 @@ export default function MobileDiscoverySection({
       {/* 1. Vertical video cards — swipeable row */}
       <div
         className="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-2"
-        style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}
+        style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none", touchAction: "pan-x pan-y", overscrollBehaviorX: "contain" }}
       >
         {videoCards.map((p, i) => (
           <VerticalVideoCard

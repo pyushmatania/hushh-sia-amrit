@@ -489,7 +489,6 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
   }, [clearTimers, doReveal]);
 
   const onTouchMoveHandler = useCallback((e: React.TouchEvent) => {
-    e.stopPropagation();
     const touch = e.touches[0];
     const deltaX = touch.clientX - touchStartXRef.current;
     const deltaY = touchStartYRef.current - touch.clientY;
@@ -502,9 +501,12 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
         setChargeProgress(0);
         setIsActive(false);
       }
+      // Don't stopPropagation/preventDefault when not revealed — allow vertical scroll
       return;
     }
 
+    // Only block scroll when the card is actively revealed (modal state)
+    e.stopPropagation();
     e.preventDefault();
     if (deltaY > 70 && !hasSwipedRef.current) {
       hasSwipedRef.current = true;
@@ -595,16 +597,15 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
   useEffect(() => {
     if (typeof document === "undefined" || typeof window === "undefined") return;
     const { body } = document;
-    const prevOverflow = body.style.overflow;
-    const prevTouchAction = body.style.touchAction;
     const shouldLockBody = revealed && window.matchMedia("(max-width: 767px)").matches;
     if (shouldLockBody) {
       body.style.overflow = "hidden";
-      body.style.touchAction = "none";
+      // Don't set touchAction to "none" on body — it kills scroll permanently on Android
+      // if the cleanup fails. Instead, scope touch blocking to the card element only.
     }
     return () => {
-      body.style.overflow = prevOverflow;
-      body.style.touchAction = prevTouchAction;
+      // Always restore body scroll — ensures no permanent lock on Android
+      body.style.overflow = "";
     };
   }, [revealed]);
 

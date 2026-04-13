@@ -182,7 +182,7 @@ export default function ExperienceDetailScreen({ pack, property, onBack, onBook 
       <div className="relative z-10 px-5 -mt-1 pb-32 space-y-5">
 
         {/* Quick info chips */}
-        <div className="flex gap-2 overflow-x-auto hide-scrollbar -mx-5 px-5 pt-1" style={{ touchAction: "pan-x" }}>
+        <div className="flex gap-2 overflow-x-auto hide-scrollbar -mx-5 px-5 pt-1" style={{ touchAction: "pan-x pan-y", overscrollBehaviorX: "contain" }}>
           {[
             { icon: "🕐", text: pack.slot },
             { icon: "📦", text: `${pack.includes.length} items included` },
