@@ -257,7 +257,7 @@ export default function Index() {
   const lazyFallback = <ScreenSkeleton />;
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
+    <div className="min-h-screen bg-background" style={{ overflowX: "clip" }}>
       <DesktopTopNav
         active={activeTab}
         onChange={(tab) => {

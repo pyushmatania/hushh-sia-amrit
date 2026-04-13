@@ -232,20 +232,26 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
     const absY = Math.abs(dy);
 
     if (touchRef.current.mode === "pending") {
-      if (absX < 4 && absY < 4) return;
+      if (absX < 6 && absY < 6) return;
 
-      // Treat diagonal movement as horizontal swipe (more forgiving)
-      // Only treat as vertical if Y is clearly dominant (>2x horizontal)
-      if (absY > 10 && absY > absX * 2.5) {
+      // On Android, vertical scroll must be prioritized. Only claim horizontal
+      // when the horizontal movement is clearly dominant.
+      if (absY > 8 && absY > absX * 1.2) {
         touchRef.current.mode = "vertical";
         setIsDragging(false);
         setDragX(0);
         return;
       }
 
-      if (absX >= 6 || (absX >= 4 && absX >= absY * 0.4)) {
+      if (absX >= 10 && absX > absY * 1.5) {
         touchRef.current.mode = "horizontal";
         setIsDragging(true);
+      } else if (absY > absX) {
+        // Default to vertical on ambiguous gestures — preserves page scroll
+        touchRef.current.mode = "vertical";
+        setIsDragging(false);
+        setDragX(0);
+        return;
       } else {
         return;
       }
