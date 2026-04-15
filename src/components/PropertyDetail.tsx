@@ -792,6 +792,7 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
         <div className="border-b border-border my-5" />
 
         {/* Date picker — Calendar with range support for stays */}
+        <div ref={bookingSectionRef} />
         <h3 className="text-lg font-semibold text-foreground mb-1 flex items-center gap-2">
           <CalendarIcon size={18} className="text-primary" /> {isStay ? "Select dates" : "Select a date"}
           <span className="text-[10px] font-medium text-destructive ml-1">*required</span>
