@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { experiencePacks as fallbackPacks, type ExperiencePack } from "@/components/home/CuratedPackCard";
 import { useDataMode } from "@/hooks/use-data-mode";
@@ -10,7 +10,7 @@ export function useCurations() {
 
   useEffect(() => {
     const load = async () => {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("curations")
         .select("*")
         .eq("active", true)
@@ -35,12 +35,10 @@ export function useCurations() {
             imageUrls: row.image_urls ?? undefined,
           }))
         );
-      }
-      } else if (!isRealMode) {
-        // Keep fallbackPacks only in demo mode
-      } else {
+      } else if (isRealMode) {
         setPacks([]);
       }
+      // In demo mode with empty DB, keep fallbackPacks
       setLoading(false);
     };
     load();
