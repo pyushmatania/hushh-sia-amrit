@@ -195,10 +195,19 @@ export default function AdminStaffManagement() {
     return { attendanceRate, totalHours, overtimeHours, mealsConsumed, presentDays, totalDays: last30.length, lateArrivals, compositeScore, grade, punctualityScore };
   };
 
+  // Check if operating on demo data (non-UUID ids)
+  const isDemoRecord = (id?: string) => id && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+
   // CRUD
   const handleSave = async () => {
     if (!editingStaff?.name) { toast.error("Name is required"); return; }
-    if (editingStaff.id) {
+    // If editing a demo record, treat as new insert (strip fake id)
+    if (editingStaff.id && isDemoRecord(editingStaff.id)) {
+      const { id, created_at, ...rest } = editingStaff as any;
+      const { error } = await supabase.from("staff_members").insert(rest as any);
+      if (error) { toast.error(error.message); return; }
+      toast.success("Staff added from template");
+    } else if (editingStaff.id) {
       const { error } = await supabase.from("staff_members")
         .update({ ...editingStaff, updated_at: new Date().toISOString() } as any)
         .eq("id", editingStaff.id);
@@ -214,6 +223,15 @@ export default function AdminStaffManagement() {
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
+    // Demo records only exist in local state — just remove from UI
+    if (isDemoRecord(deleteTarget.id)) {
+      setStaff(prev => prev.filter(s => s.id !== deleteTarget.id));
+      toast.success("Demo staff removed");
+      setDeleteTarget(null);
+      return;
+    }
+    // Clean up related records first
+    await supabase.from("staff_leaves").delete().eq("staff_id", deleteTarget.id);
     await supabase.from("staff_attendance").delete().eq("staff_id", deleteTarget.id);
     await supabase.from("staff_salary_payments").delete().eq("staff_id", deleteTarget.id);
     const { error } = await supabase.from("staff_members").delete().eq("id", deleteTarget.id);
@@ -222,6 +240,7 @@ export default function AdminStaffManagement() {
   };
 
   const markAttendance = async (staffId: string, status: string, mealProvided: boolean, overtime = 0) => {
+    if (isDemoRecord(staffId)) { toast.error("Cannot mark attendance for demo staff — add them as real staff first"); return; }
     const existing = todayAttendance.find(a => a.staff_id === staffId);
     const payload = {
       status, meal_provided: mealProvided,
@@ -298,6 +317,7 @@ export default function AdminStaffManagement() {
     if (!newLeave.staff_id || !newLeave.start_date || !newLeave.end_date) {
       toast.error("Please fill all required fields"); return;
     }
+    if (isDemoRecord(newLeave.staff_id)) { toast.error("Cannot submit leave for demo staff"); return; }
     const start = new Date(newLeave.start_date);
     const end = new Date(newLeave.end_date);
     if (end < start) { toast.error("End date must be after start date"); return; }
