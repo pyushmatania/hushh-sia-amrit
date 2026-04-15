@@ -179,14 +179,16 @@ function curationsToCombo(row: any, staticMatch: CuratedCombo | undefined, prope
 }
 
 export function PropertiesProvider({ children }: { children: ReactNode }) {
-  const [properties, setProperties] = useState<Property[]>(staticProperties);
-  const [packages, setPackages] = useState<ExperiencePackage[]>(staticPackages);
-  const [addons, setAddons] = useState<Record<string, Addon[]>>(staticAddons);
-  const [curatedCombos, setCuratedCombos] = useState<CuratedCombo[]>(staticCombos);
+  const { isRealMode } = useDataMode();
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [packages, setPackages] = useState<ExperiencePackage[]>([]);
+  const [addons, setAddons] = useState<Record<string, Addon[]>>({});
+  const [curatedCombos, setCuratedCombos] = useState<CuratedCombo[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const load = useCallback(async () => {
+    setLoading(true);
     const [listingsRes, inventoryRes, curationsRes, packagesRes] = await Promise.all([
       supabase.from("host_listings").select("*").eq("status", "published").order("sort_order", { ascending: true }).order("created_at", { ascending: true }),
       supabase.from("inventory").select("*").order("sort_order", { ascending: true }).order("category").order("name"),
@@ -194,7 +196,7 @@ export function PropertiesProvider({ children }: { children: ReactNode }) {
       supabase.from("experience_packages").select("*").eq("active", true).order("sort_order", { ascending: true }),
     ]);
 
-    const realMode = isRealModeSnapshot();
+    const realMode = isRealMode;
 
     // Process listings
     if (!listingsRes.error && listingsRes.data && listingsRes.data.length > 0) {
@@ -237,7 +239,6 @@ export function PropertiesProvider({ children }: { children: ReactNode }) {
     }
 
     // Process curations → curatedCombos
-    // Build a property image map from listings for curations that don't match static combos
     const listingImageMap = new Map<string, string>();
     if (listingsRes.data) {
       for (const row of listingsRes.data) {
@@ -276,7 +277,7 @@ export function PropertiesProvider({ children }: { children: ReactNode }) {
     }
 
     setLoading(false);
-  }, []);
+  }, [isRealMode]);
 
   useEffect(() => {
     load();
