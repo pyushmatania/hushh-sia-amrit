@@ -543,7 +543,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
             onClose={() => setQrBookingId(null)}
             bookingId={qrBookingId || ""}
             propertyName={qrProperty?.name}
-            propertyImage={qrProperty?.images[0]}
+            propertyImage={qrProperty?.images?.[0]}
             propertyLocation={qrProperty?.location}
             date={qrBooking?.date}
             slotLabel={slot?.label}
