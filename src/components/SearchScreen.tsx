@@ -41,6 +41,7 @@ const sortLabels: Record<SortOption, string> = {
 };
 
 export default function SearchScreen({ onPropertyTap, onClose }: SearchScreenProps) {
+  const { properties } = usePropertiesData();
   const [query, setQuery] = useState("");
   const { query: dbQuery, setQuery: setDbQuery, results: dbResults, loading: dbLoading } = useSearch();
   const [showFilters, setShowFilters] = useState(false);

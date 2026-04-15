@@ -82,6 +82,7 @@ function createPhotoIcon(imageUrl: string, isSelected: boolean, price: number) {
 }
 
 export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenProps) {
+  const { properties } = usePropertiesData();
   const { resolvedTheme } = useTheme();
   const [selectedPin, setSelectedPin] = useState<Property | null>(null);
   const [tileStyle, setTileStyle] = useState<keyof typeof TILE_LAYERS>(resolvedTheme === "dark" ? "dark" : "light");
