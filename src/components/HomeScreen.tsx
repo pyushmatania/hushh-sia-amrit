@@ -575,6 +575,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               </>
               )}
             </>
+            )
           )}
 
           {/* ═══════ SERVICES TAB ═══════ */}
