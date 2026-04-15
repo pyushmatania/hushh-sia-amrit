@@ -60,6 +60,7 @@ interface HomeScreenProps {
 }
 
 export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap, onMapTap, onNotificationTap, wishlist = [], onToggleWishlist }: HomeScreenProps) {
+  const { user } = useAuth();
   const { unreadCount: notifCount } = useNotifications();
   const { properties, packages, curatedCombos } = usePropertiesData();
   const { packs: experiencePacks } = useCurations();
