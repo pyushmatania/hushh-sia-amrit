@@ -16,6 +16,7 @@ import { getListingThumbnail } from "@/lib/listing-thumbnails";
 import { useAuth } from "@/hooks/use-auth";
 import { DEMO_PROFILES, DEMO_BOOKINGS, DEMO_ORDERS, DEMO_ORDER_ITEMS, DEMO_REVIEWS, buildDemoListingMap } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 
 /* ─── Types ─── */
 interface BookingRecord {
@@ -925,6 +926,7 @@ export default function AdminClients({ initialUserId, onContextConsumed, onBack 
   const [listingMap, setListingMap] = useState<Map<string, string>>(new Map());
   const [listingInfoMap, setListingInfoMap] = useState<Map<string, ListingInfo>>(new Map());
   const [isDemo, setIsDemo] = useState(false);
+  const { isDemoMode } = useDataMode();
 
   useEffect(() => {
     if (initialUserId && !loading && clients.length > 0) {
@@ -1004,7 +1006,7 @@ export default function AdminClients({ initialUserId, onContextConsumed, onBack 
 
       /* ── Demo-data fallback when Supabase returns nothing ── */
       const rawProfiles = profilesRes.data ?? [];
-      if (rawProfiles.length === 0) {
+      if (rawProfiles.length === 0 && isDemoMode) {
         const demoLMap = buildDemoListingMap();
         setListingMap(demoLMap);
         const demoLInfoMap = new Map<string, ListingInfo>();

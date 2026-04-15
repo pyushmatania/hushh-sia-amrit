@@ -4,6 +4,7 @@ import { Trophy, Star, Target, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { DEMO_BOOKINGS, DEMO_PROFILES } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 
 interface Milestone {
   id: string; icon: string; title: string; description: string;
@@ -34,6 +35,7 @@ export default function AdminAchievements() {
   const [loading, setLoading] = useState(true);
   const [isDemo, setIsDemo] = useState(false);
   const [celebrateId, setCelebrateId] = useState<string | null>(null);
+  const { isDemoMode } = useDataMode();
 
   useEffect(() => {
     const load = async () => {
@@ -43,7 +45,7 @@ export default function AdminAchievements() {
       ]);
       const bookingsRaw = bookingsRes.data ?? [];
       const profilesRaw = profilesRes.data ?? [];
-      const usingDemo = bookingsRaw.length === 0 && profilesRaw.length === 0;
+      const usingDemo = bookingsRaw.length === 0 && profilesRaw.length === 0 && isDemoMode;
       setIsDemo(usingDemo);
 
       const bookings = usingDemo ? DEMO_BOOKINGS.filter(b => b.status !== "cancelled") : bookingsRaw;

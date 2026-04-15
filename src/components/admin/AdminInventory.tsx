@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { DEMO_INVENTORY } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 import { motion, AnimatePresence } from "framer-motion";
 import { Package, Search, Plus, Trash2, Pencil, X, AlertTriangle, Eye, GripVertical, Sparkles, CheckSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -51,6 +52,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [bulkMode, setBulkMode] = useState(false);
   const [isDemo, setIsDemo] = useState(false);
+  const { getDemoFallback } = useDataMode();
 
   const toggleSelect = (id: string) => {
     setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
@@ -78,8 +80,9 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
           };
         });
         if (rows.length === 0) {
-          setItems(DEMO_INVENTORY as InventoryItem[]);
-          setIsDemo(true);
+          const fallback = getDemoFallback(DEMO_INVENTORY as InventoryItem[]);
+          setItems(fallback);
+          setIsDemo(fallback.length > 0);
         } else {
           setItems(rows);
           setIsDemo(false);

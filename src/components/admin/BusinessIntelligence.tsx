@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { DEMO_BOOKINGS, DEMO_LISTINGS } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, Cell } from "recharts";
 
 /* ─── Types ─── */
@@ -110,6 +111,7 @@ export default function BusinessIntelligence({ onNavigate }: { onNavigate?: (pag
   const [loadingPricing, setLoadingPricing] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [isDemo, setIsDemo] = useState(false);
+  const { isDemoMode } = useDataMode();
   const [actionResults, setActionResults] = useState<string[]>([]);
   const [actions, setActions] = useState<AutoAction[]>([
     { id: "low-stock", icon: Package, title: "Check Low Stock", description: "Scan inventory & auto-disable out-of-stock items", color: "text-amber-500", bg: "bg-amber-500/10", running: false },
@@ -130,7 +132,7 @@ export default function BusinessIntelligence({ onNavigate }: { onNavigate?: (pag
     }
     // Demo fallback: if no real alerts, populate with realistic demo alerts
     setAlerts(prev => {
-      if (prev.length === 0 || (prev.length === 1 && prev[0].id === "fallback")) {
+      if ((prev.length === 0 || (prev.length === 1 && prev[0].id === "fallback")) && isDemoMode) {
         setIsDemo(true);
         setPredictions({
           peakDay: "Saturday", peakDayBookings: 14, slowDay: "Tuesday",
@@ -155,13 +157,15 @@ export default function BusinessIntelligence({ onNavigate }: { onNavigate?: (pag
     ]);
     let bookings = bookingsRes.data ?? [];
     let usingDemoListings = false;
-    if (!bookings.length) {
-      // Use demo data as fallback
+    if (!bookings.length && isDemoMode) {
       bookings = DEMO_BOOKINGS.filter(b => b.status !== "cancelled").map(b => ({
         slot: b.slot, total: b.total, date: b.date, created_at: b.created_at, status: b.status, property_id: b.property_id,
       }));
       usingDemoListings = true;
       setIsDemo(true);
+    } else if (!bookings.length) {
+      setLoadingPricing(false);
+      return;
     }
 
     const now = Date.now();

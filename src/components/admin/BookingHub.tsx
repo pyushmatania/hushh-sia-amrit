@@ -13,6 +13,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { DEMO_BOOKINGS, DEMO_LISTINGS, DEMO_PROFILES, buildDemoListingMapRich, buildDemoProfileMap } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -70,6 +71,7 @@ export default function BookingHub({
   const [propertyMap, setPropertyMap] = useState<Map<string, { name: string; image: string; location: string; capacity: number; category: string }>>(new Map());
   const [profileMap, setProfileMap] = useState<Map<string, string>>(new Map());
   const [isDemo, setIsDemo] = useState(false);
+  const { isDemoMode } = useDataMode();
 
   const load = useCallback(async () => {
     const [bookingsRes, listingsRes, profilesRes] = await Promise.all([
@@ -96,7 +98,7 @@ export default function BookingHub({
         userName: pMap.get(b.user_id) || "Guest",
       };
     });
-    if (data.length === 0) {
+    if (data.length === 0 && isDemoMode) {
       const demoLMap = buildDemoListingMapRich();
       const demoPMap = buildDemoProfileMap();
       setPropertyMap(demoLMap);

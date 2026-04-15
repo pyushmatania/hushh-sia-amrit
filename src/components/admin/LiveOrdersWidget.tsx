@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getListingThumbnail } from "@/lib/listing-thumbnails";
 import { DEMO_ORDERS, DEMO_ORDER_ITEMS, DEMO_LISTINGS, DEMO_PROFILES } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import OrderNotes from "@/components/shared/OrderNotes";
@@ -34,6 +35,7 @@ export default function LiveOrdersWidget({ onViewAll }: { onViewAll: () => void 
   const [orders, setOrders] = useState<LiveOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDemo, setIsDemo] = useState(false);
+  const { isDemoMode } = useDataMode();
   const [selectedOrder, setSelectedOrder] = useState<LiveOrder | null>(null);
   const [detailTab, setDetailTab] = useState<"details" | "history" | "timeline">("details");
   const [clientHistory, setClientHistory] = useState<ClientHistory | null>(null);
@@ -43,8 +45,7 @@ export default function LiveOrdersWidget({ onViewAll }: { onViewAll: () => void 
   const loadOrders = async () => {
     const { data: ordersData } = await supabase.from("orders").select("*")
       .in("status", ["pending", "preparing"]).order("created_at", { ascending: false }).limit(5);
-    if (!ordersData?.length) {
-      // Fallback to demo data
+    if (!ordersData?.length && isDemoMode) {
       const demoActive = DEMO_ORDERS.filter(o => o.status === "pending" || o.status === "preparing");
       const demoLive: LiveOrder[] = demoActive.map(o => {
         const listing = DEMO_LISTINGS.find(l => l.id === o.property_id);
@@ -61,6 +62,11 @@ export default function LiveOrdersWidget({ onViewAll }: { onViewAll: () => void 
       });
       setIsDemo(true);
       setOrders(demoLive);
+      setLoading(false);
+      return;
+    } else if (!ordersData?.length) {
+      setOrders([]);
+      setIsDemo(false);
       setLoading(false);
       return;
     }

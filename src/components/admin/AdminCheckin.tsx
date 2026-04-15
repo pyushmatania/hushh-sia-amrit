@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getListingThumbnail } from "@/lib/listing-thumbnails";
 import { DEMO_BOOKINGS, DEMO_LISTINGS, DEMO_PROFILES } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -34,6 +35,7 @@ export default function AdminCheckin() {
   const [entries, setEntries] = useState<GuestCheckin[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDemo, setIsDemo] = useState(false);
+  const { isDemoMode } = useDataMode();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "checked-in" | "expected" | "unverified">("all");
   const [qrSheet, setQrSheet] = useState(false);
@@ -65,7 +67,7 @@ export default function AdminCheckin() {
     const listingsRaw = listingsRes.data ?? [];
     const verificationsRaw = verificationsRes.data ?? [];
 
-    const usingDemo = bookingsRaw.length === 0;
+    const usingDemo = bookingsRaw.length === 0 && isDemoMode;
     setIsDemo(usingDemo);
 
     const bookingsData = usingDemo ? DEMO_BOOKINGS : bookingsRaw;

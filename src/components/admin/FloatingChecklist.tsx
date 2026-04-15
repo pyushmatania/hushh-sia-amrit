@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { DEMO_ORDERS, DEMO_BOOKINGS, DEMO_LISTINGS, DEMO_ORDER_ITEMS, buildDemoListingMap, buildDemoProfileMap } from "./admin-demo-data";
+import { useDataMode } from "@/hooks/use-data-mode";
 
 interface PendingItem {
   id: string;
@@ -29,6 +30,7 @@ export default function FloatingChecklist() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<FilterType>("all");
+  const { isDemoMode } = useDataMode();
 
   const load = async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true);
@@ -137,7 +139,7 @@ export default function FloatingChecklist() {
     });
 
     // Fallback to demo data when Supabase returns nothing
-    if (pending.length === 0) {
+    if (pending.length === 0 && isDemoMode) {
       const demoListingMap = buildDemoListingMap();
       const demoProfileMap = buildDemoProfileMap();
 

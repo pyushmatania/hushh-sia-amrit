@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import OrderNotes from "@/components/shared/OrderNotes";
 import { DEMO_ORDERS, DEMO_ORDER_ITEMS, DEMO_LISTINGS, DEMO_PROFILES, buildDemoListingMap, buildDemoProfileMap } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 
 interface Order {
   id: string; user_id: string; property_id: string; booking_id: string | null;
@@ -58,6 +59,7 @@ export default function AdminOrders() {
   const [clientHistory, setClientHistory] = useState<ClientHistory | null>(null);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [isDemo, setIsDemo] = useState(false);
+  const { isDemoMode } = useDataMode();
   const [listingMap] = useState(() => new Map<string, { name: string; imageUrls: string[] }>());
 
   const load = async () => {
@@ -75,7 +77,7 @@ export default function AdminOrders() {
     (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, { name: l.name, imageUrls: l.image_urls || [] }));
 
     // Demo data fallback when Supabase returns no orders
-    if (ordersRes.data.length === 0) {
+    if (ordersRes.data.length === 0 && isDemoMode) {
       DEMO_LISTINGS.forEach(l => listingMap.set(l.id, { name: l.name, imageUrls: l.image_urls || [] }));
       const demoProfileMap = buildDemoProfileMap();
       const demoItemMap = new Map<string, any[]>();
@@ -89,6 +91,11 @@ export default function AdminOrders() {
         };
       }));
       setIsDemo(true);
+      setLoading(false);
+      return;
+    } else if (ordersRes.data.length === 0) {
+      setOrders([]);
+      setIsDemo(false);
       setLoading(false);
       return;
     }

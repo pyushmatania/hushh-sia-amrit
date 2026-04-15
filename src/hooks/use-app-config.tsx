@@ -152,3 +152,8 @@ export function useAppConfig(): AppConfig {
 
   return config;
 }
+
+/** Non-hook snapshot of current config (uses cache or defaults) */
+export function getAppConfigSnapshot(): AppConfig {
+  return cachedConfig || defaults;
+}

@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getListingThumbnail } from "@/lib/listing-thumbnails";
 import { DEMO_BOOKINGS, DEMO_ORDERS, DEMO_ORDER_ITEMS, DEMO_LISTINGS, DEMO_PROFILES } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip,
   PieChart, Pie, Cell, AreaChart, Area, CartesianGrid, LineChart, Line
@@ -35,6 +36,7 @@ export default function AdminAnalytics() {
   });
   const [propertyMap, setPropertyMap] = useState(new Map<string, PropertyInfo>());
   const [isDemo, setIsDemo] = useState(false);
+  const { isDemoMode } = useDataMode();
 
   useEffect(() => {
     const load = async () => {
@@ -46,13 +48,13 @@ export default function AdminAnalytics() {
         supabase.from("profiles").select("user_id, tier, loyalty_points"),
       ]);
 
-      const hasRealData = (bookingsRes.data && bookingsRes.data.length > 0);
-      const bookings = hasRealData ? bookingsRes.data! : DEMO_BOOKINGS as any[];
-      const orders = hasRealData ? (ordersRes.data || []) : DEMO_ORDERS as any[];
-      const items = hasRealData ? (itemsRes.data || []) : DEMO_ORDER_ITEMS as any[];
-      const listings = hasRealData ? (listingsRes.data || []) : DEMO_LISTINGS as any[];
-      const profiles = hasRealData ? (profilesRes.data || []) : DEMO_PROFILES as any[];
-      if (!hasRealData) setIsDemo(true);
+      const hasRealData = (bookingsRes.data && bookingsRes.data.length > 0) || !isDemoMode;
+      const bookings = (bookingsRes.data && bookingsRes.data.length > 0) ? bookingsRes.data! : isDemoMode ? DEMO_BOOKINGS as any[] : [];
+      const orders = (bookingsRes.data && bookingsRes.data.length > 0) ? (ordersRes.data || []) : isDemoMode ? DEMO_ORDERS as any[] : [];
+      const items = (bookingsRes.data && bookingsRes.data.length > 0) ? (itemsRes.data || []) : isDemoMode ? DEMO_ORDER_ITEMS as any[] : [];
+      const listings = (bookingsRes.data && bookingsRes.data.length > 0) ? (listingsRes.data || []) : isDemoMode ? DEMO_LISTINGS as any[] : [];
+      const profiles = (bookingsRes.data && bookingsRes.data.length > 0) ? (profilesRes.data || []) : isDemoMode ? DEMO_PROFILES as any[] : [];
+      if (!hasRealData && isDemoMode) setIsDemo(true);
 
       // Property map
       const pMap = new Map<string, PropertyInfo>();

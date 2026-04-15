@@ -7,6 +7,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { DEMO_PROFILES, DEMO_REFERRAL_CODES, DEMO_LOYALTY_TRANSACTIONS } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 
 interface TierStats { tier: string; count: number; }
@@ -23,6 +24,7 @@ export default function AdminLoyaltyReferrals() {
   const [loyaltyOverview, setLoyaltyOverview] = useState<LoyaltyOverview | null>(null);
   const [loading, setLoading] = useState(true);
   const [isDemo, setIsDemo] = useState(false);
+  const { isDemoMode } = useDataMode();
 
   useEffect(() => {
     const load = async () => {
@@ -37,7 +39,7 @@ export default function AdminLoyaltyReferrals() {
       const uses = referralUsesRes.data ?? [];
       let transactions = loyaltyRes.data ?? [];
 
-      if (profiles.length === 0) {
+      if (profiles.length === 0 && isDemoMode) {
         profiles = DEMO_PROFILES as any;
         codes = DEMO_REFERRAL_CODES as any;
         transactions = DEMO_LOYALTY_TRANSACTIONS as any;

@@ -18,6 +18,7 @@ import { format } from "date-fns";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
 import { DEMO_EXPENSES, DEMO_BOOKINGS, DEMO_ORDERS } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip,
   BarChart, Bar, PieChart as RePieChart, Pie, Cell
@@ -82,6 +83,7 @@ export default function FinanceHub() {
   const [editingBudget, setEditingBudget] = useState<Partial<BudgetAllocation> | null>(null);
   const [revPeriod, setRevPeriod] = useState<"week" | "month" | "all">("month");
   const [isDemo, setIsDemo] = useState(false);
+  const { isDemoMode } = useDataMode();
 
   const loadData = async () => {
     setLoading(true);
@@ -94,7 +96,7 @@ export default function FinanceHub() {
     const expensesData = (e.data as any[]) ?? [];
     const bookingsData = (bk.data as any[]) ?? [];
     const ordersData = (o.data as any[]) ?? [];
-    if (expensesData.length === 0 && bookingsData.length === 0) {
+    if (expensesData.length === 0 && bookingsData.length === 0 && isDemoMode) {
       setExpenses(DEMO_EXPENSES as any);
       setBookings(DEMO_BOOKINGS as any);
       setOrders(DEMO_ORDERS as any);

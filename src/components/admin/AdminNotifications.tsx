@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { DEMO_NOTIFICATIONS } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 
 interface AdminNotification {
   id: string;
@@ -31,6 +32,7 @@ export default function AdminNotifications() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "unread" | "booking" | "order" | "alert">("all");
   const [isDemo, setIsDemo] = useState(false);
+  const { getDemoFallback } = useDataMode();
 
   useEffect(() => {
     loadNotifications();
@@ -42,8 +44,9 @@ export default function AdminNotifications() {
     const { data } = await supabase.from("notifications").select("*").order("created_at", { ascending: false }).limit(100);
     const notifications = data ?? [];
     if (notifications.length === 0) {
-      setNotifications(DEMO_NOTIFICATIONS as AdminNotification[]);
-      setIsDemo(true);
+      const fallback = getDemoFallback(DEMO_NOTIFICATIONS as AdminNotification[]);
+      setNotifications(fallback);
+      setIsDemo(fallback.length > 0);
     } else {
       setNotifications(notifications);
     }

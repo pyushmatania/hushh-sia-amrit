@@ -1,4 +1,4 @@
-import { useAppConfig } from "./use-app-config";
+import { useAppConfig, getAppConfigSnapshot } from "./use-app-config";
 
 /**
  * Returns whether the app should show demo data.
@@ -18,4 +18,10 @@ export function useDataMode() {
     /** Helper: returns demo data only if in demo mode, otherwise empty array */
     getDemoFallback: <T,>(demoData: T[]): T[] => isDemoMode ? demoData : [],
   };
+}
+
+/** Non-hook helper: reads the current data_mode from the config snapshot cache */
+export function isRealModeSnapshot(): boolean {
+  const snap = getAppConfigSnapshot();
+  return snap.data_mode === "real";
 }

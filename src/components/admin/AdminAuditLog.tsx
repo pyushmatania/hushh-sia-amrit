@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { DEMO_AUDIT_LOGS } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 
 interface AuditLog {
   id: string; user_id: string | null; action: string;
@@ -29,14 +30,16 @@ export default function AdminAuditLog() {
   const [loading, setLoading] = useState(true);
   const [filterAction, setFilterAction] = useState("all");
   const [isDemo, setIsDemo] = useState(false);
+  const { getDemoFallback } = useDataMode();
 
   useEffect(() => {
     supabase.from("audit_logs").select("*").order("created_at", { ascending: false }).limit(100)
       .then(({ data }) => {
         const logs = (data as any) ?? [];
         if (logs.length === 0) {
-          setLogs(DEMO_AUDIT_LOGS as AuditLog[]);
-          setIsDemo(true);
+          const fallback = getDemoFallback(DEMO_AUDIT_LOGS as AuditLog[]);
+          setLogs(fallback);
+          setIsDemo(fallback.length > 0);
         } else {
           setLogs(logs);
         }

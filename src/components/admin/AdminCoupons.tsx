@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { DEMO_COUPONS } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 
 interface Coupon {
   id: string; code: string; description: string; discount_type: string;
@@ -22,12 +23,16 @@ export default function AdminCoupons() {
   const [showCreate, setShowCreate] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
   const [form, setForm] = useState({ code: "", description: "", discount_type: "percentage", discount_value: 10, min_order: 0, max_uses: "", expires_at: "" });
+  const { getDemoFallback } = useDataMode();
 
   useEffect(() => {
     supabase.from("coupons").select("*").order("created_at", { ascending: false })
       .then(({ data }) => {
         const rows = (data as any) ?? [];
-        if (rows.length === 0) { setCoupons(DEMO_COUPONS as any); setIsDemo(true); }
+        if (rows.length === 0) {
+          const fallback = getDemoFallback(DEMO_COUPONS as unknown as Coupon[]);
+          setCoupons(fallback); setIsDemo(fallback.length > 0);
+        }
         else { setCoupons(rows); setIsDemo(false); }
         setLoading(false);
       });
