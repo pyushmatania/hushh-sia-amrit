@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Settings, Sun, Moon, Shield, Bell, Palette, DollarSign, Loader2, CalendarX2, Phone, Award, Clock, Globe, MapPin, Gamepad2, BedDouble, MailCheck, Building2 } from "lucide-react";
+import { Settings, Sun, Moon, Shield, Bell, Palette, DollarSign, Loader2, CalendarX2, Phone, Award, Clock, Globe, MapPin, Gamepad2, BedDouble, MailCheck, Building2, Database } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { Input } from "@/components/ui/input";
 import { useAppConfig, updateAppConfig, loadAppConfig } from "@/hooks/use-app-config";
@@ -337,6 +337,58 @@ export default function AdminSettings() {
                   <Loader2 size={12} className="animate-spin" /> Saving...
                 </div>
               )}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Data Mode Toggle - always visible on general tab */}
+        {activeTab === "general" && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-2xl bg-card border-2 border-primary/30 overflow-hidden col-span-full"
+          >
+            <div className="flex items-center gap-3 p-4 border-b border-border/60">
+              <div className="w-8 h-8 rounded-lg text-primary bg-primary/10 flex items-center justify-center">
+                <Database size={16} />
+              </div>
+              <div>
+                <span className="text-sm font-semibold text-foreground">Data Mode</span>
+                <p className="text-[10px] text-muted-foreground">Switch between demo and real data across the entire app</p>
+              </div>
+            </div>
+            <div className="px-4 py-4">
+              <div className="flex gap-2">
+                {[
+                  { val: "demo", label: "🎭 Demo", desc: "Sample data for preview" },
+                  { val: "real", label: "🔒 Real", desc: "Live production data" },
+                ].map(opt => (
+                  <motion.button
+                    key={opt.val}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => saveConfigValue("data_mode", opt.val)}
+                    className={`flex-1 py-3 px-3 rounded-xl border text-center transition-all ${
+                      (appConfig as any).data_mode === opt.val
+                        ? opt.val === "real"
+                          ? "bg-emerald-500/10 border-emerald-500 text-emerald-600 font-semibold"
+                          : "bg-primary/10 border-primary text-primary font-semibold"
+                        : "bg-card border-border text-muted-foreground hover:border-primary/40"
+                    }`}
+                  >
+                    <span className="text-lg block">{opt.label.split(" ")[0]}</span>
+                    <span className="text-xs font-semibold block mt-0.5">{opt.label.split(" ")[1]}</span>
+                    <span className="text-[10px] text-muted-foreground block">{opt.desc}</span>
+                  </motion.button>
+                ))}
+              </div>
+              {saving === "data_mode" && (
+                <div className="flex items-center gap-1.5 mt-2 text-xs text-primary">
+                  <Loader2 size={12} className="animate-spin" /> Saving...
+                </div>
+              )}
+              <p className="text-[10px] text-muted-foreground mt-2">
+                ⚠️ When set to Real, users will see actual data. Demo mode shows sample/placeholder content.
+              </p>
             </div>
           </motion.div>
         )}
