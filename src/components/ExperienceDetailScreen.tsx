@@ -276,7 +276,7 @@ export default function ExperienceDetailScreen({ pack, property, onBack, onBook 
           <div className="flex items-center gap-3">
             <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 relative">
               <OptimizedImage
-                src={property.images[0]}
+                src={property.images?.[0] || "/placeholder.svg"}
                 alt={property.name}
                 fill
                 className="object-cover"

@@ -27,7 +27,7 @@ export default memo(function PropertyCardSmall({ property, index, onTap, isWishl
           </div>
         )}
         <OptimizedImage
-          src={property.images[0]}
+          src={property.images?.[0] || "/placeholder.svg"}
           alt={property.name}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-500"

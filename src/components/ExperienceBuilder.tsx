@@ -84,7 +84,7 @@ export default function ExperienceBuilder({ property, slotId, guests, date, onBa
   const { addons } = usePropertiesData();
   const [selections, setSelections] = useState<Record<string, number>>({});
   const [hapticId, setHapticId] = useState<string | null>(null);
-  const slot = property.slots.find((s) => s.id === slotId)!;
+  const slot = property.slots.find((s) => s.id === slotId) || property.slots[0] || { id: slotId, label: "Slot", time: "", price: property.basePrice, available: true, popular: false };
   const categories = Object.keys(addons);
   const [activeCategory, setActiveCategory] = useState(categories[0]);
   const tabsRef = useRef<HTMLDivElement>(null);
