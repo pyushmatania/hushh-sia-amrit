@@ -30,7 +30,7 @@ export default function AdminCoupons() {
       .then(({ data }) => {
         const rows = (data as any) ?? [];
         if (rows.length === 0) {
-          const fallback = getDemoFallback(DEMO_COUPONS as Coupon[]);
+          const fallback = getDemoFallback(DEMO_COUPONS as unknown as Coupon[]);
           setCoupons(fallback); setIsDemo(fallback.length > 0);
         }
         else { setCoupons(rows); setIsDemo(false); }
