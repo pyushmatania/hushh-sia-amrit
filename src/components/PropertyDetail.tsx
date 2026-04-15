@@ -25,6 +25,7 @@ import { useToast } from "@/hooks/use-toast";
 import { hapticMedium, hapticSuccess } from "@/lib/haptics";
 import { format, differenceInDays } from "date-fns";
 import { cn } from "@/lib/utils";
+import { useLocaleSettings } from "@/hooks/use-locale-settings";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { DateRange } from "react-day-picker";

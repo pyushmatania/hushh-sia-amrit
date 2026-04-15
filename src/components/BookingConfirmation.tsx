@@ -3,6 +3,7 @@ import { Check, MapPin, Calendar, Users, Clock, ShoppingCart, Shield, Upload } f
 import { useState, useEffect } from "react";
 import { fireCelebration } from "@/lib/confetti";
 import { format } from "date-fns";
+import { useLocaleSettings } from "@/hooks/use-locale-settings";
 import type { Property } from "@/data/properties";
 import LiveOrderingSheet from "./LiveOrderingSheet";
 import IdentityUploadSheet from "./IdentityUploadSheet";

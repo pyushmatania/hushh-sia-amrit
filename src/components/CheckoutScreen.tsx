@@ -3,6 +3,7 @@ import { ArrowLeft, Tag, CreditCard, Smartphone, Banknote, ChevronRight, Shield,
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
+import { useLocaleSettings } from "@/hooks/use-locale-settings";
 import type { Property } from "@/data/properties";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { Calendar } from "@/components/ui/calendar";
