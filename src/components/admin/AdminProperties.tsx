@@ -113,7 +113,7 @@ export default function AdminProperties() {
         supabase.from("curations").select("id", { count: "exact", head: true }),
       ]);
 
-      setListings((listingsRes.data as Listing[]) ?? []);
+      setListings(((listingsRes.data as Listing[]) ?? []).filter(Boolean).map(l => ({ ...l, image_urls: l.image_urls || [] })));
       setCurationCount(curationsRes.count ?? 0);
       setLoading(false);
     };
