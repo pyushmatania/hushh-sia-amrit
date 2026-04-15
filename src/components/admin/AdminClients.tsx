@@ -1064,7 +1064,7 @@ export default function AdminClients({ initialUserId, onContextConsumed, onBack 
       setLoading(false);
     };
     load();
-  }, []);
+  }, [isDemoMode]);
 
   const filtered = useMemo(() =>
     clients

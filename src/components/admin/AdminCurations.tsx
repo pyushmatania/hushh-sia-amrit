@@ -149,7 +149,7 @@ export default function AdminCurations() {
     }
   };
 
-  useEffect(() => { loadCurations(); }, []);
+  useEffect(() => { loadCurations(); }, [isDemoMode]);
 
   // Stats
   const totalCurations = curations.length;

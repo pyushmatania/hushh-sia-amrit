@@ -99,7 +99,7 @@ export default function LiveOrdersWidget({ onViewAll }: { onViewAll: () => void 
     const ch = supabase.channel("dashboard-orders-widget")
       .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, () => loadOrders()).subscribe();
     return () => { supabase.removeChannel(ch); };
-  }, []);
+  }, [isDemoMode]);
 
   const loadClientHistory = async (userId: string) => {
     setHistoryLoading(true);

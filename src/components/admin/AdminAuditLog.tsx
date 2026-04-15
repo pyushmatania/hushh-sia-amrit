@@ -45,7 +45,7 @@ export default function AdminAuditLog() {
         }
         setLoading(false);
       });
-  }, []);
+  }, [isDemoMode]);
 
   const filtered = logs.filter(l =>
     (filterAction === "all" || l.action === filterAction) &&

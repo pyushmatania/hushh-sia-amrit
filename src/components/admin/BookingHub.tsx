@@ -120,7 +120,7 @@ export default function BookingHub({
       setIsDemo(false);
     }
     setLoading(false);
-  }, []);
+  }, [isDemoMode]);
 
   useEffect(() => {
     load();

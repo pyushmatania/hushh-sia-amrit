@@ -68,7 +68,7 @@ export default function AdminAchievements() {
       setLoading(false);
     };
     load();
-  }, []);
+  }, [isDemoMode]);
 
   const achieved = milestones.filter(m => m.achieved);
   const pending = milestones.filter(m => !m.achieved);

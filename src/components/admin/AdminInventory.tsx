@@ -96,7 +96,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
     const onRefresh = () => loadInventory();
     window.addEventListener("hushh:listings-updated", onRefresh);
     return () => window.removeEventListener("hushh:listings-updated", onRefresh);
-  }, []);
+  }, [isDemoMode]);
 
   const scopedItems = filterCategory === "food-drinks" ? items.filter(i => foodDrinksCategories.includes(i.category)) : filterCategory === "addons" ? items.filter(i => addonsCategories.includes(i.category)) : items;
   const availableCats = filterCategory === "food-drinks" ? foodDrinksCategories : filterCategory === "addons" ? addonsCategories : categoryOptions;

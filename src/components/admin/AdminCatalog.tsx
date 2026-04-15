@@ -95,7 +95,7 @@ export default function AdminCatalog() {
       window.removeEventListener("hushh:listings-updated", handler);
       window.removeEventListener("hushh:open-curations", openCurationsHandler);
     };
-  }, []);
+  }, [isDemoMode]);
 
   const statPills = [
     { label: "Properties", value: stats.properties, sub: `${stats.liveProperties} live`, tab: "properties" as TabId },

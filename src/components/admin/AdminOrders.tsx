@@ -116,7 +116,7 @@ export default function AdminOrders() {
     load();
     const ch = supabase.channel("admin-orders-rt").on("postgres_changes", { event: "*", schema: "public", table: "orders" }, () => load()).subscribe();
     return () => { supabase.removeChannel(ch); };
-  }, []);
+  }, [isDemoMode]);
 
   const updateOrder = async (id: string, updates: Record<string, any>) => {
     await supabase.from("orders").update(updates).eq("id", id);

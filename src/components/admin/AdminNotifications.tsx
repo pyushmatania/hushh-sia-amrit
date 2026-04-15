@@ -38,7 +38,7 @@ export default function AdminNotifications() {
     loadNotifications();
     const ch = supabase.channel("admin-notifications-rt").on("postgres_changes", { event: "INSERT", schema: "public", table: "notifications" }, () => loadNotifications()).subscribe();
     return () => { supabase.removeChannel(ch); };
-  }, []);
+  }, [isDemoMode]);
 
   const loadNotifications = async () => {
     const { data } = await supabase.from("notifications").select("*").order("created_at", { ascending: false }).limit(100);

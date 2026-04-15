@@ -90,7 +90,7 @@ export default function AdminAlerts({ onNavigate }: Props) {
       setLoading(false);
     };
     fetchAlerts();
-  }, []);
+  }, [isDemoMode]);
 
   return (
     <div className="space-y-6">
