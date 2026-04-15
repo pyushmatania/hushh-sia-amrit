@@ -222,6 +222,7 @@ export function useLocaleSettings() {
     formatDateShort,
     formatTime,
     formatTimeString,
+    formatSlotTime,
     formatDateTime,
     currencySymbol,
     formatCurrency,
