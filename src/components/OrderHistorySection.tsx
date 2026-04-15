@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import OrderNotes from "@/components/shared/OrderNotes";
 import { useAuth } from "@/hooks/use-auth";
+import { useLocaleSettings } from "@/hooks/use-locale-settings";
 
 interface OrderRow {
   id: string;
