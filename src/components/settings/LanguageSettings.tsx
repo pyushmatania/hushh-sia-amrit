@@ -1,19 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Check, Globe, Clock, Calendar, MapPin, Thermometer } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { SectionHeader, ToggleSwitch } from "./SettingRow";
+import { useLocaleSettings } from "@/hooks/use-locale-settings";
 
 export default function LanguageSettings() {
   const { toast } = useToast();
-  const [lang, setLang] = useState("en");
-  const [currency, setCurrency] = useState("inr");
-  const [timezone, setTimezone] = useState("ist");
-  const [dateFormat, setDateFormat] = useState("dmy");
+  const { settings, update } = useLocaleSettings();
+
   const [autoTranslate, setAutoTranslate] = useState(true);
   const [autoDetect, setAutoDetect] = useState(false);
-  const [tempUnit, setTempUnit] = useState("celsius");
-  const [distUnit, setDistUnit] = useState("km");
 
   const languages = [
     { id: "en", label: "English", native: "English", flag: "🇬🇧", completion: "100%" },
@@ -50,7 +47,7 @@ export default function LanguageSettings() {
   ];
 
   const handleLangChange = (id: string) => {
-    setLang(id);
+    update({ lang: id });
     const l = languages.find(x => x.id === id);
     toast({ title: `Language set to ${l?.label}`, description: id === "en" ? "App is in English" : `Translation ${l?.completion} complete` });
   };
@@ -77,7 +74,7 @@ export default function LanguageSettings() {
       {/* Language */}
       <div>
         <SectionHeader title="App Language" />
-        <SelectionList items={languages} selected={lang} onSelect={handleLangChange}
+        <SelectionList items={languages} selected={settings.lang} onSelect={handleLangChange}
           renderItem={(l) => (
             <div className="flex items-center gap-3 flex-1">
               <span className="text-lg">{l.flag}</span>
@@ -114,10 +111,34 @@ export default function LanguageSettings() {
         </div>
       </div>
 
+      {/* Time Format — 12h / 24h */}
+      <div>
+        <SectionHeader title="Time Format" />
+        <div className="flex items-center justify-between py-3 px-1">
+          <div className="flex items-center gap-3">
+            <Clock size={16} className="text-muted-foreground" />
+            <div>
+              <p className="text-sm font-medium text-foreground">Clock format</p>
+              <p className="text-xs text-muted-foreground">
+                {settings.timeFormat === "12h" ? "e.g. 2:30 PM" : "e.g. 14:30"}
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-1 p-0.5 rounded-lg bg-muted/50">
+            {(["12h", "24h"] as const).map(tf => (
+              <button key={tf} onClick={() => { update({ timeFormat: tf }); toast({ title: `Time format set to ${tf === "12h" ? "12-hour" : "24-hour"}` }); }}
+                className={`px-3 py-1 rounded-md text-xs font-semibold transition-all ${settings.timeFormat === tf ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}`}>
+                {tf === "12h" ? "12h" : "24h"}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Currency */}
       <div>
         <SectionHeader title="Currency" />
-        <SelectionList items={currencies} selected={currency} onSelect={(id) => { setCurrency(id); toast({ title: `Currency set to ${currencies.find(c => c.id === id)?.label}` }); }}
+        <SelectionList items={currencies} selected={settings.currency} onSelect={(id) => { update({ currency: id }); toast({ title: `Currency set to ${currencies.find(c => c.id === id)?.label}` }); }}
           renderItem={(c) => (
             <div className="flex items-center gap-3 flex-1">
               <div className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center text-sm font-bold text-foreground">{c.symbol}</div>
@@ -133,7 +154,7 @@ export default function LanguageSettings() {
       {/* Timezone */}
       <div>
         <SectionHeader title="Timezone" />
-        <SelectionList items={timezones} selected={timezone} onSelect={(id) => { setTimezone(id); toast({ title: `Timezone set to ${timezones.find(t => t.id === id)?.label}` }); }}
+        <SelectionList items={timezones} selected={settings.timezone} onSelect={(id) => { update({ timezone: id }); toast({ title: `Timezone set to ${timezones.find(t => t.id === id)?.label}` }); }}
           renderItem={(tz) => (
             <div className="flex items-center gap-3 flex-1">
               <Clock size={16} className="text-muted-foreground shrink-0" />
@@ -148,7 +169,7 @@ export default function LanguageSettings() {
       {/* Date Format */}
       <div>
         <SectionHeader title="Date Format" />
-        <SelectionList items={dateFormats} selected={dateFormat} onSelect={(id) => { setDateFormat(id); toast({ title: `Date format: ${dateFormats.find(d => d.id === id)?.label}` }); }}
+        <SelectionList items={dateFormats} selected={settings.dateFormat} onSelect={(id) => { update({ dateFormat: id }); toast({ title: `Date format: ${dateFormats.find(d => d.id === id)?.label}` }); }}
           renderItem={(df) => (
             <div className="flex items-center gap-3 flex-1">
               <Calendar size={16} className="text-muted-foreground shrink-0" />
@@ -170,7 +191,7 @@ export default function LanguageSettings() {
           </div>
           <div className="flex gap-1 p-0.5 rounded-lg bg-muted/50">
             {["celsius", "fahrenheit"].map(u => (
-              <button key={u} onClick={() => setTempUnit(u)} className={`px-3 py-1 rounded-md text-xs font-semibold transition-all ${tempUnit === u ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}`}>
+              <button key={u} onClick={() => update({ tempUnit: u })} className={`px-3 py-1 rounded-md text-xs font-semibold transition-all ${settings.tempUnit === u ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}`}>
                 {u === "celsius" ? "°C" : "°F"}
               </button>
             ))}
@@ -183,7 +204,7 @@ export default function LanguageSettings() {
           </div>
           <div className="flex gap-1 p-0.5 rounded-lg bg-muted/50">
             {["km", "miles"].map(u => (
-              <button key={u} onClick={() => setDistUnit(u)} className={`px-3 py-1 rounded-md text-xs font-semibold transition-all ${distUnit === u ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}`}>
+              <button key={u} onClick={() => update({ distUnit: u })} className={`px-3 py-1 rounded-md text-xs font-semibold transition-all ${settings.distUnit === u ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}`}>
                 {u === "km" ? "km" : "mi"}
               </button>
             ))}
