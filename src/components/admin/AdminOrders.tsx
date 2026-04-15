@@ -77,7 +77,7 @@ export default function AdminOrders() {
     (listingsRes.data ?? []).forEach(l => listingMap.set(l.id, { name: l.name, imageUrls: l.image_urls || [] }));
 
     // Demo data fallback when Supabase returns no orders
-    if (ordersRes.data.length === 0) {
+    if (ordersRes.data.length === 0 && isDemoMode) {
       DEMO_LISTINGS.forEach(l => listingMap.set(l.id, { name: l.name, imageUrls: l.image_urls || [] }));
       const demoProfileMap = buildDemoProfileMap();
       const demoItemMap = new Map<string, any[]>();
@@ -91,6 +91,11 @@ export default function AdminOrders() {
         };
       }));
       setIsDemo(true);
+      setLoading(false);
+      return;
+    } else if (ordersRes.data.length === 0) {
+      setOrders([]);
+      setIsDemo(false);
       setLoading(false);
       return;
     }

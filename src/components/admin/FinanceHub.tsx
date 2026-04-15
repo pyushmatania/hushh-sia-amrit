@@ -96,7 +96,7 @@ export default function FinanceHub() {
     const expensesData = (e.data as any[]) ?? [];
     const bookingsData = (bk.data as any[]) ?? [];
     const ordersData = (o.data as any[]) ?? [];
-    if (expensesData.length === 0 && bookingsData.length === 0) {
+    if (expensesData.length === 0 && bookingsData.length === 0 && isDemoMode) {
       setExpenses(DEMO_EXPENSES as any);
       setBookings(DEMO_BOOKINGS as any);
       setOrders(DEMO_ORDERS as any);

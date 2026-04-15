@@ -98,7 +98,7 @@ export default function BookingHub({
         userName: pMap.get(b.user_id) || "Guest",
       };
     });
-    if (data.length === 0) {
+    if (data.length === 0 && isDemoMode) {
       const demoLMap = buildDemoListingMapRich();
       const demoPMap = buildDemoProfileMap();
       setPropertyMap(demoLMap);
