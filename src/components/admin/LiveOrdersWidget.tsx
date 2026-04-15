@@ -45,8 +45,7 @@ export default function LiveOrdersWidget({ onViewAll }: { onViewAll: () => void 
   const loadOrders = async () => {
     const { data: ordersData } = await supabase.from("orders").select("*")
       .in("status", ["pending", "preparing"]).order("created_at", { ascending: false }).limit(5);
-    if (!ordersData?.length) {
-      // Fallback to demo data
+    if (!ordersData?.length && isDemoMode) {
       const demoActive = DEMO_ORDERS.filter(o => o.status === "pending" || o.status === "preparing");
       const demoLive: LiveOrder[] = demoActive.map(o => {
         const listing = DEMO_LISTINGS.find(l => l.id === o.property_id);
@@ -63,6 +62,11 @@ export default function LiveOrdersWidget({ onViewAll }: { onViewAll: () => void 
       });
       setIsDemo(true);
       setOrders(demoLive);
+      setLoading(false);
+      return;
+    } else if (!ordersData?.length) {
+      setOrders([]);
+      setIsDemo(false);
       setLoading(false);
       return;
     }

@@ -132,7 +132,7 @@ export default function BusinessIntelligence({ onNavigate }: { onNavigate?: (pag
     }
     // Demo fallback: if no real alerts, populate with realistic demo alerts
     setAlerts(prev => {
-      if (prev.length === 0 || (prev.length === 1 && prev[0].id === "fallback")) {
+      if ((prev.length === 0 || (prev.length === 1 && prev[0].id === "fallback")) && isDemoMode) {
         setIsDemo(true);
         setPredictions({
           peakDay: "Saturday", peakDayBookings: 14, slowDay: "Tuesday",
@@ -157,13 +157,15 @@ export default function BusinessIntelligence({ onNavigate }: { onNavigate?: (pag
     ]);
     let bookings = bookingsRes.data ?? [];
     let usingDemoListings = false;
-    if (!bookings.length) {
-      // Use demo data as fallback
+    if (!bookings.length && isDemoMode) {
       bookings = DEMO_BOOKINGS.filter(b => b.status !== "cancelled").map(b => ({
         slot: b.slot, total: b.total, date: b.date, created_at: b.created_at, status: b.status, property_id: b.property_id,
       }));
       usingDemoListings = true;
       setIsDemo(true);
+    } else if (!bookings.length) {
+      setLoadingPricing(false);
+      return;
     }
 
     const now = Date.now();
