@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Star, MapPin, Navigation, Layers, Search, SlidersHorizontal, List, Map as MapIcon, ArrowUpDown, Plus, Minus, Share2, LocateFixed, Loader2, ChevronLeft, ChevronRight, Sun, Moon } from "lucide-react";
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import { properties, type Property } from "@/data/properties";
+import { type Property } from "@/data/properties";
+import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { useTheme } from "@/hooks/use-theme";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -81,6 +82,7 @@ function createPhotoIcon(imageUrl: string, isSelected: boolean, price: number) {
 }
 
 export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenProps) {
+  const { properties } = usePropertiesData();
   const { resolvedTheme } = useTheme();
   const [selectedPin, setSelectedPin] = useState<Property | null>(null);
   const [tileStyle, setTileStyle] = useState<keyof typeof TILE_LAYERS>(resolvedTheme === "dark" ? "dark" : "light");

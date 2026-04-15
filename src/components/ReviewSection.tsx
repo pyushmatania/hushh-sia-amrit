@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { formatDistanceToNow } from "date-fns";
 import type { PropertyReview } from "@/data/properties";
 import { getMockUserId } from "@/data/mock-users";
+import { useDataMode } from "@/hooks/use-data-mode";
 import PublicProfileScreen from "./PublicProfileScreen";
 
 interface ReviewSectionProps {
@@ -229,6 +230,7 @@ function LegacyReviewCard({ review, index, onProfileTap }: { review: PropertyRev
 /* ── Main section ── */
 export default function ReviewSection({ propertyId, reviews: staticReviews, rating: staticRating, reviewCount: staticCount, onAddReview }: ReviewSectionProps) {
   const { user } = useAuth();
+  const { isRealMode } = useDataMode();
   const { reviews: dbReviews, loading, submitting, submitReview, stats } = useReviews(propertyId);
   const [showAll, setShowAll] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -240,24 +242,28 @@ export default function ReviewSection({ propertyId, reviews: staticReviews, rati
   const [viewingProfile, setViewingProfile] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // In real mode, suppress static/demo reviews entirely
+  const effectiveStaticReviews = isRealMode ? [] : staticReviews;
+  const effectiveStaticCount = isRealMode ? 0 : staticCount;
+
   // Merge DB + static reviews for display
   const hasDbReviews = dbReviews.length > 0;
-  const rating = hasDbReviews ? Math.round(stats.average * 10) / 10 : staticRating;
-  const reviewCount = hasDbReviews ? stats.count + staticCount : staticCount;
+  const rating = hasDbReviews ? Math.round(stats.average * 10) / 10 : (isRealMode ? 0 : staticRating);
+  const reviewCount = hasDbReviews ? stats.count + effectiveStaticCount : effectiveStaticCount;
 
   const breakdown = useMemo(() => {
     const counts = [0, 0, 0, 0, 0];
-    staticReviews.forEach((r) => {
+    effectiveStaticReviews.forEach((r) => {
       if (r.rating >= 1 && r.rating <= 5) counts[r.rating - 1]++;
     });
     // Add DB review counts
     stats.breakdown.forEach((c, i) => { counts[i] += c; });
     return counts;
-  }, [staticReviews, stats.breakdown]);
+  }, [effectiveStaticReviews, stats.breakdown]);
 
-  const totalReviews = staticReviews.length + dbReviews.length;
+  const totalReviews = effectiveStaticReviews.length + dbReviews.length;
   const displayedDbReviews = showAll ? dbReviews : dbReviews.slice(0, 3);
-  const displayedStaticReviews = showAll ? staticReviews : staticReviews.slice(0, Math.max(0, 3 - dbReviews.length));
+  const displayedStaticReviews = showAll ? effectiveStaticReviews : effectiveStaticReviews.slice(0, Math.max(0, 3 - dbReviews.length));
 
   const handlePhotoAdd = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []).filter(f => f.type.startsWith("image/"));

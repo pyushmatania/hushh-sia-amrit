@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, UserPlus, Search, Sparkles, Heart, MessageCircle, Star, Users, MapPin, Calendar } from "lucide-react";
 import { useState } from "react";
+import { useDataMode } from "@/hooks/use-data-mode";
+import EmptyState from "./shared/EmptyState";
 
 interface ConnectionsScreenProps {
   onBack: () => void;
@@ -23,8 +25,12 @@ const suggestedPeople = [
 export default function ConnectionsScreen({ onBack }: ConnectionsScreenProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"friends" | "discover">("friends");
+  const { isRealMode } = useDataMode();
 
-  const filtered = mockConnections.filter((c) =>
+  const connections = isRealMode ? [] : mockConnections;
+  const suggestions = isRealMode ? [] : suggestedPeople;
+
+  const filtered = connections.filter((c) =>
     c.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -222,7 +228,7 @@ export default function ConnectionsScreen({ onBack }: ConnectionsScreenProps) {
                 <p className="text-xs text-muted-foreground">Based on your trips, venues, and shared experiences</p>
               </div>
 
-              {suggestedPeople.map((person, i) => (
+              {suggestions.map((person, i) => (
                 <motion.div
                   key={person.id}
                   initial={{ opacity: 0, y: 16 }}

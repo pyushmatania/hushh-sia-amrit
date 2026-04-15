@@ -30,7 +30,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { DateRange } from "react-day-picker";
 import type { Property } from "@/data/properties";
-import { addons } from "@/data/properties";
+// addons now come from usePropertiesData() context
 import { usePropertiesData } from "@/contexts/PropertiesContext";
 import ReviewSection from "@/components/ReviewSection";
 

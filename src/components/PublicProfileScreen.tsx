@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
 import { overlaySlideUp, staggerContainer, staggerItem } from "@/lib/animations";
 import { mockProfiles, mockUserReviews, type MockUserProfile } from "@/data/mock-users";
+import { useDataMode } from "@/hooks/use-data-mode";
 
 interface PublicProfile {
   user_id: string;
@@ -81,10 +82,11 @@ export default function PublicProfileScreen({ userId, onBack, onMessage }: Publi
   const [bookingCount, setBookingCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const { isRealMode } = useDataMode();
 
   const fetchProfile = useCallback(async () => {
-    // Check if this is a mock user
-    if (userId.startsWith("mock-")) {
+    // Check if this is a mock user — skip in real mode
+    if (userId.startsWith("mock-") && !isRealMode) {
       const mockProfile = mockProfiles[userId];
       if (mockProfile) {
         setProfile(mockProfile as PublicProfile);
@@ -92,6 +94,12 @@ export default function PublicProfileScreen({ userId, onBack, onMessage }: Publi
         setBookingCount(5);
         setWishlistCount(8);
       }
+      setLoading(false);
+      return;
+    }
+
+    // In real mode, mock user IDs won't resolve — just close
+    if (userId.startsWith("mock-")) {
       setLoading(false);
       return;
     }
