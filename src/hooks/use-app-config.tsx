@@ -53,6 +53,8 @@ export interface AppConfig {
   review_prompt_hours: number;
   // Splash
   splash_variant: string;
+  // Data mode
+  data_mode: string;
 }
 
 const defaults: AppConfig = {
@@ -99,6 +101,7 @@ const defaults: AppConfig = {
   booking_reminder_hours: 24,
   review_prompt_hours: 48,
   splash_variant: "2",
+  data_mode: "demo",
 };
 
 const stringKeys = new Set([
@@ -106,7 +109,7 @@ const stringKeys = new Set([
   "app_name", "app_tagline", "logo_url", "favicon_url",
   "instagram_url", "facebook_url", "youtube_url", "twitter_url",
   "terms_url", "privacy_url", "refund_policy_url",
-  "splash_variant",
+  "splash_variant", "data_mode",
 ]);
 
 let cachedConfig: AppConfig | null = null;
