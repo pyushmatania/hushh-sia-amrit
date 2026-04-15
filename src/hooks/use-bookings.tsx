@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./use-auth";
+import { useDataMode } from "./use-data-mode";
 import type { Booking } from "@/pages/Index";
 
 const LOCAL_KEY = "hushh_bookings";
