@@ -194,7 +194,11 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
           className="rounded-2xl border border-border overflow-hidden"
         >
           <div className="relative h-40">
-            <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover" />
+            {property.images?.[0] ? (
+              <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full bg-secondary flex items-center justify-center"><Home size={32} className="text-muted-foreground/30" /></div>
+            )}
             {isActive && (
               <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-success/90 backdrop-blur-sm">
                 <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
