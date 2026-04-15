@@ -181,7 +181,7 @@ export default function ExperienceBuilder({ property, slotId, guests, date, onBa
             <div className="flex items-center gap-2 mt-0.5">
               <span className="text-[11px] md:text-sm text-muted-foreground">{slot.label}</span>
               <span className="w-1 h-1 rounded-full bg-muted-foreground/40" />
-              <span className="text-[11px] md:text-sm text-muted-foreground">{slot.time}</span>
+              <span className="text-[11px] md:text-sm text-muted-foreground">{locale.formatSlotTime(slot.time)}</span>
               <span className="w-1 h-1 rounded-full bg-muted-foreground/40" />
               <span className="text-[11px] md:text-sm text-primary font-medium">{guests} guests</span>
             </div>
@@ -505,7 +505,7 @@ export default function ExperienceBuilder({ property, slotId, guests, date, onBa
 
             {/* Base slot */}
             <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">{slot.label} · {slot.time}</span>
+              <span className="text-muted-foreground">{slot.label} · {locale.formatSlotTime(slot.time)}</span>
               <span className="text-foreground font-medium">₹{slot.price.toLocaleString()}</span>
             </div>
 
