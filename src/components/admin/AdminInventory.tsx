@@ -52,6 +52,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [bulkMode, setBulkMode] = useState(false);
   const [isDemo, setIsDemo] = useState(false);
+  const { getDemoFallback } = useDataMode();
 
   const toggleSelect = (id: string) => {
     setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
@@ -79,8 +80,9 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
           };
         });
         if (rows.length === 0) {
-          setItems(DEMO_INVENTORY as InventoryItem[]);
-          setIsDemo(true);
+          const fallback = getDemoFallback(DEMO_INVENTORY as InventoryItem[]);
+          setItems(fallback);
+          setIsDemo(fallback.length > 0);
         } else {
           setItems(rows);
           setIsDemo(false);
