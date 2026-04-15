@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
 import { DEMO_CAMPAIGNS } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 
 interface Campaign {
   id: string; title: string; description: string; type: string;
@@ -34,6 +35,7 @@ export default function AdminCampaigns() {
   const [isDemo, setIsDemo] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
+  const { isDemoMode } = useDataMode();
   const [form, setForm] = useState({
     title: "", description: "", type: "flash_deal",
     discount_type: "percentage", discount_value: 10,
@@ -44,11 +46,11 @@ export default function AdminCampaigns() {
     supabase.from("campaigns").select("*").order("created_at", { ascending: false })
       .then(({ data }) => {
         const rows = (data as any) ?? [];
-        if (rows.length === 0) { setCampaigns(DEMO_CAMPAIGNS as any); setIsDemo(true); }
+        if (rows.length === 0 && isDemoMode) { setCampaigns(DEMO_CAMPAIGNS as any); setIsDemo(true); }
         else { setCampaigns(rows); setIsDemo(false); }
         setLoading(false);
       });
-  }, []);
+  }, [isDemoMode]);
 
   const create = async () => {
     if (!form.title || !user) return;

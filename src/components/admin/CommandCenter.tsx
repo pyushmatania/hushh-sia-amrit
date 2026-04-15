@@ -23,6 +23,7 @@ import WeeklyDigestPreview from "./WeeklyDigestPreview";
 import NeuralSearchWidget from "./NeuralSearchWidget";
 import { useDraggableWidgets, DraggableWidgetWrapper, DashboardEditToggle } from "./DraggableWidgets";
 import type { AdminPage } from "./AdminLayout";
+import { useDataMode } from "@/hooks/use-data-mode";
 
 interface Stats {
   revenue: number; bookings: number; activeListings: number; totalUsers: number;
@@ -163,6 +164,7 @@ const PIE_COLORS = ["hsl(250, 80%, 60%)", "hsl(280, 65%, 62%)", "hsl(200, 75%, 5
 export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (page: AdminPage) => void; userRole?: "super_admin" | "ops_manager" | "host" | "staff" | null }) {
   const [stats, setStats] = useState<Stats>({ revenue: 0, bookings: 0, activeListings: 0, totalUsers: 0, pendingOrders: 0, todayBookings: 0, avgRating: 0, lowStock: 0, conflicts: 0 });
   const locale = useLocaleSettings();
+  const { isDemoMode } = useDataMode();
   const [greeting, setGreeting] = useState("Good morning");
   const [topProperties, setTopProperties] = useState<TopProperty[]>([]);
   const [recentReviews, setRecentReviews] = useState<RecentReview[]>([]);
@@ -193,7 +195,7 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
 
       // If Supabase returned no data (empty DB or query error), use demo data
       const hasRealData = bookings.length > 0 || listings.length > 0 || users.length > 0;
-      if (!hasRealData) {
+      if (!hasRealData && isDemoMode) {
         setStats(DEMO_STATS);
         setTopProperties(DEMO_TOP_PROPERTIES);
         setRecentReviews(DEMO_REVIEWS);
@@ -202,6 +204,8 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
         setWeeklyPerfData(buildDemoWeeklyData());
         setCategoryData(DEMO_CATEGORY_DATA);
         setPrevMonthStats({ revenue: 24, bookings: 18, listings: 33, users: 48 });
+        return;
+      } else if (!hasRealData) {
         return;
       }
       const listingMap = new Map<string, string>(); listings.forEach(l => listingMap.set(l.id, l.name));
@@ -274,7 +278,7 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
     ]).then(([expRes, revRes]) => {
       // If no financial data, use demo
       if (!(expRes.data?.length) && !(revRes.data?.length)) {
-        setFinancialData(DEMO_FINANCIAL_DATA);
+        if (isDemoMode) setFinancialData(DEMO_FINANCIAL_DATA);
         return;
       }
       const monthMap = new Map<string, { expenses: number; revenue: number }>();
