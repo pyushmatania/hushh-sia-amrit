@@ -278,7 +278,7 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
     ]).then(([expRes, revRes]) => {
       // If no financial data, use demo
       if (!(expRes.data?.length) && !(revRes.data?.length)) {
-        setFinancialData(DEMO_FINANCIAL_DATA);
+        if (isDemoMode) setFinancialData(DEMO_FINANCIAL_DATA);
         return;
       }
       const monthMap = new Map<string, { expenses: number; revenue: number }>();
