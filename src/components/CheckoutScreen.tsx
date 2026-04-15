@@ -38,7 +38,7 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
   const [liveGuests, setLiveGuests] = useState(initialGuests);
   const [editingDate, setEditingDate] = useState(false);
   const [editingGuests, setEditingGuests] = useState(false);
-  const slot = property.slots.find((s) => s.id === slotId)!;
+  const slot = property.slots.find((s) => s.id === slotId) || property.slots[0] || { id: slotId, label: "Slot", time: "", price: property.basePrice, available: true, popular: false };
   const [coupon, setCoupon] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
   const [couponDiscount, setCouponDiscount] = useState(0);
