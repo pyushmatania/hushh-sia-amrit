@@ -36,11 +36,15 @@ export function useCurations() {
           }))
         );
       }
-      // On error or empty, fallbackPacks remain
+      } else if (!isRealMode) {
+        // Keep fallbackPacks only in demo mode
+      } else {
+        setPacks([]);
+      }
       setLoading(false);
     };
     load();
-  }, []);
+  }, [isRealMode]);
 
   return { packs, loading };
 }
