@@ -50,7 +50,7 @@ export default function ActiveTripCard({ onViewTrip }: ActiveTripCardProps) {
           {/* Thumbnail */}
           <div className="w-[72px] h-[72px] md:w-[120px] md:h-[120px] rounded-xl md:rounded-2xl overflow-hidden shrink-0 relative">
             <img
-              src={property.images[0]}
+              src={property.images?.[0] || "/placeholder.svg"}
               alt={property.name}
               className="w-full h-full object-cover"
             />

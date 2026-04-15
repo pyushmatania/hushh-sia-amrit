@@ -404,7 +404,7 @@ export default function PropertyCardStack({ properties, startIndex, onTap, wishl
                     </div>
                   )}
                   <OptimizedImage
-                    src={property.images[0]}
+                    src={property.images?.[0] || "/placeholder.svg"}
                     alt={property.name}
                     fill
                     className="object-cover"

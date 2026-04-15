@@ -195,7 +195,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
         >
           <div className="relative h-40">
             {property.images?.[0] ? (
-              <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover" />
+              <img src={property.images?.[0] || "/placeholder.svg"} alt={property.name} className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full bg-secondary flex items-center justify-center"><Home size={32} className="text-muted-foreground/30" /></div>
             )}
@@ -952,7 +952,7 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
         onClose={() => setShowQRModal(false)}
         bookingId={booking.bookingId}
         propertyName={property?.name}
-        propertyImage={property?.images[0]}
+        propertyImage={property?.images?.[0] || "/placeholder.svg"}
         propertyLocation={property?.location}
         date={booking.date}
         slotLabel={property?.slots.find(s => s.id === booking.slot)?.label}

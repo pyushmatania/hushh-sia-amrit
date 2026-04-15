@@ -31,7 +31,7 @@ function MiniCard({ property, onTap, isWishlisted, onToggleWishlist }: {
           </div>
         )}
         <OptimizedImage
-          src={property.images[0]}
+          src={property.images?.[0] || "/placeholder.svg"}
           alt={property.name}
           fill
           className="object-cover"

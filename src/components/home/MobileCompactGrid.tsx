@@ -19,7 +19,7 @@ function CompactPropertyCard({ property, onTap, isWL, onToggleWishlist }: {
   return (
     <div className="shrink-0 w-[155px] cursor-pointer active:scale-[0.97] transition-transform" onClick={() => onTap(property)}>
       <div className="relative aspect-[3/4] rounded-xl overflow-hidden" style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.3)" }}>
-        <OptimizedImage src={property.images[0]} alt={property.name} fill className="object-cover" sizes="155px" />
+        <OptimizedImage src={property.images?.[0] || "/placeholder.svg"} alt={property.name} fill className="object-cover" sizes="155px" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
         {/* Subtle edge reflection */}
         <div className="absolute inset-0 pointer-events-none" style={{

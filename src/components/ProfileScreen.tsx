@@ -836,7 +836,7 @@ export default function ProfileScreen({ onHostTap, bookings = [], onViewBookingD
                       style={{ boxShadow: "0 4px 16px -4px hsl(0 0% 0% / 0.15)" }}
                     >
                       <div className="relative h-36">
-                        <img src={prop.images[0]} alt={prop.name} className="w-full h-full object-cover" />
+                        <img src={prop.images?.[0] || "/placeholder.svg"} alt={prop.name} className="w-full h-full object-cover" />
                         <div className="absolute inset-0 bg-gradient-to-t from-card via-card/60 to-transparent" />
                         <div className="absolute top-3 right-3 flex items-center gap-1 bg-muted-foreground/80 backdrop-blur-sm px-2 py-1 rounded-full">
                           <span className="w-1.5 h-1.5 rounded-full bg-white/70" />

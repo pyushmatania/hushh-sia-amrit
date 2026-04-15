@@ -37,7 +37,7 @@ function DesktopOverlayCard({ p, onTap, isWL, onToggleWishlist }: { p: Property;
       className="rounded-2xl overflow-hidden cursor-pointer group relative"
       style={{ height: 320, border: "1px solid hsl(var(--border) / 0.15)" }}
     >
-      <img src={p.images[0]} alt={p.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+      <img src={p.images?.[0] || "/placeholder.svg"} alt={p.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/5 group-hover:from-black/95 transition-all duration-500" />
       
       <div className="absolute top-4 left-4 right-4 flex justify-between items-start z-10">
@@ -73,7 +73,7 @@ function DesktopGlassCard({ p, onTap, isWL, onToggleWishlist }: { p: Property; o
       style={{ background: "hsl(var(--card) / 0.8)", border: "1px solid hsl(var(--border) / 0.25)", boxShadow: "0 8px 32px hsl(var(--foreground) / 0.06)" }}
     >
       <div className="relative h-[180px] overflow-hidden">
-        <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+        <img src={p.images?.[0] || "/placeholder.svg"} alt={p.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
         {onToggleWishlist && (
           <button onClick={(e) => { e.stopPropagation(); onToggleWishlist(p.id); }} className="absolute top-3 right-3">
@@ -108,7 +108,7 @@ function DesktopPanoCard({ p, onTap, isWL, onToggleWishlist }: { p: Property; on
       className="col-span-2 lg:col-span-3 xl:col-span-4 rounded-2xl overflow-hidden cursor-pointer group relative"
       style={{ height: 200, border: "1px solid hsl(var(--border) / 0.2)" }}
     >
-      <img src={p.images[0]} alt={p.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+      <img src={p.images?.[0] || "/placeholder.svg"} alt={p.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
       <div className="absolute inset-0" style={{ background: "linear-gradient(90deg, hsl(var(--background) / 0.95) 0%, hsl(var(--background) / 0.7) 45%, transparent 100%)" }} />
       {onToggleWishlist && (
         <button onClick={(e) => { e.stopPropagation(); onToggleWishlist(p.id); }} className="absolute top-4 right-4 z-10">
@@ -138,7 +138,7 @@ function DesktopMinimalCard({ p, onTap, isWL, onToggleWishlist }: { p: Property;
   return (
     <div onClick={() => onTap(p)} className="rounded-2xl overflow-hidden cursor-pointer group" style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border) / 0.3)" }}>
       <div className="relative h-[160px] overflow-hidden">
-        <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+        <img src={p.images?.[0] || "/placeholder.svg"} alt={p.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         {onToggleWishlist && (
           <button onClick={(e) => { e.stopPropagation(); onToggleWishlist(p.id); }} className="absolute top-3 right-3">
@@ -162,7 +162,7 @@ function DesktopEditorialCard({ p, onTap, isWL, onToggleWishlist }: { p: Propert
   const cheapest = Math.min(...p.slots.filter(s => s.available).map(s => s.price));
   return (
     <div onClick={() => onTap(p)} className="col-span-2 rounded-2xl overflow-hidden cursor-pointer group relative" style={{ height: 260, border: "1px solid hsl(var(--border) / 0.2)" }}>
-      <img src={p.images[0]} alt={p.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+      <img src={p.images?.[0] || "/placeholder.svg"} alt={p.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
       <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, hsl(var(--background) / 0.92) 0%, hsl(var(--background) / 0.6) 50%, transparent 100%)" }} />
       
       <div className="absolute top-5 left-5 z-10">
@@ -203,7 +203,7 @@ function DesktopAccentCard({ p, onTap, isWL, onToggleWishlist }: { p: Property; 
   return (
     <div onClick={() => onTap(p)} className="rounded-2xl overflow-hidden cursor-pointer group" style={{ background: gradients[Math.abs(p.name.length) % 3], border: "1px solid hsl(var(--border) / 0.2)" }}>
       <div className="relative h-[200px] overflow-hidden rounded-t-2xl">
-        <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+        <img src={p.images?.[0] || "/placeholder.svg"} alt={p.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
         {onToggleWishlist && (
           <button onClick={(e) => { e.stopPropagation(); onToggleWishlist(p.id); }} className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center" style={{ background: "hsl(var(--foreground) / 0.2)", backdropFilter: "blur(8px)" }}>
@@ -403,7 +403,7 @@ export default function MixedListingFeed({ properties, onPropertyTap, wishlist, 
           onClick={() => onPropertyTap(p)}
         >
           <div className="relative aspect-[4/3] rounded-xl overflow-hidden">
-            <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
+            <img src={p.images?.[0] || "/placeholder.svg"} alt={p.name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
             {onToggleWishlist && (
               <button onClick={(e) => { e.stopPropagation(); onToggleWishlist(p.id); }} className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center">
                 <Heart size={20} className={isWL ? "fill-primary text-primary" : "fill-foreground/30 text-white"} strokeWidth={isWL ? 0 : 2} />

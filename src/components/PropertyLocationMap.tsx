@@ -35,7 +35,7 @@ export default function PropertyLocationMap({ property }: { property: Property }
     const photoHtml = `
       <div style="position:relative;">
         <div style="width:48px;height:48px;border-radius:50%;border:3px solid hsl(270,80%,65%);overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.3);">
-          <img src="${property.images[0] || ""}" style="width:100%;height:100%;object-fit:cover;" />
+          <img src="${property.images?.[0] || "/placeholder.svg" || ""}" style="width:100%;height:100%;object-fit:cover;" />
         </div>
         <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%) rotate(45deg);width:12px;height:12px;background:hsl(270,80%,65%);border-radius:2px;"></div>
         <div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:hsl(270,80%,65%);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;white-space:nowrap;">
@@ -134,7 +134,7 @@ export default function PropertyLocationMap({ property }: { property: Property }
 
       <div className="relative z-[500] bg-card/90 backdrop-blur-sm px-4 py-3 flex items-center gap-3 border-t border-border">
         <div className="w-10 h-10 rounded-xl overflow-hidden border border-border shrink-0">
-          <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover" />
+          <img src={property.images?.[0] || "/placeholder.svg"} alt={property.name} className="w-full h-full object-cover" />
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-foreground truncate">{property.name}</p>

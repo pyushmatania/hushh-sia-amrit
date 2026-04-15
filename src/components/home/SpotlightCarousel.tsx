@@ -124,7 +124,7 @@ const VideoCard = memo(function VideoCard({
       <div className="relative" style={{ height: "70vh", maxHeight: "580px" }}>
         <AccentFrame color={accent.color} radius="20px" glowAlpha={0.08} />
         <div className="relative w-full h-full overflow-hidden rounded-[20px]" style={{ border: "1px solid hsl(var(--border) / 0.24)" }}>
-          <OptimizedImage src={property.images[0]} alt={property.name} fill className="object-cover" sizes="(max-width: 640px) 85vw, 380px" priority={isFirst} />
+          <OptimizedImage src={property.images?.[0] || "/placeholder.svg"} alt={property.name} fill className="object-cover" sizes="(max-width: 640px) 85vw, 380px" priority={isFirst} />
           {!videoReady && <div className="absolute inset-0 z-[2] pointer-events-none video-buffer-shimmer" />}
           {isVisible && (
             <video
@@ -293,7 +293,7 @@ export default function SpotlightCarousel({ properties, onPropertyTap, category 
               onMouseEnter={() => setHoveredDesktop(i)}
               onMouseLeave={() => setHoveredDesktop(null)}
             >
-              <img src={p.images[0]} alt={p.name}
+              <img src={p.images?.[0] || "/placeholder.svg"} alt={p.name}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700"
                 style={{ transform: isHovered ? "scale(1.04)" : "scale(1)" }}
                 loading={i === 0 ? "eager" : "lazy"}

@@ -675,7 +675,7 @@ export default function PropertyCardCinematic({ property, index, onTap, isWishli
           >
             {/* Background image */}
             {!imgLoaded && <div className="absolute inset-0 bg-secondary animate-pulse"><div className="absolute inset-0 shimmer-bg" /></div>}
-            <OptimizedImage src={property.images[0]} alt={property.name} fill className="object-cover" sizes="(max-width: 640px) 85vw, 360px" onImageLoad={() => setImgLoaded(true)} showSkeleton={false} />
+            <OptimizedImage src={property.images?.[0] || "/placeholder.svg"} alt={property.name} fill className="object-cover" sizes="(max-width: 640px) 85vw, 360px" onImageLoad={() => setImgLoaded(true)} showSkeleton={false} />
 
             {/* Holographic sheen */}
             <div className="absolute inset-0 pointer-events-none z-10 mix-blend-color-dodge" style={{

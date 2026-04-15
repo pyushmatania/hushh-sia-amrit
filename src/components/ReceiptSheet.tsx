@@ -86,7 +86,7 @@ export default function ReceiptSheet({ open, onClose, booking }: Props) {
             <div className="p-4 border-b border-dashed border-border/50">
               <div className="flex items-center gap-3">
                 {property && (
-                  <img src={property.images[0]} alt="" className="w-14 h-14 rounded-xl object-cover" />
+                  <img src={property.images?.[0] || "/placeholder.svg"} alt="" className="w-14 h-14 rounded-xl object-cover" />
                 )}
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-sm text-foreground truncate">{property?.name || "Property"}</p>

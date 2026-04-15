@@ -226,7 +226,7 @@ function RelatedPropertyRow({ relatedProperty, added, onToggle, onViewDetails }:
       >
         <div className="relative shrink-0">
           <img
-            src={relatedProperty.images[0]}
+            src={relatedProperty.images?.[0] || "/placeholder.svg"}
             alt={relatedProperty.name}
             className="w-12 h-12 rounded-xl object-cover"
             loading="lazy"
@@ -418,7 +418,7 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
 
   // Filter out empty/invalid image URLs to prevent blank slideshow frames
   const validImages = property.images.filter(img => img && img.trim().length > 0 && img !== "undefined" && img !== "null");
-  const heroImages = validImages.length > 0 ? validImages : [property.images[0] || "/placeholder.svg"];
+  const heroImages = validImages.length > 0 ? validImages : [property.images?.[0] || "/placeholder.svg" || "/placeholder.svg"];
 
   useEffect(() => {
     setImgIndex(0);

@@ -42,7 +42,7 @@ function MobileHoloCard({ service, onTap, index }: { service: Property; onTap: (
       >
         <div className="absolute inset-0 pointer-events-none z-10" style={{ background: "linear-gradient(125deg, transparent 30%, hsl(var(--primary) / 0.08) 45%, hsl(280 80% 60% / 0.06) 55%, transparent 70%)" }} />
         <div className="relative h-[140px] overflow-hidden">
-          <img src={service.images[0]} alt={service.name} className="w-full h-full object-cover" loading="lazy" />
+          <img src={service.images?.[0] || "/placeholder.svg"} alt={service.name} className="w-full h-full object-cover" loading="lazy" />
           <div className={`absolute inset-0 bg-gradient-to-t ${config.gradient} to-transparent opacity-40`} />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           <div className="absolute top-2 left-2 w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "hsl(var(--primary) / 0.8)", backdropFilter: "blur(8px)" }}>
@@ -85,7 +85,7 @@ function MobileGameCard({ service, onTap, index }: { service: Property; onTap: (
       className="rounded-2xl overflow-hidden cursor-pointer active:scale-[0.96] transition-transform relative"
       style={{ height: 200, background: "linear-gradient(160deg, hsl(var(--card)) 0%, hsl(var(--muted) / 0.8) 100%)", border: "1px solid hsl(var(--border) / 0.3)" }}
     >
-      <img src={service.images[0]} alt={service.name} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+      <img src={service.images?.[0] || "/placeholder.svg"} alt={service.name} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
       <div className="absolute top-0 left-0 right-0 px-2.5 py-1.5 flex items-center justify-between" style={{ background: "linear-gradient(180deg, hsl(var(--primary) / 0.3) 0%, transparent 100%)" }}>
         <span className="text-[8px] font-black tracking-widest text-white/70 uppercase">{service.propertyType}</span>
@@ -142,7 +142,7 @@ function DesktopServiceCard({ service, onTap, index }: { service: Property; onTa
       }}
     >
       <div className="relative aspect-[4/3] overflow-hidden">
-        <img src={service.images[0]} alt={service.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+        <img src={service.images?.[0] || "/placeholder.svg"} alt={service.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
         <div className="absolute top-3 left-3 w-8 h-8 rounded-lg flex items-center justify-center border border-white/15" style={{ background: "hsl(var(--foreground) / 0.2)", backdropFilter: "blur(10px)" }}>
           <Icon size={14} className={config.color} />
@@ -206,7 +206,7 @@ export default function ServiceGrid({ services, onServiceTap }: ServiceGridProps
           className="mx-4 rounded-3xl overflow-hidden cursor-pointer active:scale-[0.98] transition-all group relative"
           style={{ height: 220 }}
         >
-          <img src={featured.images[0]} alt={featured.name} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+          <img src={featured.images?.[0] || "/placeholder.svg"} alt={featured.name} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
           <div className={`absolute inset-0 bg-gradient-to-t ${(serviceIconMap[featured.propertyType || ""] || defaultIcon).gradient} to-transparent opacity-70`} />
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent" />
@@ -247,7 +247,7 @@ export default function ServiceGrid({ services, onServiceTap }: ServiceGridProps
                 className={`relative rounded-2xl overflow-hidden cursor-pointer group ${isFirst ? "col-span-2" : ""}`}
                 onClick={() => onServiceTap(s)}
               >
-                <img src={s.images[0]} alt={s.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
+                <img src={s.images?.[0] || "/placeholder.svg"} alt={s.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/5 group-hover:from-black/95 transition-all duration-500" />
                 
                 <div className="absolute top-4 left-4 flex items-center gap-2">
