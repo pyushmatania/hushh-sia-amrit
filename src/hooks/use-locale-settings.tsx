@@ -139,6 +139,47 @@ export function useLocaleSettings() {
     return `${hour12}:${m.toString().padStart(2, "0")} ${period}`;
   }, [settings.timeFormat]);
 
+  /** Convert a single "8 AM" or "12 PM" token to 24h or back */
+  const convertTimeToken = useCallback((token: string): string => {
+    const trimmed = token.trim();
+    // Check if it's already in 12h format like "8 AM", "12 PM"
+    const match12 = trimmed.match(/^(\d{1,2})\s*(AM|PM)$/i);
+    if (match12) {
+      let h = parseInt(match12[1], 10);
+      const isPm = match12[2].toUpperCase() === "PM";
+      if (settings.timeFormat === "24h") {
+        if (isPm && h !== 12) h += 12;
+        if (!isPm && h === 12) h = 0;
+        return `${h.toString().padStart(2, "0")}:00`;
+      }
+      return trimmed; // already 12h
+    }
+    // Check if it's in 24h format like "14:00"
+    const match24 = trimmed.match(/^(\d{1,2}):(\d{2})$/);
+    if (match24) {
+      const h = parseInt(match24[1], 10);
+      const m = match24[2];
+      if (settings.timeFormat === "12h") {
+        const period = h >= 12 ? "PM" : "AM";
+        const hour12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+        return m === "00" ? `${hour12} ${period}` : `${hour12}:${m} ${period}`;
+      }
+      return trimmed; // already 24h
+    }
+    return trimmed;
+  }, [settings.timeFormat]);
+
+  /** Format a slot time range like "8 AM - 12 PM" respecting 12h/24h */
+  const formatSlotTime = useCallback((slotTime: string): string => {
+    if (!slotTime) return slotTime;
+    // Split on " - " or " – " (en-dash)
+    const parts = slotTime.split(/\s*[-–]\s*/);
+    if (parts.length === 2) {
+      return `${convertTimeToken(parts[0])} - ${convertTimeToken(parts[1])}`;
+    }
+    return convertTimeToken(slotTime);
+  }, [convertTimeToken]);
+
   /** Format date+time together */
   const formatDateTime = useCallback((input: string | Date): string => {
     const d = typeof input === "string" ? new Date(input) : input;
