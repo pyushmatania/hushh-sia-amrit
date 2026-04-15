@@ -162,22 +162,22 @@ const PIE_COLORS = ["hsl(250, 80%, 60%)", "hsl(280, 65%, 62%)", "hsl(200, 75%, 5
 
 export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (page: AdminPage) => void; userRole?: "super_admin" | "ops_manager" | "host" | "staff" | null }) {
   const [stats, setStats] = useState<Stats>({ revenue: 0, bookings: 0, activeListings: 0, totalUsers: 0, pendingOrders: 0, todayBookings: 0, avgRating: 0, lowStock: 0, conflicts: 0 });
+  const locale = useLocaleSettings();
   const [greeting, setGreeting] = useState("Good morning");
   const [topProperties, setTopProperties] = useState<TopProperty[]>([]);
   const [recentReviews, setRecentReviews] = useState<RecentReview[]>([]);
   const [todaySchedule, setTodaySchedule] = useState<TodaySlot[]>([]);
   const [categoryData, setCategoryData] = useState<{ name: string; value: number }[]>([]);
-  const [currentTime, setCurrentTime] = useState(new Date());
   const [revenueChartData, setRevenueChartData] = useState<{ day: string; revenue: number }[]>([]);
   const [weeklyPerfData, setWeeklyPerfData] = useState<{ day: string; value: number }[]>([]);
   const [financialData, setFinancialData] = useState<{ month: string; expenses: number; revenue: number }[]>([]);
   const [prevMonthStats, setPrevMonthStats] = useState({ revenue: 0, bookings: 0, listings: 0, users: 0 });
 
-  useEffect(() => { const t = setInterval(() => setCurrentTime(new Date()), 60000); return () => clearInterval(t); }, []);
+  useEffect(() => {
+    setGreeting(locale.getGreeting().text);
+  }, [locale.currentTime]);
 
   useEffect(() => {
-    const h = new Date().getHours();
-    setGreeting(h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening");
     const today = new Date().toISOString().split("T")[0];
     Promise.all([
       supabase.from("bookings").select("total, status, property_id, date, slot, guests"),
