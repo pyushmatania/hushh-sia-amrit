@@ -356,6 +356,7 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
     return sameId ?? incomingProperty;
   }, [incomingProperty, allProperties]);
 
+  const bookingSectionRef = useRef<HTMLDivElement>(null);
   const [imgIndex, setImgIndex] = useState(0);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [guests, setGuests] = useState(2);
