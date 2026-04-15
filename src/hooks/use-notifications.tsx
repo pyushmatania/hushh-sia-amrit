@@ -17,6 +17,7 @@ export interface Notification {
 
 export function useNotifications() {
   const { user } = useAuth();
+  const { isRealMode } = useDataMode();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -24,8 +25,8 @@ export function useNotifications() {
 
   const fetch = useCallback(async () => {
     if (!user) {
-      // Guest mode — show mock notifications
-      setNotifications(mockNotifications as Notification[]);
+      // Guest mode — show mock notifications only in demo mode
+      setNotifications(isRealMode ? [] : (mockNotifications as Notification[]));
       setLoading(false);
       return;
     }
