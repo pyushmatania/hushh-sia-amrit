@@ -9,6 +9,7 @@ import { useMessages, type Conversation, type Message } from "@/hooks/use-messag
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow, format, isToday, isYesterday, isSameDay } from "date-fns";
 import { useAppConfig } from "@/hooks/use-app-config";
+import { useDataMode } from "@/hooks/use-data-mode";
 
 /* ═══ Types ═══ */
 interface Notification {
