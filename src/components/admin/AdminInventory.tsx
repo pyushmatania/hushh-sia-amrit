@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { DEMO_INVENTORY } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 import { motion, AnimatePresence } from "framer-motion";
 import { Package, Search, Plus, Trash2, Pencil, X, AlertTriangle, Eye, GripVertical, Sparkles, CheckSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
