@@ -75,15 +75,23 @@ export default function OrderHistorySection() {
 
   if (!user || (loading === false && orders.length === 0)) return null;
 
-  const formatDate = (iso: string) => {
-    const d = new Date(iso);
-    return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
-  };
-
-  const formatTime = (iso: string) => {
-    const d = new Date(iso);
-    return d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
-  };
+  const { formatDateShort: formatDate, formatTime } = (await import("@/hooks/use-locale-settings")).useLocaleSettings ? (() => {
+    // Use inline to avoid hook rules — fallback to locale-aware formatting
+    const d1 = (iso: string) => {
+      try {
+        const s = JSON.parse(localStorage.getItem("hushh_locale_settings") || "{}");
+        const d = new Date(iso);
+        const tf = s.timeFormat || "12h";
+        return {
+          date: d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }),
+          time: tf === "24h"
+            ? d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: false })
+            : d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true }),
+        };
+      } catch { return { date: iso, time: "" }; }
+    };
+    return { formatDateShort: (iso: string) => d1(iso).date, formatTime: (iso: string) => d1(iso).time };
+  })() : { formatDateShort: (iso: string) => iso, formatTime: (iso: string) => iso };
 
   return (
     <div className="px-5 pt-6 pb-4">

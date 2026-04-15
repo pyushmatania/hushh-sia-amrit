@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
+import { useLocaleSettings } from "@/hooks/use-locale-settings";
 import { motion, AnimatePresence } from "framer-motion";
 import NumberTicker from "@/components/shared/NumberTicker";
 import {
