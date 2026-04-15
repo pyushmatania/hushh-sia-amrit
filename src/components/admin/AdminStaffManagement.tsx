@@ -317,6 +317,7 @@ export default function AdminStaffManagement() {
     if (!newLeave.staff_id || !newLeave.start_date || !newLeave.end_date) {
       toast.error("Please fill all required fields"); return;
     }
+    if (isDemoRecord(newLeave.staff_id)) { toast.error("Cannot submit leave for demo staff"); return; }
     const start = new Date(newLeave.start_date);
     const end = new Date(newLeave.end_date);
     if (end < start) { toast.error("End date must be after start date"); return; }
