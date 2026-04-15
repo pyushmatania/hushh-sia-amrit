@@ -35,6 +35,7 @@ const paymentMethods = [
 
 export default function CheckoutScreen({ property, slotId, guests: initialGuests, date: initialDate, selections: initialSelections, total: initialTotal, onBack, onConfirm, extras: initialExtras, isWishlisted, onToggleWishlist, roomsCount: propRoomsCount, extraMattresses: propExtraMattresses }: CheckoutScreenProps) {
   const { addons } = usePropertiesData();
+  const locale = useLocaleSettings();
   const [liveDate, setLiveDate] = useState<Date>(initialDate);
   const [liveGuests, setLiveGuests] = useState(initialGuests);
   const [editingDate, setEditingDate] = useState(false);

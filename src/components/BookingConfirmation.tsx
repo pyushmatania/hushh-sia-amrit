@@ -25,6 +25,7 @@ interface BookingConfirmationProps {
 
 export default function BookingConfirmation({ property, slotId, guests, date, total, onDone, bookingId: passedBookingId }: BookingConfirmationProps) {
   const appConfig = useAppConfig();
+  const locale = useLocaleSettings();
   const prefix = (appConfig.app_name || "HUSHH").toUpperCase();
   const slot = property.slots.find((s) => s.id === slotId);
   // Use the real booking ID from the DB if available, otherwise generate a display-only fallback

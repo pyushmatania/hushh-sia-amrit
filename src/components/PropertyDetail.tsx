@@ -357,6 +357,7 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
     return sameId ?? incomingProperty;
   }, [incomingProperty, allProperties]);
 
+  const locale = useLocaleSettings();
   const bookingSectionRef = useRef<HTMLDivElement>(null);
   const [imgIndex, setImgIndex] = useState(0);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
