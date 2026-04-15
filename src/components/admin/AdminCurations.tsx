@@ -19,6 +19,7 @@ import { useAutoSave } from "@/hooks/use-auto-save";
 import CatalogEditSheet from "./CatalogEditSheet";
 import { DEMO_CURATIONS, DEMO_LISTINGS, DEMO_BOOKINGS, DEMO_ORDERS } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 
 const MOOD_OPTIONS = ["Romantic", "Party", "Chill", "Adventure", "Work", "Celebration", "Family"];
 const INCLUDE_OPTIONS = [
@@ -63,6 +64,7 @@ export default function AdminCurations() {
   const [revenueMap, setRevenueMap] = useState(new Map<string, { bookingRev: number; orderRev: number; totalBookings: number }>());
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [isDemo, setIsDemo] = useState(false);
+  const { isDemoMode } = useDataMode();
 
   const toggleSelect = (id: string) => {
     setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
