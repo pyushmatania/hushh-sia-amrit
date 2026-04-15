@@ -74,11 +74,11 @@ export default function OrderHistorySection() {
     })();
   }, [user]);
 
-  if (!user || (loading === false && orders.length === 0)) return null;
-
   const locale = useLocaleSettings();
   const formatDate = (iso: string) => locale.formatDateShort(iso);
   const formatTime = (iso: string) => locale.formatTime(iso);
+
+  if (!user || (loading === false && orders.length === 0)) return null;
 
   return (
     <div className="px-5 pt-6 pb-4">
