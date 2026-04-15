@@ -30,6 +30,7 @@ export default function FloatingChecklist() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<FilterType>("all");
+  const { isDemoMode } = useDataMode();
 
   const load = async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true);
@@ -138,7 +139,7 @@ export default function FloatingChecklist() {
     });
 
     // Fallback to demo data when Supabase returns nothing
-    if (pending.length === 0) {
+    if (pending.length === 0 && isDemoMode) {
       const demoListingMap = buildDemoListingMap();
       const demoProfileMap = buildDemoProfileMap();
 
