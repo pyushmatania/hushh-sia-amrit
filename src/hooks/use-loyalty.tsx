@@ -69,7 +69,7 @@ export function useLoyalty(): LoyaltyData {
       );
     }
     setLoading(false);
-  }, [user]);
+  }, [user, isRealMode]);
 
   useEffect(() => { refresh(); }, [refresh]);
 
