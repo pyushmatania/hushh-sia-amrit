@@ -94,7 +94,7 @@ export default function AdminCurations() {
 
       setCurations(curRes.data ?? []);
 
-      if ((curRes.data ?? []).length === 0) {
+      if ((curRes.data ?? []).length === 0 && isDemoMode) {
         setIsDemo(true);
         setCurations(DEMO_CURATIONS as any[]);
 
