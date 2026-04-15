@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { isRealModeSnapshot } from "@/hooks/use-data-mode";
 import {
   properties as staticProperties,
   packages as staticPackages,
@@ -193,6 +194,8 @@ export function PropertiesProvider({ children }: { children: ReactNode }) {
       supabase.from("experience_packages").select("*").eq("active", true).order("sort_order", { ascending: true }),
     ]);
 
+    const realMode = isRealModeSnapshot();
+
     // Process listings
     if (!listingsRes.error && listingsRes.data && listingsRes.data.length > 0) {
       const staticByName = new Map(staticProperties.map((p) => [p.name.toLowerCase().trim(), p]));
@@ -215,10 +218,10 @@ export function PropertiesProvider({ children }: { children: ReactNode }) {
         writeListingLinks(nextLinks);
       }
 
-      const missing = staticProperties.filter((p) => !matchedStaticIds.has(p.id));
+      const missing = realMode ? [] : staticProperties.filter((p) => !matchedStaticIds.has(p.id));
       setProperties([...merged, ...missing]);
     } else {
-      setProperties(staticProperties);
+      setProperties(realMode ? [] : staticProperties);
     }
 
     // Process inventory → addons
@@ -230,7 +233,7 @@ export function PropertiesProvider({ children }: { children: ReactNode }) {
       }
       setAddons(merged);
     } else {
-      setAddons(staticAddons);
+      setAddons(realMode ? {} : staticAddons);
     }
 
     // Process curations → curatedCombos
@@ -253,7 +256,7 @@ export function PropertiesProvider({ children }: { children: ReactNode }) {
       });
       setCuratedCombos(merged);
     } else {
-      setCuratedCombos(staticCombos);
+      setCuratedCombos(realMode ? [] : staticCombos);
     }
 
     // Process experience packages
@@ -269,7 +272,7 @@ export function PropertiesProvider({ children }: { children: ReactNode }) {
         }))
       );
     } else {
-      setPackages(staticPackages);
+      setPackages(realMode ? [] : staticPackages);
     }
 
     setLoading(false);
