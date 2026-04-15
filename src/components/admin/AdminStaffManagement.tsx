@@ -240,6 +240,7 @@ export default function AdminStaffManagement() {
   };
 
   const markAttendance = async (staffId: string, status: string, mealProvided: boolean, overtime = 0) => {
+    if (isDemoRecord(staffId)) { toast.error("Cannot mark attendance for demo staff — add them as real staff first"); return; }
     const existing = todayAttendance.find(a => a.staff_id === staffId);
     const payload = {
       status, meal_provided: mealProvided,
