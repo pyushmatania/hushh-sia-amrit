@@ -23,7 +23,7 @@ export default function AdminCoupons() {
   const [showCreate, setShowCreate] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
   const [form, setForm] = useState({ code: "", description: "", discount_type: "percentage", discount_value: 10, min_order: 0, max_uses: "", expires_at: "" });
-  const { getDemoFallback } = useDataMode();
+  const { getDemoFallback, isDemoMode } = useDataMode();
 
   useEffect(() => {
     supabase.from("coupons").select("*").order("created_at", { ascending: false })

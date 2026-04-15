@@ -52,7 +52,7 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [bulkMode, setBulkMode] = useState(false);
   const [isDemo, setIsDemo] = useState(false);
-  const { getDemoFallback } = useDataMode();
+  const { getDemoFallback, isDemoMode } = useDataMode();
 
   const toggleSelect = (id: string) => {
     setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);

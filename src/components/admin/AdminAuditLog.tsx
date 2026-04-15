@@ -30,7 +30,7 @@ export default function AdminAuditLog() {
   const [loading, setLoading] = useState(true);
   const [filterAction, setFilterAction] = useState("all");
   const [isDemo, setIsDemo] = useState(false);
-  const { getDemoFallback } = useDataMode();
+  const { getDemoFallback, isDemoMode } = useDataMode();
 
   useEffect(() => {
     supabase.from("audit_logs").select("*").order("created_at", { ascending: false }).limit(100)

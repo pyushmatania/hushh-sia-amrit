@@ -32,7 +32,7 @@ export default function AdminNotifications() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "unread" | "booking" | "order" | "alert">("all");
   const [isDemo, setIsDemo] = useState(false);
-  const { getDemoFallback } = useDataMode();
+  const { getDemoFallback, isDemoMode } = useDataMode();
 
   useEffect(() => {
     loadNotifications();
