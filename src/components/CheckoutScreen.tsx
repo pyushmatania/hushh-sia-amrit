@@ -218,7 +218,7 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
           {/* Booking Summary Card */}
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="rounded-2xl border border-border p-4 md:p-6">
             <div className="flex items-center gap-3 mb-3">
-              <img src={property.images[0]} alt={property.name} className="w-16 h-16 md:w-20 md:h-20 rounded-xl object-cover" />
+              <img src={property.images?.[0] || "/placeholder.svg"} alt={property.name} className="w-16 h-16 md:w-20 md:h-20 rounded-xl object-cover" />
               <div className="flex-1 min-w-0">
                 <h3 className="font-semibold text-foreground text-sm md:text-lg truncate">{property.name}</h3>
                 <p className="text-xs md:text-sm text-muted-foreground flex items-center gap-1 mt-0.5">
