@@ -59,6 +59,7 @@ export default function AdminAlerts({ onNavigate }: Props) {
   const [predictions, setPredictions] = useState<Predictions | null>(null);
   const [loading, setLoading] = useState(true);
   const [isDemo, setIsDemo] = useState(false);
+  const { isDemoMode } = useDataMode();
 
   useEffect(() => {
     const fetchAlerts = async () => {
@@ -72,7 +73,7 @@ export default function AdminAlerts({ onNavigate }: Props) {
       }
       // Demo fallback: if no real alerts returned, populate with realistic demo data
       setAlerts(prev => {
-        if (prev.length === 0) {
+        if (prev.length === 0 && isDemoMode) {
           setIsDemo(true);
           setPredictions({
             peakDay: "Saturday", peakDayBookings: 14, slowDay: "Tuesday",
