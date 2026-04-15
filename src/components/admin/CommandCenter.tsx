@@ -23,6 +23,7 @@ import WeeklyDigestPreview from "./WeeklyDigestPreview";
 import NeuralSearchWidget from "./NeuralSearchWidget";
 import { useDraggableWidgets, DraggableWidgetWrapper, DashboardEditToggle } from "./DraggableWidgets";
 import type { AdminPage } from "./AdminLayout";
+import { useDataMode } from "@/hooks/use-data-mode";
 
 interface Stats {
   revenue: number; bookings: number; activeListings: number; totalUsers: number;
