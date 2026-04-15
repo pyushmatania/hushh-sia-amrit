@@ -926,6 +926,7 @@ export default function AdminClients({ initialUserId, onContextConsumed, onBack 
   const [listingMap, setListingMap] = useState<Map<string, string>>(new Map());
   const [listingInfoMap, setListingInfoMap] = useState<Map<string, ListingInfo>>(new Map());
   const [isDemo, setIsDemo] = useState(false);
+  const { isDemoMode } = useDataMode();
 
   useEffect(() => {
     if (initialUserId && !loading && clients.length > 0) {

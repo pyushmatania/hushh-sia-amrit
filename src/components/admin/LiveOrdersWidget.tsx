@@ -35,6 +35,7 @@ export default function LiveOrdersWidget({ onViewAll }: { onViewAll: () => void 
   const [orders, setOrders] = useState<LiveOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDemo, setIsDemo] = useState(false);
+  const { isDemoMode } = useDataMode();
   const [selectedOrder, setSelectedOrder] = useState<LiveOrder | null>(null);
   const [detailTab, setDetailTab] = useState<"details" | "history" | "timeline">("details");
   const [clientHistory, setClientHistory] = useState<ClientHistory | null>(null);

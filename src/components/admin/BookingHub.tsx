@@ -71,6 +71,7 @@ export default function BookingHub({
   const [propertyMap, setPropertyMap] = useState<Map<string, { name: string; image: string; location: string; capacity: number; category: string }>>(new Map());
   const [profileMap, setProfileMap] = useState<Map<string, string>>(new Map());
   const [isDemo, setIsDemo] = useState(false);
+  const { isDemoMode } = useDataMode();
 
   const load = useCallback(async () => {
     const [bookingsRes, listingsRes, profilesRes] = await Promise.all([

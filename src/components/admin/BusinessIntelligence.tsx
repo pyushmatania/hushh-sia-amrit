@@ -111,6 +111,7 @@ export default function BusinessIntelligence({ onNavigate }: { onNavigate?: (pag
   const [loadingPricing, setLoadingPricing] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [isDemo, setIsDemo] = useState(false);
+  const { isDemoMode } = useDataMode();
   const [actionResults, setActionResults] = useState<string[]>([]);
   const [actions, setActions] = useState<AutoAction[]>([
     { id: "low-stock", icon: Package, title: "Check Low Stock", description: "Scan inventory & auto-disable out-of-stock items", color: "text-amber-500", bg: "bg-amber-500/10", running: false },

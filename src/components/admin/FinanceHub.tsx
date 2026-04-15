@@ -83,6 +83,7 @@ export default function FinanceHub() {
   const [editingBudget, setEditingBudget] = useState<Partial<BudgetAllocation> | null>(null);
   const [revPeriod, setRevPeriod] = useState<"week" | "month" | "all">("month");
   const [isDemo, setIsDemo] = useState(false);
+  const { isDemoMode } = useDataMode();
 
   const loadData = async () => {
     setLoading(true);

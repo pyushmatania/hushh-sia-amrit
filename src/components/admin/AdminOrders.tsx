@@ -59,6 +59,7 @@ export default function AdminOrders() {
   const [clientHistory, setClientHistory] = useState<ClientHistory | null>(null);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [isDemo, setIsDemo] = useState(false);
+  const { isDemoMode } = useDataMode();
   const [listingMap] = useState(() => new Map<string, { name: string; imageUrls: string[] }>());
 
   const load = async () => {

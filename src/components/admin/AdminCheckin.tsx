@@ -35,6 +35,7 @@ export default function AdminCheckin() {
   const [entries, setEntries] = useState<GuestCheckin[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDemo, setIsDemo] = useState(false);
+  const { isDemoMode } = useDataMode();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "checked-in" | "expected" | "unverified">("all");
   const [qrSheet, setQrSheet] = useState(false);
