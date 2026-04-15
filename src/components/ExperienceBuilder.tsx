@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Plus, Minus, Check, ChefHat, Palette, Music, Wifi, Armchair, Camera, Flame, Sparkles, X, ChevronRight, Search, Star, Zap } from "lucide-react";
 import { useState, useMemo, useRef } from "react";
+import { useLocaleSettings } from "@/hooks/use-locale-settings";
 import type { Property } from "@/data/properties";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
 
