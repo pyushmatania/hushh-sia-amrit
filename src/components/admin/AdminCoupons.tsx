@@ -36,7 +36,7 @@ export default function AdminCoupons() {
         else { setCoupons(rows); setIsDemo(false); }
         setLoading(false);
       });
-  }, []);
+  }, [isDemoMode]);
 
   const genCode = () => "HUSHH" + Array.from({ length: 5 }, () => "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[Math.floor(Math.random() * 36)]).join("");
 

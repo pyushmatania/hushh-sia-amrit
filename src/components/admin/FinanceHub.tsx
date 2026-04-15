@@ -111,7 +111,7 @@ export default function FinanceHub() {
     setLoading(false);
   };
 
-  useEffect(() => { loadData(); }, []);
+  useEffect(() => { loadData(); }, [isDemoMode]);
 
   const currentMonth = format(new Date(), "MMMM");
   const currentYear = new Date().getFullYear();

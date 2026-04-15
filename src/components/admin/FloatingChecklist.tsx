@@ -201,7 +201,7 @@ export default function FloatingChecklist() {
       .on("postgres_changes", { event: "*", schema: "public", table: "inventory" }, () => load())
       .subscribe();
     return () => { supabase.removeChannel(ch); };
-  }, []);
+  }, [isDemoMode]);
 
   const filtered = useMemo(() =>
     filter === "all" ? items : items.filter(i => i.type === filter),

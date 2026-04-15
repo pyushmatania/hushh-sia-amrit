@@ -252,7 +252,7 @@ export default function BusinessIntelligence({ onNavigate }: { onNavigate?: (pag
     setLoadingPricing(false);
   };
 
-  useEffect(() => { fetchAlerts(); fetchPricing(); }, []);
+  useEffect(() => { fetchAlerts(); fetchPricing(); }, [isDemoMode]);
 
   const refresh = async () => {
     setRefreshing(true);

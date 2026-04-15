@@ -51,7 +51,7 @@ export default function AdminCheckin() {
       .on("postgres_changes", { event: "*", schema: "public", table: "bookings" }, () => loadData())
       .subscribe();
     return () => { supabase.removeChannel(ch); };
-  }, []);
+  }, [isDemoMode]);
 
   const loadData = async () => {
     setLoading(true);

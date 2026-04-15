@@ -156,7 +156,7 @@ export default function AdminAnalytics() {
       });
     };
     load();
-  }, []);
+  }, [isDemoMode]);
 
   const revGrowth = summary.lastWeekRev ? Math.round(((summary.thisWeekRev - summary.lastWeekRev) / summary.lastWeekRev) * 100) : 0;
   const bookGrowth = summary.lastWeekBookings ? Math.round(((summary.thisWeekBookings - summary.lastWeekBookings) / summary.lastWeekBookings) * 100) : 0;

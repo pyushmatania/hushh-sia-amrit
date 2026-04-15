@@ -306,7 +306,7 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
       });
       setFinancialData(Array.from(monthMap, ([month, data]) => ({ month, ...data })));
     });
-  }, []);
+  }, [isDemoMode]);
 
   // Phase 1: Real-time dashboard sync
   useEffect(() => {
@@ -336,7 +336,7 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
       }).subscribe(),
     ];
     return () => { channels.forEach(ch => supabase.removeChannel(ch)); };
-  }, []);
+  }, [isDemoMode]);
 
   const revTrendPct = prevMonthStats.revenue;
   const bkTrendPct = prevMonthStats.bookings;
