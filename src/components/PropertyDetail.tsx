@@ -922,7 +922,7 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
                         )}
                       </div>
                       <span className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                        <Clock size={10} /> {slot.time}
+                        <Clock size={10} /> {locale.formatSlotTime(slot.time)}
                       </span>
                       {/* Viewers microcopy */}
                       {slot.viewersNow && slot.viewersNow > 0 && (
@@ -1457,7 +1457,7 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
                   }`}
                 >
                   <p className="text-sm font-medium text-foreground">{slot.label}</p>
-                  <p className="text-xs text-muted-foreground">{slot.time}</p>
+                  <p className="text-xs text-muted-foreground">{locale.formatSlotTime(slot.time)}</p>
                   <p className="text-sm font-semibold text-foreground mt-1">₹{slot.price.toLocaleString()}</p>
                 </button>
               ))}

@@ -237,7 +237,7 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
                 <Pencil size={9} className="text-primary ml-0.5" />
               </button>
               <span className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-secondary/80">
-                <Clock size={12} /> {slot.label} · {slot.time}
+                <Clock size={12} /> {slot.label} · {locale.formatSlotTime(slot.time)}
               </span>
               <button onClick={() => { setEditingGuests(!editingGuests); setEditingDate(false); }}
                 className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-secondary/80 border transition-colors ${liveGuests < 1 ? "border-destructive/50 ring-1 ring-destructive/30" : "border-border/50 hover:border-primary/30"}`}>

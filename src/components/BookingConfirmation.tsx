@@ -102,8 +102,8 @@ export default function BookingConfirmation({ property, slotId, guests, date, to
             </div>
           </div>
           <div className="grid grid-cols-1 gap-2 text-sm text-muted-foreground">
-            <span className="flex items-center gap-2"><Calendar size={14} /> {format(date, "EEEE, d MMMM yyyy")}</span>
-            <span className="flex items-center gap-2"><Clock size={14} /> {slot ? `${slot.label} · ${slot.time}` : "Confirmed slot"}</span>
+            <span className="flex items-center gap-2"><Calendar size={14} /> {locale.formatDateShort(date)}</span>
+            <span className="flex items-center gap-2"><Clock size={14} /> {slot ? `${slot.label} · ${locale.formatSlotTime(slot.time)}` : "Confirmed slot"}</span>
             <span className="flex items-center gap-2"><Users size={14} /> {guests} guests</span>
           </div>
           <div className="flex items-center justify-between pt-3 border-t border-border">
