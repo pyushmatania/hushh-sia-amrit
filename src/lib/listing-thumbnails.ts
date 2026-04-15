@@ -73,13 +73,13 @@ const thumbnailMap: Record<string, string> = {
  * When preferMapped=true: mapped local asset > image_urls[0] > null
  */
 export function getListingThumbnail(
-  name: string,
-  imageUrls?: string[],
+  name: string | null | undefined,
+  imageUrls?: string[] | null,
   options?: { preferMapped?: boolean }
 ): string | null {
   const normalizedName = normalizeListingName(name || "");
   const mapped = thumbnailMap[normalizedName] || null;
-  const firstUrl = imageUrls?.find((url) => !!url) || null;
+  const firstUrl = (Array.isArray(imageUrls) ? imageUrls : []).find((url) => !!url) || null;
 
   if (options?.preferMapped) return mapped || firstUrl;
   // Always try firstUrl first, then fall back to mapped asset for display
