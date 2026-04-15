@@ -365,7 +365,7 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
                     const cheapest = ext.slots.filter(s => s.available).sort((a, b) => a.price - b.price)[0];
                     return (
                       <motion.div key={ext.id} initial={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.2 }} className="flex items-center gap-2 text-sm">
-                        <img src={ext.images[0]} alt="" className="w-8 h-8 rounded-lg object-cover shrink-0" />
+                        <img src={ext.images?.[0] || "/placeholder.svg"} alt="" className="w-8 h-8 rounded-lg object-cover shrink-0" />
                         <span className="text-muted-foreground flex-1 truncate">{ext.name}</span>
                         <span className="text-foreground font-medium">₹{(cheapest?.price || ext.basePrice).toLocaleString()}</span>
                         <button onClick={() => removeExtra(ext.id)} className="w-5 h-5 rounded-full border border-border/60 flex items-center justify-center hover:bg-destructive/10 shrink-0"><X size={10} className="text-muted-foreground" /></button>
