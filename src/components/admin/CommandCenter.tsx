@@ -806,7 +806,7 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
         <div>
           <h1 className="text-xl font-bold text-foreground tracking-tight">{greeting} 👋</h1>
           <p className="text-[11px] text-muted-foreground mt-0.5">
-            {currentTime.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "short" })} · {currentTime.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
+            {locale.formatDateShort(locale.currentTime)} · {locale.formatTime(locale.currentTime)}
             {userRole && <span className="ml-2 px-1.5 py-0.5 rounded-md bg-primary/10 text-primary text-[9px] font-bold capitalize">{userRole.replace("_", " ")}</span>}
           </p>
         </div>
