@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./use-auth";
 import { mockLoyaltyTransactions } from "@/data/mock-users";
+import { useDataMode } from "./use-data-mode";
 
 export interface LoyaltyTransaction {
   id: string;
@@ -24,6 +25,7 @@ export interface LoyaltyData {
 
 export function useLoyalty(): LoyaltyData {
   const { user } = useAuth();
+  const { isRealMode } = useDataMode();
   const [points, setPoints] = useState(0);
   const [tier, setTier] = useState("Silver");
   const [transactions, setTransactions] = useState<LoyaltyTransaction[]>([]);
@@ -31,10 +33,15 @@ export function useLoyalty(): LoyaltyData {
 
   const refresh = useCallback(async () => {
     if (!user) {
-      // Guest mode — show mock loyalty data
-      setPoints(320);
-      setTier("Gold");
-      setTransactions(mockLoyaltyTransactions);
+      if (isRealMode) {
+        setPoints(0);
+        setTier("Silver");
+        setTransactions([]);
+      } else {
+        setPoints(320);
+        setTier("Gold");
+        setTransactions(mockLoyaltyTransactions);
+      }
       setLoading(false);
       return;
     }
@@ -62,7 +69,7 @@ export function useLoyalty(): LoyaltyData {
       );
     }
     setLoading(false);
-  }, [user]);
+  }, [user, isRealMode]);
 
   useEffect(() => { refresh(); }, [refresh]);
 

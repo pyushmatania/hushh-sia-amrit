@@ -9,6 +9,7 @@ import { useMessages, type Conversation, type Message } from "@/hooks/use-messag
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow, format, isToday, isYesterday, isSameDay } from "date-fns";
 import { useAppConfig } from "@/hooks/use-app-config";
+import { useDataMode } from "@/hooks/use-data-mode";
 
 /* ═══ Types ═══ */
 interface Notification {
@@ -425,6 +426,7 @@ export default function MessagesScreen() {
   const { user } = useAuth();
   const { conversations, loading } = useMessages();
   const appConfig = useAppConfig();
+  const { isRealMode } = useDataMode();
   const brandName = appConfig.app_name || "Hushh";
   const [tab, setTab] = useState<"chats" | "updates">("chats");
   const [activeConvo, setActiveConvo] = useState<Conversation | null>(null);
@@ -434,11 +436,13 @@ export default function MessagesScreen() {
   const [showSearch, setShowSearch] = useState(false);
 
   const dynamicMockThreads = useMemo(() =>
-    mockThreads.map(t => t.id === "c1" ? { ...t, name: `${brandName} Concierge` } : t),
-    [brandName]
+    isRealMode ? [] : mockThreads.map(t => t.id === "c1" ? { ...t, name: `${brandName} Concierge` } : t),
+    [brandName, isRealMode]
   );
 
-  const unreadNotifCount = notifications.filter(n => !n.read && !readNotifications.has(n.id)).length;
+  const dynamicNotifications = useMemo(() => isRealMode ? [] : notifications, [isRealMode]);
+
+  const unreadNotifCount = dynamicNotifications.filter(n => !n.read && !readNotifications.has(n.id)).length;
   const unreadChatCount = user
     ? conversations.reduce((s, c) => s + c.unread_count, 0)
     : dynamicMockThreads.reduce((s, t) => s + t.unread, 0);
@@ -570,7 +574,7 @@ export default function MessagesScreen() {
 
         {tab === "updates" && (
           <motion.div key="updates" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} className="px-5">
-            {notifications.map((notif, i) => {
+            {dynamicNotifications.map((notif, i) => {
               const isRead = notif.read || readNotifications.has(notif.id);
               return (
                 <motion.button

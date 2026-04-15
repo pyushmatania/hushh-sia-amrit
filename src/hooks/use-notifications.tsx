@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./use-auth";
 import { mockNotifications } from "@/data/mock-users";
+import { useDataMode } from "./use-data-mode";
 
 export interface Notification {
   id: string;
@@ -16,6 +17,7 @@ export interface Notification {
 
 export function useNotifications() {
   const { user } = useAuth();
+  const { isRealMode } = useDataMode();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -23,8 +25,8 @@ export function useNotifications() {
 
   const fetch = useCallback(async () => {
     if (!user) {
-      // Guest mode — show mock notifications
-      setNotifications(mockNotifications as Notification[]);
+      // Guest mode — show mock notifications only in demo mode
+      setNotifications(isRealMode ? [] : (mockNotifications as Notification[]));
       setLoading(false);
       return;
     }
@@ -36,7 +38,7 @@ export function useNotifications() {
       .limit(50);
     if (data) setNotifications(data as Notification[]);
     setLoading(false);
-  }, [user]);
+  }, [user, isRealMode]);
 
   useEffect(() => { fetch(); }, [fetch]);
 
