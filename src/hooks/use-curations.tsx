@@ -1,9 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { experiencePacks as fallbackPacks, type ExperiencePack } from "@/components/home/CuratedPackCard";
+import { useDataMode } from "@/hooks/use-data-mode";
 
 export function useCurations() {
-  const [packs, setPacks] = useState<ExperiencePack[]>(fallbackPacks);
+  const { isRealMode } = useDataMode();
+  const [packs, setPacks] = useState<ExperiencePack[]>(isRealMode ? [] : fallbackPacks);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
