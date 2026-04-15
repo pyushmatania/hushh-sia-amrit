@@ -27,6 +27,10 @@ export default class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, info: ErrorInfo) {
     console.error("[ErrorBoundary]", error, info.componentStack);
     this.setState({ errorInfo: info });
+    // Auto-reload on stale chunk / dynamic import failures
+    if (error?.message?.includes("dynamically imported module") || error?.message?.includes("Importing a module script failed") || error?.message?.includes("Failed to fetch dynamically imported module")) {
+      setTimeout(() => window.location.reload(), 1500);
+    }
   }
 
   handleReset = () => {
