@@ -86,16 +86,18 @@ export default function QRCodeModal({
 
           {/* 3D Canvas */}
           <div className="absolute inset-0 pointer-events-none opacity-60">
-            <Suspense fallback={null}>
-              <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
-                <ambientLight intensity={0.3} />
-                <pointLight position={[4, 4, 4]} intensity={0.7} color="#d4a853" />
-                <pointLight position={[-4, -2, 3]} intensity={0.4} color="#9333ea" />
-                <spotLight position={[0, 6, 4]} angle={0.25} penumbra={1} intensity={0.5} />
-                <FloatingCard />
-                <Environment preset="night" />
-              </Canvas>
-            </Suspense>
+            <ErrorBoundary fallbackTitle="3D unavailable">
+              <Suspense fallback={null}>
+                <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
+                  <ambientLight intensity={0.3} />
+                  <pointLight position={[4, 4, 4]} intensity={0.7} color="#d4a853" />
+                  <pointLight position={[-4, -2, 3]} intensity={0.4} color="#9333ea" />
+                  <spotLight position={[0, 6, 4]} angle={0.25} penumbra={1} intensity={0.5} />
+                  <FloatingCard />
+                  <Environment preset="night" />
+                </Canvas>
+              </Suspense>
+            </ErrorBoundary>
           </div>
 
           {/* QR Code */}
