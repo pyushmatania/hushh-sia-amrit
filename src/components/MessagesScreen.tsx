@@ -563,10 +563,10 @@ export default function MessagesScreen() {
             {filteredChats.length === 0 && !loading && (
               <div className="text-center py-20">
                 <div className="w-14 h-14 rounded-full bg-muted/20 mx-auto mb-3 flex items-center justify-center">
-                  <MessageCircle size={22} className="text-muted-foreground/20" />
+                  <span className="text-2xl">💬</span>
                 </div>
                 <p className="text-sm font-medium text-foreground/60">No conversations yet</p>
-                <p className="text-xs text-muted-foreground/35 mt-1">Messages from hosts will appear here</p>
+                <p className="text-xs text-muted-foreground/35 mt-1 max-w-[240px] mx-auto leading-relaxed">When you book a stay or experience, you can chat directly with the host here.</p>
               </div>
             )}
           </motion.div>
@@ -574,38 +574,48 @@ export default function MessagesScreen() {
 
         {tab === "updates" && (
           <motion.div key="updates" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} className="px-5">
-            {dynamicNotifications.map((notif, i) => {
-              const isRead = notif.read || readNotifications.has(notif.id);
-              return (
-                <motion.button
-                  key={notif.id}
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.03 }}
-                  onClick={() => setReadNotifications(prev => new Set(prev).add(notif.id))}
-                  className={`w-full flex items-start gap-3 py-3.5 text-left active:bg-muted/10 transition-colors ${
-                    i > 0 ? "border-t border-border/10" : ""
-                  }`}
-                >
-                  <span className="text-lg shrink-0 mt-0.5">{notif.icon}</span>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2">
-                      <span className={`text-[13px] leading-snug ${isRead ? "font-medium text-foreground/50" : "font-semibold text-foreground"}`}>
-                        {notif.title}
-                      </span>
-                      <span className="text-[10px] text-muted-foreground/35 shrink-0">{notif.time}</span>
+            {dynamicNotifications.length === 0 ? (
+              <div className="text-center py-20">
+                <div className="w-14 h-14 rounded-full bg-muted/20 mx-auto mb-3 flex items-center justify-center">
+                  <span className="text-2xl">🔔</span>
+                </div>
+                <p className="text-sm font-medium text-foreground/60">All caught up!</p>
+                <p className="text-xs text-muted-foreground/35 mt-1 max-w-[240px] mx-auto leading-relaxed">You'll receive booking confirmations, offers & updates here.</p>
+              </div>
+            ) : (
+              dynamicNotifications.map((notif, i) => {
+                const isRead = notif.read || readNotifications.has(notif.id);
+                return (
+                  <motion.button
+                    key={notif.id}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.03 }}
+                    onClick={() => setReadNotifications(prev => new Set(prev).add(notif.id))}
+                    className={`w-full flex items-start gap-3 py-3.5 text-left active:bg-muted/10 transition-colors ${
+                      i > 0 ? "border-t border-border/10" : ""
+                    }`}
+                  >
+                    <span className="text-lg shrink-0 mt-0.5">{notif.icon}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <span className={`text-[13px] leading-snug ${isRead ? "font-medium text-foreground/50" : "font-semibold text-foreground"}`}>
+                          {notif.title}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground/35 shrink-0">{notif.time}</span>
+                      </div>
+                      <p className="text-[12px] text-muted-foreground/50 mt-0.5 leading-relaxed line-clamp-2">{notif.body}</p>
+                      {notif.cta && (
+                        <span className="inline-flex items-center mt-1 text-[11px] font-semibold text-primary">
+                          {notif.cta.label}
+                        </span>
+                      )}
                     </div>
-                    <p className="text-[12px] text-muted-foreground/50 mt-0.5 leading-relaxed line-clamp-2">{notif.body}</p>
-                    {notif.cta && (
-                      <span className="inline-flex items-center mt-1 text-[11px] font-semibold text-primary">
-                        {notif.cta.label}
-                      </span>
-                    )}
-                  </div>
-                  {!isRead && <div className="w-2 h-2 rounded-full bg-primary shrink-0 mt-2" />}
-                </motion.button>
-              );
-            })}
+                    {!isRead && <div className="w-2 h-2 rounded-full bg-primary shrink-0 mt-2" />}
+                  </motion.button>
+                );
+              })
+            )}
           </motion.div>
         )}
       </AnimatePresence>

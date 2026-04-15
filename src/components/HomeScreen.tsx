@@ -16,6 +16,8 @@ import { useHomepageSections } from "@/hooks/use-homepage-sections";
 import { useAppConfig } from "@/hooks/use-app-config";
 import { useHomepageFilters } from "@/hooks/use-homepage-filters";
 import ErrorBoundary from "@/components/shared/ErrorBoundary";
+import ComingSoonState, { getComingSoonMessage } from "@/components/shared/ComingSoonState";
+import { useDataMode } from "@/hooks/use-data-mode";
 import profileAvatar from "@/assets/profile-avatar.webp";
 
 import RotatingSearchBar from "./home/RotatingSearchBar";
@@ -63,6 +65,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
   const { user } = useAuth();
   const { unreadCount: notifCount } = useNotifications();
   const { properties, packages, curatedCombos } = usePropertiesData();
+  const { isRealMode } = useDataMode();
   const { packs: experiencePacks } = useCurations();
   const { isSectionVisible, getSortOrder } = useHomepageSections("home");
   const appConfig = useAppConfig();
@@ -257,6 +260,10 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
 
           {/* ═══════ HOME TAB ═══════ */}
           {activeCategory === "home" && (() => {
+              if (isRealMode && properties.length === 0 && curatedCombos.length === 0 && packages.length === 0) {
+                const msg = getComingSoonMessage("default");
+                return <ComingSoonState emoji={msg.emoji} title="We're setting things up" description="Amazing stays, experiences & curations are being added. Check back soon!" />;
+              }
               const homeSections: { key: string; order: number; node: ReactNode }[] = [];
 
               if (isSectionVisible("active_trip")) {
@@ -375,6 +382,9 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
 
           {/* ═══════ STAYS TAB ═══════ */}
           {activeCategory === "stay" && (
+            stayProperties.length === 0 && isRealMode ? (
+              <ComingSoonState {...getComingSoonMessage("stays")} />
+            ) : (
             <>
               <SectionTitle title="FEATURED STAYS" />
               <OscarToggle isOn={oscarMode} onToggle={() => setOscarMode(!oscarMode)} />
@@ -467,10 +477,14 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               )}
               </AnimatePresence>
             </>
+            )
           )}
 
           {/* ═══════ EXPERIENCES TAB ═══════ */}
           {activeCategory === "experience" && (
+            experienceProperties.length === 0 && isRealMode ? (
+              <ComingSoonState {...getComingSoonMessage("experiences")} />
+            ) : (
             <>
               <div className="px-5 pt-6 pb-2 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:pt-10 md:pb-4 md:text-center">
                 <h1 className="text-2xl font-bold text-foreground md:text-4xl lg:text-5xl" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
@@ -561,10 +575,14 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               </>
               )}
             </>
+            )
           )}
 
           {/* ═══════ SERVICES TAB ═══════ */}
           {activeCategory === "service" && (
+            serviceProperties.length === 0 && isRealMode ? (
+              <ComingSoonState {...getComingSoonMessage("services")} />
+            ) : (
             <>
               <div className="px-5 pt-6 pb-1 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:pt-10 md:pb-4 md:text-center">
                 <h1 className="text-2xl font-bold text-foreground md:text-4xl lg:text-5xl" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
@@ -620,10 +638,14 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               </>
               )}
             </>
+            )
           )}
 
           {/* ═══════ CURATIONS TAB ═══════ */}
           {activeCategory === "curation" && (
+            curatedCombos.length === 0 && isRealMode ? (
+              <ComingSoonState {...getComingSoonMessage("curations")} />
+            ) : (
             <>
               <div className="px-5 pt-6 pb-2 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:pt-10 md:pb-4 md:text-center">
                 <h1 className="text-2xl font-bold text-foreground md:text-4xl lg:text-5xl" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
@@ -701,6 +723,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               </>
               )}
             </>
+            )
           )}
 
           {/* ═══════ HOME: CURATIONS DISCOVERY ═══════ */}
