@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import LazySection from "./home/LazySection";
 import { Bell, MapPin, ArrowRight } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 import { hapticSelection } from "@/lib/haptics";
 import CategoryBar from "./CategoryBar";
 import PackageCard from "./PackageCard";
