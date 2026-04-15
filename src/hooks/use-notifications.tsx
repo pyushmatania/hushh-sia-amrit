@@ -38,7 +38,7 @@ export function useNotifications() {
       .limit(50);
     if (data) setNotifications(data as Notification[]);
     setLoading(false);
-  }, [user]);
+  }, [user, isRealMode]);
 
   useEffect(() => { fetch(); }, [fetch]);
 
