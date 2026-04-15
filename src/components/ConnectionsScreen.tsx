@@ -228,7 +228,7 @@ export default function ConnectionsScreen({ onBack }: ConnectionsScreenProps) {
                 <p className="text-xs text-muted-foreground">Based on your trips, venues, and shared experiences</p>
               </div>
 
-              {suggestedPeople.map((person, i) => (
+              {suggestions.map((person, i) => (
                 <motion.div
                   key={person.id}
                   initial={{ opacity: 0, y: 16 }}
