@@ -580,6 +580,9 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
 
           {/* ═══════ SERVICES TAB ═══════ */}
           {activeCategory === "service" && (
+            serviceProperties.length === 0 && isRealMode ? (
+              <ComingSoonState {...getComingSoonMessage("services")} />
+            ) : (
             <>
               <div className="px-5 pt-6 pb-1 md:px-8 lg:px-16 xl:px-24 2xl:px-32 md:pt-10 md:pb-4 md:text-center">
                 <h1 className="text-2xl font-bold text-foreground md:text-4xl lg:text-5xl" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
@@ -635,6 +638,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
               </>
               )}
             </>
+            )
           )}
 
           {/* ═══════ CURATIONS TAB ═══════ */}
