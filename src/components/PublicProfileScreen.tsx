@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
 import { overlaySlideUp, staggerContainer, staggerItem } from "@/lib/animations";
 import { mockProfiles, mockUserReviews, type MockUserProfile } from "@/data/mock-users";
+import { useDataMode } from "@/hooks/use-data-mode";
 
 interface PublicProfile {
   user_id: string;
