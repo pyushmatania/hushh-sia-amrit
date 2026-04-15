@@ -4,6 +4,7 @@ import { Building2, Sparkles, UtensilsCrossed, Wrench, Gift, Package, RefreshCw,
 import { supabase } from "@/integrations/supabase/client";
 import { DEMO_LISTINGS, DEMO_CURATIONS, DEMO_INVENTORY } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 import AdminProperties from "./AdminProperties";
 import AdminCurations from "./AdminCurations";
 import AdminInventory from "./AdminInventory";
@@ -38,6 +39,7 @@ export default function AdminCatalog() {
   });
   const [loadingStats, setLoadingStats] = useState(true);
   const [isDemo, setIsDemo] = useState(false);
+  const { isDemoMode } = useDataMode();
 
   const fetchStats = async () => {
     setLoadingStats(true);
@@ -52,16 +54,21 @@ export default function AdminCatalog() {
 
     /* ── Demo-data fallback when Supabase returns nothing ── */
     if (props.length === 0 && (pkgRes.data ?? []).length === 0 && (curRes.data ?? []).length === 0 && inv.length === 0) {
-      const demoInv = DEMO_INVENTORY;
-      setStats({
-        properties: DEMO_LISTINGS.length,
-        liveProperties: DEMO_LISTINGS.filter(l => l.status === "published").length,
-        packages: 0,
-        curations: DEMO_CURATIONS.length,
-        inventoryItems: demoInv.length,
-        lowStockItems: demoInv.filter(i => i.stock <= i.low_stock_threshold && i.available).length,
-      });
-      setIsDemo(true);
+      if (isDemoMode) {
+        const demoInv = DEMO_INVENTORY;
+        setStats({
+          properties: DEMO_LISTINGS.length,
+          liveProperties: DEMO_LISTINGS.filter(l => l.status === "published").length,
+          packages: 0,
+          curations: DEMO_CURATIONS.length,
+          inventoryItems: demoInv.length,
+          lowStockItems: demoInv.filter(i => i.stock <= i.low_stock_threshold && i.available).length,
+        });
+        setIsDemo(true);
+      } else {
+        setStats({ properties: 0, liveProperties: 0, packages: 0, curations: 0, inventoryItems: 0, lowStockItems: 0 });
+        setIsDemo(false);
+      }
       setLoadingStats(false);
       return;
     }
