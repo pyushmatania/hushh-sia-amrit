@@ -42,7 +42,20 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
   const [cancelled, setCancelled] = useState(false);
   const { toast } = useToast();
 
-  const property = useMemo(() => properties.find((p) => p.id === booking.propertyId), [booking.propertyId]);
+  const property = useMemo(() => {
+    const found = properties.find((p) => p.id === booking.propertyId);
+    if (found) return found;
+    // Fallback synthetic property to prevent crashes
+    return {
+      id: booking.propertyId, name: "Property", description: "", fullDescription: "",
+      location: "Jeypore, Odisha", lat: 18.856, lng: 82.571,
+      images: [], basePrice: booking.total, rating: 0, reviewCount: 0,
+      amenities: [], amenityIcons: [], capacity: 10, tags: [], category: ["experience"] as string[],
+      primaryCategory: "experience", slotsLeft: 0, verified: false,
+      slots: [], entryInstructions: "", hostName: "Host", hostSince: "2024",
+      responseRate: "100%", rules: [], reviews: [], highlights: [],
+    };
+  }, [booking.propertyId, properties]);
 
   const addonTotal = useMemo(() => {
     return Object.entries(addonSelections).reduce((sum, [id, qty]) => {
@@ -181,7 +194,11 @@ export default function BookingDetailScreen({ booking, onBack, onCancel, onReboo
           className="rounded-2xl border border-border overflow-hidden"
         >
           <div className="relative h-40">
-            <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover" />
+            {property.images?.[0] ? (
+              <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full bg-secondary flex items-center justify-center"><Home size={32} className="text-muted-foreground/30" /></div>
+            )}
             {isActive && (
               <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-success/90 backdrop-blur-sm">
                 <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
