@@ -195,7 +195,7 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
 
       // If Supabase returned no data (empty DB or query error), use demo data
       const hasRealData = bookings.length > 0 || listings.length > 0 || users.length > 0;
-      if (!hasRealData) {
+      if (!hasRealData && isDemoMode) {
         setStats(DEMO_STATS);
         setTopProperties(DEMO_TOP_PROPERTIES);
         setRecentReviews(DEMO_REVIEWS);
@@ -204,6 +204,8 @@ export default function CommandCenter({ onNavigate, userRole }: { onNavigate?: (
         setWeeklyPerfData(buildDemoWeeklyData());
         setCategoryData(DEMO_CATEGORY_DATA);
         setPrevMonthStats({ revenue: 24, bookings: 18, listings: 33, users: 48 });
+        return;
+      } else if (!hasRealData) {
         return;
       }
       const listingMap = new Map<string, string>(); listings.forEach(l => listingMap.set(l.id, l.name));
