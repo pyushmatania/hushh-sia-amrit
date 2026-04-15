@@ -42,9 +42,7 @@ const AdminTelegram = lazy(() => import("@/components/admin/AdminTelegram"));
 // Admin panel — v2
 export default function Admin() {
   const { user, loading: authLoading } = useAuth();
-  const [skipAuth, setSkipAuth] = useState(false);
-  const [skipTaps, setSkipTaps] = useState(0);
-  const { hasAdminAccess, loading: roleLoading, roles } = useAdmin(skipAuth);
+  const { hasAdminAccess, loading: roleLoading, roles, isAdmin } = useAdmin();
   const [page, setPage] = useState<AdminPage>("dashboard");
   const [pageHistory, setPageHistory] = useState<AdminPage[]>([]);
   const [historyContext, setHistoryContext] = useState<{ bookingId?: string; propertyId?: string } | null>(null);
@@ -98,27 +96,15 @@ export default function Admin() {
     );
   }
 
-  if (!user && !skipAuth) {
+  if (!user) {
     return (
       <div className="relative">
         <AuthScreen onBack={() => window.history.back()} />
-        <div className="fixed bottom-24 inset-x-0 flex justify-center z-50">
-          <motion.button
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setSkipAuth(true)}
-            className="px-8 py-3 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-sm font-medium text-white/80 hover:text-white hover:bg-white/15 transition-all shadow-lg"
-          >
-            Skip for now →
-          </motion.button>
-        </div>
       </div>
     );
   }
 
-  if (!hasAdminAccess) {
+  if (!isAdmin) {
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-background px-6 text-center">
         <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center mb-4">
