@@ -195,10 +195,19 @@ export default function AdminStaffManagement() {
     return { attendanceRate, totalHours, overtimeHours, mealsConsumed, presentDays, totalDays: last30.length, lateArrivals, compositeScore, grade, punctualityScore };
   };
 
+  // Check if operating on demo data (non-UUID ids)
+  const isDemoRecord = (id?: string) => id && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+
   // CRUD
   const handleSave = async () => {
     if (!editingStaff?.name) { toast.error("Name is required"); return; }
-    if (editingStaff.id) {
+    // If editing a demo record, treat as new insert (strip fake id)
+    if (editingStaff.id && isDemoRecord(editingStaff.id)) {
+      const { id, created_at, ...rest } = editingStaff as any;
+      const { error } = await supabase.from("staff_members").insert(rest as any);
+      if (error) { toast.error(error.message); return; }
+      toast.success("Staff added from template");
+    } else if (editingStaff.id) {
       const { error } = await supabase.from("staff_members")
         .update({ ...editingStaff, updated_at: new Date().toISOString() } as any)
         .eq("id", editingStaff.id);
@@ -214,6 +223,15 @@ export default function AdminStaffManagement() {
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
+    // Demo records only exist in local state — just remove from UI
+    if (isDemoRecord(deleteTarget.id)) {
+      setStaff(prev => prev.filter(s => s.id !== deleteTarget.id));
+      toast.success("Demo staff removed");
+      setDeleteTarget(null);
+      return;
+    }
+    // Clean up related records first
+    await supabase.from("staff_leaves").delete().eq("staff_id", deleteTarget.id);
     await supabase.from("staff_attendance").delete().eq("staff_id", deleteTarget.id);
     await supabase.from("staff_salary_payments").delete().eq("staff_id", deleteTarget.id);
     const { error } = await supabase.from("staff_members").delete().eq("id", deleteTarget.id);
