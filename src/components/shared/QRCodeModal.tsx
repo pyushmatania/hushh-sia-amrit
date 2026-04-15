@@ -5,6 +5,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { RoundedBox, Float, Environment } from "@react-three/drei";
 import * as THREE from "three";
 import BookingQRCode from "./BookingQRCode";
+import ErrorBoundary from "./ErrorBoundary";
 import { format } from "date-fns";
 
 interface QRCodeModalProps {
