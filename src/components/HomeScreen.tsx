@@ -16,6 +16,8 @@ import { useHomepageSections } from "@/hooks/use-homepage-sections";
 import { useAppConfig } from "@/hooks/use-app-config";
 import { useHomepageFilters } from "@/hooks/use-homepage-filters";
 import ErrorBoundary from "@/components/shared/ErrorBoundary";
+import ComingSoonState, { getComingSoonMessage } from "@/components/shared/ComingSoonState";
+import { useDataMode } from "@/hooks/use-data-mode";
 import profileAvatar from "@/assets/profile-avatar.webp";
 
 import RotatingSearchBar from "./home/RotatingSearchBar";
@@ -63,6 +65,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
   const { user } = useAuth();
   const { unreadCount: notifCount } = useNotifications();
   const { properties, packages, curatedCombos } = usePropertiesData();
+  const { isRealMode } = useDataMode();
   const { packs: experiencePacks } = useCurations();
   const { isSectionVisible, getSortOrder } = useHomepageSections("home");
   const appConfig = useAppConfig();
