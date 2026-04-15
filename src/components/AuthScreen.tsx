@@ -60,10 +60,8 @@ export default function AuthScreen({ onBack }: { onBack?: () => void } = {}) {
       const { error } = await signUp(email, password, name);
       if (error) {
         setError(error);
-      } else {
-        resetRateLimit(rlKey);
-        setSignupSuccess(true);
       }
+      // With auto-confirm enabled, user is signed in immediately after signup
     }
     setLoading(false);
   };
