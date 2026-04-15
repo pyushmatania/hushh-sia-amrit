@@ -426,6 +426,7 @@ export default function MessagesScreen() {
   const { user } = useAuth();
   const { conversations, loading } = useMessages();
   const appConfig = useAppConfig();
+  const { isRealMode } = useDataMode();
   const brandName = appConfig.app_name || "Hushh";
   const [tab, setTab] = useState<"chats" | "updates">("chats");
   const [activeConvo, setActiveConvo] = useState<Conversation | null>(null);
@@ -435,11 +436,13 @@ export default function MessagesScreen() {
   const [showSearch, setShowSearch] = useState(false);
 
   const dynamicMockThreads = useMemo(() =>
-    mockThreads.map(t => t.id === "c1" ? { ...t, name: `${brandName} Concierge` } : t),
-    [brandName]
+    isRealMode ? [] : mockThreads.map(t => t.id === "c1" ? { ...t, name: `${brandName} Concierge` } : t),
+    [brandName, isRealMode]
   );
 
-  const unreadNotifCount = notifications.filter(n => !n.read && !readNotifications.has(n.id)).length;
+  const dynamicNotifications = useMemo(() => isRealMode ? [] : notifications, [isRealMode]);
+
+  const unreadNotifCount = dynamicNotifications.filter(n => !n.read && !readNotifications.has(n.id)).length;
   const unreadChatCount = user
     ? conversations.reduce((s, c) => s + c.unread_count, 0)
     : dynamicMockThreads.reduce((s, t) => s + t.unread, 0);
