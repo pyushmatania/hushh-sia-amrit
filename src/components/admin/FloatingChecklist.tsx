@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { DEMO_ORDERS, DEMO_BOOKINGS, DEMO_LISTINGS, DEMO_ORDER_ITEMS, buildDemoListingMap, buildDemoProfileMap } from "./admin-demo-data";
+import { useDataMode } from "@/hooks/use-data-mode";
 
 interface PendingItem {
   id: string;

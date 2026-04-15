@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { DEMO_BOOKINGS, DEMO_LISTINGS } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, Cell } from "recharts";
 
 /* ─── Types ─── */

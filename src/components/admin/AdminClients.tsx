@@ -16,6 +16,7 @@ import { getListingThumbnail } from "@/lib/listing-thumbnails";
 import { useAuth } from "@/hooks/use-auth";
 import { DEMO_PROFILES, DEMO_BOOKINGS, DEMO_ORDERS, DEMO_ORDER_ITEMS, DEMO_REVIEWS, buildDemoListingMap } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 
 /* ─── Types ─── */
 interface BookingRecord {

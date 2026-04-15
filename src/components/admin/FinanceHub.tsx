@@ -18,6 +18,7 @@ import { format } from "date-fns";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
 import { DEMO_EXPENSES, DEMO_BOOKINGS, DEMO_ORDERS } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip,
   BarChart, Bar, PieChart as RePieChart, Pie, Cell

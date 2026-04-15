@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import OrderNotes from "@/components/shared/OrderNotes";
 import { DEMO_ORDERS, DEMO_ORDER_ITEMS, DEMO_LISTINGS, DEMO_PROFILES, buildDemoListingMap, buildDemoProfileMap } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 
 interface Order {
   id: string; user_id: string; property_id: string; booking_id: string | null;

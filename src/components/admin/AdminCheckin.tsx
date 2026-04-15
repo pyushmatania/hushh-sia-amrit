@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getListingThumbnail } from "@/lib/listing-thumbnails";
 import { DEMO_BOOKINGS, DEMO_LISTINGS, DEMO_PROFILES } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";

@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getListingThumbnail } from "@/lib/listing-thumbnails";
 import { DEMO_ORDERS, DEMO_ORDER_ITEMS, DEMO_LISTINGS, DEMO_PROFILES } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import OrderNotes from "@/components/shared/OrderNotes";
