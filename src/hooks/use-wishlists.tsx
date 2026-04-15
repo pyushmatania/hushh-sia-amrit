@@ -37,6 +37,7 @@ function setLocalWishlist(ids: string[]) {
 export function useWishlists() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { isRealMode } = useDataMode();
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -70,10 +71,16 @@ export function useWishlists() {
       return;
     }
 
+    // Guest mode: in real mode show empty, in demo mode show demo data
+    if (isRealMode) {
+      setWishlist([]);
+      setLoading(false);
+      return;
+    }
+
     const { hasStoredValue, ids } = readLocalWishlist();
     const sanitized = sanitizeWishlist(ids);
 
-    // Guest mode: always show demo data unless user has valid saved ids
     if (!hasStoredValue || sanitized.length === 0) {
       setWishlist(DEMO_WISHLIST_IDS);
     } else {
@@ -81,7 +88,7 @@ export function useWishlists() {
     }
 
     setLoading(false);
-  }, [user]);
+  }, [user, isRealMode]);
 
   const toggleWishlist = useCallback(
     async (propertyId: string) => {
