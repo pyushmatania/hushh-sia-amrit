@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./use-auth";
 import { mockNotifications } from "@/data/mock-users";
+import { useDataMode } from "./use-data-mode";
 
 export interface Notification {
   id: string;
