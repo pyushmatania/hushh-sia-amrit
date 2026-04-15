@@ -574,7 +574,7 @@ export default function MessagesScreen() {
 
         {tab === "updates" && (
           <motion.div key="updates" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} className="px-5">
-            {notifications.map((notif, i) => {
+            {dynamicNotifications.map((notif, i) => {
               const isRead = notif.read || readNotifications.has(notif.id);
               return (
                 <motion.button
