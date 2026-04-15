@@ -89,6 +89,7 @@ const emptyStaff: Partial<StaffMember> = {
 };
 
 export default function AdminStaffManagement() {
+  const { isDemoMode, getDemoFallback } = useDataMode();
   const [tab, setTab] = useState<Tab>("roster");
   const [staff, setStaff] = useState<StaffMember[]>([]);
   const [attendance, setAttendance] = useState<Attendance[]>([]);
@@ -117,15 +118,20 @@ export default function AdminStaffManagement() {
       supabase.from("staff_leaves").select("*").order("created_at", { ascending: false }),
     ]);
     const staffRows = (s.data as any[]) ?? [];
-    if (staffRows.length === 0) { setStaff(DEMO_STAFF as any); setIsDemo(true); }
-    else { setStaff(staffRows); setIsDemo(false); }
+    if (staffRows.length === 0) {
+      setStaff(getDemoFallback(DEMO_STAFF as any));
+      setIsDemo(isDemoMode);
+    } else {
+      setStaff(staffRows);
+      setIsDemo(false);
+    }
     setAttendance((a.data as any[]) ?? []);
     setSalaries((p.data as any[]) ?? []);
     setLeaves((l.data as any[]) ?? []);
     setLoading(false);
   };
 
-  useEffect(() => { loadData(); }, []);
+  useEffect(() => { loadData(); }, [isDemoMode]);
 
   const filtered = useMemo(() => {
     let list = staff.filter(s =>
