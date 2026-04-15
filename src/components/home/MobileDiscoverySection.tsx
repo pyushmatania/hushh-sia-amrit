@@ -144,7 +144,7 @@ const VerticalVideoCard = memo(function VerticalVideoCard({
       >
         {/* Fallback image */}
         <img
-          src={property.images[0]}
+          src={property.images?.[0] || "/placeholder.svg"}
           alt={property.name}
           className="absolute inset-0 w-full h-full object-cover"
           loading="lazy"

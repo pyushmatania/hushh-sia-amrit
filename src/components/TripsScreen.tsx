@@ -151,7 +151,7 @@ const TripCard = memo(function TripCard({
         <div className="relative bg-card rounded-3xl overflow-hidden border border-border">
           {/* Background image — no parallax for performance */}
           <div className="relative h-[220px] overflow-hidden">
-            <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover" loading="lazy" />
+            <img src={property.images?.[0] || "/placeholder.svg"} alt={property.name} className="w-full h-full object-cover" loading="lazy" />
             <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
 
             {/* Status pill */}
@@ -399,7 +399,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
                         className="flex items-center gap-3 p-2.5 rounded-xl bg-secondary/50 border border-border/50 cursor-pointer active:scale-[0.98] transition-transform"
                       >
                         {prop && (
-                          <img src={prop.images[0]} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" loading="lazy" />
+                          <img src={prop.images?.[0] || "/placeholder.svg"} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" loading="lazy" />
                         )}
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-semibold text-foreground truncate">{prop?.name || "Property"}</p>
@@ -543,7 +543,7 @@ export default function TripsScreen({ bookings, onViewDetail, onRebook, onCancel
             onClose={() => setQrBookingId(null)}
             bookingId={qrBookingId || ""}
             propertyName={qrProperty?.name}
-            propertyImage={qrProperty?.images[0]}
+            propertyImage={qrProperty?.images?.[0]}
             propertyLocation={qrProperty?.location}
             date={qrBooking?.date}
             slotLabel={slot?.label}

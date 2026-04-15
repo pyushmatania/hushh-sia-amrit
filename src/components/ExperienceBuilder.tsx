@@ -84,7 +84,7 @@ export default function ExperienceBuilder({ property, slotId, guests, date, onBa
   const { addons } = usePropertiesData();
   const [selections, setSelections] = useState<Record<string, number>>({});
   const [hapticId, setHapticId] = useState<string | null>(null);
-  const slot = property.slots.find((s) => s.id === slotId)!;
+  const slot = property.slots.find((s) => s.id === slotId) || property.slots[0] || { id: slotId, label: "Slot", time: "", price: property.basePrice, available: true, popular: false };
   const categories = Object.keys(addons);
   const [activeCategory, setActiveCategory] = useState(categories[0]);
   const tabsRef = useRef<HTMLDivElement>(null);
@@ -221,7 +221,7 @@ export default function ExperienceBuilder({ property, slotId, guests, date, onBa
                 const cheapest = ext.slots.filter(s => s.available).sort((a, b) => a.price - b.price)[0];
                 return (
                   <div key={ext.id} className="shrink-0 flex items-center gap-2 bg-primary/[0.05] border border-primary/15 rounded-xl px-3 py-1.5">
-                    <img src={ext.images[0]} alt="" className="w-7 h-7 rounded-lg object-cover" />
+                    <img src={ext.images?.[0] || "/placeholder.svg"} alt="" className="w-7 h-7 rounded-lg object-cover" />
                     <div className="min-w-0">
                       <p className="text-[10px] font-semibold text-foreground truncate max-w-[90px]">{ext.name}</p>
                       <p className="text-[9px] text-primary font-medium">₹{(cheapest?.price || ext.basePrice).toLocaleString()}</p>

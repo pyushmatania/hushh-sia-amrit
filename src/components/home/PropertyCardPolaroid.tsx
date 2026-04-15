@@ -155,7 +155,7 @@ export default function PropertyCardPolaroid({ property, index, onTap, isWishlis
             </div>
           )}
           <OptimizedImage
-            src={property.images[0]}
+            src={property.images?.[0] || "/placeholder.svg"}
             alt={property.name}
             fill
             className="object-cover"

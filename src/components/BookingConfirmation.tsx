@@ -93,7 +93,7 @@ export default function BookingConfirmation({ property, slotId, guests, date, to
           className="w-full mt-8 rounded-2xl border border-border p-5 space-y-4"
         >
           <div className="flex items-center gap-3">
-            <img src={property.images[0]} alt={property.name} className="w-14 h-14 rounded-xl object-cover" />
+            <img src={property.images?.[0] || "/placeholder.svg"} alt={property.name} className="w-14 h-14 rounded-xl object-cover" />
             <div>
               <h3 className="font-semibold text-foreground">{property.name}</h3>
               <p className="text-xs text-muted-foreground">{property.location}</p>

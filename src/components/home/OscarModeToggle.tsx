@@ -247,7 +247,7 @@ function OscarPropertyCard({ property, onTap, index, isWL, onToggleWishlist, tot
         {isSingle && <RibbonBadge number={index + 1} />}
 
         <div className={`relative ${isSingle ? "h-[440px] rounded-[28px]" : "h-[260px] md:h-[320px] rounded-xl"} overflow-hidden`}>
-          <img src={property.images[0]} alt={property.name}
+          <img src={property.images?.[0] || "/placeholder.svg"} alt={property.name}
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-700"
             style={{ transform: hovered ? "scale(1.08)" : "scale(1)" }}
             loading="lazy" />

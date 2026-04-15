@@ -38,7 +38,7 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
   const [liveGuests, setLiveGuests] = useState(initialGuests);
   const [editingDate, setEditingDate] = useState(false);
   const [editingGuests, setEditingGuests] = useState(false);
-  const slot = property.slots.find((s) => s.id === slotId)!;
+  const slot = property.slots.find((s) => s.id === slotId) || property.slots[0] || { id: slotId, label: "Slot", time: "", price: property.basePrice, available: true, popular: false };
   const [coupon, setCoupon] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
   const [couponDiscount, setCouponDiscount] = useState(0);
@@ -218,7 +218,7 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
           {/* Booking Summary Card */}
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="rounded-2xl border border-border p-4 md:p-6">
             <div className="flex items-center gap-3 mb-3">
-              <img src={property.images[0]} alt={property.name} className="w-16 h-16 md:w-20 md:h-20 rounded-xl object-cover" />
+              <img src={property.images?.[0] || "/placeholder.svg"} alt={property.name} className="w-16 h-16 md:w-20 md:h-20 rounded-xl object-cover" />
               <div className="flex-1 min-w-0">
                 <h3 className="font-semibold text-foreground text-sm md:text-lg truncate">{property.name}</h3>
                 <p className="text-xs md:text-sm text-muted-foreground flex items-center gap-1 mt-0.5">
@@ -365,7 +365,7 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
                     const cheapest = ext.slots.filter(s => s.available).sort((a, b) => a.price - b.price)[0];
                     return (
                       <motion.div key={ext.id} initial={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.2 }} className="flex items-center gap-2 text-sm">
-                        <img src={ext.images[0]} alt="" className="w-8 h-8 rounded-lg object-cover shrink-0" />
+                        <img src={ext.images?.[0] || "/placeholder.svg"} alt="" className="w-8 h-8 rounded-lg object-cover shrink-0" />
                         <span className="text-muted-foreground flex-1 truncate">{ext.name}</span>
                         <span className="text-foreground font-medium">₹{(cheapest?.price || ext.basePrice).toLocaleString()}</span>
                         <button onClick={() => removeExtra(ext.id)} className="w-5 h-5 rounded-full border border-border/60 flex items-center justify-center hover:bg-destructive/10 shrink-0"><X size={10} className="text-muted-foreground" /></button>
@@ -480,7 +480,7 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
                   const cheapest = ext.slots.filter(s => s.available).sort((a, b) => a.price - b.price)[0];
                   return (
                     <div key={ext.id} className="flex items-center gap-2 text-sm">
-                      <img src={ext.images[0]} alt="" className="w-8 h-8 rounded-lg object-cover shrink-0" />
+                      <img src={ext.images?.[0] || "/placeholder.svg"} alt="" className="w-8 h-8 rounded-lg object-cover shrink-0" />
                       <span className="text-muted-foreground flex-1 truncate">{ext.name}</span>
                       <span className="text-foreground font-medium">₹{(cheapest?.price || ext.basePrice).toLocaleString()}</span>
                       <button onClick={() => removeExtra(ext.id)} className="w-5 h-5 rounded-full border border-border/60 flex items-center justify-center hover:bg-destructive/10 shrink-0"><X size={10} className="text-muted-foreground" /></button>

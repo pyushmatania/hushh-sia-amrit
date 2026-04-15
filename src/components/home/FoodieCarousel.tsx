@@ -88,7 +88,7 @@ const FoodieVideoCard = memo(function FoodieVideoCard({
         <AccentFrame color={accent.color} radius="20px" glowAlpha={0.08} />
         <div className="relative w-full h-full overflow-hidden rounded-[20px]" style={{ border: "1px solid hsl(var(--border) / 0.24)" }}>
           {/* Background poster — always visible */}
-          <img src={property.images[0]} alt={property.name} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+          <img src={property.images?.[0] || "/placeholder.svg"} alt={property.name} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
           {/* Shimmer while video loads */}
           {!videoReady && <div className="absolute inset-0 z-[2] pointer-events-none video-buffer-shimmer" />}
 
@@ -176,7 +176,7 @@ export default function FoodieCarousel({ properties, onPropertyTap }: FoodieCaro
             style={{ height: 360 }}
             onClick={() => onPropertyTap(p)}
           >
-            <img src={p.images[0]} alt={p.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+            <img src={p.images?.[0] || "/placeholder.svg"} alt={p.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-5">
               <p className="text-2xl lg:text-3xl font-black italic text-white/90" style={{ fontFamily: "'Playfair Display', serif", textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}>

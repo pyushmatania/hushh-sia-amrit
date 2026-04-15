@@ -211,7 +211,7 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
 
     // Add filtered
     filteredProperties.forEach((p) => {
-      const icon = createPhotoIcon(p.images[0], selectedPin?.id === p.id, p.basePrice);
+      const icon = createPhotoIcon(p.images?.[0] || "/placeholder.svg", selectedPin?.id === p.id, p.basePrice);
       const marker = L.marker([p.lat, p.lng], { icon });
       marker.on("click", () => setSelectedPin((prev) => (prev?.id === p.id ? null : p)));
       markersRef.current.set(p.id, marker);
@@ -240,7 +240,7 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
       const p = properties.find((pr) => pr.id === id);
       if (!p) return;
       const isSelected = selectedPin?.id === id;
-      marker.setIcon(createPhotoIcon(p.images[0], isSelected, p.basePrice));
+      marker.setIcon(createPhotoIcon(p.images?.[0] || "/placeholder.svg", isSelected, p.basePrice));
       marker.setZIndexOffset(isSelected ? 1000 : 0);
     });
 
@@ -541,7 +541,7 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
                   >
                     <div className="flex gap-3 p-3">
                       <div className="w-24 h-24 rounded-xl overflow-hidden shrink-0 relative">
-                        <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
+                        <img src={p.images?.[0] || "/placeholder.svg"} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
                         {p.verified && (
                           <div className="absolute top-1 left-1 bg-primary/90 text-primary-foreground text-[7px] font-bold px-1.5 py-0.5 rounded-md">✓</div>
                         )}
@@ -645,7 +645,7 @@ export default function MapViewScreen({ onPropertyTap, onClose }: MapViewScreenP
             <div onClick={() => onPropertyTap(selectedPin)} className="bg-background/95 backdrop-blur-xl border border-border rounded-2xl overflow-hidden shadow-2xl cursor-pointer active:scale-[0.98] transition-transform">
               <div className="flex gap-3 p-3">
                 <div className="w-28 h-28 rounded-xl overflow-hidden shrink-0 relative">
-                  <img src={selectedPin.images[0]} alt={selectedPin.name} className="w-full h-full object-cover" />
+                  <img src={selectedPin.images?.[0] || "/placeholder.svg"} alt={selectedPin.name} className="w-full h-full object-cover" />
                   {selectedPin.verified && (
                     <div className="absolute top-1.5 left-1.5 bg-primary/90 text-primary-foreground text-[8px] font-bold px-1.5 py-0.5 rounded-md">✓ Verified</div>
                   )}

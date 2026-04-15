@@ -35,7 +35,7 @@ export default function PropertyCardWide({ property, index, onTap, isWishlisted 
             </div>
           )}
           <OptimizedImage
-            src={property.images[0]}
+            src={property.images?.[0] || "/placeholder.svg"}
             alt={property.name}
             fill
             className="object-cover"
