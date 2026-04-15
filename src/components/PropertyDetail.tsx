@@ -1513,8 +1513,9 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
 
       {/* Sticky bottom — mobile only */}
       <AnimatePresence>
-        {selectedSlotData && selectedDate && (
+        {selectedSlotData && selectedDate ? (
           <motion.div
+            key="reserve-bar"
             initial={{ y: 80 }}
             animate={{ y: 0 }}
             exit={{ y: 80 }}
@@ -1537,6 +1538,29 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
               transition={{ type: "spring", stiffness: 400 }}
             >
               Reserve{addedExtras.length > 0 ? ` (${addedExtras.length + 1})` : ""}
+            </motion.button>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="book-now-bar"
+            initial={{ y: 80 }}
+            animate={{ y: 0 }}
+            exit={{ y: 80 }}
+            className="fixed bottom-0 left-0 right-0 border-t border-border/50 px-5 py-3.5 flex items-center justify-between z-40 backdrop-blur-xl bg-card/90 dark:bg-card/70 md:hidden"
+          >
+            <div>
+              <span className="font-semibold text-foreground text-lg">₹{property.basePrice.toLocaleString()}</span>
+              <span className="text-muted-foreground text-sm"> / slot</span>
+            </div>
+            <motion.button
+              onClick={() => {
+                bookingSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              className="bg-primary text-primary-foreground px-7 py-3 rounded-xl font-semibold text-sm glow-radiate"
+              whileTap={{ scale: 0.93 }}
+              transition={{ type: "spring", stiffness: 400 }}
+            >
+              Book Now
             </motion.button>
           </motion.div>
         )}
