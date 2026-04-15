@@ -237,7 +237,7 @@ export default function AdminCurations() {
       window.dispatchEvent(new Event("hushh:listings-updated"));
     }
     return !error;
-  }, []);
+  }, [isDemoMode]);
 
   const autoSaveData = editing && editingId ? { ...editing, _editingId: editingId } : null;
   const { status: autoSaveStatus } = useAutoSave({
