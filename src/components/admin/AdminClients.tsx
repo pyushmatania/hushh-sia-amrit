@@ -1006,7 +1006,7 @@ export default function AdminClients({ initialUserId, onContextConsumed, onBack 
 
       /* ── Demo-data fallback when Supabase returns nothing ── */
       const rawProfiles = profilesRes.data ?? [];
-      if (rawProfiles.length === 0) {
+      if (rawProfiles.length === 0 && isDemoMode) {
         const demoLMap = buildDemoListingMap();
         setListingMap(demoLMap);
         const demoLInfoMap = new Map<string, ListingInfo>();

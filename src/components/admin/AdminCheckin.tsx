@@ -67,7 +67,7 @@ export default function AdminCheckin() {
     const listingsRaw = listingsRes.data ?? [];
     const verificationsRaw = verificationsRes.data ?? [];
 
-    const usingDemo = bookingsRaw.length === 0;
+    const usingDemo = bookingsRaw.length === 0 && isDemoMode;
     setIsDemo(usingDemo);
 
     const bookingsData = usingDemo ? DEMO_BOOKINGS : bookingsRaw;
