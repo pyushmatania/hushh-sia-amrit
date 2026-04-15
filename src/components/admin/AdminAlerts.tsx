@@ -8,6 +8,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import AutoActionsPanel from "./AutoActionsPanel";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 
 interface SmartAlert {
   id: string;
