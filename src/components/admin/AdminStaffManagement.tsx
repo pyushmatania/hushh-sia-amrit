@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { DEMO_STAFF } from "./admin-demo-data";
 import DemoDataBanner from "./DemoDataBanner";
+import { useDataMode } from "@/hooks/use-data-mode";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Users, Plus, Search, UserCheck, UserX, Clock, Wallet,
