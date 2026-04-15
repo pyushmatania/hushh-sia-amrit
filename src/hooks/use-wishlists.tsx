@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./use-auth";
 import { useToast } from "./use-toast";
 import { properties as staticProperties } from "@/data/properties";
+import { useDataMode } from "./use-data-mode";
 
 const LOCAL_KEY = "hushh_wishlists";
 const DEMO_WISHLIST_IDS = ["1", "3", "5", "7", "10"];
