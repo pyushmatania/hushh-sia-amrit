@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import LazySection from "./home/LazySection";
 import { Bell, MapPin, ArrowRight } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 import { hapticSelection } from "@/lib/haptics";
 import CategoryBar from "./CategoryBar";
 import PackageCard from "./PackageCard";
@@ -59,6 +60,7 @@ interface HomeScreenProps {
 }
 
 export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap, onMapTap, onNotificationTap, wishlist = [], onToggleWishlist }: HomeScreenProps) {
+  const { user } = useAuth();
   const { unreadCount: notifCount } = useNotifications();
   const { properties, packages, curatedCombos } = usePropertiesData();
   const { packs: experiencePacks } = useCurations();
@@ -228,7 +230,7 @@ export default function HomeScreen({ onPropertyTap, onExperienceTap, onSearchTap
             <img src={profileAvatar} alt="Profile" className="w-full h-full object-cover" />
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">Hey, Amrit!</p>
+            <p className="text-xs text-muted-foreground">Hey, {user?.user_metadata?.full_name || (user?.email ? user.email.split("@")[0] : "Guest")}!</p>
             <p className="text-sm font-semibold text-foreground flex items-center gap-1"><MapPin size={12} /> Jeypore, Odisha</p>
           </div>
         </div>
