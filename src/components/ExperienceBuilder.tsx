@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Plus, Minus, Check, ChefHat, Palette, Music, Wifi, Armchair, Camera, Flame, Sparkles, X, ChevronRight, Search, Star, Zap } from "lucide-react";
 import { useState, useMemo, useRef } from "react";
+import { useLocaleSettings } from "@/hooks/use-locale-settings";
 import type { Property } from "@/data/properties";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
 
@@ -82,6 +83,7 @@ interface ExperienceBuilderProps {
 
 export default function ExperienceBuilder({ property, slotId, guests, date, onBack, onContinue, extras }: ExperienceBuilderProps) {
   const { addons } = usePropertiesData();
+  const locale = useLocaleSettings();
   const [selections, setSelections] = useState<Record<string, number>>({});
   const [hapticId, setHapticId] = useState<string | null>(null);
   const slot = property.slots.find((s) => s.id === slotId) || property.slots[0] || { id: slotId, label: "Slot", time: "", price: property.basePrice, available: true, popular: false };
@@ -179,7 +181,7 @@ export default function ExperienceBuilder({ property, slotId, guests, date, onBa
             <div className="flex items-center gap-2 mt-0.5">
               <span className="text-[11px] md:text-sm text-muted-foreground">{slot.label}</span>
               <span className="w-1 h-1 rounded-full bg-muted-foreground/40" />
-              <span className="text-[11px] md:text-sm text-muted-foreground">{slot.time}</span>
+              <span className="text-[11px] md:text-sm text-muted-foreground">{locale.formatSlotTime(slot.time)}</span>
               <span className="w-1 h-1 rounded-full bg-muted-foreground/40" />
               <span className="text-[11px] md:text-sm text-primary font-medium">{guests} guests</span>
             </div>
@@ -503,7 +505,7 @@ export default function ExperienceBuilder({ property, slotId, guests, date, onBa
 
             {/* Base slot */}
             <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">{slot.label} · {slot.time}</span>
+              <span className="text-muted-foreground">{slot.label} · {locale.formatSlotTime(slot.time)}</span>
               <span className="text-foreground font-medium">₹{slot.price.toLocaleString()}</span>
             </div>
 

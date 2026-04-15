@@ -3,6 +3,7 @@ import { ArrowLeft, Tag, CreditCard, Smartphone, Banknote, ChevronRight, Shield,
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
+import { useLocaleSettings } from "@/hooks/use-locale-settings";
 import type { Property } from "@/data/properties";
 import { usePropertiesData } from "@/contexts/PropertiesContext";
 import { Calendar } from "@/components/ui/calendar";
@@ -34,6 +35,7 @@ const paymentMethods = [
 
 export default function CheckoutScreen({ property, slotId, guests: initialGuests, date: initialDate, selections: initialSelections, total: initialTotal, onBack, onConfirm, extras: initialExtras, isWishlisted, onToggleWishlist, roomsCount: propRoomsCount, extraMattresses: propExtraMattresses }: CheckoutScreenProps) {
   const { addons } = usePropertiesData();
+  const locale = useLocaleSettings();
   const [liveDate, setLiveDate] = useState<Date>(initialDate);
   const [liveGuests, setLiveGuests] = useState(initialGuests);
   const [editingDate, setEditingDate] = useState(false);
@@ -235,7 +237,7 @@ export default function CheckoutScreen({ property, slotId, guests: initialGuests
                 <Pencil size={9} className="text-primary ml-0.5" />
               </button>
               <span className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-secondary/80">
-                <Clock size={12} /> {slot.label} · {slot.time}
+                <Clock size={12} /> {slot.label} · {locale.formatSlotTime(slot.time)}
               </span>
               <button onClick={() => { setEditingGuests(!editingGuests); setEditingDate(false); }}
                 className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-secondary/80 border transition-colors ${liveGuests < 1 ? "border-destructive/50 ring-1 ring-destructive/30" : "border-border/50 hover:border-primary/30"}`}>

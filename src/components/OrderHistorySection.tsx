@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import OrderNotes from "@/components/shared/OrderNotes";
 import { useAuth } from "@/hooks/use-auth";
+import { useLocaleSettings } from "@/hooks/use-locale-settings";
 
 interface OrderRow {
   id: string;
@@ -73,17 +74,11 @@ export default function OrderHistorySection() {
     })();
   }, [user]);
 
+  const locale = useLocaleSettings();
+  const formatDate = (iso: string) => locale.formatDateShort(iso);
+  const formatTime = (iso: string) => locale.formatTime(iso);
+
   if (!user || (loading === false && orders.length === 0)) return null;
-
-  const formatDate = (iso: string) => {
-    const d = new Date(iso);
-    return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
-  };
-
-  const formatTime = (iso: string) => {
-    const d = new Date(iso);
-    return d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
-  };
 
   return (
     <div className="px-5 pt-6 pb-4">

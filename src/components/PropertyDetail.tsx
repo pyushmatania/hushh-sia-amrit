@@ -25,6 +25,7 @@ import { useToast } from "@/hooks/use-toast";
 import { hapticMedium, hapticSuccess } from "@/lib/haptics";
 import { format, differenceInDays } from "date-fns";
 import { cn } from "@/lib/utils";
+import { useLocaleSettings } from "@/hooks/use-locale-settings";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { DateRange } from "react-day-picker";
@@ -356,6 +357,7 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
     return sameId ?? incomingProperty;
   }, [incomingProperty, allProperties]);
 
+  const locale = useLocaleSettings();
   const bookingSectionRef = useRef<HTMLDivElement>(null);
   const [imgIndex, setImgIndex] = useState(0);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
@@ -920,7 +922,7 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
                         )}
                       </div>
                       <span className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                        <Clock size={10} /> {slot.time}
+                        <Clock size={10} /> {locale.formatSlotTime(slot.time)}
                       </span>
                       {/* Viewers microcopy */}
                       {slot.viewersNow && slot.viewersNow > 0 && (
@@ -1455,7 +1457,7 @@ export default function PropertyDetail({ property: incomingProperty, onBack, onB
                   }`}
                 >
                   <p className="text-sm font-medium text-foreground">{slot.label}</p>
-                  <p className="text-xs text-muted-foreground">{slot.time}</p>
+                  <p className="text-xs text-muted-foreground">{locale.formatSlotTime(slot.time)}</p>
                   <p className="text-sm font-semibold text-foreground mt-1">₹{slot.price.toLocaleString()}</p>
                 </button>
               ))}

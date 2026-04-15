@@ -3,6 +3,7 @@ import { Check, MapPin, Calendar, Users, Clock, ShoppingCart, Shield, Upload } f
 import { useState, useEffect } from "react";
 import { fireCelebration } from "@/lib/confetti";
 import { format } from "date-fns";
+import { useLocaleSettings } from "@/hooks/use-locale-settings";
 import type { Property } from "@/data/properties";
 import LiveOrderingSheet from "./LiveOrderingSheet";
 import IdentityUploadSheet from "./IdentityUploadSheet";
@@ -24,6 +25,7 @@ interface BookingConfirmationProps {
 
 export default function BookingConfirmation({ property, slotId, guests, date, total, onDone, bookingId: passedBookingId }: BookingConfirmationProps) {
   const appConfig = useAppConfig();
+  const locale = useLocaleSettings();
   const prefix = (appConfig.app_name || "HUSHH").toUpperCase();
   const slot = property.slots.find((s) => s.id === slotId);
   // Use the real booking ID from the DB if available, otherwise generate a display-only fallback
@@ -100,8 +102,8 @@ export default function BookingConfirmation({ property, slotId, guests, date, to
             </div>
           </div>
           <div className="grid grid-cols-1 gap-2 text-sm text-muted-foreground">
-            <span className="flex items-center gap-2"><Calendar size={14} /> {format(date, "EEEE, d MMMM yyyy")}</span>
-            <span className="flex items-center gap-2"><Clock size={14} /> {slot ? `${slot.label} · ${slot.time}` : "Confirmed slot"}</span>
+            <span className="flex items-center gap-2"><Calendar size={14} /> {locale.formatDateShort(date)}</span>
+            <span className="flex items-center gap-2"><Clock size={14} /> {slot ? `${slot.label} · ${locale.formatSlotTime(slot.time)}` : "Confirmed slot"}</span>
             <span className="flex items-center gap-2"><Users size={14} /> {guests} guests</span>
           </div>
           <div className="flex items-center justify-between pt-3 border-t border-border">
