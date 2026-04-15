@@ -229,6 +229,7 @@ function mergeGuestBookings(local: Booking[]): Booking[] {
 
 export function useBookings() {
   const { user } = useAuth();
+  const { isRealMode } = useDataMode();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -281,10 +282,15 @@ export function useBookings() {
       return () => { supabase.removeChannel(channel); };
     }
 
-    const local = getLocalBookings();
-    setBookings(mergeGuestBookings(local));
+    // Guest mode — only show demo bookings in demo mode
+    if (isRealMode) {
+      setBookings([]);
+    } else {
+      const local = getLocalBookings();
+      setBookings(mergeGuestBookings(local));
+    }
     setLoading(false);
-  }, [user, loadBookings]);
+  }, [user, loadBookings, isRealMode]);
 
   const createBooking = useCallback(
     async (booking: Omit<Booking, "id">) => {
