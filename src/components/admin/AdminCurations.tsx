@@ -381,7 +381,7 @@ export default function AdminCurations() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Price (₹)</label>
-                  <Input type="number" value={editing.price} onChange={e => setEditing({ ...editing, price: Number(e.target.value) })} className="rounded-xl" />
+                  <Input type="number" value={editing.price || ""} onChange={e => setEditing({ ...editing, price: e.target.value === "" ? 0 : Number(e.target.value) })} className="rounded-xl" />
                 </div>
                 <div>
                   <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Original Price</label>
