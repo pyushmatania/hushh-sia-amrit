@@ -362,17 +362,17 @@ export default function AdminInventory({ filterCategory }: AdminInventoryProps =
               </div>
               <div>
                 <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Unit Price (₹)</label>
-                <Input type="number" value={editing.unit_price || 0} onChange={e => setEditing(p => ({ ...p!, unit_price: Number(e.target.value) }))} className="rounded-xl" />
+                <Input type="number" value={editing.unit_price || ""} onChange={e => setEditing(p => ({ ...p!, unit_price: e.target.value === "" ? 0 : Number(e.target.value) }))} className="rounded-xl" />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Stock</label>
-                <Input type="number" value={editing.stock || 0} onChange={e => setEditing(p => ({ ...p!, stock: Number(e.target.value) }))} className="rounded-xl" />
+                <Input type="number" value={editing.stock || ""} onChange={e => setEditing(p => ({ ...p!, stock: e.target.value === "" ? 0 : Number(e.target.value) }))} className="rounded-xl" />
               </div>
               <div>
                 <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Low Threshold</label>
-                <Input type="number" value={editing.low_stock_threshold || 0} onChange={e => setEditing(p => ({ ...p!, low_stock_threshold: Number(e.target.value) }))} className="rounded-xl" />
+                <Input type="number" value={editing.low_stock_threshold || ""} onChange={e => setEditing(p => ({ ...p!, low_stock_threshold: e.target.value === "" ? 0 : Number(e.target.value) }))} className="rounded-xl" />
               </div>
             </div>
             <div className="flex items-center gap-2">

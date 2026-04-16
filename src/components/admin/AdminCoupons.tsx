@@ -102,10 +102,10 @@ export default function AdminCoupons() {
               <div><label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1.5 block">Discount</label>
                 <div className="flex gap-2">
                   <select value={form.discount_type} onChange={e => setForm(f => ({ ...f, discount_type: e.target.value }))} className="bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl px-2.5 py-2 text-sm text-zinc-700 dark:text-zinc-200"><option value="percentage">%</option><option value="flat">₹</option></select>
-                  <Input type="number" value={form.discount_value} onChange={e => setForm(f => ({ ...f, discount_value: Number(e.target.value) }))} className="rounded-xl bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700" />
+                  <Input type="number" value={form.discount_value || ""} onChange={e => setForm(f => ({ ...f, discount_value: e.target.value === "" ? 0 : Number(e.target.value) }))} className="rounded-xl bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700" />
                 </div></div>
               <div><label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1.5 block">Min Order (₹)</label>
-                <Input type="number" value={form.min_order} onChange={e => setForm(f => ({ ...f, min_order: Number(e.target.value) }))} className="rounded-xl bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700" /></div>
+                <Input type="number" value={form.min_order || ""} onChange={e => setForm(f => ({ ...f, min_order: e.target.value === "" ? 0 : Number(e.target.value) }))} className="rounded-xl bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700" /></div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div><label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1.5 block">Max Uses</label>

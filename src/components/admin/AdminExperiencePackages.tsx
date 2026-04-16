@@ -429,11 +429,11 @@ export default function AdminExperiencePackages() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Price (₹)</label>
-                <Input type="number" value={editing.price ?? ""} onChange={e => setEditing(p => ({ ...p!, price: Number(e.target.value) }))} className="rounded-xl" />
+                <Input type="number" value={editing.price || ""} onChange={e => setEditing(p => ({ ...p!, price: e.target.value === "" ? 0 : Number(e.target.value) }))} className="rounded-xl" />
               </div>
               <div>
                 <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Sort Order</label>
-                <Input type="number" value={editing.sort_order ?? ""} onChange={e => setEditing(p => ({ ...p!, sort_order: Number(e.target.value) }))} className="rounded-xl" />
+                <Input type="number" value={editing.sort_order || ""} onChange={e => setEditing(p => ({ ...p!, sort_order: e.target.value === "" ? 0 : Number(e.target.value) }))} className="rounded-xl" />
               </div>
             </div>
 

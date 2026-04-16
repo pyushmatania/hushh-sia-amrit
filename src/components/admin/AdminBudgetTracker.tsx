@@ -627,7 +627,7 @@ export default function AdminBudgetTracker() {
                 <div className="grid grid-cols-2 gap-2">
                   <div>
                     <label className="text-[11px] font-medium text-muted-foreground mb-1 block">Amount (₹) *</label>
-                    <Input type="number" value={editingExpense.amount ?? ""} onChange={e => setEditingExpense(p => ({ ...p!, amount: Number(e.target.value) }))}
+                    <Input type="number" value={editingExpense.amount || ""} onChange={e => setEditingExpense(p => ({ ...p!, amount: e.target.value === "" ? 0 : Number(e.target.value) }))}
                       className="rounded-xl h-10" placeholder="5000" />
                   </div>
                   <div>
@@ -723,7 +723,7 @@ export default function AdminBudgetTracker() {
                 </div>
                 <div>
                   <label className="text-[11px] font-medium text-muted-foreground mb-1 block">Allocated Amount (₹)</label>
-                  <Input type="number" value={editingBudget.allocated ?? ""} onChange={e => setEditingBudget(p => ({ ...p!, allocated: Number(e.target.value) }))}
+                  <Input type="number" value={editingBudget.allocated || ""} onChange={e => setEditingBudget(p => ({ ...p!, allocated: e.target.value === "" ? 0 : Number(e.target.value) }))}
                     className="rounded-xl h-10" placeholder="50000" />
                 </div>
                 <div>
